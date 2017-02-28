@@ -1,0 +1,49 @@
+{
+    "fluentMethods": true,
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 50
+        },
+        {
+            "fieldName": "description",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 100
+        },
+        {
+            "fieldName": "points",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "pointsMostLeadLaps",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "pointsFastLap",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "pointsPole",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "pointsLeadLap",
+            "fieldType": "Integer"
+        }
+    ],
+    "changelogDate": "20170213140812",
+    "entityTableName": "points_system",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no"
+}

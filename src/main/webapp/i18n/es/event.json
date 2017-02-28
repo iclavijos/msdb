@@ -1,0 +1,24 @@
+{
+    "motorsportsDatabaseApp": {
+        "event" : {
+            "home": {
+                "title": "Events",
+                "createLabel": "Crear nuevo Event",
+                "createOrEditLabel": "Crear o editar Event",
+                "search": "Search for Event"
+            },
+            "created": "Un nuevo Event ha sido creado con el identificador {{ param }}",
+            "updated": "Un Event ha sido actualizado con el identificador {{ param }}",
+            "deleted": "Un Event ha sido eliminado con el identificador {{ param }}",
+            "delete": {
+                "question": "¿Seguro que quiere eliminar Event {{ id }}?"
+            },
+            "detail": {
+                "title": "Event"
+            },
+            "name": "Name",
+            "description": "Description",
+            "editions": "Editions"
+        }
+    }
+}

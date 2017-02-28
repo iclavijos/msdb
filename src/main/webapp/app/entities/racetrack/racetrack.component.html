@@ -1,0 +1,76 @@
+<div>
+    <h2>
+        <span jhiTranslate="motorsportsDatabaseApp.racetrack.home.title">Racetracks</span>
+        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
+        	class="btn btn-primary float-right create-racetrack" [routerLink]="['/', { outlets: { popup: ['racetrack-new'] } }]">
+            <span class="fa fa-plus"></span>
+            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.racetrack.home.createLabel">
+            Create new Racetrack
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <div class="row">
+        <div class="col-sm-12 no-padding-right">
+            <form name="searchForm" class="form-inline">
+                <div class="input-group w-100 mt-3">
+                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.racetrack.home.search' | translate }}">
+                    <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
+                        <span class="fa fa-search"></span>
+                    </button>
+                    <button class="input-group-addon btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                        <span class="fa fa-trash-o"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br/>
+    <div class="table-responsive" *ngIf="racetracks">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+            <th><span jhiTranslate="motorsportsDatabaseApp.racetrack.name">Name</span></th>
+            <th><span jhiTranslate="motorsportsDatabaseApp.racetrack.location">Location</span></th>
+            <th><span jhiTranslate="motorsportsDatabaseApp.racetrack.logo">Logo</span></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let racetrack of racetracks ;trackBy: trackId">
+                <td>{{racetrack.name}}</td>
+                <td>{{racetrack.location}}</td>
+                <td>
+                    <a *ngIf="racetrack.logo" (click)="openFile(racetrack.logoContentType, racetrack.logo)">
+                        <img [src]="'data:' + racetrack.logoContentType + ';base64,' + racetrack.logo" style="max-height: 30px;" alt="racetrack image"/>
+                    </a>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['../racetrack', racetrack.id ]"
+                                class="btn btn-info btn-sm">
+                            <span class="fa fa-eye"></span>
+                            <span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                [routerLink]="['/', { outlets: { popup: 'racetrack/'+ racetrack.id + '/edit'} }]"
+                                replaceUrl="true"
+                                class="btn btn-primary btn-sm">
+                            <span class="fa fa-pencil"></span>
+                            <span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                                [routerLink]="['/', { outlets: { popup: 'racetrack/'+ racetrack.id + '/delete'} }]"
+                                replaceUrl="true"
+                                class="btn btn-danger btn-sm">
+                            <span class="fa fa-remove"></span>
+                            <span class="hidden-md-down" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

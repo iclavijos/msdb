@@ -1,0 +1,62 @@
+
+<div *ngIf="car">
+    <h2><span jhiTranslate="motorsportsDatabaseApp.car.detail.title">Car</span> {{car.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="motorsportsDatabaseApp.car.name">Name</span></dt>
+        <dd>
+            <span>{{car.name}}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.car.manufacturer">Manufacturer</span></dt>
+        <dd>
+            <span>{{car.manufacturer}}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.car.image">Image</span></dt>
+        <dd>
+            <div *ngIf="car.image">
+                <a (click)="openFile(car.imageContentType, car.image)">
+                    <img [src]="'data:' + car.imageContentType + ';base64,' + car.image" style="max-width: 100%;" alt="car image"/>
+                </a>
+                {{car.imageContentType}}, {{byteSize(car.image)}}
+            </div>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.car.engine">Engine</span></dt>
+        <dd>
+            <div *ngIf="car.engine">
+                <a [routerLink]="['/engine', car.engine?.id]">{{car.engine?.id}}</a>
+            </div>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.car.chassis">Chassis</span></dt>
+        <dd>
+            <div *ngIf="car.chassis">
+                <a [routerLink]="['/chassis', car.chassis?.id]">{{car.chassis?.id}}</a>
+            </div>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.car.tyreProvider">Tyre Provider</span></dt>
+        <dd>
+            <div *ngIf="car.tyreProvider">
+                <a [routerLink]="['/tyre-provider', car.tyreProvider?.id]">{{car.tyreProvider?.id}}</a>
+            </div>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.car.fuelProvider">Fuel Provider</span></dt>
+        <dd>
+            <div *ngIf="car.fuelProvider">
+                <a [routerLink]="['/fuel-provider', car.fuelProvider?.id]">{{car.fuelProvider?.id}}</a>
+            </div>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            (click)="previousState()"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+    </button>
+
+    <button type="button"
+            [routerLink]="['/', { outlets: { popup: 'car/'+ car.id + '/edit'} }]"
+            replaceUrl="true"
+            class="btn btn-primary">
+        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+    </button>
+</div>

@@ -1,0 +1,29 @@
+{
+    "motorsportsDatabaseApp": {
+        "driver" : {
+            "home": {
+                "title": "Pilots",
+                "createLabel": "Afegir nou pilot",
+                "createOrEditLabel": "Afegir o editar un pilot",
+                "search": "Cercar pilots"
+            },
+            "created": "S'ha creat un nou pilot amb identificador {{ param }}",
+            "updated": "S'ha actualitzat el pilot amb identificador {{ param }}",
+            "deleted": "S'ha esborrat el pilot amb identificador {{ param }}",
+            "delete": {
+                "question": "Esteu segur que voleu esborrar el pilot amb identificador {{ id }}?"
+            },
+            "detail": {
+                "title": "Pilot"
+            },
+            "name": "Nom",
+            "surname": "Cognoms",
+            "birthDate": "Data de naixement",
+            "birthPlace": "Lloc de naixement",
+            "deathDate": "Data de la mort",
+            "deathPlace": "Lloc de la mort",
+            "portrait": "Retrat",
+            "participations": "Participacions"
+        }
+    }
+}

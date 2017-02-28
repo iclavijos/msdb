@@ -1,0 +1,102 @@
+<div>
+    <h2>
+        <span jhiTranslate="motorsportsDatabaseApp.car.home.title">Cars</span>
+        <button class="btn btn-primary float-right create-car" [routerLink]="['/', { outlets: { popup: ['car-new'] } }]">
+            <span class="fa fa-plus"></span>
+            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.car.home.createLabel">
+            Create new Car
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <div class="row">
+        <div class="col-sm-12 no-padding-right">
+            <form name="searchForm" class="form-inline">
+                <div class="input-group w-100 mt-3">
+                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.car.home.search' | translate }}">
+                    <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
+                        <span class="fa fa-search"></span>
+                    </button>
+                    <button class="input-group-addon btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                        <span class="fa fa-trash-o"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br/>
+    <div class="table-responsive" *ngIf="cars">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+            <th><span jhiTranslate="global.field.id">ID</span></th>
+            <th><span jhiTranslate="motorsportsDatabaseApp.car.name">Name</span></th>
+            <th><span jhiTranslate="motorsportsDatabaseApp.car.manufacturer">Manufacturer</span></th>
+            <th><span jhiTranslate="motorsportsDatabaseApp.car.image">Image</span></th>
+            <th><span jhiTranslate="motorsportsDatabaseApp.car.engine">Engine</span></th>
+            <th><span jhiTranslate="motorsportsDatabaseApp.car.chassis">Chassis</span></th>
+            <th><span jhiTranslate="motorsportsDatabaseApp.car.tyreProvider">Tyre Provider</span></th>
+            <th><span jhiTranslate="motorsportsDatabaseApp.car.fuelProvider">Fuel Provider</span></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let car of cars ;trackBy: trackId">
+                <td><a [routerLink]="['../car', car.id ]">{{car.id}}</a></td>
+                <td>{{car.name}}</td>
+                <td>{{car.manufacturer}}</td>
+                <td>
+                    <a *ngIf="car.image" (click)="openFile(car.imageContentType, car.image)">
+                        <img [src]="'data:' + car.imageContentType + ';base64,' + car.image" style="max-height: 30px;" alt="car image"/>
+                    </a>
+                    <span *ngIf="car.image">{{car.imageContentType}}, {{byteSize(car.image)}}</span>
+                </td>
+                <td>
+                    <div *ngIf="car.engine">
+                        <a [routerLink]="['../engine', car.engine?.id ]" >{{car.engine?.id}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="car.chassis">
+                        <a [routerLink]="['../chassis', car.chassis?.id ]" >{{car.chassis?.id}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="car.tyreProvider">
+                        <a [routerLink]="['../tyre-provider', car.tyreProvider?.id ]" >{{car.tyreProvider?.id}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="car.fuelProvider">
+                        <a [routerLink]="['../fuel-provider', car.fuelProvider?.id ]" >{{car.fuelProvider?.id}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['../car', car.id ]"
+                                class="btn btn-info btn-sm">
+                            <span class="fa fa-eye"></span>
+                            <span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'car/'+ car.id + '/edit'} }]"
+                                replaceUrl="true"
+                                class="btn btn-primary btn-sm">
+                            <span class="fa fa-pencil"></span>
+                            <span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'car/'+ car.id + '/delete'} }]"
+                                replaceUrl="true"
+                                class="btn btn-danger btn-sm">
+                            <span class="fa fa-remove"></span>
+                            <span class="hidden-md-down" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

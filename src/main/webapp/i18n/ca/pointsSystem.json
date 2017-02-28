@@ -1,0 +1,28 @@
+{
+    "motorsportsDatabaseApp": {
+        "pointsSystem" : {
+            "home": {
+                "title": "Points Systems",
+                "createLabel": "Create a new Points System",
+                "createOrEditLabel": "Create or edit a Points System",
+                "search": "Search for Points System"
+            },
+            "created": "A new Points System is created with identifier {{ param }}",
+            "updated": "A Points System is updated with identifier {{ param }}",
+            "deleted": "A Points System is deleted with identifier {{ param }}",
+            "delete": {
+                "question": "Are you sure you want to delete Points System {{ id }}?"
+            },
+            "detail": {
+                "title": "Points System"
+            },
+            "name": "Name",
+            "description": "Description",
+            "points": "Points",
+            "pointsMostLeadLaps": "Points Most Lead Laps",
+            "pointsFastLap": "Points Fast Lap",
+            "pointsPole": "Points Pole",
+            "pointsLeadLap": "Points Lead Lap"
+        }
+    }
+}

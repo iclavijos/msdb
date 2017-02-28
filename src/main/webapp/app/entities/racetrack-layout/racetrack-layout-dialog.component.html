@@ -1,0 +1,88 @@
+
+
+<form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="myRacetrackLayoutLabel" jhiTranslate="motorsportsDatabaseApp.racetrackLayout.home.createOrEditLabel">Create or edit a Racetrack Layout</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                (click)="clear()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrackLayout.name" for="field_name">Name</label>
+            <input type="text" class="form-control" name="name" id="field_name"
+                [(ngModel)]="racetrackLayout.name"
+            required maxlength="100" />
+            <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.name?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.name?.errors?.required" jhiTranslate="entity.validation.required">
+                   This field is required.
+                </small>
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.name?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 100 }">
+                   This field cannot be longer than 100 characters.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrackLayout.length" for="field_length">Length</label>
+            <input type="number" class="form-control" name="length" id="field_length"
+                [(ngModel)]="racetrackLayout.length"
+            required />
+            <div [hidden]="!(editForm.controls.length?.dirty && editForm.controls.length?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.length?.errors?.required" jhiTranslate="entity.validation.required">
+                   This field is required.
+                </small>
+                <small class="form-text text-danger"
+                    [hidden]="!editForm.controls.length?.errors?.number" jhiTranslate="entity.validation.number">
+                    This field should be a number.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrackLayout.yearFirstUse" for="field_yearFirstUse">Year First Use</label>
+            <input type="number" class="form-control" name="yearFirstUse" id="field_yearFirstUse"
+                [(ngModel)]="racetrackLayout.yearFirstUse"
+            required />
+            <div [hidden]="!(editForm.controls.yearFirstUse?.dirty && editForm.controls.yearFirstUse?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.yearFirstUse?.errors?.required" jhiTranslate="entity.validation.required">
+                   This field is required.
+                </small>
+                <small class="form-text text-danger"
+                    [hidden]="!editForm.controls.yearFirstUse?.errors?.number" jhiTranslate="entity.validation.number">
+                    This field should be a number.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrackLayout.layoutImage" for="field_layoutImage">Layout Image</label>
+            <div>
+                <img [src]="'data:' + racetrackLayout.layoutImageContentType + ';base64,' + racetrackLayout.layoutImage" style="max-height: 100px;" *ngIf="racetrackLayout.layoutImage" alt="racetrackLayout image"/>
+                <div *ngIf="racetrackLayout.layoutImage" class="form-text text-danger clearfix">
+                    <span class="pull-left">{{racetrackLayout.layoutImageContentType}}, {{byteSize(racetrackLayout.layoutImage)}}</span>
+                    <button type="button" (click)="racetrackLayout.layoutImage=null;racetrackLayout.layoutImageContentType=null;"
+                            class="btn btn-default btn-xs pull-right">
+                        <span class="fa fa-times"></span>
+                    </button>
+                </div>
+                <input type="file" (change)="setFileData($event, racetrackLayout, 'layoutImage', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+            </div>
+            <input type="hidden" class="form-control" name="layoutImage" id="field_layoutImage"
+                [(ngModel)]="racetrackLayout.layoutImage"
+             />
+            <input type="hidden" class="form-control" name="layoutImageContentType" id="field_layoutImageContentType"
+                [(ngModel)]="racetrackLayout.layoutImageContentType" />
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+            <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+        <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+            <span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+    </div>
+</form>

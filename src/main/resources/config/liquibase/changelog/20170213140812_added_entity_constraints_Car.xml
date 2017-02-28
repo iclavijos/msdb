@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <!--
+        Added the constraints for entity Car.
+    -->
+    <changeSet id="20170213140812-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="engine_id"
+                                 baseTableName="car"
+                                 constraintName="fk_car_engine_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="engine"/>
+
+        <addForeignKeyConstraint baseColumnNames="chassis_id"
+                                 baseTableName="car"
+                                 constraintName="fk_car_chassis_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="chassis"/>
+
+        <addForeignKeyConstraint baseColumnNames="tyre_provider_id"
+                                 baseTableName="car"
+                                 constraintName="fk_car_tyre_provider_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="tyre_provider"/>
+
+        <addForeignKeyConstraint baseColumnNames="fuel_provider_id"
+                                 baseTableName="car"
+                                 constraintName="fk_car_fuel_provider_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="fuel_provider"/>
+
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,26 @@
+{
+    "motorsportsDatabaseApp": {
+        "series" : {
+            "home": {
+                "title": "Series",
+                "createLabel": "Crear nuevo Series",
+                "createOrEditLabel": "Crear o editar Series",
+                "search": "Search for Series"
+            },
+            "created": "Un nuevo Series ha sido creado con el identificador {{ param }}",
+            "updated": "Un Series ha sido actualizado con el identificador {{ param }}",
+            "deleted": "Un Series ha sido eliminado con el identificador {{ param }}",
+            "delete": {
+                "question": "¿Seguro que quiere eliminar Series {{ id }}?"
+            },
+            "detail": {
+                "title": "Series"
+            },
+            "name": "Name",
+            "shortname": "Shortname",
+            "organizer": "Organizer",
+            "logo": "Logo",
+            "editions": "Editions"
+        }
+    }
+}

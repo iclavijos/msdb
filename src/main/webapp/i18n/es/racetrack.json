@@ -1,0 +1,47 @@
+{
+    "motorsportsDatabaseApp": {
+        "racetrack" : {
+            "home": {
+                "title": "Circuitos",
+                "createLabel": "Crear nuevo circuito",
+                "createOrEditLabel": "Crear o editar un circuito",
+                "search": "Buscar circuitos"
+            },
+            "created": "Un nuevo circuito ha sido creado con el identificador {{ param }}",
+            "updated": "Un circuito ha sido actualizado con el identificador {{ param }}",
+            "deleted": "Un circuito ha sido eliminado con el identificador {{ param }}",
+            "delete": {
+                "question": "¿Seguro que quiere eliminar el circuito {{ id }}?"
+            },
+            "detail": {
+                "title": "circuito"
+            },
+            "name": "Nombre",
+            "location": "Localizacion",
+            "logo": "Logo",
+            "layouts": "Trazados"
+        },
+        "racetrackLayout" : {
+            "home": {
+                "title": "Trazados",
+                "createLabel": "Crear nuevo trazado",
+                "createOrEditLabel": "Crear o editar trazado",
+                "search": "Buscar trazados"
+            },
+            "created": "Un nuevo trazado ha sido creado con el identificador {{ param }}",
+            "updated": "Un trazado ha sido actualizado con el identificador {{ param }}",
+            "deleted": "Un trazado ha sido eliminado con el identificador {{ param }}",
+            "delete": {
+                "question": "¿Seguro que quiere eliminar Racetrack Layout {{ id }}?"
+            },
+            "detail": {
+                "title": "Trazado"
+            },
+            "name": "Nombre",
+            "length": "Longitud",
+            "yearFirstUse": "Anyo debut",
+            "layoutImage": "Perfil",
+            "racetrack": "Circuito"
+        }
+    }
+}

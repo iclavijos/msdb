@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<testsuite name="PhantomJS 2.1.1 (Windows 7 0.0.0)" package="" timestamp="2017-02-22T06:21:38" id="0" hostname="MC0ZGHFC" tests="52" errors="0" failures="0" time="6.014">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1"/>
+  </properties>
+  <testcase name="Component Tests ActivateComponent calls activate.get with the key from params" time="0.203" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests ActivateComponent should set set success to OK upon successful activation" time="0.116" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests ActivateComponent should set set error to ERROR upon activation failure" time="0.11" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PasswordResetFinishComponent should define its initial state" time="0.1" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PasswordResetFinishComponent sets focus after the view has been initialized" time="0.098" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PasswordResetInitComponent should define its initial state" time="0.096" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PasswordResetInitComponent sets focus after the view has been initialized" time="0.1" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PasswordResetInitComponent notifies of success upon successful requestReset" time="0.102" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PasswordResetInitComponent notifies of unknown email upon e-mail address not registered/400" time="0.099" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PasswordResetInitComponent notifies of error upon error response" time="0.096" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PasswordStrengthBarComponent PasswordStrengthBarComponents should initialize with default values" time="0.105" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PasswordStrengthBarComponent PasswordStrengthBarComponents should increase strength upon password value change" time="0.119" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PasswordStrengthBarComponent PasswordStrengthBarComponents should change the color based on strength" time="0.104" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PasswordComponent should show error if passwords do not match" time="0.124" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PasswordComponent should call Auth.changePassword when passwords match" time="0.107" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PasswordComponent should set success to OK upon success" time="0.111" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PasswordComponent should notify of error if change password fails" time="0.109" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests RegisterComponent should ensure the two passwords entered match" time="0.113" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests RegisterComponent should update success to OK after creating an account" time="0.111" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests RegisterComponent should notify of user existence upon 400/login already in use" time="0.111" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests RegisterComponent should notify of email existence upon 400/e-mail address already in use" time="0.106" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests RegisterComponent should notify of generic error" time="0.102" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests SettingsComponent should send the current identity upon save" time="0.103" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests SettingsComponent should notify of success upon successful save" time="0.106" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests SettingsComponent should notify of error upon failed save" time="0.101" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests JhiHealthCheckComponent baseName and subSystemName should return the basename when it has no sub system" time="0.108" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests JhiHealthCheckComponent baseName and subSystemName should return the basename when it has sub systems" time="0.099" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests JhiHealthCheckComponent baseName and subSystemName should return the sub system name" time="0.158" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests JhiHealthCheckComponent baseName and subSystemName should return the subsystem when it has multiple keys" time="0.111" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests JhiHealthCheckComponent transformHealthData should flatten empty health data" time="0.102" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests JhiHealthCheckComponent should flatten health data with no subsystems" time="0.099" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests JhiHealthCheckComponent should flatten health data with subsystems at level 1, main system has no additional information" time="0.098" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests JhiHealthCheckComponent should flatten health data with subsystems at level 1, main system has additional information" time="0.106" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests JhiHealthCheckComponent should flatten health data with subsystems at level 1, main system has additional error" time="0.102" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests Car Management Detail Component OnInit Should call load all on init" time="0.149" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests Category Management Detail Component OnInit Should call load all on init" time="0.132" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests Chassis Management Detail Component OnInit Should call load all on init" time="0.162" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests Driver Management Detail Component OnInit Should call load all on init" time="0.128" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests Engine Management Detail Component OnInit Should call load all on init" time="0.112" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests EventEdition Management Detail Component OnInit Should call load all on init" time="0.119" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests EventEntryResult Management Detail Component OnInit Should call load all on init" time="0.124" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests EventEntry Management Detail Component OnInit Should call load all on init" time="0.119" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests EventSession Management Detail Component OnInit Should call load all on init" time="0.114" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests Event Management Detail Component OnInit Should call load all on init" time="0.121" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests FuelProvider Management Detail Component OnInit Should call load all on init" time="0.123" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests PointsSystem Management Detail Component OnInit Should call load all on init" time="0.12" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests RacetrackLayout Management Detail Component OnInit Should call load all on init" time="0.136" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests Racetrack Management Detail Component OnInit Should call load all on init" time="0.126" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests SeriesEdition Management Detail Component OnInit Should call load all on init" time="0.111" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests Series Management Detail Component OnInit Should call load all on init" time="0.136" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests Team Management Detail Component OnInit Should call load all on init" time="0.117" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <testcase name="Component Tests TyreProvider Management Detail Component OnInit Should call load all on init" time="0.13" classname="PhantomJS_2_1_1_(Windows_7_0_0_0).Component Tests"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

@@ -1,0 +1,25 @@
+{
+    "motorsportsDatabaseApp": {
+        "eventSession" : {
+            "home": {
+                "title": "Event Sessions",
+                "createLabel": "Create a new Event Session",
+                "createOrEditLabel": "Create or edit a Event Session",
+                "search": "Search for Event Session"
+            },
+            "created": "A new Event Session is created with identifier {{ param }}",
+            "updated": "A Event Session is updated with identifier {{ param }}",
+            "deleted": "A Event Session is deleted with identifier {{ param }}",
+            "delete": {
+                "question": "Are you sure you want to delete Event Session {{ id }}?"
+            },
+            "detail": {
+                "title": "Event Session"
+            },
+            "name": "Name",
+            "shortname": "Shortname",
+            "sessionStartTime": "Session Start Time",
+            "duration": "Duration"
+        }
+    }
+}

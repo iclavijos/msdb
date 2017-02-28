@@ -1,0 +1,86 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "evolutions",
+            "otherEntityName": "engine",
+            "otherEntityRelationshipName": "derivedFrom"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "derivedFrom",
+            "otherEntityName": "engine",
+            "otherEntityField": "id"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 50
+        },
+        {
+            "fieldName": "manufacturer",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 50
+        },
+        {
+            "fieldName": "capacity",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "architecture",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 10
+        },
+        {
+            "fieldName": "debutYear",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "petrolEngine",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "dieselEngine",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "electricEngine",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "turbo",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "image",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "image"
+        }
+    ],
+    "changelogDate": "20170213140812",
+    "entityTableName": "engine",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no"
+}

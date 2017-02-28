@@ -1,0 +1,116 @@
+
+<div *ngIf="racetrack">
+	<h2>{{racetrack.name}}</h2>
+	<hr>
+	<jhi-alert-error></jhi-alert-error>
+	<div class="row">
+		<div class="col-lg-4 col-md-4">
+			<div>
+				<dl class="row-md jh-entity-details">
+					<dt>
+						<span jhiTranslate="motorsportsDatabaseApp.racetrack.name">Name</span>
+					</dt>
+					<dd>
+						<span>{{racetrack.name}}</span>
+					</dd>
+					<dt>
+						<span jhiTranslate="motorsportsDatabaseApp.racetrack.location">Location</span>
+					</dt>
+					<dd>
+						<span>{{racetrack.location}}</span>
+					</dd>
+					<dt>
+						<span jhiTranslate="motorsportsDatabaseApp.racetrack.logo">Logo</span>
+					</dt>
+					<dd>
+						<div *ngIf="racetrack.logo">
+							<a (click)="openFile(racetrack.logoContentType, racetrack.logo)">
+								<img
+								[src]="'data:' + racetrack.logoContentType + ';base64,' + racetrack.logo"
+								style="max-width: 100%;" alt="racetrack image" />
+							</a>
+						</div>
+					</dd>
+				</dl>
+
+			</div>
+		</div>
+
+		<div class="col-lg-8 col-md-8">
+			<h3>
+		        <span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.home.title">Layouts</span>
+		    </h3>
+			<div class="table-responsive" *ngIf="racetrackLayouts">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th><span
+								jhiTranslate="motorsportsDatabaseApp.racetrackLayout.name">Name</span></th>
+							<th><span
+								jhiTranslate="motorsportsDatabaseApp.racetrackLayout.length">Length</span></th>
+							<th><span
+								jhiTranslate="motorsportsDatabaseApp.racetrackLayout.yearFirstUse">Year
+									First Use</span></th>
+							<th><span
+								jhiTranslate="motorsportsDatabaseApp.racetrackLayout.layoutImage">Layout
+									Image</span></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr
+							*ngFor="let racetrackLayout of racetrackLayouts ;trackBy: trackId">
+							<td>{{racetrackLayout.name}}</td>
+							<td>{{racetrackLayout.length}}</td>
+							<td>{{racetrackLayout.yearFirstUse}}</td>
+							<td><a *ngIf="racetrackLayout.layoutImage"
+								(click)="openFile(racetrackLayout.layoutImageContentType, racetrackLayout.layoutImage)">
+									<img
+									[src]="'data:' + racetrackLayout.layoutImageContentType + ';base64,' + racetrackLayout.layoutImage"
+									style="max-height: 30px;" alt="racetrackLayout image" />
+							</a></td>
+							<td class="text-right">
+								<div class="btn-group flex-btn-group-container">
+									<button type="submit"
+										[routerLink]="['racetrack-layout', racetrackLayout.id ]"
+										class="btn btn-info btn-sm">
+										<span class="fa fa-eye"></span>
+									</button>
+									<button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+										[routerLink]="['/', { outlets: { popup: 'racetrack-layout/'+ racetrackLayout.id + '/edit'} }]"
+										replaceUrl="true" class="btn btn-primary btn-sm">
+										<span class="fa fa-pencil"></span>
+									</button>
+									<button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
+										[routerLink]="['/', { outlets: { popup: 'racetrack-layout/'+ racetrackLayout.id + '/delete'} }]"
+										replaceUrl="true" class="btn btn-danger btn-sm">
+										<span class="fa fa-remove"></span>
+									</button>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<button class="btn btn-primary float-right create-racetrack-layout" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+				[routerLink]="['/', { outlets: { popup: 'racetrack-layout-new/' + racetrack.id  } }]">
+	            <span class="fa fa-plus"></span>
+	            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.racetrackLayout.home.createLabel">
+	            Add new Layout
+	            </span>
+	        </button>
+		</div>
+	</div>
+	<button type="submit" (click)="previousState()" class="btn btn-info">
+		<span class="fa fa-arrow-left"></span>&nbsp;<span
+			jhiTranslate="entity.action.back"> Back</span>
+	</button>
+	
+	<button type="button"
+		*jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+		[routerLink]="['/', { outlets: { popup: 'racetrack/'+ racetrack.id + '/edit'} }]"
+		replaceUrl="true" class="btn btn-primary">
+		<span class="fa fa-pencil"></span>&nbsp;<span
+			jhiTranslate="entity.action.edit"> Edit</span>
+	</button>
+</div>
