@@ -109,7 +109,9 @@ export class RacetrackLayoutPopupComponent implements OnInit, OnDestroy {
         let isNewLayout: boolean = false;
         this.routeSub = this.route.params.subscribe(params => {
             this.route.url.subscribe(url => {
-                isNewLayout = url[0].path.endsWith("-new");
+                if (url.length == 3) {
+                    isNewLayout = url[2].path.endsWith("-new");
+                }
             });
             if ( params['id'] && !isNewLayout) {
                 this.modalRef = this.racetrackLayoutPopupService

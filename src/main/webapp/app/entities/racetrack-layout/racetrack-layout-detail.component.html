@@ -25,6 +25,16 @@
                 {{racetrackLayout.layoutImageContentType}}, {{byteSize(racetrackLayout.layoutImage)}}
             </div>
         </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.active">Active</span></dt>
+        <dd>
+            <span>{{racetrackLayout.active}}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.racetrack">Racetrack</span></dt>
+        <dd>
+            <div *ngIf="racetrackLayout.racetrack">
+                <a [routerLink]="['/racetrack', racetrackLayout.racetrack?.id]">{{racetrackLayout.racetrack?.id}}</a>
+            </div>
+        </dd>
     </dl>
 
     <button type="submit"

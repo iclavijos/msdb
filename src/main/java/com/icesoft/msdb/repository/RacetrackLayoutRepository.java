@@ -11,5 +11,5 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public interface RacetrackLayoutRepository extends JpaRepository<RacetrackLayout,Long> {
-	List<RacetrackLayout> findByRacetrackIdOrderByYearFirstUseDesc(long racetrackId);
+	List<RacetrackLayout> findByRacetrackIdOrderByActiveDescYearFirstUseDescNameAsc(long racetrackId);
 }

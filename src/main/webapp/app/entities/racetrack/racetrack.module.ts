@@ -15,7 +15,8 @@ import {
     racetrackRoute,
     racetrackPopupRoute,
     racetrackLayoutRoute,
-    racetrackLayoutPopupRoute
+    racetrackLayoutPopupRoute,
+    RacetrackResolvePagingParams,
 } from './';
 
 let ENTITY_STATES = [
@@ -48,6 +49,7 @@ let ENTITY_STATES = [
     providers: [
         RacetrackService,
         RacetrackPopupService,
+        RacetrackResolvePagingParams,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

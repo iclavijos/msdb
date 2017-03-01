@@ -76,6 +76,12 @@
             <input type="hidden" class="form-control" name="layoutImageContentType" id="field_layoutImageContentType"
                 [(ngModel)]="racetrackLayout.layoutImageContentType" />
         </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrackLayout.active" for="field_active">Active</label>
+            <input type="checkbox" class="form-control" name="active" id="field_active"
+                [(ngModel)]="racetrackLayout.active"
+             />
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">

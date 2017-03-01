@@ -35,9 +35,8 @@ export class RacetrackDialogComponent implements OnInit {
     ngOnInit() {
         this.isSaving = false;
         this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
-        this.racetrackLayoutService.query().subscribe(
-            (res: Response) => { this.racetracklayouts = res.json(); }, (res: Response) => this.onError(res.json()));
     }
+    
     byteSize(field) {
         return this.dataUtils.byteSize(field);
     }

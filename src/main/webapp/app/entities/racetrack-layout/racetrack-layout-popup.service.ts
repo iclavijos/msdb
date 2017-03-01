@@ -10,7 +10,7 @@ import { RacetrackLayoutService } from './racetrack-layout.service';
 @Injectable()
 export class RacetrackLayoutPopupService {
     private isOpen = false;
-    private racetrack: Racetrack;
+
     constructor (
         private modalService: NgbModal,
         private router: Router,
@@ -25,14 +25,14 @@ export class RacetrackLayoutPopupService {
         }
         this.isOpen = true;
 
-        if (id && !isNewLayout) {
+        if (!isNewLayout) {
             this.racetrackLayoutService.find(id).subscribe(racetrackLayout => {
                 this.racetrackLayoutModalRef(component, racetrackLayout);
             });
         } else {
-            this.racetrackService.find(id)
-                .subscribe((res: Racetrack) => this.racetrack = res, (res: Response) => console.log(res.json()));
-            return this.racetrackLayoutModalRef(component, new RacetrackLayout(), this.racetrack);
+            this.racetrackService.find(id).subscribe(racetrack => {
+                return this.racetrackLayoutModalRef(component, new RacetrackLayout(), racetrack);
+            });
         }
     }
 

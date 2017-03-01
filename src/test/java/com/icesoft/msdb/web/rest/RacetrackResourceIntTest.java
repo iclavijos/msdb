@@ -1,12 +1,18 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.MotorsportsDatabaseApp;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.icesoft.msdb.domain.Racetrack;
-import com.icesoft.msdb.repository.RacetrackLayoutRepository;
-import com.icesoft.msdb.repository.RacetrackRepository;
-import com.icesoft.msdb.repository.search.RacetrackSearchRepository;
-import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,13 +29,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
 
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.icesoft.msdb.MotorsportsDatabaseApp;
+import com.icesoft.msdb.domain.Racetrack;
+import com.icesoft.msdb.repository.RacetrackRepository;
+import com.icesoft.msdb.repository.search.RacetrackSearchRepository;
+import com.icesoft.msdb.service.RacetrackService;
+import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
  * Test class for the RacetrackResource REST controller.
@@ -58,7 +63,7 @@ public class RacetrackResourceIntTest {
     private RacetrackSearchRepository racetrackSearchRepository;
     
     @Autowired
-    private RacetrackLayoutRepository racetrackLayoutRepository;
+    private RacetrackService racetrackService;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -79,7 +84,7 @@ public class RacetrackResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            RacetrackResource racetrackResource = new RacetrackResource(racetrackRepository, racetrackSearchRepository, racetrackLayoutRepository);
+            RacetrackResource racetrackResource = new RacetrackResource(racetrackService);
         this.restRacetrackMockMvc = MockMvcBuilders.standaloneSetup(racetrackResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

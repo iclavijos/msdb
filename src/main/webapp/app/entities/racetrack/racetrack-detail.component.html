@@ -54,6 +54,7 @@
 							<th><span
 								jhiTranslate="motorsportsDatabaseApp.racetrackLayout.layoutImage">Layout
 									Image</span></th>
+							<th><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.active">Active</span></th>
 							<th></th>
 						</tr>
 					</thead>
@@ -69,6 +70,7 @@
 									[src]="'data:' + racetrackLayout.layoutImageContentType + ';base64,' + racetrackLayout.layoutImage"
 									style="max-height: 30px;" alt="racetrackLayout image" />
 							</a></td>
+							<td>{{racetrackLayout.active}}</td>
 							<td class="text-right">
 								<div class="btn-group flex-btn-group-container">
 									<button type="submit"
@@ -93,7 +95,7 @@
 				</table>
 			</div>
 			<button class="btn btn-primary float-right create-racetrack-layout" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-				[routerLink]="['/', { outlets: { popup: 'racetrack-layout-new/' + racetrack.id  } }]">
+				[routerLink]="['/', { outlets: { popup: 'racetrack/' + racetrack.id + '/racetrack-layout-new'   } }]">
 	            <span class="fa fa-plus"></span>
 	            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.racetrackLayout.home.createLabel">
 	            Add new Layout

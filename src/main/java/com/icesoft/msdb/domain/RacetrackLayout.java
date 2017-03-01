@@ -44,6 +44,9 @@ public class RacetrackLayout implements Serializable {
     @Column(name = "layout_image_content_type")
     private String layoutImageContentType;
 
+    @Column(name = "active")
+    private Boolean active;
+
     @ManyToOne
     private Racetrack racetrack;
 
@@ -120,6 +123,19 @@ public class RacetrackLayout implements Serializable {
         this.layoutImageContentType = layoutImageContentType;
     }
 
+    public Boolean isActive() {
+        return active;
+    }
+
+    public RacetrackLayout active(Boolean active) {
+        this.active = active;
+        return this;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
     public Racetrack getRacetrack() {
         return racetrack;
     }
@@ -162,6 +178,7 @@ public class RacetrackLayout implements Serializable {
             ", yearFirstUse='" + yearFirstUse + "'" +
             ", layoutImage='" + layoutImage + "'" +
             ", layoutImageContentType='" + layoutImageContentType + "'" +
+            ", active='" + active + "'" +
             '}';
     }
 }

@@ -25,6 +25,7 @@
                 "eventEntry": "Event Entry",
                 "eventEntryResult": "Event Entry Result",
                 "car": "Car",
+                "driver": "Driver",
                 "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
             },
             "account": {

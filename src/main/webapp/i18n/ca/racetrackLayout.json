@@ -3,15 +3,15 @@
         "racetrackLayout" : {
             "home": {
                 "title": "Racetrack Layouts",
-                "createLabel": "Crear nuevo Racetrack Layout",
-                "createOrEditLabel": "Crear o editar Racetrack Layout",
+                "createLabel": "Create a new Racetrack Layout",
+                "createOrEditLabel": "Create or edit a Racetrack Layout",
                 "search": "Search for Racetrack Layout"
             },
-            "created": "Un nuevo Racetrack Layout ha sido creado con el identificador {{ param }}",
-            "updated": "Un Racetrack Layout ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un Racetrack Layout ha sido eliminado con el identificador {{ param }}",
+            "created": "A new Racetrack Layout is created with identifier {{ param }}",
+            "updated": "A Racetrack Layout is updated with identifier {{ param }}",
+            "deleted": "A Racetrack Layout is deleted with identifier {{ param }}",
             "delete": {
-                "question": "¿Seguro que quiere eliminar Racetrack Layout {{ id }}?"
+                "question": "Are you sure you want to delete Racetrack Layout {{ id }}?"
             },
             "detail": {
                 "title": "Racetrack Layout"

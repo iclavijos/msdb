@@ -15,98 +15,103 @@ import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
 })
 export class DriverComponent implements OnInit, OnDestroy {
 
+currentAccount: any;
     drivers: Driver[];
-    currentAccount: any;
+    error: any;
+    success: any;
     eventSubscriber: Subscription;
-    itemsPerPage: number;
+    currentSearch: string;
+    routeData: any;
     links: any;
+    totalItems: any;
+    queryCount: any;
+    itemsPerPage: any;
     page: any;
     predicate: any;
-    queryCount: any;
+    previousPage: any;
     reverse: any;
-    totalItems: number;
-    currentSearch: string;
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
         private driverService: DriverService,
-        private alertService: AlertService,
-        private dataUtils: DataUtils,
-        private eventManager: EventManager,
         private parseLinks: ParseLinks,
+        private alertService: AlertService,
+        private principal: Principal,
         private activatedRoute: ActivatedRoute,
-        private principal: Principal
+        private dataUtils: DataUtils,
+        private router: Router,
+        private eventManager: EventManager,
+        private paginationUtil: PaginationUtil,
+        private paginationConfig: PaginationConfig
     ) {
-        this.drivers = [];
         this.itemsPerPage = ITEMS_PER_PAGE;
-        this.page = 0;
-        this.links = {
-            last: 0
-        };
-        this.predicate = 'id';
-        this.reverse = true;
+        this.routeData = this.activatedRoute.data.subscribe(data => {
+            this.page = data['pagingParams'].page;
+            this.previousPage = data['pagingParams'].page;
+            this.reverse = data['pagingParams'].ascending;
+            this.predicate = data['pagingParams'].predicate;
+        });
         this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
         this.jhiLanguageService.setLocations(['driver']);
     }
 
-    loadAll () {
+    loadAll() {
         if (this.currentSearch) {
             this.driverService.search({
                 query: this.currentSearch,
-                page: this.page,
                 size: this.itemsPerPage,
-                sort: this.sort()
-            }).subscribe(
-                (res: Response) => this.onSuccess(res.json(), res.headers),
-                (res: Response) => this.onError(res.json())
-            );
+                sort: this.sort()}).subscribe(
+                    (res: Response) => this.onSuccess(res.json(), res.headers),
+                    (res: Response) => this.onError(res.json())
+                );
             return;
         }
         this.driverService.query({
-            page: this.page,
+            page: this.page - 1,
             size: this.itemsPerPage,
-            sort: this.sort()
-        }).subscribe(
+            sort: this.sort()}).subscribe(
             (res: Response) => this.onSuccess(res.json(), res.headers),
             (res: Response) => this.onError(res.json())
         );
     }
-
-    reset () {
-        this.page = 0;
-        this.drivers = [];
+    loadPage (page: number) {
+        if (page !== this.previousPage) {
+            this.previousPage = page;
+            this.transition();
+        }
+    }
+    transition() {
+        this.router.navigate(['/driver'], {queryParams:
+            {
+                page: this.page,
+                size: this.itemsPerPage,
+                search: this.currentSearch,
+                sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+            }
+        });
         this.loadAll();
     }
 
-    loadPage(page) {
-        this.page = page;
-        this.loadAll();
-    }
-
-    clear () {
-        this.drivers = [];
-        this.links = {
-            last: 0
-        };
+    clear() {
         this.page = 0;
-        this.predicate = 'id';
-        this.reverse = true;
         this.currentSearch = '';
+        this.router.navigate(['/driver', {
+            page: this.page,
+            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+        }]);
         this.loadAll();
     }
-
     search (query) {
         if (!query) {
             return this.clear();
         }
-        this.drivers = [];
-        this.links = {
-            last: 0
-        };
         this.page = 0;
-        this.predicate = '_score';
-        this.reverse = false;
         this.currentSearch = query;
+        this.router.navigate(['/driver', {
+            search: this.currentSearch,
+            page: this.page,
+            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+        }]);
         this.loadAll();
     }
     ngOnInit() {
@@ -135,7 +140,7 @@ export class DriverComponent implements OnInit, OnDestroy {
         return this.dataUtils.openFile(contentType, field);
     }
     registerChangeInDrivers() {
-        this.eventSubscriber = this.eventManager.subscribe('driverListModification', (response) => this.reset());
+        this.eventSubscriber = this.eventManager.subscribe('driverListModification', (response) => this.loadAll());
     }
 
     sort () {
@@ -146,12 +151,12 @@ export class DriverComponent implements OnInit, OnDestroy {
         return result;
     }
 
-    private onSuccess(data, headers) {
+    private onSuccess (data, headers) {
         this.links = this.parseLinks.parse(headers.get('link'));
         this.totalItems = headers.get('X-Total-Count');
-        for (let i = 0; i < data.length; i++) {
-            this.drivers.push(data[i]);
-        }
+        this.queryCount = this.totalItems;
+        // this.page = pagingParams.page;
+        this.drivers = data;
     }
 
     private onError (error) {

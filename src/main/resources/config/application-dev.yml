@@ -44,6 +44,7 @@ spring:
             hibernate.javax.cache.provider: org.ehcache.jsr107.EhcacheCachingProvider
             hibernate.javax.cache.uri: ${spring.cache.jcache.config}
             hibernate.cache.region.factory_class: io.github.jhipster.config.jcache.SpringCacheRegionFactory
+        #hibernate.ddl-auto: update
     cache:
         jcache:
             config: config/ehcache/ehcache-dev.xml

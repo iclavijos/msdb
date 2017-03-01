@@ -1,8 +1,7 @@
 <div>
     <h2>
         <span jhiTranslate="motorsportsDatabaseApp.driver.home.title">Drivers</span>
-        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
-        	class="btn btn-primary float-right create-driver" [routerLink]="['/', { outlets: { popup: ['driver-new'] } }]">
+        <button class="btn btn-primary float-right create-driver" [routerLink]="['/', { outlets: { popup: ['driver-new'] } }]">
             <span class="fa fa-plus"></span>
             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.driver.home.createLabel">
             Create new Driver
@@ -29,7 +28,7 @@
     <div class="table-responsive" *ngIf="drivers">
         <table class="table table-striped">
             <thead>
-            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="reset.bind(this)">
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
             <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.driver.name">Name</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="surname"><span jhiTranslate="motorsportsDatabaseApp.driver.surname">Surname</span> <span class="fa fa-sort"></span></th>
@@ -37,10 +36,11 @@
             <th jhiSortBy="birthPlace"><span jhiTranslate="motorsportsDatabaseApp.driver.birthPlace">Birth Place</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="deathDate"><span jhiTranslate="motorsportsDatabaseApp.driver.deathDate">Death Date</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="deathPlace"><span jhiTranslate="motorsportsDatabaseApp.driver.deathPlace">Death Place</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="portrait"><span jhiTranslate="motorsportsDatabaseApp.driver.portrait">Portrait</span> <span class="fa fa-sort"></span></th>
             <th></th>
             </tr>
             </thead>
-            <tbody infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
+            <tbody>
             <tr *ngFor="let driver of drivers ;trackBy: trackId">
                 <td><a [routerLink]="['../driver', driver.id ]">{{driver.id}}</a></td>
                 <td>{{driver.name}}</td>
@@ -49,6 +49,12 @@
                 <td>{{driver.birthPlace}}</td>
                 <td>{{driver.deathDate | date:'mediumDate'}}</td>
                 <td>{{driver.deathPlace}}</td>
+                <td>
+                    <a *ngIf="driver.portrait" (click)="openFile(driver.portraitContentType, driver.portrait)">
+                        <img [src]="'data:' + driver.portraitContentType + ';base64,' + driver.portrait" style="max-height: 30px;" alt="driver image"/>
+                    </a>
+                    <span *ngIf="driver.portrait">{{driver.portraitContentType}}, {{byteSize(driver.portrait)}}</span>
+                </td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"
@@ -57,14 +63,14 @@
                             <span class="fa fa-eye"></span>
                             <span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
                         </button>
-                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                        <button type="submit"
                                 [routerLink]="['/', { outlets: { popup: 'driver/'+ driver.id + '/edit'} }]"
                                 replaceUrl="true"
                                 class="btn btn-primary btn-sm">
                             <span class="fa fa-pencil"></span>
                             <span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
                         </button>
-                        <button type="submit" *jhiHasAnyAuthority="'ROLE_ADMIN'"
+                        <button type="submit"
                                 [routerLink]="['/', { outlets: { popup: 'driver/'+ driver.id + '/delete'} }]"
                                 replaceUrl="true"
                                 class="btn btn-danger btn-sm">
@@ -77,4 +83,12 @@
             </tbody>
         </table>
     </div>
+        <div *ngIf="drivers && drivers.length">
+            <div class="row justify-content-center">
+                <jhi-item-count [page]="page" [total]="queryCount" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+            </div>
+            <div class="row justify-content-center">
+                <ngb-pagination [collectionSize]="totalItems" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
+            </div>
+        </div>
 </div>

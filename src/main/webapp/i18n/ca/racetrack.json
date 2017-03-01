@@ -32,7 +32,7 @@
             "updated": "A Racetrack Layout is updated with identifier {{ param }}",
             "deleted": "A Racetrack Layout is deleted with identifier {{ param }}",
             "delete": {
-                "question": "Are you sure you want to delete Racetrack Layout {{ id }}?"
+                "question": "Esteu segur que voleu esborrar el traçat '{{ id }}?'"
             },
             "detail": {
                 "title": "Racetrack Layout"
@@ -41,7 +41,8 @@
             "length": "Length",
             "yearFirstUse": "Year First Use",
             "layoutImage": "Layout Image",
-            "racetrack": "Racetrack"
+            "racetrack": "Racetrack",
+            "active": "En actiu"
         }
     }
 }

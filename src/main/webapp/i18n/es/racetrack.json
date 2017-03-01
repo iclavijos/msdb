@@ -23,25 +23,26 @@
         },
         "racetrackLayout" : {
             "home": {
-                "title": "Trazados",
-                "createLabel": "Crear nuevo trazado",
-                "createOrEditLabel": "Crear o editar trazado",
-                "search": "Buscar trazados"
+                "title": "Racetrack Layouts",
+                "createLabel": "Crear nuevo Racetrack Layout",
+                "createOrEditLabel": "Crear o editar Racetrack Layout",
+                "search": "Search for Racetrack Layout"
             },
-            "created": "Un nuevo trazado ha sido creado con el identificador {{ param }}",
-            "updated": "Un trazado ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un trazado ha sido eliminado con el identificador {{ param }}",
+            "created": "Un nuevo Racetrack Layout ha sido creado con el identificador {{ param }}",
+            "updated": "Un Racetrack Layout ha sido actualizado con el identificador {{ param }}",
+            "deleted": "Un Racetrack Layout ha sido eliminado con el identificador {{ param }}",
             "delete": {
-                "question": "¿Seguro que quiere eliminar Racetrack Layout {{ id }}?"
+                "question": "¿Seguro que quiere eliminar el trazado '{{ id }}'?"
             },
             "detail": {
-                "title": "Trazado"
+                "title": "Racetrack Layout"
             },
-            "name": "Nombre",
-            "length": "Longitud",
-            "yearFirstUse": "Anyo debut",
-            "layoutImage": "Perfil",
-            "racetrack": "Circuito"
+            "name": "Name",
+            "length": "Length",
+            "yearFirstUse": "Year First Use",
+            "layoutImage": "Layout Image",
+            "racetrack": "Racetrack",
+            "active": "En activo"
         }
     }
 }

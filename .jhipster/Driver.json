@@ -63,6 +63,6 @@
     "changelogDate": "20170213140812",
     "entityTableName": "driver",
     "dto": "no",
-    "pagination": "infinite-scroll",
+    "pagination": "pagination",
     "service": "no"
 }

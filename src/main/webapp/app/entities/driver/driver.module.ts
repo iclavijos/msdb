@@ -14,6 +14,7 @@ import {
     DriverDeleteDialogComponent,
     driverRoute,
     driverPopupRoute,
+    DriverResolvePagingParams,
 } from './';
 
 let ENTITY_STATES = [
@@ -44,6 +45,7 @@ let ENTITY_STATES = [
     providers: [
         DriverService,
         DriverPopupService,
+        DriverResolvePagingParams,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

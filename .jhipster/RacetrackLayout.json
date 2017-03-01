@@ -36,11 +36,15 @@
             "fieldName": "layoutImage",
             "fieldType": "byte[]",
             "fieldTypeBlobContent": "image"
+        },
+        {
+            "fieldName": "active",
+            "fieldType": "Boolean"
         }
     ],
     "changelogDate": "20170213140812",
-    "entityTableName": "racetrack_layout",
     "dto": "no",
-    "pagination": "no",
-    "service": "no"
+    "service": "no",
+    "entityTableName": "racetrack_layout",
+    "pagination": "no"
 }

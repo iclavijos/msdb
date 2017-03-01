@@ -6,6 +6,7 @@ export class RacetrackLayout {
         public length?: number,
         public yearFirstUse?: number,
         public layoutImage?: any,
+        public active: boolean = true,
         public racetrack?: Racetrack,
     ) { }
 }

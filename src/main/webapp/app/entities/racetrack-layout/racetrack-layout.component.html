@@ -34,6 +34,7 @@
             <th><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.length">Length</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.yearFirstUse">Year First Use</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.layoutImage">Layout Image</span></th>
+            <th><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.active">Active</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.racetrack">Racetrack</span></th>
             <th></th>
             </tr>
@@ -50,6 +51,7 @@
                     </a>
                     <span *ngIf="racetrackLayout.layoutImage">{{racetrackLayout.layoutImageContentType}}, {{byteSize(racetrackLayout.layoutImage)}}</span>
                 </td>
+                <td>{{racetrackLayout.active}}</td>
                 <td>
                     <div *ngIf="racetrackLayout.racetrack">
                         <a [routerLink]="['../racetrack', racetrackLayout.racetrack?.id ]" >{{racetrackLayout.racetrack?.id}}</a>

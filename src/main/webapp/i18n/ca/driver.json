@@ -2,28 +2,28 @@
     "motorsportsDatabaseApp": {
         "driver" : {
             "home": {
-                "title": "Pilots",
-                "createLabel": "Afegir nou pilot",
-                "createOrEditLabel": "Afegir o editar un pilot",
-                "search": "Cercar pilots"
+                "title": "Drivers",
+                "createLabel": "Create a new Driver",
+                "createOrEditLabel": "Create or edit a Driver",
+                "search": "Search for Driver"
             },
-            "created": "S'ha creat un nou pilot amb identificador {{ param }}",
-            "updated": "S'ha actualitzat el pilot amb identificador {{ param }}",
-            "deleted": "S'ha esborrat el pilot amb identificador {{ param }}",
+            "created": "A new Driver is created with identifier {{ param }}",
+            "updated": "A Driver is updated with identifier {{ param }}",
+            "deleted": "A Driver is deleted with identifier {{ param }}",
             "delete": {
-                "question": "Esteu segur que voleu esborrar el pilot amb identificador {{ id }}?"
+                "question": "Are you sure you want to delete Driver {{ id }}?"
             },
             "detail": {
-                "title": "Pilot"
+                "title": "Driver"
             },
-            "name": "Nom",
-            "surname": "Cognoms",
-            "birthDate": "Data de naixement",
-            "birthPlace": "Lloc de naixement",
-            "deathDate": "Data de la mort",
-            "deathPlace": "Lloc de la mort",
-            "portrait": "Retrat",
-            "participations": "Participacions"
+            "name": "Name",
+            "surname": "Surname",
+            "birthDate": "Birth Date",
+            "birthPlace": "Birth Place",
+            "deathDate": "Death Date",
+            "deathPlace": "Death Place",
+            "portrait": "Portrait",
+            "participations": "Participations"
         }
     }
 }

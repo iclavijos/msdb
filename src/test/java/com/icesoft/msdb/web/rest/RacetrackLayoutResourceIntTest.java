@@ -52,6 +52,9 @@ public class RacetrackLayoutResourceIntTest {
     private static final byte[] UPDATED_LAYOUT_IMAGE = TestUtil.createByteArray(2, "1");
     private static final String DEFAULT_LAYOUT_IMAGE_CONTENT_TYPE = "image/jpg";
     private static final String UPDATED_LAYOUT_IMAGE_CONTENT_TYPE = "image/png";
+    
+    private static final Boolean DEFAULT_ACTIVE = false;
+    private static final Boolean UPDATED_ACTIVE = true;
 
     @Autowired
     private RacetrackLayoutRepository racetrackLayoutRepository;
@@ -97,7 +100,8 @@ public class RacetrackLayoutResourceIntTest {
                 .length(DEFAULT_LENGTH)
                 .yearFirstUse(DEFAULT_YEAR_FIRST_USE)
                 .layoutImage(DEFAULT_LAYOUT_IMAGE)
-                .layoutImageContentType(DEFAULT_LAYOUT_IMAGE_CONTENT_TYPE);
+                .layoutImageContentType(DEFAULT_LAYOUT_IMAGE_CONTENT_TYPE)
+                .active(DEFAULT_ACTIVE);
         return racetrackLayout;
     }
 
@@ -128,6 +132,7 @@ public class RacetrackLayoutResourceIntTest {
         assertThat(testRacetrackLayout.getYearFirstUse()).isEqualTo(DEFAULT_YEAR_FIRST_USE);
         assertThat(testRacetrackLayout.getLayoutImage()).isEqualTo(DEFAULT_LAYOUT_IMAGE);
         assertThat(testRacetrackLayout.getLayoutImageContentType()).isEqualTo(DEFAULT_LAYOUT_IMAGE_CONTENT_TYPE);
+        assertThat(testRacetrackLayout.isActive()).isEqualTo(DEFAULT_ACTIVE);
 
         // Validate the RacetrackLayout in Elasticsearch
         RacetrackLayout racetrackLayoutEs = racetrackLayoutSearchRepository.findOne(testRacetrackLayout.getId());
@@ -223,7 +228,8 @@ public class RacetrackLayoutResourceIntTest {
             .andExpect(jsonPath("$.[*].length").value(hasItem(DEFAULT_LENGTH)))
             .andExpect(jsonPath("$.[*].yearFirstUse").value(hasItem(DEFAULT_YEAR_FIRST_USE)))
             .andExpect(jsonPath("$.[*].layoutImageContentType").value(hasItem(DEFAULT_LAYOUT_IMAGE_CONTENT_TYPE)))
-            .andExpect(jsonPath("$.[*].layoutImage").value(hasItem(Base64Utils.encodeToString(DEFAULT_LAYOUT_IMAGE))));
+            .andExpect(jsonPath("$.[*].layoutImage").value(hasItem(Base64Utils.encodeToString(DEFAULT_LAYOUT_IMAGE))))
+            .andExpect(jsonPath("$.[*].active").value(hasItem(DEFAULT_ACTIVE.booleanValue())));
     }
 
     @Test
@@ -241,7 +247,8 @@ public class RacetrackLayoutResourceIntTest {
             .andExpect(jsonPath("$.length").value(DEFAULT_LENGTH))
             .andExpect(jsonPath("$.yearFirstUse").value(DEFAULT_YEAR_FIRST_USE))
             .andExpect(jsonPath("$.layoutImageContentType").value(DEFAULT_LAYOUT_IMAGE_CONTENT_TYPE))
-            .andExpect(jsonPath("$.layoutImage").value(Base64Utils.encodeToString(DEFAULT_LAYOUT_IMAGE)));
+            .andExpect(jsonPath("$.layoutImage").value(Base64Utils.encodeToString(DEFAULT_LAYOUT_IMAGE)))
+            .andExpect(jsonPath("$.active").value(DEFAULT_ACTIVE.booleanValue()));
     }
 
     @Test
@@ -267,7 +274,8 @@ public class RacetrackLayoutResourceIntTest {
                 .length(UPDATED_LENGTH)
                 .yearFirstUse(UPDATED_YEAR_FIRST_USE)
                 .layoutImage(UPDATED_LAYOUT_IMAGE)
-                .layoutImageContentType(UPDATED_LAYOUT_IMAGE_CONTENT_TYPE);
+                .layoutImageContentType(UPDATED_LAYOUT_IMAGE_CONTENT_TYPE)
+                .active(UPDATED_ACTIVE);
 
         restRacetrackLayoutMockMvc.perform(put("/api/racetrack-layouts")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -283,6 +291,7 @@ public class RacetrackLayoutResourceIntTest {
         assertThat(testRacetrackLayout.getYearFirstUse()).isEqualTo(UPDATED_YEAR_FIRST_USE);
         assertThat(testRacetrackLayout.getLayoutImage()).isEqualTo(UPDATED_LAYOUT_IMAGE);
         assertThat(testRacetrackLayout.getLayoutImageContentType()).isEqualTo(UPDATED_LAYOUT_IMAGE_CONTENT_TYPE);
+        assertThat(testRacetrackLayout.isActive()).isEqualTo(UPDATED_ACTIVE);
 
         // Validate the RacetrackLayout in Elasticsearch
         RacetrackLayout racetrackLayoutEs = racetrackLayoutSearchRepository.findOne(testRacetrackLayout.getId());
@@ -345,7 +354,8 @@ public class RacetrackLayoutResourceIntTest {
             .andExpect(jsonPath("$.[*].length").value(hasItem(DEFAULT_LENGTH)))
             .andExpect(jsonPath("$.[*].yearFirstUse").value(hasItem(DEFAULT_YEAR_FIRST_USE)))
             .andExpect(jsonPath("$.[*].layoutImageContentType").value(hasItem(DEFAULT_LAYOUT_IMAGE_CONTENT_TYPE)))
-            .andExpect(jsonPath("$.[*].layoutImage").value(hasItem(Base64Utils.encodeToString(DEFAULT_LAYOUT_IMAGE))));
+            .andExpect(jsonPath("$.[*].layoutImage").value(hasItem(Base64Utils.encodeToString(DEFAULT_LAYOUT_IMAGE))))
+            .andExpect(jsonPath("$.[*].active").value(hasItem(DEFAULT_ACTIVE.booleanValue())));
     }
 
     @Test
