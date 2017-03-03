@@ -1,10 +1,9 @@
 package com.icesoft.msdb.service;
 
-import com.icesoft.msdb.domain.Authority;
-import com.icesoft.msdb.domain.User;
-import com.icesoft.msdb.repository.AuthorityRepository;
-import com.icesoft.msdb.repository.UserRepository;
-import com.icesoft.msdb.repository.search.UserSearchRepository;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,10 +16,10 @@ import org.springframework.social.connect.UserProfile;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
+import com.icesoft.msdb.domain.Authority;
+import com.icesoft.msdb.domain.User;
+import com.icesoft.msdb.repository.AuthorityRepository;
+import com.icesoft.msdb.repository.UserRepository;
 
 @Service
 public class SocialService {
@@ -37,18 +36,18 @@ public class SocialService {
 
     private final MailService mailService;
 
-    private final UserSearchRepository userSearchRepository;
+    //private final UserSearchRepository userSearchRepository;
 
     public SocialService(UsersConnectionRepository usersConnectionRepository, AuthorityRepository authorityRepository,
             PasswordEncoder passwordEncoder, UserRepository userRepository,
-            MailService mailService, UserSearchRepository userSearchRepository) {
+            MailService mailService) { //, UserSearchRepository userSearchRepository) {
 
         this.usersConnectionRepository = usersConnectionRepository;
         this.authorityRepository = authorityRepository;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.mailService = mailService;
-        this.userSearchRepository = userSearchRepository;
+        //this.userSearchRepository = userSearchRepository;
     }
 
     public void deleteUserSocialConnection(String login) {
@@ -111,7 +110,7 @@ public class SocialService {
         newUser.setLangKey(langKey);
         newUser.setImageUrl(imageUrl);
 
-        userSearchRepository.save(newUser);
+        //userSearchRepository.save(newUser);
         return userRepository.save(newUser);
     }
 

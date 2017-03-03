@@ -1,11 +1,18 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.MotorsportsDatabaseApp;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.icesoft.msdb.domain.FuelProvider;
-import com.icesoft.msdb.repository.FuelProviderRepository;
-import com.icesoft.msdb.repository.search.FuelProviderSearchRepository;
-import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,13 +29,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
 
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.icesoft.msdb.MotorsportsDatabaseApp;
+import com.icesoft.msdb.domain.FuelProvider;
+import com.icesoft.msdb.repository.FuelProviderRepository;
+import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
  * Test class for the FuelProviderResource REST controller.
@@ -51,9 +55,6 @@ public class FuelProviderResourceIntTest {
     private FuelProviderRepository fuelProviderRepository;
 
     @Autowired
-    private FuelProviderSearchRepository fuelProviderSearchRepository;
-
-    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +73,7 @@ public class FuelProviderResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            FuelProviderResource fuelProviderResource = new FuelProviderResource(fuelProviderRepository, fuelProviderSearchRepository);
+            FuelProviderResource fuelProviderResource = new FuelProviderResource(fuelProviderRepository);
         this.restFuelProviderMockMvc = MockMvcBuilders.standaloneSetup(fuelProviderResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -95,7 +96,6 @@ public class FuelProviderResourceIntTest {
 
     @Before
     public void initTest() {
-        fuelProviderSearchRepository.deleteAll();
         fuelProvider = createEntity(em);
     }
 
@@ -119,9 +119,6 @@ public class FuelProviderResourceIntTest {
         assertThat(testFuelProvider.getLogo()).isEqualTo(DEFAULT_LOGO);
         assertThat(testFuelProvider.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
 
-        // Validate the FuelProvider in Elasticsearch
-        FuelProvider fuelProviderEs = fuelProviderSearchRepository.findOne(testFuelProvider.getId());
-        assertThat(fuelProviderEs).isEqualToComparingFieldByField(testFuelProvider);
     }
 
     @Test
@@ -207,7 +204,6 @@ public class FuelProviderResourceIntTest {
     public void updateFuelProvider() throws Exception {
         // Initialize the database
         fuelProviderRepository.saveAndFlush(fuelProvider);
-        fuelProviderSearchRepository.save(fuelProvider);
         int databaseSizeBeforeUpdate = fuelProviderRepository.findAll().size();
 
         // Update the fuelProvider
@@ -229,10 +225,6 @@ public class FuelProviderResourceIntTest {
         assertThat(testFuelProvider.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testFuelProvider.getLogo()).isEqualTo(UPDATED_LOGO);
         assertThat(testFuelProvider.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
-
-        // Validate the FuelProvider in Elasticsearch
-        FuelProvider fuelProviderEs = fuelProviderSearchRepository.findOne(testFuelProvider.getId());
-        assertThat(fuelProviderEs).isEqualToComparingFieldByField(testFuelProvider);
     }
 
     @Test
@@ -258,17 +250,12 @@ public class FuelProviderResourceIntTest {
     public void deleteFuelProvider() throws Exception {
         // Initialize the database
         fuelProviderRepository.saveAndFlush(fuelProvider);
-        fuelProviderSearchRepository.save(fuelProvider);
         int databaseSizeBeforeDelete = fuelProviderRepository.findAll().size();
 
         // Get the fuelProvider
         restFuelProviderMockMvc.perform(delete("/api/fuel-providers/{id}", fuelProvider.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
-
-        // Validate Elasticsearch is empty
-        boolean fuelProviderExistsInEs = fuelProviderSearchRepository.exists(fuelProvider.getId());
-        assertThat(fuelProviderExistsInEs).isFalse();
 
         // Validate the database is empty
         List<FuelProvider> fuelProviderList = fuelProviderRepository.findAll();
@@ -280,7 +267,6 @@ public class FuelProviderResourceIntTest {
     public void searchFuelProvider() throws Exception {
         // Initialize the database
         fuelProviderRepository.saveAndFlush(fuelProvider);
-        fuelProviderSearchRepository.save(fuelProvider);
 
         // Search the fuelProvider
         restFuelProviderMockMvc.perform(get("/api/_search/fuel-providers?query=id:" + fuelProvider.getId()))

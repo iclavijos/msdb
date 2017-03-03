@@ -1,26 +1,31 @@
 package com.icesoft.msdb.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.Event;
-
-import com.icesoft.msdb.repository.EventRepository;
-import com.icesoft.msdb.repository.search.EventSearchRepository;
-import com.icesoft.msdb.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.Event;
+import com.icesoft.msdb.repository.EventRepository;
+import com.icesoft.msdb.web.rest.util.HeaderUtil;
+
+import io.github.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing Event.
@@ -35,11 +40,11 @@ public class EventResource {
         
     private final EventRepository eventRepository;
 
-    private final EventSearchRepository eventSearchRepository;
+//    private final EventSearchRepository eventSearchRepository;
 
-    public EventResource(EventRepository eventRepository, EventSearchRepository eventSearchRepository) {
+    public EventResource(EventRepository eventRepository) { //, EventSearchRepository eventSearchRepository) {
         this.eventRepository = eventRepository;
-        this.eventSearchRepository = eventSearchRepository;
+//        this.eventSearchRepository = eventSearchRepository;
     }
 
     /**
@@ -57,7 +62,7 @@ public class EventResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new event cannot already have an ID")).body(null);
         }
         Event result = eventRepository.save(event);
-        eventSearchRepository.save(result);
+//        eventSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/events/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -80,7 +85,7 @@ public class EventResource {
             return createEvent(event);
         }
         Event result = eventRepository.save(event);
-        eventSearchRepository.save(result);
+//        eventSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, event.getId().toString()))
             .body(result);
@@ -124,7 +129,7 @@ public class EventResource {
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         log.debug("REST request to delete Event : {}", id);
         eventRepository.delete(id);
-        eventSearchRepository.delete(id);
+//        eventSearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -139,9 +144,7 @@ public class EventResource {
     @Timed
     public List<Event> searchEvents(@RequestParam String query) {
         log.debug("REST request to search Events for query {}", query);
-        return StreamSupport
-            .stream(eventSearchRepository.search(queryStringQuery(query)).spliterator(), false)
-            .collect(Collectors.toList());
+        return eventRepository.search(query);
     }
 
 

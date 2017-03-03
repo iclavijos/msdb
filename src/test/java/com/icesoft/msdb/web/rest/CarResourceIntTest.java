@@ -1,11 +1,18 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.MotorsportsDatabaseApp;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.icesoft.msdb.domain.Car;
-import com.icesoft.msdb.repository.CarRepository;
-import com.icesoft.msdb.repository.search.CarSearchRepository;
-import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,13 +29,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
 
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.icesoft.msdb.MotorsportsDatabaseApp;
+import com.icesoft.msdb.domain.Car;
+import com.icesoft.msdb.repository.CarRepository;
+import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
  * Test class for the CarResource REST controller.
@@ -54,9 +58,6 @@ public class CarResourceIntTest {
     private CarRepository carRepository;
 
     @Autowired
-    private CarSearchRepository carSearchRepository;
-
-    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -75,7 +76,7 @@ public class CarResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            CarResource carResource = new CarResource(carRepository, carSearchRepository);
+            CarResource carResource = new CarResource(carRepository);
         this.restCarMockMvc = MockMvcBuilders.standaloneSetup(carResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -99,7 +100,7 @@ public class CarResourceIntTest {
 
     @Before
     public void initTest() {
-        carSearchRepository.deleteAll();
+//        carSearchRepository.deleteAll();
         car = createEntity(em);
     }
 
@@ -125,8 +126,8 @@ public class CarResourceIntTest {
         assertThat(testCar.getImageContentType()).isEqualTo(DEFAULT_IMAGE_CONTENT_TYPE);
 
         // Validate the Car in Elasticsearch
-        Car carEs = carSearchRepository.findOne(testCar.getId());
-        assertThat(carEs).isEqualToComparingFieldByField(testCar);
+//        Car carEs = carSearchRepository.findOne(testCar.getId());
+//        assertThat(carEs).isEqualToComparingFieldByField(testCar);
     }
 
     @Test
@@ -232,7 +233,7 @@ public class CarResourceIntTest {
     public void updateCar() throws Exception {
         // Initialize the database
         carRepository.saveAndFlush(car);
-        carSearchRepository.save(car);
+//        carSearchRepository.save(car);
         int databaseSizeBeforeUpdate = carRepository.findAll().size();
 
         // Update the car
@@ -258,8 +259,8 @@ public class CarResourceIntTest {
         assertThat(testCar.getImageContentType()).isEqualTo(UPDATED_IMAGE_CONTENT_TYPE);
 
         // Validate the Car in Elasticsearch
-        Car carEs = carSearchRepository.findOne(testCar.getId());
-        assertThat(carEs).isEqualToComparingFieldByField(testCar);
+//        Car carEs = carSearchRepository.findOne(testCar.getId());
+//        assertThat(carEs).isEqualToComparingFieldByField(testCar);
     }
 
     @Test
@@ -285,7 +286,7 @@ public class CarResourceIntTest {
     public void deleteCar() throws Exception {
         // Initialize the database
         carRepository.saveAndFlush(car);
-        carSearchRepository.save(car);
+//        carSearchRepository.save(car);
         int databaseSizeBeforeDelete = carRepository.findAll().size();
 
         // Get the car
@@ -294,8 +295,8 @@ public class CarResourceIntTest {
             .andExpect(status().isOk());
 
         // Validate Elasticsearch is empty
-        boolean carExistsInEs = carSearchRepository.exists(car.getId());
-        assertThat(carExistsInEs).isFalse();
+//        boolean carExistsInEs = carSearchRepository.exists(car.getId());
+//        assertThat(carExistsInEs).isFalse();
 
         // Validate the database is empty
         List<Car> carList = carRepository.findAll();
@@ -307,7 +308,7 @@ public class CarResourceIntTest {
     public void searchCar() throws Exception {
         // Initialize the database
         carRepository.saveAndFlush(car);
-        carSearchRepository.save(car);
+//        carSearchRepository.save(car);
 
         // Search the car
         restCarMockMvc.perform(get("/api/_search/cars?query=id:" + car.getId()))

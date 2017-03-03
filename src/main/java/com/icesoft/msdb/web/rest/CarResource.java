@@ -1,26 +1,31 @@
 package com.icesoft.msdb.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.Car;
-
-import com.icesoft.msdb.repository.CarRepository;
-import com.icesoft.msdb.repository.search.CarSearchRepository;
-import com.icesoft.msdb.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.Car;
+import com.icesoft.msdb.repository.CarRepository;
+import com.icesoft.msdb.web.rest.util.HeaderUtil;
+
+import io.github.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing Car.
@@ -35,11 +40,11 @@ public class CarResource {
         
     private final CarRepository carRepository;
 
-    private final CarSearchRepository carSearchRepository;
+//    private final CarSearchRepository carSearchRepository;
 
-    public CarResource(CarRepository carRepository, CarSearchRepository carSearchRepository) {
+    public CarResource(CarRepository carRepository) { //, CarSearchRepository carSearchRepository) {
         this.carRepository = carRepository;
-        this.carSearchRepository = carSearchRepository;
+//        this.carSearchRepository = carSearchRepository;
     }
 
     /**
@@ -57,7 +62,7 @@ public class CarResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new car cannot already have an ID")).body(null);
         }
         Car result = carRepository.save(car);
-        carSearchRepository.save(result);
+        //carSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/cars/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -80,7 +85,7 @@ public class CarResource {
             return createCar(car);
         }
         Car result = carRepository.save(car);
-        carSearchRepository.save(result);
+        //carSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, car.getId().toString()))
             .body(result);
@@ -124,7 +129,7 @@ public class CarResource {
     public ResponseEntity<Void> deleteCar(@PathVariable Long id) {
         log.debug("REST request to delete Car : {}", id);
         carRepository.delete(id);
-        carSearchRepository.delete(id);
+        //carSearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -139,9 +144,7 @@ public class CarResource {
     @Timed
     public List<Car> searchCars(@RequestParam String query) {
         log.debug("REST request to search Cars for query {}", query);
-        return StreamSupport
-            .stream(carSearchRepository.search(queryStringQuery(query)).spliterator(), false)
-            .collect(Collectors.toList());
+        return carRepository.search(query);
     }
 
 

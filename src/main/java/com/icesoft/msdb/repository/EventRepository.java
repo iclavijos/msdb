@@ -9,7 +9,8 @@ import java.util.List;
 /**
  * Spring Data JPA repository for the Event entity.
  */
-@SuppressWarnings("unused")
 public interface EventRepository extends JpaRepository<Event,Long> {
 
+	@Query("select e from Event e where e.name like %?1% or e.description like %?1%")
+	List<Event> search(String searchValue);
 }

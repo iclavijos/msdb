@@ -1,14 +1,12 @@
 package com.icesoft.msdb.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.Category;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
 
-import com.icesoft.msdb.repository.CategoryRepository;
-import com.icesoft.msdb.repository.search.CategorySearchRepository;
-import com.icesoft.msdb.web.rest.util.HeaderUtil;
-import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
-import io.github.jhipster.web.util.ResponseUtil;
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -16,17 +14,24 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.Category;
+import com.icesoft.msdb.repository.CategoryRepository;
+import com.icesoft.msdb.web.rest.util.HeaderUtil;
+import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import io.github.jhipster.web.util.ResponseUtil;
+import io.swagger.annotations.ApiParam;
 
 /**
  * REST controller for managing Category.
@@ -41,11 +46,11 @@ public class CategoryResource {
         
     private final CategoryRepository categoryRepository;
 
-    private final CategorySearchRepository categorySearchRepository;
+//    private final CategorySearchRepository categorySearchRepository;
 
-    public CategoryResource(CategoryRepository categoryRepository, CategorySearchRepository categorySearchRepository) {
+    public CategoryResource(CategoryRepository categoryRepository) {//, CategorySearchRepository categorySearchRepository) {
         this.categoryRepository = categoryRepository;
-        this.categorySearchRepository = categorySearchRepository;
+//        this.categorySearchRepository = categorySearchRepository;
     }
 
     /**
@@ -63,7 +68,7 @@ public class CategoryResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new category cannot already have an ID")).body(null);
         }
         Category result = categoryRepository.save(category);
-        categorySearchRepository.save(result);
+//        categorySearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/categories/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -86,7 +91,7 @@ public class CategoryResource {
             return createCategory(category);
         }
         Category result = categoryRepository.save(category);
-        categorySearchRepository.save(result);
+//        categorySearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, category.getId().toString()))
             .body(result);
@@ -134,7 +139,7 @@ public class CategoryResource {
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         log.debug("REST request to delete Category : {}", id);
         categoryRepository.delete(id);
-        categorySearchRepository.delete(id);
+//        categorySearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -152,7 +157,7 @@ public class CategoryResource {
     public ResponseEntity<List<Category>> searchCategories(@RequestParam String query, @ApiParam Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to search for a page of Categories for query {}", query);
-        Page<Category> page = categorySearchRepository.search(queryStringQuery(query), pageable);
+        Page<Category> page = categoryRepository.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/categories");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

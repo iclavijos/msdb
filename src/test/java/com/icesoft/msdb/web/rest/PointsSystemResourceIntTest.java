@@ -1,11 +1,18 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.MotorsportsDatabaseApp;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.icesoft.msdb.domain.PointsSystem;
-import com.icesoft.msdb.repository.PointsSystemRepository;
-import com.icesoft.msdb.repository.search.PointsSystemSearchRepository;
-import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,13 +28,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.icesoft.msdb.MotorsportsDatabaseApp;
+import com.icesoft.msdb.domain.PointsSystem;
+import com.icesoft.msdb.repository.PointsSystemRepository;
+import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
  * Test class for the PointsSystemResource REST controller.
@@ -63,9 +67,6 @@ public class PointsSystemResourceIntTest {
     private PointsSystemRepository pointsSystemRepository;
 
     @Autowired
-    private PointsSystemSearchRepository pointsSystemSearchRepository;
-
-    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -84,7 +85,7 @@ public class PointsSystemResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            PointsSystemResource pointsSystemResource = new PointsSystemResource(pointsSystemRepository, pointsSystemSearchRepository);
+            PointsSystemResource pointsSystemResource = new PointsSystemResource(pointsSystemRepository);
         this.restPointsSystemMockMvc = MockMvcBuilders.standaloneSetup(pointsSystemResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -111,7 +112,6 @@ public class PointsSystemResourceIntTest {
 
     @Before
     public void initTest() {
-        pointsSystemSearchRepository.deleteAll();
         pointsSystem = createEntity(em);
     }
 
@@ -139,9 +139,6 @@ public class PointsSystemResourceIntTest {
         assertThat(testPointsSystem.getPointsPole()).isEqualTo(DEFAULT_POINTS_POLE);
         assertThat(testPointsSystem.getPointsLeadLap()).isEqualTo(DEFAULT_POINTS_LEAD_LAP);
 
-        // Validate the PointsSystem in Elasticsearch
-        PointsSystem pointsSystemEs = pointsSystemSearchRepository.findOne(testPointsSystem.getId());
-        assertThat(pointsSystemEs).isEqualToComparingFieldByField(testPointsSystem);
     }
 
     @Test
@@ -253,7 +250,6 @@ public class PointsSystemResourceIntTest {
     public void updatePointsSystem() throws Exception {
         // Initialize the database
         pointsSystemRepository.saveAndFlush(pointsSystem);
-        pointsSystemSearchRepository.save(pointsSystem);
         int databaseSizeBeforeUpdate = pointsSystemRepository.findAll().size();
 
         // Update the pointsSystem
@@ -284,9 +280,6 @@ public class PointsSystemResourceIntTest {
         assertThat(testPointsSystem.getPointsPole()).isEqualTo(UPDATED_POINTS_POLE);
         assertThat(testPointsSystem.getPointsLeadLap()).isEqualTo(UPDATED_POINTS_LEAD_LAP);
 
-        // Validate the PointsSystem in Elasticsearch
-        PointsSystem pointsSystemEs = pointsSystemSearchRepository.findOne(testPointsSystem.getId());
-        assertThat(pointsSystemEs).isEqualToComparingFieldByField(testPointsSystem);
     }
 
     @Test
@@ -312,17 +305,12 @@ public class PointsSystemResourceIntTest {
     public void deletePointsSystem() throws Exception {
         // Initialize the database
         pointsSystemRepository.saveAndFlush(pointsSystem);
-        pointsSystemSearchRepository.save(pointsSystem);
         int databaseSizeBeforeDelete = pointsSystemRepository.findAll().size();
 
         // Get the pointsSystem
         restPointsSystemMockMvc.perform(delete("/api/points-systems/{id}", pointsSystem.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
-
-        // Validate Elasticsearch is empty
-        boolean pointsSystemExistsInEs = pointsSystemSearchRepository.exists(pointsSystem.getId());
-        assertThat(pointsSystemExistsInEs).isFalse();
 
         // Validate the database is empty
         List<PointsSystem> pointsSystemList = pointsSystemRepository.findAll();
@@ -334,7 +322,6 @@ public class PointsSystemResourceIntTest {
     public void searchPointsSystem() throws Exception {
         // Initialize the database
         pointsSystemRepository.saveAndFlush(pointsSystem);
-        pointsSystemSearchRepository.save(pointsSystem);
 
         // Search the pointsSystem
         restPointsSystemMockMvc.perform(get("/api/_search/points-systems?query=id:" + pointsSystem.getId()))

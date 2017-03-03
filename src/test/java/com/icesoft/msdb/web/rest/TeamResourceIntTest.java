@@ -1,11 +1,18 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.MotorsportsDatabaseApp;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.icesoft.msdb.domain.Team;
-import com.icesoft.msdb.repository.TeamRepository;
-import com.icesoft.msdb.repository.search.TeamSearchRepository;
-import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,13 +29,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
 
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.icesoft.msdb.MotorsportsDatabaseApp;
+import com.icesoft.msdb.domain.Team;
+import com.icesoft.msdb.repository.TeamRepository;
+import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
  * Test class for the TeamResource REST controller.
@@ -57,9 +61,6 @@ public class TeamResourceIntTest {
     private TeamRepository teamRepository;
 
     @Autowired
-    private TeamSearchRepository teamSearchRepository;
-
-    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -78,7 +79,7 @@ public class TeamResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            TeamResource teamResource = new TeamResource(teamRepository, teamSearchRepository);
+            TeamResource teamResource = new TeamResource(teamRepository);
         this.restTeamMockMvc = MockMvcBuilders.standaloneSetup(teamResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -103,7 +104,6 @@ public class TeamResourceIntTest {
 
     @Before
     public void initTest() {
-        teamSearchRepository.deleteAll();
         team = createEntity(em);
     }
 
@@ -128,10 +128,6 @@ public class TeamResourceIntTest {
         assertThat(testTeam.getHqLocation()).isEqualTo(DEFAULT_HQ_LOCATION);
         assertThat(testTeam.getLogo()).isEqualTo(DEFAULT_LOGO);
         assertThat(testTeam.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
-
-        // Validate the Team in Elasticsearch
-        Team teamEs = teamSearchRepository.findOne(testTeam.getId());
-        assertThat(teamEs).isEqualToComparingFieldByField(testTeam);
     }
 
     @Test
@@ -221,7 +217,6 @@ public class TeamResourceIntTest {
     public void updateTeam() throws Exception {
         // Initialize the database
         teamRepository.saveAndFlush(team);
-        teamSearchRepository.save(team);
         int databaseSizeBeforeUpdate = teamRepository.findAll().size();
 
         // Update the team
@@ -247,10 +242,6 @@ public class TeamResourceIntTest {
         assertThat(testTeam.getHqLocation()).isEqualTo(UPDATED_HQ_LOCATION);
         assertThat(testTeam.getLogo()).isEqualTo(UPDATED_LOGO);
         assertThat(testTeam.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
-
-        // Validate the Team in Elasticsearch
-        Team teamEs = teamSearchRepository.findOne(testTeam.getId());
-        assertThat(teamEs).isEqualToComparingFieldByField(testTeam);
     }
 
     @Test
@@ -276,17 +267,12 @@ public class TeamResourceIntTest {
     public void deleteTeam() throws Exception {
         // Initialize the database
         teamRepository.saveAndFlush(team);
-        teamSearchRepository.save(team);
         int databaseSizeBeforeDelete = teamRepository.findAll().size();
 
         // Get the team
         restTeamMockMvc.perform(delete("/api/teams/{id}", team.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
-
-        // Validate Elasticsearch is empty
-        boolean teamExistsInEs = teamSearchRepository.exists(team.getId());
-        assertThat(teamExistsInEs).isFalse();
 
         // Validate the database is empty
         List<Team> teamList = teamRepository.findAll();
@@ -298,7 +284,6 @@ public class TeamResourceIntTest {
     public void searchTeam() throws Exception {
         // Initialize the database
         teamRepository.saveAndFlush(team);
-        teamSearchRepository.save(team);
 
         // Search the team
         restTeamMockMvc.perform(get("/api/_search/teams?query=id:" + team.getId()))

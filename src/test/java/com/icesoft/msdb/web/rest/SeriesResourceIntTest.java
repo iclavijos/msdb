@@ -1,11 +1,18 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.MotorsportsDatabaseApp;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.icesoft.msdb.domain.Series;
-import com.icesoft.msdb.repository.SeriesRepository;
-import com.icesoft.msdb.repository.search.SeriesSearchRepository;
-import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,13 +29,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
 
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.icesoft.msdb.MotorsportsDatabaseApp;
+import com.icesoft.msdb.domain.Series;
+import com.icesoft.msdb.repository.SeriesRepository;
+import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
  * Test class for the SeriesResource REST controller.
@@ -57,9 +61,6 @@ public class SeriesResourceIntTest {
     private SeriesRepository seriesRepository;
 
     @Autowired
-    private SeriesSearchRepository seriesSearchRepository;
-
-    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -78,7 +79,7 @@ public class SeriesResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            SeriesResource seriesResource = new SeriesResource(seriesRepository, seriesSearchRepository);
+            SeriesResource seriesResource = new SeriesResource(seriesRepository);
         this.restSeriesMockMvc = MockMvcBuilders.standaloneSetup(seriesResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -103,7 +104,6 @@ public class SeriesResourceIntTest {
 
     @Before
     public void initTest() {
-        seriesSearchRepository.deleteAll();
         series = createEntity(em);
     }
 
@@ -129,9 +129,6 @@ public class SeriesResourceIntTest {
         assertThat(testSeries.getLogo()).isEqualTo(DEFAULT_LOGO);
         assertThat(testSeries.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
 
-        // Validate the Series in Elasticsearch
-        Series seriesEs = seriesSearchRepository.findOne(testSeries.getId());
-        assertThat(seriesEs).isEqualToComparingFieldByField(testSeries);
     }
 
     @Test
@@ -239,7 +236,6 @@ public class SeriesResourceIntTest {
     public void updateSeries() throws Exception {
         // Initialize the database
         seriesRepository.saveAndFlush(series);
-        seriesSearchRepository.save(series);
         int databaseSizeBeforeUpdate = seriesRepository.findAll().size();
 
         // Update the series
@@ -266,9 +262,6 @@ public class SeriesResourceIntTest {
         assertThat(testSeries.getLogo()).isEqualTo(UPDATED_LOGO);
         assertThat(testSeries.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
 
-        // Validate the Series in Elasticsearch
-        Series seriesEs = seriesSearchRepository.findOne(testSeries.getId());
-        assertThat(seriesEs).isEqualToComparingFieldByField(testSeries);
     }
 
     @Test
@@ -294,17 +287,12 @@ public class SeriesResourceIntTest {
     public void deleteSeries() throws Exception {
         // Initialize the database
         seriesRepository.saveAndFlush(series);
-        seriesSearchRepository.save(series);
         int databaseSizeBeforeDelete = seriesRepository.findAll().size();
 
         // Get the series
         restSeriesMockMvc.perform(delete("/api/series/{id}", series.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
-
-        // Validate Elasticsearch is empty
-        boolean seriesExistsInEs = seriesSearchRepository.exists(series.getId());
-        assertThat(seriesExistsInEs).isFalse();
 
         // Validate the database is empty
         List<Series> seriesList = seriesRepository.findAll();
@@ -316,7 +304,6 @@ public class SeriesResourceIntTest {
     public void searchSeries() throws Exception {
         // Initialize the database
         seriesRepository.saveAndFlush(series);
-        seriesSearchRepository.save(series);
 
         // Search the series
         restSeriesMockMvc.perform(get("/api/_search/series?query=id:" + series.getId()))

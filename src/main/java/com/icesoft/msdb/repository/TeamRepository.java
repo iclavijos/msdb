@@ -1,16 +1,16 @@
 package com.icesoft.msdb.repository;
 
-import com.icesoft.msdb.domain.Team;
+import java.util.List;
 
-import org.springframework.data.jpa.repository.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+import com.icesoft.msdb.domain.Team;
 
 /**
  * Spring Data JPA repository for the Team entity.
  */
-@SuppressWarnings("unused")
 public interface TeamRepository extends JpaRepository<Team,Long> {
 
     @Query("select distinct team from Team team left join fetch team.participations")
@@ -19,4 +19,6 @@ public interface TeamRepository extends JpaRepository<Team,Long> {
     @Query("select team from Team team left join fetch team.participations where team.id =:id")
     Team findOneWithEagerRelationships(@Param("id") Long id);
 
+    @Query("select t from Team t where t.name like %?1% or t.hqLocation like %?1%")
+    List<Team> search(String searchValue);
 }

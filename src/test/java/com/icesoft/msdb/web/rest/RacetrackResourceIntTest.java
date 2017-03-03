@@ -32,7 +32,6 @@ import org.springframework.util.Base64Utils;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.repository.RacetrackRepository;
-import com.icesoft.msdb.repository.search.RacetrackSearchRepository;
 import com.icesoft.msdb.service.RacetrackService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
@@ -58,9 +57,6 @@ public class RacetrackResourceIntTest {
 
     @Autowired
     private RacetrackRepository racetrackRepository;
-
-    @Autowired
-    private RacetrackSearchRepository racetrackSearchRepository;
     
     @Autowired
     private RacetrackService racetrackService;
@@ -108,7 +104,6 @@ public class RacetrackResourceIntTest {
 
     @Before
     public void initTest() {
-        racetrackSearchRepository.deleteAll();
         racetrack = createEntity(em);
     }
 
@@ -133,9 +128,6 @@ public class RacetrackResourceIntTest {
         assertThat(testRacetrack.getLogo()).isEqualTo(DEFAULT_LOGO);
         assertThat(testRacetrack.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
 
-        // Validate the Racetrack in Elasticsearch
-        Racetrack racetrackEs = racetrackSearchRepository.findOne(testRacetrack.getId());
-        assertThat(racetrackEs).isEqualToComparingFieldByField(testRacetrack);
     }
 
     @Test
@@ -241,7 +233,6 @@ public class RacetrackResourceIntTest {
     public void updateRacetrack() throws Exception {
         // Initialize the database
         racetrackRepository.saveAndFlush(racetrack);
-        racetrackSearchRepository.save(racetrack);
         int databaseSizeBeforeUpdate = racetrackRepository.findAll().size();
 
         // Update the racetrack
@@ -265,10 +256,6 @@ public class RacetrackResourceIntTest {
         assertThat(testRacetrack.getLocation()).isEqualTo(UPDATED_LOCATION);
         assertThat(testRacetrack.getLogo()).isEqualTo(UPDATED_LOGO);
         assertThat(testRacetrack.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
-
-        // Validate the Racetrack in Elasticsearch
-        Racetrack racetrackEs = racetrackSearchRepository.findOne(testRacetrack.getId());
-        assertThat(racetrackEs).isEqualToComparingFieldByField(testRacetrack);
     }
 
     @Test
@@ -294,17 +281,12 @@ public class RacetrackResourceIntTest {
     public void deleteRacetrack() throws Exception {
         // Initialize the database
         racetrackRepository.saveAndFlush(racetrack);
-        racetrackSearchRepository.save(racetrack);
         int databaseSizeBeforeDelete = racetrackRepository.findAll().size();
 
         // Get the racetrack
         restRacetrackMockMvc.perform(delete("/api/racetracks/{id}", racetrack.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
-
-        // Validate Elasticsearch is empty
-        boolean racetrackExistsInEs = racetrackSearchRepository.exists(racetrack.getId());
-        assertThat(racetrackExistsInEs).isFalse();
 
         // Validate the database is empty
         List<Racetrack> racetrackList = racetrackRepository.findAll();
@@ -316,7 +298,6 @@ public class RacetrackResourceIntTest {
     public void searchRacetrack() throws Exception {
         // Initialize the database
         racetrackRepository.saveAndFlush(racetrack);
-        racetrackSearchRepository.save(racetrack);
 
         // Search the racetrack
         restRacetrackMockMvc.perform(get("/api/_search/racetracks?query=id:" + racetrack.getId()))

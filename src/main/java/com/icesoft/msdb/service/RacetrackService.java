@@ -44,7 +44,7 @@ public interface RacetrackService {
      */
     void delete(Long id);
     
-    List<Racetrack> search(String query);
+    Page<Racetrack> search(String query, Pageable pageable);
     
     List<RacetrackLayout> findRacetrackLayouts(Long id);
 }

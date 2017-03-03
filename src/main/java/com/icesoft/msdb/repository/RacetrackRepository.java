@@ -1,15 +1,17 @@
 package com.icesoft.msdb.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
 import com.icesoft.msdb.domain.Racetrack;
-
-import org.springframework.data.jpa.repository.*;
-
-import java.util.List;
 
 /**
  * Spring Data JPA repository for the Racetrack entity.
  */
-@SuppressWarnings("unused")
 public interface RacetrackRepository extends JpaRepository<Racetrack,Long> {
 
+	@Query("select r from Racetrack r where r.name like %?1% or r.location like %?1%")
+	Page<Racetrack> search(String searchValue, Pageable pageable);
 }

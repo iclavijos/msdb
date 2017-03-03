@@ -1,15 +1,10 @@
 package com.icesoft.msdb.service;
 
-import com.icesoft.msdb.domain.Authority;
-import com.icesoft.msdb.domain.User;
-import com.icesoft.msdb.repository.AuthorityRepository;
-import com.icesoft.msdb.config.Constants;
-import com.icesoft.msdb.repository.UserRepository;
-import com.icesoft.msdb.repository.search.UserSearchRepository;
-import com.icesoft.msdb.security.AuthoritiesConstants;
-import com.icesoft.msdb.security.SecurityUtils;
-import com.icesoft.msdb.service.util.RandomUtil;
-import com.icesoft.msdb.service.dto.UserDTO;
+import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +15,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
-import java.util.*;
+import com.icesoft.msdb.config.Constants;
+import com.icesoft.msdb.domain.Authority;
+import com.icesoft.msdb.domain.User;
+import com.icesoft.msdb.repository.AuthorityRepository;
+import com.icesoft.msdb.repository.UserRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.security.SecurityUtils;
+import com.icesoft.msdb.service.dto.UserDTO;
+import com.icesoft.msdb.service.util.RandomUtil;
 
 /**
  * Service class for managing users.
@@ -38,15 +40,15 @@ public class UserService {
 
     private final SocialService socialService;
 
-    private final UserSearchRepository userSearchRepository;
+    //private final UserSearchRepository userSearchRepository;
 
     private final AuthorityRepository authorityRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, SocialService socialService, UserSearchRepository userSearchRepository, AuthorityRepository authorityRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, SocialService socialService, AuthorityRepository authorityRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.socialService = socialService;
-        this.userSearchRepository = userSearchRepository;
+        //this.userSearchRepository = userSearchRepository;
         this.authorityRepository = authorityRepository;
     }
 
@@ -57,7 +59,7 @@ public class UserService {
                 // activate given user for the registration key.
                 user.setActivated(true);
                 user.setActivationKey(null);
-                userSearchRepository.save(user);
+                //userSearchRepository.save(user);
                 log.debug("Activated user: {}", user);
                 return user;
             });
@@ -111,7 +113,7 @@ public class UserService {
         authorities.add(authority);
         newUser.setAuthorities(authorities);
         userRepository.save(newUser);
-        userSearchRepository.save(newUser);
+        //userSearchRepository.save(newUser);
         log.debug("Created Information for User: {}", newUser);
         return newUser;
     }
@@ -141,7 +143,7 @@ public class UserService {
         user.setResetDate(ZonedDateTime.now());
         user.setActivated(true);
         userRepository.save(user);
-        userSearchRepository.save(user);
+        //userSearchRepository.save(user);
         log.debug("Created Information for User: {}", user);
         return user;
     }
@@ -155,7 +157,7 @@ public class UserService {
             user.setLastName(lastName);
             user.setEmail(email);
             user.setLangKey(langKey);
-            userSearchRepository.save(user);
+            //userSearchRepository.save(user);
             log.debug("Changed Information for User: {}", user);
         });
     }
@@ -189,7 +191,7 @@ public class UserService {
         userRepository.findOneByLogin(login).ifPresent(user -> {
             socialService.deleteUserSocialConnection(user.getLogin());
             userRepository.delete(user);
-            userSearchRepository.delete(user);
+            //userSearchRepository.delete(user);
             log.debug("Deleted User: {}", user);
         });
     }
@@ -236,7 +238,7 @@ public class UserService {
         for (User user : users) {
             log.debug("Deleting not activated user {}", user.getLogin());
             userRepository.delete(user);
-            userSearchRepository.delete(user);
+            //userSearchRepository.delete(user);
         }
     }
 }

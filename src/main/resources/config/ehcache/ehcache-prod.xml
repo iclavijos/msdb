@@ -22,57 +22,5 @@
 
     <cache alias="com.icesoft.msdb.social.SocialUserConnection" uses-template="simple"/>
 
-    <cache alias="com.icesoft.msdb.domain.Racetrack" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Racetrack.layouts" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.RacetrackLayout" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Driver" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Driver.participations" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.PointsSystem" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.TyreProvider" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.FuelProvider" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Category" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Chassis" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Chassis.evolutions" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Engine" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Engine.evolutions" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Team" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Team.participations" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Series" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Series.editions" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.SeriesEdition" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Event" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Event.editions" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.EventSession" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.EventEdition" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.EventEntry" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.EventEntry.participants" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.EventEntryResult" uses-template="simple"/>
-
-    <cache alias="com.icesoft.msdb.domain.Car" uses-template="simple"/>
-
     <!-- jhipster-needle-ehcache-add-entry -->
 </config>

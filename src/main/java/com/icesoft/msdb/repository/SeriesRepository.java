@@ -1,15 +1,17 @@
 package com.icesoft.msdb.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
 import com.icesoft.msdb.domain.Series;
-
-import org.springframework.data.jpa.repository.*;
-
-import java.util.List;
 
 /**
  * Spring Data JPA repository for the Series entity.
  */
-@SuppressWarnings("unused")
 public interface SeriesRepository extends JpaRepository<Series,Long> {
 
+	@Query("select s from Series s where s.name like %?1% or s.shortname like %?1% or s.organizer like %?1%")
+	Page<Series> search(String searchValue, Pageable page);
 }

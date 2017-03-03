@@ -1,10 +1,6 @@
 package com.icesoft.msdb.service.impl;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +13,6 @@ import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.RacetrackRepository;
-import com.icesoft.msdb.repository.search.RacetrackSearchRepository;
 import com.icesoft.msdb.service.RacetrackService;
 
 /**
@@ -33,13 +28,12 @@ public class RacetrackServiceImpl implements RacetrackService{
     
     private final RacetrackLayoutRepository racetrackLayoutRepository;
 
-    private final RacetrackSearchRepository racetrackSearchRepository;
+//    private final RacetrackSearchRepository racetrackSearchRepository;
 
-    public RacetrackServiceImpl(RacetrackRepository racetrackRepository, RacetrackLayoutRepository racetrackLayoutRepository,
-    		RacetrackSearchRepository racetrackSearchRepository) {
+    public RacetrackServiceImpl(RacetrackRepository racetrackRepository, RacetrackLayoutRepository racetrackLayoutRepository) {
         this.racetrackRepository = racetrackRepository;
         this.racetrackLayoutRepository = racetrackLayoutRepository;
-        this.racetrackSearchRepository = racetrackSearchRepository;
+        //this.racetrackSearchRepository = racetrackSearchRepository;
     }
 
     /**
@@ -52,7 +46,7 @@ public class RacetrackServiceImpl implements RacetrackService{
     public Racetrack save(Racetrack racetrack) {
         log.debug("Request to save Racetrack : {}", racetrack);
         Racetrack result = racetrackRepository.save(racetrack);
-        racetrackSearchRepository.save(result);
+        //racetrackSearchRepository.save(result);
         return result;
     }
 
@@ -95,14 +89,12 @@ public class RacetrackServiceImpl implements RacetrackService{
         Racetrack racetrack = racetrackRepository.findOne(id);
         racetrackLayoutRepository.delete(racetrack.getLayouts());
         racetrackRepository.delete(id);
-        racetrackSearchRepository.delete(id);
+        //racetrackSearchRepository.delete(id);
     }
     
     @Override
-    public List<Racetrack> search(String query) {
-    	return StreamSupport
-                .stream(racetrackSearchRepository.search(queryStringQuery(query)).spliterator(), false)
-                .collect(Collectors.toList());
+    public Page<Racetrack> search(String query, Pageable pageable) {
+    	return racetrackRepository.search(query, pageable);
     }
     
     @Override

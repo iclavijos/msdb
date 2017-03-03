@@ -46,9 +46,9 @@ spring:
         jcache:
             config: config/ehcache/ehcache-prod.xml
     data:
-        elasticsearch:
-            cluster-name:
-            cluster-nodes: localhost:9300
+        # elasticsearch:
+        #     cluster-name:
+        #     cluster-nodes: #localhost:9300
     mail:
         host: localhost
         port: 25

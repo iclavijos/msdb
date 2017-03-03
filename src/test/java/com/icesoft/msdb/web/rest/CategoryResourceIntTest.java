@@ -1,11 +1,18 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.MotorsportsDatabaseApp;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.icesoft.msdb.domain.Category;
-import com.icesoft.msdb.repository.CategoryRepository;
-import com.icesoft.msdb.repository.search.CategorySearchRepository;
-import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,13 +29,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
 
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.icesoft.msdb.MotorsportsDatabaseApp;
+import com.icesoft.msdb.domain.Category;
+import com.icesoft.msdb.repository.CategoryRepository;
+import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
  * Test class for the CategoryResource REST controller.
@@ -54,9 +58,6 @@ public class CategoryResourceIntTest {
     private CategoryRepository categoryRepository;
 
     @Autowired
-    private CategorySearchRepository categorySearchRepository;
-
-    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -75,7 +76,7 @@ public class CategoryResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            CategoryResource categoryResource = new CategoryResource(categoryRepository, categorySearchRepository);
+            CategoryResource categoryResource = new CategoryResource(categoryRepository);
         this.restCategoryMockMvc = MockMvcBuilders.standaloneSetup(categoryResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -99,7 +100,6 @@ public class CategoryResourceIntTest {
 
     @Before
     public void initTest() {
-        categorySearchRepository.deleteAll();
         category = createEntity(em);
     }
 
@@ -124,9 +124,6 @@ public class CategoryResourceIntTest {
         assertThat(testCategory.getLogo()).isEqualTo(DEFAULT_LOGO);
         assertThat(testCategory.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
 
-        // Validate the Category in Elasticsearch
-        Category categoryEs = categorySearchRepository.findOne(testCategory.getId());
-        assertThat(categoryEs).isEqualToComparingFieldByField(testCategory);
     }
 
     @Test
@@ -232,7 +229,6 @@ public class CategoryResourceIntTest {
     public void updateCategory() throws Exception {
         // Initialize the database
         categoryRepository.saveAndFlush(category);
-        categorySearchRepository.save(category);
         int databaseSizeBeforeUpdate = categoryRepository.findAll().size();
 
         // Update the category
@@ -257,9 +253,6 @@ public class CategoryResourceIntTest {
         assertThat(testCategory.getLogo()).isEqualTo(UPDATED_LOGO);
         assertThat(testCategory.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
 
-        // Validate the Category in Elasticsearch
-        Category categoryEs = categorySearchRepository.findOne(testCategory.getId());
-        assertThat(categoryEs).isEqualToComparingFieldByField(testCategory);
     }
 
     @Test
@@ -285,17 +278,12 @@ public class CategoryResourceIntTest {
     public void deleteCategory() throws Exception {
         // Initialize the database
         categoryRepository.saveAndFlush(category);
-        categorySearchRepository.save(category);
         int databaseSizeBeforeDelete = categoryRepository.findAll().size();
 
         // Get the category
         restCategoryMockMvc.perform(delete("/api/categories/{id}", category.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
-
-        // Validate Elasticsearch is empty
-        boolean categoryExistsInEs = categorySearchRepository.exists(category.getId());
-        assertThat(categoryExistsInEs).isFalse();
 
         // Validate the database is empty
         List<Category> categoryList = categoryRepository.findAll();
@@ -307,7 +295,6 @@ public class CategoryResourceIntTest {
     public void searchCategory() throws Exception {
         // Initialize the database
         categoryRepository.saveAndFlush(category);
-        categorySearchRepository.save(category);
 
         // Search the category
         restCategoryMockMvc.perform(get("/api/_search/categories?query=id:" + category.getId()))

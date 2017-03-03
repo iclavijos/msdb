@@ -1,19 +1,9 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.config.Constants;
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.User;
-import com.icesoft.msdb.repository.UserRepository;
-import com.icesoft.msdb.repository.search.UserSearchRepository;
-import com.icesoft.msdb.security.AuthoritiesConstants;
-import com.icesoft.msdb.service.MailService;
-import com.icesoft.msdb.service.UserService;
-import com.icesoft.msdb.service.dto.UserDTO;
-import com.icesoft.msdb.web.rest.vm.ManagedUserVM;
-import com.icesoft.msdb.web.rest.util.HeaderUtil;
-import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import io.swagger.annotations.ApiParam;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,15 +13,29 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.config.Constants;
+import com.icesoft.msdb.domain.User;
+import com.icesoft.msdb.repository.UserRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.MailService;
+import com.icesoft.msdb.service.UserService;
+import com.icesoft.msdb.service.dto.UserDTO;
+import com.icesoft.msdb.web.rest.util.HeaderUtil;
+import com.icesoft.msdb.web.rest.util.PaginationUtil;
+import com.icesoft.msdb.web.rest.vm.ManagedUserVM;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import io.github.jhipster.web.util.ResponseUtil;
+import io.swagger.annotations.ApiParam;
 
 /**
  * REST controller for managing users.
@@ -71,15 +75,11 @@ public class UserResource {
 
     private final UserService userService;
 
-    private final UserSearchRepository userSearchRepository;
-
-    public UserResource(UserRepository userRepository, MailService mailService,
-            UserService userService, UserSearchRepository userSearchRepository) {
+    public UserResource(UserRepository userRepository, MailService mailService, UserService userService) {
 
         this.userRepository = userRepository;
         this.mailService = mailService;
         this.userService = userService;
-        this.userSearchRepository = userSearchRepository;
     }
 
     /**
@@ -201,8 +201,6 @@ public class UserResource {
     @GetMapping("/_search/users/{query}")
     @Timed
     public List<User> search(@PathVariable String query) {
-        return StreamSupport
-            .stream(userSearchRepository.search(queryStringQuery(query)).spliterator(), false)
-            .collect(Collectors.toList());
+        return userRepository.search(query);
     }
 }

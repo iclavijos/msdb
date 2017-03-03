@@ -9,7 +9,8 @@ import java.util.List;
 /**
  * Spring Data JPA repository for the TyreProvider entity.
  */
-@SuppressWarnings("unused")
 public interface TyreProviderRepository extends JpaRepository<TyreProvider,Long> {
 
+	@Query("select t from TyreProvider t where t.name like %?1%")
+	List<TyreProvider> search(String searchValue);
 }

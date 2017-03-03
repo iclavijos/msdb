@@ -1,26 +1,31 @@
 package com.icesoft.msdb.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.Chassis;
-
-import com.icesoft.msdb.repository.ChassisRepository;
-import com.icesoft.msdb.repository.search.ChassisSearchRepository;
-import com.icesoft.msdb.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.Chassis;
+import com.icesoft.msdb.repository.ChassisRepository;
+import com.icesoft.msdb.web.rest.util.HeaderUtil;
+
+import io.github.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing Chassis.
@@ -35,11 +40,11 @@ public class ChassisResource {
         
     private final ChassisRepository chassisRepository;
 
-    private final ChassisSearchRepository chassisSearchRepository;
+//    private final ChassisSearchRepository chassisSearchRepository;
 
-    public ChassisResource(ChassisRepository chassisRepository, ChassisSearchRepository chassisSearchRepository) {
+    public ChassisResource(ChassisRepository chassisRepository) { //, ChassisSearchRepository chassisSearchRepository) {
         this.chassisRepository = chassisRepository;
-        this.chassisSearchRepository = chassisSearchRepository;
+//        this.chassisSearchRepository = chassisSearchRepository;
     }
 
     /**
@@ -57,7 +62,7 @@ public class ChassisResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new chassis cannot already have an ID")).body(null);
         }
         Chassis result = chassisRepository.save(chassis);
-        chassisSearchRepository.save(result);
+//        chassisSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/chassis/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -80,7 +85,7 @@ public class ChassisResource {
             return createChassis(chassis);
         }
         Chassis result = chassisRepository.save(chassis);
-        chassisSearchRepository.save(result);
+//        chassisSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, chassis.getId().toString()))
             .body(result);
@@ -124,7 +129,7 @@ public class ChassisResource {
     public ResponseEntity<Void> deleteChassis(@PathVariable Long id) {
         log.debug("REST request to delete Chassis : {}", id);
         chassisRepository.delete(id);
-        chassisSearchRepository.delete(id);
+//        chassisSearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -139,9 +144,7 @@ public class ChassisResource {
     @Timed
     public List<Chassis> searchChassis(@RequestParam String query) {
         log.debug("REST request to search Chassis for query {}", query);
-        return StreamSupport
-            .stream(chassisSearchRepository.search(queryStringQuery(query)).spliterator(), false)
-            .collect(Collectors.toList());
+        return chassisRepository.search(query);
     }
 
 

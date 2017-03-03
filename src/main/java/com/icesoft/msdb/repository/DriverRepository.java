@@ -1,15 +1,17 @@
 package com.icesoft.msdb.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
 import com.icesoft.msdb.domain.Driver;
-
-import org.springframework.data.jpa.repository.*;
-
-import java.util.List;
 
 /**
  * Spring Data JPA repository for the Driver entity.
  */
-@SuppressWarnings("unused")
 public interface DriverRepository extends JpaRepository<Driver,Long> {
 
+	@Query("select d from Driver d where d.name like %?1% or d.surname like %?1%")
+	Page<Driver> search(String searchValue, Pageable page);
 }

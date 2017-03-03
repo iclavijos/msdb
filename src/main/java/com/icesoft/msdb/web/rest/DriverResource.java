@@ -1,14 +1,12 @@
 package com.icesoft.msdb.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.Driver;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
 
-import com.icesoft.msdb.repository.DriverRepository;
-import com.icesoft.msdb.repository.search.DriverSearchRepository;
-import com.icesoft.msdb.web.rest.util.HeaderUtil;
-import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
-import io.github.jhipster.web.util.ResponseUtil;
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -16,17 +14,24 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.Driver;
+import com.icesoft.msdb.repository.DriverRepository;
+import com.icesoft.msdb.web.rest.util.HeaderUtil;
+import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import io.github.jhipster.web.util.ResponseUtil;
+import io.swagger.annotations.ApiParam;
 
 /**
  * REST controller for managing Driver.
@@ -41,11 +46,11 @@ public class DriverResource {
         
     private final DriverRepository driverRepository;
 
-    private final DriverSearchRepository driverSearchRepository;
+//    private final DriverSearchRepository driverSearchRepository;
 
-    public DriverResource(DriverRepository driverRepository, DriverSearchRepository driverSearchRepository) {
+    public DriverResource(DriverRepository driverRepository) { //, DriverSearchRepository driverSearchRepository) {
         this.driverRepository = driverRepository;
-        this.driverSearchRepository = driverSearchRepository;
+//        this.driverSearchRepository = driverSearchRepository;
     }
 
     /**
@@ -63,7 +68,10 @@ public class DriverResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new driver cannot already have an ID")).body(null);
         }
         Driver result = driverRepository.save(driver);
-        driverSearchRepository.save(result);
+        result.setParticipations(null);
+        result.setPortrait(null);
+        result.setPortraitContentType(null);
+//        driverSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/drivers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -86,7 +94,7 @@ public class DriverResource {
             return createDriver(driver);
         }
         Driver result = driverRepository.save(driver);
-        driverSearchRepository.save(result);
+//        driverSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, driver.getId().toString()))
             .body(result);
@@ -134,7 +142,7 @@ public class DriverResource {
     public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
         log.debug("REST request to delete Driver : {}", id);
         driverRepository.delete(id);
-        driverSearchRepository.delete(id);
+//        driverSearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -152,7 +160,7 @@ public class DriverResource {
     public ResponseEntity<List<Driver>> searchDrivers(@RequestParam String query, @ApiParam Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to search for a page of Drivers for query {}", query);
-        Page<Driver> page = driverSearchRepository.search(queryStringQuery(query), pageable);
+        Page<Driver> page = driverRepository.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/drivers");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

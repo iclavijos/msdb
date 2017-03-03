@@ -1,11 +1,20 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.MotorsportsDatabaseApp;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.icesoft.msdb.domain.Driver;
-import com.icesoft.msdb.repository.DriverRepository;
-import com.icesoft.msdb.repository.search.DriverSearchRepository;
-import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,15 +31,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
 
-import javax.persistence.EntityManager;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.icesoft.msdb.MotorsportsDatabaseApp;
+import com.icesoft.msdb.domain.Driver;
+import com.icesoft.msdb.repository.DriverRepository;
+import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
  * Test class for the DriverResource REST controller.
@@ -68,9 +72,6 @@ public class DriverResourceIntTest {
     private DriverRepository driverRepository;
 
     @Autowired
-    private DriverSearchRepository driverSearchRepository;
-
-    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -89,7 +90,7 @@ public class DriverResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            DriverResource driverResource = new DriverResource(driverRepository, driverSearchRepository);
+            DriverResource driverResource = new DriverResource(driverRepository);
         this.restDriverMockMvc = MockMvcBuilders.standaloneSetup(driverResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -117,7 +118,6 @@ public class DriverResourceIntTest {
 
     @Before
     public void initTest() {
-        driverSearchRepository.deleteAll();
         driver = createEntity(em);
     }
 
@@ -146,9 +146,6 @@ public class DriverResourceIntTest {
         assertThat(testDriver.getPortrait()).isEqualTo(DEFAULT_PORTRAIT);
         assertThat(testDriver.getPortraitContentType()).isEqualTo(DEFAULT_PORTRAIT_CONTENT_TYPE);
 
-        // Validate the Driver in Elasticsearch
-        Driver driverEs = driverSearchRepository.findOne(testDriver.getId());
-        assertThat(driverEs).isEqualToComparingFieldByField(testDriver);
     }
 
     @Test
@@ -280,7 +277,6 @@ public class DriverResourceIntTest {
     public void updateDriver() throws Exception {
         // Initialize the database
         driverRepository.saveAndFlush(driver);
-        driverSearchRepository.save(driver);
         int databaseSizeBeforeUpdate = driverRepository.findAll().size();
 
         // Update the driver
@@ -313,9 +309,6 @@ public class DriverResourceIntTest {
         assertThat(testDriver.getPortrait()).isEqualTo(UPDATED_PORTRAIT);
         assertThat(testDriver.getPortraitContentType()).isEqualTo(UPDATED_PORTRAIT_CONTENT_TYPE);
 
-        // Validate the Driver in Elasticsearch
-        Driver driverEs = driverSearchRepository.findOne(testDriver.getId());
-        assertThat(driverEs).isEqualToComparingFieldByField(testDriver);
     }
 
     @Test
@@ -341,17 +334,12 @@ public class DriverResourceIntTest {
     public void deleteDriver() throws Exception {
         // Initialize the database
         driverRepository.saveAndFlush(driver);
-        driverSearchRepository.save(driver);
         int databaseSizeBeforeDelete = driverRepository.findAll().size();
 
         // Get the driver
         restDriverMockMvc.perform(delete("/api/drivers/{id}", driver.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
-
-        // Validate Elasticsearch is empty
-        boolean driverExistsInEs = driverSearchRepository.exists(driver.getId());
-        assertThat(driverExistsInEs).isFalse();
 
         // Validate the database is empty
         List<Driver> driverList = driverRepository.findAll();
@@ -363,7 +351,6 @@ public class DriverResourceIntTest {
     public void searchDriver() throws Exception {
         // Initialize the database
         driverRepository.saveAndFlush(driver);
-        driverSearchRepository.save(driver);
 
         // Search the driver
         restDriverMockMvc.perform(get("/api/_search/drivers?query=id:" + driver.getId()))

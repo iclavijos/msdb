@@ -175,7 +175,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-logging"
     compile "org.springframework.boot:spring-boot-starter-aop"
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
-    compile "org.springframework.boot:spring-boot-starter-data-elasticsearch"
+    // compile "com.github.vanroy:spring-boot-starter-data-jest:2.3.0.RELEASE"
     // needed to get around elasticsearch stacktrace about jna not found
     // https://github.com/elastic/elasticsearch/issues/13245
     compile "net.java.dev.jna:jna"
@@ -207,6 +207,7 @@ dependencies {
     compile "org.springframework.social:spring-social-twitter"
     
     compile 'com.sendgrid:sendgrid-java:3.0.9'
+	//compile 'io.searchbox:jest:2.0.4'    
     
     testCompile "org.awaitility:awaitility:${awaitility_version}"
     testCompile "com.jayway.jsonpath:json-path"

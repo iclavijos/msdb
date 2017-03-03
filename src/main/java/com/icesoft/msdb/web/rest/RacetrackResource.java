@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.service.RacetrackService;
@@ -32,6 +33,7 @@ import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
+import io.swagger.annotations.ApiParam;
 
 /**
  * REST controller for managing Racetrack.
@@ -154,12 +156,15 @@ public class RacetrackResource {
      *
      * @param query the query of the racetrack search 
      * @return the result of the search
+     * @throws URISyntaxException 
      */
     @GetMapping("/_search/racetracks")
     @Timed
-    public List<Racetrack> searchRacetracks(@RequestParam String query) {
+    public ResponseEntity<List<Racetrack>> searchRacetracks(@RequestParam String query, @ApiParam Pageable pageable) throws URISyntaxException {
         log.debug("REST request to search Racetracks for query {}", query);
-        return racetrackService.search(query);
+        Page<Racetrack> page = racetrackService.search(query, pageable);
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/racetracks");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
 

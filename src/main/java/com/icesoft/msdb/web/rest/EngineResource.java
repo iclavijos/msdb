@@ -1,26 +1,31 @@
 package com.icesoft.msdb.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.Engine;
-
-import com.icesoft.msdb.repository.EngineRepository;
-import com.icesoft.msdb.repository.search.EngineSearchRepository;
-import com.icesoft.msdb.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.Engine;
+import com.icesoft.msdb.repository.EngineRepository;
+import com.icesoft.msdb.web.rest.util.HeaderUtil;
+
+import io.github.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing Engine.
@@ -35,11 +40,11 @@ public class EngineResource {
         
     private final EngineRepository engineRepository;
 
-    private final EngineSearchRepository engineSearchRepository;
+//    private final EngineSearchRepository engineSearchRepository;
 
-    public EngineResource(EngineRepository engineRepository, EngineSearchRepository engineSearchRepository) {
+    public EngineResource(EngineRepository engineRepository) { //, EngineSearchRepository engineSearchRepository) {
         this.engineRepository = engineRepository;
-        this.engineSearchRepository = engineSearchRepository;
+//        this.engineSearchRepository = engineSearchRepository;
     }
 
     /**
@@ -57,7 +62,7 @@ public class EngineResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new engine cannot already have an ID")).body(null);
         }
         Engine result = engineRepository.save(engine);
-        engineSearchRepository.save(result);
+//        engineSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/engines/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -80,7 +85,7 @@ public class EngineResource {
             return createEngine(engine);
         }
         Engine result = engineRepository.save(engine);
-        engineSearchRepository.save(result);
+//        engineSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, engine.getId().toString()))
             .body(result);
@@ -124,7 +129,7 @@ public class EngineResource {
     public ResponseEntity<Void> deleteEngine(@PathVariable Long id) {
         log.debug("REST request to delete Engine : {}", id);
         engineRepository.delete(id);
-        engineSearchRepository.delete(id);
+//        engineSearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -139,9 +144,7 @@ public class EngineResource {
     @Timed
     public List<Engine> searchEngines(@RequestParam String query) {
         log.debug("REST request to search Engines for query {}", query);
-        return StreamSupport
-            .stream(engineSearchRepository.search(queryStringQuery(query)).spliterator(), false)
-            .collect(Collectors.toList());
+        return engineRepository.search(query);
     }
 
 

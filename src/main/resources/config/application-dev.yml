@@ -52,13 +52,15 @@ spring:
         mongodb:
             uri: mongodb://localhost:27017
             database: nosqlsample
-        elasticsearch:
-            cluster-name:
-            cluster-nodes:
-            properties:
-                path:
-                  logs: target/elasticsearch/log
-                  data: target/elasticsearch/data
+        # elasticsearch:
+        #     cluster-name: 
+        #     cluster-nodes: #localhost:9300
+        #     properties:
+        #         http:
+        #             enabled: true
+        #         path:
+        #           logs: target/elasticsearch/log
+        #           data: target/elasticsearch/data
     mail:
         host: localhost
         port: 25

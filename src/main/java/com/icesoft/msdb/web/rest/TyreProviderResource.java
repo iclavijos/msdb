@@ -1,26 +1,31 @@
 package com.icesoft.msdb.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.TyreProvider;
-
-import com.icesoft.msdb.repository.TyreProviderRepository;
-import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
-import com.icesoft.msdb.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.TyreProvider;
+import com.icesoft.msdb.repository.TyreProviderRepository;
+import com.icesoft.msdb.web.rest.util.HeaderUtil;
+
+import io.github.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing TyreProvider.
@@ -35,11 +40,8 @@ public class TyreProviderResource {
         
     private final TyreProviderRepository tyreProviderRepository;
 
-    private final TyreProviderSearchRepository tyreProviderSearchRepository;
-
-    public TyreProviderResource(TyreProviderRepository tyreProviderRepository, TyreProviderSearchRepository tyreProviderSearchRepository) {
+    public TyreProviderResource(TyreProviderRepository tyreProviderRepository) {
         this.tyreProviderRepository = tyreProviderRepository;
-        this.tyreProviderSearchRepository = tyreProviderSearchRepository;
     }
 
     /**
@@ -57,7 +59,6 @@ public class TyreProviderResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new tyreProvider cannot already have an ID")).body(null);
         }
         TyreProvider result = tyreProviderRepository.save(tyreProvider);
-        tyreProviderSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/tyre-providers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -80,7 +81,6 @@ public class TyreProviderResource {
             return createTyreProvider(tyreProvider);
         }
         TyreProvider result = tyreProviderRepository.save(tyreProvider);
-        tyreProviderSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, tyreProvider.getId().toString()))
             .body(result);
@@ -124,7 +124,6 @@ public class TyreProviderResource {
     public ResponseEntity<Void> deleteTyreProvider(@PathVariable Long id) {
         log.debug("REST request to delete TyreProvider : {}", id);
         tyreProviderRepository.delete(id);
-        tyreProviderSearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -139,9 +138,7 @@ public class TyreProviderResource {
     @Timed
     public List<TyreProvider> searchTyreProviders(@RequestParam String query) {
         log.debug("REST request to search TyreProviders for query {}", query);
-        return StreamSupport
-            .stream(tyreProviderSearchRepository.search(queryStringQuery(query)).spliterator(), false)
-            .collect(Collectors.toList());
+        return tyreProviderRepository.search(query);
     }
 
 

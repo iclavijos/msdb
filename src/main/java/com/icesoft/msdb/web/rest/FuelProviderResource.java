@@ -1,26 +1,31 @@
 package com.icesoft.msdb.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.FuelProvider;
-
-import com.icesoft.msdb.repository.FuelProviderRepository;
-import com.icesoft.msdb.repository.search.FuelProviderSearchRepository;
-import com.icesoft.msdb.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.FuelProvider;
+import com.icesoft.msdb.repository.FuelProviderRepository;
+import com.icesoft.msdb.web.rest.util.HeaderUtil;
+
+import io.github.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing FuelProvider.
@@ -35,11 +40,8 @@ public class FuelProviderResource {
         
     private final FuelProviderRepository fuelProviderRepository;
 
-    private final FuelProviderSearchRepository fuelProviderSearchRepository;
-
-    public FuelProviderResource(FuelProviderRepository fuelProviderRepository, FuelProviderSearchRepository fuelProviderSearchRepository) {
+    public FuelProviderResource(FuelProviderRepository fuelProviderRepository) {
         this.fuelProviderRepository = fuelProviderRepository;
-        this.fuelProviderSearchRepository = fuelProviderSearchRepository;
     }
 
     /**
@@ -57,7 +59,6 @@ public class FuelProviderResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new fuelProvider cannot already have an ID")).body(null);
         }
         FuelProvider result = fuelProviderRepository.save(fuelProvider);
-        fuelProviderSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/fuel-providers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -80,7 +81,6 @@ public class FuelProviderResource {
             return createFuelProvider(fuelProvider);
         }
         FuelProvider result = fuelProviderRepository.save(fuelProvider);
-        fuelProviderSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, fuelProvider.getId().toString()))
             .body(result);
@@ -124,7 +124,6 @@ public class FuelProviderResource {
     public ResponseEntity<Void> deleteFuelProvider(@PathVariable Long id) {
         log.debug("REST request to delete FuelProvider : {}", id);
         fuelProviderRepository.delete(id);
-        fuelProviderSearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -139,9 +138,7 @@ public class FuelProviderResource {
     @Timed
     public List<FuelProvider> searchFuelProviders(@RequestParam String query) {
         log.debug("REST request to search FuelProviders for query {}", query);
-        return StreamSupport
-            .stream(fuelProviderSearchRepository.search(queryStringQuery(query)).spliterator(), false)
-            .collect(Collectors.toList());
+        return fuelProviderRepository.search(query);
     }
 
 

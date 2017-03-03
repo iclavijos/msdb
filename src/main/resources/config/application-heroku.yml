@@ -29,9 +29,9 @@ spring:
     data:
         mongodb:
             uri: ${MONGODB_URI}?authMode=scram-sha1
-        elasticsearch:
-            cluster-name:
-            cluster-nodes: ${BONSAI_URL}
+        # elasticsearch:
+        #     cluster-name:
+        #     cluster-nodes: #${BONSAI_URL}
 
 # Not sure if this needs to be added here
 application:

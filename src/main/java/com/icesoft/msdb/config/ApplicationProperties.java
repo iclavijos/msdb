@@ -14,6 +14,8 @@ public class ApplicationProperties {
 	
 	private final SendGrid sendgrid = new SendGrid();
 	
+	private String elasticserver = "";
+	
 	public static class SendGrid {
 		private String key;
 
@@ -28,5 +30,13 @@ public class ApplicationProperties {
 
 	public SendGrid getSendgrid() {
 		return sendgrid;
+	}
+	
+	public void setElasticserver(String url) {
+		this.elasticserver = url;
+	}
+	
+	public String getElasticserver() {
+		return elasticserver;
 	}
 }

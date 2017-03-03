@@ -1,11 +1,18 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.MotorsportsDatabaseApp;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.icesoft.msdb.domain.Chassis;
-import com.icesoft.msdb.repository.ChassisRepository;
-import com.icesoft.msdb.repository.search.ChassisSearchRepository;
-import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,13 +28,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.icesoft.msdb.MotorsportsDatabaseApp;
+import com.icesoft.msdb.domain.Chassis;
+import com.icesoft.msdb.repository.ChassisRepository;
+import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
  * Test class for the ChassisResource REST controller.
@@ -51,9 +55,6 @@ public class ChassisResourceIntTest {
     private ChassisRepository chassisRepository;
 
     @Autowired
-    private ChassisSearchRepository chassisSearchRepository;
-
-    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +73,7 @@ public class ChassisResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            ChassisResource chassisResource = new ChassisResource(chassisRepository, chassisSearchRepository);
+            ChassisResource chassisResource = new ChassisResource(chassisRepository);
         this.restChassisMockMvc = MockMvcBuilders.standaloneSetup(chassisResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -95,7 +96,6 @@ public class ChassisResourceIntTest {
 
     @Before
     public void initTest() {
-        chassisSearchRepository.deleteAll();
         chassis = createEntity(em);
     }
 
@@ -119,9 +119,6 @@ public class ChassisResourceIntTest {
         assertThat(testChassis.getManufacturer()).isEqualTo(DEFAULT_MANUFACTURER);
         assertThat(testChassis.getDebutYear()).isEqualTo(DEFAULT_DEBUT_YEAR);
 
-        // Validate the Chassis in Elasticsearch
-        Chassis chassisEs = chassisSearchRepository.findOne(testChassis.getId());
-        assertThat(chassisEs).isEqualToComparingFieldByField(testChassis);
     }
 
     @Test
@@ -243,7 +240,6 @@ public class ChassisResourceIntTest {
     public void updateChassis() throws Exception {
         // Initialize the database
         chassisRepository.saveAndFlush(chassis);
-        chassisSearchRepository.save(chassis);
         int databaseSizeBeforeUpdate = chassisRepository.findAll().size();
 
         // Update the chassis
@@ -266,9 +262,6 @@ public class ChassisResourceIntTest {
         assertThat(testChassis.getManufacturer()).isEqualTo(UPDATED_MANUFACTURER);
         assertThat(testChassis.getDebutYear()).isEqualTo(UPDATED_DEBUT_YEAR);
 
-        // Validate the Chassis in Elasticsearch
-        Chassis chassisEs = chassisSearchRepository.findOne(testChassis.getId());
-        assertThat(chassisEs).isEqualToComparingFieldByField(testChassis);
     }
 
     @Test
@@ -294,17 +287,12 @@ public class ChassisResourceIntTest {
     public void deleteChassis() throws Exception {
         // Initialize the database
         chassisRepository.saveAndFlush(chassis);
-        chassisSearchRepository.save(chassis);
         int databaseSizeBeforeDelete = chassisRepository.findAll().size();
 
         // Get the chassis
         restChassisMockMvc.perform(delete("/api/chassis/{id}", chassis.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
-
-        // Validate Elasticsearch is empty
-        boolean chassisExistsInEs = chassisSearchRepository.exists(chassis.getId());
-        assertThat(chassisExistsInEs).isFalse();
 
         // Validate the database is empty
         List<Chassis> chassisList = chassisRepository.findAll();
@@ -316,7 +304,6 @@ public class ChassisResourceIntTest {
     public void searchChassis() throws Exception {
         // Initialize the database
         chassisRepository.saveAndFlush(chassis);
-        chassisSearchRepository.save(chassis);
 
         // Search the chassis
         restChassisMockMvc.perform(get("/api/_search/chassis?query=id:" + chassis.getId()))

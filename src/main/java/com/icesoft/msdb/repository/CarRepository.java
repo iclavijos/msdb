@@ -9,7 +9,8 @@ import java.util.List;
 /**
  * Spring Data JPA repository for the Car entity.
  */
-@SuppressWarnings("unused")
 public interface CarRepository extends JpaRepository<Car,Long> {
 
+	@Query("select c from Car c where c.name like %?1% or c.manufacturer like %?1%")
+	List<Car> search(String searchValue);
 }

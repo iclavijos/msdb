@@ -9,7 +9,8 @@ import java.util.List;
 /**
  * Spring Data JPA repository for the Engine entity.
  */
-@SuppressWarnings("unused")
 public interface EngineRepository extends JpaRepository<Engine,Long> {
 
+	@Query("select e from Engine e where e.name like %?1% or e.manufacturer like %?1%")
+	List<Engine> search(String searchValue);
 }

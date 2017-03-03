@@ -9,7 +9,8 @@ import java.util.List;
 /**
  * Spring Data JPA repository for the FuelProvider entity.
  */
-@SuppressWarnings("unused")
 public interface FuelProviderRepository extends JpaRepository<FuelProvider,Long> {
 
+	@Query("select f from FuelProvider f where f.name like %?1%")
+	List<FuelProvider> search(String searchValue);
 }
