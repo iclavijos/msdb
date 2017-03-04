@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface CarRepository extends JpaRepository<Car,Long> {
 
-	@Query("select c from Car c where c.name like %?1% or c.manufacturer like %?1%")
+	@Query("select c from Car c where c.name like lower(concat('%', ?1,'%')) or c.manufacturer like lower(concat('%', ?1,'%'))")
 	List<Car> search(String searchValue);
 }

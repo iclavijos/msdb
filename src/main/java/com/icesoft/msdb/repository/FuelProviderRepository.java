@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface FuelProviderRepository extends JpaRepository<FuelProvider,Long> {
 
-	@Query("select f from FuelProvider f where f.name like %?1%")
+	@Query("select f from FuelProvider f where f.name like lower(concat('%', ?1,'%'))")
 	List<FuelProvider> search(String searchValue);
 }

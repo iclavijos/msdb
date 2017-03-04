@@ -12,6 +12,6 @@ import com.icesoft.msdb.domain.Chassis;
  */
 public interface ChassisRepository extends JpaRepository<Chassis,Long> {
 
-	@Query("select c from Chassis c where c.name like %?1% or c.manufacturer like %?1%")
+	@Query("select c from Chassis c where c.name like lower(concat('%', ?1,'%')) or c.manufacturer like lower(concat('%', ?1,'%'))")
 	List<Chassis> search(String searchValue);
 }

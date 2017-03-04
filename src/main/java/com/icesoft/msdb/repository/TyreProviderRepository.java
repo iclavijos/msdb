@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface TyreProviderRepository extends JpaRepository<TyreProvider,Long> {
 
-	@Query("select t from TyreProvider t where t.name like %?1%")
+	@Query("select t from TyreProvider t where t.name like lower(concat('%', ?1,'%'))")
 	List<TyreProvider> search(String searchValue);
 }

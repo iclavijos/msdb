@@ -162,7 +162,7 @@ public class RacetrackResource {
     @Timed
     public ResponseEntity<List<Racetrack>> searchRacetracks(@RequestParam String query, @ApiParam Pageable pageable) throws URISyntaxException {
         log.debug("REST request to search Racetracks for query {}", query);
-        Page<Racetrack> page = racetrackService.search(query, pageable);
+        Page<Racetrack> page = racetrackService.search(query.toLowerCase(), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/racetracks");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

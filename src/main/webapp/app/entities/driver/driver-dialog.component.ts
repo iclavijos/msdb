@@ -8,7 +8,7 @@ import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jh
 import { Driver } from './driver.model';
 import { DriverPopupService } from './driver-popup.service';
 import { DriverService } from './driver.service';
-import { EventEntry, EventEntryService } from '../event-entry';
+
 @Component({
     selector: 'jhi-driver-dialog',
     templateUrl: './driver-dialog.component.html'
@@ -19,14 +19,12 @@ export class DriverDialogComponent implements OnInit {
     authorities: any[];
     isSaving: boolean;
 
-    evententries: EventEntry[];
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
         private dataUtils: DataUtils,
         private alertService: AlertService,
         private driverService: DriverService,
-        private eventEntryService: EventEntryService,
         private eventManager: EventManager
     ) {
         this.jhiLanguageService.setLocations(['driver']);
@@ -35,8 +33,6 @@ export class DriverDialogComponent implements OnInit {
     ngOnInit() {
         this.isSaving = false;
         this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
-        this.eventEntryService.query().subscribe(
-            (res: Response) => { this.evententries = res.json(); }, (res: Response) => this.onError(res.json()));
     }
     byteSize(field) {
         return this.dataUtils.byteSize(field);
@@ -86,10 +82,6 @@ export class DriverDialogComponent implements OnInit {
 
     private onError (error) {
         this.alertService.error(error.message, null, null);
-    }
-
-    trackEventEntryById(index: number, item: EventEntry) {
-        return item.id;
     }
 }
 

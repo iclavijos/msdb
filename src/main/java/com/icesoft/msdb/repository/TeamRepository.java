@@ -19,6 +19,6 @@ public interface TeamRepository extends JpaRepository<Team,Long> {
     @Query("select team from Team team left join fetch team.participations where team.id =:id")
     Team findOneWithEagerRelationships(@Param("id") Long id);
 
-    @Query("select t from Team t where t.name like %?1% or t.hqLocation like %?1%")
+    @Query("select t from Team t where t.name like lower(concat('%', ?1,'%')) or t.hqLocation like lower(concat('%', ?1,'%'))")
     List<Team> search(String searchValue);
 }

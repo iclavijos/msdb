@@ -140,7 +140,7 @@ export class RacetrackComponent implements OnInit, OnDestroy {
         return this.dataUtils.openFile(contentType, field);
     }
     registerChangeInRacetracks() {
-        this.eventSubscriber = this.eventManager.subscribe('racetrackListModification', (response) => this.loadAll());
+        this.eventSubscriber = this.eventManager.subscribe('racetrackModification', (response) => this.loadAll());
     }
 
     sort () {

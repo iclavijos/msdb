@@ -26,15 +26,12 @@ spring:
         serialization.indent_output: true
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:h2:file:./target/h2db/db/motorsportsdatabase;DB_CLOSE_DELAY=-1
-        username: MotorsportsDatabase
-        password:
-    h2:
-        console:
-            enabled: false
+        url: jdbc:mysql://localhost:3306/msdb?useUnicode=true&characterEncoding=utf8&useSSL=false
+        username: msdb
+        password: msdb
     jpa:
-        database-platform: io.github.jhipster.domain.util.FixedH2Dialect
-        database: H2
+        database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+        database: MYSQL
         show-sql: true
         properties:
             hibernate.id.new_generator_mappings: true
@@ -44,7 +41,7 @@ spring:
             hibernate.javax.cache.provider: org.ehcache.jsr107.EhcacheCachingProvider
             hibernate.javax.cache.uri: ${spring.cache.jcache.config}
             hibernate.cache.region.factory_class: io.github.jhipster.config.jcache.SpringCacheRegionFactory
-        #hibernate.ddl-auto: update
+        hibernate.ddl-auto: update
     cache:
         jcache:
             config: config/ehcache/ehcache-dev.xml

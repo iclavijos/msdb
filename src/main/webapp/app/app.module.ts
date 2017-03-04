@@ -15,6 +15,8 @@ import { LayoutRoutingModule } from './layouts';
 import { customHttpProvider } from './blocks/interceptor/http.provider';
 import { PaginationConfig } from './blocks/config/uib-pagination.config';
 
+import { AutoCompleteModule } from "primeng/primeng";
+
 import {
     JhiMainComponent,
     NavbarComponent,
@@ -35,7 +37,8 @@ import {
         MotorsportsDatabaseHomeModule,
         MotorsportsDatabaseAdminModule,
         MotorsportsDatabaseAccountModule,
-        MotorsportsDatabaseEntityModule
+        MotorsportsDatabaseEntityModule,
+        AutoCompleteModule
     ],
     declarations: [
         JhiMainComponent,

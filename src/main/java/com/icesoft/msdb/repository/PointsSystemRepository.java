@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface PointsSystemRepository extends JpaRepository<PointsSystem,Long> {
 
-	@Query("select p from PointsSystem p where p.name like %?1% or p.description like %?1%")
+	@Query("select p from PointsSystem p where p.name like lower(concat('%', ?1,'%')) or p.description like lower(concat('%', ?1,'%'))")
 	List<PointsSystem> search(String searchValue);
 }

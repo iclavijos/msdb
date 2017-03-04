@@ -9,6 +9,8 @@ import { DriverService } from './driver.service';
 import { ITEMS_PER_PAGE, Principal } from '../../shared';
 import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
 
+import { AutoCompleteModule } from 'primeng/components/autocomplete/autocomplete';
+
 @Component({
     selector: 'jhi-driver',
     templateUrl: './driver.component.html'
@@ -17,6 +19,8 @@ export class DriverComponent implements OnInit, OnDestroy {
 
 currentAccount: any;
     drivers: Driver[];
+    suggestedDrivers: Driver[];
+    driver: Driver;
     error: any;
     success: any;
     eventSubscriber: Subscription;
@@ -161,5 +165,15 @@ currentAccount: any;
 
     private onError (error) {
         this.alertService.error(error.message, null, null);
+    }
+    
+    filterDrivers(event) {     
+        this.driverService.search(event.query).subscribe(
+                (res: Response) => this.suggestedDrivers = res.json(),
+                (res: Response) => this.onError(res.json()));
+    }
+    
+    selectDriver(event) {
+        console.log(event);
     }
 }

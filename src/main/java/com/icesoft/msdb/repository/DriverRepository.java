@@ -12,6 +12,8 @@ import com.icesoft.msdb.domain.Driver;
  */
 public interface DriverRepository extends JpaRepository<Driver,Long> {
 
-	@Query("select d from Driver d where d.name like %?1% or d.surname like %?1%")
+	@Query("select d from Driver d where "
+			+ "lower(d.name) like concat('%', lower(?1),'%') or "
+			+ "lower(d.surname) like concat('%', lower(?1),'%')")
 	Page<Driver> search(String searchValue, Pageable page);
 }

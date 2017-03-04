@@ -12,6 +12,6 @@ import com.icesoft.msdb.domain.Category;
  */
 public interface CategoryRepository extends JpaRepository<Category,Long> {
 
-	@Query("select c from Category c where c.name like %?1% or c.shortname like %?1%")
+	@Query("select c from Category c where c.name like lower(concat('%', ?1,'%')) or c.shortname like lower(concat('%', ?1,'%'))")
 	Page<Category> search(String searchValue, Pageable page);
 }

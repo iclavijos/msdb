@@ -13,7 +13,10 @@
         <div class="col-sm-12 no-padding-right">
             <form name="searchForm" class="form-inline">
                 <div class="input-group w-100 mt-3">
-                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.driver.home.search' | translate }}">
+                	<input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.driver.home.search' | translate }}">
+                    <!-- <p-autoComplete [(ngModel)]="currentSearch" [suggestions]="suggestedDrivers" (completeMethod)="filterDrivers($event)" field="name" [size]="10" 
+                    	placeholder="{{ 'motorsportsDatabaseApp.driver.home.search' | translate }}" [minLength]="2" name="currentSearch"
+                    	(onSelect)="selectDriver($event)" class="form-control" id="currentSearch" ngDefaultControl ></p-autoComplete> -->
                     <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
                         <span class="fa fa-search"></span>
                     </button>
@@ -29,7 +32,6 @@
         <table class="table table-striped">
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.driver.name">Name</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="surname"><span jhiTranslate="motorsportsDatabaseApp.driver.surname">Surname</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="birthDate"><span jhiTranslate="motorsportsDatabaseApp.driver.birthDate">Birth Date</span> <span class="fa fa-sort"></span></th>
@@ -42,7 +44,6 @@
             </thead>
             <tbody>
             <tr *ngFor="let driver of drivers ;trackBy: trackId">
-                <td><a [routerLink]="['../driver', driver.id ]">{{driver.id}}</a></td>
                 <td>{{driver.name}}</td>
                 <td>{{driver.surname}}</td>
                 <td>{{driver.birthDate | date:'mediumDate'}}</td>
@@ -53,7 +54,6 @@
                     <a *ngIf="driver.portrait" (click)="openFile(driver.portraitContentType, driver.portrait)">
                         <img [src]="'data:' + driver.portraitContentType + ';base64,' + driver.portrait" style="max-height: 30px;" alt="driver image"/>
                     </a>
-                    <span *ngIf="driver.portrait">{{driver.portraitContentType}}, {{byteSize(driver.portrait)}}</span>
                 </td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">

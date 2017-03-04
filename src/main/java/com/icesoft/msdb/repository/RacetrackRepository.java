@@ -12,6 +12,8 @@ import com.icesoft.msdb.domain.Racetrack;
  */
 public interface RacetrackRepository extends JpaRepository<Racetrack,Long> {
 
-	@Query("select r from Racetrack r where r.name like %?1% or r.location like %?1%")
+	@Query("select r from Racetrack r where "
+			+ "lower(r.name) like lower(concat('%', ?1,'%')) or "
+			+ "lower(r.location) like lower(concat('%', ?1,'%'))")
 	Page<Racetrack> search(String searchValue, Pageable pageable);
 }

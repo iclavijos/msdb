@@ -35,6 +35,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findAllByLoginNot(Pageable pageable, String login);
     
-    @Query("select u from User u where u.login like %?1% or u.firstName like %?1% or u.lastName like %?1% or u.email like %?1%")
+    @Query("select u from User u where u.login like lower(concat('%', ?1,'%')) or u.firstName like lower(concat('%', ?1,'%')) or u.lastName like lower(concat('%', ?1,'%')) or u.email like lower(concat('%', ?1,'%'))")
     List<User> search(String searchValue);
 }
