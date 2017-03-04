@@ -7,6 +7,7 @@ import com.icesoft.msdb.security.social.CustomSignInAdapter;
 
 import io.github.jhipster.config.JHipsterProperties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -67,7 +68,7 @@ public class SocialConfiguration implements SocialConfigurer {
         // Google configuration
         String googleClientId = environment.getProperty("spring.social.google.client-id");
         String googleClientSecret = environment.getProperty("spring.social.google.client-secret");
-        if (googleClientId != null && googleClientSecret != null) {
+        if (!StringUtils.isBlank(googleClientId) && !StringUtils.isBlank(googleClientSecret)) {
             log.debug("Configuring GoogleConnectionFactory");
             connectionFactoryConfigurer.addConnectionFactory(
                 new GoogleConnectionFactory(
@@ -82,7 +83,7 @@ public class SocialConfiguration implements SocialConfigurer {
         // Facebook configuration
         String facebookClientId = environment.getProperty("spring.social.facebook.client-id");
         String facebookClientSecret = environment.getProperty("spring.social.facebook.client-secret");
-        if (facebookClientId != null && facebookClientSecret != null) {
+        if (!StringUtils.isBlank(facebookClientId) && !StringUtils.isBlank(facebookClientSecret)) {
             log.debug("Configuring FacebookConnectionFactory");
             connectionFactoryConfigurer.addConnectionFactory(
                 new FacebookConnectionFactory(
@@ -97,7 +98,7 @@ public class SocialConfiguration implements SocialConfigurer {
         // Twitter configuration
         String twitterClientId = environment.getProperty("spring.social.twitter.client-id");
         String twitterClientSecret = environment.getProperty("spring.social.twitter.client-secret");
-        if (twitterClientId != null && twitterClientSecret != null) {
+        if (!StringUtils.isBlank(twitterClientId) && !StringUtils.isBlank(twitterClientSecret)) {
             log.debug("Configuring TwitterConnectionFactory");
             connectionFactoryConfigurer.addConnectionFactory(
                 new TwitterConnectionFactory(

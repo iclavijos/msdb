@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +16,7 @@ import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.connect.UserProfile;
 import org.springframework.social.connect.UsersConnectionRepository;
+import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.stereotype.Service;
 
 import com.icesoft.msdb.domain.Authority;
@@ -65,15 +68,27 @@ public class SocialService {
             throw new IllegalArgumentException("Connection cannot be null");
         }
         UserProfile userProfile = connection.fetchUserProfile();
+        String email = userProfile.getEmail();
+        if (StringUtils.isBlank(email) && connection.getApi() instanceof TwitterTemplate) {
+        	TwitterTemplate template = (TwitterTemplate)connection.getApi();
+        	String response = template.getRestTemplate()
+        			.getForObject("https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true", String.class);
+        	try {
+	        	JSONObject obj = new JSONObject(response);
+	        	email = (String)obj.get("email");
+        	} catch (JSONException e) {
+        		log.error("Cannot process Twitter reply: ", e);
+        	}
+        }
         String providerId = connection.getKey().getProviderId();
         String imageUrl = connection.getImageUrl();
-        User user = createUserIfNotExist(userProfile, langKey, providerId, imageUrl);
+        User user = createUserIfNotExist(userProfile, langKey, providerId, imageUrl, email);
         createSocialConnection(user.getLogin(), connection);
         mailService.sendSocialRegistrationValidationEmail(user, providerId);
     }
 
-    private User createUserIfNotExist(UserProfile userProfile, String langKey, String providerId, String imageUrl) {
-        String email = userProfile.getEmail();
+    private User createUserIfNotExist(UserProfile userProfile, String langKey, String providerId, String imageUrl, String email) {
+        //String email = userProfile.getEmail();
         String userName = userProfile.getUsername();
         if (!StringUtils.isBlank(userName)) {
             userName = userName.toLowerCase(Locale.ENGLISH);
