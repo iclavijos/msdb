@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +15,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import com.icesoft.msdb.repository.converter.PointsConverter;
 
 /**
  * A PointsSystem.
@@ -41,7 +44,8 @@ public class PointsSystem implements Serializable {
     private String description;
 
     @Column(name = "points")
-    private Integer points;
+    @Convert(converter = PointsConverter.class)
+    private int[] points;
 
     @Column(name = "points_most_lead_laps")
     private Integer pointsMostLeadLaps;
@@ -89,16 +93,16 @@ public class PointsSystem implements Serializable {
         this.description = description;
     }
 
-    public Integer getPoints() {
+    public int[] getPoints() {
         return points;
     }
 
-    public PointsSystem points(Integer points) {
+    public PointsSystem points(int[] points) {
         this.points = points;
         return this;
     }
 
-    public void setPoints(Integer points) {
+    public void setPoints(int[] points) {
         this.points = points;
     }
 

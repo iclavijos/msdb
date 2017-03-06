@@ -1,0 +1,10 @@
+{
+    "imports": {
+        "title": "Importación",
+		"subtitle": {
+			"drivers": "Subir un fichero CSV con los datos de los pilotos a importar al sistema"
+		},
+		"file": "Archivo",
+		"upload": "Importar"
+    }
+}

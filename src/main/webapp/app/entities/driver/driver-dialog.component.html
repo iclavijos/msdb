@@ -45,7 +45,7 @@
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.birthDate" for="field_birthDate">Birth Date</label>
             <div class="input-group">
                 <input id="field_birthDate" type="text" class="form-control" name="birthDate" ngbDatepicker  #birthDateDp="ngbDatepicker" [(ngModel)]="driver.birthDate"
-                required/>
+                required [minDate]="minDate" [maxDate]="startDate"/>
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-default" (click)="birthDateDp.open()"><i class="fa fa-calendar"></i></button>
                 </span>
@@ -73,7 +73,7 @@
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.deathDate" for="field_deathDate">Death Date</label>
             <div class="input-group">
                 <input id="field_deathDate" type="text" class="form-control" name="deathDate" ngbDatepicker  #deathDateDp="ngbDatepicker" [(ngModel)]="driver.deathDate"
-                />
+                placeholder="yyyy-mm-dd" [minDate]="minDate" [maxDate]="startDate"/>
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-default" (click)="deathDateDp.open()"><i class="fa fa-calendar"></i></button>
                 </span>
@@ -94,10 +94,9 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.portrait" for="field_portrait">Portrait</label>
             <div>
-                <img [src]="'data:' + driver.portraitContentType + ';base64,' + driver.portrait" style="max-height: 100px;" *ngIf="driver.portrait" alt="driver image"/>
-                <div *ngIf="driver.portrait" class="form-text text-danger clearfix">
-                    <span class="pull-left">{{driver.portraitContentType}}, {{byteSize(driver.portrait)}}</span>
-                    <button type="button" (click)="driver.portrait=null;driver.portraitContentType=null;"
+                <img [src]="driver.portraitUrl" style="max-height: 100px;" *ngIf="driver.portraitUrl" alt="driver image"/>
+                <div *ngIf="driver.portraitUrl" class="form-text text-danger clearfix">
+                    <button type="button" (click)="driver.portraitUrl=null;"
                             class="btn btn-default btn-xs pull-right">
                         <span class="fa fa-times"></span>
                     </button>

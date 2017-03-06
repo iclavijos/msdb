@@ -9,8 +9,6 @@ import { DriverService } from './driver.service';
 import { ITEMS_PER_PAGE, Principal } from '../../shared';
 import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
 
-import { AutoCompleteModule } from 'primeng/components/autocomplete/autocomplete';
-
 @Component({
     selector: 'jhi-driver',
     templateUrl: './driver.component.html'
@@ -167,13 +165,13 @@ currentAccount: any;
         this.alertService.error(error.message, null, null);
     }
     
-    filterDrivers(event) {     
-        this.driverService.search(event.query).subscribe(
+    filterDrivers(event) {
+        this.driverService.typeahead(event.query).subscribe(
                 (res: Response) => this.suggestedDrivers = res.json(),
                 (res: Response) => this.onError(res.json()));
     }
     
     selectDriver(event) {
-        console.log(event);
+        this.router.navigate(['/driver', event.id]);
     }
 }

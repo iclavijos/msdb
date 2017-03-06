@@ -9,6 +9,7 @@ export class DriverService {
 
     private resourceUrl = 'api/drivers';
     private resourceSearchUrl = 'api/_search/drivers';
+    private resourceTypeAheadUrl = 'api/_typeahead/drivers';
 
     constructor(private http: Http, private dateUtils: DateUtils) { }
 
@@ -60,6 +61,16 @@ export class DriverService {
         let options = this.createRequestOption(req);
         return this.http.get(this.resourceSearchUrl, options)
             .map((res: any) => this.convertResponse(res))
+        ;
+    }
+    
+    typeahead(req): Observable<Response> {
+        let params: URLSearchParams = new URLSearchParams();
+        params.set('query', req);
+        
+        return this.http.get(this.resourceTypeAheadUrl, {
+                search: params
+            }).map((res: any) => res)
         ;
     }
 

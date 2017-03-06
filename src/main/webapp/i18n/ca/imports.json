@@ -1,0 +1,10 @@
+{
+    "imports": {
+        "title": "Importació",
+        "subtitle": {
+			"drivers": "Pujar un fitxer CSV amb les dades dels pilots a importar al sistema"
+		},
+		"file": "Arxiu",
+		"upload": "Importar"
+    }
+}

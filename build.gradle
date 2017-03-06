@@ -207,6 +207,9 @@ dependencies {
     compile "org.springframework.social:spring-social-twitter"
     
     compile 'com.sendgrid:sendgrid-java:3.0.9'
+    compile 'com.cloudinary:cloudinary-http44:1.8.1'
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.8.7'
+    
 	//compile 'io.searchbox:jest:2.0.4'    
     
     testCompile "org.awaitility:awaitility:${awaitility_version}"

@@ -2,7 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModalRef, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+
 import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jhipster';
 
 import { Driver } from './driver.model';
@@ -14,10 +15,13 @@ import { DriverService } from './driver.service';
     templateUrl: './driver-dialog.component.html'
 })
 export class DriverDialogComponent implements OnInit {
-
+    
     driver: Driver;
     authorities: any[];
     isSaving: boolean;
+
+    minDate: NgbDateStruct;
+    startDate: NgbDateStruct;
 
     constructor(
         public activeModal: NgbActiveModal,
@@ -31,8 +35,11 @@ export class DriverDialogComponent implements OnInit {
     }
 
     ngOnInit() {
+        let now = new Date();
         this.isSaving = false;
         this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
+        this.minDate = {year: 1890, month: 1, day: 1};
+        this.startDate = {year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate()};
     }
     byteSize(field) {
         return this.dataUtils.byteSize(field);

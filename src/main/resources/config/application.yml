@@ -123,3 +123,7 @@ jhipster:
 # ===================================================================
 
 application:
+    cloudinary:
+        name: ${cloudinary.name}
+        key: ${cloudinary.key}
+        secret: ${cloudinary.secret}

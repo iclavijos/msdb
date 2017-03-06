@@ -40,13 +40,14 @@
                             <span jhiTranslate="global.menu.entities.racetrack">Racetrack</span>
                         </a>
                     </li>
-                    <!-- 
-                    <li uiSrefActive="active">
+                     
+                    <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" uiSrefActive="active">
                         <a class="dropdown-item" routerLink="points-system" (click)="collapseNavbar()">
                             <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
                             <span jhiTranslate="global.menu.entities.pointsSystem">Points System</span>
                         </a>
                     </li>
+                    <!--
                     <li uiSrefActive="active">
                         <a class="dropdown-item" routerLink="tyre-provider" (click)="collapseNavbar()">
                             <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
@@ -133,6 +134,23 @@
                     </li>
                     -->
                     <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
+                </ul>
+            </li>
+            <li *jhiHasAnyAuthority="['ROLE_EDITOR','ROLE_ADMIN']" ngbDropdown class="nav-item dropdown pointer">
+                <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="import-menu">
+                    <span>
+                        <i class="fa fa-user-plus" aria-hidden="true"></i>
+                        <span jhiTranslate="global.menu.imports.main">Imports</span>
+                        <b class="caret"></b>
+                    </span>
+                </a>
+                <ul class="dropdown-menu" ngbDropdownMenu>
+                    <li>
+                        <a class="dropdown-item" routerLink="import/drivers" routerLinkActive="active" (click)="collapseNavbar()">
+                            <i class="fa fa-fw fa-user" aria-hidden="true"></i>
+                            <span jhiTranslate="global.menu.imports.drivers">Import drivers</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li *jhiHasAnyAuthority="'ROLE_ADMIN'" ngbDropdown class="nav-item dropdown pointer">

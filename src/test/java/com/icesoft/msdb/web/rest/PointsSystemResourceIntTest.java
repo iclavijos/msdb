@@ -48,8 +48,8 @@ public class PointsSystemResourceIntTest {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
-    private static final Integer DEFAULT_POINTS = 1;
-    private static final Integer UPDATED_POINTS = 2;
+    private static final int[] DEFAULT_POINTS = {9, 6, 4, 3, 2, 1};
+    private static final int[] UPDATED_POINTS = {10, 6, 4, 3, 2, 1};
 
     private static final Integer DEFAULT_POINTS_MOST_LEAD_LAPS = 1;
     private static final Integer UPDATED_POINTS_MOST_LEAD_LAPS = 2;

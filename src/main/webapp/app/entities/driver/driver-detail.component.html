@@ -1,6 +1,6 @@
 
 <div *ngIf="driver">
-    <h2><span jhiTranslate="motorsportsDatabaseApp.driver.detail.title">Driver</span> {{driver.id}}</h2>
+    <h2>{{driver.surname}}, {{driver.name}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
     <dl class="row-md jh-entity-details">
@@ -32,9 +32,8 @@
         <dd>
             <div *ngIf="driver.portrait">
                 <a (click)="openFile(driver.portraitContentType, driver.portrait)">
-                    <img [src]="'data:' + driver.portraitContentType + ';base64,' + driver.portrait" style="max-width: 100%;" alt="driver image"/>
+                    <img [src]="driver.portraitUrl" style="max-width: 100%;" alt="driver image"/>
                 </a>
-                {{driver.portraitContentType}}, {{byteSize(driver.portrait)}}
             </div>
         </dd>
     </dl>

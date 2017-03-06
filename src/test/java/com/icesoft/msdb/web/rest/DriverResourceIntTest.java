@@ -19,6 +19,7 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +35,7 @@ import org.springframework.util.Base64Utils;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.repository.DriverRepository;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
@@ -65,8 +67,6 @@ public class DriverResourceIntTest {
 
     private static final byte[] DEFAULT_PORTRAIT = TestUtil.createByteArray(1, "0");
     private static final byte[] UPDATED_PORTRAIT = TestUtil.createByteArray(2, "1");
-    private static final String DEFAULT_PORTRAIT_CONTENT_TYPE = "image/jpg";
-    private static final String UPDATED_PORTRAIT_CONTENT_TYPE = "image/png";
 
     @Autowired
     private DriverRepository driverRepository;
@@ -86,11 +86,14 @@ public class DriverResourceIntTest {
     private MockMvc restDriverMockMvc;
 
     private Driver driver;
+    
+    @Mock
+    private CDNService cdnService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            DriverResource driverResource = new DriverResource(driverRepository);
+            DriverResource driverResource = new DriverResource(driverRepository, cdnService);
         this.restDriverMockMvc = MockMvcBuilders.standaloneSetup(driverResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -111,8 +114,7 @@ public class DriverResourceIntTest {
                 .birthPlace(DEFAULT_BIRTH_PLACE)
                 .deathDate(DEFAULT_DEATH_DATE)
                 .deathPlace(DEFAULT_DEATH_PLACE)
-                .portrait(DEFAULT_PORTRAIT)
-                .portraitContentType(DEFAULT_PORTRAIT_CONTENT_TYPE);
+                .portrait(DEFAULT_PORTRAIT);
         return driver;
     }
 
@@ -144,7 +146,6 @@ public class DriverResourceIntTest {
         assertThat(testDriver.getDeathDate()).isEqualTo(DEFAULT_DEATH_DATE);
         assertThat(testDriver.getDeathPlace()).isEqualTo(DEFAULT_DEATH_PLACE);
         assertThat(testDriver.getPortrait()).isEqualTo(DEFAULT_PORTRAIT);
-        assertThat(testDriver.getPortraitContentType()).isEqualTo(DEFAULT_PORTRAIT_CONTENT_TYPE);
 
     }
 
@@ -239,7 +240,6 @@ public class DriverResourceIntTest {
             .andExpect(jsonPath("$.[*].birthPlace").value(hasItem(DEFAULT_BIRTH_PLACE.toString())))
             .andExpect(jsonPath("$.[*].deathDate").value(hasItem(DEFAULT_DEATH_DATE.toString())))
             .andExpect(jsonPath("$.[*].deathPlace").value(hasItem(DEFAULT_DEATH_PLACE.toString())))
-            .andExpect(jsonPath("$.[*].portraitContentType").value(hasItem(DEFAULT_PORTRAIT_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].portrait").value(hasItem(Base64Utils.encodeToString(DEFAULT_PORTRAIT))));
     }
 
@@ -260,7 +260,6 @@ public class DriverResourceIntTest {
             .andExpect(jsonPath("$.birthPlace").value(DEFAULT_BIRTH_PLACE.toString()))
             .andExpect(jsonPath("$.deathDate").value(DEFAULT_DEATH_DATE.toString()))
             .andExpect(jsonPath("$.deathPlace").value(DEFAULT_DEATH_PLACE.toString()))
-            .andExpect(jsonPath("$.portraitContentType").value(DEFAULT_PORTRAIT_CONTENT_TYPE))
             .andExpect(jsonPath("$.portrait").value(Base64Utils.encodeToString(DEFAULT_PORTRAIT)));
     }
 
@@ -288,8 +287,7 @@ public class DriverResourceIntTest {
                 .birthPlace(UPDATED_BIRTH_PLACE)
                 .deathDate(UPDATED_DEATH_DATE)
                 .deathPlace(UPDATED_DEATH_PLACE)
-                .portrait(UPDATED_PORTRAIT)
-                .portraitContentType(UPDATED_PORTRAIT_CONTENT_TYPE);
+                .portrait(UPDATED_PORTRAIT);
 
         restDriverMockMvc.perform(put("/api/drivers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -307,7 +305,6 @@ public class DriverResourceIntTest {
         assertThat(testDriver.getDeathDate()).isEqualTo(UPDATED_DEATH_DATE);
         assertThat(testDriver.getDeathPlace()).isEqualTo(UPDATED_DEATH_PLACE);
         assertThat(testDriver.getPortrait()).isEqualTo(UPDATED_PORTRAIT);
-        assertThat(testDriver.getPortraitContentType()).isEqualTo(UPDATED_PORTRAIT_CONTENT_TYPE);
 
     }
 
@@ -363,7 +360,6 @@ public class DriverResourceIntTest {
             .andExpect(jsonPath("$.[*].birthPlace").value(hasItem(DEFAULT_BIRTH_PLACE.toString())))
             .andExpect(jsonPath("$.[*].deathDate").value(hasItem(DEFAULT_DEATH_DATE.toString())))
             .andExpect(jsonPath("$.[*].deathPlace").value(hasItem(DEFAULT_DEATH_PLACE.toString())))
-            .andExpect(jsonPath("$.[*].portraitContentType").value(hasItem(DEFAULT_PORTRAIT_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].portrait").value(hasItem(Base64Utils.encodeToString(DEFAULT_PORTRAIT))));
     }
 

@@ -50,6 +50,10 @@
                 "database": "Base de dades",
                 "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
             },
+            "imports" : {
+            	"main": "Importar",
+            	"drivers": "Pilots"
+            },
             "language": "Idioma"
         },
         "form": {

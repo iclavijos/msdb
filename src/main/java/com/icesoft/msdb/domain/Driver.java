@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -21,6 +20,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.icesoft.msdb.web.rest.view.View;
 
 /**
  * A Driver.
@@ -35,16 +36,19 @@ public class Driver implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(View.Summary.class)
     private Long id;
 
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
+    @JsonView(View.Summary.class)
     private String name;
 
     @NotNull
     @Size(max = 60)
     @Column(name = "surname", length = 60, nullable = false)
+    @JsonView(View.Summary.class)
     private String surname;
 
     @NotNull
@@ -62,12 +66,10 @@ public class Driver implements Serializable {
     @Column(name = "death_place", length = 75)
     private String deathPlace;
 
-    @Lob
-    @Column(name = "portrait")
     private byte[] portrait;
-
-    @Column(name = "portrait_content_type")
-    private String portraitContentType;
+    
+    @Column(name = "portrait_url")
+    private String portraitUrl;
 
     @OneToMany(mappedBy = "driver")
     @JsonIgnore
@@ -172,18 +174,18 @@ public class Driver implements Serializable {
     public void setPortrait(byte[] portrait) {
         this.portrait = portrait;
     }
-
-    public String getPortraitContentType() {
-        return portraitContentType;
+    
+    public String getPortraitUrl() {
+    	return portraitUrl;
     }
-
-    public Driver portraitContentType(String portraitContentType) {
-        this.portraitContentType = portraitContentType;
-        return this;
+    
+    public Driver portraitUrl(String portraitUrl) {
+    	this.portraitUrl = portraitUrl;
+    	return this;
     }
-
-    public void setPortraitContentType(String portraitContentType) {
-        this.portraitContentType = portraitContentType;
+    
+    public void setPortraitUrl(String portraitUrl) {
+    	this.portraitUrl = portraitUrl;
     }
 
     public Set<EventEntry> getParticipations() {
@@ -242,7 +244,6 @@ public class Driver implements Serializable {
             ", deathDate='" + deathDate + "'" +
             ", deathPlace='" + deathPlace + "'" +
             ", portrait='" + portrait + "'" +
-            ", portraitContentType='" + portraitContentType + "'" +
             '}';
     }
 }

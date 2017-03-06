@@ -53,7 +53,7 @@ export const driverPopupRoute: Routes = [
     path: 'driver-new',
     component: DriverPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.driver.home.title'
     },
     outlet: 'popup'
@@ -62,7 +62,7 @@ export const driverPopupRoute: Routes = [
     path: 'driver/:id/edit',
     component: DriverPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.driver.home.title'
     },
     outlet: 'popup'
@@ -71,7 +71,7 @@ export const driverPopupRoute: Routes = [
     path: 'driver/:id/delete',
     component: DriverDeletePopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.driver.home.title'
     },
     outlet: 'popup'

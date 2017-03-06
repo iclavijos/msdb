@@ -1,0 +1,10 @@
+{
+    "imports": {
+        "title": "Import",
+		"subtitle": {
+			"drivers": "Upload a CSV file with the data of the drivers to import into the system"
+		},
+		"file": "File",
+		"upload": "Import"
+    }
+}

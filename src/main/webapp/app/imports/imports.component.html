@@ -1,0 +1,21 @@
+<div class="row">
+    <h2 jhiTranslate="imports.title">Import</h2>
+</div>
+<div class="row">
+    <form name="editForm" role="form" novalidate (ngSubmit)="uploadFile()" #editForm="ngForm">
+    	<jhi-alert-error></jhi-alert-error>
+        
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="imports.file" for="field_file">File</label>
+        	<input type="file" (change)="setFileData($event)" accept="text/csv" jhiTranslate="imports.selectFile"/>
+        </div>
+        <div>
+	        <button type="button" class="btn btn-default" (click)="cancel()">
+	            <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+	        </button>
+	        <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+	            <span class="fa fa-upload"></span>&nbsp;<span jhiTranslate="imports.upload">Upload</span>
+	        </button>
+	    </div>
+    </form>
+</div>

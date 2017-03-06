@@ -8,10 +8,8 @@ export class Driver {
         public birthPlace?: string,
         public deathDate?: any,
         public deathPlace?: string,
-        public portrait?: any
+        public portrait?: any,
+        public portraitUrl?: string
     ) { }
-    
-    fullName() {
-        return this.surname + ', ' + this.name;
-    }
+
 }

@@ -25,10 +25,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.repository.DriverRepository;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
+import com.icesoft.msdb.web.rest.view.View;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
@@ -46,11 +49,11 @@ public class DriverResource {
         
     private final DriverRepository driverRepository;
 
-//    private final DriverSearchRepository driverSearchRepository;
+    private final CDNService cdnService;
 
-    public DriverResource(DriverRepository driverRepository) { //, DriverSearchRepository driverSearchRepository) {
+    public DriverResource(DriverRepository driverRepository, CDNService cdnService) {
         this.driverRepository = driverRepository;
-//        this.driverSearchRepository = driverSearchRepository;
+        this.cdnService = cdnService;
     }
 
     /**
@@ -67,14 +70,19 @@ public class DriverResource {
         if (driver.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new driver cannot already have an ID")).body(null);
         }
+        
         Driver result = driverRepository.save(driver);
-        result.setParticipations(null);
-        result.setPortrait(null);
-        result.setPortraitContentType(null);
-//        driverSearchRepository.save(result);
+        if (driver.getPortrait() != null) {
+	        String cdnUrl = cdnService.uploadImage(driver.getId().toString(), driver.getPortrait());
+			driver.portraitUrl(cdnUrl);
+			
+			result = driverRepository.save(result);
+        }
+        
         return ResponseEntity.created(new URI("/api/drivers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
+
     }
 
     /**
@@ -93,8 +101,11 @@ public class DriverResource {
         if (driver.getId() == null) {
             return createDriver(driver);
         }
+        if (driver.getPortrait() != null) {
+	        String cdnUrl = cdnService.uploadImage(driver.getId().toString(), driver.getPortrait());
+	        driver.setPortraitUrl(cdnUrl);
+        }
         Driver result = driverRepository.save(driver);
-//        driverSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, driver.getId().toString()))
             .body(result);
@@ -142,7 +153,7 @@ public class DriverResource {
     public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
         log.debug("REST request to delete Driver : {}", id);
         driverRepository.delete(id);
-//        driverSearchRepository.delete(id);
+        cdnService.deleteImage(id.toString());
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -159,11 +170,20 @@ public class DriverResource {
     @Timed
     public ResponseEntity<List<Driver>> searchDrivers(@RequestParam String query, @ApiParam Pageable pageable)
         throws URISyntaxException {
-        log.debug("REST request to search for a page of Drivers for query {}", query);
+        log.debug("REST request to search for a page of Drivers for query '{}'", query);
         Page<Driver> page = driverRepository.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/drivers");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    @GetMapping("/_typeahead/drivers")
+    @Timed
+    @JsonView(View.Summary.class)
+    public ResponseEntity<List<Driver>> typeahead(@RequestParam String query)
+        throws URISyntaxException {
+        log.debug("REST request to search for a page of Drivers for query '{}'", query);
+        List<Driver> page = driverRepository.searchNonPageable(query);
+        return new ResponseEntity<>(page, HttpStatus.OK);
+    }
 
 }
