@@ -64,7 +64,7 @@ currentAccount: any;
                 size: this.itemsPerPage,
                 sort: this.sort()}).subscribe(
                     (res: Response) => this.onSuccess(res.json(), res.headers),
-                    (res: Response) => this.onError(res.json())
+                    (res: Response) => this.onError(res)
                 );
             return;
         }
@@ -73,7 +73,7 @@ currentAccount: any;
             size: this.itemsPerPage,
             sort: this.sort()}).subscribe(
             (res: Response) => this.onSuccess(res.json(), res.headers),
-            (res: Response) => this.onError(res.json())
+            (res: Response) => this.onError(res)
         );
     }
     loadPage (page: number) {
@@ -162,6 +162,7 @@ currentAccount: any;
     }
 
     private onError (error) {
+        console.log(error);
         this.alertService.error(error.message, null, null);
     }
     

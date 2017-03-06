@@ -104,6 +104,8 @@ public class DriverResource {
         if (driver.getPortrait() != null) {
 	        String cdnUrl = cdnService.uploadImage(driver.getId().toString(), driver.getPortrait());
 	        driver.setPortraitUrl(cdnUrl);
+        } else {
+        	cdnService.deleteImage(driver.getId().toString());
         }
         Driver result = driverRepository.save(driver);
         return ResponseEntity.ok()

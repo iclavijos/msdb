@@ -1,7 +1,8 @@
 <div>
     <h2>
         <span jhiTranslate="motorsportsDatabaseApp.driver.home.title">Drivers</span>
-        <button class="btn btn-primary float-right create-driver" [routerLink]="['/', { outlets: { popup: ['driver-new'] } }]">
+        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
+        	class="btn btn-primary float-right create-driver" [routerLink]="['/', { outlets: { popup: ['driver-new'] } }]">
             <span class="fa fa-plus"></span>
             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.driver.home.createLabel">
             Create new Driver
@@ -62,14 +63,14 @@
                             <span class="fa fa-eye"></span>
                             <span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                 [routerLink]="['/', { outlets: { popup: 'driver/'+ driver.id + '/edit'} }]"
                                 replaceUrl="true"
                                 class="btn btn-primary btn-sm">
                             <span class="fa fa-pencil"></span>
                             <span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
                                 [routerLink]="['/', { outlets: { popup: 'driver/'+ driver.id + '/delete'} }]"
                                 replaceUrl="true"
                                 class="btn btn-danger btn-sm">

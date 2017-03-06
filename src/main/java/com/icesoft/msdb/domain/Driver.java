@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -20,6 +21,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.icesoft.msdb.web.rest.view.View;
 
@@ -66,6 +68,7 @@ public class Driver implements Serializable {
     @Column(name = "death_place", length = 75)
     private String deathPlace;
 
+    @Transient
     private byte[] portrait;
     
     @Column(name = "portrait_url")

@@ -38,10 +38,10 @@ export class DriverService {
     find(id: number): Observable<Driver> {
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
             let jsonResponse = res.json();
-            jsonResponse.birthDate = this.dateUtils
-                .convertLocalDateFromServer(jsonResponse.birthDate);
-            jsonResponse.deathDate = this.dateUtils
-                .convertLocalDateFromServer(jsonResponse.deathDate);
+            jsonResponse.birthDate = new Date(jsonResponse.birthDate[0], jsonResponse.birthDate[1] - 1, jsonResponse.birthDate[2]);
+            if (jsonResponse.deathDate) {
+                jsonResponse.deathDate = new Date(jsonResponse.deathDate[0], jsonResponse.deathDate[1] - 1, jsonResponse.deathDate[2]);
+            }
             return jsonResponse;
         });
     }
@@ -77,10 +77,10 @@ export class DriverService {
     private convertResponse(res: any): any {
         let jsonResponse = res.json();
         for (let i = 0; i < jsonResponse.length; i++) {
-            jsonResponse[i].birthDate = this.dateUtils
-                .convertLocalDateFromServer(jsonResponse[i].birthDate);
-            jsonResponse[i].deathDate = this.dateUtils
-                .convertLocalDateFromServer(jsonResponse[i].deathDate);
+            jsonResponse[i].birthDate = new Date(jsonResponse[i].birthDate[0], jsonResponse[i].birthDate[1] - 1, jsonResponse[i].birthDate[2]);
+            if (jsonResponse[i].deathDate) {
+                jsonResponse[i].deathDate = new Date(jsonResponse[i].deathDate[0], jsonResponse[i].deathDate[1] - 1, jsonResponse[i].deathDate[2]);
+            }
         }
         res._body = jsonResponse;
         return res;
