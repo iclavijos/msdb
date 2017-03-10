@@ -22,5 +22,9 @@
 
     <cache alias="com.icesoft.msdb.social.SocialUserConnection" uses-template="simple"/>
 
+    <cache alias="com.icesoft.msdb.domain.PointsSystem" uses-template="simple"/>
+
+    <cache alias="com.icesoft.msdb.domain.TyreProvider" uses-template="simple"/>
+
     <!-- jhipster-needle-ehcache-add-entry -->
 </config>

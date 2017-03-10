@@ -52,7 +52,8 @@
             },
             "imports" : {
             	"main": "Importar",
-            	"drivers": "Pilots"
+            	"drivers": "Pilots",
+            	"racetracks": "Circuits"
             },
             "language": "Idioma"
         },
@@ -76,7 +77,11 @@
                 "register": {
                     "noaccount": "No disposa d'un compte encara?",
                     "link": "Registri un nou compte"
-                }
+                },
+            	"imports": {
+            		"success": "El fitxer ha estat pujat correctament i està essent processat.",
+            		"fail": "Hi ha hagut algun problema i el fitxer no s'ha progut processar."
+            	}
             },
             "error": {
                 "dontmatch" : "La contrasenya i la confirmació no coincideixen!"

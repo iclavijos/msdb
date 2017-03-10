@@ -40,20 +40,26 @@
                             <span jhiTranslate="global.menu.entities.racetrack">Racetrack</span>
                         </a>
                     </li>
-                     
+                    <li uiSrefActive="active">
+                        <a class="dropdown-item" routerLink="team" (click)="collapseNavbar()">
+                            <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+                            <span jhiTranslate="global.menu.entities.team">Team</span>
+                        </a>
+                    </li> 
                     <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" uiSrefActive="active">
                         <a class="dropdown-item" routerLink="points-system" (click)="collapseNavbar()">
                             <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
                             <span jhiTranslate="global.menu.entities.pointsSystem">Points System</span>
                         </a>
                     </li>
-                    <!--
                     <li uiSrefActive="active">
                         <a class="dropdown-item" routerLink="tyre-provider" (click)="collapseNavbar()">
                             <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
                             <span jhiTranslate="global.menu.entities.tyreProvider">Tyre Provider</span>
                         </a>
                     </li>
+                    <!--
+                    
                     <li uiSrefActive="active">
                         <a class="dropdown-item" routerLink="fuel-provider" (click)="collapseNavbar()">
                             <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
@@ -149,6 +155,12 @@
                         <a class="dropdown-item" routerLink="import/drivers" routerLinkActive="active" (click)="collapseNavbar()">
                             <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
                             <span jhiTranslate="global.menu.imports.drivers">Import drivers</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" routerLink="import/racetracks" routerLinkActive="active" (click)="collapseNavbar()">
+                            <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+                            <span jhiTranslate="global.menu.imports.racetracks">Import racetracks</span>
                         </a>
                     </li>
                 </ul>

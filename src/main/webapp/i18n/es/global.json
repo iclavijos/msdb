@@ -51,7 +51,8 @@
             },
             "imports" : {
             	"main": "Importar",
-            	"drivers": "Pilotos"
+            	"drivers": "Pilotos",
+            	"racetracks": "Circuitos"
             },
             "language": "Idioma"
         },
@@ -75,7 +76,11 @@
                 "register": {
                     "noaccount": "¿No tienes una cuenta todavía?",
                     "link": "Crea una cuenta"
-                }
+                },
+            	"imports": {
+            		"success": "El fichero se ha subido correctamente y está siendo procesado",
+            		"fail": "Ha habido algún problema y el fichero no se ha podido procesar"
+            	}
             },
             "error": {
                 "dontmatch" : "¡La contraseña y la confirmación de contraseña no coinciden!"

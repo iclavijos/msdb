@@ -9,12 +9,10 @@ export class ImportsService {
 
     private resourceUrl = 'api/imports';
 
-    constructor(private http: Http) { }
+    constructor(
+            private http: Http) { }
 
-    importCSV(imports: Imports) {
-        this.http.post(this.resourceUrl, imports)
-            .map((res: Response) => res)
-            .subscribe((res: any) => res);
+    importCSV(imports: Imports): Observable<Response> {
+        return this.http.post(this.resourceUrl, imports);
     }
-
 }

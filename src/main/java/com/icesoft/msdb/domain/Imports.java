@@ -2,7 +2,7 @@ package com.icesoft.msdb.domain;
 
 public class Imports {
 	private String csvContents;
-	private String importType;
+	private ImportType importType;
 	
 	public String getCsvContents() {
 		return csvContents;
@@ -10,10 +10,10 @@ public class Imports {
 	public void setCsvContents(String csvContents) {
 		this.csvContents = csvContents;
 	}
-	public String getImportType() {
+	public ImportType getImportType() {
 		return importType;
 	}
-	public void setImportType(String importType) {
+	public void setImportType(ImportType importType) {
 		this.importType = importType;
 	}
 }

@@ -51,7 +51,8 @@
             },
             "imports" : {
             	"main": "Import",
-            	"drivers": "Drivers"
+            	"drivers": "Drivers",
+            	"racetracks": "Racetracks"
             },
             "language": "Language"
         },
@@ -75,7 +76,11 @@
                 "register": {
                     "noaccount": "You don't have an account yet?",
                     "link": "Register a new account"
-                }
+                },
+                "imports": {
+            		"success": "The file was properly uploaded and is being processed",
+            		"fail": "There was an issue and the file could not be processed"
+            	}
             },
             "error": {
                 "dontmatch": "The password and its confirmation do not match!"

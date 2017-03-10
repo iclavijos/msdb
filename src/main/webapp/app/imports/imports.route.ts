@@ -10,7 +10,40 @@ export const importDriversRoute: Route = {
     data: {
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'imports.title',
-        importType: 'drivers'
+        importType: 'DRIVERS'
+    },
+    canActivate: [UserRouteAccessService]
+};
+
+export const importRacetracksRoute: Route = {
+    path: 'import/racetracks',
+    component: ImportsComponent,
+    data: {
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+        pageTitle: 'imports.title',
+        importType: 'RACETRACKS'
+    },
+    canActivate: [UserRouteAccessService]
+};
+
+export const importPointsSystemRoute: Route = {
+    path: 'import/pointsSystem',
+    component: ImportsComponent,
+    data: {
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+        pageTitle: 'imports.title',
+        importType: 'POINTSSYSTEM'
+    },
+    canActivate: [UserRouteAccessService]
+};
+
+export const importTyreProvidersRoute: Route = {
+    path: 'import/tyreProviders',
+    component: ImportsComponent,
+    data: {
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+        pageTitle: 'imports.title',
+        importType: 'TYREPROVIDERS'
     },
     canActivate: [UserRouteAccessService]
 };
@@ -21,13 +54,16 @@ export const importFuelProvidersRoute: Route = {
     data: {
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'imports.title',
-        type: 'fuelProviders'
+        importType: 'FUELPROVIDERS'
     },
     canActivate: [UserRouteAccessService]
 };
 
 let IMPORTS_ROUTES = [
    importDriversRoute,
+   importRacetracksRoute,
+   importPointsSystemRoute,
+   importTyreProvidersRoute,
    importFuelProvidersRoute
 ];
 
