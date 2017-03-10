@@ -12,6 +12,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
     driver: Driver;
     private subscription: any;
+    compositeName: String;
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
@@ -31,6 +32,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
     load (id) {
         this.driverService.find(id).subscribe(driver => {
             this.driver = driver;
+            this.compositeName = this.driver.surname + ', ' + this.driver.name;
         });
     }
     byteSize(field) {

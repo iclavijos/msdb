@@ -87,7 +87,7 @@ export class RacetrackLayoutComponent implements OnInit, OnDestroy {
         return this.dataUtils.openFile(contentType, field);
     }
     registerChangeInRacetrackLayouts() {
-        this.eventSubscriber = this.eventManager.subscribe('racetrackLayoutListModification', (response) => this.loadAll());
+        this.eventSubscriber = this.eventManager.subscribe('racetrackLayoutModification', (response) => this.loadAll());
     }
 
 

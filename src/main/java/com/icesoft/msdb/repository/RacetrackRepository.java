@@ -1,5 +1,7 @@
 package com.icesoft.msdb.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +18,5 @@ public interface RacetrackRepository extends JpaRepository<Racetrack,Long> {
 			+ "lower(r.name) like lower(concat('%', ?1,'%')) or "
 			+ "lower(r.location) like lower(concat('%', ?1,'%'))")
 	Page<Racetrack> search(String searchValue, Pageable pageable);
+	
 }

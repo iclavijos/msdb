@@ -60,10 +60,11 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrackLayout.layoutImage" for="field_layoutImage">Layout Image</label>
             <div>
-                <img [src]="'data:' + racetrackLayout.layoutImageContentType + ';base64,' + racetrackLayout.layoutImage" style="max-height: 100px;" *ngIf="racetrackLayout.layoutImage" alt="racetrackLayout image"/>
+                <img *ngIf="racetrackLayout.layoutImageUrl && racetrackLayout.layoutImage == null" [src]="racetrackLayout.layoutImageUrl" style="max-height: 100px;" alt="racetrackLayout image extern"/>
+                <img *ngIf="racetrackLayout.layoutImage" [src]="'data:image/jpeg;base64,' +racetrackLayout.layoutImage" style="max-height: 100px;" alt="racetrackLayout image"/>
                 <div *ngIf="racetrackLayout.layoutImage" class="form-text text-danger clearfix">
-                    <span class="pull-left">{{racetrackLayout.layoutImageContentType}}, {{byteSize(racetrackLayout.layoutImage)}}</span>
-                    <button type="button" (click)="racetrackLayout.layoutImage=null;racetrackLayout.layoutImageContentType=null;"
+                    <span class="pull-left">{{byteSize(racetrackLayout.layoutImage)}}</span>
+                    <button type="button" (click)="racetrackLayout.layoutImage=null"
                             class="btn btn-default btn-xs pull-right">
                         <span class="fa fa-times"></span>
                     </button>
@@ -78,9 +79,7 @@
         </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrackLayout.active" for="field_active">Active</label>
-            <input type="checkbox" class="form-control" name="active" id="field_active"
-                [(ngModel)]="racetrackLayout.active"
-             />
+            <i [ngClass]="racetrackLayout.active ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'" (click)="toogleActive()"></i>
         </div>
     </div>
     <div class="modal-footer">

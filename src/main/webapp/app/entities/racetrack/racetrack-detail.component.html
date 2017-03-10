@@ -23,13 +23,7 @@
 						<span jhiTranslate="motorsportsDatabaseApp.racetrack.logo">Logo</span>
 					</dt>
 					<dd>
-						<div *ngIf="racetrack.logo">
-							<a (click)="openFile(racetrack.logoContentType, racetrack.logo)">
-								<img
-								[src]="'data:' + racetrack.logoContentType + ';base64,' + racetrack.logo"
-								style="max-width: 100%;" alt="racetrack image" />
-							</a>
-						</div>
+						<img *ngIf="racetrack.logoUrl" [src]="racetrack.logoUrl" style="max-width: 100%" alt="racetrack logo"/>
 					</dd>
 				</dl>
 
@@ -52,8 +46,7 @@
 								jhiTranslate="motorsportsDatabaseApp.racetrackLayout.yearFirstUse">Year
 									First Use</span></th>
 							<th><span
-								jhiTranslate="motorsportsDatabaseApp.racetrackLayout.layoutImage">Layout
-									Image</span></th>
+								jhiTranslate="motorsportsDatabaseApp.racetrackLayout.layoutImage">Layout</span></th>
 							<th><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.active">Active</span></th>
 							<th></th>
 						</tr>
@@ -64,13 +57,9 @@
 							<td>{{racetrackLayout.name}}</td>
 							<td>{{racetrackLayout.length}}</td>
 							<td>{{racetrackLayout.yearFirstUse}}</td>
-							<td><a *ngIf="racetrackLayout.layoutImage"
-								(click)="openFile(racetrackLayout.layoutImageContentType, racetrackLayout.layoutImage)">
-									<img
-									[src]="'data:' + racetrackLayout.layoutImageContentType + ';base64,' + racetrackLayout.layoutImage"
-									style="max-height: 30px;" alt="racetrackLayout image" />
-							</a></td>
-							<td>{{racetrackLayout.active}}</td>
+							<td><img *ngIf="racetrackLayout.layoutImageUrl" [src]="racetrackLayout.layoutImageUrl" style="max-height: 30px;" alt="racetrack layout"/></td>
+							<td><i [ngClass]="racetrackLayout.active ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'"></i>
+							</td>
 							<td class="text-right">
 								<div class="btn-group flex-btn-group-container">
 									<button type="submit"

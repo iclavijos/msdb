@@ -70,9 +70,13 @@ export class RacetrackLayoutDialogComponent implements OnInit {
                 .subscribe((res: RacetrackLayout) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
         }
     }
+    
+    toogleActive() {
+        this.racetrackLayout.active = !this.racetrackLayout.active;
+    }
 
     private onSaveSuccess (result: RacetrackLayout) {
-        this.eventManager.broadcast({ name: 'racetrackLayoutsModification', content: 'OK'});
+        this.eventManager.broadcast({ name: 'racetrackLayoutModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }

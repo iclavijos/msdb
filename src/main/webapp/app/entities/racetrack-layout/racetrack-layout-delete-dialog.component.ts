@@ -32,7 +32,7 @@ export class RacetrackLayoutDeleteDialogComponent {
     confirmDelete (id: number) {
         this.racetrackLayoutService.delete(id).subscribe(response => {
             this.eventManager.broadcast({
-                name: 'racetrackLayoutListModification' + this.racetrackLayout.racetrack.id,
+                name: 'racetrackLayoutsModification',
                 content: 'Deleted an racetrackLayout'
             });
             this.activeModal.dismiss(true);

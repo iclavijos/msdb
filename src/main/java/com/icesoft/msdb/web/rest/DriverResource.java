@@ -73,7 +73,7 @@ public class DriverResource {
         
         Driver result = driverRepository.save(driver);
         if (driver.getPortrait() != null) {
-	        String cdnUrl = cdnService.uploadImage(driver.getId().toString(), driver.getPortrait());
+	        String cdnUrl = cdnService.uploadImage(driver.getId().toString(), driver.getPortrait(), "drivers");
 			driver.portraitUrl(cdnUrl);
 			
 			result = driverRepository.save(result);
@@ -102,10 +102,10 @@ public class DriverResource {
             return createDriver(driver);
         }
         if (driver.getPortrait() != null) {
-	        String cdnUrl = cdnService.uploadImage(driver.getId().toString(), driver.getPortrait());
+	        String cdnUrl = cdnService.uploadImage(driver.getId().toString(), driver.getPortrait(), "drivers");
 	        driver.setPortraitUrl(cdnUrl);
         } else {
-        	cdnService.deleteImage(driver.getId().toString());
+        	cdnService.deleteImage(driver.getId().toString(), "drivers");
         }
         Driver result = driverRepository.save(driver);
         return ResponseEntity.ok()
@@ -155,7 +155,7 @@ public class DriverResource {
     public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
         log.debug("REST request to delete Driver : {}", id);
         driverRepository.delete(id);
-        cdnService.deleteImage(id.toString());
+        cdnService.deleteImage(id.toString(), "drivers");
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

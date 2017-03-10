@@ -46,14 +46,12 @@
             <tr *ngFor="let driver of drivers ;trackBy: trackId">
                 <td>{{driver.name}}</td>
                 <td>{{driver.surname}}</td>
-                <td>{{driver.birthDate | date:'mediumDate'}}</td>
+                <td>{{driver.birthDate | date:'fullDate'}}</td>
                 <td>{{driver.birthPlace}}</td>
-                <td>{{driver.deathDate | date:'mediumDate'}}</td>
+                <td>{{driver.deathDate | date:'fullDate'}}</td>
                 <td>{{driver.deathPlace}}</td>
                 <td>
-                    <a *ngIf="driver.portraitUrl" (click)="openFile(driver.portraitContentType, driver.portrait)">
-                        <img [src]="driver.portraitUrl" style="max-height: 30px;" alt="driver image"/>
-                    </a>
+                	<img *ngIf="driver.portraitUrl" [src]="driver.portraitUrl" style="max-height: 30px;" alt="driver image"/>
                 </td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">

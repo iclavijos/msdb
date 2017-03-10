@@ -1,6 +1,6 @@
 
 <div *ngIf="racetrackLayout">
-    <h2><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.detail.title">Racetrack Layout</span> {{racetrackLayout.id}}</h2>
+    <h2>{{racetrackLayout.racetrack.name}} - {{racetrackLayout.name}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
     <dl class="row-md jh-entity-details">
@@ -22,18 +22,12 @@
                 <a (click)="openFile(racetrackLayout.layoutImageContentType, racetrackLayout.layoutImage)">
                     <img [src]="'data:' + racetrackLayout.layoutImageContentType + ';base64,' + racetrackLayout.layoutImage" style="max-width: 100%;" alt="racetrackLayout image"/>
                 </a>
-                {{racetrackLayout.layoutImageContentType}}, {{byteSize(racetrackLayout.layoutImage)}}
             </div>
         </dd>
         <dt><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.active">Active</span></dt>
         <dd>
-            <span>{{racetrackLayout.active}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.racetrack">Racetrack</span></dt>
-        <dd>
-            <div *ngIf="racetrackLayout.racetrack">
-                <a [routerLink]="['/racetrack', racetrackLayout.racetrack?.id]">{{racetrackLayout.racetrack?.id}}</a>
-            </div>
+            <span><i *ngIf="racetrackLayout.active" class="fa fa-fw fa-check" aria-hidden="true"></i>
+				  <i *ngIf="!racetrackLayout.active" class="fa fa-fw fa-times" aria-hidden="true"></i></span>
         </dd>
     </dl>
 

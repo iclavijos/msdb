@@ -41,9 +41,7 @@
                 <td>{{racetrack.name}}</td>
                 <td>{{racetrack.location}}</td>
                 <td>
-                    <a *ngIf="racetrack.logo" (click)="openFile(racetrack.logoContentType, racetrack.logo)">
-                        <img [src]="'data:' + racetrack.logoContentType + ';base64,' + racetrack.logo" style="max-height: 30px;" alt="racetrack image"/>
-                    </a>
+                    <img *ngIf="racetrack.logoUrl" [src]="racetrack.logoUrl" style="max-height: 30px;" alt="racetrack logo"/>
                 </td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">

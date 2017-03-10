@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -46,12 +47,11 @@ public class Racetrack implements Serializable {
     @Column(name = "location", length = 100, nullable = false)
     private String location;
 
-    @Lob
-    @Column(name = "logo")
+    @Transient
     private byte[] logo;
-
-    @Column(name = "logo_content_type")
-    private String logoContentType;
+    
+    @Column(name = "logo_url")
+    private String logoUrl;
 
     @OneToMany(mappedBy = "racetrack")
     @JsonIgnore
@@ -105,17 +105,17 @@ public class Racetrack implements Serializable {
         this.logo = logo;
     }
 
-    public String getLogoContentType() {
-        return logoContentType;
+    public String getLogoUrl() {
+    	return logoUrl;
     }
-
-    public Racetrack logoContentType(String logoContentType) {
-        this.logoContentType = logoContentType;
-        return this;
+    
+    public Racetrack logoUrl(String logoUrl) {
+    	this.logoUrl = logoUrl;
+    	return this;
     }
-
-    public void setLogoContentType(String logoContentType) {
-        this.logoContentType = logoContentType;
+    
+    public void setLogoUrl(String logoUrl) {
+    	this.logoUrl = logoUrl;
     }
 
     public Set<RacetrackLayout> getLayouts() {
@@ -170,7 +170,7 @@ public class Racetrack implements Serializable {
             ", name='" + name + "'" +
             ", location='" + location + "'" +
             ", logo='" + logo + "'" +
-            ", logoContentType='" + logoContentType + "'" +
+            ", logoUrl='" + logoUrl + "'" +
             '}';
     }
 }

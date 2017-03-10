@@ -87,7 +87,7 @@ public class RacetrackServiceImpl implements RacetrackService{
     public void delete(Long id) {
         log.debug("Request to delete Racetrack : {}", id);
         Racetrack racetrack = racetrackRepository.findOne(id);
-        racetrackLayoutRepository.delete(racetrack.getLayouts());
+        racetrackLayoutRepository.deleteInBatch(racetrack.getLayouts());
         racetrackRepository.delete(id);
         //racetrackSearchRepository.delete(id);
     }

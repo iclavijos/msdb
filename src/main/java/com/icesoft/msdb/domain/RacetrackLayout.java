@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -45,12 +46,11 @@ public class RacetrackLayout implements Serializable {
     @Column(name = "year_first_use", nullable = false)
     private Integer yearFirstUse;
 
-    @Lob
-    @Column(name = "layout_image")
+    @Transient
     private byte[] layoutImage;
-
-    @Column(name = "layout_image_content_type")
-    private String layoutImageContentType;
+    
+    @Column
+    private String layoutImageUrl;
 
     @Column(name = "active")
     private Boolean active;
@@ -114,21 +114,17 @@ public class RacetrackLayout implements Serializable {
         return this;
     }
 
-    public void setLayoutImage(byte[] layoutImage) {
-        this.layoutImage = layoutImage;
+    public String getLayoutImageUrl() {
+    	return layoutImageUrl;
     }
-
-    public String getLayoutImageContentType() {
-        return layoutImageContentType;
+    
+    public RacetrackLayout layoutImageUrl(String layoutImageUrl) {
+    	this.layoutImageUrl = layoutImageUrl;
+    	return this;
     }
-
-    public RacetrackLayout layoutImageContentType(String layoutImageContentType) {
-        this.layoutImageContentType = layoutImageContentType;
-        return this;
-    }
-
-    public void setLayoutImageContentType(String layoutImageContentType) {
-        this.layoutImageContentType = layoutImageContentType;
+    
+    public void setLayoutImageUrl(String layoutImageUrl) {
+    	this.layoutImageUrl = layoutImageUrl;
     }
 
     public Boolean isActive() {
@@ -185,7 +181,7 @@ public class RacetrackLayout implements Serializable {
             ", length='" + length + "'" +
             ", yearFirstUse='" + yearFirstUse + "'" +
             ", layoutImage='" + layoutImage + "'" +
-            ", layoutImageContentType='" + layoutImageContentType + "'" +
+            ", layoutImageUrl='" + layoutImageUrl + "'" +
             ", active='" + active + "'" +
             '}';
     }

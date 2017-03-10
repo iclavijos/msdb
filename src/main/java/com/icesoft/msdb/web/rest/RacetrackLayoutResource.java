@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
@@ -38,9 +39,12 @@ public class RacetrackLayoutResource {
     private static final String ENTITY_NAME = "racetrackLayout";
         
     private final RacetrackLayoutRepository racetrackLayoutRepository;
+    
+    private final CDNService cdnService;
 
-    public RacetrackLayoutResource(RacetrackLayoutRepository racetrackLayoutRepository) {
+    public RacetrackLayoutResource(RacetrackLayoutRepository racetrackLayoutRepository, CDNService cdnService) {
         this.racetrackLayoutRepository = racetrackLayoutRepository;
+        this.cdnService = cdnService;
     }
 
     /**
@@ -58,6 +62,14 @@ public class RacetrackLayoutResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new racetrackLayout cannot already have an ID")).body(null);
         }
         RacetrackLayout result = racetrackLayoutRepository.save(racetrackLayout);
+      
+        if (result.getLayoutImageUrl() != null) {
+	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), racetrackLayout.getLayoutImage(), "racetrackLayouts");
+			result.setLayoutImageUrl(cdnUrl);
+			
+			result = racetrackLayoutRepository.save(result);
+        }
+        
         return ResponseEntity.created(new URI("/api/racetrack-layouts/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -78,6 +90,12 @@ public class RacetrackLayoutResource {
         log.debug("REST request to update RacetrackLayout : {}", racetrackLayout);
         if (racetrackLayout.getId() == null) {
             return createRacetrackLayout(racetrackLayout);
+        }
+        if (racetrackLayout.getLayoutImage() != null) {
+	        String cdnUrl = cdnService.uploadImage(racetrackLayout.getId().toString(), racetrackLayout.getLayoutImage(), "racetrackLayouts");
+	        racetrackLayout.setLayoutImageUrl(cdnUrl);
+        } else {
+        	cdnService.deleteImage(racetrackLayout.getId().toString(), "racetrackLayouts");
         }
         RacetrackLayout result = racetrackLayoutRepository.save(racetrackLayout);
         return ResponseEntity.ok()
@@ -123,6 +141,7 @@ public class RacetrackLayoutResource {
     public ResponseEntity<Void> deleteRacetrackLayout(@PathVariable Long id) {
         log.debug("REST request to delete RacetrackLayout : {}", id);
         racetrackLayoutRepository.delete(id);
+        cdnService.deleteImage(id.toString(), "racetrackLayouts");
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

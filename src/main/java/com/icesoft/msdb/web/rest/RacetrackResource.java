@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -25,9 +26,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
+import com.icesoft.msdb.repository.RacetrackLayoutRepository;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.RacetrackService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
@@ -45,11 +47,18 @@ public class RacetrackResource {
     private final Logger log = LoggerFactory.getLogger(RacetrackResource.class);
 
     private static final String ENTITY_NAME = "racetrack";
+    private static final String ENTITY_NAME_LAYOUT = "racetrackLayout";
 
     private final RacetrackService racetrackService;
+    
+    //TODO: move code inside service and change presentation layer to adapt to new URL's
+    @Autowired private RacetrackLayoutRepository racetrackLayoutRepository;
+    
+    private final CDNService cdnService;
 
-    public RacetrackResource(RacetrackService racetrackService) {
+    public RacetrackResource(RacetrackService racetrackService, CDNService cdnService) {
         this.racetrackService = racetrackService;
+        this.cdnService = cdnService;
     }
 
     /**
@@ -67,6 +76,12 @@ public class RacetrackResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new racetrack cannot already have an ID")).body(null);
         }
         Racetrack result = racetrackService.save(racetrack);
+        if (result.getLogo() != null) {
+	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getLogo(), "racetracks");
+			result.setLogoUrl(cdnUrl);
+			
+			result = racetrackService.save(result);
+        }
         return ResponseEntity.created(new URI("/api/racetracks/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -87,6 +102,12 @@ public class RacetrackResource {
         log.debug("REST request to update Racetrack : {}", racetrack);
         if (racetrack.getId() == null) {
             return createRacetrack(racetrack);
+        }
+        if (racetrack.getLogo() != null) {
+	        String cdnUrl = cdnService.uploadImage(racetrack.getId().toString(), racetrack.getLogo(), "racetracks");
+	        racetrack.setLogoUrl(cdnUrl);
+        } else {
+        	cdnService.deleteImage(racetrack.getId().toString(), "racetracks");
         }
         Racetrack result = racetrackService.save(racetrack);
         return ResponseEntity.ok()
@@ -147,6 +168,7 @@ public class RacetrackResource {
     public ResponseEntity<Void> deleteRacetrack(@PathVariable Long id) {
         log.debug("REST request to delete Racetrack : {}", id);
         racetrackService.delete(id);
+        cdnService.deleteImage(id.toString(), "racetracks");
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -165,6 +187,104 @@ public class RacetrackResource {
         Page<Racetrack> page = racetrackService.search(query.toLowerCase(), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/racetracks");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+    
+    /**
+     * POST  /racetrack-layouts : Create a new racetrackLayout.
+     *
+     * @param racetrackLayout the racetrackLayout to create
+     * @return the ResponseEntity with status 201 (Created) and with body the new racetrackLayout, or with status 400 (Bad Request) if the racetrackLayout has already an ID
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @PostMapping("/racetracks/{id}/racetrack-layouts")
+    @Timed
+    public ResponseEntity<RacetrackLayout> createRacetrackLayout(@Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
+        log.debug("REST request to save RacetrackLayout : {}", racetrackLayout);
+        if (racetrackLayout.getId() != null) {
+            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new racetrackLayout cannot already have an ID")).body(null);
+        }
+        RacetrackLayout result = racetrackLayoutRepository.save(racetrackLayout);
+      
+        if (result.getLayoutImageUrl() != null) {
+	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), racetrackLayout.getLayoutImage(), "racetrackLayouts");
+			result.setLayoutImageUrl(cdnUrl);
+			
+			result = racetrackLayoutRepository.save(result);
+        }
+        
+        return ResponseEntity.created(new URI("/api/racetrack-layouts/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME_LAYOUT, result.getId().toString()))
+            .body(result);
+    }
+
+    /**
+     * PUT  /racetrack-layouts : Updates an existing racetrackLayout.
+     *
+     * @param racetrackLayout the racetrackLayout to update
+     * @return the ResponseEntity with status 200 (OK) and with body the updated racetrackLayout,
+     * or with status 400 (Bad Request) if the racetrackLayout is not valid,
+     * or with status 500 (Internal Server Error) if the racetrackLayout couldnt be updated
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @PutMapping("/racetracks/{id}/racetrack-layouts")
+    @Timed
+    public ResponseEntity<RacetrackLayout> updateRacetrackLayout(@Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
+        log.debug("REST request to update RacetrackLayout : {}", racetrackLayout);
+        if (racetrackLayout.getId() == null) {
+            return createRacetrackLayout(racetrackLayout);
+        }
+        if (racetrackLayout.getLayoutImageUrl() != null) {
+	        String cdnUrl = cdnService.uploadImage(racetrackLayout.getId().toString(), racetrackLayout.getLayoutImage(), "racetrackLayouts");
+	        racetrackLayout.setLayoutImageUrl(cdnUrl);
+        } else {
+        	cdnService.deleteImage(racetrackLayout.getId().toString(), "racetrackLayouts");
+        }
+        RacetrackLayout result = racetrackLayoutRepository.save(racetrackLayout);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME_LAYOUT, racetrackLayout.getId().toString()))
+            .body(result);
+    }
+
+    /**
+     * GET  /racetrack-layouts : get all the racetrackLayouts.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of racetrackLayouts in body
+     */
+    @GetMapping("/racetracks/{id}/racetrack-layouts")
+    @Timed
+    public List<RacetrackLayout> getAllRacetrackLayouts() {
+        log.debug("REST request to get all RacetrackLayouts");
+        List<RacetrackLayout> racetrackLayouts = racetrackLayoutRepository.findAll();
+        return racetrackLayouts;
+    }
+
+    /**
+     * GET  /racetrack-layouts/:id : get the "id" racetrackLayout.
+     *
+     * @param id the id of the racetrackLayout to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the racetrackLayout, or with status 404 (Not Found)
+     */
+    @GetMapping("/racetracks/{id}/racetrack-layouts/{idLayout}")
+    @Timed
+    public ResponseEntity<RacetrackLayout> getRacetrackLayout(@PathVariable Long idLayout) {
+        log.debug("REST request to get RacetrackLayout : {}", idLayout);
+        RacetrackLayout racetrackLayout = racetrackLayoutRepository.findOne(idLayout);
+        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(racetrackLayout));
+    }
+
+    /**
+     * DELETE  /racetrack-layouts/:id : delete the "id" racetrackLayout.
+     *
+     * @param id the id of the racetrackLayout to delete
+     * @return the ResponseEntity with status 200 (OK)
+     */
+    @DeleteMapping("/racetracks/{id}/racetrack-layouts/{idLayout}")
+    @Timed
+    public ResponseEntity<Void> deleteRacetrackLayout(@PathVariable Long idLayout) {
+        log.debug("REST request to delete RacetrackLayout : {}", idLayout);
+        racetrackLayoutRepository.delete(idLayout);
+        cdnService.deleteImage(idLayout.toString(), "racetrackLayouts");
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME_LAYOUT, idLayout.toString())).build();
     }
 
 

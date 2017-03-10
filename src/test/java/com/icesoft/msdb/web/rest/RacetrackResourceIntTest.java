@@ -17,6 +17,7 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +33,7 @@ import org.springframework.util.Base64Utils;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.repository.RacetrackRepository;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.RacetrackService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
@@ -52,8 +54,6 @@ public class RacetrackResourceIntTest {
 
     private static final byte[] DEFAULT_LOGO = TestUtil.createByteArray(1, "0");
     private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(2, "1");
-    private static final String DEFAULT_LOGO_CONTENT_TYPE = "image/jpg";
-    private static final String UPDATED_LOGO_CONTENT_TYPE = "image/png";
 
     @Autowired
     private RacetrackRepository racetrackRepository;
@@ -76,11 +76,14 @@ public class RacetrackResourceIntTest {
     private MockMvc restRacetrackMockMvc;
 
     private Racetrack racetrack;
+    
+    @Mock
+    private CDNService cdnService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            RacetrackResource racetrackResource = new RacetrackResource(racetrackService);
+            RacetrackResource racetrackResource = new RacetrackResource(racetrackService, cdnService);
         this.restRacetrackMockMvc = MockMvcBuilders.standaloneSetup(racetrackResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -97,8 +100,7 @@ public class RacetrackResourceIntTest {
         Racetrack racetrack = new Racetrack()
                 .name(DEFAULT_NAME)
                 .location(DEFAULT_LOCATION)
-                .logo(DEFAULT_LOGO)
-                .logoContentType(DEFAULT_LOGO_CONTENT_TYPE);
+                .logo(DEFAULT_LOGO);
         return racetrack;
     }
 
@@ -126,7 +128,6 @@ public class RacetrackResourceIntTest {
         assertThat(testRacetrack.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testRacetrack.getLocation()).isEqualTo(DEFAULT_LOCATION);
         assertThat(testRacetrack.getLogo()).isEqualTo(DEFAULT_LOGO);
-        assertThat(testRacetrack.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
 
     }
 
@@ -199,7 +200,6 @@ public class RacetrackResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(racetrack.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].location").value(hasItem(DEFAULT_LOCATION.toString())))
-            .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
 
@@ -216,7 +216,6 @@ public class RacetrackResourceIntTest {
             .andExpect(jsonPath("$.id").value(racetrack.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.location").value(DEFAULT_LOCATION.toString()))
-            .andExpect(jsonPath("$.logoContentType").value(DEFAULT_LOGO_CONTENT_TYPE))
             .andExpect(jsonPath("$.logo").value(Base64Utils.encodeToString(DEFAULT_LOGO)));
     }
 
@@ -240,8 +239,7 @@ public class RacetrackResourceIntTest {
         updatedRacetrack
                 .name(UPDATED_NAME)
                 .location(UPDATED_LOCATION)
-                .logo(UPDATED_LOGO)
-                .logoContentType(UPDATED_LOGO_CONTENT_TYPE);
+                .logo(UPDATED_LOGO);
 
         restRacetrackMockMvc.perform(put("/api/racetracks")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -255,7 +253,6 @@ public class RacetrackResourceIntTest {
         assertThat(testRacetrack.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testRacetrack.getLocation()).isEqualTo(UPDATED_LOCATION);
         assertThat(testRacetrack.getLogo()).isEqualTo(UPDATED_LOGO);
-        assertThat(testRacetrack.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
     }
 
     @Test
@@ -306,7 +303,6 @@ public class RacetrackResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(racetrack.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].location").value(hasItem(DEFAULT_LOCATION.toString())))
-            .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
 
