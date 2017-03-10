@@ -23,8 +23,8 @@ public class CloudinaryService implements CDNService {
 	@Autowired Cloudinary cloudinary;
 
 	@Override
-	public String uploadImage(String imageId, byte[] imageData) throws MSDBException {
-		Map params = ObjectUtils.asMap("public_id", "drivers/" + imageId);
+	public String uploadImage(String imageId, byte[] imageData, String folder) throws MSDBException {
+		Map params = ObjectUtils.asMap("public_id", folder + "/" + imageId);
         File file = new File("drivers_" + imageId);
         try {
 	        FileUtils.writeByteArrayToFile(file, imageData);
@@ -39,9 +39,9 @@ public class CloudinaryService implements CDNService {
 	}
 
 	@Override
-	public void deleteImage(String imageId) throws MSDBException {
+	public void deleteImage(String imageId, String folder) throws MSDBException {
 		try {
-			cloudinary.uploader().destroy("drivers/" + imageId, ObjectUtils.emptyMap());
+			cloudinary.uploader().destroy(folder + "/" + imageId, ObjectUtils.emptyMap());
 		} catch (IOException e) {
 			log.error("Image could not be deleted from CDN", e);
 			throw new MSDBException(e);
