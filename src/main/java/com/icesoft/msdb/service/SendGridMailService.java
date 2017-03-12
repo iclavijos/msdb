@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
@@ -22,7 +21,7 @@ import com.sendgrid.SendGrid;
 
 import io.github.jhipster.config.JHipsterProperties;
 
-@Service("sendGridMailService")
+
 public class SendGridMailService implements MailService {
 	private final Logger log = LoggerFactory.getLogger(SendGridMailService.class);
 	
@@ -48,7 +47,7 @@ public class SendGridMailService implements MailService {
 
 	@Override
 	public void sendEmail(String to, String subject, String content, boolean isMultipart, boolean isHtml) {
-		log.debug("Send e-mail[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
+		log.info("Send e-mail[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
 				isMultipart, isHtml, to, subject, content);
 
 		Email from = new Email("robot@msdb.com");

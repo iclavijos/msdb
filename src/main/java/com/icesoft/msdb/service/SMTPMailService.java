@@ -8,13 +8,10 @@ import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Primary;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
@@ -28,9 +25,7 @@ import io.github.jhipster.config.JHipsterProperties;
  * We use the @Async annotation to send e-mails asynchronously.
  * </p>
  */
-@Service
-@Qualifier("smtpMailService")
-@Primary
+
 public class SMTPMailService implements MailService {
 
     private final Logger log = LoggerFactory.getLogger(SMTPMailService.class);
@@ -46,6 +41,8 @@ public class SMTPMailService implements MailService {
     private final MessageSource messageSource;
 
     private final SpringTemplateEngine templateEngine;
+    
+    
 
     public SMTPMailService(JHipsterProperties jHipsterProperties, JavaMailSender javaMailSender,
             MessageSource messageSource, SpringTemplateEngine templateEngine) {
