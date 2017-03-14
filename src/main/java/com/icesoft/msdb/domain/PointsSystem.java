@@ -10,13 +10,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import com.icesoft.msdb.repository.converter.PointsConverter;
 
 /**
  * A PointsSystem.
@@ -38,14 +38,12 @@ public class PointsSystem implements Serializable {
     @Column(name = "name", length = 50, nullable = false)
     private String name;
 
-    @NotNull
     @Size(max = 100)
     @Column(name = "description", length = 100, nullable = false)
     private String description;
 
     @Column(name = "points")
-    @Convert(converter = PointsConverter.class)
-    private int[] points;
+    private String points;
 
     @Column(name = "points_most_lead_laps")
     private Integer pointsMostLeadLaps;
@@ -58,8 +56,24 @@ public class PointsSystem implements Serializable {
 
     @Column(name = "points_lead_lap")
     private Integer pointsLeadLap;
+    
+    @Column(name="active")
+    private Boolean active;
 
-    public Long getId() {
+    public Boolean isActive() {
+		return active;
+	}
+    
+    public PointsSystem active(Boolean active) {
+    	this.active = active;
+    	return this;
+    }
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	public Long getId() {
         return id;
     }
 
@@ -93,16 +107,26 @@ public class PointsSystem implements Serializable {
         this.description = description;
     }
 
-    public int[] getPoints() {
+    public String getPoints() {
         return points;
     }
+    
+    @Transient
+    public int[] disclosePoints() {
+    	String[] tmp = StringUtils.remove(points, " ").split(",");
+		int[] result = new int[tmp.length];
+		for(int i = 0; i < result.length; i++) {
+			result[i] = Integer.parseInt(tmp[i]);
+		}
+		return result;
+    }
 
-    public PointsSystem points(int[] points) {
+    public PointsSystem points(String points) {
         this.points = points;
         return this;
     }
 
-    public void setPoints(int[] points) {
+    public void setPoints(String points) {
         this.points = points;
     }
 

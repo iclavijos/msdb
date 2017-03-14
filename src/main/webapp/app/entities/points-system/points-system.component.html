@@ -28,21 +28,19 @@
     <div class="table-responsive" *ngIf="pointsSystems">
         <table class="table table-striped">
             <thead>
-            <tr>
-            <th><span jhiTranslate="global.field.id">ID</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.name">Name</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.description">Description</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.points">Points</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps">Points Most Lead Laps</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsFastLap">Points Fast Lap</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsPole">Points Pole</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsLeadLap">Points Lead Lap</span></th>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.name">Name</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="description"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.description">Description</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="points"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.points">Points</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="pointsMostLeadLaps"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps">Points Most Lead Laps</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="pointsFastLap"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsFastLap">Points Fast Lap</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="pointsPole"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsPole">Points Pole</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="pointsLeadLap"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsLeadLap">Points Lead Lap</span> <span class="fa fa-sort"></span></th>
             <th></th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let pointsSystem of pointsSystems ;trackBy: trackId">
-                <td><a [routerLink]="['../points-system', pointsSystem.id ]">{{pointsSystem.id}}</a></td>
                 <td>{{pointsSystem.name}}</td>
                 <td>{{pointsSystem.description}}</td>
                 <td>{{pointsSystem.points}}</td>
@@ -78,4 +76,12 @@
             </tbody>
         </table>
     </div>
+        <div *ngIf="pointsSystems && pointsSystems.length">
+            <div class="row justify-content-center">
+                <jhi-item-count [page]="page" [total]="queryCount" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+            </div>
+            <div class="row justify-content-center">
+                <ngb-pagination [collectionSize]="totalItems" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
+            </div>
+        </div>
 </div>

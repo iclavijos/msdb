@@ -2,6 +2,8 @@ package com.icesoft.msdb.repository;
 
 import com.icesoft.msdb.domain.PointsSystem;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 
 import java.util.List;
@@ -9,8 +11,8 @@ import java.util.List;
 /**
  * Spring Data JPA repository for the PointsSystem entity.
  */
+@SuppressWarnings("unused")
 public interface PointsSystemRepository extends JpaRepository<PointsSystem,Long> {
 
-	@Query("select p from PointsSystem p where p.name like lower(concat('%', ?1,'%')) or p.description like lower(concat('%', ?1,'%'))")
-	List<PointsSystem> search(String searchValue);
+	Page<PointsSystem> findByNameContainsIgnoreCase(String query, Pageable pageable);
 }

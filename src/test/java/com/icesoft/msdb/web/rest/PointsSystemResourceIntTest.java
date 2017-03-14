@@ -48,8 +48,8 @@ public class PointsSystemResourceIntTest {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
-    private static final int[] DEFAULT_POINTS = {9, 6, 4, 3, 2, 1};
-    private static final int[] UPDATED_POINTS = {10, 6, 4, 3, 2, 1};
+    private static final String DEFAULT_POINTS = "AAAAAAAAAA";
+    private static final String UPDATED_POINTS = "BBBBBBBBBB";
 
     private static final Integer DEFAULT_POINTS_MOST_LEAD_LAPS = 1;
     private static final Integer UPDATED_POINTS_MOST_LEAD_LAPS = 2;
@@ -210,7 +210,7 @@ public class PointsSystemResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(pointsSystem.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
-            .andExpect(jsonPath("$.[*].points").value(hasItem(DEFAULT_POINTS)))
+            .andExpect(jsonPath("$.[*].points").value(hasItem(DEFAULT_POINTS.toString())))
             .andExpect(jsonPath("$.[*].pointsMostLeadLaps").value(hasItem(DEFAULT_POINTS_MOST_LEAD_LAPS)))
             .andExpect(jsonPath("$.[*].pointsFastLap").value(hasItem(DEFAULT_POINTS_FAST_LAP)))
             .andExpect(jsonPath("$.[*].pointsPole").value(hasItem(DEFAULT_POINTS_POLE)))
@@ -230,7 +230,7 @@ public class PointsSystemResourceIntTest {
             .andExpect(jsonPath("$.id").value(pointsSystem.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
-            .andExpect(jsonPath("$.points").value(DEFAULT_POINTS))
+            .andExpect(jsonPath("$.points").value(DEFAULT_POINTS.toString()))
             .andExpect(jsonPath("$.pointsMostLeadLaps").value(DEFAULT_POINTS_MOST_LEAD_LAPS))
             .andExpect(jsonPath("$.pointsFastLap").value(DEFAULT_POINTS_FAST_LAP))
             .andExpect(jsonPath("$.pointsPole").value(DEFAULT_POINTS_POLE))
@@ -330,7 +330,7 @@ public class PointsSystemResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(pointsSystem.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
-            .andExpect(jsonPath("$.[*].points").value(hasItem(DEFAULT_POINTS)))
+            .andExpect(jsonPath("$.[*].points").value(hasItem(DEFAULT_POINTS.toString())))
             .andExpect(jsonPath("$.[*].pointsMostLeadLaps").value(hasItem(DEFAULT_POINTS_MOST_LEAD_LAPS)))
             .andExpect(jsonPath("$.[*].pointsFastLap").value(hasItem(DEFAULT_POINTS_FAST_LAP)))
             .andExpect(jsonPath("$.[*].pointsPole").value(hasItem(DEFAULT_POINTS_POLE)))

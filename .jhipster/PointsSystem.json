@@ -22,7 +22,7 @@
         },
         {
             "fieldName": "points",
-            "fieldType": "Integer"
+            "fieldType": "String"
         },
         {
             "fieldName": "pointsMostLeadLaps",
@@ -44,6 +44,6 @@
     "changelogDate": "20170213140812",
     "entityTableName": "points_system",
     "dto": "no",
-    "pagination": "no",
+    "pagination": "pagination",
     "service": "no"
 }

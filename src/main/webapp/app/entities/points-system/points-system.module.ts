@@ -14,6 +14,7 @@ import {
     PointsSystemDeleteDialogComponent,
     pointsSystemRoute,
     pointsSystemPopupRoute,
+    PointsSystemResolvePagingParams,
 } from './';
 
 let ENTITY_STATES = [
@@ -44,6 +45,7 @@ let ENTITY_STATES = [
     providers: [
         PointsSystemService,
         PointsSystemPopupService,
+        PointsSystemResolvePagingParams,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

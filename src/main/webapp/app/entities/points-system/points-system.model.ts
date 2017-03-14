@@ -3,10 +3,10 @@ export class PointsSystem {
         public id?: number,
         public name?: string,
         public description?: string,
-        public points?: number,
-        public pointsMostLeadLaps?: number,
-        public pointsFastLap?: number,
-        public pointsPole?: number,
-        public pointsLeadLap?: number,
+        public points?: string,
+        public pointsMostLeadLaps = 0,
+        public pointsFastLap = 0,
+        public pointsPole = 0,
+        public pointsLeadLap = 0,
     ) { }
 }
