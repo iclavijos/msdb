@@ -1,4 +1,3 @@
-import { EventEntry } from '../event-entry';
 export class Team {
     constructor(
         public id?: number,
@@ -6,6 +5,6 @@ export class Team {
         public description?: string,
         public hqLocation?: string,
         public logo?: any,
-        public participations?: EventEntry,
+        public logoUrl?: string,
     ) { }
 }

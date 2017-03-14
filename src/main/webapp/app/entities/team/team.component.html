@@ -1,7 +1,8 @@
 <div>
     <h2>
         <span jhiTranslate="motorsportsDatabaseApp.team.home.title">Teams</span>
-        <button class="btn btn-primary float-right create-team" [routerLink]="['/', { outlets: { popup: ['team-new'] } }]">
+        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" class="btn btn-primary float-right create-team" 
+        	[routerLink]="['/', { outlets: { popup: ['team-new'] } }]">
             <span class="fa fa-plus"></span>
             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.team.home.createLabel">
             Create new Team
@@ -29,31 +30,20 @@
         <table class="table table-striped">
             <thead>
             <tr>
-            <th><span jhiTranslate="global.field.id">ID</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.team.name">Name</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.team.description">Description</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.team.hqLocation">Hq Location</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.team.logo">Logo</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.team.participations">Participations</span></th>
             <th></th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let team of teams ;trackBy: trackId">
-                <td><a [routerLink]="['../team', team.id ]">{{team.id}}</a></td>
                 <td>{{team.name}}</td>
                 <td>{{team.description}}</td>
                 <td>{{team.hqLocation}}</td>
                 <td>
-                    <a *ngIf="team.logo" (click)="openFile(team.logoContentType, team.logo)">
-                        <img [src]="'data:' + team.logoContentType + ';base64,' + team.logo" style="max-height: 30px;" alt="team image"/>
-                    </a>
-                    <span *ngIf="team.logo">{{team.logoContentType}}, {{byteSize(team.logo)}}</span>
-                </td>
-                <td>
-                    <span *ngFor="let participations of team.participations; let last = last">
-                            <a class="form-control-static" [routerLink]="['../event-entry', participations?.id ]">{{participations.id}}</a>{{last ? '' : ', '}}
-                        </span>
+                    <img *ngIf="team.logoUrl" [src]="team.logoUrl" style="max-height: 30px;" alt="driver image"/>
                 </td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
@@ -63,14 +53,14 @@
                             <span class="fa fa-eye"></span>
                             <span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                 [routerLink]="['/', { outlets: { popup: 'team/'+ team.id + '/edit'} }]"
                                 replaceUrl="true"
                                 class="btn btn-primary btn-sm">
                             <span class="fa fa-pencil"></span>
                             <span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
                                 [routerLink]="['/', { outlets: { popup: 'team/'+ team.id + '/delete'} }]"
                                 replaceUrl="true"
                                 class="btn btn-danger btn-sm">
@@ -83,4 +73,12 @@
             </tbody>
         </table>
     </div>
+    <div *ngIf="teams && teams.length">                                                                                  
+    <div class="row justify-content-center">                                                                         
+        <jhi-item-count [page]="page" [total]="queryCount" [itemsPerPage]="itemsPerPage"></jhi-item-count>           
+    </div>                                                                                                           
+    <div class="row justify-content-center">                                                                         
+        <ngb-pagination [collectionSize]="totalItems" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
+    </div>                                                                                                           
+</div>                                                                                                               
 </div>

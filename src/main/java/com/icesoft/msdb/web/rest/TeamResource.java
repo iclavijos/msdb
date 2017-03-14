@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.repository.TeamRepository;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
@@ -39,10 +40,13 @@ public class TeamResource {
     private static final String ENTITY_NAME = "team";
         
     private final TeamRepository teamRepository;
+    
+    private final CDNService cdnService;
 
 
-    public TeamResource(TeamRepository teamRepository) {
+    public TeamResource(TeamRepository teamRepository, CDNService cdnService) {
         this.teamRepository = teamRepository;
+        this.cdnService = cdnService;
     }
 
     /**
@@ -60,6 +64,12 @@ public class TeamResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new team cannot already have an ID")).body(null);
         }
         Team result = teamRepository.save(team);
+        if (team.getLogo() != null) {
+	        String cdnUrl = cdnService.uploadImage(team.getId().toString(), team.getLogo(), "teams");
+			team.logoUrl(cdnUrl);
+			
+			result = teamRepository.save(result);
+        }
         return ResponseEntity.created(new URI("/api/teams/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -80,6 +90,12 @@ public class TeamResource {
         log.debug("REST request to update Team : {}", team);
         if (team.getId() == null) {
             return createTeam(team);
+        }
+        if (team.getLogo() != null) {
+        	String cdnUrl = cdnService.uploadImage(team.getId().toString(), team.getLogo(), "teams");
+			team.logoUrl(cdnUrl);
+        } else {
+        	cdnService.deleteImage(team.getId().toString(), "teams");
         }
         Team result = teamRepository.save(team);
         return ResponseEntity.ok()
@@ -125,6 +141,7 @@ public class TeamResource {
     public ResponseEntity<Void> deleteTeam(@PathVariable Long id) {
         log.debug("REST request to delete Team : {}", id);
         teamRepository.delete(id);
+        cdnService.deleteImage(id.toString(), "teams");
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

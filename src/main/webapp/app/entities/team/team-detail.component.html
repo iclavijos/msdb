@@ -1,6 +1,6 @@
 
 <div *ngIf="team">
-    <h2><span jhiTranslate="motorsportsDatabaseApp.team.detail.title">Team</span> {{team.id}}</h2>
+    <h2>{{team.name}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
     <dl class="row-md jh-entity-details">
@@ -25,12 +25,6 @@
                 {{team.logoContentType}}, {{byteSize(team.logo)}}
             </div>
         </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.team.participations">Participations</span></dt>
-        <dd>
-            <span *ngFor="let participations of team.participations; let last = last">
-                <a [routerLink]="['/event-entry', participations?.id ]">{{participations.id}}</a>{{last ? '' : ', '}}
-            </span>
-        </dd>
     </dl>
 
     <button type="submit"
@@ -39,7 +33,7 @@
         <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
     </button>
 
-    <button type="button"
+    <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
             [routerLink]="['/', { outlets: { popup: 'team/'+ team.id + '/edit'} }]"
             replaceUrl="true"
             class="btn btn-primary">

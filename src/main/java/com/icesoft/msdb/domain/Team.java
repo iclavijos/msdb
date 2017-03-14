@@ -12,14 +12,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A Team.
@@ -49,18 +51,18 @@ public class Team implements Serializable {
     @Column(name = "hq_location", length = 100)
     private String hqLocation;
 
-    @Lob
-    @Column(name = "logo")
+    @Transient
     private byte[] logo;
-
-    @Column(name = "logo_content_type")
-    private String logoContentType;
+    
+    @Column
+    private String logoUrl;
 
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JoinTable(name = "team_participations",
                joinColumns = @JoinColumn(name="teams_id", referencedColumnName="id"),
                inverseJoinColumns = @JoinColumn(name="participations_id", referencedColumnName="id"))
+    @JsonIgnore
     private Set<EventEntry> participations = new HashSet<>();
 
     public Long getId() {
@@ -123,17 +125,17 @@ public class Team implements Serializable {
         this.logo = logo;
     }
 
-    public String getLogoContentType() {
-        return logoContentType;
+    public String getLogoUrl() {
+    	return logoUrl;
     }
-
-    public Team logoContentType(String logoContentType) {
-        this.logoContentType = logoContentType;
-        return this;
+    
+    public Team logoUrl(String logoUrl) {
+    	this.logoUrl = logoUrl;
+    	return this;
     }
-
-    public void setLogoContentType(String logoContentType) {
-        this.logoContentType = logoContentType;
+    
+    public void setLogoUrl(String logoUrl) {
+    	this.logoUrl = logoUrl;
     }
 
     public Set<EventEntry> getParticipations() {
@@ -189,7 +191,7 @@ public class Team implements Serializable {
             ", description='" + description + "'" +
             ", hqLocation='" + hqLocation + "'" +
             ", logo='" + logo + "'" +
-            ", logoContentType='" + logoContentType + "'" +
+            ", logoUrl='" + logoUrl + "'" +
             '}';
     }
 }

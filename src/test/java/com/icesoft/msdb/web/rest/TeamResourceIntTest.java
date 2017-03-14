@@ -17,6 +17,7 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +33,7 @@ import org.springframework.util.Base64Utils;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.repository.TeamRepository;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
@@ -54,8 +56,6 @@ public class TeamResourceIntTest {
 
     private static final byte[] DEFAULT_LOGO = TestUtil.createByteArray(1, "0");
     private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(2, "1");
-    private static final String DEFAULT_LOGO_CONTENT_TYPE = "image/jpg";
-    private static final String UPDATED_LOGO_CONTENT_TYPE = "image/png";
 
     @Autowired
     private TeamRepository teamRepository;
@@ -75,11 +75,14 @@ public class TeamResourceIntTest {
     private MockMvc restTeamMockMvc;
 
     private Team team;
+    
+    @Mock
+    private CDNService cdnService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            TeamResource teamResource = new TeamResource(teamRepository);
+            TeamResource teamResource = new TeamResource(teamRepository, cdnService);
         this.restTeamMockMvc = MockMvcBuilders.standaloneSetup(teamResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -97,8 +100,7 @@ public class TeamResourceIntTest {
                 .name(DEFAULT_NAME)
                 .description(DEFAULT_DESCRIPTION)
                 .hqLocation(DEFAULT_HQ_LOCATION)
-                .logo(DEFAULT_LOGO)
-                .logoContentType(DEFAULT_LOGO_CONTENT_TYPE);
+                .logo(DEFAULT_LOGO);
         return team;
     }
 
@@ -127,7 +129,6 @@ public class TeamResourceIntTest {
         assertThat(testTeam.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testTeam.getHqLocation()).isEqualTo(DEFAULT_HQ_LOCATION);
         assertThat(testTeam.getLogo()).isEqualTo(DEFAULT_LOGO);
-        assertThat(testTeam.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
     }
 
     @Test
@@ -182,7 +183,6 @@ public class TeamResourceIntTest {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
             .andExpect(jsonPath("$.[*].hqLocation").value(hasItem(DEFAULT_HQ_LOCATION.toString())))
-            .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
 
@@ -200,7 +200,6 @@ public class TeamResourceIntTest {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
             .andExpect(jsonPath("$.hqLocation").value(DEFAULT_HQ_LOCATION.toString()))
-            .andExpect(jsonPath("$.logoContentType").value(DEFAULT_LOGO_CONTENT_TYPE))
             .andExpect(jsonPath("$.logo").value(Base64Utils.encodeToString(DEFAULT_LOGO)));
     }
 
@@ -225,8 +224,7 @@ public class TeamResourceIntTest {
                 .name(UPDATED_NAME)
                 .description(UPDATED_DESCRIPTION)
                 .hqLocation(UPDATED_HQ_LOCATION)
-                .logo(UPDATED_LOGO)
-                .logoContentType(UPDATED_LOGO_CONTENT_TYPE);
+                .logo(UPDATED_LOGO);
 
         restTeamMockMvc.perform(put("/api/teams")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -241,7 +239,6 @@ public class TeamResourceIntTest {
         assertThat(testTeam.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testTeam.getHqLocation()).isEqualTo(UPDATED_HQ_LOCATION);
         assertThat(testTeam.getLogo()).isEqualTo(UPDATED_LOGO);
-        assertThat(testTeam.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
     }
 
     @Test
@@ -293,7 +290,6 @@ public class TeamResourceIntTest {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
             .andExpect(jsonPath("$.[*].hqLocation").value(hasItem(DEFAULT_HQ_LOCATION.toString())))
-            .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
 
