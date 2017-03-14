@@ -2,7 +2,6 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.List;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -17,7 +16,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,14 +28,15 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.Driver;
-import com.icesoft.msdb.domain.ImportType;
 import com.icesoft.msdb.domain.Imports;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
+import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.domain.serializer.ParseDeserializer;
 import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.RacetrackRepository;
+import com.icesoft.msdb.repository.TeamRepository;
 import com.icesoft.msdb.service.dto.RacetrackWithLayoutsImportDTO;
 
 /**
@@ -52,6 +51,7 @@ public class ImportsResource {
     @Autowired private DriverRepository driversRepository;
     @Autowired private RacetrackRepository racetrackRepository;
     @Autowired private RacetrackLayoutRepository racetrackLayoutRepository;
+    @Autowired private TeamRepository teamRepository;
 
     @PostMapping("/imports")
     @Timed
@@ -60,16 +60,11 @@ public class ImportsResource {
         log.debug("REST request to import CSV contents : {}", imports.getImportType());
         
         String data = new String(DatatypeConverter.parseBase64Binary(imports.getCsvContents()));
-        try {
-	        switch(imports.getImportType()) {
-	        	case DRIVERS: importDrivers(data); break;
-	        	case RACETRACKS: importRacetracks(data); break;
-	        	default: log.warn("The uploaded file does not correspond to any known entity");
-	        }
-        } catch (MSDBException e) {
-        	HttpHeaders textPlainHeaders = new HttpHeaders();
-            textPlainHeaders.setContentType(MediaType.TEXT_PLAIN);
-        	return new ResponseEntity<>("imports.fail", textPlainHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        switch(imports.getImportType()) {
+        	case DRIVERS: importDrivers(data); break;
+        	case RACETRACKS: importRacetracks(data); break;
+        	case TEAMS: importTeams(data); break;
+        	default: log.warn("The uploaded file does not correspond to any known entity");
         }
         
         return new ResponseEntity<>("File uploaded", HttpStatus.ACCEPTED);
@@ -139,6 +134,20 @@ public class ImportsResource {
         	}
         	
         }
+    }
+    
+    private void importTeams(String data) {
+    	MappingIterator<Team> readValues = initializeIterator(new Team(), data);
+        while (readValues.hasNext()) {
+        	Team team = readValues.next();
+        	if (!teamRepository.search(team.getName()).isEmpty()) {
+        		log.debug("Importing team: {}", team);
+	        	teamRepository.save(team);
+        	} else {
+        		log.warn("Team {} already exist in the database. Skipping...", team);
+        	}
+        }
+        
     }
 
 }

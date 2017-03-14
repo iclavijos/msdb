@@ -14,8 +14,6 @@ import { ImportsService } from './imports.service';
 export class ImportsComponent implements OnInit {
     imports: Imports;
 
-    private fileUploadComponent: any;
-
     constructor(
         private jhiLanguageService: JhiLanguageService,
         private route: ActivatedRoute,
@@ -38,7 +36,6 @@ export class ImportsComponent implements OnInit {
 //            if (!/^excel\//.test($file.type)) {
 //                return;
 //            }
-            this.fileUploadComponent = $event.target;
             this.dataUtils.toBase64($file, (base64Data) => {
                 this.imports.csvContents = base64Data;
             });
@@ -55,8 +52,6 @@ export class ImportsComponent implements OnInit {
     
     success() {
         this.alertService.success('global.messages.info.imports.success', null);
-        this.fileUploadComponent = null;
-        
     }
     
     fail() {
