@@ -30,7 +30,7 @@
                 <constraints nullable="false" />
             </column>
 
-            <column name="points" type="integer">
+            <column name="points" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
 

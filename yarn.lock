@@ -4665,10 +4665,6 @@ ng-jhipster@0.1.8:
   dependencies:
     ng2-translate "4.2.0"
 
-ng2-completer@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/ng2-completer/-/ng2-completer-1.2.0.tgz#fdf5b8a7cd1dd16934bfbaa141cf9400850741f6"
-
 ng2-translate@4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/ng2-translate/-/ng2-translate-4.2.0.tgz#83bc8feca329b5fc56a636e36073241c6280c659"
