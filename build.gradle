@@ -175,10 +175,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-logging"
     compile "org.springframework.boot:spring-boot-starter-aop"
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
-    // compile "com.github.vanroy:spring-boot-starter-data-jest:2.3.0.RELEASE"
-    // needed to get around elasticsearch stacktrace about jna not found
-    // https://github.com/elastic/elasticsearch/issues/13245
-    compile "net.java.dev.jna:jna"
+    compile "org.springframework.boot:spring-boot-starter-data-mongodb"
     compile "org.springframework.boot:spring-boot-starter-security"
     compile ("org.springframework.boot:spring-boot-starter-web") {
         exclude module: 'spring-boot-starter-tomcat'

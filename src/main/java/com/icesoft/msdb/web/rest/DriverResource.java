@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.icesoft.msdb.domain.Driver;
+import com.icesoft.msdb.domain.Statistics;
 import com.icesoft.msdb.repository.DriverRepository;
+import com.icesoft.msdb.repository.StatisticsRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
@@ -48,11 +52,14 @@ public class DriverResource {
     private static final String ENTITY_NAME = "driver";
         
     private final DriverRepository driverRepository;
+    
+    private final StatisticsRepository statsRepo;
 
     private final CDNService cdnService;
 
-    public DriverResource(DriverRepository driverRepository, CDNService cdnService) {
+    public DriverResource(DriverRepository driverRepository, StatisticsRepository statsRepo, CDNService cdnService) {
         this.driverRepository = driverRepository;
+        this.statsRepo = statsRepo;
         this.cdnService = cdnService;
     }
 
@@ -142,6 +149,17 @@ public class DriverResource {
         log.debug("REST request to get Driver : {}", id);
         Driver driver = driverRepository.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(driver));
+    }
+    
+    /**
+     * 
+     */
+    @GetMapping("/drivers/{id}/statistics")
+    @Timed
+    public ResponseEntity<Statistics> getDriverStatistics(@PathVariable Long id) {
+    	log.debug("REST request to get statistics for driver : {}", id);
+    	Statistics stats = statsRepo.findOne(id);
+        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(stats));
     }
 
     /**
