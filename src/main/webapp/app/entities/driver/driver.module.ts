@@ -3,8 +3,6 @@ import { RouterModule } from '@angular/router';
 
 import { MotorsportsDatabaseSharedModule } from '../../shared';
 
-import { AutoCompleteModule } from 'primeng/components/autocomplete/autocomplete';
-
 import {
     DriverService,
     DriverPopupService,
@@ -28,7 +26,6 @@ let ENTITY_STATES = [
     imports: [
         MotorsportsDatabaseSharedModule,
         RouterModule.forRoot(ENTITY_STATES, { useHash: true }),
-        AutoCompleteModule
     ],
     declarations: [
         DriverComponent,

@@ -1,4 +1,3 @@
-import { EventEntry } from '../event-entry';
 export class Driver {
     constructor(
         public id?: number,
