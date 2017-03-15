@@ -3,52 +3,117 @@
     <router-outlet name="navbar"></router-outlet>
 </div>
 <div class="container-fluid">
-	<!-- nav class="col-sm-3 col-md-2 hidden-xs-down bg-faded sidebar">
-          <ul class="nav nav-pills flex-column">
-            <li class="nav-item">
-              <a class="nav-link active" href="#">Overview <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Reports</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Analytics</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Export</a>
-            </li>
-          </ul>
-
-          <ul class="nav nav-pills flex-column">
-            <li class="nav-item">
-              <a class="nav-link" href="#">Nav item</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Nav item again</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">One more nav</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Another nav item</a>
-            </li>
-          </ul>
-
-          <ul class="nav nav-pills flex-column">
-            <li class="nav-item">
-              <a class="nav-link" href="#">Nav item again</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">One more nav</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Another nav item</a>
-            </li>
-          </ul>
-        </nav -->
-    <div class="card jh-card">
-        <router-outlet></router-outlet>
-        <router-outlet name="popup"></router-outlet>
-    </div>
+	<div class="row">
+		<div class="col-lg-2 col-md-2" *ngIf="isAuthenticated()">
+			<ul class="navbar-nav ml-auto">
+            	<li uiSrefActive="active">
+		            <a class="dropdown-item" routerLink="driver">
+		                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+		                <span jhiTranslate="global.menu.entities.driver">Driver</span>
+		            </a>
+		        </li>
+		        <li uiSrefActive="active">
+		            <a class="dropdown-item" routerLink="racetrack">
+		                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+		                <span jhiTranslate="global.menu.entities.racetrack">Racetrack</span>
+		            </a>
+		        </li>
+		        <li uiSrefActive="active">
+		            <a class="dropdown-item" routerLink="team">
+		                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+		                <span jhiTranslate="global.menu.entities.team">Team</span>
+		            </a>
+		        </li>
+		        <li uiSrefActive="active">
+                    <a class="dropdown-item" routerLink="car">
+                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                        <span jhiTranslate="global.menu.entities.car">Car</span>
+                    </a>
+                </li>
+                <li uiSrefActive="active">
+                    <a class="dropdown-item" routerLink="chassis">
+                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                        <span jhiTranslate="global.menu.entities.chassis">Chassis</span>
+                    </a>
+                </li>
+                <li uiSrefActive="active">
+                    <a class="dropdown-item" routerLink="engine">
+                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                        <span jhiTranslate="global.menu.entities.engine">Engine</span>
+                    </a>
+                </li>
+                <li uiSrefActive="active">
+		            <a class="dropdown-item" routerLink="tyre-provider">
+		                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+		                <span jhiTranslate="global.menu.entities.tyreProvider">Tyre Provider</span>
+		            </a>
+		        </li>
+		        <li uiSrefActive="active">
+                    <a class="dropdown-item" routerLink="fuel-provider">
+                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                        <span jhiTranslate="global.menu.entities.fuelProvider">Fuel Provider</span>
+                    </a>
+                </li>
+		        <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" uiSrefActive="active">
+		            <a class="dropdown-item" routerLink="points-system">
+		                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+		                <span jhiTranslate="global.menu.entities.pointsSystem">Points System</span>
+		            </a>
+		        </li>
+                <li uiSrefActive="active">
+                    <a class="dropdown-item" routerLink="category">
+                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                        <span jhiTranslate="global.menu.entities.category">Category</span>
+                    </a>
+                </li>
+                <li uiSrefActive="active">
+                    <a class="dropdown-item" routerLink="series">
+                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                        <span jhiTranslate="global.menu.entities.series">Series</span>
+                    </a>
+                </li>
+                <li uiSrefActive="active" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
+                    <a class="dropdown-item" routerLink="series-edition">
+                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                        <span jhiTranslate="global.menu.entities.seriesEdition">Series Edition</span>
+                    </a>
+                </li>
+                <li uiSrefActive="active">
+                    <a class="dropdown-item" routerLink="event">
+                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                        <span jhiTranslate="global.menu.entities.event">Event</span>
+                    </a>
+                </li>
+                <li uiSrefActive="active" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
+                    <a class="dropdown-item" routerLink="event-session">
+                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                        <span jhiTranslate="global.menu.entities.eventSession">Event Session</span>
+                    </a>
+                </li>
+                <li uiSrefActive="active" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
+                    <a class="dropdown-item" routerLink="event-edition">
+                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                        <span jhiTranslate="global.menu.entities.eventEdition">Event Edition</span>
+                    </a>
+                </li>
+                <li uiSrefActive="active" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
+                    <a class="dropdown-item" routerLink="event-entry">
+                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                        <span jhiTranslate="global.menu.entities.eventEntry">Event Entry</span>
+                    </a>
+                </li>
+                <li uiSrefActive="active" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
+                    <a class="dropdown-item" routerLink="event-entry-result">
+                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                        <span jhiTranslate="global.menu.entities.eventEntryResult">Event Entry Result</span>
+                    </a>
+                </li>
+           	</ul>
+		</div>
+		<div class="col-lg-10 col-md-10 card jh-card">
+	        <router-outlet></router-outlet>
+	        <router-outlet name="popup"></router-outlet>
+	    </div>
+	</div>
     <jhi-footer></jhi-footer>
 </div>
