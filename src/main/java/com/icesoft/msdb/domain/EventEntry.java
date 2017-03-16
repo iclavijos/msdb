@@ -110,13 +110,13 @@ public class EventEntry implements Serializable {
 
     public EventEntry addParticipants(Team team) {
         this.participants.add(team);
-        team.getParticipations().add(this);
+        //team.getParticipations().add(this);
         return this;
     }
 
     public EventEntry removeParticipants(Team team) {
         this.participants.remove(team);
-        team.getParticipations().remove(this);
+        //team.getParticipations().remove(this);
         return this;
     }
 
