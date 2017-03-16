@@ -16,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,7 @@ import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.Statistics;
 import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.StatisticsRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
@@ -72,6 +74,7 @@ public class DriverResource {
      */
     @PostMapping("/drivers")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<Driver> createDriver(@Valid @RequestBody Driver driver) throws URISyntaxException {
         log.debug("REST request to save Driver : {}", driver);
         if (driver.getId() != null) {
@@ -103,6 +106,7 @@ public class DriverResource {
      */
     @PutMapping("/drivers")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<Driver> updateDriver(@Valid @RequestBody Driver driver) throws URISyntaxException {
         log.debug("REST request to update Driver : {}", driver);
         if (driver.getId() == null) {
@@ -170,6 +174,7 @@ public class DriverResource {
      */
     @DeleteMapping("/drivers/{id}")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
         log.debug("REST request to delete Driver : {}", id);
         driverRepository.delete(id);
