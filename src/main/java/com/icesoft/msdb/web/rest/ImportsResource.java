@@ -118,19 +118,21 @@ public class ImportsResource {
         			racetrack = racetrackRepository.save(racetrack);
         		}
         	}
-        	RacetrackLayout layout = new RacetrackLayout();
-        	layout.setName(tmp.getLayoutName());
-        	layout.setLength(tmp.getLength());
-        	layout.setYearFirstUse(tmp.getYearFirstUse());
-        	layout.setActive(tmp.isActive());
-        	
-        	RacetrackLayout found = racetrackLayoutRepository.findOne(Example.of(layout));
-        	if (found == null) {
-        		layout.setRacetrack(racetrack);
-        		racetrackLayoutRepository.save(layout);
-        	} else {
-        		//Do nothing
-        		log.warn("Skipping racetrack layout {} - already exists", layout);
+        	if (StringUtils.isNotBlank(tmp.getLayoutName())) {
+	        	RacetrackLayout layout = new RacetrackLayout();
+	        	layout.setName(tmp.getLayoutName());
+	        	layout.setLength(tmp.getLength());
+	        	layout.setYearFirstUse(tmp.getYearFirstUse());
+	        	layout.setActive(tmp.isActive());
+	        	
+	        	RacetrackLayout found = racetrackLayoutRepository.findOne(Example.of(layout));
+	        	if (found == null) {
+	        		layout.setRacetrack(racetrack);
+	        		racetrackLayoutRepository.save(layout);
+	        	} else {
+	        		//Do nothing
+	        		log.warn("Skipping racetrack layout {} - already exists", layout);
+	        	}
         	}
         	
         }
