@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 
@@ -56,6 +58,7 @@ public class RacetrackLayoutResource {
      */
     @PostMapping("/racetrack-layouts")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<RacetrackLayout> createRacetrackLayout(@Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
         log.debug("REST request to save RacetrackLayout : {}", racetrackLayout);
         if (racetrackLayout.getId() != null) {
@@ -86,6 +89,7 @@ public class RacetrackLayoutResource {
      */
     @PutMapping("/racetrack-layouts")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<RacetrackLayout> updateRacetrackLayout(@Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
         log.debug("REST request to update RacetrackLayout : {}", racetrackLayout);
         if (racetrackLayout.getId() == null) {
@@ -138,6 +142,7 @@ public class RacetrackLayoutResource {
      */
     @DeleteMapping("/racetrack-layouts/{id}")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteRacetrackLayout(@PathVariable Long id) {
         log.debug("REST request to delete RacetrackLayout : {}", id);
         racetrackLayoutRepository.delete(id);

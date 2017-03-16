@@ -18,11 +18,7 @@
         </dd>
         <dt><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.layoutImage">Layout Image</span></dt>
         <dd>
-            <div *ngIf="racetrackLayout.layoutImage">
-                <a (click)="openFile(racetrackLayout.layoutImageContentType, racetrackLayout.layoutImage)">
-                    <img [src]="'data:' + racetrackLayout.layoutImageContentType + ';base64,' + racetrackLayout.layoutImage" style="max-width: 100%;" alt="racetrackLayout image"/>
-                </a>
-            </div>
+            <td><img *ngIf="racetrackLayout.layoutImageUrl" [src]="racetrackLayout.layoutImageUrl" style="max-width: 800px;" alt="racetrack layout"/></td>
         </dd>
         <dt><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.active">Active</span></dt>
         <dd>

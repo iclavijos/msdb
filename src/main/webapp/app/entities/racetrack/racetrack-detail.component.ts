@@ -66,7 +66,7 @@ export class RacetrackDetailComponent implements OnInit, OnDestroy {
     registerChangeInRacetrackLayouts() {
         this.eventSubscriber = this.eventManager.subscribe('racetrackModification', (response) => this.load(this.racetrackId));
         this.eventSubscriber.add(
-                this.eventManager.subscribe('racetrackLayoutsModification', (response) => this.loadLayouts(this.racetrackId)));
+                this.eventManager.subscribe('racetrackLayoutModification', (response) => this.loadLayouts(this.racetrackId)));
     }
     
     previousState() {

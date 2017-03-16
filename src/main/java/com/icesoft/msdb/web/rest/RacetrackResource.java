@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.RacetrackService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
@@ -70,6 +72,7 @@ public class RacetrackResource {
      */
     @PostMapping("/racetracks")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<Racetrack> createRacetrack(@Valid @RequestBody Racetrack racetrack) throws URISyntaxException {
         log.debug("REST request to save Racetrack : {}", racetrack);
         if (racetrack.getId() != null) {
@@ -98,6 +101,7 @@ public class RacetrackResource {
      */
     @PutMapping("/racetracks")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<Racetrack> updateRacetrack(@Valid @RequestBody Racetrack racetrack) throws URISyntaxException {
         log.debug("REST request to update Racetrack : {}", racetrack);
         if (racetrack.getId() == null) {
@@ -165,6 +169,7 @@ public class RacetrackResource {
      */
     @DeleteMapping("/racetracks/{id}")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteRacetrack(@PathVariable Long id) {
         log.debug("REST request to delete Racetrack : {}", id);
         racetrackService.delete(id);
@@ -198,6 +203,7 @@ public class RacetrackResource {
      */
     @PostMapping("/racetracks/{id}/racetrack-layouts")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<RacetrackLayout> createRacetrackLayout(@Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
         log.debug("REST request to save RacetrackLayout : {}", racetrackLayout);
         if (racetrackLayout.getId() != null) {
@@ -228,6 +234,7 @@ public class RacetrackResource {
      */
     @PutMapping("/racetracks/{id}/racetrack-layouts")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<RacetrackLayout> updateRacetrackLayout(@Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
         log.debug("REST request to update RacetrackLayout : {}", racetrackLayout);
         if (racetrackLayout.getId() == null) {
@@ -280,6 +287,7 @@ public class RacetrackResource {
      */
     @DeleteMapping("/racetracks/{id}/racetrack-layouts/{idLayout}")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteRacetrackLayout(@PathVariable Long idLayout) {
         log.debug("REST request to delete RacetrackLayout : {}", idLayout);
         racetrackLayoutRepository.delete(idLayout);

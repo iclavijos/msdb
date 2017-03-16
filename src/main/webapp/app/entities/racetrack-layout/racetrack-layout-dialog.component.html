@@ -63,8 +63,7 @@
                 <img *ngIf="racetrackLayout.layoutImageUrl && racetrackLayout.layoutImage == null" [src]="racetrackLayout.layoutImageUrl" style="max-height: 100px;" alt="racetrackLayout image extern"/>
                 <img *ngIf="racetrackLayout.layoutImage" [src]="'data:image/jpeg;base64,' +racetrackLayout.layoutImage" style="max-height: 100px;" alt="racetrackLayout image"/>
                 <div *ngIf="racetrackLayout.layoutImage" class="form-text text-danger clearfix">
-                    <span class="pull-left">{{byteSize(racetrackLayout.layoutImage)}}</span>
-                    <button type="button" (click)="racetrackLayout.layoutImage=null"
+                    <button type="button" (click)="racetrackLayout.layoutImage=null; racetrackLayout.layoutImageUrl=null;"
                             class="btn btn-default btn-xs pull-right">
                         <span class="fa fa-times"></span>
                     </button>
