@@ -1,7 +1,8 @@
 <div>
     <h2>
         <span jhiTranslate="motorsportsDatabaseApp.tyreProvider.home.title">Tyre Providers</span>
-        <button class="btn btn-primary float-right create-tyre-provider" [routerLink]="['/', { outlets: { popup: ['tyre-provider-new'] } }]">
+        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" class="btn btn-primary float-right create-tyre-provider" 
+        	[routerLink]="['/', { outlets: { popup: ['tyre-provider-new'] } }]">
             <span class="fa fa-plus"></span>
             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.tyreProvider.home.createLabel">
             Create new Tyre Provider
@@ -28,22 +29,19 @@
     <div class="table-responsive" *ngIf="tyreProviders">
         <table class="table table-striped">
             <thead>
-            <tr>
-            <th><span jhiTranslate="global.field.id">ID</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.name">Name</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.logo">Logo</span></th>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.name">Name</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="logo"><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.logo">Logo</span> <span class="fa fa-sort"></span></th>
             <th></th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let tyreProvider of tyreProviders ;trackBy: trackId">
-                <td><a [routerLink]="['../tyre-provider', tyreProvider.id ]">{{tyreProvider.id}}</a></td>
                 <td>{{tyreProvider.name}}</td>
                 <td>
                     <a *ngIf="tyreProvider.logo" (click)="openFile(tyreProvider.logoContentType, tyreProvider.logo)">
                         <img [src]="'data:' + tyreProvider.logoContentType + ';base64,' + tyreProvider.logo" style="max-height: 30px;" alt="tyreProvider image"/>
                     </a>
-                    <span *ngIf="tyreProvider.logo">{{tyreProvider.logoContentType}}, {{byteSize(tyreProvider.logo)}}</span>
                 </td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
@@ -53,14 +51,14 @@
                             <span class="fa fa-eye"></span>
                             <span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                 [routerLink]="['/', { outlets: { popup: 'tyre-provider/'+ tyreProvider.id + '/edit'} }]"
                                 replaceUrl="true"
                                 class="btn btn-primary btn-sm">
                             <span class="fa fa-pencil"></span>
                             <span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
                                 [routerLink]="['/', { outlets: { popup: 'tyre-provider/'+ tyreProvider.id + '/delete'} }]"
                                 replaceUrl="true"
                                 class="btn btn-danger btn-sm">
@@ -73,4 +71,12 @@
             </tbody>
         </table>
     </div>
+        <div *ngIf="tyreProviders && tyreProviders.length">
+            <div class="row justify-content-center">
+                <jhi-item-count [page]="page" [total]="queryCount" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+            </div>
+            <div class="row justify-content-center">
+                <ngb-pagination [collectionSize]="totalItems" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
+            </div>
+        </div>
 </div>

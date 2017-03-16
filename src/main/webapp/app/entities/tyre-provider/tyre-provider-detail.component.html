@@ -1,6 +1,6 @@
 
 <div *ngIf="tyreProvider">
-    <h2><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.detail.title">Tyre Provider</span> {{tyreProvider.id}}</h2>
+    <h2>{{tyreProvider.name}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
     <dl class="row-md jh-entity-details">
@@ -14,7 +14,6 @@
                 <a (click)="openFile(tyreProvider.logoContentType, tyreProvider.logo)">
                     <img [src]="'data:' + tyreProvider.logoContentType + ';base64,' + tyreProvider.logo" style="max-width: 100%;" alt="tyreProvider image"/>
                 </a>
-                {{tyreProvider.logoContentType}}, {{byteSize(tyreProvider.logo)}}
             </div>
         </dd>
     </dl>
@@ -25,7 +24,7 @@
         <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
     </button>
 
-    <button type="button"
+    <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
             [routerLink]="['/', { outlets: { popup: 'tyre-provider/'+ tyreProvider.id + '/edit'} }]"
             replaceUrl="true"
             class="btn btn-primary">

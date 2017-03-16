@@ -14,6 +14,7 @@ import {
     TyreProviderDeleteDialogComponent,
     tyreProviderRoute,
     tyreProviderPopupRoute,
+    TyreProviderResolvePagingParams,
 } from './';
 
 let ENTITY_STATES = [
@@ -44,6 +45,7 @@ let ENTITY_STATES = [
     providers: [
         TyreProviderService,
         TyreProviderPopupService,
+        TyreProviderResolvePagingParams,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
