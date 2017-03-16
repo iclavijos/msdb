@@ -53,7 +53,9 @@
             "imports" : {
             	"main": "Importar",
             	"drivers": "Pilots",
-            	"racetracks": "Circuits"
+            	"racetracks": "Circuits",
+            	"teams": "Equips",
+            	"engines": "Motors"
             },
             "language": "Idioma"
         },

@@ -28,12 +28,14 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.Driver;
+import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.domain.Imports;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.domain.serializer.ParseDeserializer;
 import com.icesoft.msdb.repository.DriverRepository;
+import com.icesoft.msdb.repository.EngineRepository;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.RacetrackRepository;
 import com.icesoft.msdb.repository.TeamRepository;
@@ -52,6 +54,7 @@ public class ImportsResource {
     @Autowired private RacetrackRepository racetrackRepository;
     @Autowired private RacetrackLayoutRepository racetrackLayoutRepository;
     @Autowired private TeamRepository teamRepository;
+    @Autowired private EngineRepository engineRepository;
 
     @PostMapping("/imports")
     @Timed
@@ -64,6 +67,7 @@ public class ImportsResource {
         	case DRIVERS: importDrivers(data); break;
         	case RACETRACKS: importRacetracks(data); break;
         	case TEAMS: importTeams(data); break;
+        	case ENGINES: importEngines(data); break;
         	default: log.warn("The uploaded file does not correspond to any known entity");
         }
         
@@ -142,7 +146,7 @@ public class ImportsResource {
     	MappingIterator<Team> readValues = initializeIterator(new Team(), data);
         while (readValues.hasNext()) {
         	Team team = readValues.next();
-        	if (!teamRepository.search(team.getName()).isEmpty()) {
+        	if (teamRepository.search(team.getName()).isEmpty()) {
         		log.debug("Importing team: {}", team);
 	        	teamRepository.save(team);
         	} else {
@@ -150,6 +154,19 @@ public class ImportsResource {
         	}
         }
         
+    }
+    
+    private void importEngines(String data) {
+    	MappingIterator<Engine> readValues = initializeIterator(new Engine(), data);
+        while (readValues.hasNext()) {
+        	Engine engine = readValues.next();
+        	if (engineRepository.findByName(engine.getName()).isEmpty()) {
+        		log.debug("Importing engine: {}", engine);
+	        	engineRepository.save(engine);
+        	} else {
+        		log.warn("Engine {} already exist in the database. Skipping...", engine);
+        	}
+        }
     }
 
 }

@@ -26,17 +26,6 @@ export const importRacetracksRoute: Route = {
     canActivate: [UserRouteAccessService]
 };
 
-export const importPointsSystemRoute: Route = {
-    path: 'import/pointsSystem',
-    component: ImportsComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'imports.title',
-        importType: 'POINTSSYSTEM'
-    },
-    canActivate: [UserRouteAccessService]
-};
-
 export const importTeamsRoute: Route = {
     path: 'import/teams',
     component: ImportsComponent,
@@ -44,6 +33,28 @@ export const importTeamsRoute: Route = {
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'imports.title',
         importType: 'TEAMS'
+    },
+    canActivate: [UserRouteAccessService]
+};
+
+export const importEnginesRoute: Route = {
+    path: 'import/engines',
+    component: ImportsComponent,
+    data: {
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+        pageTitle: 'imports.title',
+        importType: 'ENGINES'
+    },
+    canActivate: [UserRouteAccessService]
+};
+
+export const importPointsSystemRoute: Route = {
+    path: 'import/pointsSystem',
+    component: ImportsComponent,
+    data: {
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+        pageTitle: 'imports.title',
+        importType: 'POINTSSYSTEM'
     },
     canActivate: [UserRouteAccessService]
 };
@@ -75,6 +86,7 @@ let IMPORTS_ROUTES = [
    importRacetracksRoute,
    importPointsSystemRoute,
    importTeamsRoute,
+   importEnginesRoute,
    importTyreProvidersRoute,
    importFuelProvidersRoute
 ];

@@ -52,7 +52,9 @@
             "imports" : {
             	"main": "Import",
             	"drivers": "Drivers",
-            	"racetracks": "Racetracks"
+            	"racetracks": "Racetracks",
+            	"teams": "Teams",
+            	"engines": "Engines"
             },
             "language": "Language"
         },

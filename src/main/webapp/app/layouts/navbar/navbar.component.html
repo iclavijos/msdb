@@ -37,6 +37,18 @@
                             <span jhiTranslate="global.menu.imports.racetracks">Import racetracks</span>
                         </a>
                     </li>
+                    <li>
+                        <a class="dropdown-item" routerLink="import/teams" routerLinkActive="active" (click)="collapseNavbar()">
+                            <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+                            <span jhiTranslate="global.menu.imports.teams">Import teams</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" routerLink="import/engines" routerLinkActive="active" (click)="collapseNavbar()">
+                            <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+                            <span jhiTranslate="global.menu.imports.engines">Import engines</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li *jhiHasAnyAuthority="'ROLE_ADMIN'" ngbDropdown class="nav-item dropdown pointer">
