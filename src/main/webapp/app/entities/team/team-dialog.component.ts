@@ -8,7 +8,7 @@ import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jh
 import { Team } from './team.model';
 import { TeamPopupService } from './team-popup.service';
 import { TeamService } from './team.service';
-import { EventEntry, EventEntryService } from '../event-entry';
+
 @Component({
     selector: 'jhi-team-dialog',
     templateUrl: './team-dialog.component.html'
@@ -19,14 +19,12 @@ export class TeamDialogComponent implements OnInit {
     authorities: any[];
     isSaving: boolean;
 
-    evententries: EventEntry[];
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
         private dataUtils: DataUtils,
         private alertService: AlertService,
         private teamService: TeamService,
-        private eventEntryService: EventEntryService,
         private eventManager: EventManager
     ) {
         this.jhiLanguageService.setLocations(['team']);
@@ -35,9 +33,8 @@ export class TeamDialogComponent implements OnInit {
     ngOnInit() {
         this.isSaving = false;
         this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
-        this.eventEntryService.query().subscribe(
-            (res: Response) => { this.evententries = res.json(); }, (res: Response) => this.onError(res.json()));
     }
+    
     byteSize(field) {
         return this.dataUtils.byteSize(field);
     }
@@ -86,10 +83,6 @@ export class TeamDialogComponent implements OnInit {
 
     private onError (error) {
         this.alertService.error(error.message, null, null);
-    }
-
-    trackEventEntryById(index: number, item: EventEntry) {
-        return item.id;
     }
 
     getSelected(selectedVals: Array<any>, option: any) {

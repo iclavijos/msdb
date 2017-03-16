@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { JhiLanguageService, DataUtils } from 'ng-jhipster';
 import { Team } from './team.model';
 import { TeamService } from './team.service';
@@ -17,7 +17,8 @@ export class TeamDetailComponent implements OnInit, OnDestroy {
         private jhiLanguageService: JhiLanguageService,
         private dataUtils: DataUtils,
         private teamService: TeamService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ) {
         this.jhiLanguageService.setLocations(['team']);
     }
@@ -41,7 +42,7 @@ export class TeamDetailComponent implements OnInit, OnDestroy {
         return this.dataUtils.openFile(contentType, field);
     }
     previousState() {
-        window.history.back();
+        this.router.navigate(['/team']);
     }
 
     ngOnDestroy() {

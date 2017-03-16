@@ -18,11 +18,8 @@
         </dd>
         <dt><span jhiTranslate="motorsportsDatabaseApp.team.logo">Logo</span></dt>
         <dd>
-            <div *ngIf="team.logo">
-                <a (click)="openFile(team.logoContentType, team.logo)">
-                    <img [src]="'data:' + team.logoContentType + ';base64,' + team.logo" style="max-width: 100%;" alt="team image"/>
-                </a>
-                {{team.logoContentType}}, {{byteSize(team.logo)}}
+            <div *ngIf="team.logoUrl">
+            	<img [src]="team.logoUrl" style="max-height: 200px;" alt="driver image"/>
             </div>
         </dd>
     </dl>
