@@ -9,7 +9,12 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,9 +28,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.repository.EngineRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
+import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
+import io.swagger.annotations.ApiParam;
 
 /**
  * REST controller for managing Engine.
@@ -40,11 +49,11 @@ public class EngineResource {
         
     private final EngineRepository engineRepository;
 
-//    private final EngineSearchRepository engineSearchRepository;
+    private final CDNService cdnService;
 
-    public EngineResource(EngineRepository engineRepository) { //, EngineSearchRepository engineSearchRepository) {
+    public EngineResource(EngineRepository engineRepository, CDNService cdnService) {
         this.engineRepository = engineRepository;
-//        this.engineSearchRepository = engineSearchRepository;
+        this.cdnService = cdnService;
     }
 
     /**
@@ -56,13 +65,21 @@ public class EngineResource {
      */
     @PostMapping("/engines")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<Engine> createEngine(@Valid @RequestBody Engine engine) throws URISyntaxException {
         log.debug("REST request to save Engine : {}", engine);
         if (engine.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new engine cannot already have an ID")).body(null);
         }
         Engine result = engineRepository.save(engine);
-//        engineSearchRepository.save(result);
+        
+        if (engine.getImage() != null) {
+	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), engine.getImage(), "engines");
+			result.setImageUrl(cdnUrl);
+			
+			result = engineRepository.save(result);
+        }
+        
         return ResponseEntity.created(new URI("/api/engines/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -79,13 +96,21 @@ public class EngineResource {
      */
     @PutMapping("/engines")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<Engine> updateEngine(@Valid @RequestBody Engine engine) throws URISyntaxException {
         log.debug("REST request to update Engine : {}", engine);
         if (engine.getId() == null) {
             return createEngine(engine);
         }
+        
+        if (engine.getImage() != null) {
+	        String cdnUrl = cdnService.uploadImage(engine.getId().toString(), engine.getImage(), "engines");
+			engine.setImageUrl(cdnUrl);
+        } else {
+        	cdnService.deleteImage(engine.getId().toString(), "engines");
+        }
         Engine result = engineRepository.save(engine);
-//        engineSearchRepository.save(result);
+        
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, engine.getId().toString()))
             .body(result);
@@ -98,10 +123,11 @@ public class EngineResource {
      */
     @GetMapping("/engines")
     @Timed
-    public List<Engine> getAllEngines() {
+    public ResponseEntity<List<Engine>> getAllEngines(@ApiParam Pageable pageable) throws URISyntaxException {
         log.debug("REST request to get all Engines");
-        List<Engine> engines = engineRepository.findAll();
-        return engines;
+        Page<Engine> page = engineRepository.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/engines");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**
@@ -126,10 +152,11 @@ public class EngineResource {
      */
     @DeleteMapping("/engines/{id}")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteEngine(@PathVariable Long id) {
         log.debug("REST request to delete Engine : {}", id);
         engineRepository.delete(id);
-//        engineSearchRepository.delete(id);
+        cdnService.deleteImage(id.toString(), "engines");
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -142,9 +169,11 @@ public class EngineResource {
      */
     @GetMapping("/_search/engines")
     @Timed
-    public List<Engine> searchEngines(@RequestParam String query) {
-        log.debug("REST request to search Engines for query {}", query);
-        return engineRepository.search(query);
+    public ResponseEntity<List<Engine>> searchEngines(@RequestParam String query, @ApiParam Pageable pageable) throws URISyntaxException {
+        log.debug("REST request to search for a page of Engines for query {}", query);
+        Page<Engine> page = engineRepository.search(query, pageable);
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/engines");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
 

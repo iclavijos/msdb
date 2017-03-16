@@ -9,8 +9,11 @@ export class Engine {
         public petrolEngine?: boolean,
         public dieselEngine?: boolean,
         public electricEngine?: boolean,
+        public otherEngine?: boolean,
         public turbo?: boolean,
         public image?: any,
+        public imageUrl?: string,
+        public comments?: string,
         public evolutions?: Engine,
         public derivedFrom?: Engine,
     ) { }

@@ -1,7 +1,8 @@
 <div>
     <h2>
         <span jhiTranslate="motorsportsDatabaseApp.engine.home.title">Engines</span>
-        <button class="btn btn-primary float-right create-engine" [routerLink]="['/', { outlets: { popup: ['engine-new'] } }]">
+        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
+        	class="btn btn-primary float-right create-engine" [routerLink]="['/', { outlets: { popup: ['engine-new'] } }]">
             <span class="fa fa-plus"></span>
             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.engine.home.createLabel">
             Create new Engine
@@ -28,43 +29,36 @@
     <div class="table-responsive" *ngIf="engines">
         <table class="table table-striped">
             <thead>
-            <tr>
-            <th><span jhiTranslate="global.field.id">ID</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.engine.name">Name</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.engine.manufacturer">Manufacturer</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.engine.capacity">Capacity</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.engine.architecture">Architecture</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.engine.debutYear">Debut Year</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.engine.petrolEngine">Petrol Engine</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.engine.dieselEngine">Diesel Engine</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.engine.electricEngine">Electric Engine</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.engine.turbo">Turbo</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.engine.image">Image</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.engine.derivedFrom">Derived From</span></th>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.engine.name">Name</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="manufacturer"><span jhiTranslate="motorsportsDatabaseApp.engine.manufacturer">Manufacturer</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="capacity"><span jhiTranslate="motorsportsDatabaseApp.engine.capacity">Capacity</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="architecture"><span jhiTranslate="motorsportsDatabaseApp.engine.architecture">Architecture</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="debutYear"><span jhiTranslate="motorsportsDatabaseApp.engine.debutYear">Debut Year</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="petrolEngine"><span jhiTranslate="motorsportsDatabaseApp.engine.petrolEngine">Petrol Engine</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="dieselEngine"><span jhiTranslate="motorsportsDatabaseApp.engine.dieselEngine">Diesel Engine</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="electricEngine"><span jhiTranslate="motorsportsDatabaseApp.engine.electricEngine">Electric Engine</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="otherEngine"><span jhiTranslate="motorsportsDatabaseApp.engine.otherEngine">Other Engine</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="turbo"><span jhiTranslate="motorsportsDatabaseApp.engine.turbo">Turbo</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="derivedFrom.id"><span jhiTranslate="motorsportsDatabaseApp.engine.derivedFrom">Derived From</span> <span class="fa fa-sort"></span></th>
             <th></th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let engine of engines ;trackBy: trackId">
-                <td><a [routerLink]="['../engine', engine.id ]">{{engine.id}}</a></td>
                 <td>{{engine.name}}</td>
                 <td>{{engine.manufacturer}}</td>
                 <td>{{engine.capacity}}</td>
                 <td>{{engine.architecture}}</td>
                 <td>{{engine.debutYear}}</td>
-                <td>{{engine.petrolEngine}}</td>
-                <td>{{engine.dieselEngine}}</td>
-                <td>{{engine.electricEngine}}</td>
-                <td>{{engine.turbo}}</td>
-                <td>
-                    <a *ngIf="engine.image" (click)="openFile(engine.imageContentType, engine.image)">
-                        <img [src]="'data:' + engine.imageContentType + ';base64,' + engine.image" style="max-height: 30px;" alt="engine image"/>
-                    </a>
-                    <span *ngIf="engine.image">{{engine.imageContentType}}, {{byteSize(engine.image)}}</span>
-                </td>
+                <td><i [ngClass]="engine.petrolEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'"></i></td>
+                <td><i [ngClass]="engine.dieselEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'"></i></td>
+                <td><i [ngClass]="engine.electricEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'"></i></td>
+                <td><i [ngClass]="engine.otherEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'"></i></td>
+                <td><i [ngClass]="engine.turbo ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'"></i></td>
                 <td>
                     <div *ngIf="engine.derivedFrom">
-                        <a [routerLink]="['../engine', engine.derivedFrom?.id ]" >{{engine.derivedFrom?.id}}</a>
+                        <a [routerLink]="['../engine', engine.derivedFrom?.id ]" >{{engine.derivedFrom?.manufacturer}} {{engine.derivedFrom?.name}}</a>
                     </div>
                 </td>
                 <td class="text-right">
@@ -75,14 +69,14 @@
                             <span class="fa fa-eye"></span>
                             <span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                 [routerLink]="['/', { outlets: { popup: 'engine/'+ engine.id + '/edit'} }]"
                                 replaceUrl="true"
                                 class="btn btn-primary btn-sm">
                             <span class="fa fa-pencil"></span>
                             <span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
                                 [routerLink]="['/', { outlets: { popup: 'engine/'+ engine.id + '/delete'} }]"
                                 replaceUrl="true"
                                 class="btn btn-danger btn-sm">
@@ -94,5 +88,13 @@
             </tr>
             </tbody>
         </table>
+    </div>
+    <div *ngIf="engines && engines.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
     </div>
 </div>

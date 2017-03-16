@@ -2,10 +2,10 @@
     "motorsportsDatabaseApp": {
         "engine" : {
             "home": {
-                "title": "Engines",
-                "createLabel": "Create a new Engine",
-                "createOrEditLabel": "Create or edit a Engine",
-                "search": "Search for Engine"
+                "title": "Motors",
+                "createLabel": "Crear nou motor",
+                "createOrEditLabel": "Crear o editar un motor",
+                "search": "Cercar motors"
             },
             "created": "A new Engine is created with identifier {{ param }}",
             "updated": "A Engine is updated with identifier {{ param }}",
@@ -14,20 +14,22 @@
                 "question": "Are you sure you want to delete Engine {{ id }}?"
             },
             "detail": {
-                "title": "Engine"
+                "title": "Motor"
             },
-            "name": "Name",
-            "manufacturer": "Manufacturer",
-            "capacity": "Capacity",
-            "architecture": "Architecture",
-            "debutYear": "Debut Year",
-            "petrolEngine": "Petrol Engine",
-            "dieselEngine": "Diesel Engine",
-            "electricEngine": "Electric Engine",
-            "turbo": "Turbo",
+            "name": "Nom",
+            "manufacturer": "Fabricant",
+            "capacity": "Cilindrada",
+            "architecture": "Arquitectura",
+            "debutYear": "Any debut",
+            "petrolEngine": "Benzina?",
+            "dieselEngine": "Diesel?",
+            "electricEngine": "Electric?",
+            "otherEngine": "Altre tipus?",
+            "turbo": "Turbo?",
             "image": "Image",
-            "evolutions": "Evolutions",
-            "derivedFrom": "Derived From"
+            "comments": "Comentaris",
+            "evolutions": "Evolucions",
+            "derivedFrom": "Derivat de"
         }
     }
 }

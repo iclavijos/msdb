@@ -14,6 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -68,16 +69,22 @@ public class Engine implements Serializable {
 
     @Column(name = "electric_engine")
     private Boolean electricEngine;
-
+    
+    @Column(name = "other_engine")
+    private Boolean otherEngine;
+    
     @Column(name = "turbo")
     private Boolean turbo;
+    
+    @Size(max = 1024)
+    @Column(name = "comments", length = 1024)
+    private String comments;
 
-    @Lob
-    @Column(name = "image")
+    @Transient
     private byte[] image;
 
-    @Column(name = "image_content_type")
-    private String imageContentType;
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @OneToMany(mappedBy = "derivedFrom")
     @JsonIgnore
@@ -212,7 +219,33 @@ public class Engine implements Serializable {
         this.turbo = turbo;
     }
 
-    public byte[] getImage() {
+    public Boolean getOtherEngine() {
+		return otherEngine;
+	}
+    
+    public Engine otherEngine(Boolean otherEngine) {
+    	this.otherEngine = otherEngine;
+    	return this;
+    }
+
+	public void setOtherEngine(Boolean otherEngine) {
+		this.otherEngine = otherEngine;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+	
+	public Engine comments(String comments) {
+		this.comments = comments;
+		return this;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	public byte[] getImage() {
         return image;
     }
 
@@ -225,17 +258,17 @@ public class Engine implements Serializable {
         this.image = image;
     }
 
-    public String getImageContentType() {
-        return imageContentType;
+    public String getImageUrl() {
+    	return imageUrl;
     }
-
-    public Engine imageContentType(String imageContentType) {
-        this.imageContentType = imageContentType;
-        return this;
+    
+    public Engine imageUrl(String imageUrl) {
+    	this.imageUrl = imageUrl;
+    	return this;
     }
-
-    public void setImageContentType(String imageContentType) {
-        this.imageContentType = imageContentType;
+    
+    public void setImageUrl(String imageUrl) {
+    	this.imageUrl = imageUrl;
     }
 
     public Set<Engine> getEvolutions() {
@@ -308,9 +341,11 @@ public class Engine implements Serializable {
             ", petrolEngine='" + petrolEngine + "'" +
             ", dieselEngine='" + dieselEngine + "'" +
             ", electricEngine='" + electricEngine + "'" +
+            ", otherEngine='" + otherEngine + "'" +
             ", turbo='" + turbo + "'" +
             ", image='" + image + "'" +
-            ", imageContentType='" + imageContentType + "'" +
+            ", imageUrl='" + imageUrl + "'" +
+            ", comments='" + comments + "'" +
             '}';
     }
 }

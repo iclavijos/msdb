@@ -81,6 +81,6 @@
     "changelogDate": "20170213140812",
     "entityTableName": "engine",
     "dto": "no",
-    "pagination": "no",
+    "pagination": "pagination",
     "service": "no"
 }

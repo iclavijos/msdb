@@ -9,11 +9,6 @@
     </div>
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
-        <div class="form-group" [hidden]="!engine.id">
-            <label for="id" jhiTranslate="global.field.id">ID</label>
-            <input type="text" class="form-control" id="id" name="id"
-                   [(ngModel)]="engine.id" readonly />
-        </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.name" for="field_name">Name</label>
             <input type="text" class="form-control" name="name" id="field_name"
@@ -96,35 +91,31 @@
         </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.petrolEngine" for="field_petrolEngine">Petrol Engine</label>
-            <input type="checkbox" class="form-control" name="petrolEngine" id="field_petrolEngine"
-                [(ngModel)]="engine.petrolEngine"
-             />
+             <i [ngClass]="engine.petrolEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'" (click)="engine.petrolEngine = !engine.petrolEngine;"></i>
         </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.dieselEngine" for="field_dieselEngine">Diesel Engine</label>
-            <input type="checkbox" class="form-control" name="dieselEngine" id="field_dieselEngine"
-                [(ngModel)]="engine.dieselEngine"
-             />
+            <i [ngClass]="engine.dieselEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'" (click)="engine.dieselEngine = !engine.dieselEngine;"></i>
         </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.electricEngine" for="field_electricEngine">Electric Engine</label>
-            <input type="checkbox" class="form-control" name="electricEngine" id="field_electricEngine"
-                [(ngModel)]="engine.electricEngine"
-             />
+            <i [ngClass]="engine.electricEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'" (click)="engine.electricEngine = !engine.electricEngine"></i>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.otherEngine" for="field_otherEngine">Other Engine</label>
+            <i [ngClass]="engine.otherEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'" (click)="engine.otherEngine = !engine.otherEngine"></i>
         </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.turbo" for="field_turbo">Turbo</label>
-            <input type="checkbox" class="form-control" name="turbo" id="field_turbo"
-                [(ngModel)]="engine.turbo"
-             />
+            <i [ngClass]="engine.turbo ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'" (click)="engine.turbo = !engine.turbo"></i>
         </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.image" for="field_image">Image</label>
             <div>
+                <img [src]="engine.imageUrl" style="max-height: 100px;" *ngIf="!engine.image && engine.imageUrl" alt="engine image"/>
                 <img [src]="'data:' + engine.imageContentType + ';base64,' + engine.image" style="max-height: 100px;" *ngIf="engine.image" alt="engine image"/>
-                <div *ngIf="engine.image" class="form-text text-danger clearfix">
-                    <span class="pull-left">{{engine.imageContentType}}, {{byteSize(engine.image)}}</span>
-                    <button type="button" (click)="engine.image=null;engine.imageContentType=null;"
+                <div *ngIf="engine.imageUrl || engine.image" class="form-text text-danger clearfix">
+                    <button type="button" (click)="engine.imageUrl=null; engine.image=null;"
                             class="btn btn-default btn-xs pull-right">
                         <span class="fa fa-times"></span>
                     </button>
@@ -140,10 +131,12 @@
 
         <div class="form-group">
             <label jhiTranslate="motorsportsDatabaseApp.engine.derivedFrom" for="field_derivedFrom">Derived From</label>
-            <select class="form-control" id="field_derivedFrom" name="derivedFrom" [(ngModel)]="engine.derivedFrom" >
+            <!-- select class="form-control" id="field_derivedFrom" name="derivedFrom" [(ngModel)]="engine.derivedFrom" >
                 <option [ngValue]="null"></option>
-                <option [ngValue]="engineOption.id === engine.derivedFrom?.id ? engine.derivedFrom : engineOption" *ngFor="let engineOption of engines; trackBy: trackEngineById">{{engineOption.id}}</option>
-            </select>
+                <option [ngValue]="engineOption.id === engine.derivedFrom?.id ? engine.derivedFrom : engineOption" *ngFor="let engineOption of engines; trackBy: trackEngineById">{{engineOption.manufacturer}} {{engineOption.name}}</option>
+            </select -->
+            <ng2-completer id="field_derivedFrom" name="derivedFrom" [(ngModel)]="derivedFromSearch" [datasource]="dataService" [minSearchLength]="2" 
+            	(selected)="onEngineSelected($event)" [inputClass]="form-text" [pause]="300" ></ng2-completer>
         </div>
     </div>
     <div class="modal-footer">

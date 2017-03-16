@@ -17,6 +17,7 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +33,7 @@ import org.springframework.util.Base64Utils;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.repository.EngineRepository;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
@@ -72,8 +74,6 @@ public class EngineResourceIntTest {
 
     private static final byte[] DEFAULT_IMAGE = TestUtil.createByteArray(1, "0");
     private static final byte[] UPDATED_IMAGE = TestUtil.createByteArray(2, "1");
-    private static final String DEFAULT_IMAGE_CONTENT_TYPE = "image/jpg";
-    private static final String UPDATED_IMAGE_CONTENT_TYPE = "image/png";
 
     @Autowired
     private EngineRepository engineRepository;
@@ -89,6 +89,9 @@ public class EngineResourceIntTest {
 
     @Autowired
     private EntityManager em;
+    
+    @Mock
+    private CDNService cdnService;
 
     private MockMvc restEngineMockMvc;
 
@@ -97,7 +100,7 @@ public class EngineResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            EngineResource engineResource = new EngineResource(engineRepository);
+            EngineResource engineResource = new EngineResource(engineRepository, cdnService);
         this.restEngineMockMvc = MockMvcBuilders.standaloneSetup(engineResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -121,8 +124,7 @@ public class EngineResourceIntTest {
                 .dieselEngine(DEFAULT_DIESEL_ENGINE)
                 .electricEngine(DEFAULT_ELECTRIC_ENGINE)
                 .turbo(DEFAULT_TURBO)
-                .image(DEFAULT_IMAGE)
-                .imageContentType(DEFAULT_IMAGE_CONTENT_TYPE);
+                .image(DEFAULT_IMAGE);
         return engine;
     }
 
@@ -157,7 +159,6 @@ public class EngineResourceIntTest {
         assertThat(testEngine.isElectricEngine()).isEqualTo(DEFAULT_ELECTRIC_ENGINE);
         assertThat(testEngine.isTurbo()).isEqualTo(DEFAULT_TURBO);
         assertThat(testEngine.getImage()).isEqualTo(DEFAULT_IMAGE);
-        assertThat(testEngine.getImageContentType()).isEqualTo(DEFAULT_IMAGE_CONTENT_TYPE);
 
     }
 
@@ -291,7 +292,6 @@ public class EngineResourceIntTest {
             .andExpect(jsonPath("$.[*].dieselEngine").value(hasItem(DEFAULT_DIESEL_ENGINE.booleanValue())))
             .andExpect(jsonPath("$.[*].electricEngine").value(hasItem(DEFAULT_ELECTRIC_ENGINE.booleanValue())))
             .andExpect(jsonPath("$.[*].turbo").value(hasItem(DEFAULT_TURBO.booleanValue())))
-            .andExpect(jsonPath("$.[*].imageContentType").value(hasItem(DEFAULT_IMAGE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].image").value(hasItem(Base64Utils.encodeToString(DEFAULT_IMAGE))));
     }
 
@@ -315,7 +315,6 @@ public class EngineResourceIntTest {
             .andExpect(jsonPath("$.dieselEngine").value(DEFAULT_DIESEL_ENGINE.booleanValue()))
             .andExpect(jsonPath("$.electricEngine").value(DEFAULT_ELECTRIC_ENGINE.booleanValue()))
             .andExpect(jsonPath("$.turbo").value(DEFAULT_TURBO.booleanValue()))
-            .andExpect(jsonPath("$.imageContentType").value(DEFAULT_IMAGE_CONTENT_TYPE))
             .andExpect(jsonPath("$.image").value(Base64Utils.encodeToString(DEFAULT_IMAGE)));
     }
 
@@ -346,8 +345,7 @@ public class EngineResourceIntTest {
                 .dieselEngine(UPDATED_DIESEL_ENGINE)
                 .electricEngine(UPDATED_ELECTRIC_ENGINE)
                 .turbo(UPDATED_TURBO)
-                .image(UPDATED_IMAGE)
-                .imageContentType(UPDATED_IMAGE_CONTENT_TYPE);
+                .image(UPDATED_IMAGE);
 
         restEngineMockMvc.perform(put("/api/engines")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -368,7 +366,6 @@ public class EngineResourceIntTest {
         assertThat(testEngine.isElectricEngine()).isEqualTo(UPDATED_ELECTRIC_ENGINE);
         assertThat(testEngine.isTurbo()).isEqualTo(UPDATED_TURBO);
         assertThat(testEngine.getImage()).isEqualTo(UPDATED_IMAGE);
-        assertThat(testEngine.getImageContentType()).isEqualTo(UPDATED_IMAGE_CONTENT_TYPE);
 
     }
 
@@ -427,7 +424,6 @@ public class EngineResourceIntTest {
             .andExpect(jsonPath("$.[*].dieselEngine").value(hasItem(DEFAULT_DIESEL_ENGINE.booleanValue())))
             .andExpect(jsonPath("$.[*].electricEngine").value(hasItem(DEFAULT_ELECTRIC_ENGINE.booleanValue())))
             .andExpect(jsonPath("$.[*].turbo").value(hasItem(DEFAULT_TURBO.booleanValue())))
-            .andExpect(jsonPath("$.[*].imageContentType").value(hasItem(DEFAULT_IMAGE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].image").value(hasItem(Base64Utils.encodeToString(DEFAULT_IMAGE))));
     }
 

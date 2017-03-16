@@ -8,6 +8,9 @@ import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jh
 import { Engine } from './engine.model';
 import { EnginePopupService } from './engine-popup.service';
 import { EngineService } from './engine.service';
+
+import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
+
 @Component({
     selector: 'jhi-engine-dialog',
     templateUrl: './engine-dialog.component.html'
@@ -17,24 +20,28 @@ export class EngineDialogComponent implements OnInit {
     engine: Engine;
     authorities: any[];
     isSaving: boolean;
+    private derivedFromSearch: string;
+    protected dataService: CompleterData;
 
-    engines: Engine[];
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
         private dataUtils: DataUtils,
         private alertService: AlertService,
         private engineService: EngineService,
-        private eventManager: EventManager
+        private eventManager: EventManager,
+        private completerService: CompleterService
     ) {
         this.jhiLanguageService.setLocations(['engine']);
+        this.dataService = completerService.remote('api/_search/engines?query=', null, 'name').descriptionField("manufacturer");
     }
 
     ngOnInit() {
         this.isSaving = false;
         this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
-        this.engineService.query().subscribe(
-            (res: Response) => { this.engines = res.json(); }, (res: Response) => this.onError(res.json()));
+        if (this.engine.derivedFrom) {
+            this.derivedFromSearch = this.engine.manufacturer + ' ' + this.engine.name;
+        }
     }
     byteSize(field) {
         return this.dataUtils.byteSize(field);
@@ -88,6 +95,16 @@ export class EngineDialogComponent implements OnInit {
 
     trackEngineById(index: number, item: Engine) {
         return item.id;
+    }
+    
+    public onEngineSelected(selected: CompleterItem) {
+        if (selected) {
+            this.engine.derivedFrom = selected.originalObject;
+            this.derivedFromSearch = this.engine.manufacturer + ' ' + this.engine.name;
+        } else {
+            this.engine.derivedFrom = null;
+            this.derivedFromSearch = null;
+        }
     }
 }
 

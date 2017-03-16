@@ -21,11 +21,13 @@
             "capacity": "Capacity",
             "architecture": "Architecture",
             "debutYear": "Debut Year",
-            "petrolEngine": "Petrol Engine",
-            "dieselEngine": "Diesel Engine",
-            "electricEngine": "Electric Engine",
-            "turbo": "Turbo",
+            "petrolEngine": "Petrol?",
+            "dieselEngine": "Diesel?",
+            "electricEngine": "Electric?",
+            "otherEngine": "Other Type?",
+            "turbo": "Turbo?",
             "image": "Image",
+            "comments": "Comments",
             "evolutions": "Evolutions",
             "derivedFrom": "Derived From"
         }

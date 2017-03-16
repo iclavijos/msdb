@@ -2,32 +2,34 @@
     "motorsportsDatabaseApp": {
         "engine" : {
             "home": {
-                "title": "Engines",
-                "createLabel": "Crear nuevo Engine",
-                "createOrEditLabel": "Crear o editar Engine",
-                "search": "Search for Engine"
+                "title": "Motores",
+                "createLabel": "Crear nuevo motor",
+                "createOrEditLabel": "Crear o editar motor",
+                "search": "Buscar motores"
             },
-            "created": "Un nuevo Engine ha sido creado con el identificador {{ param }}",
+            "created": "Un nuevo mtoor ha sido creado con el identificador {{ param }}",
             "updated": "Un Engine ha sido actualizado con el identificador {{ param }}",
             "deleted": "Un Engine ha sido eliminado con el identificador {{ param }}",
             "delete": {
-                "question": "¿Seguro que quiere eliminar Engine {{ id }}?"
+                "question": "¿Seguro que quiere eliminar el motor?"
             },
             "detail": {
-                "title": "Engine"
+                "title": "Motor"
             },
-            "name": "Name",
-            "manufacturer": "Manufacturer",
-            "capacity": "Capacity",
-            "architecture": "Architecture",
-            "debutYear": "Debut Year",
-            "petrolEngine": "Petrol Engine",
-            "dieselEngine": "Diesel Engine",
-            "electricEngine": "Electric Engine",
-            "turbo": "Turbo",
-            "image": "Image",
-            "evolutions": "Evolutions",
-            "derivedFrom": "Derived From"
+            "name": "Nombre",
+            "manufacturer": "Fabricante",
+            "capacity": "Cilindrada",
+            "architecture": "Arquitectura",
+            "debutYear": "Año debut",
+            "petrolEngine": "Gasolina?",
+            "dieselEngine": "Diesel?",
+            "electricEngine": "Eléctrico?",
+            "otherEngine": "Otro tipo?",
+            "turbo": "Turbo?",
+            "image": "Imagen",
+            "comments": "Comentarios",
+            "evolutions": "Evoluciones",
+            "derivedFrom": "Derivado de"
         }
     }
 }
