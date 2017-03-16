@@ -25,9 +25,9 @@
 		            </a>
 		        </li>
 		        <li uiSrefActive="active">
-                    <a class="dropdown-item" routerLink="car">
+                    <a class="dropdown-item" routerLink="engine">
                         <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-                        <span jhiTranslate="global.menu.entities.car">Car</span>
+                        <span jhiTranslate="global.menu.entities.engine">Engine</span>
                     </a>
                 </li>
                 <li uiSrefActive="active">
@@ -36,13 +36,19 @@
                         <span jhiTranslate="global.menu.entities.chassis">Chassis</span>
                     </a>
                 </li>
-                <li uiSrefActive="active">
-                    <a class="dropdown-item" routerLink="engine">
+		        <li uiSrefActive="active">
+                    <a class="dropdown-item" routerLink="car">
                         <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-                        <span jhiTranslate="global.menu.entities.engine">Engine</span>
+                        <span jhiTranslate="global.menu.entities.car">Car</span>
                     </a>
                 </li>
-                <li uiSrefActive="active">
+                <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" uiSrefActive="active">
+		            <a class="dropdown-item" routerLink="points-system">
+		                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+		                <span jhiTranslate="global.menu.entities.pointsSystem">Points System</span>
+		            </a>
+		        </li>
+                <!-- li uiSrefActive="active">
 		            <a class="dropdown-item" routerLink="tyre-provider">
 		                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
 		                <span jhiTranslate="global.menu.entities.tyreProvider">Tyre Provider</span>
@@ -54,12 +60,6 @@
                         <span jhiTranslate="global.menu.entities.fuelProvider">Fuel Provider</span>
                     </a>
                 </li>
-		        <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" uiSrefActive="active">
-		            <a class="dropdown-item" routerLink="points-system">
-		                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-		                <span jhiTranslate="global.menu.entities.pointsSystem">Points System</span>
-		            </a>
-		        </li>
                 <li uiSrefActive="active">
                     <a class="dropdown-item" routerLink="category">
                         <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
@@ -107,7 +107,7 @@
                         <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
                         <span jhiTranslate="global.menu.entities.eventEntryResult">Event Entry Result</span>
                     </a>
-                </li>
+                </li -->
            	</ul>
 		</div>
 		<div class="col-lg-10 col-md-10 card jh-card">
