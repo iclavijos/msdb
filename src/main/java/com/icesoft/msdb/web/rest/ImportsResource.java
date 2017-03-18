@@ -2,6 +2,7 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -39,6 +40,7 @@ import com.icesoft.msdb.repository.EngineRepository;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.RacetrackRepository;
 import com.icesoft.msdb.repository.TeamRepository;
+import com.icesoft.msdb.service.dto.EnginesImportDTO;
 import com.icesoft.msdb.service.dto.RacetrackWithLayoutsImportDTO;
 
 /**
@@ -74,14 +76,14 @@ public class ImportsResource {
         return new ResponseEntity<>("File uploaded", HttpStatus.ACCEPTED);
     }
     
-    private <T> MappingIterator<T> initializeIterator(T type, String data) {
+    private <T> MappingIterator<T> initializeIterator(Class<T> type, String data) {
     	CsvSchema bootstrapSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator(';');
         CsvMapper mapper = new CsvMapper();
         try {
         	JavaTimeModule javaTimeModule=new JavaTimeModule();
             javaTimeModule.addDeserializer(LocalDate.class, new ParseDeserializer());
             mapper.registerModule(javaTimeModule);
-	        return mapper.readerFor(type.getClass()).with(bootstrapSchema).readValues(data);
+	        return mapper.readerFor(type).with(bootstrapSchema).readValues(data);
 	        
         } catch (Exception e) {
         	log.error("Problem processing uploaded CSV data", e);
@@ -91,7 +93,7 @@ public class ImportsResource {
     }
     
     private void importDrivers(String data) {
-    	MappingIterator<Driver> readValues = initializeIterator(new Driver(), data);
+    	MappingIterator<Driver> readValues = initializeIterator(Driver.class, data);
         while (readValues.hasNext()) {
         	Driver driver = readValues.next();
         	if (driversRepository.findByNameAndSurnameAndBirthDateAllIgnoreCase(
@@ -106,7 +108,7 @@ public class ImportsResource {
     }
     
     private void importRacetracks(String data) {
-    	MappingIterator<RacetrackWithLayoutsImportDTO> readValues = initializeIterator(new RacetrackWithLayoutsImportDTO(), data);
+    	MappingIterator<RacetrackWithLayoutsImportDTO> readValues = initializeIterator(RacetrackWithLayoutsImportDTO.class, data);
         Racetrack racetrack = null;
         while (readValues.hasNext()) {
         	RacetrackWithLayoutsImportDTO tmp = readValues.next();
@@ -143,7 +145,7 @@ public class ImportsResource {
     }
     
     private void importTeams(String data) {
-    	MappingIterator<Team> readValues = initializeIterator(new Team(), data);
+    	MappingIterator<Team> readValues = initializeIterator(Team.class, data);
         while (readValues.hasNext()) {
         	Team team = readValues.next();
         	if (teamRepository.search(team.getName()).isEmpty()) {
@@ -157,12 +159,22 @@ public class ImportsResource {
     }
     
     private void importEngines(String data) {
-    	MappingIterator<Engine> readValues = initializeIterator(new Engine(), data);
+    	MappingIterator<EnginesImportDTO> readValues = initializeIterator(EnginesImportDTO.class, data);
         while (readValues.hasNext()) {
-        	Engine engine = readValues.next();
+        	EnginesImportDTO engine = readValues.next();
         	if (engineRepository.findByName(engine.getName()).isEmpty()) {
         		log.debug("Importing engine: {}", engine);
-	        	engineRepository.save(engine);
+        		Engine newEngine = engine.buildEngine();
+        		List<Engine> derivedFrom = engineRepository.findByNameAndManufacturer(
+        				engine.getDerivedFromName(), engine.getDerivedFromManufacturer());
+        		if (derivedFrom == null || derivedFrom.isEmpty()) {
+        			log.warn("Engine {} has a parent which could not be found. Skipping...", engine);
+        		} else if (derivedFrom.size() > 1) {
+        			log.warn("Engine {} has a parent found more than once. Skipping...", engine);
+        		} else {
+        			newEngine.setDerivedFrom(derivedFrom.get(0));
+        		}        		
+	        	engineRepository.save(newEngine);
         	} else {
         		log.warn("Engine {} already exist in the database. Skipping...", engine);
         	}

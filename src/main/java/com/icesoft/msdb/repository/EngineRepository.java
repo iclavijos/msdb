@@ -18,4 +18,6 @@ public interface EngineRepository extends JpaRepository<Engine,Long> {
 	Page<Engine> search(String searchValue, Pageable page);
 	
 	List<Engine> findByName(String name);
+	
+	List<Engine> findByNameAndManufacturer(String name, String manufacturer);
 }
