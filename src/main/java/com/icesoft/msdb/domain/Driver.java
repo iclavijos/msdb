@@ -21,7 +21,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.icesoft.msdb.web.rest.view.View;
 
@@ -31,8 +30,7 @@ import com.icesoft.msdb.web.rest.view.View;
 @Entity
 @Table(name = "driver")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-//@Document(indexName = "driver")
-public class Driver implements Serializable {
+public class Driver extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
