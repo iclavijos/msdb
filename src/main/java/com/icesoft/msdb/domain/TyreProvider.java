@@ -23,7 +23,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "tyre_provider")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 //@Document(indexName = "tyreprovider")
-public class TyreProvider implements Serializable {
+public class TyreProvider extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

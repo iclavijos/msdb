@@ -66,7 +66,7 @@ public class RacetrackLayoutResource {
         }
         RacetrackLayout result = racetrackLayoutRepository.save(racetrackLayout);
       
-        if (result.getLayoutImageUrl() != null) {
+        if (result.getLayoutImage() != null) {
 	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), racetrackLayout.getLayoutImage(), "racetrackLayouts");
 			result.setLayoutImageUrl(cdnUrl);
 			

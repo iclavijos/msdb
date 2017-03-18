@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "team")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 //@Document(indexName = "team")
-public class Team implements Serializable {
+public class Team extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

@@ -25,7 +25,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "racetrack_layout")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 //@Document(indexName = "racetracklayout")
-public class RacetrackLayout implements Serializable {
+public class RacetrackLayout extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
