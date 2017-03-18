@@ -27,7 +27,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "chassis")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-//@Document(indexName = "chassis")
 public class Chassis implements Serializable {
 
     private static final long serialVersionUID = 1L;

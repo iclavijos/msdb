@@ -8,6 +8,9 @@ import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
 import { Chassis } from './chassis.model';
 import { ChassisPopupService } from './chassis-popup.service';
 import { ChassisService } from './chassis.service';
+
+import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
+
 @Component({
     selector: 'jhi-chassis-dialog',
     templateUrl: './chassis-dialog.component.html'
@@ -17,23 +20,27 @@ export class ChassisDialogComponent implements OnInit {
     chassis: Chassis;
     authorities: any[];
     isSaving: boolean;
+    private derivedFromSearch: string;
+    protected dataService: CompleterData;
 
-    chassisCollection: Chassis[];
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
         private alertService: AlertService,
         private chassisService: ChassisService,
-        private eventManager: EventManager
+        private eventManager: EventManager,
+        private completerService: CompleterService
     ) {
         this.jhiLanguageService.setLocations(['chassis']);
+        this.dataService = completerService.remote('api/_search/chassis?query=', null, 'name').descriptionField("manufacturer");
     }
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
-        this.chassisService.query().subscribe(
-            (res: Response) => { this.chassisCollection = res.json(); }, (res: Response) => this.onError(res.json()));
+        this.authorities = ['ROLE_EDITOR', 'ROLE_ADMIN'];
+        if (this.chassis.derivedFrom) {
+            this.derivedFromSearch = this.chassis.manufacturer + ' ' + this.chassis.name;
+        }
     }
     clear () {
         this.activeModal.dismiss('cancel');
@@ -67,6 +74,16 @@ export class ChassisDialogComponent implements OnInit {
 
     trackChassisById(index: number, item: Chassis) {
         return item.id;
+    }
+    
+    public onChassisSelected(selected: CompleterItem) {
+        if (selected) {
+            this.chassis.derivedFrom = selected.originalObject;
+            this.derivedFromSearch = this.chassis.manufacturer + ' ' + this.chassis.name;
+        } else {
+            this.chassis.derivedFrom = null;
+            this.derivedFromSearch = null;
+        }
     }
 }
 

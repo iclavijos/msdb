@@ -9,11 +9,6 @@
     </div>
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
-        <div class="form-group" [hidden]="!chassis.id">
-            <label for="id" jhiTranslate="global.field.id">ID</label>
-            <input type="text" class="form-control" id="id" name="id"
-                   [(ngModel)]="chassis.id" readonly />
-        </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.chassis.name" for="field_name">Name</label>
             <input type="text" class="form-control" name="name" id="field_name"
@@ -65,10 +60,8 @@
 
         <div class="form-group">
             <label jhiTranslate="motorsportsDatabaseApp.chassis.derivedFrom" for="field_derivedFrom">Derived From</label>
-            <select class="form-control" id="field_derivedFrom" name="derivedFrom" [(ngModel)]="chassis.derivedFrom" >
-                <option [ngValue]="null"></option>
-                <option [ngValue]="chassisOption.id === chassis.derivedFrom?.id ? chassis.derivedFrom : chassisOption" *ngFor="let chassisOption of chassis; trackBy: trackChassisById">{{chassisOption.id}}</option>
-            </select>
+            <ng2-completer id="field_derivedFrom" name="derivedFrom" [(ngModel)]="derivedFromSearch" [datasource]="dataService" [minSearchLength]="2" 
+            	(selected)="onChassisSelected($event)" [pause]="300" ></ng2-completer>
         </div>
     </div>
     <div class="modal-footer">

@@ -1,6 +1,6 @@
 
 <div *ngIf="chassis">
-    <h2><span jhiTranslate="motorsportsDatabaseApp.chassis.detail.title">Chassis</span> {{chassis.id}}</h2>
+    <h2>{{chassis.manufacturer}}  {{chassis.name}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
     <dl class="row-md jh-entity-details">
@@ -19,7 +19,7 @@
         <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.derivedFrom">Derived From</span></dt>
         <dd>
             <div *ngIf="chassis.derivedFrom">
-                <a [routerLink]="['/chassis', chassis.derivedFrom?.id]">{{chassis.derivedFrom?.id}}</a>
+                <a [routerLink]="['/chassis', chassis.derivedFrom?.id]">{{chassis.derivedFrom?.manufacturer}} {{chassis.derivedFrom?.name}}</a>
             </div>
         </dd>
     </dl>
