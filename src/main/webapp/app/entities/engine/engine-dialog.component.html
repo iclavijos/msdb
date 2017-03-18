@@ -89,25 +89,33 @@
                 </small>
             </div>
         </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.petrolEngine" for="field_petrolEngine">Petrol Engine</label>
-             <i [ngClass]="engine.petrolEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'" (click)="engine.petrolEngine = !engine.petrolEngine;"></i>
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.dieselEngine" for="field_dieselEngine">Diesel Engine</label>
-            <i [ngClass]="engine.dieselEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'" (click)="engine.dieselEngine = !engine.dieselEngine;"></i>
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.electricEngine" for="field_electricEngine">Electric Engine</label>
-            <i [ngClass]="engine.electricEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'" (click)="engine.electricEngine = !engine.electricEngine"></i>
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.otherEngine" for="field_otherEngine">Other Engine</label>
-            <i [ngClass]="engine.otherEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'" (click)="engine.otherEngine = !engine.otherEngine"></i>
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.turbo" for="field_turbo">Turbo</label>
-            <i [ngClass]="engine.turbo ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'" (click)="engine.turbo = !engine.turbo"></i>
+        <div class="row">
+        	<div class="col-lg-4 col-md-4">
+		        <div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.petrolEngine" for="field_petrolEngine">Petrol Engine</label>
+		             <i [ngClass]="engine.petrolEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="engine.petrolEngine = !engine.petrolEngine;"></i>
+		        </div>
+		        <div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.dieselEngine" for="field_dieselEngine">Diesel Engine</label>
+		            <i [ngClass]="engine.dieselEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="engine.dieselEngine = !engine.dieselEngine;"></i>
+		        </div>
+	        </div>
+	        <div class="col-lg-4 col-md-4">
+		        <div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.electricEngine" for="field_electricEngine">Electric Engine</label>
+		            <i [ngClass]="engine.electricEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="engine.electricEngine = !engine.electricEngine"></i>
+		        </div>
+		        <div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.otherEngine" for="field_otherEngine">Other Engine</label>
+		            <i [ngClass]="engine.otherEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="engine.otherEngine = !engine.otherEngine"></i>
+		        </div>
+	        </div>
+	        <div class="col-lg-4 col-md-4">
+		        <div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.turbo" for="field_turbo">Turbo</label>
+		            <i [ngClass]="engine.turbo ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="engine.turbo = !engine.turbo"></i>
+		        </div>
+	        </div>
         </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.image" for="field_image">Image</label>
@@ -117,7 +125,7 @@
                 <div *ngIf="engine.imageUrl || engine.image" class="form-text text-danger clearfix">
                     <button type="button" (click)="engine.imageUrl=null; engine.image=null;"
                             class="btn btn-default btn-xs pull-right">
-                        <span class="fa fa-times"></span>
+                        <span class="fa fa-square-o"></span>
                     </button>
                 </div>
                 <input type="file" (change)="setFileData($event, engine, 'image', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
@@ -131,12 +139,8 @@
 
         <div class="form-group">
             <label jhiTranslate="motorsportsDatabaseApp.engine.derivedFrom" for="field_derivedFrom">Derived From</label>
-            <!-- select class="form-control" id="field_derivedFrom" name="derivedFrom" [(ngModel)]="engine.derivedFrom" >
-                <option [ngValue]="null"></option>
-                <option [ngValue]="engineOption.id === engine.derivedFrom?.id ? engine.derivedFrom : engineOption" *ngFor="let engineOption of engines; trackBy: trackEngineById">{{engineOption.manufacturer}} {{engineOption.name}}</option>
-            </select -->
             <ng2-completer id="field_derivedFrom" name="derivedFrom" [(ngModel)]="derivedFromSearch" [datasource]="dataService" [minSearchLength]="2" 
-            	(selected)="onEngineSelected($event)" [inputClass]="form-text" [pause]="300" ></ng2-completer>
+            	(selected)="onEngineSelected($event)" [inputClass]="form-control" [pause]="300" ></ng2-completer>
         </div>
     </div>
     <div class="modal-footer">

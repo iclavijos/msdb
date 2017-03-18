@@ -24,26 +24,34 @@
         <dd>
             <span>{{engine.debutYear}}</span>
         </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.petrolEngine">Petrol Engine</span></dt>
-        <dd>
-            <span><i [ngClass]="engine.petrolEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'"></i></span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.dieselEngine">Diesel Engine</span></dt>
-        <dd>
-            <span><i [ngClass]="engine.dieselEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'"></i></span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.electricEngine">Electric Engine</span></dt>
-        <dd>
-            <span><i [ngClass]="engine.electricEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'"></i></span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.otherEngine">Other Engine</span></dt>
-        <dd>
-            <span><i [ngClass]="engine.otherEngine ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'"></i></span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.turbo">Turbo</span></dt>
-        <dd>
-            <span><i [ngClass]="engine.turbo ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'"></i></span>
-        </dd>
+        <div class="row">
+        	<div class="col-lg-4 col-md-4">
+	        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.petrolEngine">Petrol Engine</span></dt>
+	        <dd>
+	            <span><i [ngClass]="engine.petrolEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+	        </dd>
+	        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.dieselEngine">Diesel Engine</span></dt>
+	        <dd>
+	            <span><i [ngClass]="engine.dieselEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+	        </dd>
+	        </div>
+	        <div class="col-lg-4 col-md-4">
+	        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.electricEngine">Electric Engine</span></dt>
+	        <dd>
+	            <span><i [ngClass]="engine.electricEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+	        </dd>
+	        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.otherEngine">Other Engine</span></dt>
+	        <dd>
+	            <span><i [ngClass]="engine.otherEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+	        </dd>
+	        </div>
+	        <div class="col-lg-4 col-md-4">
+	        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.turbo">Turbo</span></dt>
+	        <dd>
+	            <span><i [ngClass]="engine.turbo ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+	        </dd>
+	        </div>
+        </div>
         <dt><span jhiTranslate="motorsportsDatabaseApp.engine.image">Image</span></dt>
         <dd>
             <div *ngIf="engine.imageUrl">

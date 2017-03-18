@@ -66,7 +66,7 @@
                     <span class="pull-left">{{series.logoContentType}}, {{byteSize(series.logo)}}</span>
                     <button type="button" (click)="series.logo=null;series.logoContentType=null;"
                             class="btn btn-default btn-xs pull-right">
-                        <span class="fa fa-times"></span>
+                        <span class="fa fa-square-o"></span>
                     </button>
                 </div>
                 <input type="file" (change)="setFileData($event, series, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>

@@ -42,31 +42,36 @@
                 [(ngModel)]="pointsSystem.points"
              />
         </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps" for="field_pointsMostLeadLaps">Points Most Lead Laps</label>
-            <input type="number" class="form-control" name="pointsMostLeadLaps" id="field_pointsMostLeadLaps"
-                [(ngModel)]="pointsSystem.pointsMostLeadLaps"
-             />
+        <div class="row">
+	        <div class="form-group col-lg-3 col-md-3">
+	            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps" for="field_pointsMostLeadLaps">Points Most Lead Laps</label>
+	            <input type="number" class="form-control" name="pointsMostLeadLaps" id="field_pointsMostLeadLaps"
+	                [(ngModel)]="pointsSystem.pointsMostLeadLaps"
+	             />
+	        </div>
+	        <div class="form-group col-lg-3 col-md-3">
+	            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsFastLap" for="field_pointsFastLap">Points Fast Lap</label>
+	            <input type="number" class="form-control" name="pointsFastLap" id="field_pointsFastLap"
+	                [(ngModel)]="pointsSystem.pointsFastLap"
+	             />
+	        </div>
+	        <div class="form-group col-lg-3 col-md-3">
+	            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsPole" for="field_pointsPole">Points Pole</label>
+	            <input type="number" class="form-control" name="pointsPole" id="field_pointsPole"
+	                [(ngModel)]="pointsSystem.pointsPole"
+	             />
+	        </div>
+	        <div class="form-group col-lg-3 col-md-3">
+	            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsLeadLap" for="field_pointsLeadLap">Points Lead Lap</label>
+	            <input type="number" class="form-control" name="pointsLeadLap" id="field_pointsLeadLap"
+	                [(ngModel)]="pointsSystem.pointsLeadLap"
+	             />
+	        </div>
+		</div>
+		<div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.active" for="field_active">Active</label>
+            <i [ngClass]="pointsSystem.active ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="pointsSystem.active = !pointsSystem.active"></i>
         </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsFastLap" for="field_pointsFastLap">Points Fast Lap</label>
-            <input type="number" class="form-control" name="pointsFastLap" id="field_pointsFastLap"
-                [(ngModel)]="pointsSystem.pointsFastLap"
-             />
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsPole" for="field_pointsPole">Points Pole</label>
-            <input type="number" class="form-control" name="pointsPole" id="field_pointsPole"
-                [(ngModel)]="pointsSystem.pointsPole"
-             />
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsLeadLap" for="field_pointsLeadLap">Points Lead Lap</label>
-            <input type="number" class="form-control" name="pointsLeadLap" id="field_pointsLeadLap"
-                [(ngModel)]="pointsSystem.pointsLeadLap"
-             />
-        </div>
-
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">

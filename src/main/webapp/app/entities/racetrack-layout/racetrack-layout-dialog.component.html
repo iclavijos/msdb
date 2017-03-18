@@ -65,7 +65,7 @@
                 <div *ngIf="racetrackLayout.layoutImage" class="form-text text-danger clearfix">
                     <button type="button" (click)="racetrackLayout.layoutImage=null; racetrackLayout.layoutImageUrl=null;"
                             class="btn btn-default btn-xs pull-right">
-                        <span class="fa fa-times"></span>
+                        <span class="fa fa-square-o"></span>
                     </button>
                 </div>
                 <input type="file" (change)="setFileData($event, racetrackLayout, 'layoutImage', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
@@ -78,7 +78,7 @@
         </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrackLayout.active" for="field_active">Active</label>
-            <i [ngClass]="racetrackLayout.active ? 'fa fa-fw fa-check' : 'fa fa-fw fa-times'" (click)="toogleActive()"></i>
+            <i [ngClass]="racetrackLayout.active ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="toogleActive()"></i>
         </div>
     </div>
     <div class="modal-footer">
