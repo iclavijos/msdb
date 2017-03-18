@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.PointsSystem;
 
 import com.icesoft.msdb.repository.PointsSystemRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 import io.swagger.annotations.ApiParam;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -52,6 +54,7 @@ public class PointsSystemResource {
      */
     @PostMapping("/points-systems")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<PointsSystem> createPointsSystem(@Valid @RequestBody PointsSystem pointsSystem) throws URISyntaxException {
         log.debug("REST request to save PointsSystem : {}", pointsSystem);
         if (pointsSystem.getId() != null) {
@@ -74,6 +77,7 @@ public class PointsSystemResource {
      */
     @PutMapping("/points-systems")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<PointsSystem> updatePointsSystem(@Valid @RequestBody PointsSystem pointsSystem) throws URISyntaxException {
         log.debug("REST request to update PointsSystem : {}", pointsSystem);
         if (pointsSystem.getId() == null) {
@@ -124,6 +128,7 @@ public class PointsSystemResource {
      */
     @DeleteMapping("/points-systems/{id}")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deletePointsSystem(@PathVariable Long id) {
         log.debug("REST request to delete PointsSystem : {}", id);
         pointsSystemRepository.delete(id);

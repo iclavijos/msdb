@@ -2,27 +2,28 @@
     "motorsportsDatabaseApp": {
         "pointsSystem" : {
             "home": {
-                "title": "Points Systems",
-                "createLabel": "Create a new Points System",
-                "createOrEditLabel": "Create or edit a Points System",
-                "search": "Search for Points System"
+                "title": "Sistemes de puntuació",
+                "createLabel": "Crea nou sistema de puntuació",
+                "createOrEditLabel": "Crea o edita sistema de puntuació",
+                "search": "Cerca sistemes de puntuació"
             },
-            "created": "A new Points System is created with identifier {{ param }}",
-            "updated": "A Points System is updated with identifier {{ param }}",
-            "deleted": "A Points System is deleted with identifier {{ param }}",
+            "created": "S'ha definit un nou sistema de puntuació",
+            "updated": "S'ha actualitzat el sistema de puntuació",
+            "deleted": "S'ha esborrat el sistema de puntuació",
             "delete": {
-                "question": "Are you sure you want to delete Points System {{ id }}?"
+                "question": "Està segur que vol esborrar el sistema de puntuació?"
             },
             "detail": {
-                "title": "Points System"
+                "title": "Sistema de puntuació"
             },
-            "name": "Name",
-            "description": "Description",
-            "points": "Points",
-            "pointsMostLeadLaps": "Points Most Lead Laps",
-            "pointsFastLap": "Points Fast Lap",
-            "pointsPole": "Points Pole",
-            "pointsLeadLap": "Points Lead Lap"
+            "name": "Nom",
+            "description": "Descripció",
+            "points": "Punts",
+            "pointsMostLeadLaps": "Punts més voltes liderades",
+            "pointsFastLap": "Punts volta ràpida",
+            "pointsPole": "Punts Pole",
+            "pointsLeadLap": "Punts per liderar",
+            "active": "Actiu?"
         }
     }
 }

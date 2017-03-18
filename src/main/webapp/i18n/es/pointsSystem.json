@@ -2,27 +2,28 @@
     "motorsportsDatabaseApp": {
         "pointsSystem" : {
             "home": {
-                "title": "Points Systems",
-                "createLabel": "Crear nuevo Points System",
-                "createOrEditLabel": "Crear o editar Points System",
-                "search": "Search for Points System"
+                "title": "Sistemas de puntuación",
+                "createLabel": "Crear nuevo sistema de puntuación",
+                "createOrEditLabel": "Crear o editar sistema de puntuación",
+                "search": "Buscar sistemas de puntuación"
             },
-            "created": "Un nuevo Points System ha sido creado con el identificador {{ param }}",
-            "updated": "Un Points System ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un Points System ha sido eliminado con el identificador {{ param }}",
+            "created": "Se ha creado un nuevo sistema de puntuación",
+            "updated": "Se ha actualizado el sistema de puntuación",
+            "deleted": "Se ha eliminado el sistema de puntuación",
             "delete": {
-                "question": "¿Seguro que quiere eliminar Points System {{ id }}?"
+                "question": "¿Seguro que quiere eliminar el sistema de puntuación?"
             },
             "detail": {
-                "title": "Points System"
+                "title": "Sistema de puntuación"
             },
-            "name": "Name",
-            "description": "Description",
-            "points": "Points",
-            "pointsMostLeadLaps": "Points Most Lead Laps",
-            "pointsFastLap": "Points Fast Lap",
-            "pointsPole": "Points Pole",
-            "pointsLeadLap": "Points Lead Lap"
+            "name": "Nombre",
+            "description": "Descripción",
+            "points": "Puntos",
+            "pointsMostLeadLaps": "Puntos más vueltas lideradas",
+            "pointsFastLap": "Puntos vuelta rápida",
+            "pointsPole": "Puntos pole",
+            "pointsLeadLap": "Puntos liderar vuelta",
+            "active": "Activo?"
         }
     }
 }

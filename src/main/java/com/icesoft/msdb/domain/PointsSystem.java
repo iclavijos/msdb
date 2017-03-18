@@ -25,7 +25,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "points_system")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 //@Document(indexName = "pointssystem")
-public class PointsSystem implements Serializable {
+public class PointsSystem extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

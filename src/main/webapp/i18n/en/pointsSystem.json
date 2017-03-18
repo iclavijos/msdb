@@ -7,11 +7,11 @@
                 "createOrEditLabel": "Create or edit a Points System",
                 "search": "Search for Points System"
             },
-            "created": "A new Points System is created with identifier {{ param }}",
-            "updated": "A Points System is updated with identifier {{ param }}",
-            "deleted": "A Points System is deleted with identifier {{ param }}",
+            "created": "A new Points System is created",
+            "updated": "A Points System is updated",
+            "deleted": "A Points System is deleted",
             "delete": {
-                "question": "Are you sure you want to delete Points System {{ id }}?"
+                "question": "Are you sure you want to delete Points System?"
             },
             "detail": {
                 "title": "Points System"
@@ -22,7 +22,8 @@
             "pointsMostLeadLaps": "Points Most Lead Laps",
             "pointsFastLap": "Points Fast Lap",
             "pointsPole": "Points Pole",
-            "pointsLeadLap": "Points Lead Lap"
+            "pointsLeadLap": "Points Lead Lap",
+            "active": "Active?"
         }
     }
 }
