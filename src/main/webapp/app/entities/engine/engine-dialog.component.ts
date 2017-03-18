@@ -38,7 +38,7 @@ export class EngineDialogComponent implements OnInit {
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
+        this.authorities = ['ROLE_EDITOR', 'ROLE_ADMIN'];
         if (this.engine.derivedFrom) {
             this.derivedFromSearch = this.engine.manufacturer + ' ' + this.engine.name;
         }
