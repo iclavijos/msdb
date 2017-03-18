@@ -1,7 +1,5 @@
 import { Engine } from '../engine';
 import { Chassis } from '../chassis';
-import { TyreProvider } from '../tyre-provider';
-import { FuelProvider } from '../fuel-provider';
 export class Car {
     constructor(
         public id?: number,
@@ -10,7 +8,5 @@ export class Car {
         public image?: any,
         public engine?: Engine,
         public chassis?: Chassis,
-        public tyreProvider?: TyreProvider,
-        public fuelProvider?: FuelProvider,
     ) { }
 }

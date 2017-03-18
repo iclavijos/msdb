@@ -20,9 +20,7 @@
             "manufacturer": "Manufacturer",
             "image": "Image",
             "engine": "Engine",
-            "chassis": "Chassis",
-            "tyreProvider": "Tyre Provider",
-            "fuelProvider": "Fuel Provider"
+            "chassis": "Chassis"
         }
     }
 }

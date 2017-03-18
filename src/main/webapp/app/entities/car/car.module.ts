@@ -14,6 +14,7 @@ import {
     CarDeleteDialogComponent,
     carRoute,
     carPopupRoute,
+    CarResolvePagingParams,
 } from './';
 
 let ENTITY_STATES = [
@@ -44,6 +45,7 @@ let ENTITY_STATES = [
     providers: [
         CarService,
         CarPopupService,
+        CarResolvePagingParams,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -1,7 +1,8 @@
 <div>
     <h2>
         <span jhiTranslate="motorsportsDatabaseApp.car.home.title">Cars</span>
-        <button class="btn btn-primary float-right create-car" [routerLink]="['/', { outlets: { popup: ['car-new'] } }]">
+        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+        	class="btn btn-primary float-right create-car" [routerLink]="['/', { outlets: { popup: ['car-new'] } }]">
             <span class="fa fa-plus"></span>
             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.car.home.createLabel">
             Create new Car
@@ -28,15 +29,12 @@
     <div class="table-responsive" *ngIf="cars">
         <table class="table table-striped">
             <thead>
-            <tr>
-            <th><span jhiTranslate="global.field.id">ID</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.car.name">Name</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.car.manufacturer">Manufacturer</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.car.image">Image</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.car.engine">Engine</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.car.chassis">Chassis</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.car.tyreProvider">Tyre Provider</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.car.fuelProvider">Fuel Provider</span></th>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.car.name">Name</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="manufacturer"><span jhiTranslate="motorsportsDatabaseApp.car.manufacturer">Manufacturer</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="engine.id"><span jhiTranslate="motorsportsDatabaseApp.car.engine">Engine</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="chassis.id"><span jhiTranslate="motorsportsDatabaseApp.car.chassis">Chassis</span> <span class="fa fa-sort"></span></th>
             <th></th>
             </tr>
             </thead>
@@ -46,52 +44,33 @@
                 <td>{{car.name}}</td>
                 <td>{{car.manufacturer}}</td>
                 <td>
-                    <a *ngIf="car.image" (click)="openFile(car.imageContentType, car.image)">
-                        <img [src]="'data:' + car.imageContentType + ';base64,' + car.image" style="max-height: 30px;" alt="car image"/>
-                    </a>
-                    <span *ngIf="car.image">{{car.imageContentType}}, {{byteSize(car.image)}}</span>
-                </td>
-                <td>
                     <div *ngIf="car.engine">
-                        <a [routerLink]="['../engine', car.engine?.id ]" >{{car.engine?.id}}</a>
+                        <a [routerLink]="['../engine', car.engine?.id ]" >{{car.engine?.manufacturer}} {{car.engine?.name}}</a>
                     </div>
                 </td>
                 <td>
                     <div *ngIf="car.chassis">
-                        <a [routerLink]="['../chassis', car.chassis?.id ]" >{{car.chassis?.id}}</a>
-                    </div>
-                </td>
-                <td>
-                    <div *ngIf="car.tyreProvider">
-                        <a [routerLink]="['../tyre-provider', car.tyreProvider?.id ]" >{{car.tyreProvider?.id}}</a>
-                    </div>
-                </td>
-                <td>
-                    <div *ngIf="car.fuelProvider">
-                        <a [routerLink]="['../fuel-provider', car.fuelProvider?.id ]" >{{car.fuelProvider?.id}}</a>
+                        <a [routerLink]="['../chassis', car.chassis?.id ]" >{{car.chassis?.manufacturer}} {{car.chassis?.name}}</a>
                     </div>
                 </td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
-                        <button type="submit"
+                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                 [routerLink]="['../car', car.id ]"
                                 class="btn btn-info btn-sm">
                             <span class="fa fa-eye"></span>
-                            <span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                 [routerLink]="['/', { outlets: { popup: 'car/'+ car.id + '/edit'} }]"
                                 replaceUrl="true"
                                 class="btn btn-primary btn-sm">
                             <span class="fa fa-pencil"></span>
-                            <span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
                                 [routerLink]="['/', { outlets: { popup: 'car/'+ car.id + '/delete'} }]"
                                 replaceUrl="true"
                                 class="btn btn-danger btn-sm">
                             <span class="fa fa-remove"></span>
-                            <span class="hidden-md-down" jhiTranslate="entity.action.delete">Delete</span>
                         </button>
                     </div>
                 </td>
@@ -99,4 +78,12 @@
             </tbody>
         </table>
     </div>
+        <div *ngIf="cars && cars.length">
+            <div class="row justify-content-center">
+                <jhi-item-count [page]="page" [total]="queryCount" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+            </div>
+            <div class="row justify-content-center">
+                <ngb-pagination [collectionSize]="totalItems" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
+            </div>
+        </div>
 </div>

@@ -10,8 +10,6 @@ import { CarPopupService } from './car-popup.service';
 import { CarService } from './car.service';
 import { Engine, EngineService } from '../engine';
 import { Chassis, ChassisService } from '../chassis';
-import { TyreProvider, TyreProviderService } from '../tyre-provider';
-import { FuelProvider, FuelProviderService } from '../fuel-provider';
 @Component({
     selector: 'jhi-car-dialog',
     templateUrl: './car-dialog.component.html'
@@ -25,10 +23,6 @@ export class CarDialogComponent implements OnInit {
     engines: Engine[];
 
     chassis: Chassis[];
-
-    tyreproviders: TyreProvider[];
-
-    fuelproviders: FuelProvider[];
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
@@ -37,8 +31,6 @@ export class CarDialogComponent implements OnInit {
         private carService: CarService,
         private engineService: EngineService,
         private chassisService: ChassisService,
-        private tyreProviderService: TyreProviderService,
-        private fuelProviderService: FuelProviderService,
         private eventManager: EventManager
     ) {
         this.jhiLanguageService.setLocations(['car']);
@@ -51,10 +43,6 @@ export class CarDialogComponent implements OnInit {
             (res: Response) => { this.engines = res.json(); }, (res: Response) => this.onError(res.json()));
         this.chassisService.query().subscribe(
             (res: Response) => { this.chassis = res.json(); }, (res: Response) => this.onError(res.json()));
-        this.tyreProviderService.query().subscribe(
-            (res: Response) => { this.tyreproviders = res.json(); }, (res: Response) => this.onError(res.json()));
-        this.fuelProviderService.query().subscribe(
-            (res: Response) => { this.fuelproviders = res.json(); }, (res: Response) => this.onError(res.json()));
     }
     byteSize(field) {
         return this.dataUtils.byteSize(field);
@@ -111,14 +99,6 @@ export class CarDialogComponent implements OnInit {
     }
 
     trackChassisById(index: number, item: Chassis) {
-        return item.id;
-    }
-
-    trackTyreProviderById(index: number, item: TyreProvider) {
-        return item.id;
-    }
-
-    trackFuelProviderById(index: number, item: FuelProvider) {
         return item.id;
     }
 }

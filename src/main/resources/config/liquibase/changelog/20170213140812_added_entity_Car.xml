@@ -45,14 +45,6 @@
                 <constraints nullable="true" />
             </column>
 
-            <column name="tyre_provider_id" type="bigint">
-                <constraints nullable="true" />
-            </column>
-
-            <column name="fuel_provider_id" type="bigint">
-                <constraints nullable="true" />
-            </column>
-
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
         

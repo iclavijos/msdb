@@ -20,17 +20,5 @@
                                  referencedColumnNames="id"
                                  referencedTableName="chassis"/>
 
-        <addForeignKeyConstraint baseColumnNames="tyre_provider_id"
-                                 baseTableName="car"
-                                 constraintName="fk_car_tyre_provider_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="tyre_provider"/>
-
-        <addForeignKeyConstraint baseColumnNames="fuel_provider_id"
-                                 baseTableName="car"
-                                 constraintName="fk_car_fuel_provider_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="fuel_provider"/>
-
     </changeSet>
 </databaseChangeLog>

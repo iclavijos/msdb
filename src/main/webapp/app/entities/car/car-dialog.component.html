@@ -49,12 +49,12 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.car.image" for="field_image">Image</label>
             <div>
+                <img [src]="car.imageUrl" style="max-height: 100px;" *ngIf="!car.image && car.imageUrl" alt="car image"/>
                 <img [src]="'data:' + car.imageContentType + ';base64,' + car.image" style="max-height: 100px;" *ngIf="car.image" alt="car image"/>
-                <div *ngIf="car.image" class="form-text text-danger clearfix">
-                    <span class="pull-left">{{car.imageContentType}}, {{byteSize(car.image)}}</span>
-                    <button type="button" (click)="car.image=null;car.imageContentType=null;"
+                <div *ngIf="car.imageUrl || car.image" class="form-text text-danger clearfix">
+                    <button type="button" (click)="car.imageUrl=null; car.image=null;"
                             class="btn btn-default btn-xs pull-right">
-                        <span class="fa fa-times"></span>
+                        <span class="fa fa-square-o"></span>
                     </button>
                 </div>
                 <input type="file" (change)="setFileData($event, car, 'image', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
@@ -78,20 +78,6 @@
             <select class="form-control" id="field_chassis" name="chassis" [(ngModel)]="car.chassis" >
                 <option [ngValue]="null"></option>
                 <option [ngValue]="chassisOption.id === car.chassis?.id ? car.chassis : chassisOption" *ngFor="let chassisOption of chassis; trackBy: trackChassisById">{{chassisOption.id}}</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label jhiTranslate="motorsportsDatabaseApp.car.tyreProvider" for="field_tyreProvider">Tyre Provider</label>
-            <select class="form-control" id="field_tyreProvider" name="tyreProvider" [(ngModel)]="car.tyreProvider" >
-                <option [ngValue]="null"></option>
-                <option [ngValue]="tyreProviderOption.id === car.tyreProvider?.id ? car.tyreProvider : tyreProviderOption" *ngFor="let tyreProviderOption of tyreproviders; trackBy: trackTyreProviderById">{{tyreProviderOption.id}}</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label jhiTranslate="motorsportsDatabaseApp.car.fuelProvider" for="field_fuelProvider">Fuel Provider</label>
-            <select class="form-control" id="field_fuelProvider" name="fuelProvider" [(ngModel)]="car.fuelProvider" >
-                <option [ngValue]="null"></option>
-                <option [ngValue]="fuelProviderOption.id === car.fuelProvider?.id ? car.fuelProvider : fuelProviderOption" *ngFor="let fuelProviderOption of fuelproviders; trackBy: trackFuelProviderById">{{fuelProviderOption.id}}</option>
             </select>
         </div>
     </div>

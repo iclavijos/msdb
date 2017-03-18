@@ -1,21 +1,12 @@
 package com.icesoft.msdb.domain;
 
-import java.io.Serializable;
-import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A Car.
@@ -23,7 +14,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "car")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-//@Document(indexName = "car")
 public class Car implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,24 +32,17 @@ public class Car implements Serializable {
     @Column(name = "manufacturer", length = 50, nullable = false)
     private String manufacturer;
 
-    @Lob
-    @Column(name = "image")
+    @Transient
     private byte[] image;
 
-    @Column(name = "image_content_type")
-    private String imageContentType;
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @ManyToOne
     private Engine engine;
 
     @ManyToOne
     private Chassis chassis;
-
-    @ManyToOne
-    private TyreProvider tyreProvider;
-
-    @ManyToOne
-    private FuelProvider fuelProvider;
 
     public Long getId() {
         return id;
@@ -108,17 +91,17 @@ public class Car implements Serializable {
         this.image = image;
     }
 
-    public String getImageContentType() {
-        return imageContentType;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public Car imageContentType(String imageContentType) {
-        this.imageContentType = imageContentType;
+    public Car imageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
         return this;
     }
 
-    public void setImageContentType(String imageContentType) {
-        this.imageContentType = imageContentType;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public Engine getEngine() {
@@ -145,32 +128,6 @@ public class Car implements Serializable {
 
     public void setChassis(Chassis chassis) {
         this.chassis = chassis;
-    }
-
-    public TyreProvider getTyreProvider() {
-        return tyreProvider;
-    }
-
-    public Car tyreProvider(TyreProvider tyreProvider) {
-        this.tyreProvider = tyreProvider;
-        return this;
-    }
-
-    public void setTyreProvider(TyreProvider tyreProvider) {
-        this.tyreProvider = tyreProvider;
-    }
-
-    public FuelProvider getFuelProvider() {
-        return fuelProvider;
-    }
-
-    public Car fuelProvider(FuelProvider fuelProvider) {
-        this.fuelProvider = fuelProvider;
-        return this;
-    }
-
-    public void setFuelProvider(FuelProvider fuelProvider) {
-        this.fuelProvider = fuelProvider;
     }
 
     @Override
@@ -200,7 +157,7 @@ public class Car implements Serializable {
             ", name='" + name + "'" +
             ", manufacturer='" + manufacturer + "'" +
             ", image='" + image + "'" +
-            ", imageContentType='" + imageContentType + "'" +
+            ", imageUrl='" + imageUrl + "'" +
             '}';
     }
 }

@@ -17,6 +17,7 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +33,7 @@ import org.springframework.util.Base64Utils;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Car;
 import com.icesoft.msdb.repository.CarRepository;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
@@ -51,8 +53,6 @@ public class CarResourceIntTest {
 
     private static final byte[] DEFAULT_IMAGE = TestUtil.createByteArray(1, "0");
     private static final byte[] UPDATED_IMAGE = TestUtil.createByteArray(2, "1");
-    private static final String DEFAULT_IMAGE_CONTENT_TYPE = "image/jpg";
-    private static final String UPDATED_IMAGE_CONTENT_TYPE = "image/png";
 
     @Autowired
     private CarRepository carRepository;
@@ -72,11 +72,14 @@ public class CarResourceIntTest {
     private MockMvc restCarMockMvc;
 
     private Car car;
+    
+    @Mock
+    private CDNService cdnService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            CarResource carResource = new CarResource(carRepository);
+            CarResource carResource = new CarResource(carRepository, cdnService);
         this.restCarMockMvc = MockMvcBuilders.standaloneSetup(carResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -93,14 +96,12 @@ public class CarResourceIntTest {
         Car car = new Car()
                 .name(DEFAULT_NAME)
                 .manufacturer(DEFAULT_MANUFACTURER)
-                .image(DEFAULT_IMAGE)
-                .imageContentType(DEFAULT_IMAGE_CONTENT_TYPE);
+                .image(DEFAULT_IMAGE);
         return car;
     }
 
     @Before
     public void initTest() {
-//        carSearchRepository.deleteAll();
         car = createEntity(em);
     }
 
@@ -123,11 +124,7 @@ public class CarResourceIntTest {
         assertThat(testCar.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testCar.getManufacturer()).isEqualTo(DEFAULT_MANUFACTURER);
         assertThat(testCar.getImage()).isEqualTo(DEFAULT_IMAGE);
-        assertThat(testCar.getImageContentType()).isEqualTo(DEFAULT_IMAGE_CONTENT_TYPE);
 
-        // Validate the Car in Elasticsearch
-//        Car carEs = carSearchRepository.findOne(testCar.getId());
-//        assertThat(carEs).isEqualToComparingFieldByField(testCar);
     }
 
     @Test
@@ -199,7 +196,6 @@ public class CarResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(car.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].manufacturer").value(hasItem(DEFAULT_MANUFACTURER.toString())))
-            .andExpect(jsonPath("$.[*].imageContentType").value(hasItem(DEFAULT_IMAGE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].image").value(hasItem(Base64Utils.encodeToString(DEFAULT_IMAGE))));
     }
 
@@ -216,7 +212,6 @@ public class CarResourceIntTest {
             .andExpect(jsonPath("$.id").value(car.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.manufacturer").value(DEFAULT_MANUFACTURER.toString()))
-            .andExpect(jsonPath("$.imageContentType").value(DEFAULT_IMAGE_CONTENT_TYPE))
             .andExpect(jsonPath("$.image").value(Base64Utils.encodeToString(DEFAULT_IMAGE)));
     }
 
@@ -233,7 +228,6 @@ public class CarResourceIntTest {
     public void updateCar() throws Exception {
         // Initialize the database
         carRepository.saveAndFlush(car);
-//        carSearchRepository.save(car);
         int databaseSizeBeforeUpdate = carRepository.findAll().size();
 
         // Update the car
@@ -241,8 +235,7 @@ public class CarResourceIntTest {
         updatedCar
                 .name(UPDATED_NAME)
                 .manufacturer(UPDATED_MANUFACTURER)
-                .image(UPDATED_IMAGE)
-                .imageContentType(UPDATED_IMAGE_CONTENT_TYPE);
+                .image(UPDATED_IMAGE);
 
         restCarMockMvc.perform(put("/api/cars")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -256,11 +249,7 @@ public class CarResourceIntTest {
         assertThat(testCar.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testCar.getManufacturer()).isEqualTo(UPDATED_MANUFACTURER);
         assertThat(testCar.getImage()).isEqualTo(UPDATED_IMAGE);
-        assertThat(testCar.getImageContentType()).isEqualTo(UPDATED_IMAGE_CONTENT_TYPE);
 
-        // Validate the Car in Elasticsearch
-//        Car carEs = carSearchRepository.findOne(testCar.getId());
-//        assertThat(carEs).isEqualToComparingFieldByField(testCar);
     }
 
     @Test
@@ -286,17 +275,12 @@ public class CarResourceIntTest {
     public void deleteCar() throws Exception {
         // Initialize the database
         carRepository.saveAndFlush(car);
-//        carSearchRepository.save(car);
         int databaseSizeBeforeDelete = carRepository.findAll().size();
 
         // Get the car
         restCarMockMvc.perform(delete("/api/cars/{id}", car.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
-
-        // Validate Elasticsearch is empty
-//        boolean carExistsInEs = carSearchRepository.exists(car.getId());
-//        assertThat(carExistsInEs).isFalse();
 
         // Validate the database is empty
         List<Car> carList = carRepository.findAll();
@@ -308,7 +292,6 @@ public class CarResourceIntTest {
     public void searchCar() throws Exception {
         // Initialize the database
         carRepository.saveAndFlush(car);
-//        carSearchRepository.save(car);
 
         // Search the car
         restCarMockMvc.perform(get("/api/_search/cars?query=id:" + car.getId()))
@@ -317,7 +300,6 @@ public class CarResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(car.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].manufacturer").value(hasItem(DEFAULT_MANUFACTURER.toString())))
-            .andExpect(jsonPath("$.[*].imageContentType").value(hasItem(DEFAULT_IMAGE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].image").value(hasItem(Base64Utils.encodeToString(DEFAULT_IMAGE))));
     }
 
