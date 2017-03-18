@@ -42,9 +42,6 @@ public class EventEntry implements Serializable {
     private String teamName;
 
     @ManyToOne
-    private Car car;
-
-    @ManyToOne
     private Driver driver;
 
     @ManyToMany(mappedBy = "participations")
@@ -71,19 +68,6 @@ public class EventEntry implements Serializable {
 
     public void setTeamName(String teamName) {
         this.teamName = teamName;
-    }
-
-    public Car getCar() {
-        return car;
-    }
-
-    public EventEntry car(Car car) {
-        this.car = car;
-        return this;
-    }
-
-    public void setCar(Car car) {
-        this.car = car;
     }
 
     public Driver getDriver() {

@@ -8,7 +8,6 @@ import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
 import { EventEntry } from './event-entry.model';
 import { EventEntryPopupService } from './event-entry-popup.service';
 import { EventEntryService } from './event-entry.service';
-import { Car, CarService } from '../car';
 import { Driver, DriverService } from '../driver';
 import { Team, TeamService } from '../team';
 @Component({
@@ -21,8 +20,6 @@ export class EventEntryDialogComponent implements OnInit {
     authorities: any[];
     isSaving: boolean;
 
-    cars: Car[];
-
     drivers: Driver[];
 
     teams: Team[];
@@ -31,7 +28,6 @@ export class EventEntryDialogComponent implements OnInit {
         private jhiLanguageService: JhiLanguageService,
         private alertService: AlertService,
         private eventEntryService: EventEntryService,
-        private carService: CarService,
         private driverService: DriverService,
         private teamService: TeamService,
         private eventManager: EventManager
@@ -41,9 +37,7 @@ export class EventEntryDialogComponent implements OnInit {
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
-        this.carService.query().subscribe(
-            (res: Response) => { this.cars = res.json(); }, (res: Response) => this.onError(res.json()));
+        this.authorities = ['ROLE_EDITOR', 'ROLE_ADMIN'];
         this.driverService.query().subscribe(
             (res: Response) => { this.drivers = res.json(); }, (res: Response) => this.onError(res.json()));
         this.teamService.query().subscribe(
@@ -77,10 +71,6 @@ export class EventEntryDialogComponent implements OnInit {
 
     private onError (error) {
         this.alertService.error(error.message, null, null);
-    }
-
-    trackCarById(index: number, item: Car) {
-        return item.id;
     }
 
     trackDriverById(index: number, item: Driver) {

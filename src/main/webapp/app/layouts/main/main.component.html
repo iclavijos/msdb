@@ -36,12 +36,6 @@
                         <span jhiTranslate="global.menu.entities.chassis">Chassis</span>
                     </a>
                 </li>
-		        <li uiSrefActive="active">
-                    <a class="dropdown-item" routerLink="car">
-                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-                        <span jhiTranslate="global.menu.entities.car">Car</span>
-                    </a>
-                </li>
                 <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" uiSrefActive="active">
 		            <a class="dropdown-item" routerLink="points-system">
 		                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>

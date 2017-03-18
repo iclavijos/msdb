@@ -7,12 +7,6 @@
         Added the constraints for entity EventEntry.
     -->
     <changeSet id="20170213140812-2" author="jhipster">
-        
-        <addForeignKeyConstraint baseColumnNames="car_id"
-                                 baseTableName="event_entry"
-                                 constraintName="fk_event_entry_car_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="car"/>
 
         <addForeignKeyConstraint baseColumnNames="driver_id"
                                  baseTableName="event_entry"

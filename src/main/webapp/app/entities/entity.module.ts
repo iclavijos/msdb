@@ -17,7 +17,6 @@ import { MotorsportsDatabaseEventSessionModule } from './event-session/event-ses
 import { MotorsportsDatabaseEventEditionModule } from './event-edition/event-edition.module';
 import { MotorsportsDatabaseEventEntryModule } from './event-entry/event-entry.module';
 import { MotorsportsDatabaseEventEntryResultModule } from './event-entry-result/event-entry-result.module';
-import { MotorsportsDatabaseCarModule } from './car/car.module';
 /* jhipster-needle-add-entity-module-import - JHipster will add entity modules imports here */
 
 @NgModule({
@@ -39,7 +38,6 @@ import { MotorsportsDatabaseCarModule } from './car/car.module';
         MotorsportsDatabaseEventEditionModule,
         MotorsportsDatabaseEventEntryModule,
         MotorsportsDatabaseEventEntryResultModule,
-        MotorsportsDatabaseCarModule,
         /* jhipster-needle-add-entity-module - JHipster will add entity modules here */
     ],
     declarations: [],

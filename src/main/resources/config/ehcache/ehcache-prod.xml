@@ -26,8 +26,6 @@
 
     <cache alias="com.icesoft.msdb.domain.TyreProvider" uses-template="simple"/>
 
-    <cache alias="com.icesoft.msdb.domain.Car" uses-template="simple"/>
-
     <cache alias="com.icesoft.msdb.domain.Chassis" uses-template="simple"/>
 
     <cache alias="com.icesoft.msdb.domain.Chassis.evolutions" uses-template="simple"/>
