@@ -6,5 +6,8 @@ export class Chassis {
         public debutYear?: number,
         public evolutions?: Chassis,
         public derivedFrom?: Chassis,
+        public rebranded: boolean = false,
+        public image?: any,
+        public imageUrl?: string,
     ) { }
 }

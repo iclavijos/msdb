@@ -17,6 +17,7 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Chassis;
 import com.icesoft.msdb.repository.ChassisRepository;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
@@ -69,11 +71,14 @@ public class ChassisResourceIntTest {
     private MockMvc restChassisMockMvc;
 
     private Chassis chassis;
+    
+    @Mock
+    private CDNService cdnService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            ChassisResource chassisResource = new ChassisResource(chassisRepository);
+            ChassisResource chassisResource = new ChassisResource(chassisRepository, cdnService);
         this.restChassisMockMvc = MockMvcBuilders.standaloneSetup(chassisResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

@@ -63,6 +63,29 @@
             <ng2-completer id="field_derivedFrom" name="derivedFrom" [(ngModel)]="derivedFromSearch" [datasource]="dataService" [minSearchLength]="2" 
             	(selected)="onChassisSelected($event)" [pause]="300" ></ng2-completer>
         </div>
+        <div class="form-group">
+            <label jhiTranslate="motorsportsDatabaseApp.chassis.rebranded" for="field_rebranded">Rebranded</label> <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.chassis.rebrandedTooltip' | translate }}"></i>
+            <i [ngClass]="chassis.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="chassis.rebranded = !chassis.rebranded"></i>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.chassis.image" for="field_image">Image</label>
+            <div>
+                <img [src]="chassis.imageUrl" style="max-height: 100px;" *ngIf="chassis.image && chassis.imageUrl" alt="chassis image"/>
+                <img [src]="'data:' + chassis.imageContentType + ';base64,' + chassis.image" style="max-height: 100px;" *ngIf="chassis.image" alt="chassis image"/>
+                <div *ngIf="chassis.imageUrl || chassis.image" class="form-text text-danger clearfix">
+                    <button type="button" (click)="chassis.imageUrl=null; chassis.image=null;"
+                            class="btn btn-default btn-xs pull-right">
+                        <span class="fa fa-times"></span>
+                    </button>
+                </div>
+                <input type="file" (change)="setFileData($event, chassis, 'image', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+            </div>
+            <input type="hidden" class="form-control" name="image" id="field_image"
+                [(ngModel)]="chassis.image"
+             />
+            <input type="hidden" class="form-control" name="imageContentType" id="field_imageContentType"
+                [(ngModel)]="chassis.imageContentType" />
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">

@@ -34,6 +34,7 @@
             <th jhiSortBy="manufacturer"><span jhiTranslate="motorsportsDatabaseApp.chassis.manufacturer">Manufacturer</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="debutYear"><span jhiTranslate="motorsportsDatabaseApp.chassis.debutYear">Debut Year</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="derivedFrom.id"><span jhiTranslate="motorsportsDatabaseApp.chassis.derivedFrom">Derived From</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="rebranded"><span jhiTranslate="motorsportsDatabaseApp.chassis.rebranded">Rebranded</span> <span class="fa fa-sort"></span> <span class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.chassis.rebrandedTooltip' | translate }}"></span></th>
             <th></th>
             </tr>
             </thead>
@@ -44,9 +45,10 @@
                 <td>{{chassis.debutYear}}</td>
                 <td>
                     <div *ngIf="chassis.derivedFrom">
-                        <a [routerLink]="['../chassis', chassis.derivedFrom?.id ]" >{{chassis.derivedFrom?.id}}</a>
+                        <a [routerLink]="['../chassis', chassis.derivedFrom?.id ]" >{{chassis.derivedFrom?.manufacturer}} {{chassis.derivedFrom?.name}}</a>
                     </div>
                 </td>
+                <td><i [ngClass]="chassis.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 

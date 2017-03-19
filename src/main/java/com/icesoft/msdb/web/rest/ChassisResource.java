@@ -29,6 +29,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Chassis;
 import com.icesoft.msdb.repository.ChassisRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
@@ -47,9 +48,12 @@ public class ChassisResource {
     private static final String ENTITY_NAME = "chassis";
         
     private final ChassisRepository chassisRepository;
+    
+    private final CDNService cdnService;
 
-    public ChassisResource(ChassisRepository chassisRepository) {
+    public ChassisResource(ChassisRepository chassisRepository, CDNService cdnService) {
         this.chassisRepository = chassisRepository;
+        this.cdnService = cdnService;
     }
 
     /**
@@ -68,6 +72,14 @@ public class ChassisResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new chassis cannot already have an ID")).body(null);
         }
         Chassis result = chassisRepository.save(chassis);
+        
+        if (chassis.getImage() != null) {
+	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), chassis.getImage(), ENTITY_NAME);
+			result.setImageUrl(cdnUrl);
+			
+			result = chassisRepository.save(result);
+        }
+        
         return ResponseEntity.created(new URI("/api/chassis/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -90,6 +102,14 @@ public class ChassisResource {
         if (chassis.getId() == null) {
             return createChassis(chassis);
         }
+        
+        if (chassis.getImage() != null) {
+	        String cdnUrl = cdnService.uploadImage(chassis.getId().toString(), chassis.getImage(), ENTITY_NAME);
+	        chassis.setImageUrl(cdnUrl);
+        } else {
+        	cdnService.deleteImage(chassis.getId().toString(), ENTITY_NAME);
+        }
+        
         Chassis result = chassisRepository.save(chassis);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, chassis.getId().toString()))
@@ -139,6 +159,7 @@ public class ChassisResource {
     public ResponseEntity<Void> deleteChassis(@PathVariable Long id) {
         log.debug("REST request to delete Chassis : {}", id);
         chassisRepository.delete(id);
+        cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

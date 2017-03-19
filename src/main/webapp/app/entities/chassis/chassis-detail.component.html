@@ -22,6 +22,16 @@
                 <a [routerLink]="['/chassis', chassis.derivedFrom?.id]">{{chassis.derivedFrom?.manufacturer}} {{chassis.derivedFrom?.name}}</a>
             </div>
         </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.rebranded">Rebranded</span> 
+        	<i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.chassis.rebrandedTooltip' | translate }}"></i></dt>
+        <dd>
+            <span><i [ngClass]="chassis.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+        </dd>
+        <dd>
+            <div *ngIf="chassis.imageUrl">
+            	<img [src]="chassis.imageUrl" style="max-width: 300px;" alt="chassis image"/>
+            </div>
+        </dd>
     </dl>
 
     <button type="submit"

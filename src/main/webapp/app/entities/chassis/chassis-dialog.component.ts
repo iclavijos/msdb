@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
+import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jhipster';
 
 import { Chassis } from './chassis.model';
 import { ChassisPopupService } from './chassis-popup.service';
@@ -26,6 +26,7 @@ export class ChassisDialogComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
+        private dataUtils: DataUtils,
         private alertService: AlertService,
         private chassisService: ChassisService,
         private eventManager: EventManager,
@@ -44,6 +45,23 @@ export class ChassisDialogComponent implements OnInit {
     }
     clear () {
         this.activeModal.dismiss('cancel');
+    }
+    
+    openFile(contentType, field) {
+        return this.dataUtils.openFile(contentType, field);
+    }
+    
+    setFileData($event, chassis, field, isImage) {
+        if ($event.target.files && $event.target.files[0]) {
+            let $file = $event.target.files[0];
+            if (isImage && !/^image\//.test($file.type)) {
+                return;
+            }
+            this.dataUtils.toBase64($file, (base64Data) => {
+                chassis[field] = base64Data;
+                chassis[`${field}ContentType`] = $file.type;
+            });
+        }
     }
 
     save () {

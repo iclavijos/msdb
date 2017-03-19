@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -48,6 +49,15 @@ public class Chassis implements Serializable {
     @NotNull
     @Column(name = "debut_year", nullable = false)
     private Integer debutYear;
+    
+    @Column
+    private Boolean rebranded;
+    
+    @Transient
+    private byte[] image;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @OneToMany(mappedBy = "derivedFrom")
     @JsonIgnore
@@ -103,8 +113,47 @@ public class Chassis implements Serializable {
     public void setDebutYear(Integer debutYear) {
         this.debutYear = debutYear;
     }
+    
+    public Boolean getRebranded() {
+		return rebranded;
+	}
 
-    public Set<Chassis> getEvolutions() {
+    public Chassis rebranded(Boolean rebranded) {
+    	this.rebranded = rebranded;
+    	return this;
+    }
+    
+	public void setRebranded(Boolean rebranded) {
+		this.rebranded = rebranded;
+	}
+
+	public byte[] getImage() {
+		return image;
+	}
+	
+	public Chassis image(byte[] image) {
+		this.image = image;
+		return this;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+	
+	public Chassis imageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+		return this;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	public Set<Chassis> getEvolutions() {
         return evolutions;
     }
 
@@ -169,6 +218,8 @@ public class Chassis implements Serializable {
             ", name='" + name + "'" +
             ", manufacturer='" + manufacturer + "'" +
             ", debutYear='" + debutYear + "'" +
+            ", rebranded='" + rebranded + "'" +
+            ", imageUrl='" + imageUrl + "'" +
             '}';
     }
 }
