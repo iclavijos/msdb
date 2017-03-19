@@ -67,7 +67,7 @@ public class RacetrackLayoutResource {
         RacetrackLayout result = racetrackLayoutRepository.save(racetrackLayout);
       
         if (result.getLayoutImage() != null) {
-	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), racetrackLayout.getLayoutImage(), "racetrackLayouts");
+	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), racetrackLayout.getLayoutImage(), ENTITY_NAME);
 			result.setLayoutImageUrl(cdnUrl);
 			
 			result = racetrackLayoutRepository.save(result);
@@ -96,10 +96,10 @@ public class RacetrackLayoutResource {
             return createRacetrackLayout(racetrackLayout);
         }
         if (racetrackLayout.getLayoutImage() != null) {
-	        String cdnUrl = cdnService.uploadImage(racetrackLayout.getId().toString(), racetrackLayout.getLayoutImage(), "racetrackLayouts");
+	        String cdnUrl = cdnService.uploadImage(racetrackLayout.getId().toString(), racetrackLayout.getLayoutImage(), ENTITY_NAME);
 	        racetrackLayout.setLayoutImageUrl(cdnUrl);
         } else {
-        	cdnService.deleteImage(racetrackLayout.getId().toString(), "racetrackLayouts");
+        	cdnService.deleteImage(racetrackLayout.getId().toString(), ENTITY_NAME);
         }
         RacetrackLayout result = racetrackLayoutRepository.save(racetrackLayout);
         return ResponseEntity.ok()
@@ -146,7 +146,7 @@ public class RacetrackLayoutResource {
     public ResponseEntity<Void> deleteRacetrackLayout(@PathVariable Long id) {
         log.debug("REST request to delete RacetrackLayout : {}", id);
         racetrackLayoutRepository.delete(id);
-        cdnService.deleteImage(id.toString(), "racetrackLayouts");
+        cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

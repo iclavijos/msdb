@@ -75,7 +75,7 @@ public class TeamResource {
         }
         Team result = teamRepository.save(team);
         if (team.getLogo() != null) {
-	        String cdnUrl = cdnService.uploadImage(team.getId().toString(), team.getLogo(), "teams");
+	        String cdnUrl = cdnService.uploadImage(team.getId().toString(), team.getLogo(), ENTITY_NAME);
 			team.logoUrl(cdnUrl);
 			
 			result = teamRepository.save(result);
@@ -103,10 +103,10 @@ public class TeamResource {
             return createTeam(team);
         }
         if (team.getLogo() != null) {
-        	String cdnUrl = cdnService.uploadImage(team.getId().toString(), team.getLogo(), "teams");
+        	String cdnUrl = cdnService.uploadImage(team.getId().toString(), team.getLogo(), ENTITY_NAME);
 			team.logoUrl(cdnUrl);
         } else {
-        	cdnService.deleteImage(team.getId().toString(), "teams");
+        	cdnService.deleteImage(team.getId().toString(), ENTITY_NAME);
         }
         Team result = teamRepository.save(team);
         return ResponseEntity.ok()
@@ -154,7 +154,7 @@ public class TeamResource {
     public ResponseEntity<Void> deleteTeam(@PathVariable Long id) {
         log.debug("REST request to delete Team : {}", id);
         teamRepository.delete(id);
-        cdnService.deleteImage(id.toString(), "teams");
+        cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

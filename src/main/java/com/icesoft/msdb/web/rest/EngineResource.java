@@ -74,7 +74,7 @@ public class EngineResource {
         Engine result = engineRepository.save(engine);
         
         if (engine.getImage() != null) {
-	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), engine.getImage(), "engines");
+	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), engine.getImage(), ENTITY_NAME);
 			result.setImageUrl(cdnUrl);
 			
 			result = engineRepository.save(result);
@@ -104,10 +104,10 @@ public class EngineResource {
         }
         
         if (engine.getImage() != null) {
-	        String cdnUrl = cdnService.uploadImage(engine.getId().toString(), engine.getImage(), "engines");
+	        String cdnUrl = cdnService.uploadImage(engine.getId().toString(), engine.getImage(), ENTITY_NAME);
 			engine.setImageUrl(cdnUrl);
         } else {
-        	cdnService.deleteImage(engine.getId().toString(), "engines");
+        	cdnService.deleteImage(engine.getId().toString(), ENTITY_NAME);
         }
         Engine result = engineRepository.save(engine);
         
@@ -156,7 +156,7 @@ public class EngineResource {
     public ResponseEntity<Void> deleteEngine(@PathVariable Long id) {
         log.debug("REST request to delete Engine : {}", id);
         engineRepository.delete(id);
-        cdnService.deleteImage(id.toString(), "engines");
+        cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
