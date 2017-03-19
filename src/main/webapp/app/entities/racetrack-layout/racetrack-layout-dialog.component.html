@@ -65,7 +65,7 @@
                 <div *ngIf="racetrackLayout.layoutImage" class="form-text text-danger clearfix">
                     <button type="button" (click)="racetrackLayout.layoutImage=null; racetrackLayout.layoutImageUrl=null;"
                             class="btn btn-default btn-xs pull-right">
-                        <span class="fa fa-square-o"></span>
+                        <span class="fa fa-times"></span>
                     </button>
                 </div>
                 <input type="file" (change)="setFileData($event, racetrackLayout, 'layoutImage', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>

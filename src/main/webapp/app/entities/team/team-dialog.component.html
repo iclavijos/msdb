@@ -57,7 +57,7 @@
                 <div *ngIf="team.logoUrl || team.logo" class="form-text text-danger clearfix">
                     <button type="button" (click)="team.logoUrl=null; team.logo=null;"
                             class="btn btn-default btn-xs pull-right">
-                        <span class="fa fa-square-o"></span>
+                        <span class="fa fa-times"></span>
                     </button>
                 </div>
                 <input type="file" (change)="setFileData($event, team, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
