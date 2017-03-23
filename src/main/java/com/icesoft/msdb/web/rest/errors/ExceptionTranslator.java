@@ -2,6 +2,8 @@ package com.icesoft.msdb.web.rest.errors;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;
@@ -14,11 +16,15 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import com.icesoft.msdb.web.rest.EngineResource;
+
 /**
  * Controller advice to translate the server side exceptions to client-friendly json structures.
  */
 @ControllerAdvice
 public class ExceptionTranslator {
+	
+	private final Logger log = LoggerFactory.getLogger(ExceptionTranslator.class);
 
     @ExceptionHandler(ConcurrencyFailureException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
@@ -70,6 +76,8 @@ public class ExceptionTranslator {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorVM> processRuntimeException(Exception ex) {
+    	log.error("Problems processing request:", ex.getMessage());
+    	log.debug("Exception details: ", ex);
         BodyBuilder builder;
         ErrorVM errorVM;
         ResponseStatus responseStatus = AnnotationUtils.findAnnotation(ex.getClass(), ResponseStatus.class);
