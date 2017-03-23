@@ -15,7 +15,7 @@ import { DriverService } from './driver.service';
     templateUrl: './driver-dialog.component.html'
 })
 export class DriverDialogComponent implements OnInit {
-    
+
     driver: Driver;
     authorities: any[];
     isSaving: boolean;

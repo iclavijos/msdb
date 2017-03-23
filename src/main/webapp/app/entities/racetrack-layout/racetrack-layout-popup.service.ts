@@ -19,7 +19,7 @@ export class RacetrackLayoutPopupService {
 
     ) {}
 
-    open (component: Component, id?: number | any, isNewLayout: boolean = false): NgbModalRef {    
+    open (component: Component, id?: number | any, isNewLayout = false): NgbModalRef {
         if (this.isOpen) {
             return;
         }

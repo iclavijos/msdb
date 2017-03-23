@@ -30,7 +30,7 @@ export class RacetrackService {
             return res.json();
         });
     }
-    
+
     findLayouts(id: number): Observable<Response> {
         return this.http.get(`${this.resourceUrl}/${id}/layouts`);
     }

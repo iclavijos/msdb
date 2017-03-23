@@ -46,7 +46,7 @@ export class RacetrackDetailComponent implements OnInit, OnDestroy {
         });
         this.loadLayouts(id);
     }
-    
+
     loadLayouts(id) {
         this.racetrackService.findLayouts(id).subscribe(
                 (res: Response) => {
@@ -54,7 +54,7 @@ export class RacetrackDetailComponent implements OnInit, OnDestroy {
                 }
         );
     }
-    
+
     byteSize(field) {
         return this.dataUtils.byteSize(field);
     }
@@ -62,13 +62,13 @@ export class RacetrackDetailComponent implements OnInit, OnDestroy {
     openFile(contentType, field) {
         return this.dataUtils.openFile(contentType, field);
     }
-    
+
     registerChangeInRacetrackLayouts() {
         this.eventSubscriber = this.eventManager.subscribe('racetrackModification', (response) => this.load(this.racetrackId));
         this.eventSubscriber.add(
                 this.eventManager.subscribe('racetrackLayoutModification', (response) => this.loadLayouts(this.racetrackId)));
     }
-    
+
     previousState() {
         this.router.navigateByUrl('racetrack');
         this.eventManager.destroy(this.eventSubscriber);

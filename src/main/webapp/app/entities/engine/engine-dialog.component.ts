@@ -33,7 +33,7 @@ export class EngineDialogComponent implements OnInit {
         private completerService: CompleterService
     ) {
         this.jhiLanguageService.setLocations(['engine']);
-        this.dataService = completerService.remote('api/_search/engines?query=', null, 'name').descriptionField("manufacturer");
+        this.dataService = completerService.remote('api/_search/engines?query=', null, 'name').descriptionField('manufacturer');
     }
 
     ngOnInit() {
@@ -96,7 +96,7 @@ export class EngineDialogComponent implements OnInit {
     trackEngineById(index: number, item: Engine) {
         return item.id;
     }
-    
+
     public onEngineSelected(selected: CompleterItem) {
         if (selected) {
             this.engine.derivedFrom = selected.originalObject;

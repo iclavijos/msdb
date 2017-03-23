@@ -165,13 +165,13 @@ currentAccount: any;
         console.log(error);
         this.alertService.error(error.message, null, null);
     }
-    
+
     filterDrivers(event) {
         this.driverService.typeahead(event.query).subscribe(
                 (res: Response) => this.suggestedDrivers = res.json(),
                 (res: Response) => this.onError(res.json()));
     }
-    
+
     selectDriver(event) {
         this.router.navigate(['/driver', event.id]);
     }

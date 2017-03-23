@@ -63,11 +63,11 @@ export class DriverService {
             .map((res: any) => this.convertResponse(res))
         ;
     }
-    
+
     typeahead(req): Observable<Response> {
         let params: URLSearchParams = new URLSearchParams();
         params.set('query', req);
-        
+
         return this.http.get(this.resourceTypeAheadUrl, {
                 search: params
             }).map((res: any) => res)
@@ -77,9 +77,11 @@ export class DriverService {
     private convertResponse(res: any): any {
         let jsonResponse = res.json();
         for (let i = 0; i < jsonResponse.length; i++) {
-            jsonResponse[i].birthDate = new Date(jsonResponse[i].birthDate[0], jsonResponse[i].birthDate[1] - 1, jsonResponse[i].birthDate[2]);
+            jsonResponse[i].birthDate = new Date(
+                    jsonResponse[i].birthDate[0], jsonResponse[i].birthDate[1] - 1, jsonResponse[i].birthDate[2]);
             if (jsonResponse[i].deathDate) {
-                jsonResponse[i].deathDate = new Date(jsonResponse[i].deathDate[0], jsonResponse[i].deathDate[1] - 1, jsonResponse[i].deathDate[2]);
+                jsonResponse[i].deathDate = new Date(
+                        jsonResponse[i].deathDate[0], jsonResponse[i].deathDate[1] - 1, jsonResponse[i].deathDate[2]);
             }
         }
         res._body = jsonResponse;

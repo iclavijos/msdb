@@ -36,7 +36,7 @@ export class RacetrackDialogComponent implements OnInit {
         this.isSaving = false;
         this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
     }
-    
+
     byteSize(field) {
         return this.dataUtils.byteSize(field);
     }

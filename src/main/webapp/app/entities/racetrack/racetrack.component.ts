@@ -73,14 +73,14 @@ export class RacetrackComponent implements OnInit, OnDestroy {
             (res: Response) => this.onError(res.json())
         );
     }
-    
+
     loadPage (page: number) {
         if (page !== this.previousPage) {
             this.previousPage = page;
             this.transition();
         }
     }
-    
+
     transition() {
         this.router.navigate(['/racetrack'], {queryParams:
             {
@@ -150,15 +150,15 @@ export class RacetrackComponent implements OnInit, OnDestroy {
         }
         return result;
     }
-    
+
     updateRacetracksList(response) {
         let racetrack: Racetrack = <Racetrack>response.content;
         let remove: Boolean = racetrack.name == null;
 
         let found: Boolean = false;
-        let i: number = 0;
+        let i = 0;
         while (!found && i < this.racetracks.length) {
-            if (this.racetracks[i].id == racetrack.id) {
+            if (this.racetracks[i].id === racetrack.id) {
                 found = true;
                 if (!remove) {
                     this.racetracks[i] = racetrack;
@@ -174,7 +174,7 @@ export class RacetrackComponent implements OnInit, OnDestroy {
             }
         }
     }
-    
+
     private onSuccess (data, headers) {
         this.links = this.parseLinks.parse(headers.get('link'));
         this.totalItems = headers.get('X-Total-Count');

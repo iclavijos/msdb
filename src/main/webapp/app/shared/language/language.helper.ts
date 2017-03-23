@@ -44,7 +44,8 @@ export class JhiLanguageHelper {
     }
 
     private getPageTitle(routeSnapshot: ActivatedRouteSnapshot) {
-        let title: string = (routeSnapshot.data && routeSnapshot.data['pageTitle']) ? routeSnapshot.data['pageTitle'] : 'motorsportsDatabaseApp';
+        let title: string = (routeSnapshot.data && routeSnapshot.data['pageTitle']) ?
+                routeSnapshot.data['pageTitle'] : 'motorsportsDatabaseApp';
         if (routeSnapshot.firstChild) {
             title = this.getPageTitle(routeSnapshot.firstChild) || title;
         }

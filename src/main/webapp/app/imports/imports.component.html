@@ -13,7 +13,7 @@
 	        <button type="button" class="btn btn-default" (click)="cancel()">
 	            <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
 	        </button>
-	        <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+	        <button type="submit" [disabled]="editForm.form.invalid" class="btn btn-primary">
 	            <span class="fa fa-upload"></span>&nbsp;<span jhiTranslate="imports.upload">Upload</span>
 	        </button>
 	    </div>

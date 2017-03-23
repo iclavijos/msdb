@@ -29,7 +29,7 @@ export class ImportsComponent implements OnInit {
     ngOnInit() {
         this.imports.importType = this.route.snapshot.data['importType'];
     }
-    
+
     setFileData($event) {
         if ($event.target.files && $event.target.files[0]) {
             let $file = $event.target.files[0];
@@ -41,7 +41,7 @@ export class ImportsComponent implements OnInit {
             });
         }
     }
-    
+
     uploadFile() {
         this.importsService.importCSV(this.imports)
             .map((res: Response) => res)
@@ -49,11 +49,11 @@ export class ImportsComponent implements OnInit {
                 (res: Response) => this.success(),
                 (res: Response) => this.fail());
     }
-    
+
     success() {
         this.alertService.success('global.messages.info.imports.success', null);
     }
-    
+
     fail() {
         this.alertService.success('global.messages.info.imports.fail', null);
     }
