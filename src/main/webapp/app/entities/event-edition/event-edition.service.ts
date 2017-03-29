@@ -33,8 +33,8 @@ export class EventEditionService {
     find(id: number): Observable<EventEdition> {
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
             let jsonResponse = res.json();
-            jsonResponse.eventDate = this.dateUtils
-                .convertLocalDateFromServer(jsonResponse.eventDate);
+            jsonResponse.eventDate = new Date(
+                    jsonResponse.eventDate[0], jsonResponse.eventDate[1] - 1, jsonResponse.eventDate[2]);
             return jsonResponse;
         });
     }
@@ -60,8 +60,8 @@ export class EventEditionService {
     private convertResponse(res: any): any {
         let jsonResponse = res.json();
         for (let i = 0; i < jsonResponse.length; i++) {
-            jsonResponse[i].eventDate = this.dateUtils
-                .convertLocalDateFromServer(jsonResponse[i].eventDate);
+            jsonResponse[i].eventDate = new Date(
+                    jsonResponse[i].eventDate[0], jsonResponse[i].eventDate[1] - 1, jsonResponse[i].eventDate[2]);
         }
         res._body = jsonResponse;
         return res;

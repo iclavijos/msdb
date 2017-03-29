@@ -28,11 +28,12 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.tyreProvider.logo" for="field_logo">Logo</label>
             <div>
-                <img [src]="'data:' + tyreProvider.logoContentType + ';base64,' + tyreProvider.logo" style="max-height: 100px;" *ngIf="tyreProvider.logo" alt="tyreProvider image"/>
-                <div *ngIf="tyreProvider.logo" class="form-text text-danger clearfix">
-                    <button type="button" (click)="tyreProvider.logo=null;tyreProvider.logoContentType=null;"
+                <img [src]="tyreProvider.logoUrl" style="max-height: 100px;" *ngIf="!tyreProvider.logo && tyreProvider.logoUrl" alt="tyre provider logo"/>
+                <img [src]="'data:' + tyreProvider.logoContentType + ';base64,' + tyreProvider.logo" style="max-height: 100px;" *ngIf="tyreProvider.logo" alt="tyre provider logo"/>
+                <div *ngIf="tyreProvider.logoUrl || tyreProvider.logo" class="form-text text-danger clearfix">
+                    <button type="button" (click)="tyreProvider.logoUrl=null; tyreProvider.logo=null;"
                             class="btn btn-default btn-xs pull-right">
-                        <span class="fa fa-square-o"></span>
+                        <span class="fa fa-times"></span>
                     </button>
                 </div>
                 <input type="file" (change)="setFileData($event, tyreProvider, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>

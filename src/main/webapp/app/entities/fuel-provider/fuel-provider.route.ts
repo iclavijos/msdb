@@ -11,11 +11,29 @@ import { FuelProviderDeletePopupComponent } from './fuel-provider-delete-dialog.
 
 import { Principal } from '../../shared';
 
+@Injectable()
+export class FuelProviderResolvePagingParams implements Resolve<any> {
+
+  constructor(private paginationUtil: PaginationUtil) {}
+
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+      let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
+      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
+      return {
+          page: this.paginationUtil.parsePage(page),
+          predicate: this.paginationUtil.parsePredicate(sort),
+          ascending: this.paginationUtil.parseAscending(sort)
+    };
+  }
+}
 
 export const fuelProviderRoute: Routes = [
   {
     path: 'fuel-provider',
     component: FuelProviderComponent,
+    resolve: {
+      'pagingParams': FuelProviderResolvePagingParams
+    },
     data: {
         authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
@@ -35,7 +53,7 @@ export const fuelProviderPopupRoute: Routes = [
     path: 'fuel-provider-new',
     component: FuelProviderPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
     },
     outlet: 'popup'
@@ -44,7 +62,7 @@ export const fuelProviderPopupRoute: Routes = [
     path: 'fuel-provider/:id/edit',
     component: FuelProviderPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
     },
     outlet: 'popup'
@@ -53,7 +71,7 @@ export const fuelProviderPopupRoute: Routes = [
     path: 'fuel-provider/:id/delete',
     component: FuelProviderDeletePopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
     },
     outlet: 'popup'

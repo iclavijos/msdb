@@ -23,7 +23,7 @@ spring:
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
         maximumPoolSize: 9
-        url: ${JDBC_DATABASE_URL}
+        url: ${JDBC_DATABASE_URL}&verifyServerCertificate=false&useSSL=false
         username: ${JDBC_DATABASE_USERNAME}
         password: ${JDBC_DATABASE_PASSWORD}
     data:

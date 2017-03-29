@@ -11,11 +11,29 @@ import { EventEditionDeletePopupComponent } from './event-edition-delete-dialog.
 
 import { Principal } from '../../shared';
 
+@Injectable()
+export class EventEditionResolvePagingParams implements Resolve<any> {
+
+  constructor(private paginationUtil: PaginationUtil) {}
+
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+      let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
+      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
+      return {
+          page: this.paginationUtil.parsePage(page),
+          predicate: this.paginationUtil.parsePredicate(sort),
+          ascending: this.paginationUtil.parseAscending(sort)
+    };
+  }
+}
 
 export const eventEditionRoute: Routes = [
   {
     path: 'event-edition',
     component: EventEditionComponent,
+    resolve: {
+      'pagingParams': EventEditionResolvePagingParams
+    },
     data: {
         authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.eventEdition.home.title'
@@ -35,7 +53,7 @@ export const eventEditionPopupRoute: Routes = [
     path: 'event-edition-new',
     component: EventEditionPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventEdition.home.title'
     },
     outlet: 'popup'
@@ -44,7 +62,7 @@ export const eventEditionPopupRoute: Routes = [
     path: 'event-edition/:id/edit',
     component: EventEditionPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventEdition.home.title'
     },
     outlet: 'popup'
@@ -53,7 +71,7 @@ export const eventEditionPopupRoute: Routes = [
     path: 'event-edition/:id/delete',
     component: EventEditionDeletePopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventEdition.home.title'
     },
     outlet: 'popup'

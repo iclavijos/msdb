@@ -1,6 +1,8 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { Ng2CompleterModule } from 'ng2-completer';
+
 import { MotorsportsDatabaseSharedModule } from '../../shared';
 
 import {
@@ -14,6 +16,7 @@ import {
     EventEditionDeleteDialogComponent,
     eventEditionRoute,
     eventEditionPopupRoute,
+    EventEditionResolvePagingParams,
 } from './';
 
 let ENTITY_STATES = [
@@ -23,6 +26,7 @@ let ENTITY_STATES = [
 
 @NgModule({
     imports: [
+        Ng2CompleterModule,
         MotorsportsDatabaseSharedModule,
         RouterModule.forRoot(ENTITY_STATES, { useHash: true })
     ],
@@ -44,6 +48,7 @@ let ENTITY_STATES = [
     providers: [
         EventEditionService,
         EventEditionPopupService,
+        EventEditionResolvePagingParams,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

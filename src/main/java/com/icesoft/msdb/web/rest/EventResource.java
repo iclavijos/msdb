@@ -9,7 +9,13 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,10 +28,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Event;
-import com.icesoft.msdb.repository.EventRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.EventService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
+import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
+import io.swagger.annotations.ApiParam;
 
 /**
  * REST controller for managing Event.
@@ -38,13 +47,10 @@ public class EventResource {
 
     private static final String ENTITY_NAME = "event";
         
-    private final EventRepository eventRepository;
+    private final EventService eventService;
 
-//    private final EventSearchRepository eventSearchRepository;
-
-    public EventResource(EventRepository eventRepository) { //, EventSearchRepository eventSearchRepository) {
-        this.eventRepository = eventRepository;
-//        this.eventSearchRepository = eventSearchRepository;
+    public EventResource(EventService eventService) {
+        this.eventService = eventService;
     }
 
     /**
@@ -56,13 +62,14 @@ public class EventResource {
      */
     @PostMapping("/events")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Event> createEvent(@Valid @RequestBody Event event) throws URISyntaxException {
         log.debug("REST request to save Event : {}", event);
         if (event.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new event cannot already have an ID")).body(null);
         }
-        Event result = eventRepository.save(event);
-//        eventSearchRepository.save(result);
+        Event result = eventService.save(event);
         return ResponseEntity.created(new URI("/api/events/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -79,13 +86,14 @@ public class EventResource {
      */
     @PutMapping("/events")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Event> updateEvent(@Valid @RequestBody Event event) throws URISyntaxException {
         log.debug("REST request to update Event : {}", event);
         if (event.getId() == null) {
             return createEvent(event);
         }
-        Event result = eventRepository.save(event);
-//        eventSearchRepository.save(result);
+        Event result = eventService.save(event);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, event.getId().toString()))
             .body(result);
@@ -94,14 +102,18 @@ public class EventResource {
     /**
      * GET  /events : get all the events.
      *
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of events in body
+     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/events")
     @Timed
-    public List<Event> getAllEvents() {
-        log.debug("REST request to get all Events");
-        List<Event> events = eventRepository.findAll();
-        return events;
+    public ResponseEntity<List<Event>> getAllEvents(@ApiParam Pageable pageable)
+        throws URISyntaxException {
+        log.debug("REST request to get a page of Events");
+        Page<Event> page = eventService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/events");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**
@@ -114,7 +126,7 @@ public class EventResource {
     @Timed
     public ResponseEntity<Event> getEvent(@PathVariable Long id) {
         log.debug("REST request to get Event : {}", id);
-        Event event = eventRepository.findOne(id);
+        Event event = eventService.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(event));
     }
 
@@ -126,10 +138,11 @@ public class EventResource {
      */
     @DeleteMapping("/events/{id}")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
+    @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         log.debug("REST request to delete Event : {}", id);
-        eventRepository.delete(id);
-//        eventSearchRepository.delete(id);
+        eventService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -138,13 +151,18 @@ public class EventResource {
      * to the query.
      *
      * @param query the query of the event search 
+     * @param pageable the pagination information
      * @return the result of the search
+     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/_search/events")
     @Timed
-    public List<Event> searchEvents(@RequestParam String query) {
-        log.debug("REST request to search Events for query {}", query);
-        return eventRepository.search(query);
+    public ResponseEntity<List<Event>> searchEvents(@RequestParam String query, @ApiParam Pageable pageable)
+        throws URISyntaxException {
+        log.debug("REST request to search for a page of Events for query {}", query);
+        Page<Event> page = eventService.search(query, pageable);
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/events");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
 

@@ -57,6 +57,6 @@
     "changelogDate": "20170213140812",
     "entityTableName": "event_edition",
     "dto": "no",
-    "pagination": "no",
+    "pagination": "pagination",
     "service": "no"
 }

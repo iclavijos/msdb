@@ -14,6 +14,7 @@ import {
     EventDeleteDialogComponent,
     eventRoute,
     eventPopupRoute,
+    EventResolvePagingParams,
 } from './';
 
 let ENTITY_STATES = [
@@ -44,6 +45,7 @@ let ENTITY_STATES = [
     providers: [
         EventService,
         EventPopupService,
+        EventResolvePagingParams,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -19,7 +19,6 @@ export class EventDialogComponent implements OnInit {
     authorities: any[];
     isSaving: boolean;
 
-    eventeditions: EventEdition[];
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
@@ -34,8 +33,8 @@ export class EventDialogComponent implements OnInit {
     ngOnInit() {
         this.isSaving = false;
         this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
-        this.eventEditionService.query().subscribe(
-            (res: Response) => { this.eventeditions = res.json(); }, (res: Response) => this.onError(res.json()));
+//        this.eventEditionService.query().subscribe(
+//            (res: Response) => { this.eventeditions = res.json(); }, (res: Response) => this.onError(res.json()));
     }
     clear () {
         this.activeModal.dismiss('cancel');

@@ -49,11 +49,6 @@ public class CategoryResourceIntTest {
     private static final String DEFAULT_SHORTNAME = "AAAAAAAAAA";
     private static final String UPDATED_SHORTNAME = "BBBBBBBBBB";
 
-    private static final byte[] DEFAULT_LOGO = TestUtil.createByteArray(1, "0");
-    private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(2, "1");
-    private static final String DEFAULT_LOGO_CONTENT_TYPE = "image/jpg";
-    private static final String UPDATED_LOGO_CONTENT_TYPE = "image/png";
-
     @Autowired
     private CategoryRepository categoryRepository;
 
@@ -92,9 +87,7 @@ public class CategoryResourceIntTest {
     public static Category createEntity(EntityManager em) {
         Category category = new Category()
                 .name(DEFAULT_NAME)
-                .shortname(DEFAULT_SHORTNAME)
-                .logo(DEFAULT_LOGO)
-                .logoContentType(DEFAULT_LOGO_CONTENT_TYPE);
+                .shortname(DEFAULT_SHORTNAME);
         return category;
     }
 
@@ -121,9 +114,6 @@ public class CategoryResourceIntTest {
         Category testCategory = categoryList.get(categoryList.size() - 1);
         assertThat(testCategory.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testCategory.getShortname()).isEqualTo(DEFAULT_SHORTNAME);
-        assertThat(testCategory.getLogo()).isEqualTo(DEFAULT_LOGO);
-        assertThat(testCategory.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
-
     }
 
     @Test
@@ -194,9 +184,7 @@ public class CategoryResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(category.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].shortname").value(hasItem(DEFAULT_SHORTNAME.toString())))
-            .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
-            .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
+            .andExpect(jsonPath("$.[*].shortname").value(hasItem(DEFAULT_SHORTNAME.toString())));
     }
 
     @Test
@@ -211,9 +199,7 @@ public class CategoryResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(category.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
-            .andExpect(jsonPath("$.shortname").value(DEFAULT_SHORTNAME.toString()))
-            .andExpect(jsonPath("$.logoContentType").value(DEFAULT_LOGO_CONTENT_TYPE))
-            .andExpect(jsonPath("$.logo").value(Base64Utils.encodeToString(DEFAULT_LOGO)));
+            .andExpect(jsonPath("$.shortname").value(DEFAULT_SHORTNAME.toString()));
     }
 
     @Test
@@ -235,9 +221,7 @@ public class CategoryResourceIntTest {
         Category updatedCategory = categoryRepository.findOne(category.getId());
         updatedCategory
                 .name(UPDATED_NAME)
-                .shortname(UPDATED_SHORTNAME)
-                .logo(UPDATED_LOGO)
-                .logoContentType(UPDATED_LOGO_CONTENT_TYPE);
+                .shortname(UPDATED_SHORTNAME);
 
         restCategoryMockMvc.perform(put("/api/categories")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -250,8 +234,6 @@ public class CategoryResourceIntTest {
         Category testCategory = categoryList.get(categoryList.size() - 1);
         assertThat(testCategory.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testCategory.getShortname()).isEqualTo(UPDATED_SHORTNAME);
-        assertThat(testCategory.getLogo()).isEqualTo(UPDATED_LOGO);
-        assertThat(testCategory.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
 
     }
 
@@ -302,9 +284,7 @@ public class CategoryResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(category.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].shortname").value(hasItem(DEFAULT_SHORTNAME.toString())))
-            .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
-            .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
+            .andExpect(jsonPath("$.[*].shortname").value(hasItem(DEFAULT_SHORTNAME.toString())));
     }
 
     @Test

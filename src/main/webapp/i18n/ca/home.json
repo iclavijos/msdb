@@ -1,9 +1,9 @@
 {
     "home": {
-        "title": "Benvingut a MotorsportDatabase!",
+        "title": "Benvingut a Motorsport Database!",
         "subtitle": "Aquesta és la pàgina principal",
         "logged": {
-            "message": "S'ha connectat amb l'usuari \"{{username}}\"."
+            "message": "T'has connectat amb l'usuari \"{{username}}\"."
         },
         "question": "Si tens qualsevol pregunta sobre JHipster:",
         "link": {
@@ -13,7 +13,7 @@
             "chat": "JHipster public chat room",
             "follow": "Segueixi a @iclavijos a Twitter"
         },
-        "like": "Si li agrada JHipster, no oblidi donar-nos una estrella",
+        "like": "Si t'agrada JHipster, no oblidis donar-nos una estrella",
         "github": "GitHub"
     }
 }

@@ -5,9 +5,11 @@ import { JhiLanguageHelper, Principal, StateStorageService } from '../../shared'
 
 @Component({
     selector: 'jhi-main',
-    templateUrl: './main.component.html'
+    templateUrl: './main.component.html',
 })
 export class JhiMainComponent implements OnInit {
+
+    isSidebarCollapsed = false;
 
     constructor(
         private jhiLanguageHelper: JhiLanguageHelper,
@@ -17,7 +19,8 @@ export class JhiMainComponent implements OnInit {
     ) {}
 
     private getPageTitle(routeSnapshot: ActivatedRouteSnapshot) {
-        let title: string = (routeSnapshot.data && routeSnapshot.data['pageTitle']) ? routeSnapshot.data['pageTitle'] : 'motorsportsDatabaseApp';
+        let title: string = (routeSnapshot.data && routeSnapshot.data['pageTitle']) ?
+                routeSnapshot.data['pageTitle'] : 'motorsportsDatabaseApp';
         if (routeSnapshot.firstChild) {
             title = this.getPageTitle(routeSnapshot.firstChild) || title;
         }
@@ -45,7 +48,15 @@ export class JhiMainComponent implements OnInit {
             }
         });
     }
-    
+
+    collapseSidebar() {
+        this.isSidebarCollapsed = true;
+    }
+
+    toggleSidebar() {
+        this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    }
+
     isAuthenticated() {
         return this.principal.isAuthenticated();
     }

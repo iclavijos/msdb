@@ -9,6 +9,8 @@
         </expiry>
         <heap unit="entries">1000</heap>
     </cache-template>
+    
+    <cache alias="homeInfo" uses-template="simple"/>
 
     <cache alias="com.icesoft.msdb.domain.User" uses-template="simple"/>
 
@@ -29,6 +31,18 @@
     <cache alias="com.icesoft.msdb.domain.Chassis" uses-template="simple"/>
 
     <cache alias="com.icesoft.msdb.domain.Chassis.evolutions" uses-template="simple"/>
+
+    <cache alias="com.icesoft.msdb.domain.FuelProvider" uses-template="simple"/>
+
+    <cache alias="com.icesoft.msdb.domain.Event" uses-template="simple"/>
+
+    <cache alias="com.icesoft.msdb.domain.Event.editions" uses-template="simple"/>
+
+    <cache alias="com.icesoft.msdb.domain.SeriesEdition" uses-template="simple"/>
+
+    <cache alias="com.icesoft.msdb.domain.Category" uses-template="simple"/>
+
+    <cache alias="com.icesoft.msdb.domain.EventEdition" uses-template="simple"/>
 
     <!-- jhipster-needle-ehcache-add-entry -->
 </config>

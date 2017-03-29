@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -73,6 +74,7 @@ public class RacetrackResource {
     @PostMapping("/racetracks")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Racetrack> createRacetrack(@Valid @RequestBody Racetrack racetrack) throws URISyntaxException {
         log.debug("REST request to save Racetrack : {}", racetrack);
         if (racetrack.getId() != null) {
@@ -170,6 +172,7 @@ public class RacetrackResource {
     @DeleteMapping("/racetracks/{id}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN})
+    @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Void> deleteRacetrack(@PathVariable Long id) {
         log.debug("REST request to delete Racetrack : {}", id);
         racetrackService.delete(id);

@@ -2,14 +2,22 @@ package com.icesoft.msdb.domain;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -50,14 +58,21 @@ public class EventEdition implements Serializable {
     @Column(name = "event_date", nullable = false)
     private LocalDate eventDate;
 
-    @ManyToOne
-    private Category allowedCategories;
+    @ManyToMany(fetch=FetchType.EAGER)
+    @JoinTable(
+        name="CATEGORIES_EVENT",
+        joinColumns=@JoinColumn(name="event_edition_id", referencedColumnName="ID"),
+        inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="ID"))
+    private List<Category> allowedCategories;
 
     @ManyToOne
     private RacetrackLayout trackLayout;
 
     @ManyToOne
     private Event event;
+    
+    @OneToOne
+    private SeriesEdition seriesEdition;
 
     public Long getId() {
         return id;
@@ -119,17 +134,31 @@ public class EventEdition implements Serializable {
         this.eventDate = eventDate;
     }
 
-    public Category getAllowedCategories() {
+    public List<Category> getAllowedCategories() {
         return allowedCategories;
     }
 
-    public EventEdition allowedCategories(Category category) {
-        this.allowedCategories = category;
+    public EventEdition allowedCategories(List<Category> categories) {
+    	if (allowedCategories == null) {
+    		this.allowedCategories = categories;
+    		return this;
+    	}
+    	this.allowedCategories.clear();
+        if (categories != null) {
+        	this.allowedCategories.addAll(categories);
+        }
         return this;
     }
 
-    public void setAllowedCategories(Category category) {
-        this.allowedCategories = category;
+    public void setAllowedCategories(List<Category> categories) {
+    	if (allowedCategories == null) {
+    		this.allowedCategories = categories;
+    		return;
+    	}
+        this.allowedCategories.clear();
+        if (categories != null) {
+        	this.allowedCategories.addAll(categories);
+        }
     }
 
     public RacetrackLayout getTrackLayout() {
@@ -158,7 +187,15 @@ public class EventEdition implements Serializable {
         this.event = event;
     }
 
-    @Override
+    public SeriesEdition getSeriesEdition() {
+		return seriesEdition;
+	}
+
+	public void setSeriesEdition(SeriesEdition seriesEdition) {
+		this.seriesEdition = seriesEdition;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

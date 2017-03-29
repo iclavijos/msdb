@@ -17,6 +17,7 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +33,7 @@ import org.springframework.util.Base64Utils;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.FuelProvider;
 import com.icesoft.msdb.repository.FuelProviderRepository;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
@@ -48,8 +50,6 @@ public class FuelProviderResourceIntTest {
 
     private static final byte[] DEFAULT_LOGO = TestUtil.createByteArray(1, "0");
     private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(2, "1");
-    private static final String DEFAULT_LOGO_CONTENT_TYPE = "image/jpg";
-    private static final String UPDATED_LOGO_CONTENT_TYPE = "image/png";
 
     @Autowired
     private FuelProviderRepository fuelProviderRepository;
@@ -69,11 +69,14 @@ public class FuelProviderResourceIntTest {
     private MockMvc restFuelProviderMockMvc;
 
     private FuelProvider fuelProvider;
+    
+    @Mock
+    private CDNService cdnService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            FuelProviderResource fuelProviderResource = new FuelProviderResource(fuelProviderRepository);
+            FuelProviderResource fuelProviderResource = new FuelProviderResource(fuelProviderRepository, cdnService);
         this.restFuelProviderMockMvc = MockMvcBuilders.standaloneSetup(fuelProviderResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -89,8 +92,7 @@ public class FuelProviderResourceIntTest {
     public static FuelProvider createEntity(EntityManager em) {
         FuelProvider fuelProvider = new FuelProvider()
                 .name(DEFAULT_NAME)
-                .logo(DEFAULT_LOGO)
-                .logoContentType(DEFAULT_LOGO_CONTENT_TYPE);
+                .logo(DEFAULT_LOGO);
         return fuelProvider;
     }
 
@@ -117,7 +119,6 @@ public class FuelProviderResourceIntTest {
         FuelProvider testFuelProvider = fuelProviderList.get(fuelProviderList.size() - 1);
         assertThat(testFuelProvider.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testFuelProvider.getLogo()).isEqualTo(DEFAULT_LOGO);
-        assertThat(testFuelProvider.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
 
     }
 
@@ -171,7 +172,6 @@ public class FuelProviderResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(fuelProvider.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
 
@@ -187,7 +187,6 @@ public class FuelProviderResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(fuelProvider.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
-            .andExpect(jsonPath("$.logoContentType").value(DEFAULT_LOGO_CONTENT_TYPE))
             .andExpect(jsonPath("$.logo").value(Base64Utils.encodeToString(DEFAULT_LOGO)));
     }
 
@@ -210,8 +209,7 @@ public class FuelProviderResourceIntTest {
         FuelProvider updatedFuelProvider = fuelProviderRepository.findOne(fuelProvider.getId());
         updatedFuelProvider
                 .name(UPDATED_NAME)
-                .logo(UPDATED_LOGO)
-                .logoContentType(UPDATED_LOGO_CONTENT_TYPE);
+                .logo(UPDATED_LOGO);
 
         restFuelProviderMockMvc.perform(put("/api/fuel-providers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -224,7 +222,7 @@ public class FuelProviderResourceIntTest {
         FuelProvider testFuelProvider = fuelProviderList.get(fuelProviderList.size() - 1);
         assertThat(testFuelProvider.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testFuelProvider.getLogo()).isEqualTo(UPDATED_LOGO);
-        assertThat(testFuelProvider.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
+
     }
 
     @Test
@@ -274,7 +272,6 @@ public class FuelProviderResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(fuelProvider.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
 

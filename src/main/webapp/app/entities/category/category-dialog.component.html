@@ -9,11 +9,6 @@
     </div>
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
-        <div class="form-group" [hidden]="!category.id">
-            <label for="id" jhiTranslate="global.field.id">ID</label>
-            <input type="text" class="form-control" id="id" name="id"
-                   [(ngModel)]="category.id" readonly />
-        </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.category.name" for="field_name">Name</label>
             <input type="text" class="form-control" name="name" id="field_name"
@@ -46,26 +41,6 @@
                 </small>
             </div>
         </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.category.logo" for="field_logo">Logo</label>
-            <div>
-                <img [src]="'data:' + category.logoContentType + ';base64,' + category.logo" style="max-height: 100px;" *ngIf="category.logo" alt="category image"/>
-                <div *ngIf="category.logo" class="form-text text-danger clearfix">
-                    <span class="pull-left">{{category.logoContentType}}, {{byteSize(category.logo)}}</span>
-                    <button type="button" (click)="category.logo=null;category.logoContentType=null;"
-                            class="btn btn-default btn-xs pull-right">
-                        <span class="fa fa-square-o"></span>
-                    </button>
-                </div>
-                <input type="file" (change)="setFileData($event, category, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
-            </div>
-            <input type="hidden" class="form-control" name="logo" id="field_logo"
-                [(ngModel)]="category.logo"
-             />
-            <input type="hidden" class="form-control" name="logoContentType" id="field_logoContentType"
-                [(ngModel)]="category.logoContentType" />
-        </div>
-
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">

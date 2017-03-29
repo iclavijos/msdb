@@ -1,29 +1,39 @@
 
 <div *ngIf="event">
-    <h2><span jhiTranslate="motorsportsDatabaseApp.event.detail.title">Event</span> {{event.id}}</h2>
+    <h2>{{event.name}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
-    <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="motorsportsDatabaseApp.event.name">Name</span></dt>
-        <dd>
-            <span>{{event.name}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.event.description">Description</span></dt>
-        <dd>
-            <span>{{event.description}}</span>
-        </dd>
-    </dl>
+    
+    <ngb-tabset>
+	  <ngb-tab title="Info">
+	    <template ngbTabContent>
+		    <dl class="row-md jh-entity-details">
+		        <dt><span jhiTranslate="motorsportsDatabaseApp.event.name">Name</span></dt>
+		        <dd>
+		            <span>{{event.name}}</span>
+		        </dd>
+		        <dt><span jhiTranslate="motorsportsDatabaseApp.event.description">Description</span></dt>
+		        <dd>
+		            <span>{{event.description}}</span>
+		        </dd>
+		    </dl>
 
-    <button type="submit"
+		    <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+		            [routerLink]="['/', { outlets: { popup: 'event/'+ event.id + '/edit'} }]"
+		            replaceUrl="true"
+		            class="btn btn-primary">
+		        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+		    </button>
+		 </template>
+	  </ngb-tab>
+	  <ngb-tab title="Editions">
+	     <template ngbTabContent>
+	     </template>
+	  </ngb-tab>
+	</ngb-tabset>
+	 <button type="submit"
             (click)="previousState()"
             class="btn btn-info">
         <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-    </button>
-
-    <button type="button"
-            [routerLink]="['/', { outlets: { popup: 'event/'+ event.id + '/edit'} }]"
-            replaceUrl="true"
-            class="btn btn-primary">
-        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
     </button>
 </div>

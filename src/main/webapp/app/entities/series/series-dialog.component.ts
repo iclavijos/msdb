@@ -19,7 +19,6 @@ export class SeriesDialogComponent implements OnInit {
     authorities: any[];
     isSaving: boolean;
 
-    serieseditions: SeriesEdition[];
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
@@ -35,8 +34,8 @@ export class SeriesDialogComponent implements OnInit {
     ngOnInit() {
         this.isSaving = false;
         this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
-        this.seriesEditionService.query().subscribe(
-            (res: Response) => { this.serieseditions = res.json(); }, (res: Response) => this.onError(res.json()));
+//        this.seriesEditionService.query().subscribe(
+//            (res: Response) => { this.serieseditions = res.json(); }, (res: Response) => this.onError(res.json()));
     }
     byteSize(field) {
         return this.dataUtils.byteSize(field);

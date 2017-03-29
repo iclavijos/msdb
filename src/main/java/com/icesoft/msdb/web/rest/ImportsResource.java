@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +41,7 @@ import com.icesoft.msdb.repository.EngineRepository;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.RacetrackRepository;
 import com.icesoft.msdb.repository.TeamRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.dto.EnginesImportDTO;
 import com.icesoft.msdb.service.dto.RacetrackWithLayoutsImportDTO;
 
@@ -61,6 +63,7 @@ public class ImportsResource {
     @PostMapping("/imports")
     @Timed
     @Transactional
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<?> importCSV(@Valid @RequestBody Imports imports) throws URISyntaxException {
         log.debug("REST request to import CSV contents : {}", imports.getImportType());
         

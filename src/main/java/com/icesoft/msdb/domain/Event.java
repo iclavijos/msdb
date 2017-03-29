@@ -26,7 +26,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "event")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-//@Document(indexName = "event")
 public class Event implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,9 +39,8 @@ public class Event implements Serializable {
     @Column(name = "name", length = 40, nullable = false)
     private String name;
 
-    @NotNull
     @Size(max = 100)
-    @Column(name = "description", length = 100, nullable = false)
+    @Column(name = "description", length = 100)
     private String description;
 
     @OneToMany(mappedBy = "event")

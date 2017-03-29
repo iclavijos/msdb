@@ -8,8 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -22,8 +22,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "fuel_provider")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-//@Document(indexName = "fuelprovider")
-public class FuelProvider implements Serializable {
+public class FuelProvider extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,12 +35,11 @@ public class FuelProvider implements Serializable {
     @Column(name = "name", length = 50, nullable = false)
     private String name;
 
-    @Lob
-    @Column(name = "logo")
+    @Transient
     private byte[] logo;
 
-    @Column(name = "logo_content_type")
-    private String logoContentType;
+    @Column(name = "logo_url")
+    private String logoUrl;
 
     public Long getId() {
         return id;
@@ -77,17 +75,17 @@ public class FuelProvider implements Serializable {
         this.logo = logo;
     }
 
-    public String getLogoContentType() {
-        return logoContentType;
+    public String getLogoUrl() {
+        return logoUrl;
     }
 
-    public FuelProvider logoContentType(String logoContentType) {
-        this.logoContentType = logoContentType;
+    public FuelProvider logoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
         return this;
     }
 
-    public void setLogoContentType(String logoContentType) {
-        this.logoContentType = logoContentType;
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
     }
 
     @Override
@@ -116,7 +114,7 @@ public class FuelProvider implements Serializable {
             "id=" + id +
             ", name='" + name + "'" +
             ", logo='" + logo + "'" +
-            ", logoContentType='" + logoContentType + "'" +
+            ", logoUrl='" + logoUrl + "'" +
             '}';
     }
 }

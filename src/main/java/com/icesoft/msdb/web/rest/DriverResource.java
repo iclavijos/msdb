@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -75,6 +76,7 @@ public class DriverResource {
     @PostMapping("/drivers")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Driver> createDriver(@Valid @RequestBody Driver driver) throws URISyntaxException {
         log.debug("REST request to save Driver : {}", driver);
         if (driver.getId() != null) {
@@ -86,7 +88,7 @@ public class DriverResource {
 	        String cdnUrl = cdnService.uploadImage(driver.getId().toString(), driver.getPortrait(), ENTITY_NAME);
 			driver.portraitUrl(cdnUrl);
 			
-			result = driverRepository.save(result);
+			result = driverRepository.save(driver);
         }
         
         return ResponseEntity.created(new URI("/api/drivers/" + result.getId()))
@@ -175,6 +177,7 @@ public class DriverResource {
     @DeleteMapping("/drivers/{id}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN})
+    @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
         log.debug("REST request to delete Driver : {}", id);
         driverRepository.delete(id);

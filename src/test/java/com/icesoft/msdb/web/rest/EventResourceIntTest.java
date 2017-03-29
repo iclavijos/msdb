@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Event;
 import com.icesoft.msdb.repository.EventRepository;
+import com.icesoft.msdb.service.EventService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
@@ -52,6 +53,9 @@ public class EventResourceIntTest {
     private EventRepository eventRepository;
 
     @Autowired
+    private EventService eventService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -70,7 +74,7 @@ public class EventResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            EventResource eventResource = new EventResource(eventRepository);
+        EventResource eventResource = new EventResource(eventService);
         this.restEventMockMvc = MockMvcBuilders.standaloneSetup(eventResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -214,7 +218,8 @@ public class EventResourceIntTest {
     @Transactional
     public void updateEvent() throws Exception {
         // Initialize the database
-        eventRepository.saveAndFlush(event);
+        eventService.save(event);
+
         int databaseSizeBeforeUpdate = eventRepository.findAll().size();
 
         // Update the event
@@ -259,7 +264,8 @@ public class EventResourceIntTest {
     @Transactional
     public void deleteEvent() throws Exception {
         // Initialize the database
-        eventRepository.saveAndFlush(event);
+        eventService.save(event);
+
         int databaseSizeBeforeDelete = eventRepository.findAll().size();
 
         // Get the event
@@ -276,7 +282,7 @@ public class EventResourceIntTest {
     @Transactional
     public void searchEvent() throws Exception {
         // Initialize the database
-        eventRepository.saveAndFlush(event);
+        eventService.save(event);
 
         // Search the event
         restEventMockMvc.perform(get("/api/_search/events?query=id:" + event.getId()))

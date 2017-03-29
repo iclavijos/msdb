@@ -3,5 +3,6 @@ export class TyreProvider {
         public id?: number,
         public name?: string,
         public logo?: any,
+        public logoUrl?: string
     ) { }
 }

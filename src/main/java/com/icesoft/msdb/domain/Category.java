@@ -41,13 +41,6 @@ public class Category implements Serializable {
     @Column(name = "shortname", length = 10, nullable = false)
     private String shortname;
 
-    @Lob
-    @Column(name = "logo")
-    private byte[] logo;
-
-    @Column(name = "logo_content_type")
-    private String logoContentType;
-
     public Long getId() {
         return id;
     }
@@ -82,32 +75,6 @@ public class Category implements Serializable {
         this.shortname = shortname;
     }
 
-    public byte[] getLogo() {
-        return logo;
-    }
-
-    public Category logo(byte[] logo) {
-        this.logo = logo;
-        return this;
-    }
-
-    public void setLogo(byte[] logo) {
-        this.logo = logo;
-    }
-
-    public String getLogoContentType() {
-        return logoContentType;
-    }
-
-    public Category logoContentType(String logoContentType) {
-        this.logoContentType = logoContentType;
-        return this;
-    }
-
-    public void setLogoContentType(String logoContentType) {
-        this.logoContentType = logoContentType;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -134,8 +101,6 @@ public class Category implements Serializable {
             "id=" + id +
             ", name='" + name + "'" +
             ", shortname='" + shortname + "'" +
-            ", logo='" + logo + "'" +
-            ", logoContentType='" + logoContentType + "'" +
             '}';
     }
 }

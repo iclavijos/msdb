@@ -2,6 +2,7 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,11 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
@@ -25,9 +32,12 @@ import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.service.dto.RacetrackLayoutSearchResultDTO;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
+import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
+import io.swagger.annotations.ApiParam;
 
 /**
  * REST controller for managing RacetrackLayout.
@@ -157,12 +167,26 @@ public class RacetrackLayoutResource {
      * @param query the query of the racetrackLayout search 
      * @return the result of the search
      */
-//    @GetMapping("/_search/racetrack-layouts")
-//    @Timed
-//    public List<RacetrackLayout> searchRacetrackLayouts(@RequestParam String query) {
-//        log.debug("REST request to search RacetrackLayouts for query {}", query);
-//        return racetrackSearchRepository.search(query);
-//    }
+    @GetMapping("/_search/layouts")
+    @Timed
+    public ResponseEntity<List<RacetrackLayout>> searchRacetrackLayouts(@RequestParam String query, @ApiParam Pageable pageable) throws URISyntaxException {
+        log.debug("REST request to search RacetracksLayouts for query {}", query);
+        Page<RacetrackLayout> page = racetrackLayoutRepository.search(query.toLowerCase(), pageable);
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/layouts");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+    
+    @GetMapping("/_typeahead/layouts")
+    @Timed
+    public List<RacetrackLayoutSearchResultDTO> searchTypeaheadLayouts(@RequestParam String query) {
+    	log.debug("REST request to search RacetracksLayouts for query {}", query);
+        Page<RacetrackLayout> page = racetrackLayoutRepository.search(query.toLowerCase(), new PageRequest(0, 20));
+        List<RacetrackLayoutSearchResultDTO> result = new ArrayList<>();
+        for (RacetrackLayout layout : page.getContent()) {
+			result.add(new RacetrackLayoutSearchResultDTO(layout));
+		}
+        return result;
+    }
 
 
 }

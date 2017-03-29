@@ -14,6 +14,7 @@ import {
     FuelProviderDeleteDialogComponent,
     fuelProviderRoute,
     fuelProviderPopupRoute,
+    FuelProviderResolvePagingParams,
 } from './';
 
 let ENTITY_STATES = [
@@ -44,6 +45,7 @@ let ENTITY_STATES = [
     providers: [
         FuelProviderService,
         FuelProviderPopupService,
+        FuelProviderResolvePagingParams,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

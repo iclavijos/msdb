@@ -15,6 +15,7 @@ import {
     seriesRoute,
     seriesPopupRoute,
     SeriesResolvePagingParams,
+    SeriesEditionResolvePagingParams,
 } from './';
 
 let ENTITY_STATES = [
@@ -46,6 +47,7 @@ let ENTITY_STATES = [
         SeriesService,
         SeriesPopupService,
         SeriesResolvePagingParams,
+        SeriesEditionResolvePagingParams,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

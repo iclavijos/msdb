@@ -12,15 +12,6 @@
         <dd>
             <span>{{category.shortname}}</span>
         </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.category.logo">Logo</span></dt>
-        <dd>
-            <div *ngIf="category.logo">
-                <a (click)="openFile(category.logoContentType, category.logo)">
-                    <img [src]="'data:' + category.logoContentType + ';base64,' + category.logo" style="max-width: 100%;" alt="category image"/>
-                </a>
-                {{category.logoContentType}}, {{byteSize(category.logo)}}
-            </div>
-        </dd>
     </dl>
 
     <button type="submit"

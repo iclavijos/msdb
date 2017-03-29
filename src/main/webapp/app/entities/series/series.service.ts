@@ -7,7 +7,9 @@ import { Series } from './series.model';
 export class SeriesService {
 
     private resourceUrl = 'api/series';
+    private resourceEditionsUrl = 'api/series/${id}/editions';
     private resourceSearchUrl = 'api/_search/series';
+    private resourceSearchEditionsUrl = 'api/_search/series/${id}/editions';
 
     constructor(private http: Http) { }
 
@@ -31,9 +33,19 @@ export class SeriesService {
         });
     }
 
+    findEditions(id: number): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${id}/editions`);
+    }
+
     query(req?: any): Observable<Response> {
         let options = this.createRequestOption(req);
         return this.http.get(this.resourceUrl, options)
+        ;
+    }
+
+    queryEditions(id: number, req?: any): Observable<Response> {
+        let options = this.createRequestOption(req);
+        return this.http.get(this.resourceEditionsUrl, options)
         ;
     }
 
@@ -43,10 +55,13 @@ export class SeriesService {
 
     search(req?: any): Observable<Response> {
         let options = this.createRequestOption(req);
-        return this.http.get(this.resourceSearchUrl, options)
-        ;
+        return this.http.get(this.resourceSearchUrl, options);
     }
 
+    searchEditions(id: number, req?: any): Observable<Response> {
+        let options = this.createRequestOption(req);
+        return this.http.get(this.resourceSearchEditionsUrl, options);
+    }
 
     private createRequestOption(req?: any): BaseRequestOptions {
         let options: BaseRequestOptions = new BaseRequestOptions();

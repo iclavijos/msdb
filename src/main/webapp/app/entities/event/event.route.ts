@@ -11,11 +11,29 @@ import { EventDeletePopupComponent } from './event-delete-dialog.component';
 
 import { Principal } from '../../shared';
 
+@Injectable()
+export class EventResolvePagingParams implements Resolve<any> {
+
+  constructor(private paginationUtil: PaginationUtil) {}
+
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+      let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
+      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
+      return {
+          page: this.paginationUtil.parsePage(page),
+          predicate: this.paginationUtil.parsePredicate(sort),
+          ascending: this.paginationUtil.parseAscending(sort)
+    };
+  }
+}
 
 export const eventRoute: Routes = [
   {
     path: 'event',
     component: EventComponent,
+    resolve: {
+      'pagingParams': EventResolvePagingParams
+    },
     data: {
         authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.event.home.title'
@@ -35,7 +53,7 @@ export const eventPopupRoute: Routes = [
     path: 'event-new',
     component: EventPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
         pageTitle: 'motorsportsDatabaseApp.event.home.title'
     },
     outlet: 'popup'
@@ -44,7 +62,7 @@ export const eventPopupRoute: Routes = [
     path: 'event/:id/edit',
     component: EventPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
         pageTitle: 'motorsportsDatabaseApp.event.home.title'
     },
     outlet: 'popup'
@@ -53,7 +71,7 @@ export const eventPopupRoute: Routes = [
     path: 'event/:id/delete',
     component: EventDeletePopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.event.home.title'
     },
     outlet: 'popup'

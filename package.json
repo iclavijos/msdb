@@ -1,7 +1,7 @@
 {
   "name": "motorsports-database",
-  "version": "0.0.0",
-  "description": "Description for MotorsportsDatabase",
+  "version": "0.5.0",
+  "description": "Database application to store any form of motorsport result",
   "private": true,
   "cacheDirectories": [
     "node_modules"
@@ -21,6 +21,7 @@
     "bootstrap": "4.0.0-alpha.6",
     "core-js": "2.4.1",
     "font-awesome": "4.7.0",
+    "icofont": "file:./../icofont",
     "jquery": "3.1.1",
     "ng-jhipster": "0.1.8",
     "ng2-completer": "^1.2.0",

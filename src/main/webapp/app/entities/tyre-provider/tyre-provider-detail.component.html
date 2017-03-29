@@ -10,10 +10,8 @@
         </dd>
         <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.logo">Logo</span></dt>
         <dd>
-            <div *ngIf="tyreProvider.logo">
-                <a (click)="openFile(tyreProvider.logoContentType, tyreProvider.logo)">
-                    <img [src]="'data:' + tyreProvider.logoContentType + ';base64,' + tyreProvider.logo" style="max-width: 100%;" alt="tyreProvider image"/>
-                </a>
+            <div *ngIf="tyreProvider.logoUrl">
+            	<img [src]="tyreProvider.logoUrl" style="max-height: 200px;" alt="tyre provider logo"/>
             </div>
         </dd>
     </dl>

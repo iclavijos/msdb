@@ -9,7 +9,12 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,9 +28,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.FuelProvider;
 import com.icesoft.msdb.repository.FuelProviderRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
+import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
+import io.swagger.annotations.ApiParam;
 
 /**
  * REST controller for managing FuelProvider.
@@ -40,8 +49,11 @@ public class FuelProviderResource {
         
     private final FuelProviderRepository fuelProviderRepository;
 
-    public FuelProviderResource(FuelProviderRepository fuelProviderRepository) {
+    private final CDNService cdnService;
+
+    public FuelProviderResource(FuelProviderRepository fuelProviderRepository, CDNService cdnService) {
         this.fuelProviderRepository = fuelProviderRepository;
+        this.cdnService = cdnService;
     }
 
     /**
@@ -53,12 +65,20 @@ public class FuelProviderResource {
      */
     @PostMapping("/fuel-providers")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<FuelProvider> createFuelProvider(@Valid @RequestBody FuelProvider fuelProvider) throws URISyntaxException {
         log.debug("REST request to save FuelProvider : {}", fuelProvider);
         if (fuelProvider.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new fuelProvider cannot already have an ID")).body(null);
         }
         FuelProvider result = fuelProviderRepository.save(fuelProvider);
+        
+        if (fuelProvider.getLogo() != null) {
+	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), fuelProvider.getLogo(), ENTITY_NAME);
+	        result.logoUrl(cdnUrl);
+			
+			result = fuelProviderRepository.save(result);
+        }
         return ResponseEntity.created(new URI("/api/fuel-providers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -75,12 +95,20 @@ public class FuelProviderResource {
      */
     @PutMapping("/fuel-providers")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<FuelProvider> updateFuelProvider(@Valid @RequestBody FuelProvider fuelProvider) throws URISyntaxException {
         log.debug("REST request to update FuelProvider : {}", fuelProvider);
         if (fuelProvider.getId() == null) {
             return createFuelProvider(fuelProvider);
         }
+        if (fuelProvider.getLogo() != null) {
+        	String cdnUrl = cdnService.uploadImage(fuelProvider.getId().toString(), fuelProvider.getLogo(), ENTITY_NAME);
+        	fuelProvider.logoUrl(cdnUrl);
+        } else {
+        	cdnService.deleteImage(fuelProvider.getId().toString(), ENTITY_NAME);
+        }
         FuelProvider result = fuelProviderRepository.save(fuelProvider);
+        
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, fuelProvider.getId().toString()))
             .body(result);
@@ -89,14 +117,18 @@ public class FuelProviderResource {
     /**
      * GET  /fuel-providers : get all the fuelProviders.
      *
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of fuelProviders in body
+     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/fuel-providers")
     @Timed
-    public List<FuelProvider> getAllFuelProviders() {
-        log.debug("REST request to get all FuelProviders");
-        List<FuelProvider> fuelProviders = fuelProviderRepository.findAll();
-        return fuelProviders;
+    public ResponseEntity<List<FuelProvider>> getAllFuelProviders(@ApiParam Pageable pageable)
+        throws URISyntaxException {
+        log.debug("REST request to get a page of FuelProviders");
+        Page<FuelProvider> page = fuelProviderRepository.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/fuel-providers");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**
@@ -121,9 +153,11 @@ public class FuelProviderResource {
      */
     @DeleteMapping("/fuel-providers/{id}")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteFuelProvider(@PathVariable Long id) {
         log.debug("REST request to delete FuelProvider : {}", id);
         fuelProviderRepository.delete(id);
+        cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -132,13 +166,18 @@ public class FuelProviderResource {
      * to the query.
      *
      * @param query the query of the fuelProvider search 
+     * @param pageable the pagination information
      * @return the result of the search
+     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/_search/fuel-providers")
     @Timed
-    public List<FuelProvider> searchFuelProviders(@RequestParam String query) {
-        log.debug("REST request to search FuelProviders for query {}", query);
-        return fuelProviderRepository.search(query);
+    public ResponseEntity<List<FuelProvider>> searchFuelProviders(@RequestParam String query, @ApiParam Pageable pageable)
+        throws URISyntaxException {
+        log.debug("REST request to search for a page of FuelProviders for query {}", query);
+        Page<FuelProvider> page = fuelProviderRepository.search(query, pageable);
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/fuel-providers");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
 

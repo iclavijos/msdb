@@ -3281,6 +3281,9 @@ humanize-string@^1.0.0:
   dependencies:
     decamelize "^1.0.0"
 
+"icofont@file:./../icofont":
+  version "1.0.0"
+
 iconv-lite@0.4.15, iconv-lite@^0.4.5:
   version "0.4.15"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.15.tgz#fe265a218ac6a57cfe854927e9d04c19825eddeb"

@@ -8,6 +8,6 @@ export class PointsSystem {
         public pointsFastLap = 0,
         public pointsPole = 0,
         public pointsLeadLap = 0,
-        public active: boolean = true
+        public active = true
     ) { }
 }

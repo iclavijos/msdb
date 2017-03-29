@@ -10,9 +10,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -27,8 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "series")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-//@Document(indexName = "series")
-public class Series implements Serializable {
+public class Series extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -50,12 +49,11 @@ public class Series implements Serializable {
     @Column(name = "organizer", length = 50)
     private String organizer;
 
-    @Lob
-    @Column(name = "logo")
+    @Transient
     private byte[] logo;
 
-    @Column(name = "logo_content_type")
-    private String logoContentType;
+    @Column(name = "logo_url")
+    private String logoUrl;
 
     @OneToMany(mappedBy = "series")
     @JsonIgnore
@@ -122,17 +120,17 @@ public class Series implements Serializable {
         this.logo = logo;
     }
 
-    public String getLogoContentType() {
-        return logoContentType;
+    public String getLogoUrl() {
+        return logoUrl;
     }
 
-    public Series logoContentType(String logoContentType) {
-        this.logoContentType = logoContentType;
+    public Series logoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
         return this;
     }
 
-    public void setLogoContentType(String logoContentType) {
-        this.logoContentType = logoContentType;
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
     }
 
     public Set<SeriesEdition> getEditions() {
@@ -188,7 +186,7 @@ public class Series implements Serializable {
             ", shortname='" + shortname + "'" +
             ", organizer='" + organizer + "'" +
             ", logo='" + logo + "'" +
-            ", logoContentType='" + logoContentType + "'" +
+            ", logoUrl='" + logoUrl + "'" +
             '}';
     }
 }

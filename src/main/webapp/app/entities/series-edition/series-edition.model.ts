@@ -1,5 +1,8 @@
 import { Category } from '../category';
 import { Series } from '../series';
+import { Driver } from '../driver';
+import { Team } from '../team';
+
 export class SeriesEdition {
     constructor(
         public id?: number,
@@ -9,5 +12,9 @@ export class SeriesEdition {
         public singleTyre?: boolean,
         public allowedCategories?: Category,
         public series?: Series,
+        public numEvents?: number,
+        public driverChamp?: Driver,
+        public teamChamp?: Team,
+        public manufacturerChamp?: string,
     ) { }
 }

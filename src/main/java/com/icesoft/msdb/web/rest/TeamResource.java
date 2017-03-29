@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.repository.TeamRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
@@ -68,6 +68,7 @@ public class TeamResource {
     @PostMapping("/teams")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Team> createTeam(@Valid @RequestBody Team team) throws URISyntaxException {
         log.debug("REST request to save Team : {}", team);
         if (team.getId() != null) {
@@ -151,6 +152,7 @@ public class TeamResource {
     @DeleteMapping("/teams/{id}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN})
+    @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Void> deleteTeam(@PathVariable Long id) {
         log.debug("REST request to delete Team : {}", id);
         teamRepository.delete(id);

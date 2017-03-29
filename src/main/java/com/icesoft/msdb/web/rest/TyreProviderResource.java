@@ -9,7 +9,12 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,11 +26,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.FuelProvider;
 import com.icesoft.msdb.domain.TyreProvider;
 import com.icesoft.msdb.repository.TyreProviderRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
+import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
+import io.swagger.annotations.ApiParam;
 
 /**
  * REST controller for managing TyreProvider.
@@ -39,9 +49,12 @@ public class TyreProviderResource {
     private static final String ENTITY_NAME = "tyreProvider";
         
     private final TyreProviderRepository tyreProviderRepository;
+    
+    private final CDNService cdnService;
 
-    public TyreProviderResource(TyreProviderRepository tyreProviderRepository) {
+    public TyreProviderResource(TyreProviderRepository tyreProviderRepository, CDNService cdnService) {
         this.tyreProviderRepository = tyreProviderRepository;
+        this.cdnService = cdnService;
     }
 
     /**
@@ -53,12 +66,21 @@ public class TyreProviderResource {
      */
     @PostMapping("/tyre-providers")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<TyreProvider> createTyreProvider(@Valid @RequestBody TyreProvider tyreProvider) throws URISyntaxException {
         log.debug("REST request to save TyreProvider : {}", tyreProvider);
         if (tyreProvider.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new tyreProvider cannot already have an ID")).body(null);
         }
         TyreProvider result = tyreProviderRepository.save(tyreProvider);
+        
+        if (tyreProvider.getLogo() != null) {
+	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), tyreProvider.getLogo(), ENTITY_NAME);
+	        tyreProvider.logoUrl(cdnUrl);
+			
+			result = tyreProviderRepository.save(result);
+        }
+        
         return ResponseEntity.created(new URI("/api/tyre-providers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -75,10 +97,17 @@ public class TyreProviderResource {
      */
     @PutMapping("/tyre-providers")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<TyreProvider> updateTyreProvider(@Valid @RequestBody TyreProvider tyreProvider) throws URISyntaxException {
         log.debug("REST request to update TyreProvider : {}", tyreProvider);
         if (tyreProvider.getId() == null) {
             return createTyreProvider(tyreProvider);
+        }
+        if (tyreProvider.getLogo() != null) {
+        	String cdnUrl = cdnService.uploadImage(tyreProvider.getId().toString(), tyreProvider.getLogo(), ENTITY_NAME);
+        	tyreProvider.logoUrl(cdnUrl);
+        } else {
+        	cdnService.deleteImage(tyreProvider.getId().toString(), ENTITY_NAME);
         }
         TyreProvider result = tyreProviderRepository.save(tyreProvider);
         return ResponseEntity.ok()
@@ -90,13 +119,16 @@ public class TyreProviderResource {
      * GET  /tyre-providers : get all the tyreProviders.
      *
      * @return the ResponseEntity with status 200 (OK) and the list of tyreProviders in body
+     * @throws URISyntaxException 
      */
     @GetMapping("/tyre-providers")
     @Timed
-    public List<TyreProvider> getAllTyreProviders() {
+    public ResponseEntity<List<TyreProvider>> getAllTyreProviders(@ApiParam Pageable pageable) 
+    		throws URISyntaxException {
         log.debug("REST request to get all TyreProviders");
-        List<TyreProvider> tyreProviders = tyreProviderRepository.findAll();
-        return tyreProviders;
+        Page<TyreProvider> page = tyreProviderRepository.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/tyre-providers");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**
@@ -121,9 +153,11 @@ public class TyreProviderResource {
      */
     @DeleteMapping("/tyre-providers/{id}")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteTyreProvider(@PathVariable Long id) {
         log.debug("REST request to delete TyreProvider : {}", id);
         tyreProviderRepository.delete(id);
+        cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -136,10 +170,13 @@ public class TyreProviderResource {
      */
     @GetMapping("/_search/tyre-providers")
     @Timed
-    public List<TyreProvider> searchTyreProviders(@RequestParam String query) {
-        log.debug("REST request to search TyreProviders for query {}", query);
-        return tyreProviderRepository.search(query);
-    }
+    public ResponseEntity<List<TyreProvider>> searchTyreProviders(@RequestParam String query, @ApiParam Pageable pageable)
+            throws URISyntaxException {
+            log.debug("REST request to search for a page of TyreProviders for query {}", query);
+            Page<TyreProvider> page = tyreProviderRepository.search(query, pageable);
+            HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/tyre-providers");
+            return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        }
 
 
 }

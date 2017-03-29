@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Series;
+import com.icesoft.msdb.domain.SeriesEdition;
+import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.SeriesRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
@@ -45,9 +50,14 @@ public class SeriesResource {
     private static final String ENTITY_NAME = "series";
         
     private final SeriesRepository seriesRepository;
+    private final SeriesEditionRepository seriesEditionRepository;
+    
+    private final CDNService cdnService;
 
-    public SeriesResource(SeriesRepository seriesRepository) {
+    public SeriesResource(SeriesRepository seriesRepository, SeriesEditionRepository seriesEditionRepository, CDNService cdnService) {
         this.seriesRepository = seriesRepository;
+        this.seriesEditionRepository = seriesEditionRepository;
+        this.cdnService = cdnService;
     }
 
     /**
@@ -59,12 +69,20 @@ public class SeriesResource {
      */
     @PostMapping("/series")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<Series> createSeries(@Valid @RequestBody Series series) throws URISyntaxException {
         log.debug("REST request to save Series : {}", series);
         if (series.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new series cannot already have an ID")).body(null);
         }
         Series result = seriesRepository.save(series);
+        
+        if (result.getLogo() != null) {
+	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getLogo(), ENTITY_NAME);
+			result.setLogoUrl(cdnUrl);
+			
+			result = seriesRepository.save(result);
+        }
         return ResponseEntity.created(new URI("/api/series/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -81,10 +99,17 @@ public class SeriesResource {
      */
     @PutMapping("/series")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<Series> updateSeries(@Valid @RequestBody Series series) throws URISyntaxException {
         log.debug("REST request to update Series : {}", series);
         if (series.getId() == null) {
             return createSeries(series);
+        }
+        if (series.getLogo() != null) {
+        	String cdnUrl = cdnService.uploadImage(series.getId().toString(), series.getLogo(), ENTITY_NAME);
+        	series.logoUrl(cdnUrl);
+        } else {
+        	cdnService.deleteImage(series.getId().toString(), ENTITY_NAME);
         }
         Series result = seriesRepository.save(series);
         return ResponseEntity.ok()
@@ -106,6 +131,16 @@ public class SeriesResource {
         log.debug("REST request to get a page of Series");
         Page<Series> page = seriesRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/series");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+    
+    @GetMapping("/series/{id}/editions")
+    @Timed
+    public ResponseEntity<List<SeriesEdition>> getAllEditions(@PathVariable Long id, @ApiParam Pageable pageable)
+        throws URISyntaxException {
+        log.debug("REST request to get a page of Series");
+        Page<SeriesEdition> page = seriesEditionRepository.findBySeriesIdOrderByPeriodDesc(id, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/series/" + id + "/editions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
@@ -131,9 +166,11 @@ public class SeriesResource {
      */
     @DeleteMapping("/series/{id}")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteSeries(@PathVariable Long id) {
         log.debug("REST request to delete Series : {}", id);
         seriesRepository.delete(id);
+        cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -155,6 +192,16 @@ public class SeriesResource {
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/series");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
-
+    
+    @GetMapping("/_search/{id}/editions")
+    @Timed
+    public ResponseEntity<List<SeriesEdition>> searchSeriesEditions(@PathVariable Long id, @RequestParam String query, @ApiParam Pageable pageable)
+        throws URISyntaxException {
+        log.debug("REST request to search for a page of SeriesEditions for query {}", query);
+        //TODO: Implement proper search
+        Page<SeriesEdition> page = seriesEditionRepository.search(query, pageable);
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/" + id + "/editions");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
 
 }

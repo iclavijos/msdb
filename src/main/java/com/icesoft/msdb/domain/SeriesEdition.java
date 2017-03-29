@@ -1,7 +1,9 @@
 package com.icesoft.msdb.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -16,13 +19,14 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * A SeriesEdition.
  */
 @Entity
 @Table(name = "series_edition")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-//@Document(indexName = "seriesedition")
 public class SeriesEdition implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -36,23 +40,25 @@ public class SeriesEdition implements Serializable {
     @Column(name = "period", length = 10, nullable = false)
     private String period;
 
-    @NotNull
-    @Column(name = "single_chassis", nullable = false)
+    @Column(name = "single_chassis")
     private Boolean singleChassis;
 
-    @NotNull
-    @Column(name = "single_engine", nullable = false)
+    @Column(name = "single_engine")
     private Boolean singleEngine;
 
-    @NotNull
-    @Column(name = "single_tyre", nullable = false)
+    @Column(name = "single_tyre")
     private Boolean singleTyre;
 
     @ManyToOne
-    private Category allowedCategories;
+    private Category allowedCategories; //TODO: Fix
 
     @ManyToOne
     private Series series;
+    
+    @OneToMany(mappedBy = "seriesEdition")
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<EventEdition> events = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -126,6 +132,31 @@ public class SeriesEdition implements Serializable {
     public void setAllowedCategories(Category category) {
         this.allowedCategories = category;
     }
+    
+    public Set<EventEdition> getEvents() {
+        return events;
+    }
+
+    public SeriesEdition events(Set<EventEdition> events) {
+        this.events = events;
+        return this;
+    }
+
+    public SeriesEdition addEvents(EventEdition eventEdition) {
+        this.events.add(eventEdition);
+        eventEdition.setSeriesEdition(this);
+        return this;
+    }
+
+    public SeriesEdition removeEditions(EventEdition eventEdition) {
+        this.events.remove(eventEdition);
+        eventEdition.setSeriesEdition(null);
+        return this;
+    }
+
+    public void setEvents(Set<EventEdition> eventEditions) {
+        this.events = eventEditions;
+    } 
 
     public Series getSeries() {
         return series;

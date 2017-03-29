@@ -8,7 +8,7 @@ export class EventEdition {
         public shortEventName?: string,
         public longEventName?: string,
         public eventDate?: any,
-        public allowedCategories?: Category,
+        public allowedCategories?: Category[],
         public trackLayout?: RacetrackLayout,
         public event?: Event,
     ) { }

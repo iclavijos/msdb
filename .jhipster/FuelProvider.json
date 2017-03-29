@@ -20,6 +20,6 @@
     "changelogDate": "20170213140812",
     "entityTableName": "fuel_provider",
     "dto": "no",
-    "pagination": "no",
+    "pagination": "pagination",
     "service": "no"
 }

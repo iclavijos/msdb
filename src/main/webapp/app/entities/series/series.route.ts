@@ -27,6 +27,22 @@ export class SeriesResolvePagingParams implements Resolve<any> {
   }
 }
 
+@Injectable()
+export class SeriesEditionResolvePagingParams implements Resolve<any> {
+
+  constructor(private paginationUtil: PaginationUtil) {}
+
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+      let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
+      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
+      return {
+          page: this.paginationUtil.parsePage(page),
+          predicate: this.paginationUtil.parsePredicate(sort),
+          ascending: this.paginationUtil.parseAscending(sort)
+    };
+  }
+}
+
 export const seriesRoute: Routes = [
   {
     path: 'series',
@@ -41,6 +57,9 @@ export const seriesRoute: Routes = [
   }, {
     path: 'series/:id',
     component: SeriesDetailComponent,
+    resolve: {
+        'pagingParams': SeriesEditionResolvePagingParams
+    },
     data: {
         authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.series.home.title'
@@ -53,7 +72,7 @@ export const seriesPopupRoute: Routes = [
     path: 'series-new',
     component: SeriesPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.series.home.title'
     },
     outlet: 'popup'
@@ -62,7 +81,7 @@ export const seriesPopupRoute: Routes = [
     path: 'series/:id/edit',
     component: SeriesPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.series.home.title'
     },
     outlet: 'popup'
@@ -71,7 +90,7 @@ export const seriesPopupRoute: Routes = [
     path: 'series/:id/delete',
     component: SeriesDeletePopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.series.home.title'
     },
     outlet: 'popup'

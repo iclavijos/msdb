@@ -1,42 +1,98 @@
 
 <div *ngIf="series">
-    <h2><span jhiTranslate="motorsportsDatabaseApp.series.detail.title">Series</span> {{series.id}}</h2>
+    <h2>{{series.name}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
-    <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="motorsportsDatabaseApp.series.name">Name</span></dt>
-        <dd>
-            <span>{{series.name}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.series.shortname">Shortname</span></dt>
-        <dd>
-            <span>{{series.shortname}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.series.organizer">Organizer</span></dt>
-        <dd>
-            <span>{{series.organizer}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.series.logo">Logo</span></dt>
-        <dd>
-            <div *ngIf="series.logo">
-                <a (click)="openFile(series.logoContentType, series.logo)">
-                    <img [src]="'data:' + series.logoContentType + ';base64,' + series.logo" style="max-width: 100%;" alt="series image"/>
-                </a>
-                {{series.logoContentType}}, {{byteSize(series.logo)}}
-            </div>
-        </dd>
-    </dl>
-
-    <button type="submit"
-            (click)="previousState()"
-            class="btn btn-info">
-        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-    </button>
-
-    <button type="button"
-            [routerLink]="['/', { outlets: { popup: 'series/'+ series.id + '/edit'} }]"
-            replaceUrl="true"
-            class="btn btn-primary">
-        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-    </button>
+    
+    <ngb-tabset>
+	  <ngb-tab title="Info">
+	    <template ngbTabContent>
+	      <dl class="row-md jh-entity-details">
+	        <dt><span jhiTranslate="motorsportsDatabaseApp.series.name">Name</span></dt>
+	        <dd>
+	            <span>{{series.name}}</span>
+	        </dd>
+	        <dt><span jhiTranslate="motorsportsDatabaseApp.series.shortname">Shortname</span></dt>
+	        <dd>	
+	            <span>{{series.shortname}}</span>
+	        </dd>
+	        <dt><span jhiTranslate="motorsportsDatabaseApp.series.organizer">Organizer</span></dt>
+	        <dd>
+	            <span>{{series.organizer}}</span>
+	        </dd>
+	        <dt><span jhiTranslate="motorsportsDatabaseApp.series.logo">Logo</span></dt>
+	        <dd>
+				<img *ngIf="series.logoUrl" [src]="series.logoUrl" style="max-width: 400px" alt="series logo"/>
+			</dd>
+			
+			<button type="submit"
+		            (click)="previousState()"
+		            class="btn btn-info">
+		        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+		    </button>
+		
+		    <button type="button"
+		            [routerLink]="['/', { outlets: { popup: 'series/'+ series.id + '/edit'} }]"
+		            replaceUrl="true"
+		            class="btn btn-primary">
+		        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+		    </button>
+	    </dl>
+	    </template>
+	  </ngb-tab>
+	  <ngb-tab title="Editions">
+	  	<template ngbTabContent>
+	  		<div>
+			    <h2>
+			        <button class="btn btn-primary float-right create-series-edition" [routerLink]="['/', { outlets: { popup: ['series-edition-new'] } }]">
+			            <span class="fa fa-plus"></span>
+			        </button>
+			    </h2>
+			    
+			    <br/>
+			    <div class="table-responsive" *ngIf="seriesEditions">
+			        <table class="table table-striped">
+			            <thead>
+			            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+			            <th jhiSortBy="period"><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.period">Period</span> <span class="fa fa-sort"></span></th>
+						<th jhiSortBy="numEvents"><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.numEvents">Num. Events</span> <span class="fa fa-sort"></span></th>
+						<th jhiSortBy="driverChamp"><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.driverChamp">Driver champ</span> <span class="fa fa-sort"></span></th>
+						<th jhiSortBy="teamChamp"><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.teamChamp">Team champ</span> <span class="fa fa-sort"></span></th>
+						<th jhiSortBy="manufacturerChamp"><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.manufacturerChamp">Manuf. champ</span> <span class="fa fa-sort"></span></th>
+			            <th></th>
+			            </tr>
+			            </thead>
+			            <tbody>
+			            <tr *ngFor="let seriesEdition of seriesEditions ;trackBy: trackId">
+			                <td>{{seriesEdition.period}}</td>
+							<td>{{seriesEdition.numEvents}}</td>
+							<td>{{seriesEdition.driverChamp}}</td>
+							<td>{{seriesEdition.teamChamp}}</td>
+							<td>{{seriesEdition.manufacturerChamp}}</td>
+			                <td class="text-right">
+			                    <div class="btn-group flex-btn-group-container">
+			                        <button type="submit"
+			                                [routerLink]="['../series-edition', seriesEdition.id ]"
+			                                class="btn btn-info btn-sm">
+			                            <span class="fa fa-eye"></span>
+			                        </button>
+			                    </div>
+			                </td>
+			            </tr>
+			            </tbody>
+			        </table>
+			    </div>
+			        <!-- Pager is not implemented yet, so this is normal pagination instead -->
+			        <div *ngIf="seriesEditions && seriesEditions.length">
+			            <div class="row justify-content-center">
+			                <jhi-item-count [page]="page" [total]="queryCount" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+			            </div>
+			            <div class="row justify-content-center">
+			                <ngb-pagination [collectionSize]="totalItems" [(page)]="page"  (pageChange)="loadPage(page)"></ngb-pagination>
+			            </div>
+			        </div>
+			</div>
+	  	</template>
+	  </ngb-tab>
+	</ngb-tabset>
 </div>

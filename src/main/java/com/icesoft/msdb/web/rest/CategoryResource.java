@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Category;
+import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.repository.CategoryRepository;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
@@ -106,8 +107,7 @@ public class CategoryResource {
      */
     @GetMapping("/categories")
     @Timed
-    public ResponseEntity<List<Category>> getAllCategories(@ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<Category>> getAllCategories(@ApiParam Pageable pageable) throws URISyntaxException {
         log.debug("REST request to get a page of Categories");
         Page<Category> page = categoryRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/categories");

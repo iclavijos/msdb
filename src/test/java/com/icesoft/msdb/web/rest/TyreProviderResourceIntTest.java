@@ -17,6 +17,7 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +33,7 @@ import org.springframework.util.Base64Utils;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.TyreProvider;
 import com.icesoft.msdb.repository.TyreProviderRepository;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
@@ -48,8 +50,6 @@ public class TyreProviderResourceIntTest {
 
     private static final byte[] DEFAULT_LOGO = TestUtil.createByteArray(1, "0");
     private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(2, "1");
-    private static final String DEFAULT_LOGO_CONTENT_TYPE = "image/jpg";
-    private static final String UPDATED_LOGO_CONTENT_TYPE = "image/png";
 
     @Autowired
     private TyreProviderRepository tyreProviderRepository;
@@ -69,11 +69,14 @@ public class TyreProviderResourceIntTest {
     private MockMvc restTyreProviderMockMvc;
 
     private TyreProvider tyreProvider;
+    
+    @Mock
+    private CDNService cdnService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            TyreProviderResource tyreProviderResource = new TyreProviderResource(tyreProviderRepository);
+            TyreProviderResource tyreProviderResource = new TyreProviderResource(tyreProviderRepository, cdnService);
         this.restTyreProviderMockMvc = MockMvcBuilders.standaloneSetup(tyreProviderResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -89,8 +92,7 @@ public class TyreProviderResourceIntTest {
     public static TyreProvider createEntity(EntityManager em) {
         TyreProvider tyreProvider = new TyreProvider()
                 .name(DEFAULT_NAME)
-                .logo(DEFAULT_LOGO)
-                .logoContentType(DEFAULT_LOGO_CONTENT_TYPE);
+                .logo(DEFAULT_LOGO);
         return tyreProvider;
     }
 
@@ -117,7 +119,6 @@ public class TyreProviderResourceIntTest {
         TyreProvider testTyreProvider = tyreProviderList.get(tyreProviderList.size() - 1);
         assertThat(testTyreProvider.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testTyreProvider.getLogo()).isEqualTo(DEFAULT_LOGO);
-        assertThat(testTyreProvider.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
     }
 
     @Test
@@ -170,7 +171,6 @@ public class TyreProviderResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(tyreProvider.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
 
@@ -186,7 +186,6 @@ public class TyreProviderResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(tyreProvider.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
-            .andExpect(jsonPath("$.logoContentType").value(DEFAULT_LOGO_CONTENT_TYPE))
             .andExpect(jsonPath("$.logo").value(Base64Utils.encodeToString(DEFAULT_LOGO)));
     }
 
@@ -209,8 +208,7 @@ public class TyreProviderResourceIntTest {
         TyreProvider updatedTyreProvider = tyreProviderRepository.findOne(tyreProvider.getId());
         updatedTyreProvider
                 .name(UPDATED_NAME)
-                .logo(UPDATED_LOGO)
-                .logoContentType(UPDATED_LOGO_CONTENT_TYPE);
+                .logo(UPDATED_LOGO);
 
         restTyreProviderMockMvc.perform(put("/api/tyre-providers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -223,7 +221,6 @@ public class TyreProviderResourceIntTest {
         TyreProvider testTyreProvider = tyreProviderList.get(tyreProviderList.size() - 1);
         assertThat(testTyreProvider.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testTyreProvider.getLogo()).isEqualTo(UPDATED_LOGO);
-        assertThat(testTyreProvider.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
     }
 
     @Test
@@ -273,7 +270,6 @@ public class TyreProviderResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(tyreProvider.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
 

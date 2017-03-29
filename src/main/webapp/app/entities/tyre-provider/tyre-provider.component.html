@@ -39,9 +39,7 @@
             <tr *ngFor="let tyreProvider of tyreProviders ;trackBy: trackId">
                 <td>{{tyreProvider.name}}</td>
                 <td>
-                    <a *ngIf="tyreProvider.logo" (click)="openFile(tyreProvider.logoContentType, tyreProvider.logo)">
-                        <img [src]="'data:' + tyreProvider.logoContentType + ';base64,' + tyreProvider.logo" style="max-height: 30px;" alt="tyreProvider image"/>
-                    </a>
+                    <img *ngIf="tyreProvider.logoUrl" [src]="tyreProvider.logoUrl" style="max-height: 30px;" alt="tyre provider logo"/>
                 </td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
@@ -49,21 +47,18 @@
                                 [routerLink]="['../tyre-provider', tyreProvider.id ]"
                                 class="btn btn-info btn-sm">
                             <span class="fa fa-eye"></span>
-                            <span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
                         </button>
                         <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                 [routerLink]="['/', { outlets: { popup: 'tyre-provider/'+ tyreProvider.id + '/edit'} }]"
                                 replaceUrl="true"
                                 class="btn btn-primary btn-sm">
                             <span class="fa fa-pencil"></span>
-                            <span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
                         </button>
                         <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
                                 [routerLink]="['/', { outlets: { popup: 'tyre-provider/'+ tyreProvider.id + '/delete'} }]"
                                 replaceUrl="true"
                                 class="btn btn-danger btn-sm">
                             <span class="fa fa-remove"></span>
-                            <span class="hidden-md-down" jhiTranslate="entity.action.delete">Delete</span>
                         </button>
                     </div>
                 </td>

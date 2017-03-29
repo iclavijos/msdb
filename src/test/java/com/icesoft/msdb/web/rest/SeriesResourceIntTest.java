@@ -17,6 +17,7 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,7 +32,9 @@ import org.springframework.util.Base64Utils;
 
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Series;
+import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.SeriesRepository;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
@@ -54,11 +57,12 @@ public class SeriesResourceIntTest {
 
     private static final byte[] DEFAULT_LOGO = TestUtil.createByteArray(1, "0");
     private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(2, "1");
-    private static final String DEFAULT_LOGO_CONTENT_TYPE = "image/jpg";
-    private static final String UPDATED_LOGO_CONTENT_TYPE = "image/png";
 
     @Autowired
     private SeriesRepository seriesRepository;
+    
+    @Autowired
+    private SeriesEditionRepository seriesEditionRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -75,11 +79,14 @@ public class SeriesResourceIntTest {
     private MockMvc restSeriesMockMvc;
 
     private Series series;
+    
+    @Mock
+    private CDNService cdnService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            SeriesResource seriesResource = new SeriesResource(seriesRepository);
+            SeriesResource seriesResource = new SeriesResource(seriesRepository, seriesEditionRepository, cdnService);
         this.restSeriesMockMvc = MockMvcBuilders.standaloneSetup(seriesResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -97,8 +104,7 @@ public class SeriesResourceIntTest {
                 .name(DEFAULT_NAME)
                 .shortname(DEFAULT_SHORTNAME)
                 .organizer(DEFAULT_ORGANIZER)
-                .logo(DEFAULT_LOGO)
-                .logoContentType(DEFAULT_LOGO_CONTENT_TYPE);
+                .logo(DEFAULT_LOGO);
         return series;
     }
 
@@ -127,7 +133,6 @@ public class SeriesResourceIntTest {
         assertThat(testSeries.getShortname()).isEqualTo(DEFAULT_SHORTNAME);
         assertThat(testSeries.getOrganizer()).isEqualTo(DEFAULT_ORGANIZER);
         assertThat(testSeries.getLogo()).isEqualTo(DEFAULT_LOGO);
-        assertThat(testSeries.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
 
     }
 
@@ -201,7 +206,6 @@ public class SeriesResourceIntTest {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].shortname").value(hasItem(DEFAULT_SHORTNAME.toString())))
             .andExpect(jsonPath("$.[*].organizer").value(hasItem(DEFAULT_ORGANIZER.toString())))
-            .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
 
@@ -219,7 +223,6 @@ public class SeriesResourceIntTest {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.shortname").value(DEFAULT_SHORTNAME.toString()))
             .andExpect(jsonPath("$.organizer").value(DEFAULT_ORGANIZER.toString()))
-            .andExpect(jsonPath("$.logoContentType").value(DEFAULT_LOGO_CONTENT_TYPE))
             .andExpect(jsonPath("$.logo").value(Base64Utils.encodeToString(DEFAULT_LOGO)));
     }
 
@@ -244,8 +247,7 @@ public class SeriesResourceIntTest {
                 .name(UPDATED_NAME)
                 .shortname(UPDATED_SHORTNAME)
                 .organizer(UPDATED_ORGANIZER)
-                .logo(UPDATED_LOGO)
-                .logoContentType(UPDATED_LOGO_CONTENT_TYPE);
+                .logo(UPDATED_LOGO);
 
         restSeriesMockMvc.perform(put("/api/series")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -260,7 +262,6 @@ public class SeriesResourceIntTest {
         assertThat(testSeries.getShortname()).isEqualTo(UPDATED_SHORTNAME);
         assertThat(testSeries.getOrganizer()).isEqualTo(UPDATED_ORGANIZER);
         assertThat(testSeries.getLogo()).isEqualTo(UPDATED_LOGO);
-        assertThat(testSeries.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
 
     }
 
@@ -313,7 +314,6 @@ public class SeriesResourceIntTest {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].shortname").value(hasItem(DEFAULT_SHORTNAME.toString())))
             .andExpect(jsonPath("$.[*].organizer").value(hasItem(DEFAULT_ORGANIZER.toString())))
-            .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
 
