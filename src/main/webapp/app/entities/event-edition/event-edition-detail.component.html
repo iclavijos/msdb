@@ -65,7 +65,9 @@
 					            <tr *ngFor="let eventSession of eventEdition.sessions ;trackBy: trackId">
 					                <td>{{eventSession.sessionStartTime | date:'medium'}}</td>
 					                <td>{{eventSession.shortname}}</td>
-					                <td>{{eventSession.duration}} {{'motorsportsDatabaseApp.eventEdition.enumerations.' + durationTypes[eventSession.durationType] | translate}}</td>
+					                <td>{{eventSession.duration}} {{'motorsportsDatabaseApp.eventEdition.enumerations.' + durationTypes[eventSession.durationType] | translate}} 
+					                	<span *ngIf="eventSession.additionalLap">+ 1 {{'motorsportsDatabaseApp.eventEdition.session.lap' | translate}}</span>
+					                </td>
 					                <td class="text-right">
 					                    <div class="btn-group flex-btn-group-container">
 					                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"

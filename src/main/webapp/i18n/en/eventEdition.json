@@ -38,6 +38,7 @@
 	            "sessionType": "Session type",
 	            "awardsPoints": "Awards points",
 	            "additionalLap": "Extra lap?",
+	            "lap": "lap",
 	            "created": "A new session is created",
 	            "updated": "A session is updated",
 	            "deleted": "A session is deleted",
