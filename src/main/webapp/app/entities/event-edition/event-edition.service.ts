@@ -38,6 +38,12 @@ export class EventEditionService {
             return jsonResponse;
         });
     }
+    
+    findSessions(id: number): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${id}/sessions`).map((res: Response) => {
+            return this.transformDateTime(res);
+        });
+    }
 
     query(req?: any): Observable<Response> {
         let options = this.createRequestOption(req);
@@ -62,6 +68,15 @@ export class EventEditionService {
         for (let i = 0; i < jsonResponse.length; i++) {
             jsonResponse[i].eventDate = new Date(
                     jsonResponse[i].eventDate[0], jsonResponse[i].eventDate[1] - 1, jsonResponse[i].eventDate[2]);
+        }
+        res._body = jsonResponse;
+        return res;
+    }
+    
+    private transformDateTime(res: any): any {
+        let jsonResponse = res.json();
+        for (let i = 0; i < jsonResponse.length; i++) {
+            jsonResponse[i].sessionStartTime = new Date(jsonResponse[i].sessionStartTime * 1000);
         }
         res._body = jsonResponse;
         return res;

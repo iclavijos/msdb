@@ -22,7 +22,7 @@ export class EventSessionDeleteDialogComponent {
         public activeModal: NgbActiveModal,
         private eventManager: EventManager
     ) {
-        this.jhiLanguageService.setLocations(['eventSession']);
+        //this.jhiLanguageService.setLocations(['eventSession']);
     }
 
     clear () {

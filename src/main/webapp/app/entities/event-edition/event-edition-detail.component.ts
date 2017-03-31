@@ -1,8 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { JhiLanguageService } from 'ng-jhipster';
+import { ActivatedRoute, Router } from '@angular/router';
+import { EventManager, JhiLanguageService } from 'ng-jhipster';
+import { Subscription } from 'rxjs/Rx';
 import { EventEdition } from './event-edition.model';
 import { EventEditionService } from './event-edition.service';
+import { EventSession } from '../event-session/event-session.model';
+
+import { DurationType, SessionType } from '../../shared';
 
 @Component({
     selector: 'jhi-event-edition-detail',
@@ -11,12 +15,21 @@ import { EventEditionService } from './event-edition.service';
 export class EventEditionDetailComponent implements OnInit, OnDestroy {
 
     eventEdition: EventEdition;
+    eventSubscriber: Subscription;
     private subscription: any;
+    sessionTypes = SessionType;
+    durationTypes = DurationType;
+    sessions: EventSession[];
+    
+    keysSession: any[];
+    keysDuration: any[];
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
         private eventEditionService: EventEditionService,
-        private route: ActivatedRoute
+        private eventManager: EventManager,
+        private route: ActivatedRoute,
+        private router: Router,
     ) {
         this.jhiLanguageService.setLocations(['eventEdition']);
     }
@@ -25,19 +38,37 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         this.subscription = this.route.params.subscribe(params => {
             this.load(params['id']);
         });
+        this.registerChangeInEventSessions();
+        
+        this.keysDuration = Object.keys(this.durationTypes).filter(Number);
+        this.keysSession = Object.keys(this.sessionTypes).filter(Number);
     }
 
     load (id) {
         this.eventEditionService.find(id).subscribe(eventEdition => {
             this.eventEdition = eventEdition;
+            this.loadSessions(id);
         });
     }
+    
+    loadSessions(id) {
+        this.eventEditionService.findSessions(id).subscribe(eventSessions => {
+            this.eventEdition.sessions = eventSessions.json();
+        });
+    }
+    
     previousState() {
-        window.history.back();
+        //window.history.back();
+        this.router.navigate(['/event-edition']);
     }
 
     ngOnDestroy() {
+        this.eventManager.destroy(this.eventSubscriber);
         this.subscription.unsubscribe();
+    }
+    
+    registerChangeInEventSessions() {
+        this.eventSubscriber = this.eventManager.subscribe('eventSessionListModification', (response) => this.loadSessions(this.eventEdition.id));
     }
 
 }

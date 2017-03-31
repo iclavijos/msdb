@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -22,8 +23,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "event_session")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-//@Document(indexName = "eventsession")
-public class EventSession implements Serializable {
+public class EventSession extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -48,6 +48,21 @@ public class EventSession implements Serializable {
     @NotNull
     @Column(name = "duration", nullable = false)
     private Integer duration;
+    
+    @Column(name= "duration_type")
+    private Integer durationType;
+    
+    @Column(name= "session_type")
+    private Integer sessionType;
+    
+    @Column(name= "additional_lap")
+    private Boolean additionalLap;
+    
+    @Column(name= "awards_points")
+    private Boolean awardsPoints;
+    
+    @ManyToOne
+    private EventEdition eventEdition;
 
     public Long getId() {
         return id;
@@ -108,6 +123,71 @@ public class EventSession implements Serializable {
     public void setDuration(Integer duration) {
         this.duration = duration;
     }
+    
+    public Integer getDurationType() {
+		return durationType;
+	}
+    
+    public EventSession durationType(Integer durationType) {
+    	this.durationType = durationType;
+    	return this;
+    }
+
+	public void setDurationType(Integer durationType) {
+		this.durationType = durationType;
+	}
+
+	public Integer getSessionType() {
+		return sessionType;
+	}
+
+	public void setSessionType(Integer sessionType) {
+		this.sessionType = sessionType;
+	}
+	
+	public EventSession sessionType(Integer sessionType) {
+		this.sessionType = sessionType;
+		return this;
+	}
+
+	public Boolean getAdditionalLap() {
+		return additionalLap;
+	}
+
+	public void setAdditionalLap(Boolean additionalLap) {
+		this.additionalLap = additionalLap;
+	}
+	
+	public EventSession additionalLap(Boolean additionalLap) {
+		this.additionalLap = additionalLap;
+		return this;
+	}
+
+	public Boolean getAwardsPoints() {
+		return awardsPoints;
+	}
+
+	public void setAwardsPoints(Boolean awardsPoints) {
+		this.awardsPoints = awardsPoints;
+	}
+	
+	public EventSession awardsPoints(Boolean awardsPoints) {
+		this.awardsPoints = awardsPoints;
+		return this;
+	}
+
+	public void setEventEdition(EventEdition eventEdition) {
+    	this.eventEdition = eventEdition;
+    }
+    
+    public EventSession eventEdition(EventEdition eventEdition) {
+    	this.eventEdition = eventEdition;
+    	return this;
+    }
+    
+    public EventEdition getEventEdition() {
+    	return eventEdition;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -137,6 +217,11 @@ public class EventSession implements Serializable {
             ", shortname='" + shortname + "'" +
             ", sessionStartTime='" + sessionStartTime + "'" +
             ", duration='" + duration + "'" +
+            ", durationType='" + durationType + "'" +
+            ", sessionType='" + sessionType + "'" +
+            ", additionalLap='" + additionalLap + "'" +
+            ", awardsPoints='" + awardsPoints + "'" +
+            ", eventEdition={" + eventEdition + "}" +
             '}';
     }
 }

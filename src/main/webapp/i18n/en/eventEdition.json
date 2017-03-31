@@ -22,7 +22,39 @@
             "eventDate": "Event Date",
             "allowedCategories": "Allowed Categories",
             "trackLayout": "Track Layout",
-            "event": "Event"
+            "event": "Event",
+            "sessions": "Sessions",
+            "info": "Information",
+            "entryList": "Entry List",
+            "results": "Results",
+            "session": {
+            	"createOrEditLabel": "Create or edit a Event Session",
+            	"name": "Name",
+	            "shortname": "Shortname",
+	            "sessionStartTime": "Session Start Time",
+	            "duration": "Duration",
+	            "empty": "-",
+	            "durationType": "Type",
+	            "sessionType": "Session type",
+	            "awardsPoints": "Awards points",
+	            "additionalLap": "Extra lap?",
+	            "created": "A new session is created",
+	            "updated": "A session is updated",
+	            "deleted": "A session is deleted",
+	            "delete": {
+	                "question": "Are you sure you want to delete session '{{id}}'?"
+	            }
+            },
+		    "enumerations": {
+			    "minutes": "Minutes",
+			    "hours": "Hours",
+			    "kilometers": "Kilometers",
+			    "miles": "Miles",
+			    
+			    "practice": "Free practice",
+			    "qualifying": "Qualifying",
+			    "race": "Race"
+			}
         }
     }
 }

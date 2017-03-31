@@ -4,30 +4,39 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { DatePipe } from '@angular/common';
 import { EventSession } from './event-session.model';
 import { EventSessionService } from './event-session.service';
+
+import { EventEdition } from '../event-edition/event-edition.model';
+import { EventEditionService } from '../event-edition/event-edition.service';
+
 @Injectable()
 export class EventSessionPopupService {
     private isOpen = false;
+    
     constructor (
         private datePipe: DatePipe,
         private modalService: NgbModal,
         private router: Router,
-        private eventSessionService: EventSessionService
-
+        private eventSessionService: EventSessionService,
+        private eventEditionService: EventEditionService,
     ) {}
 
-    open (component: Component, id?: number | any): NgbModalRef {
+    open (component: Component, id?: number | any, idEdition?: number | any): NgbModalRef {
         if (this.isOpen) {
             return;
         }
-        this.isOpen = true;
-
+        this.isOpen = true; 
+        
         if (id) {
             this.eventSessionService.find(id).subscribe(eventSession => {
-                eventSession.sessionStartTime = this.datePipe.transform(eventSession.sessionStartTime, 'yyyy-MM-ddThh:mm');
+                eventSession.sessionStartTime = this.datePipe.transform(eventSession.sessionStartTime * 1000, 'yyyy-MM-ddTHH:mm');
                 this.eventSessionModalRef(component, eventSession);
             });
         } else {
-            return this.eventSessionModalRef(component, new EventSession());
+            this.eventEditionService.find(idEdition).subscribe(eventEdition => {
+                let eventSess = new EventSession();
+                eventSess.eventEdition = eventEdition;
+                return this.eventSessionModalRef(component, eventSess);
+            });
         }
     }
 

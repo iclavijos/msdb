@@ -8,6 +8,9 @@ import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
 import { EventSession } from './event-session.model';
 import { EventSessionPopupService } from './event-session-popup.service';
 import { EventSessionService } from './event-session.service';
+
+import { DurationType, SessionType } from '../../shared';
+
 @Component({
     selector: 'jhi-event-session-dialog',
     templateUrl: './event-session-dialog.component.html'
@@ -17,19 +20,27 @@ export class EventSessionDialogComponent implements OnInit {
     eventSession: EventSession;
     authorities: any[];
     isSaving: boolean;
+    sessionTypes = SessionType;
+    durationTypes = DurationType;
+    keysSession: any[];
+    keysDuration: any[];
+
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
         private alertService: AlertService,
         private eventSessionService: EventSessionService,
-        private eventManager: EventManager
+        private eventManager: EventManager,
+        private route: ActivatedRoute
     ) {
-        this.jhiLanguageService.setLocations(['eventSession']);
     }
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
+        this.authorities = ['ROLE_EDITOR', 'ROLE_ADMIN'];
+        
+        this.keysDuration = Object.keys(this.durationTypes).filter(Number);
+        this.keysSession = Object.keys(this.sessionTypes).filter(Number);
     }
     clear () {
         this.activeModal.dismiss('cancel');
@@ -70,6 +81,7 @@ export class EventSessionPopupComponent implements OnInit, OnDestroy {
 
     modalRef: NgbModalRef;
     routeSub: any;
+    eventEditionId: number;
 
     constructor (
         private route: ActivatedRoute,
@@ -78,12 +90,15 @@ export class EventSessionPopupComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.routeSub = this.route.params.subscribe(params => {
+            if (params['idEdition']) {
+                this.eventEditionId = params['idEdition'];
+            }
             if ( params['id'] ) {
                 this.modalRef = this.eventSessionPopupService
-                    .open(EventSessionDialogComponent, params['id']);
+                    .open(EventSessionDialogComponent, params['id'], this.eventEditionId);
             } else {
                 this.modalRef = this.eventSessionPopupService
-                    .open(EventSessionDialogComponent);
+                    .open(EventSessionDialogComponent, null, this.eventEditionId);
             }
 
         });

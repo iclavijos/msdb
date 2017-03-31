@@ -2,27 +2,59 @@
     "motorsportsDatabaseApp": {
         "eventEdition" : {
             "home": {
-                "title": "Event Editions",
-                "createLabel": "Crear nuevo Event Edition",
-                "createOrEditLabel": "Crear o editar Event Edition",
-                "search": "Search for Event Edition"
+                "title": "Ediciones de eventos",
+                "createLabel": "Crear nueva edición de un evento",
+                "createOrEditLabel": "Crear o editar una edición de un evento",
+                "search": "Buscar"
             },
-            "created": "Un nuevo Event Edition ha sido creado con el identificador {{ param }}",
-            "updated": "Un Event Edition ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un Event Edition ha sido eliminado con el identificador {{ param }}",
+            "created": "Se ha creado una nueva edición de un evento",
+            "updated": "Se ha actualizado la edición del evento",
+            "deleted": "Se ha eliminado la edición del evento",
             "delete": {
-                "question": "¿Seguro que quiere eliminar Event Edition {{ id }}?"
+                "question": "¿Seguro que quiere eliminar esta edición del evento {{ id }}?"
             },
             "detail": {
-                "title": "Event Edition"
+                "title": "Edición del evento"
             },
-            "editionYear": "Edition Year",
-            "shortEventName": "Short Event Name",
-            "longEventName": "Long Event Name",
-            "eventDate": "Event Date",
-            "allowedCategories": "Allowed Categories",
-            "trackLayout": "Track Layout",
-            "event": "Event"
+            "editionYear": "Año",
+            "shortEventName": "Nombre corto",
+            "longEventName": "Nombre largo",
+            "eventDate": "Fecha",
+            "allowedCategories": "Categorías permitidas",
+            "trackLayout": "Trazado",
+            "event": "Evento",
+            "sessions": "Sesiones",
+            "info": "Detalles",
+            "entryList": "Inscritos",
+            "results": "Resultados",
+            "session": {
+            	"createOrEditLabel": "Crea o edita una sesión",
+            	"name": "Nombre",
+	            "shortname": "Nombre corto",
+	            "sessionStartTime": "Día y hora de inicio",
+	            "duration": "Duración",
+	            "empty": "-",
+	            "durationType": "Tipo",
+	            "sessionType": "Tipo de sesión",
+	            "awardsPoints": "Concede puntos",
+	            "additionalLap": "¿Vuelta extra?",
+	            "created": "Se ha creado una nueva sesión",
+	            "updated": "Se ha actualizado la sesión",
+	            "deleted": "Se ha borrado la sesión",
+	            "delete": {
+	                "question": "¿Estás seguro que quieres borrar la sesión '{{id}}'?"
+	            }
+            },
+		    "enumerations": {
+			    "minutes": "Minutos",
+			    "hours": "Horas",
+			    "kilometers": "Kilómetros",
+			    "miles": "Millas",
+			    
+			    "practice": "Entrenamientos libres",
+			    "qualifying": "Clasificación",
+			    "race": "Carrera"
+			}
         }
     }
 }

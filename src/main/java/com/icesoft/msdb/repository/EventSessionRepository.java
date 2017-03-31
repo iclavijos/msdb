@@ -12,4 +12,5 @@ import java.util.List;
 @SuppressWarnings("unused")
 public interface EventSessionRepository extends JpaRepository<EventSession,Long> {
 
+	List<EventSession> findByEventEditionIdOrderBySessionStartTimeAsc(Long eventEditionId);
 }

@@ -2,27 +2,58 @@
     "motorsportsDatabaseApp": {
         "eventEdition" : {
             "home": {
-                "title": "Event Editions",
-                "createLabel": "Create a new Event Edition",
-                "createOrEditLabel": "Create or edit a Event Edition",
-                "search": "Search for Event Edition"
+                "title": "Edició d'event",
+                "createLabel": "Crea una nova edició d'un event",
+                "createOrEditLabel": "Crea o edita l'edició d'un event",
+                "search": "Cercar edicions d'events"
             },
-            "created": "A new Event Edition is created with identifier {{ param }}",
-            "updated": "A Event Edition is updated with identifier {{ param }}",
-            "deleted": "A Event Edition is deleted with identifier {{ param }}",
+            "created": "S'ha creat una nova edició d'un event",
+            "updated": "S'ha actualitzat una edició d'un event",
+            "deleted": "S'ha esborrat l'edició de l'event",
             "delete": {
-                "question": "Are you sure you want to delete Event Edition {{ id }}?"
+                "question": "Esteu segurs que voleu esborrar l'edició de l'event?"
             },
             "detail": {
-                "title": "Event Edition"
+                "title": "Edició d'event"
             },
-            "editionYear": "Edition Year",
-            "shortEventName": "Short Event Name",
-            "longEventName": "Long Event Name",
-            "eventDate": "Event Date",
-            "allowedCategories": "Allowed Categories",
-            "trackLayout": "Track Layout",
-            "event": "Event"
+            "editionYear": "Any",
+            "shortEventName": "Nom curt",
+            "longEventName": "Nom llarg",
+            "eventDate": "Data",
+            "allowedCategories": "Categories permeses",
+            "trackLayout": "Traçat",
+            "event": "Event",
+            "sessions": "Sessions",
+            "info": "Detalls",
+            "entryList": "Inscrits",
+            "results": "Resultats",
+            "session": {
+            	"createOrEditLabel": "Crea o edita una sessió",
+            	"name": "Nom",
+	            "shortname": "Nom curt",
+	            "sessionStartTime": "Dia i hora d'inici",
+	            "duration": "Duració",
+	            "empty": "-",
+	            "durationType": "Tipus",
+	            "sessionType": "Tipus de sessió",
+	            "awardsPoints": "Concedeix punts",
+	            "additionalLap": "Volta extra?",
+	            "created": "S'ha creat una nova sessió",
+	            "updated": "S'ha actualitzat la sessió",
+	            "deleted": "S'ha esborrat la sessió",
+	            "delete": {
+	                "question": "Esteu segurs que voleu esborrar la sessió '{{id}}'?"
+	            }
+            },
+		    "enumerations": {
+			    "minutes": "Minuts",
+			    "hours": "Hores",
+			    "kilometers": "Kilòmetres",
+			    "miles": "Milles",
+			    "practice": "Entrenaments lliures",
+			    "qualifying": "Classificació",
+			    "race": "Cursa"
+			}
         }
     }
 }

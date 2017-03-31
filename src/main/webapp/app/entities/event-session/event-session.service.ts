@@ -7,7 +7,7 @@ import { DateUtils } from 'ng-jhipster';
 @Injectable()
 export class EventSessionService {
 
-    private resourceUrl = 'api/event-sessions';
+    private resourceUrl = 'api/event-editions/event-sessions';
     private resourceSearchUrl = 'api/_search/event-sessions';
 
     constructor(private http: Http, private dateUtils: DateUtils) { }
@@ -15,7 +15,8 @@ export class EventSessionService {
     create(eventSession: EventSession): Observable<EventSession> {
         let copy: EventSession = Object.assign({}, eventSession);
         copy.sessionStartTime = this.dateUtils.toDate(eventSession.sessionStartTime);
-        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
+        return this.http.post(
+                `api/event-editions/${copy.eventEdition.id}/sessions`, copy).map((res: Response) => {
             return res.json();
         });
     }

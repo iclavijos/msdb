@@ -28,7 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.EventEdition;
+import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.repository.EventEditionRepository;
+import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
@@ -46,11 +48,14 @@ public class EventEditionResource {
     private final Logger log = LoggerFactory.getLogger(EventEditionResource.class);
 
     private static final String ENTITY_NAME = "eventEdition";
+    private static final String ENTITY_NAME_SESSION = "eventSession";
         
     private final EventEditionRepository eventEditionRepository;
+    private final EventSessionRepository eventSessionRepository;
 
-    public EventEditionResource(EventEditionRepository eventEditionRepository) {
+    public EventEditionResource(EventEditionRepository eventEditionRepository, EventSessionRepository eventSessionRepository) {
         this.eventEditionRepository = eventEditionRepository;
+        this.eventSessionRepository = eventSessionRepository;
     }
 
     /**
@@ -163,6 +168,65 @@ public class EventEditionResource {
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/event-editions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
+    
+    @GetMapping("/event-editions/{id}/sessions")
+    @Timed
+    public List<EventSession> getEventEditionSessions(@PathVariable Long id) {
+    	log.debug("REST request to get all EventEditions {} sessions", id);
+    	return eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(id);
+    }
 
-
+    @PostMapping("/event-editions/{id}/sessions")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    public ResponseEntity<EventSession> createEventEditionSession(@Valid @RequestBody EventSession eventSession) throws URISyntaxException {
+        log.debug("REST request to save EventSession : {}", eventSession);
+        if (eventSession.getId() != null) {
+            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
+            		ENTITY_NAME_SESSION, "idexists", "A new eventSession cannot already have an ID")).body(null);
+        }
+        EventSession result = eventSessionRepository.save(eventSession);
+        return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/sessions"))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME_SESSION, result.getId().toString()))
+            .body(result);
+    }
+    
+    @GetMapping("/event-editions/event-sessions/{id}")
+    @Timed
+    public ResponseEntity<EventSession> getEventSession(@PathVariable Long id) {
+        log.debug("REST request to get EventSession : {}", id);
+        EventSession eventSession = eventSessionRepository.findOne(id);
+        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventSession));
+    }
+    
+    @DeleteMapping("/event-editions/event-sessions/{id}")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
+    public ResponseEntity<Void> deleteEventSession(@PathVariable Long id) {
+        log.debug("REST request to delete EventSession : {}", id);
+        eventSessionRepository.delete(id);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+    
+    @PutMapping("/event-editions/event-sessions")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    public ResponseEntity<EventSession> updateEventSession(@Valid @RequestBody EventSession eventSession) throws URISyntaxException {
+        log.debug("REST request to update EventSession : {}", eventSession);
+        if (eventSession.getId() == null) {
+            return createEventEditionSession(eventSession);
+        }
+        EventSession result = eventSessionRepository.save(eventSession);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, eventSession.getId().toString()))
+            .body(result);
+    }
+    
+    //TODO: Borrar
+    @GetMapping("/event-sessions")
+    @Timed
+    public List<EventSession> getSessions() {
+    	log.debug("REST request to get all EventEditions {} sessions");
+    	return eventSessionRepository.findAll();
+    }
 }

@@ -32,28 +32,28 @@ export const eventSessionRoute: Routes = [
 
 export const eventSessionPopupRoute: Routes = [
   {
-    path: 'event-session-new',
+    path: ':idEdition/event-session-new',
     component: EventSessionPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
     },
     outlet: 'popup'
   },
   {
-    path: 'event-session/:id/edit',
+    path: ':idEdition/event-session/:id/edit',
     component: EventSessionPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
     },
     outlet: 'popup'
   },
   {
-    path: 'event-session/:id/delete',
+    path: ':idEdition/event-session/:id/delete',
     component: EventSessionDeletePopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
     },
     outlet: 'popup'
