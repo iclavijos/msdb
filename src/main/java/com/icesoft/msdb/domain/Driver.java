@@ -51,8 +51,7 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     @JsonView(View.Summary.class)
     private String surname;
 
-    @NotNull
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date")
     private LocalDate birthDate;
 
     @Size(max = 75)
