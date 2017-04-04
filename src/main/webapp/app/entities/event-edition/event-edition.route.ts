@@ -29,16 +29,6 @@ export class EventEditionResolvePagingParams implements Resolve<any> {
 
 export const eventEditionRoute: Routes = [
   {
-    path: 'event-edition',
-    component: EventEditionComponent,
-    resolve: {
-      'pagingParams': EventEditionResolvePagingParams
-    },
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.eventEdition.home.title'
-    }
-  }, {
     path: 'event-edition/:id',
     component: EventEditionDetailComponent,
     data: {

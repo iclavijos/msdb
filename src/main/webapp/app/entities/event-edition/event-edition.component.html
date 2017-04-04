@@ -1,23 +1,17 @@
 <div>
-    <h2>
-        <span jhiTranslate="motorsportsDatabaseApp.eventEdition.home.title">Event Editions</span>
-        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
-        	class="btn btn-primary float-right create-event-edition" [routerLink]="['/', { outlets: { popup: ['event-edition-new'] } }]">
-            <span class="fa fa-plus"></span>
-            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.home.createLabel">
-            Create new Event Edition
-            </span>
-        </button>
-    </h2>
+    <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
+    	class="btn btn-primary float-right create-event-edition" [routerLink]="['/', { outlets: { popup: ['event-edition-new'] } }]">
+        <span class="fa fa-plus"></span>
+        <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.home.createLabel">
+        Create new Event Edition
+        </span>
+    </button>
     <jhi-alert></jhi-alert>
-    <div class="row">
+    <div class="row" *ngIf="!event">
         <div class="col-sm-12 no-padding-right">
             <form name="searchForm" class="form-inline">
                 <div class="input-group w-100 mt-3">
                     <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.eventEdition.home.search' | translate }}">
-                    <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
-                        <span class="fa fa-search"></span>
-                    </button>
                     <button class="input-group-addon btn btn-danger" (click)="clear()" *ngIf="currentSearch">
                         <span class="fa fa-trash-o"></span>
                     </button>
@@ -29,12 +23,12 @@
     <div class="table-responsive" *ngIf="eventEditions">
         <table class="table table-striped">
             <thead>
-            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-            <th jhiSortBy="editionYear"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.editionYear">Edition Year</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="longEventName"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.longEventName">Long Event Name</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="eventDate"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate">Event Date</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="allowedCategories.id"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.allowedCategories">Allowed Categories</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="trackLayout.id"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout">Track Layout</span> <span class="fa fa-sort"></span></th>
+            <tr>
+            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.editionYear">Edition Year</span></th>
+            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.longEventName">Long Event Name</span></th>
+            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate">Event Date</span></th>
+            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.allowedCategories">Allowed Categories</span></th>
+            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout">Track Layout</span></th>
             <th></th>
             </tr>
             </thead>
@@ -57,8 +51,8 @@
                 </td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
-                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
-                                [routerLink]="['../event-edition', eventEdition.id ]"
+                        <button type="submit" 
+                                [routerLink]="['/event-edition', eventEdition.id ]"
                                 class="btn btn-info btn-sm">
                             <span class="fa fa-eye"></span>
                         </button>

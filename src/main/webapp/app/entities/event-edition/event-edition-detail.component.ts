@@ -1,10 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EventManager, JhiLanguageService } from 'ng-jhipster';
+import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Rx';
+import { Engine } from '../engine';
 import { EventEdition } from './event-edition.model';
 import { EventEditionService } from './event-edition.service';
 import { EventSession } from '../event-session/event-session.model';
+import { EventEntry } from '../event-entry/event-entry.model';
+import { EventEntryService } from '../event-entry/event-entry.service';
 
 import { DurationType, SessionType } from '../../shared';
 
@@ -20,6 +24,7 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     sessionTypes = SessionType;
     durationTypes = DurationType;
     sessions: EventSession[];
+    eventEntries: EventEntry[];
     
     keysSession: any[];
     keysDuration: any[];
@@ -27,11 +32,11 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     constructor(
         private jhiLanguageService: JhiLanguageService,
         private eventEditionService: EventEditionService,
+        private eventEntryService: EventEntryService,
         private eventManager: EventManager,
         private route: ActivatedRoute,
         private router: Router,
     ) {
-        this.jhiLanguageService.setLocations(['eventEdition']);
     }
 
     ngOnInit() {
@@ -48,6 +53,7 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         this.eventEditionService.find(id).subscribe(eventEdition => {
             this.eventEdition = eventEdition;
             this.loadSessions(id);
+            this.loadEntries(id);
         });
     }
     
@@ -57,9 +63,16 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         });
     }
     
+    loadEntries(id) {
+        this.eventEntryService.findEntries(id).subscribe(
+            (res: Response) => {
+                this.eventEntries = res.json();
+            }
+        );
+    }
+    
     previousState() {
-        //window.history.back();
-        this.router.navigate(['/event-edition']);
+        this.router.navigate(['/event/' + this.eventEdition.event.id]);
     }
 
     ngOnDestroy() {

@@ -3,3 +3,6 @@
 @import '~font-awesome/css/font-awesome.css';
 @import '~icofont/css/icofont.min.css';
 
+.table > tbody > tr:first-child > td {
+    border: none;
+}

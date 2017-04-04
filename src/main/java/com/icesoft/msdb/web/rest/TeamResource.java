@@ -139,7 +139,7 @@ public class TeamResource {
     @Timed
     public ResponseEntity<Team> getTeam(@PathVariable Long id) {
         log.debug("REST request to get Team : {}", id);
-        Team team = teamRepository.findOneWithEagerRelationships(id);
+        Team team = teamRepository.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(team));
     }
 

@@ -30,6 +30,9 @@ let ENTITY_STATES = [
         MotorsportsDatabaseSharedModule,
         RouterModule.forRoot(ENTITY_STATES, { useHash: true })
     ],
+    exports: [
+        EventEditionComponent
+    ],
     declarations: [
         EventEditionComponent,
         EventEditionDetailComponent,

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -70,6 +68,18 @@ public class EventEdition implements Serializable {
 
     @ManyToOne
     private Event event;
+    
+    @Column(name = "single_chassis")
+    private Boolean singleChassis;
+
+    @Column(name = "single_engine")
+    private Boolean singleEngine;
+
+    @Column(name = "single_tyre")
+    private Boolean singleTyre;
+    
+    @Column(name = "single_fuel")
+    private Boolean singleFuel;
     
     @OneToOne
     private SeriesEdition seriesEdition;
@@ -186,6 +196,58 @@ public class EventEdition implements Serializable {
     public void setEvent(Event event) {
         this.event = event;
     }
+    
+	public Boolean getSingleChassis() {
+		return singleChassis;
+	}
+	
+	public EventEdition singleChassis(Boolean singleChassis) {
+		this.singleChassis = singleChassis;
+		return this;
+	}
+
+	public void setSingleChassis(Boolean singleChassis) {
+		this.singleChassis = singleChassis;
+	}
+
+	public Boolean getSingleEngine() {
+		return singleEngine;
+	}
+
+	public EventEdition singleEngine(Boolean singleEngine) {
+		this.singleEngine = singleEngine;
+		return this;
+	}
+	
+	public void setSingleEngine(Boolean singleEngine) {
+		this.singleEngine = singleEngine;
+	}
+
+	public Boolean getSingleTyre() {
+		return singleTyre;
+	}
+
+	public EventEdition singleTyre(Boolean singleTyre) {
+		this.singleTyre = singleTyre;
+		return this;
+	}
+	
+	public void setSingleTyre(Boolean singleTyre) {
+		this.singleTyre = singleTyre;
+	}
+	
+	public Boolean getSingleFuel() {
+		return singleFuel;
+	}
+
+	public EventEdition singleFuel(Boolean singleFuel) {
+		this.singleFuel = singleFuel;
+		return this;
+	}
+	
+	public void setSingleFuel(Boolean singleFuel) {
+		this.singleFuel = singleFuel;
+	}
 
     public SeriesEdition getSeriesEdition() {
 		return seriesEdition;

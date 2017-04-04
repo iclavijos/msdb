@@ -32,7 +32,8 @@
 	        <div class="form-group">
 	            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate" for="field_eventDate">Event Date</label>
 	            <div class="input-group">
-	                <input id="field_eventDate" type="text" class="form-control" name="eventDate" ngbDatepicker  #eventDateDp="ngbDatepicker" [(ngModel)]="eventEdition.eventDate"
+	                <input id="field_eventDate" type="text" class="form-control" name="eventDate" ngbDatepicker
+	                	[minDate]="minDate" [maxDate]="maxDate" #eventDateDp="ngbDatepicker" [(ngModel)]="eventEdition.eventDate"
 	                required/>
 	                <span class="input-group-btn">
 	                    <button type="button" class="btn btn-default" (click)="eventDateDp.open()"><i class="fa fa-calendar"></i></button>

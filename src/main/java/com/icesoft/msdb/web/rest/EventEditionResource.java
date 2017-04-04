@@ -28,8 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.EventEdition;
+import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.repository.EventEditionRepository;
+import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
@@ -52,10 +54,12 @@ public class EventEditionResource {
         
     private final EventEditionRepository eventEditionRepository;
     private final EventSessionRepository eventSessionRepository;
+    private final EventEntryRepository eventEntryRepository;
 
-    public EventEditionResource(EventEditionRepository eventEditionRepository, EventSessionRepository eventSessionRepository) {
+    public EventEditionResource(EventEditionRepository eventEditionRepository, EventSessionRepository eventSessionRepository, EventEntryRepository eventEntryRepository) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventSessionRepository = eventSessionRepository;
+        this.eventEntryRepository = eventEntryRepository;
     }
 
     /**
@@ -220,6 +224,13 @@ public class EventEditionResource {
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, eventSession.getId().toString()))
             .body(result);
+    }
+    
+    @GetMapping("/event-editions/{id}/entries")
+    @Timed
+    public List<EventEditionEntry> getEventEditionEntries(@PathVariable Long id) {
+    	log.debug("REST request to get all EventEditions {} entries", id);
+    	return eventEntryRepository.findByEventEditionIdOrderByRaceNumberAsc(id);
     }
     
     //TODO: Borrar

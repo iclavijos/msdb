@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.icesoft.msdb.domain.Event;
+import com.icesoft.msdb.domain.EventEdition;
 
 /**
  * Service Interface for managing Event.
@@ -43,4 +44,5 @@ public interface EventService {
     
     Page<Event> search(String query, Pageable pageable);
 
+    Page<EventEdition> findEventEditions(Long idEvent, Pageable pageable);
 }

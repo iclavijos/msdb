@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Response } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { EventManager, ParseLinks, PaginationUtil, JhiLanguageService, AlertService } from 'ng-jhipster';
 
+import { Event } from '../event';
 import { EventEdition } from './event-edition.model';
 import { EventEditionService } from './event-edition.service';
 import { ITEMS_PER_PAGE, Principal } from '../../shared';
@@ -15,7 +16,8 @@ import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
 })
 export class EventEditionComponent implements OnInit, OnDestroy {
 
-currentAccount: any;
+    @Input() event: Event;
+    currentAccount: any;
     eventEditions: EventEdition[];
     error: any;
     success: any;
@@ -45,13 +47,19 @@ currentAccount: any;
     ) {
         this.itemsPerPage = ITEMS_PER_PAGE;
         this.routeData = this.activatedRoute.data.subscribe(data => {
-            this.page = data['pagingParams'].page;
-            this.previousPage = data['pagingParams'].page;
-            this.reverse = data['pagingParams'].ascending;
-            this.predicate = data['pagingParams'].predicate;
+            if (data['pagingParams']) {
+                this.page = data['pagingParams'].page;
+                this.previousPage = data['pagingParams'].page;
+                this.reverse = data['pagingParams'].ascending;
+                this.predicate = data['pagingParams'].predicate;
+            } else {
+                this.page = 1;
+                this.previousPage = 1;
+                this.reverse = true;
+                this.predicate = 'id';
+            }
         });
         this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
-        this.jhiLanguageService.setLocations(['eventEdition']);
     }
 
     loadAll() {
@@ -73,6 +81,18 @@ currentAccount: any;
             (res: Response) => {console.log(res); this.onError(res.json());}
         );
     }
+
+    loadEventEditions() {
+
+        this.eventEditionService.findEventEditions(this.event.id, {
+            page: this.page - 1,
+            size: this.itemsPerPage,
+            sort: this.sort()}).subscribe(
+            (res: Response) => this.onSuccess(res.json(), res.headers),
+            (res: Response) => {console.log(res); this.onError(res.json());}
+        );
+    }
+
     loadPage (page: number) {
         if (page !== this.previousPage) {
             this.previousPage = page;
@@ -80,15 +100,21 @@ currentAccount: any;
         }
     }
     transition() {
-        this.router.navigate(['/event-edition'], {queryParams:
+        let queryParams = {queryParams:
             {
                 page: this.page,
                 size: this.itemsPerPage,
                 search: this.currentSearch,
                 sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
             }
-        });
-        this.loadAll();
+        };
+        if (!this.event) {
+            this.router.navigate(['/event-edition'], queryParams);
+            this.loadAll();
+        } else {
+            this.router.navigate(['/event', this.event.id], queryParams);
+            this.loadEventEditions();
+        }
     }
 
     clear() {
@@ -114,7 +140,11 @@ currentAccount: any;
         this.loadAll();
     }
     ngOnInit() {
-        this.loadAll();
+        if (!this.event) {
+            this.loadAll();
+        } else {
+            this.loadEventEditions();
+        }
         this.principal.identity().then((account) => {
             this.currentAccount = account;
         });
@@ -132,7 +162,7 @@ currentAccount: any;
 
 
     registerChangeInEventEditions() {
-        this.eventSubscriber = this.eventManager.subscribe('eventEditionListModification', (response) => this.loadAll());
+        this.eventSubscriber = this.eventManager.subscribe('eventEditionListModification', (response) => this.loadEventEditions());
     }
 
     sort () {

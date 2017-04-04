@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { JhiLanguageService } from 'ng-jhipster';
 import { Event } from './event.model';
 import { EventService } from './event.service';
@@ -16,7 +16,8 @@ export class EventDetailComponent implements OnInit, OnDestroy {
     constructor(
         private jhiLanguageService: JhiLanguageService,
         private eventService: EventService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router,
     ) {
         this.jhiLanguageService.setLocations(['event']);
     }
@@ -33,7 +34,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
         });
     }
     previousState() {
-        window.history.back();
+        this.router.navigate(['/event/']);
     }
 
     ngOnDestroy() {

@@ -19,6 +19,76 @@
             "name": "Name",
             "description": "Description",
             "editions": "Editions"
+        },
+        "eventEdition" : {
+            "home": {
+                "title": "Edició d'event",
+                "createLabel": "Crea una nova edició d'un event",
+                "createOrEditLabel": "Crea o edita l'edició d'un event",
+                "search": "Cercar edicions d'events"
+            },
+            "created": "S'ha creat una nova edició d'un event",
+            "updated": "S'ha actualitzat una edició d'un event",
+            "deleted": "S'ha esborrat l'edició de l'event",
+            "delete": {
+                "question": "Esteu segurs que voleu esborrar l'edició de l'event?"
+            },
+            "detail": {
+                "title": "Edició d'event"
+            },
+            "editionYear": "Any",
+            "shortEventName": "Nom curt",
+            "longEventName": "Nom llarg",
+            "eventDate": "Data",
+            "allowedCategories": "Categories permeses",
+            "trackLayout": "Traçat",
+            "event": "Event",
+            "sessions": "Sessions",
+            "info": "Detalls",
+            "entryList": "Inscrits",
+            "results": "Resultats",
+            "session": {
+            	"createOrEditLabel": "Crea o edita una sessió",
+            	"name": "Nom",
+	            "shortname": "Nom curt",
+	            "sessionStartTime": "Dia i hora d'inici",
+	            "duration": "Duració",
+	            "empty": "-",
+	            "durationType": "Tipus",
+	            "sessionType": "Tipus de sessió",
+	            "awardsPoints": "Concedeix punts",
+	            "additionalLap": "Volta extra?",
+	            "lap": "volta",
+	            "created": "S'ha creat una nova sessió",
+	            "updated": "S'ha actualitzat la sessió",
+	            "deleted": "S'ha esborrat la sessió",
+	            "delete": {
+	                "question": "Esteu segurs que voleu esborrar la sessió '{{id}}'?"
+	            }
+            },
+            "entry":{
+			    "addLabel": "Afegir participant",
+            	"raceNumber": "Dorsal",
+            	"teamName": "Nom Equip",
+            	"team": "Equip",
+            	"operatedBy": "Operat per",
+            	"tyres": "Neumàtics",
+            	"fuel": "Combustible",
+            	"engine": "Motor",
+            	"driver": "Pilot",
+            	"chassis": "Xassís",
+            	"category": "Categoria"
+			},
+		    "enumerations": {
+			    "minutes": "Minuts",
+			    "hours": "Hores",
+			    "kilometers": "Kilòmetres",
+			    "miles": "Milles",
+			    "laps": "Voltes",
+			    "practice": "Entrenaments lliures",
+			    "qualifying": "Classificació",
+			    "race": "Cursa"
+			}
         }
     }
 }

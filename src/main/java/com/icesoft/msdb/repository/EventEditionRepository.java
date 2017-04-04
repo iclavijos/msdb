@@ -17,4 +17,6 @@ public interface EventEditionRepository extends JpaRepository<EventEdition,Long>
 			+ "e.shortEventName like lower(concat('%', ?1,'%')) or "
 			+ "e.longEventName like lower(concat('%', ?1,'%'))")
 	Page<EventEdition> search(String searchValue, Pageable page);
+	
+	Page<EventEdition> findByEventIdOrderByEditionYearDesc(Long eventId, Pageable page);
 }

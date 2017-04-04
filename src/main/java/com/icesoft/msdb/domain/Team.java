@@ -57,13 +57,13 @@ public class Team extends AbstractAuditingEntity implements Serializable {
     @Column
     private String logoUrl;
 
-    @ManyToMany
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    @JoinTable(name = "team_participations",
-               joinColumns = @JoinColumn(name="teams_id", referencedColumnName="id"),
-               inverseJoinColumns = @JoinColumn(name="participations_id", referencedColumnName="id"))
-    @JsonIgnore
-    private Set<EventEntry> participations = new HashSet<>();
+//    @ManyToMany
+//    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+//    @JoinTable(name = "team_participations",
+//               joinColumns = @JoinColumn(name="teams_id", referencedColumnName="id"),
+//               inverseJoinColumns = @JoinColumn(name="participations_id", referencedColumnName="id"))
+//    @JsonIgnore
+//    private Set<EventEditionEntry> participations = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -138,30 +138,30 @@ public class Team extends AbstractAuditingEntity implements Serializable {
     	this.logoUrl = logoUrl;
     }
 
-    public Set<EventEntry> getParticipations() {
-        return participations;
-    }
-
-    public Team participations(Set<EventEntry> eventEntries) {
-        this.participations = eventEntries;
-        return this;
-    }
-
-    public Team addParticipations(EventEntry eventEntry) {
-        this.participations.add(eventEntry);
-        eventEntry.getParticipants().add(this);
-        return this;
-    }
-
-    public Team removeParticipations(EventEntry eventEntry) {
-        this.participations.remove(eventEntry);
-        eventEntry.getParticipants().remove(this);
-        return this;
-    }
-
-    public void setParticipations(Set<EventEntry> eventEntries) {
-        this.participations = eventEntries;
-    }
+//    public Set<EventEditionEntry> getParticipations() {
+//        return participations;
+//    }
+//
+//    public Team participations(Set<EventEditionEntry> eventEntries) {
+//        this.participations = eventEntries;
+//        return this;
+//    }
+//
+//    public Team addParticipations(EventEditionEntry eventEntry) {
+//        this.participations.add(eventEntry);
+//        eventEntry.getParticipants().add(this);
+//        return this;
+//    }
+//
+//    public Team removeParticipations(EventEditionEntry eventEntry) {
+//        this.participations.remove(eventEntry);
+//        eventEntry.getParticipants().remove(this);
+//        return this;
+//    }
+//
+//    public void setParticipations(Set<EventEditionEntry> eventEntries) {
+//        this.participations = eventEntries;
+//    }
 
     @Override
     public boolean equals(Object o) {

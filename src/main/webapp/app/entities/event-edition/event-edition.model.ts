@@ -14,5 +14,8 @@ export class EventEdition {
         public trackLayout?: RacetrackLayout,
         public event?: Event,
         public sessions?: EventSession[],
+        public singleChassis?: boolean,
+        public singleEngine?: boolean,
+        public singleTyre?: boolean,
     ) { }
 }

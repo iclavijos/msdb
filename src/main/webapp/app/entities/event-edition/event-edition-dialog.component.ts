@@ -12,6 +12,8 @@ import { Category, CategoryService } from '../category';
 import { RacetrackLayout, RacetrackLayoutService } from '../racetrack-layout';
 import { Event, EventService } from '../event';
 
+import { MIN_DATE, CURRENT_DATE, MAX_DATE } from '../../shared';
+
 import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
 
 @Component({
@@ -29,6 +31,9 @@ export class EventEditionDialogComponent implements OnInit {
     eventSelectorDisabled = false;
     private trackLayoutSearch: string;
     private eventSearch: string;
+    
+    minDate = MIN_DATE;
+    maxDate = MAX_DATE;
 
     categories: Category[];
 
@@ -43,7 +48,6 @@ export class EventEditionDialogComponent implements OnInit {
         private eventManager: EventManager,
         private completerService: CompleterService
     ) {
-        this.jhiLanguageService.setLocations(['eventEdition']);
         this.dataServiceLayout = completerService.remote('api/_typeahead/layouts?query=', null, 'fullName').imageField("layoutImg");
         this.dataServiceEvent = completerService.remote('api/_search/events?query=', null, 'name');
     }

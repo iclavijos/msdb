@@ -9,6 +9,7 @@ export class EventEditionService {
 
     private resourceUrl = 'api/event-editions';
     private resourceSearchUrl = 'api/_search/event-editions';
+    private eventResourceUrl = 'api/events';
 
     constructor(private http: Http, private dateUtils: DateUtils) { }
 
@@ -37,6 +38,11 @@ export class EventEditionService {
                     jsonResponse.eventDate[0], jsonResponse.eventDate[1] - 1, jsonResponse.eventDate[2]);
             return jsonResponse;
         });
+    }
+    
+    findEventEditions(idEvent: number, req?: any): Observable<Response> {
+        let options = this.createRequestOption(req);
+        return this.http.get(`${this.eventResourceUrl}/${idEvent}/editions`, options).map((res: any) => this.convertResponse(res));
     }
     
     findSessions(id: number): Observable<Response> {

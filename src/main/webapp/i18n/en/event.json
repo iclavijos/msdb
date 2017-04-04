@@ -19,6 +19,76 @@
             "name": "Name",
             "description": "Description",
             "editions": "Editions"
+        },
+        "eventEdition" : {
+            "home": {
+                "title": "Event Editions",
+                "createLabel": "Create a new Event Edition",
+                "createOrEditLabel": "Create or edit a Event Edition",
+                "search": "Search for Event Edition"
+            },
+            "created": "A new Event Edition is created with identifier {{ param }}",
+            "updated": "A Event Edition is updated with identifier {{ param }}",
+            "deleted": "A Event Edition is deleted with identifier {{ param }}",
+            "delete": {
+                "question": "Are you sure you want to delete Event Edition {{ id }}?"
+            },
+            "detail": {
+                "title": "Event Edition"
+            },
+            "editionYear": "Edition Year",
+            "shortEventName": "Short Event Name",
+            "longEventName": "Long Event Name",
+            "eventDate": "Event Date",
+            "allowedCategories": "Allowed Categories",
+            "trackLayout": "Track Layout",
+            "event": "Event",
+            "sessions": "Sessions",
+            "info": "Information",
+            "entryList": "Entry List",
+            "results": "Results",
+            "session": {
+            	"createOrEditLabel": "Create or edit a Event Session",
+            	"name": "Name",
+	            "shortname": "Shortname",
+	            "sessionStartTime": "Session Start Time",
+	            "duration": "Duration",
+	            "empty": "-",
+	            "durationType": "Type",
+	            "sessionType": "Session type",
+	            "awardsPoints": "Awards points",
+	            "additionalLap": "Extra lap?",
+	            "lap": "lap",
+	            "created": "A new session is created",
+	            "updated": "A session is updated",
+	            "deleted": "A session is deleted",
+	            "delete": {
+	                "question": "Are you sure you want to delete session '{{id}}'?"
+	            }
+            },
+            "entry":{
+			    "addLabel": "Add participant",
+            	"raceNumber": "Race number",
+            	"teamName": "Team name",
+            	"team": "Team",
+            	"operatedBy": "Operated by",
+            	"tyres": "Tyres",
+            	"fuel": "Fuel",
+            	"engine": "Engine",
+            	"driver": "Driver",
+            	"chassis": "Chassis",
+            	"category": "Category"
+			},
+		    "enumerations": {
+			    "minutes": "Minutes",
+			    "hours": "Hours",
+			    "kilometers": "Kilometers",
+			    "miles": "Miles",
+			    "laps": "Laps",
+			    "practice": "Free practice",
+			    "qualifying": "Qualifying",
+			    "race": "Race"
+			}
         }
     }
 }

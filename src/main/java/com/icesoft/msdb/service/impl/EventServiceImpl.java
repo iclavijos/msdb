@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.Event;
+import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
+import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventRepository;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.RacetrackRepository;
@@ -28,9 +30,11 @@ public class EventServiceImpl implements EventService {
     private final Logger log = LoggerFactory.getLogger(EventServiceImpl.class);
     
     private final EventRepository eventRepository;
+    private final EventEditionRepository eventEditionRepository;
     
-    public EventServiceImpl(EventRepository eventRepository) {
+    public EventServiceImpl(EventRepository eventRepository, EventEditionRepository eventEditionRepository) {
     	this.eventRepository = eventRepository;
+    	this.eventEditionRepository = eventEditionRepository;
     }
 
     /**
@@ -88,5 +92,10 @@ public class EventServiceImpl implements EventService {
     @Override
     public Page<Event> search(String query, Pageable pageable) {
     	return eventRepository.search(query, pageable);
+    }
+    
+    @Override
+    public Page<EventEdition> findEventEditions(Long idEvent, Pageable pageable) {
+    	return eventEditionRepository.findByEventIdOrderByEditionYearDesc(idEvent, pageable);
     }
 }

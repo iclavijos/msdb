@@ -74,7 +74,7 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     @OneToMany(mappedBy = "driver")
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<EventEntry> participations = new HashSet<>();
+    private Set<EventEditionEntry> participations = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -108,6 +108,10 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+    
+    public String getFullName() {
+    	return name + " " + surname;
     }
 
     public LocalDate getBirthDate() {
@@ -188,28 +192,28 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     	this.portraitUrl = portraitUrl;
     }
 
-    public Set<EventEntry> getParticipations() {
+    public Set<EventEditionEntry> getParticipations() {
         return participations;
     }
 
-    public Driver participations(Set<EventEntry> eventEntries) {
+    public Driver participations(Set<EventEditionEntry> eventEntries) {
         this.participations = eventEntries;
         return this;
     }
 
-    public Driver addParticipations(EventEntry eventEntry) {
+    public Driver addParticipations(EventEditionEntry eventEntry) {
         this.participations.add(eventEntry);
         eventEntry.setDriver(this);
         return this;
     }
 
-    public Driver removeParticipations(EventEntry eventEntry) {
+    public Driver removeParticipations(EventEditionEntry eventEntry) {
         this.participations.remove(eventEntry);
         eventEntry.setDriver(null);
         return this;
     }
 
-    public void setParticipations(Set<EventEntry> eventEntries) {
+    public void setParticipations(Set<EventEditionEntry> eventEntries) {
         this.participations = eventEntries;
     }
 

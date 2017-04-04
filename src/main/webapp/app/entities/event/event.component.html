@@ -41,7 +41,7 @@
                 <td>{{event.description}}</td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
-                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                        <button type="submit"
                                 [routerLink]="['../event', event.id ]"
                                 class="btn btn-info btn-sm">
                             <span class="fa fa-eye"></span>

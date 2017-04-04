@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Event;
+import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.EventService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
@@ -165,5 +166,13 @@ public class EventResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-
+    @GetMapping("/events/{id}/editions")
+    @Timed
+    public ResponseEntity<List<EventEdition>> findEventEditions(@PathVariable Long id, @ApiParam Pageable pageable)
+        throws URISyntaxException {
+        log.debug("REST request to find for a page of editions of event {}", id);
+        Page<EventEdition> page = eventService.findEventEditions(id, pageable);
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(id.toString(), page, "/events/" + id + "/editions");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
 }

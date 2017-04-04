@@ -6,7 +6,6 @@ import { MotorsportsDatabaseSharedModule } from '../../shared';
 import {
     EventEntryService,
     EventEntryPopupService,
-    EventEntryComponent,
     EventEntryDetailComponent,
     EventEntryDialogComponent,
     EventEntryPopupComponent,
@@ -27,7 +26,6 @@ let ENTITY_STATES = [
         RouterModule.forRoot(ENTITY_STATES, { useHash: true })
     ],
     declarations: [
-        EventEntryComponent,
         EventEntryDetailComponent,
         EventEntryDialogComponent,
         EventEntryDeleteDialogComponent,
@@ -35,7 +33,6 @@ let ENTITY_STATES = [
         EventEntryDeletePopupComponent,
     ],
     entryComponents: [
-        EventEntryComponent,
         EventEntryDialogComponent,
         EventEntryPopupComponent,
         EventEntryDeleteDialogComponent,

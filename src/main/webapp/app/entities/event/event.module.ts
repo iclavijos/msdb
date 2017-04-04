@@ -1,6 +1,7 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { MotorsportsDatabaseEventEditionModule } from '../event-edition/event-edition.module';
 import { MotorsportsDatabaseSharedModule } from '../../shared';
 
 import {
@@ -25,6 +26,7 @@ let ENTITY_STATES = [
 @NgModule({
     imports: [
         MotorsportsDatabaseSharedModule,
+        MotorsportsDatabaseEventEditionModule,
         RouterModule.forRoot(ENTITY_STATES, { useHash: true })
     ],
     declarations: [
@@ -33,7 +35,7 @@ let ENTITY_STATES = [
         EventDialogComponent,
         EventDeleteDialogComponent,
         EventPopupComponent,
-        EventDeletePopupComponent,
+        EventDeletePopupComponent
     ],
     entryComponents: [
         EventComponent,

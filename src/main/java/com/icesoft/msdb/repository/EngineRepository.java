@@ -14,7 +14,9 @@ import com.icesoft.msdb.domain.Engine;
  */
 public interface EngineRepository extends JpaRepository<Engine,Long> {
 
-	@Query("select e from Engine e where e.name like lower(concat('%', ?1,'%')) or e.manufacturer like lower(concat('%', ?1,'%'))")
+	@Query("select e from Engine e where e.name like lower(concat('%', ?1,'%')) or "
+			+ "e.manufacturer like lower(concat('%', ?1,'%')) or "
+			+ "e.architecture like lower(concat('%', ?1,'%'))")
 	Page<Engine> search(String searchValue, Pageable page);
 	
 	List<Engine> findByName(String name);

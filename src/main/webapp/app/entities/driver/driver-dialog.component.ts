@@ -6,6 +6,8 @@ import { NgbActiveModal, NgbModalRef, NgbDateStruct } from '@ng-bootstrap/ng-boo
 
 import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jhipster';
 
+import { MIN_DATE, CURRENT_DATE, MAX_DATE } from '../../shared';
+
 import { Driver } from './driver.model';
 import { DriverPopupService } from './driver-popup.service';
 import { DriverService } from './driver.service';
@@ -19,9 +21,8 @@ export class DriverDialogComponent implements OnInit {
     driver: Driver;
     authorities: any[];
     isSaving: boolean;
-
-    minDate: NgbDateStruct;
-    startDate: NgbDateStruct;
+    minDate = MIN_DATE;
+    startDate = CURRENT_DATE;
 
     constructor(
         public activeModal: NgbActiveModal,
@@ -35,11 +36,8 @@ export class DriverDialogComponent implements OnInit {
     }
 
     ngOnInit() {
-        let now = new Date();
         this.isSaving = false;
         this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
-        this.minDate = {year: 1890, month: 1, day: 1};
-        this.startDate = {year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate()};
     }
     byteSize(field) {
         return this.dataUtils.byteSize(field);
