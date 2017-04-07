@@ -37,13 +37,14 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router,
     ) {
+        this.jhiLanguageService.setLocations(['event']);
     }
 
     ngOnInit() {
         this.subscription = this.route.params.subscribe(params => {
             this.load(params['id']);
         });
-        this.registerChangeInEventSessions();
+        this.registerChangesInEvent();
         
         this.keysDuration = Object.keys(this.durationTypes).filter(Number);
         this.keysSession = Object.keys(this.sessionTypes).filter(Number);
@@ -80,8 +81,9 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         this.subscription.unsubscribe();
     }
     
-    registerChangeInEventSessions() {
+    registerChangesInEvent() {
         this.eventSubscriber = this.eventManager.subscribe('eventSessionListModification', (response) => this.loadSessions(this.eventEdition.id));
+        this.eventSubscriber.add(this.eventManager.subscribe('eventEntryListModification', (response) => this.loadEntries(this.eventEdition.id)));
     }
 
 }

@@ -67,6 +67,7 @@
 	            }
             },
             "entry":{
+            	"createOrEditLabel": "Create or edit an entry",
 			    "addLabel": "Add participant",
             	"raceNumber": "Race number",
             	"teamName": "Team name",

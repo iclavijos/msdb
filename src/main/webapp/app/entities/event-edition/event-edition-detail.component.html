@@ -105,7 +105,7 @@
 	</ngb-tab>
 	<ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.entryList' | translate}}">
 	    <template ngbTabContent>
-	    	<div class="row">
+	    	<div class="row" *ngIf="eventEntries.length > 0">
 		        <div class="col-sm-12 no-padding-right">
 	                <div class="input-group w-100 mt-3">
 	                    <ul *ngIf="eventEntries" class="list-unstyled">
@@ -192,12 +192,12 @@
 		                
 		                <td class="text-right">
 		                    <div class="btn-group flex-btn-group-container">
-		                    	<button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+		                    	<!-- button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
 		                                [routerLink]="['/', { outlets: { popup: 'event-entry/'+ eventEntry.id + '/duplicate'} }]"
 		                                replaceUrl="true"
 		                                class="btn btn-success btn-sm">
 		                            <span class="fa fa-files-o"></span>
-		                        </button>
+		                        </button -->
 		                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
 		                                [routerLink]="['/', { outlets: { popup: 'event-entry/'+ eventEntry.id + '/edit'} }]"
 		                                replaceUrl="true"
@@ -216,7 +216,7 @@
 		            </tbody>
 		        </table>
 		        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-	            	class="btn btn-primary float-right create-event-entry" [routerLink]="['/', { outlets: { popup: ['event-entry-new'] } }]">
+	            	class="btn btn-primary float-right create-event-entry" [routerLink]="['/', { outlets: { popup: eventEdition.id + '/event-entry-new' } }]">
 		            <span class="fa fa-plus"></span>
 		            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.addLabel">
 		            Create new Event Entry

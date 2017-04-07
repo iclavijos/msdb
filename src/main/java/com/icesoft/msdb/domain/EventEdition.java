@@ -30,7 +30,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "event_edition")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 //@Document(indexName = "eventedition")
-public class EventEdition implements Serializable {
+public class EventEdition extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

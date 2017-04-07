@@ -176,5 +176,11 @@ public class EngineResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-
+    @GetMapping("/_typeahead/engines")
+    @Timed
+    public List<Engine> typeahead(@RequestParam String query) {
+        log.debug("REST request to search for a page of Engines for query {}", query);
+        Page<Engine> page = engineRepository.search(query, null);
+        return page.getContent();
+    }
 }

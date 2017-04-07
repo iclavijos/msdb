@@ -172,11 +172,17 @@ public class TyreProviderResource {
     @Timed
     public ResponseEntity<List<TyreProvider>> searchTyreProviders(@RequestParam String query, @ApiParam Pageable pageable)
             throws URISyntaxException {
-            log.debug("REST request to search for a page of TyreProviders for query {}", query);
-            Page<TyreProvider> page = tyreProviderRepository.search(query, pageable);
-            HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/tyre-providers");
-            return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-        }
+        log.debug("REST request to search for a page of TyreProviders for query {}", query);
+        Page<TyreProvider> page = tyreProviderRepository.search(query, pageable);
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/tyre-providers");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
 
-
+    @GetMapping("/_typeahead/tyres")
+    @Timed
+    public List<TyreProvider> typeahead(@RequestParam String query) {
+        log.debug("REST request to search for a page of TyreProvider for query {}", query);
+        Page<TyreProvider> page = tyreProviderRepository.search(query, null);
+        return page.getContent();
+    }
 }

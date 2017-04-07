@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.domain.FuelProvider;
 import com.icesoft.msdb.repository.FuelProviderRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
@@ -180,5 +181,11 @@ public class FuelProviderResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-
+    @GetMapping("/_typeahead/fuel")
+    @Timed
+    public List<FuelProvider> typeahead(@RequestParam String query) {
+        log.debug("REST request to search for a page of FuelProviders for query {}", query);
+        Page<FuelProvider> page = fuelProviderRepository.search(query, null);
+        return page.getContent();
+    }
 }

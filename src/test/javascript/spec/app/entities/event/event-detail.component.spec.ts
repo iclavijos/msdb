@@ -3,7 +3,7 @@ import { MockBackend } from '@angular/http/testing';
 import { Http, BaseRequestOptions } from '@angular/http';
 import { OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Rx';
 import { DateUtils, DataUtils } from 'ng-jhipster';
 import { JhiLanguageService } from 'ng-jhipster';
@@ -44,7 +44,11 @@ describe('Component Tests', () => {
                         provide: JhiLanguageService,
                         useClass: MockLanguageService
                     },
-                    EventService
+                    EventService,
+                    {
+                        provide: Router,
+                        useClass: class { navigate = jasmine.createSpy("navigate"); }
+                    }
                 ]
             }).overrideComponent(EventDetailComponent, {
                 set: {

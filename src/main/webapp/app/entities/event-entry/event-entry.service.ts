@@ -13,20 +13,20 @@ export class EventEntryService {
 
     create(eventEntry: EventEntry): Observable<EventEntry> {
         let copy: EventEntry = Object.assign({}, eventEntry);
-        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
+        return this.http.post(`api/event-editions/${eventEntry.eventEdition.id}/entries`, copy).map((res: Response) => {
             return res.json();
         });
     }
 
     update(eventEntry: EventEntry): Observable<EventEntry> {
         let copy: EventEntry = Object.assign({}, eventEntry);
-        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
+        return this.http.put(`api/event-editions/${eventEntry.eventEdition.id}/entries`, copy).map((res: Response) => {
             return res.json();
         });
     }
 
     find(id: number): Observable<EventEntry> {
-        return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
+        return this.http.get(`api/event-editions/entries/${id}`).map((res: Response) => {
             return res.json();
         });
     }

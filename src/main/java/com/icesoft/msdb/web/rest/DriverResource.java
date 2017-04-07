@@ -2,6 +2,7 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +37,7 @@ import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.StatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.service.dto.DriverFullNameDTO;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 import com.icesoft.msdb.web.rest.view.View;
@@ -206,12 +208,19 @@ public class DriverResource {
 
     @GetMapping("/_typeahead/drivers")
     @Timed
-    @JsonView(View.Summary.class)
-    public ResponseEntity<List<Driver>> typeahead(@RequestParam String query)
+    //@JsonView(View.Summary.class)
+    public ResponseEntity<List<DriverFullNameDTO>> typeahead(@RequestParam String query)
         throws URISyntaxException {
         log.debug("REST request to search for a page of Drivers for query '{}'", query);
         List<Driver> page = driverRepository.searchNonPageable(query);
-        return new ResponseEntity<>(page, HttpStatus.OK);
+        if (page.size() > 20) {
+        	page = page.subList(0, 20);
+        }
+        List<DriverFullNameDTO> result = new ArrayList<>();
+        for (Driver driver : page) {
+			result.add(new DriverFullNameDTO(driver));
+		}
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 }

@@ -2,6 +2,7 @@ import { Injectable, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { EventEntry } from './event-entry.model';
+import { EventEdition } from '../event-edition';
 import { EventEntryService } from './event-entry.service';
 @Injectable()
 export class EventEntryPopupService {
@@ -13,7 +14,7 @@ export class EventEntryPopupService {
 
     ) {}
 
-    open (component: Component, id?: number | any): NgbModalRef {
+    open (component: Component, idEdition?: number | any, id?: number | any): NgbModalRef {
         if (this.isOpen) {
             return;
         }
@@ -24,13 +25,17 @@ export class EventEntryPopupService {
                 this.eventEntryModalRef(component, eventEntry);
             });
         } else {
-            return this.eventEntryModalRef(component, new EventEntry());
+            return this.eventEntryModalRef(component, new EventEntry(), idEdition);
         }
     }
 
-    eventEntryModalRef(component: Component, eventEntry: EventEntry): NgbModalRef {
+    eventEntryModalRef(component: Component, eventEntry: EventEntry, idEdition?: number | any): NgbModalRef {
         let modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
         modalRef.componentInstance.eventEntry = eventEntry;
+        if (!eventEntry.id) {
+            eventEntry.eventEdition = new EventEdition();
+            eventEntry.eventEdition.id = idEdition;
+        }
         modalRef.result.then(result => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
             this.isOpen = false;

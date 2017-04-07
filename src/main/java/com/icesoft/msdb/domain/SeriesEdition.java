@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "series_edition")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class SeriesEdition implements Serializable {
+public class SeriesEdition extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

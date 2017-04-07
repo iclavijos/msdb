@@ -1,6 +1,8 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { Ng2CompleterModule } from 'ng2-completer';
+
 import { MotorsportsDatabaseSharedModule } from '../../shared';
 
 import {
@@ -22,6 +24,7 @@ let ENTITY_STATES = [
 
 @NgModule({
     imports: [
+        Ng2CompleterModule,
         MotorsportsDatabaseSharedModule,
         RouterModule.forRoot(ENTITY_STATES, { useHash: true })
     ],

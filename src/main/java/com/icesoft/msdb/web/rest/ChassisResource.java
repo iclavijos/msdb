@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Chassis;
+import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.repository.ChassisRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
@@ -182,5 +183,11 @@ public class ChassisResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-
+    @GetMapping("/_typeahead/chassis")
+    @Timed
+    public List<Chassis> typeahead(@RequestParam String query) {
+        log.debug("REST request to search for a page of Chassis for query {}", query);
+        Page<Chassis> page = chassisRepository.search(query, null);
+        return page.getContent();
+    }
 }

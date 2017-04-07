@@ -1,11 +1,4 @@
 <div>
-    <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
-    	class="btn btn-primary float-right create-event-edition" [routerLink]="['/', { outlets: { popup: ['event-edition-new'] } }]">
-        <span class="fa fa-plus"></span>
-        <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.home.createLabel">
-        Create new Event Edition
-        </span>
-    </button>
     <jhi-alert></jhi-alert>
     <div class="row" *ngIf="!event">
         <div class="col-sm-12 no-padding-right">
@@ -73,6 +66,13 @@
             </tr>
             </tbody>
         </table>
+        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
+	    	class="btn btn-primary float-right create-event-edition" [routerLink]="['/', { outlets: { popup: ['event-edition-new'] } }]">
+	        <span class="fa fa-plus"></span>
+	        <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.home.createLabel">
+	        Create new Event Edition
+	        </span>
+	    </button>
     </div>
         <div *ngIf="eventEditions && eventEditions.length">
             <div class="row justify-content-center">

@@ -11,41 +11,41 @@
         <jhi-alert-error></jhi-alert-error>
         <div class="row">
 			<div class="col-lg-6 col-md-6">
-	        <div class="form-group">
-	            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.editionYear" for="field_editionYear">Edition Year</label>
-	            <input type="number" class="form-control" name="editionYear" id="field_editionYear"
-	                [(ngModel)]="eventEdition.editionYear"
-	            required />
-	            <div [hidden]="!(editForm.controls.editionYear?.dirty && editForm.controls.editionYear?.invalid)">
-	                <small class="form-text text-danger"
-	                   [hidden]="!editForm.controls.editionYear?.errors?.required" jhiTranslate="entity.validation.required">
-	                   This field is required.
-	                </small>
-	                <small class="form-text text-danger"
-	                    [hidden]="!editForm.controls.editionYear?.errors?.number" jhiTranslate="entity.validation.number">
-	                    This field should be a number.
-	                </small>
-	            </div>
-	        </div>
+		        <div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.editionYear" for="field_editionYear">Edition Year</label>
+		            <input type="number" class="form-control" name="editionYear" id="field_editionYear"
+		                [(ngModel)]="eventEdition.editionYear"
+		            required />
+		            <div [hidden]="!(editForm.controls.editionYear?.dirty && editForm.controls.editionYear?.invalid)">
+		                <small class="form-text text-danger"
+		                   [hidden]="!editForm.controls.editionYear?.errors?.required" jhiTranslate="entity.validation.required">
+		                   This field is required.
+		                </small>
+		                <small class="form-text text-danger"
+		                    [hidden]="!editForm.controls.editionYear?.errors?.number" jhiTranslate="entity.validation.number">
+		                    This field should be a number.
+		                </small>
+		            </div>
+		        </div>
 	        </div>
 	        <div class="col-lg-6 col-md-6">
-	        <div class="form-group">
-	            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate" for="field_eventDate">Event Date</label>
-	            <div class="input-group">
-	                <input id="field_eventDate" type="text" class="form-control" name="eventDate" ngbDatepicker
-	                	[minDate]="minDate" [maxDate]="maxDate" #eventDateDp="ngbDatepicker" [(ngModel)]="eventEdition.eventDate"
-	                required/>
-	                <span class="input-group-btn">
-	                    <button type="button" class="btn btn-default" (click)="eventDateDp.open()"><i class="fa fa-calendar"></i></button>
-	                </span>
-	            </div>
-	            <div [hidden]="!(editForm.controls.eventDate?.dirty && editForm.controls.eventDate?.invalid)">
-	                <small class="form-text text-danger"
-	                   [hidden]="!editForm.controls.eventDate?.errors?.required" jhiTranslate="entity.validation.required">
-	                   This field is required.
-	                </small>
-	            </div>
-	        </div>
+		        <div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate" for="field_eventDate">Event Date</label>
+		            <div class="input-group">
+		                <input id="field_eventDate" type="text" class="form-control" name="eventDate" ngbDatepicker
+		                	[minDate]="minDate" [maxDate]="maxDate" #eventDateDp="ngbDatepicker" [(ngModel)]="eventEdition.eventDate"
+		                required/>
+		                <span class="input-group-btn">
+		                    <button type="button" class="btn btn-default" (click)="eventDateDp.open()"><i class="fa fa-calendar"></i></button>
+		                </span>
+		            </div>
+		            <div [hidden]="!(editForm.controls.eventDate?.dirty && editForm.controls.eventDate?.invalid)">
+		                <small class="form-text text-danger"
+		                   [hidden]="!editForm.controls.eventDate?.errors?.required" jhiTranslate="entity.validation.required">
+		                   This field is required.
+		                </small>
+		            </div>
+		        </div>
 	        </div>
         </div>
         <div class="form-group">

@@ -167,11 +167,15 @@ public class TeamResource {
      * @param query the query of the team search 
      * @return the result of the search
      */
-    @GetMapping("/_search/teams")
+    @GetMapping("/_typeahead/teams")
     @Timed
     public List<Team> searchTeams(@RequestParam String query) {
         log.debug("REST request to search Teams for query {}", query);
-        return teamRepository.search(query);
+        List<Team> result = teamRepository.search(query);
+        if (result.size() > 20) {
+        	return result.subList(0, 20);
+        }
+        return result;
     }
 
 

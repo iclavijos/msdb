@@ -1,16 +1,13 @@
 package com.icesoft.msdb.domain;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -19,15 +16,13 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * A EventEntry.
  */
 @Entity
 @Table(name = "event_entry")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class EventEditionEntry implements Serializable {
+public class EventEditionEntry extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -222,7 +217,7 @@ public class EventEditionEntry implements Serializable {
             ", driver='" + driver.getFullName()  + "'" +
             ", chassis='" + chassis.getName() + "'" +
             ", engine='" + engine.getName() + "'" +
-            ", tyres='" + tyres.getName() + "'" +
+            ", tyres='" + (tyres != null ? tyres.getName() : "") + "'" +
             ", fuelProvider='" + (fuel != null ? fuel.getName() : "") + "'" +
             '}';
     }

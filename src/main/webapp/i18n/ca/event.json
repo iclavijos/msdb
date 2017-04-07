@@ -22,71 +22,72 @@
         },
         "eventEdition" : {
             "home": {
-                "title": "EdiciÛ d'event",
-                "createLabel": "Crea una nova ediciÛ d'un event",
-                "createOrEditLabel": "Crea o edita l'ediciÛ d'un event",
+                "title": "Edici√≥ d'event",
+                "createLabel": "Crea una nova edici√≥ d'un event",
+                "createOrEditLabel": "Crea o edita l'edici√≥ d'un event",
                 "search": "Cercar edicions d'events"
             },
-            "created": "S'ha creat una nova ediciÛ d'un event",
-            "updated": "S'ha actualitzat una ediciÛ d'un event",
-            "deleted": "S'ha esborrat l'ediciÛ de l'event",
+            "created": "S'ha creat una nova edici√≥ d'un event",
+            "updated": "S'ha actualitzat una edici√≥ d'un event",
+            "deleted": "S'ha esborrat l'edici√≥ de l'event",
             "delete": {
-                "question": "Esteu segurs que voleu esborrar l'ediciÛ de l'event?"
+                "question": "Esteu segurs que voleu esborrar l'edici√≥ de l'event?"
             },
             "detail": {
-                "title": "EdiciÛ d'event"
+                "title": "Edici√≥ d'event"
             },
             "editionYear": "Any",
             "shortEventName": "Nom curt",
             "longEventName": "Nom llarg",
             "eventDate": "Data",
             "allowedCategories": "Categories permeses",
-            "trackLayout": "TraÁat",
+            "trackLayout": "Tra√≥at",
             "event": "Event",
             "sessions": "Sessions",
             "info": "Detalls",
             "entryList": "Inscrits",
             "results": "Resultats",
             "session": {
-            	"createOrEditLabel": "Crea o edita una sessiÛ",
+            	"createOrEditLabel": "Crea o edita una sessi√≥",
             	"name": "Nom",
 	            "shortname": "Nom curt",
 	            "sessionStartTime": "Dia i hora d'inici",
-	            "duration": "DuraciÛ",
+	            "duration": "Duraci√≥",
 	            "empty": "-",
 	            "durationType": "Tipus",
-	            "sessionType": "Tipus de sessiÛ",
+	            "sessionType": "Tipus de sessi√≥",
 	            "awardsPoints": "Concedeix punts",
 	            "additionalLap": "Volta extra?",
 	            "lap": "volta",
-	            "created": "S'ha creat una nova sessiÛ",
-	            "updated": "S'ha actualitzat la sessiÛ",
-	            "deleted": "S'ha esborrat la sessiÛ",
+	            "created": "S'ha creat una nova sessi√≥",
+	            "updated": "S'ha actualitzat la sessi√≥",
+	            "deleted": "S'ha esborrat la sessi√≥",
 	            "delete": {
-	                "question": "Esteu segurs que voleu esborrar la sessiÛ '{{id}}'?"
+	                "question": "Esteu segurs que voleu esborrar la sessi√≥ '{{id}}'?"
 	            }
             },
             "entry":{
+            	"createOrEditLabel": "Afegeix o edita un participant",
 			    "addLabel": "Afegir participant",
             	"raceNumber": "Dorsal",
             	"teamName": "Nom Equip",
             	"team": "Equip",
             	"operatedBy": "Operat per",
-            	"tyres": "Neum‡tics",
+            	"tyres": "Neum√≥tics",
             	"fuel": "Combustible",
             	"engine": "Motor",
             	"driver": "Pilot",
-            	"chassis": "XassÌs",
+            	"chassis": "Xass√≠s",
             	"category": "Categoria"
 			},
 		    "enumerations": {
 			    "minutes": "Minuts",
 			    "hours": "Hores",
-			    "kilometers": "KilÚmetres",
+			    "kilometers": "Kil√≤metres",
 			    "miles": "Milles",
 			    "laps": "Voltes",
 			    "practice": "Entrenaments lliures",
-			    "qualifying": "ClassificaciÛ",
+			    "qualifying": "Classificaci√≥",
 			    "race": "Cursa"
 			}
         }

@@ -3,14 +3,15 @@ import { MockBackend } from '@angular/http/testing';
 import { Http, BaseRequestOptions } from '@angular/http';
 import { OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Rx';
 import { DateUtils, DataUtils } from 'ng-jhipster';
-import { JhiLanguageService } from 'ng-jhipster';
+import { EventManager, JhiLanguageService } from 'ng-jhipster';
 import { MockLanguageService } from '../../../helpers/mock-language.service';
 import { MockActivatedRoute } from '../../../helpers/mock-route.service';
 import { EventEditionDetailComponent } from '../../../../../../main/webapp/app/entities/event-edition/event-edition-detail.component';
 import { EventEditionService } from '../../../../../../main/webapp/app/entities/event-edition/event-edition.service';
+import { EventEntryService } from '../../../../../../main/webapp/app/entities/event-entry/event-entry.service';
 import { EventEdition } from '../../../../../../main/webapp/app/entities/event-edition/event-edition.model';
 
 describe('Component Tests', () => {
@@ -44,7 +45,13 @@ describe('Component Tests', () => {
                         provide: JhiLanguageService,
                         useClass: MockLanguageService
                     },
-                    EventEditionService
+                    EventEditionService,
+                    EventEntryService,
+                    EventManager,
+                    {
+                        provide: Router,
+                        useClass: class { navigate = jasmine.createSpy("navigate"); }
+                    }
                 ]
             }).overrideComponent(EventEditionDetailComponent, {
                 set: {

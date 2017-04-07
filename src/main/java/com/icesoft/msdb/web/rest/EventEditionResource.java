@@ -51,6 +51,7 @@ public class EventEditionResource {
 
     private static final String ENTITY_NAME = "eventEdition";
     private static final String ENTITY_NAME_SESSION = "eventSession";
+    private static final String ENTITY_NAME_ENTRY = "eventEntry";
         
     private final EventEditionRepository eventEditionRepository;
     private final EventSessionRepository eventSessionRepository;
@@ -233,11 +234,40 @@ public class EventEditionResource {
     	return eventEntryRepository.findByEventEditionIdOrderByRaceNumberAsc(id);
     }
     
-    //TODO: Borrar
-    @GetMapping("/event-sessions")
+    @PostMapping("/event-editions/{id}/entries")
     @Timed
-    public List<EventSession> getSessions() {
-    	log.debug("REST request to get all EventEditions {} sessions");
-    	return eventSessionRepository.findAll();
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    public ResponseEntity<EventEditionEntry> createEventEditionEntry(@Valid @RequestBody EventEditionEntry eventEntry) throws URISyntaxException {
+        log.debug("REST request to save EventEntry : {}", eventEntry);
+        if (eventEntry.getId() != null) {
+            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
+            		ENTITY_NAME_ENTRY, "idexists", "A new eventEntry cannot already have an ID")).body(null);
+        }
+        EventEditionEntry result = eventEntryRepository.save(eventEntry);
+        return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/entries"))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME_ENTRY, result.getId().toString()))
+            .body(result);
+    }
+    
+    @PutMapping("/event-editions/{id}/entries")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    public ResponseEntity<EventEditionEntry> updateEventEditionEntry(@Valid @RequestBody EventEditionEntry eventEntry) throws URISyntaxException {
+        log.debug("REST request to update EventEntry : {}", eventEntry);
+        if (eventEntry.getId() == null) {
+            return createEventEditionEntry(eventEntry);
+        }
+        EventEditionEntry result = eventEntryRepository.save(eventEntry);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME_ENTRY, eventEntry.getId().toString()))
+            .body(result);
+    }
+    
+    @GetMapping("/event-editions/entries/{id}")
+    @Timed
+    public ResponseEntity<EventEditionEntry> getEventEntry(@PathVariable Long id) {
+        log.debug("REST request to get EventEntry : {}", id);
+        EventEditionEntry eventEntry = eventEntryRepository.findOne(id);
+        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEntry));
     }
 }
