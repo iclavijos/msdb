@@ -32,10 +32,10 @@ export const eventEntryResultRoute: Routes = [
 
 export const eventEntryResultPopupRoute: Routes = [
   {
-    path: 'event-entry-result-new',
+    path: ':idSession/event-entry-result-new',
     component: EventEntryResultPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
     },
     outlet: 'popup'
@@ -44,7 +44,7 @@ export const eventEntryResultPopupRoute: Routes = [
     path: 'event-entry-result/:id/edit',
     component: EventEntryResultPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
     },
     outlet: 'popup'
@@ -53,7 +53,7 @@ export const eventEntryResultPopupRoute: Routes = [
     path: 'event-entry-result/:id/delete',
     component: EventEntryResultDeletePopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
     },
     outlet: 'popup'

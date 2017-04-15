@@ -29,9 +29,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventEditionEntry;
+import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
+import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
@@ -52,15 +54,19 @@ public class EventEditionResource {
     private static final String ENTITY_NAME = "eventEdition";
     private static final String ENTITY_NAME_SESSION = "eventSession";
     private static final String ENTITY_NAME_ENTRY = "eventEntry";
+    private static final String ENTITY_NAME_RESULT = "eventEntryResult";
         
     private final EventEditionRepository eventEditionRepository;
     private final EventSessionRepository eventSessionRepository;
     private final EventEntryRepository eventEntryRepository;
+    private final EventEntryResultRepository eventResultRepository;
 
-    public EventEditionResource(EventEditionRepository eventEditionRepository, EventSessionRepository eventSessionRepository, EventEntryRepository eventEntryRepository) {
+    public EventEditionResource(EventEditionRepository eventEditionRepository, EventSessionRepository eventSessionRepository, 
+    		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventSessionRepository = eventSessionRepository;
         this.eventEntryRepository = eventEntryRepository;
+        this.eventResultRepository = resultRepository;
     }
 
     /**
@@ -269,5 +275,58 @@ public class EventEditionResource {
         log.debug("REST request to get EventEntry : {}", id);
         EventEditionEntry eventEntry = eventEntryRepository.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEntry));
+    }
+    
+    @GetMapping("/event-editions/{id}/event-sessions/{idSession}/results")
+    @Timed
+    public List<EventEntryResult> getEventSessionResults(@PathVariable Long id, @PathVariable Long idSession) {
+    	log.debug("REST request to get EventEdition {} results for session {}", id, idSession);
+    	return eventResultRepository.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAsc(idSession, id);
+    }
+    
+    @GetMapping("/event-editions/event-sessions/results/{idResult}")
+    @Timed
+    public ResponseEntity<EventEntryResult> getEventSessionResult(@PathVariable Long idResult) {
+        log.debug("REST request to get eventSessionResult : {}", idResult);
+        EventEntryResult eventEntryResult = eventResultRepository.findOne(idResult);
+        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEntryResult));
+    }
+    
+    @PostMapping("/event-editions/{id}/event-sessions/{idSession}/results")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    public ResponseEntity<EventEntryResult> createEventSessionResult(@Valid @RequestBody EventEntryResult eventSessionResult) throws URISyntaxException {
+        log.debug("REST request to save EventEntryResult : {}", eventSessionResult);
+        if (eventSessionResult.getId() != null) {
+            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
+            		ENTITY_NAME_ENTRY, "idexists", "A new eventSessionResult cannot already have an ID")).body(null);
+        }
+        EventEntryResult result = eventResultRepository.save(eventSessionResult);
+        return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/entries"))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME_RESULT, result.getId().toString()))
+            .body(result);
+    }
+    
+    @PutMapping("/event-editions/{id}/event-sessions/{idSession}/results")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    public ResponseEntity<EventEntryResult> updateEventSessionResult(@Valid @RequestBody EventEntryResult eventSessionResult) throws URISyntaxException {
+        log.debug("REST request to update EventEntryResult : {}", eventSessionResult);
+        if (eventSessionResult.getId() == null) {
+            return createEventSessionResult(eventSessionResult);
+        }
+        EventEntryResult result = eventResultRepository.save(eventSessionResult);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME_RESULT, eventSessionResult.getId().toString()))
+            .body(result);
+    }
+    
+    @DeleteMapping("/event-editions/event-sessions/results/{id}")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
+    public ResponseEntity<Void> deleteEventSessionResult(@PathVariable Long id) {
+        log.debug("REST request to delete EventSessionResult : {}", id);
+        eventResultRepository.delete(id);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME_RESULT, id.toString())).build();
     }
 }

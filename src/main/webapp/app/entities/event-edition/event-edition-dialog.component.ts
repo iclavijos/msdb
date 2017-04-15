@@ -147,7 +147,7 @@ export class EventEditionDialogComponent implements OnInit {
     }
     
     public removeCategories() {
-        let allowedCategories = document.getElementById('field_allowedCategories"') as HTMLSelectElement;
+        let allowedCategories = document.getElementById('field_allowedCategories') as HTMLSelectElement;
         let i: number;
         for(i = allowedCategories.options.length - 1; i >= 0; i--) {
             if (allowedCategories.options[i].selected) {

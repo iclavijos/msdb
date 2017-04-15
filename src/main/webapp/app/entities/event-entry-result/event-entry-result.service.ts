@@ -2,51 +2,95 @@ import { Injectable } from '@angular/core';
 import { Http, Response, URLSearchParams, BaseRequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 
+import { EventSession } from '../event-session';
 import { EventEntryResult } from './event-entry-result.model';
+
 @Injectable()
 export class EventEntryResultService {
-
-    private resourceUrl = 'api/event-entry-results';
-    private resourceSearchUrl = 'api/_search/event-entry-results';
 
     constructor(private http: Http) { }
 
     create(eventEntryResult: EventEntryResult): Observable<EventEntryResult> {
         let copy: EventEntryResult = Object.assign({}, eventEntryResult);
-        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
+        return this.http.post(`api/event-editions/${eventEntryResult.session.eventEdition.id}/event-sessions/${eventEntryResult.session.id}/results`, copy).map((res: Response) => {
             return res.json();
         });
     }
 
     update(eventEntryResult: EventEntryResult): Observable<EventEntryResult> {
         let copy: EventEntryResult = Object.assign({}, eventEntryResult);
-        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
+        return this.http.put(`api/event-editions/${eventEntryResult.session.eventEdition.id}/event-sessions/${eventEntryResult.session.id}/results`, copy).map((res: Response) => {
             return res.json();
         });
     }
 
     find(id: number): Observable<EventEntryResult> {
-        return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
+        return this.http.get(`api/event-editions/event-sessions/results/${id}`).map((res: Response) => {
             return res.json();
         });
     }
 
-    query(req?: any): Observable<Response> {
-        let options = this.createRequestOption(req);
-        return this.http.get(this.resourceUrl, options)
-        ;
+    query(session: EventSession): Observable<Response> {
+        return this.http.get(`api/event-editions/${session.eventEdition.id}/event-sessions/${session.id}/results`)
+            .map((res: any) => this.convertResponse(res));
     }
 
     delete(id: number): Observable<Response> {
-        return this.http.delete(`${this.resourceUrl}/${id}`);
+        return this.http.delete(`api/event-editions/event-sessions/results/${id}`);
     }
 
-    search(req?: any): Observable<Response> {
-        let options = this.createRequestOption(req);
-        return this.http.get(this.resourceSearchUrl, options)
-        ;
+    private convertResponse(res: any): any {
+        let jsonResponse = res.json();
+        for (let i = 0; i < jsonResponse.length; i++) {
+            if (jsonResponse[i].bestLapTime) {
+                jsonResponse[i].bestLapTime = this.convertTime(jsonResponse[i].bestLapTime);
+            }
+            if (jsonResponse[i].totalTime) {
+                jsonResponse[i].totalTime = this.convertTime(jsonResponse[i].totalTime, true);
+            }
+            if (jsonResponse[i].difference && jsonResponse[i].differenceType == 1) {
+                jsonResponse[i].difference = this.convertTime(jsonResponse[i].difference);
+            }
+        }
+        res._body = jsonResponse;
+        return res;
     }
-
+    
+    private convertTime(timeMillis: number, handleHours?: boolean) {
+        let millis = timeMillis % 10000;
+        let seconds = Math.floor(timeMillis / 10000);
+        let minutes = Math.floor(seconds / 60);
+        seconds = seconds % 60;
+        
+        let result = '';
+        
+        let hours = Math.floor(minutes / 60);
+        if (handleHours) {            
+            if (hours > 0) {
+                minutes = minutes % 60;
+                result = String(hours) + 'h';
+            }
+        }
+        
+        if (minutes > 0) {
+            if (hours > 0 && minutes < 10) {
+                result += '0' + String(minutes) + '\'';
+            } else if (minutes < 10) {
+                result += String(minutes) + '\'';
+            }
+        }
+        
+        if (seconds < 10) {
+            result += '0' + String(seconds) + '".';
+        } else {
+            result += String(seconds) + '".';
+        }
+        if (millis < 1000) {
+            result += '0';
+        } 
+        result += String(millis);
+        return result;
+    }
 
     private createRequestOption(req?: any): BaseRequestOptions {
         let options: BaseRequestOptions = new BaseRequestOptions();

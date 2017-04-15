@@ -189,7 +189,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     	return eventEdition;
     }
 
-    @Override
+	@Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

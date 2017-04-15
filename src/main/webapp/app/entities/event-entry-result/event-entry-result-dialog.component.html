@@ -3,48 +3,132 @@
 <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
 
     <div class="modal-header">
-        <h4 class="modal-title" id="myEventEntryResultLabel" jhiTranslate="motorsportsDatabaseApp.eventEntryResult.home.createOrEditLabel">Create or edit a Event Entry Result</h4>
+        <h4 class="modal-title" id="myEventEntryResultLabel" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.home.createOrEditLabel">Create or edit a Event Entry Result</h4>
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
                 (click)="clear()">&times;</button>
     </div>
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
-        <div class="form-group" [hidden]="!eventEntryResult.id">
-            <label for="id" jhiTranslate="global.field.id">ID</label>
-            <input type="text" class="form-control" id="id" name="id"
-                   [(ngModel)]="eventEntryResult.id" readonly />
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEntryResult.finalPosition" for="field_finalPosition">Final Position</label>
-            <input type="number" class="form-control" name="finalPosition" id="field_finalPosition"
-                [(ngModel)]="eventEntryResult.finalPosition"
-             />
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEntryResult.totalTime" for="field_totalTime">Total Time</label>
-            <input type="number" class="form-control" name="totalTime" id="field_totalTime"
-                [(ngModel)]="eventEntryResult.totalTime"
-             />
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEntryResult.bestLapTime" for="field_bestLapTime">Best Lap Time</label>
-            <input type="number" class="form-control" name="bestLapTime" id="field_bestLapTime"
-                [(ngModel)]="eventEntryResult.bestLapTime"
-             />
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEntryResult.lapsCompleted" for="field_lapsCompleted">Laps Completed</label>
-            <input type="number" class="form-control" name="lapsCompleted" id="field_lapsCompleted"
-                [(ngModel)]="eventEntryResult.lapsCompleted"
-             />
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEntryResult.retired" for="field_retired">Retired</label>
-            <input type="checkbox" class="form-control" name="retired" id="field_retired"
-                [(ngModel)]="eventEntryResult.retired"
-             />
-        </div>
 
+		<div class="row">
+			<div class="col-lg-2 col-md-2">
+		        <div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.finalPosition" for="field_finalPosition">Final Position</label>
+		            <select class="form-control" id="field_finalPosition" name="finalPosition" [(ngModel)]="eventEntryResult.finalPosition" required 
+		            	(click)="updateUI()">
+		            	<option *ngFor="let position of positions" [value]="position">{{position}}</option>
+		            	<option value="900">{{ 'motorsportsDatabaseApp.eventEdition.result.retired' | translate}}</option>
+		            	<option value="901">{{ 'motorsportsDatabaseApp.eventEdition.result.dns' | translate}}</option>
+		            	<option value="902">{{ 'motorsportsDatabaseApp.eventEdition.result.disqualified' | translate}}</option>
+		            </select>
+		        </div>
+        	</div>
+        	<div class="col-lg-10 col-md-10">
+        		<div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.driver" for="field_driver">Driver</label>
+		            <select class="form-control" id="field_driver" name="driver" [(ngModel)]="eventEntryResult.entry" required>
+		            	<option *ngFor="let entry of entries; trackBy: trackEntryById" 
+		            		[ngValue]="entry.id === eventEntryResult.entry?.id ? eventEntryResult.entry : entry">#{{entry.raceNumber}} {{entry.driver.fullName}}</option>
+		            </select>
+		        </div>
+        	</div>
+        </div>
+        <div  *ngIf="eventEntryResult.session.sessionType === sessionType.practice">
+        	<div class="row">
+				<div class="col-lg-3 col-md-3">
+			        <div class="form-group">
+			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.lapsCompleted" for="field_lapsCompleted">Laps Completed</label>
+			            <input type="number" class="form-control" name="lapsCompleted" id="field_lapsCompleted" required
+			                [(ngModel)]="eventEntryResult.lapsCompleted"
+			             />
+			        </div>
+	        	</div>
+	        	<div class="col-lg-9 col-md-9">
+	        		<div class="form-group">
+			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.bestLapTime" for="field_bestLapTime">Best Lap Time</label>
+			            <input class="form-control" name="bestLapTime" id="field_bestLapTime" timeMask (rawChange)="rawLapTime=$event" required
+			                [(ngModel)]="eventEntryResult.bestLapTime"
+			             />
+			        </div>
+	        	</div>
+        	</div>
+        </div>
+        <div *ngIf="eventEntryResult.session.sessionType === sessionType.qualifying">
+        	<div class="form-group">
+	            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.bestLapTime" for="field_bestLapTime">Best Lap Time</label>
+	            <input class="form-control" name="bestLapTime" id="field_bestLapTime" timeMask (rawChange)="rawLapTime=$event"
+	                [(ngModel)]="eventEntryResult.bestLapTime"
+	             />
+	        </div>
+        </div>
+        <div *ngIf="eventEntryResult.session.sessionType === sessionType.race">
+        	<div class="row">
+	        	<div class="col-lg-3 col-md-3">
+	        		<div class="form-group">
+			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.lapsCompleted" for="field_lapsCompleted">Laps Completed</label>
+			            <input type="number" class="form-control" name="lapsCompleted" id="field_lapsCompleted"
+			                [(ngModel)]="eventEntryResult.lapsCompleted"
+			             />
+			        </div>
+	        	</div>
+	        	<div class="col-lg-5 col-md-5" *ngIf="eventEntryResult.finalPosition == 1">
+	        		<div class="form-group">
+			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.totalTime" for="field_totalTime">Total Time</label>
+			            <input class="form-control" name="totalTime" id="field_totalTime" timeMask (rawChange)="rawTotalTime=$event"
+			                [(ngModel)]="eventEntryResult.totalTime"
+			             />
+			        </div>
+	        	</div>
+	        	<div class="col-lg-5 col-md-5" *ngIf="eventEntryResult.finalPosition != 1">
+	        		<div class="row">
+	        			<div class="col-lg-4 col-md-4">
+	        				<div class="form-group">
+	        					<label class="form-control-label">-</label><br/>
+	        					<label class="radio-inline">
+							      <input type="radio" [(ngModel)]="eventEntryResult.differenceType" name="differenceType" value="1" checked="checked">{{ 'motorsportsDatabaseApp.eventEdition.enumerations.seconds' | translate}}<br/>
+							      <input type="radio" [(ngModel)]="eventEntryResult.differenceType" name="differenceType" value="2">{{ 'motorsportsDatabaseApp.eventEdition.enumerations.laps' | translate}}
+							    </label>
+					        </div>
+	        			</div>
+	        			<div class="col-lg-8 col-md-8">
+	        				<div class="form-group">
+					            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.difference" for="field_difference">Difference</label>
+					            <div *ngIf="eventEntryResult.differenceType == 1">
+						            <input class="form-control" name="difference" id="field_difference" timeMask (rawChange)="rawDifference=$event"
+						            	[(ngModel)]="eventEntryResult.difference"/>
+					            </div>
+					            <div *ngIf="eventEntryResult.differenceType == 2">
+					            	<input type="number" class="form-control" name="difference" id="field_difference" [(ngModel)]="eventEntryResult.difference"/>
+					            </div>
+					        </div>
+	        			</div>
+	        		</div>
+	        	</div>
+	        	<div class="col-lg-4 col-md-4">
+	        		<div class="form-group">
+			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.bestLapTime" for="field_bestLapTime">Best Lap Time</label>
+			            <input class="form-control" name="bestLapTime" id="field_bestLapTime" timeMask (rawChange)="rawLapTime=$event"
+			                [(ngModel)]="eventEntryResult.bestLapTime"
+			             />
+			        </div>
+	        	</div>
+	        </div>
+	        <div class="row">
+	        	<div class="col-lg-4 col-md-4">
+			        <div class="form-group">
+			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.retired" for="field_retired">Retired</label>
+			            <i [ngClass]="eventEntryResult.retired ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="eventEntryResult.retired = !eventEntryResult.retired"></i>
+			        </div>
+		        </div>
+		        <div class="col-lg-8 col-md-8" *ngIf="eventEntryResult.retired">
+			        <div class="form-group">
+			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.retirementCause" for="field_retirementCause">Retirement Cause</label>
+			            <input type="text" class="form-control" name="retirementCause" id="field_retirementCause"
+			                [(ngModel)]="eventEntryResult.cause" required maxlength="100" />
+			        </div>
+		        </div>
+	        </div>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">

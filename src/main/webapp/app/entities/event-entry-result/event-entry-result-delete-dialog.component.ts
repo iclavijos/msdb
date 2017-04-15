@@ -22,7 +22,7 @@ export class EventEntryResultDeleteDialogComponent {
         public activeModal: NgbActiveModal,
         private eventManager: EventManager
     ) {
-        this.jhiLanguageService.setLocations(['eventEntryResult']);
+        //this.jhiLanguageService.setLocations(['eventEntryResult']);
     }
 
     clear () {
@@ -57,7 +57,7 @@ export class EventEntryResultDeletePopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe(params => {
             this.modalRef = this.eventEntryResultPopupService
-                .open(EventEntryResultDeleteDialogComponent, params['id']);
+                .open(EventEntryResultDeleteDialogComponent, null, params['id']);
         });
     }
 

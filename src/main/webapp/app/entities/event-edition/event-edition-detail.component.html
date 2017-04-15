@@ -230,6 +230,7 @@
 	    	<ngb-tabset>
 			  <ngb-tab *ngFor="let eventSession of eventEdition.sessions" title="{{eventSession.name}}">
 			    <template ngbTabContent>
+			    	<jhi-event-entry-result [session]="eventSession">Result...</jhi-event-entry-result>
 			    </template>
 			  </ngb-tab>
 			</ngb-tabset>

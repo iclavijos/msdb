@@ -1,3 +1,5 @@
+export * from './mask/time-mask.directive';
+
 export * from './alert/alert.component';
 export * from './alert/alert-error.component';
 export * from './auth/csrf.service';

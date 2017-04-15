@@ -34,6 +34,7 @@ import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
+import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
@@ -66,6 +67,9 @@ public class EventEditionResourceIntTest {
     
     @Autowired
     private EventEntryRepository eventEntryRepository;
+    
+    @Autowired
+    private EventEntryResultRepository eventResultRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -86,7 +90,8 @@ public class EventEditionResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            EventEditionResource eventEditionResource = new EventEditionResource(eventEditionRepository, eventSessionRepository, eventEntryRepository);
+            EventEditionResource eventEditionResource = new EventEditionResource(
+            		eventEditionRepository, eventSessionRepository, eventEntryRepository, eventResultRepository);
         this.restEventEditionMockMvc = MockMvcBuilders.standaloneSetup(eventEditionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

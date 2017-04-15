@@ -1,23 +1,28 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Response } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { EventManager, ParseLinks, PaginationUtil, JhiLanguageService, AlertService } from 'ng-jhipster';
 
+import { EventSession } from '../event-session';
 import { EventEntryResult } from './event-entry-result.model';
 import { EventEntryResultService } from './event-entry-result.service';
 import { ITEMS_PER_PAGE, Principal } from '../../shared';
 import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
+
+import { SessionType } from '../../shared/enumerations/sessionType.enum';
 
 @Component({
     selector: 'jhi-event-entry-result',
     templateUrl: './event-entry-result.component.html'
 })
 export class EventEntryResultComponent implements OnInit, OnDestroy {
-eventEntryResults: EventEntryResult[];
+
+    @Input() session: EventSession;
+    sessionTypes = SessionType;
+    eventEntryResults: EventEntryResult[];
     currentAccount: any;
     eventSubscriber: Subscription;
-    currentSearch: string;
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
@@ -27,39 +32,19 @@ eventEntryResults: EventEntryResult[];
         private activatedRoute: ActivatedRoute,
         private principal: Principal
     ) {
-        this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
-        this.jhiLanguageService.setLocations(['eventEntryResult']);
+        //this.jhiLanguageService.setLocations(['eventEntryResult']);
     }
 
     loadAll() {
-        if (this.currentSearch) {
-            this.eventEntryResultService.search({
-                query: this.currentSearch,
-                }).subscribe(
-                    (res: Response) => this.eventEntryResults = res.json(),
-                    (res: Response) => this.onError(res.json())
-                );
-            return;
-       }
-        this.eventEntryResultService.query().subscribe(
+        this.eventEntryResultService.query(this.session).subscribe(
             (res: Response) => {
                 this.eventEntryResults = res.json();
-                this.currentSearch = '';
             },
             (res: Response) => this.onError(res.json())
         );
     }
 
-    search (query) {
-        if (!query) {
-            return this.clear();
-        }
-        this.currentSearch = query;
-        this.loadAll();
-    }
-
     clear() {
-        this.currentSearch = '';
         this.loadAll();
     }
     ngOnInit() {

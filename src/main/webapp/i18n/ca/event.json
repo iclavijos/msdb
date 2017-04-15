@@ -80,7 +80,33 @@
             	"chassis": "Xassís",
             	"category": "Categoria"
 			},
+			"result" : {
+	            "home": {
+	                "title": "Classificacions",
+	                "createLabel": "Afegir un nou resultat",
+	                "createOrEditLabel": "Crea o edita un resultat"
+	            },
+	            "created": "S'ha afegit un nou resultat",
+	            "updated": "S'ha actualitzat el resultat",
+	            "deleted": "S'ha esborrat el resultat",
+	            "delete": {
+	                "question": "Esteu segurs que voleu esborrar el resultat?"
+	            },
+	            "detail": {
+	                "title": "Resultat"
+	            },
+	            "finalPosition": "Posició final",
+	            "totalTime": "Temps total",
+	            "bestLapTime": "Millor volta",
+	            "lapsCompleted": "Voltes completades",
+	            "retired": "Retirat",
+	            "dns": "No ha començat",
+	            "disqualified": "Descalificat",
+	            "retirementCause": "Motiu abandonament",
+	            "difference": "Diferència"
+	        },
 		    "enumerations": {
+		    	"seconds": "Segons",
 			    "minutes": "Minuts",
 			    "hours": "Hores",
 			    "kilometers": "Kilòmetres",

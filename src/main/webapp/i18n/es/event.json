@@ -80,7 +80,33 @@
             	"chassis": "Chasis",
             	"category": "Categoría"
 			},
+			"result" : {
+	            "home": {
+	                "title": "Clasificaciones",
+	                "createLabel": "Añadir un nuevo resultado",
+	                "createOrEditLabel": "Crear o editar un resultado"
+	            },
+	            "created": "Se ha añadido un nuevo resultado",
+	            "updated": "Se ha editado el resultado",
+	            "deleted": "Se ha borrado el resultado",
+	            "delete": {
+	                "question": "¿Está seguro que quiere borrar el resultado?"
+	            },
+	            "detail": {
+	                "title": "Resultado"
+	            },
+	            "finalPosition": "Posición final",
+	            "totalTime": "Tiempo total",
+	            "bestLapTime": "Mejor vuelta",
+	            "lapsCompleted": "Vueltas completadas",
+	            "retired": "Retirado",
+	            "dns": "No ha empezado",
+	            "disqualified": "Descalificado",
+	            "retirementCause": "Motivo abandono",
+	            "difference": "Diferencia"
+	        },
 		    "enumerations": {
+		    	"seconds": "Segundos",
 			    "minutes": "Minutos",
 			    "hours": "Horas",
 			    "kilometers": "Kilómetros",

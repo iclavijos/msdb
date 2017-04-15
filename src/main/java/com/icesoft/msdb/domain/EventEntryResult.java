@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -42,6 +44,21 @@ public class EventEntryResult implements Serializable {
 
     @Column(name = "retired")
     private Boolean retired;
+    
+    @Column(name = "cause", length=100)
+    private String cause;
+    
+    @Column(name = "difference")
+    private Long difference;
+    
+    @Column(name = "difference_type")
+    private Integer differenceType;
+    
+    @ManyToOne
+    private EventSession session;
+    
+    @OneToOne
+    private EventEditionEntry entry;
 
     public Long getId() {
         return id;
@@ -116,7 +133,72 @@ public class EventEntryResult implements Serializable {
         this.retired = retired;
     }
 
-    @Override
+    public String getCause() {
+		return cause;
+	}
+
+    public EventEntryResult cause(String cause) {
+    	this.cause = cause;
+    	return this;
+    }
+    
+	public void setCause(String cause) {
+		this.cause = cause;
+	}
+
+	public Long getDifference() {
+		return difference;
+	}
+	
+	public EventEntryResult difference(Long difference) {
+		this.difference = difference;
+		return this;
+	}
+
+	public void setDifference(Long difference) {
+		this.difference = difference;
+	}
+
+	public Integer getDifferenceType() {
+		return differenceType;
+	}
+	
+	public EventEntryResult differenceType(Integer differenceType) {
+		this.differenceType = differenceType;
+		return this;
+	}
+
+	public void setDifferenceType(Integer differenceType) {
+		this.differenceType = differenceType;
+	}
+
+	public EventSession getSession() {
+		return session;
+	}
+	
+	public EventEntryResult session(EventSession session) {
+		this.session = session;
+		return this;
+	}
+
+	public void setSession(EventSession session) {
+		this.session = session;
+	}
+
+	public EventEditionEntry getEntry() {
+		return entry;
+	}
+	
+	public EventEntryResult entry(EventEditionEntry entry) {
+		this.entry = entry;
+		return this;
+	}
+
+	public void setEntry(EventEditionEntry entry) {
+		this.entry = entry;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

@@ -15,6 +15,7 @@ import {
     LoginModalService,
     Principal,
     HasAnyAuthorityDirective,
+    TimeMaskDirective,
     JhiSocialComponent,
     SocialService,
     JhiLoginModalComponent
@@ -28,7 +29,8 @@ import {
     declarations: [
         JhiSocialComponent,
         JhiLoginModalComponent,
-        HasAnyAuthorityDirective
+        HasAnyAuthorityDirective,
+        TimeMaskDirective,
     ],
     providers: [
         CookieService,
@@ -50,6 +52,7 @@ import {
         JhiSocialComponent,
         JhiLoginModalComponent,
         HasAnyAuthorityDirective,
+        TimeMaskDirective,
         DatePipe
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
