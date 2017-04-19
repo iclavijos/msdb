@@ -6,6 +6,8 @@ import { EventSession } from '../event-session';
 export class EventEdition {
     constructor(
         public id?: number,
+        public previousEditionId?: number,
+        public nextEditionId?: number,
         public editionYear?: number,
         public shortEventName?: string,
         public longEventName?: string,

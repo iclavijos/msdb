@@ -142,6 +142,14 @@ public class EventEditionResource {
     public ResponseEntity<EventEdition> getEventEdition(@PathVariable Long id) {
         log.debug("REST request to get EventEdition : {}", id);
         EventEdition eventEdition = eventEditionRepository.findOne(id);
+        Long previous = eventEditionRepository.findPreviousEditionId(eventEdition.getEvent().getId(), eventEdition.getEditionYear());
+        Long next = eventEditionRepository.findNextEditionId(eventEdition.getEvent().getId(), eventEdition.getEditionYear());
+        if (previous != null) {
+        	eventEdition.setPreviousEditionId(previous);
+        }
+        if (next != null) {
+        	eventEdition.setNextEditionId(next);
+        }
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEdition));
     }
 

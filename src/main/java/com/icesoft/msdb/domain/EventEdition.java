@@ -17,6 +17,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -55,6 +56,15 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     @NotNull
     @Column(name = "event_date", nullable = false)
     private LocalDate eventDate;
+    
+    @Column(name = "multidriver")
+    private Boolean multidriver = false;
+    
+    @Transient
+    private Long previousEditionId;
+    
+    @Transient
+    private Long nextEditionId;
 
     @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(
@@ -249,7 +259,46 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 		this.singleFuel = singleFuel;
 	}
 
-    public SeriesEdition getSeriesEdition() {
+    public Boolean isMultidriver() {
+		return multidriver;
+	}
+
+    public EventEdition multidriver(Boolean multidriver) {
+		this.multidriver = multidriver;
+		return this;
+	}
+    
+	public void setMultidriver(Boolean multidriver) {
+		this.multidriver = multidriver;
+	}
+
+	public Long getPreviousEditionId() {
+		return previousEditionId;
+	}
+	
+	public EventEdition previousEditionId(Long previousEditionId) {
+		this.previousEditionId = previousEditionId;
+		return this;
+	}
+
+	public void setPreviousEditionId(Long previousEditionId) {
+		this.previousEditionId = previousEditionId;
+	}
+
+	public Long getNextEditionId() {
+		return nextEditionId;
+	}
+	
+	public EventEdition nextEditionId(Long previousEditionId) {
+		this.previousEditionId = previousEditionId;
+		return this;
+	}
+
+	public void setNextEditionId(Long nextEditionId) {
+		this.nextEditionId = nextEditionId;
+	}
+
+	public SeriesEdition getSeriesEdition() {
 		return seriesEdition;
 	}
 
@@ -285,6 +334,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
             ", shortEventName='" + shortEventName + "'" +
             ", longEventName='" + longEventName + "'" +
             ", eventDate='" + eventDate + "'" +
+            ", multiDriver='" + multidriver + "'" +
             '}';
     }
 }
