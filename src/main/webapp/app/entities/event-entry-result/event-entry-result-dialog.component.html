@@ -33,7 +33,7 @@
 		        </div>
         	</div>
         </div>
-        <div  *ngIf="eventEntryResult.session.sessionType === sessionType.practice">
+        <div  *ngIf="eventEntryResult.session.sessionType !== 'RACE'">
         	<div class="row">
 				<div class="col-lg-3 col-md-3">
 			        <div class="form-group">
@@ -46,22 +46,13 @@
 	        	<div class="col-lg-9 col-md-9">
 	        		<div class="form-group">
 			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.bestLapTime" for="field_bestLapTime">Best Lap Time</label>
-			            <input class="form-control" name="bestLapTime" id="field_bestLapTime" timeMask (rawChange)="rawLapTime=$event" required
-			                [(ngModel)]="eventEntryResult.bestLapTime"
-			             />
+			            <input class="form-control" name="bestLapTime" id="field_bestLapTime" [ngModel]="eventEntryResult.bestLapTime | timeMaskPipe" pattern="[0-5]?\d'[0-5]\d(\.[0-9]{0,4})?" 
+			            	 title="00'00.0000" required placeholder="00'00.0000" (ngModelChange)="bestLapTime=$event"/>
 			        </div>
 	        	</div>
         	</div>
         </div>
-        <div *ngIf="eventEntryResult.session.sessionType === sessionType.qualifying">
-        	<div class="form-group">
-	            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.bestLapTime" for="field_bestLapTime">Best Lap Time</label>
-	            <input class="form-control" name="bestLapTime" id="field_bestLapTime" timeMask (rawChange)="rawLapTime=$event"
-	                [(ngModel)]="eventEntryResult.bestLapTime"
-	             />
-	        </div>
-        </div>
-        <div *ngIf="eventEntryResult.session.sessionType === sessionType.race">
+        <div *ngIf="eventEntryResult.session.sessionType === 'RACE'">
         	<div class="row">
 	        	<div class="col-lg-3 col-md-3">
 	        		<div class="form-group">
@@ -74,9 +65,8 @@
 	        	<div class="col-lg-5 col-md-5" *ngIf="eventEntryResult.finalPosition == 1">
 	        		<div class="form-group">
 			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.totalTime" for="field_totalTime">Total Time</label>
-			            <input class="form-control" name="totalTime" id="field_totalTime" timeMask (rawChange)="rawTotalTime=$event"
-			                [(ngModel)]="eventEntryResult.totalTime"
-			             />
+			            <input class="form-control" name="totalTime" id="field_totalTime" [ngModel]="eventEntryResult.totalTime | timeMaskPipe : true" 
+			            	pattern="(\d{1,2}h)?[0-5]\d'[0-5]?\d(\.[0-9]{0,4})?" required placeholder="00h00'00.0000" (ngModelChange)="totalTime=$event" title="00h00'00.0000"/>
 			        </div>
 	        	</div>
 	        	<div class="col-lg-5 col-md-5" *ngIf="eventEntryResult.finalPosition != 1">
@@ -94,11 +84,11 @@
 	        				<div class="form-group">
 					            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.difference" for="field_difference">Difference</label>
 					            <div *ngIf="eventEntryResult.differenceType == 1">
-						            <input class="form-control" name="difference" id="field_difference" timeMask (rawChange)="rawDifference=$event"
-						            	[(ngModel)]="eventEntryResult.difference"/>
+						            <input class="form-control" name="difference" id="field_difference" [ngModel]="eventEntryResult.difference | timeMaskPipe" 
+						            	pattern="([0-5]?\d')?[0-5]?\d(\.[0-9]{0,4})?" title="00'00.0000" placeholder="00'00.0000" (ngModelChange)="timeDifference=$event" required/>
 					            </div>
 					            <div *ngIf="eventEntryResult.differenceType == 2">
-					            	<input type="number" class="form-control" name="difference" id="field_difference" [(ngModel)]="eventEntryResult.difference"/>
+					            	<input type="number" class="form-control" name="difference" id="field_difference" [(ngModel)]="eventEntryResult.difference" required/>
 					            </div>
 					        </div>
 	        			</div>
@@ -107,9 +97,8 @@
 	        	<div class="col-lg-4 col-md-4">
 	        		<div class="form-group">
 			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.bestLapTime" for="field_bestLapTime">Best Lap Time</label>
-			            <input class="form-control" name="bestLapTime" id="field_bestLapTime" timeMask (rawChange)="rawLapTime=$event"
-			                [(ngModel)]="eventEntryResult.bestLapTime"
-			             />
+			            <input class="form-control" name="bestLapTime" id="field_bestLapTime" [ngModel]="eventEntryResult.bestLapTime | timeMaskPipe" pattern="[0-5]?\d'[0-5]\d(\.[0-9]{0,4})?" 
+			            	 title="00'00.0000" placeholder="00'00.0000" (ngModelChange)="bestLapTime=$event"/>
 			        </div>
 	        	</div>
 	        </div>

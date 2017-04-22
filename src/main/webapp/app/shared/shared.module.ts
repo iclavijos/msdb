@@ -15,10 +15,9 @@ import {
     LoginModalService,
     Principal,
     HasAnyAuthorityDirective,
-    TimeMaskDirective,
     JhiSocialComponent,
     SocialService,
-    JhiLoginModalComponent
+    JhiLoginModalComponent,
 } from './';
 
 @NgModule({
@@ -30,7 +29,6 @@ import {
         JhiSocialComponent,
         JhiLoginModalComponent,
         HasAnyAuthorityDirective,
-        TimeMaskDirective,
     ],
     providers: [
         CookieService,
@@ -46,13 +44,14 @@ import {
         UserService,
         DatePipe
     ],
-    entryComponents: [JhiLoginModalComponent],
+    entryComponents: [
+        JhiLoginModalComponent,
+    ],
     exports: [
         MotorsportsDatabaseSharedCommonModule,
         JhiSocialComponent,
         JhiLoginModalComponent,
         HasAnyAuthorityDirective,
-        TimeMaskDirective,
         DatePipe
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]

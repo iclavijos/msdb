@@ -1,5 +1,7 @@
 package com.icesoft.msdb.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,9 +24,9 @@ public interface EventEditionRepository extends JpaRepository<EventEdition,Long>
 	
 	@Query("select e.id from EventEdition e where e.event.id = ?1 and e.editionYear = ("
 			+ "select max(e.editionYear) from EventEdition e where e.event.id = ?1 and e.editionYear < ?2)")
-	Long findPreviousEditionId(Long eventId, Integer editionYear);
+	List<Long> findPreviousEditionId(Long eventId, Integer editionYear);
 	
 	@Query("select e.id from EventEdition e where e.event.id = ?1 and e.editionYear = ("
 			+ "select min(e.editionYear) from EventEdition e where e.event.id = ?1 and e.editionYear > ?2)")
-	Long findNextEditionId(Long editionId, Integer editionYear);
+	List<Long> findNextEditionId(Long editionId, Integer editionYear);
 }

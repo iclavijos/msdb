@@ -6,8 +6,8 @@
     	</div>
     	<div class="col-lg-2 col-md-2">
     		<h2>
-   				<a *ngIf="eventEdition.previousEditionId" [routerLink]="['/event-edition', eventEdition.previousEditionId]"><i  class="fa fa-fw fa-angle-double-left" aria-hidden="true"></i></a>
-   				<a *ngIf="eventEdition.nextEditionId" [routerLink]="['/event-edition', eventEdition.nextEditionId]"><i  class="fa fa-fw fa-angle-double-right" aria-hidden="true"></i></a>
+   				<a class="deco-none" *ngIf="eventEdition.previousEditionId" [routerLink]="['/event-edition', eventEdition.previousEditionId]"><i  class="fa fa-fw fa-angle-double-left" aria-hidden="true"></i></a>
+   				<a class="deco-none" *ngIf="eventEdition.nextEditionId" [routerLink]="['/event-edition', eventEdition.nextEditionId]"><i  class="fa fa-fw fa-angle-double-right" aria-hidden="true"></i></a>
     		</h2>
     	</div>
     </div>

@@ -7,6 +7,7 @@ import { AlertService } from 'ng-jhipster';
 import {
     MotorsportsDatabaseSharedLibsModule,
     JhiLanguageHelper,
+    TimeMaskPipe,
     FindLanguageFromKeyPipe,
     JhiAlertComponent,
     JhiAlertErrorComponent
@@ -24,6 +25,7 @@ export function alertServiceProvider(sanitizer: Sanitizer, translateService: Tra
         MotorsportsDatabaseSharedLibsModule
     ],
     declarations: [
+        TimeMaskPipe,
         FindLanguageFromKeyPipe,
         JhiAlertComponent,
         JhiAlertErrorComponent
@@ -39,6 +41,7 @@ export function alertServiceProvider(sanitizer: Sanitizer, translateService: Tra
     ],
     exports: [
         MotorsportsDatabaseSharedLibsModule,
+        TimeMaskPipe,
         FindLanguageFromKeyPipe,
         JhiAlertComponent,
         JhiAlertErrorComponent

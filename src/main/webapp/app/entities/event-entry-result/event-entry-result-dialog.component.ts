@@ -23,9 +23,9 @@ export class EventEntryResultDialogComponent implements OnInit {
     authorities: any[];
     isSaving: boolean;
     entries: EventEntry[];
-    rawLapTime: number;
-    rawTotalTime: number;
-    rawDifference: number;
+    bestLapTime: string;
+    totalTime: string;
+    timeDifference: string;
     sessionType = SessionType;
     private eventEditionId;
     private positions: number[];
@@ -61,10 +61,14 @@ export class EventEntryResultDialogComponent implements OnInit {
 
     save () {
         this.isSaving = true;
-        this.eventEntryResult.bestLapTime = this.rawLapTime;
-        this.eventEntryResult.totalTime = this.rawTotalTime;
+        if (this.bestLapTime) {
+            this.eventEntryResult.bestLapTime = this.toMillis(this.bestLapTime);
+        }
+        if (this.totalTime) {
+            this.eventEntryResult.totalTime = this.toMillis(this.totalTime);
+        }
         if (this.eventEntryResult.differenceType == 1) {
-            this.eventEntryResult.difference = this.rawDifference;
+            this.eventEntryResult.difference = this.toMillis(this.timeDifference);
         }
         if (this.eventEntryResult.id !== undefined) {
             this.eventEntryResultService.update(this.eventEntryResult)
@@ -81,6 +85,47 @@ export class EventEntryResultDialogComponent implements OnInit {
     
     updateUI() {
         this.eventEntryResult.retired = this.eventEntryResult.finalPosition >= 900;
+    }
+    
+    private toMillis(laptime : string) {
+        if (!laptime) return;
+        
+        let hours = 0;
+        let minutes = 0;
+        let seconds = 0;
+        let millis = 0;
+        let tenthousands : string;
+        let last = 0;
+        
+        if (laptime.indexOf('h') != -1) {
+            last = laptime.indexOf('h');
+            hours = parseInt(laptime.substring(0, last));
+        }
+        //Minutes
+        if (last != 0) {
+            last++;
+        }
+        if (laptime.indexOf('\'') != -1) {
+            minutes = parseInt(laptime.substring(last, laptime.indexOf('\'')));
+            last = laptime.indexOf('\'');
+        }
+        
+        //Seconds
+        if (laptime.indexOf('.') != -1) {
+            if (last != 0) {
+                last++;
+            }
+            seconds = parseInt(laptime.substring(last, laptime.indexOf('.')));
+            last = laptime.indexOf('.');
+            
+            //millis
+            tenthousands = String(laptime.substring(last + 1) + '0000').slice(0, 4);
+        } else {
+            seconds = parseInt(laptime.substring(last + 1));
+            tenthousands = '0000';
+        }
+        
+        return parseInt((hours * 3600 + minutes * 60 + seconds).toString() + tenthousands);
     }
 
     private onSaveSuccess (result: EventEntryResult) {

@@ -40,7 +40,7 @@ export class EventSessionDialogComponent implements OnInit {
         this.authorities = ['ROLE_EDITOR', 'ROLE_ADMIN'];
         
         this.keysDuration = Object.keys(this.durationTypes).filter(Number);
-        this.keysSession = Object.keys(this.sessionTypes).filter(Number);
+        this.keysSession = [0, 1, 2]; //Object.keys(this.sessionTypes).filter(key => parseInt(key)); Need to find out how not to filter out 0
     }
     clear () {
         this.activeModal.dismiss('cancel');

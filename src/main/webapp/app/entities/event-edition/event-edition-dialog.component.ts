@@ -108,6 +108,7 @@ export class EventEditionDialogComponent implements OnInit {
     }
     
     public onTrackLayoutSelected(selected: CompleterItem) {
+        if (!selected.originalObject) return;
         let tracklayout = selected.originalObject.racetrackLayout;
         if (selected) {
             this.eventEdition.trackLayout = tracklayout;

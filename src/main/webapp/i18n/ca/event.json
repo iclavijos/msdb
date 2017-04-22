@@ -106,6 +106,7 @@
 	            "difference": "Diferència"
 	        },
 		    "enumerations": {
+		    	"milliseconds": "Deumilèssimes",
 		    	"seconds": "Segons",
 			    "minutes": "Minuts",
 			    "hours": "Hores",

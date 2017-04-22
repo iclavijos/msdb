@@ -1,4 +1,4 @@
-export * from './mask/time-mask.directive';
+export * from './mask/time-mask.pipe';
 
 export * from './alert/alert.component';
 export * from './alert/alert-error.component';

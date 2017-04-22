@@ -6,6 +6,8 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,6 +18,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import com.icesoft.msdb.domain.enums.SessionType;
 
 /**
  * A EventSession.
@@ -53,7 +57,8 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     private Integer durationType;
     
     @Column(name= "session_type")
-    private Integer sessionType;
+    @Enumerated(EnumType.ORDINAL)
+    private SessionType sessionType;
     
     @Column(name= "additional_lap")
     private Boolean additionalLap;
@@ -137,15 +142,15 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 		this.durationType = durationType;
 	}
 
-	public Integer getSessionType() {
+	public SessionType getSessionType() {
 		return sessionType;
 	}
 
-	public void setSessionType(Integer sessionType) {
+	public void setSessionType(SessionType sessionType) {
 		this.sessionType = sessionType;
 	}
 	
-	public EventSession sessionType(Integer sessionType) {
+	public EventSession sessionType(SessionType sessionType) {
 		this.sessionType = sessionType;
 		return this;
 	}

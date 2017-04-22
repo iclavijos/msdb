@@ -42,15 +42,15 @@ export class EventEntryResultService {
     private convertResponse(res: any): any {
         let jsonResponse = res.json();
         for (let i = 0; i < jsonResponse.length; i++) {
-            if (jsonResponse[i].bestLapTime) {
-                jsonResponse[i].bestLapTime = this.convertTime(jsonResponse[i].bestLapTime);
-            }
-            if (jsonResponse[i].totalTime) {
-                jsonResponse[i].totalTime = this.convertTime(jsonResponse[i].totalTime, true);
-            }
-            if (jsonResponse[i].difference && jsonResponse[i].differenceType == 1) {
-                jsonResponse[i].difference = this.convertTime(jsonResponse[i].difference);
-            }
+//            if (jsonResponse[i].bestLapTime) {
+//                jsonResponse[i].bestLapTime = this.convertTime(jsonResponse[i].bestLapTime);
+//            }
+//            if (jsonResponse[i].totalTime) {
+//                jsonResponse[i].totalTime = this.convertTime(jsonResponse[i].totalTime, true);
+//            }
+//            if (jsonResponse[i].difference && jsonResponse[i].differenceType == 1) {
+//                jsonResponse[i].difference = this.convertTime(jsonResponse[i].difference);
+//            }
         }
         res._body = jsonResponse;
         return res;
