@@ -23,11 +23,10 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 /**
  * A EventEdition.
@@ -65,15 +64,14 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     @Column(name = "multidriver")
     private Boolean multidriver = false;
     
-    @OneToOne
-    @JsonIgnore
-    private EventEdition previousEdition;
+    @Transient
+    private Long previousEditionId;
     
-    @OneToOne
-    @JsonIgnore
-    private EventEdition nextEdition;
+    @Transient
+    private Long nextEditionId;
 
     @ManyToMany(fetch=FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
     @JoinTable(
         name="CATEGORIES_EVENT",
         joinColumns=@JoinColumn(name="event_edition_id", referencedColumnName="ID"),
@@ -279,40 +277,30 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 		this.multidriver = multidriver;
 	}
 
-	public EventEdition getPreviousEdition() {
-		return previousEdition;
-	}
-	
-	public EventEdition previousEdition(EventEdition previousEdition) {
-		this.previousEdition = previousEdition;
-		return this;
-	}
-
-	public void setPreviousEdition(EventEdition previousEdition) {
-		this.previousEdition = previousEdition;
-	}
-
-	public EventEdition getNextEdition() {
-		return nextEdition;
-	}
-	
-	public EventEdition nextEdition(EventEdition nextEdition) {
-		this.nextEdition = nextEdition;
-		return this;
-	}
-
-	public void setNextEdition(EventEdition nextEdition) {
-		this.nextEdition = nextEdition;
-	}
-	
-	@JsonProperty("previousEditionId")
 	public Long getPreviousEditionId() {
-		return previousEdition != null ? previousEdition.id : null; 
+		return previousEditionId;
 	}
 	
-	@JsonProperty("nextEditionId")
+	public EventEdition previousEditionId(Long previousEditionId) {
+		this.previousEditionId = previousEditionId;
+		return this;
+	}
+
+	public void setPreviousEditionId(Long previousEditionId) {
+		this.previousEditionId = previousEditionId;
+	}
+
 	public Long getNextEditionId() {
-		return nextEdition != null ? nextEdition.id : null;
+		return nextEditionId;
+	}
+	
+	public EventEdition nextEditionId(Long nextEditionId) {
+		this.nextEditionId = nextEditionId;
+		return this;
+	}
+
+	public void setNextEditionId(Long nextEditionId) {
+		this.nextEditionId = nextEditionId;
 	}
 
 	public SeriesEdition getSeriesEdition() {
@@ -352,6 +340,8 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
             ", longEventName='" + longEventName + "'" +
             ", eventDate='" + eventDate + "'" +
             ", multiDriver='" + multidriver + "'" +
+            ", previousEventEdId='" + previousEditionId + "'" +
+            ", nextEventEdId='" + nextEditionId + "'" +
             '}';
     }
 }

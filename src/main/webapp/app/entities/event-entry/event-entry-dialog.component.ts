@@ -74,7 +74,9 @@ export class EventEntryDialogComponent implements OnInit {
             });
         } else {
             this.allowedCategories = this.eventEntry.eventEdition.allowedCategories;
-            this.driverSearch = this.eventEntry.driver.name + ' ' + this.eventEntry.driver.surname;
+            if (!this.eventEntry.eventEdition.multidriver) {
+                this.driverSearch = this.eventEntry.drivers[0].name + ' ' + this.eventEntry.drivers[0].surname;
+            }
             this.engineSearch = this.eventEntry.engine.manufacturer + ' ' + this.eventEntry.engine.name;
             this.teamSearch = this.eventEntry.team.name;
             this.operatedBySearch = this.eventEntry.operatedBy ? this.eventEntry.operatedBy.name : null;
@@ -113,12 +115,32 @@ export class EventEntryDialogComponent implements OnInit {
         this.alertService.error(error.message, null, null);
     }
 
-    public onDriverSelected(selected: CompleterItem) {
+    private onDriverSelected(selected: CompleterItem) {
         if (selected) {
-            this.eventEntry.driver = selected.originalObject.driver;
+            if (!this.eventEntry.eventEdition.multidriver) {
+                this.eventEntry.drivers = [selected.originalObject.driver];
+            } else {
+                if (!this.eventEntry.drivers) {
+                    this.eventEntry.drivers = new Array();
+                }
+                this.eventEntry.drivers.push(selected.originalObject.driver);
+            }    
         } else {
-            this.eventEntry.driver = null;
-            this.driverSearch = null;
+            if (!this.eventEntry.eventEdition.multidriver) {
+                this.eventEntry.drivers = null;
+            }
+        }
+        this.driverSearch = null;
+    }
+    
+    private removeDriver(event) {
+        let selectedDriverId = event.target.value;
+        let i : number = 0;
+        for(let driver of this.eventEntry.drivers) {
+            if (driver.id == selectedDriverId) {
+                this.eventEntry.drivers.splice(i, 1);
+            }
+            i++;
         }
     }
 

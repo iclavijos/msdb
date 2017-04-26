@@ -7,6 +7,7 @@ import { EventManager, ParseLinks, PaginationUtil, JhiLanguageService, AlertServ
 import { Event } from '../event';
 import { EventEdition } from './event-edition.model';
 import { EventEditionService } from './event-edition.service';
+import { EventEntry } from '../event-entry/event-entry.model';
 import { ITEMS_PER_PAGE, Principal } from '../../shared';
 import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
 
@@ -154,12 +155,22 @@ export class EventEditionComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.eventManager.destroy(this.eventSubscriber);
     }
+    
+    private computeDriversName(entry: EventEntry): string {
+        let result = '';
+        
+        for(let i = 0; i < entry.drivers.length; i++) {
+            result += entry.drivers[i].surname;
+            if (i < entry.drivers.length - 1) {
+                result += ' / ';
+            }
+        }
+        return result;
+    }
 
     trackId (index: number, item: EventEdition) {
         return item.id;
     }
-
-
 
     registerChangeInEventEditions() {
         this.eventSubscriber = this.eventManager.subscribe('eventEditionListModification', (response) => this.loadEventEditions());

@@ -17,7 +17,8 @@ public interface EventEditionRepository extends JpaRepository<EventEdition,Long>
 
 	@Query("select e from EventEdition e where e.editionYear like lower(concat('%', ?1,'%')) or "
 			+ "e.shortEventName like lower(concat('%', ?1,'%')) or "
-			+ "e.longEventName like lower(concat('%', ?1,'%'))")
+			+ "e.longEventName like lower(concat('%', ?1,'%')) "
+			+ "order by e.editionYear desc, e.longEventName asc")
 	Page<EventEdition> search(String searchValue, Pageable page);
 	
 	Page<EventEdition> findByEventIdOrderByEditionYearDesc(Long eventId, Pageable page);
@@ -29,4 +30,7 @@ public interface EventEditionRepository extends JpaRepository<EventEdition,Long>
 	@Query("select e.id from EventEdition e where e.event.id = ?1 and e.editionYear = ("
 			+ "select min(e.editionYear) from EventEdition e where e.event.id = ?1 and e.editionYear > ?2)")
 	List<Long> findNextEditionId(Long editionId, Integer editionYear);
+	
+	@Query("select e.id, e.editionYear from EventEdition e where e.event.id = ?1 order by e.editionYear desc")
+	List<Object[]> findEventEditionsIdYear(Long editionId);
 }

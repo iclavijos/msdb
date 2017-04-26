@@ -123,7 +123,8 @@
             "edit": "Editar",
             "open": "Open",
             "save": "Guardar",
-            "view": "Vista"
+            "view": "Vista",
+            "copy": "Copia"
         },
         "detail": {
             "field": "Campo",

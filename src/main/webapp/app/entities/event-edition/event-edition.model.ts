@@ -16,6 +16,7 @@ export class EventEdition {
         public trackLayout?: RacetrackLayout,
         public event?: Event,
         public sessions?: EventSession[],
+        public multidriver?: boolean,
         public singleChassis?: boolean,
         public singleEngine?: boolean,
         public singleTyre?: boolean,

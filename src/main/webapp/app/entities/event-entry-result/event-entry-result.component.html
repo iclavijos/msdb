@@ -1,13 +1,4 @@
 <div>
-    <h2>
-        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
-        	class="btn btn-primary float-right create-event-entry-result" [routerLink]="['/', { outlets: { popup: session.id +  '/event-entry-result-new' } }]">
-            <span class="fa fa-plus"></span>
-            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.home.createLabel">
-            Create new Event Entry Result
-            </span>
-        </button>
-    </h2>
     <jhi-alert></jhi-alert>
     <br/>
     <div class="table-responsive" *ngIf="eventEntryResults">
@@ -28,7 +19,7 @@
             <tbody>
             <tr *ngFor="let eventEntryResult of eventEntryResults ;trackBy: trackId">
                 <td>{{eventEntryResult.finalPosition >= 900 ? '-' : eventEntryResult.finalPosition }}</td>
-                <td>#{{eventEntryResult.entry.raceNumber}} {{eventEntryResult.entry.driver.fullName}}</td>
+                <td>#{{eventEntryResult.entry.raceNumber}} {{eventEntryResult.session.eventEdition.multidriver ? eventEntryResult.entry.driversName : eventEntryResult.entry.drivers[0].fullName}}</td>
                 <td>{{eventEntryResult.entry.entryName}}</td>
                 <td *ngIf="session.sessionType === 'RACE'">
                 	{{eventEntryResult.finalPosition > 1 && eventEntryResult.finalPosition < 900 && !eventEntryResult.retired ?
@@ -59,4 +50,13 @@
             </tbody>
         </table>
     </div>
+    <h2>
+        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
+        	class="btn btn-primary float-right create-event-entry-result" [routerLink]="['/', { outlets: { popup: session.id +  '/event-entry-result-new' } }]">
+            <span class="fa fa-plus"></span>
+            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.home.createLabel">
+            Create new Event Entry Result
+            </span>
+        </button>
+    </h2>
 </div>

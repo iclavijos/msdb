@@ -30,6 +30,10 @@ export class EventService {
             return res.json();
         });
     }
+    
+    findEventEditionIds(idEvent: number): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${idEvent}/editionIds`);
+    }
 
     query(req?: any): Observable<Response> {
         let options = this.createRequestOption(req);

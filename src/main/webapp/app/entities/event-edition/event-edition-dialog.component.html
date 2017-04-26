@@ -108,12 +108,22 @@
 		        </div>
 			</div>
         </div>
-        <div class="form-group">
-            <label jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout" for="field_trackLayout">Track Layout</label>
-            <ng2-completer id="field_trackLayout" name="trackLayout" [(ngModel)]="trackLayoutSearch" [datasource]="dataServiceLayout" [minSearchLength]="2" 
-            	(selected)="onTrackLayoutSelected($event)" (highlighted)="onTrackLayoutSelected($event)" [pause]="300" [autoMatch]="true" 
-            	[maxChars]="10" required></ng2-completer>
-        </div>
+        <div class="row">
+			<div class="col-lg-4 col-md-4">
+				<div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.multidriver" for="field_multidriver">Multiple drivers?</label>
+		             <i [ngClass]="eventEdition.multidriver ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="eventEdition.multidriver = !eventEdition.multidriver"></i>
+		        </div>
+			</div>
+			<div class="col-lg-8 col-md-8">
+				<div class="form-group">
+		            <label jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout" for="field_trackLayout">Track Layout</label>
+		            <ng2-completer id="field_trackLayout" name="trackLayout" [(ngModel)]="trackLayoutSearch" [datasource]="dataServiceLayout" [minSearchLength]="2" 
+		            	(selected)="onTrackLayoutSelected($event)" (highlighted)="onTrackLayoutSelected($event)" [pause]="300" [autoMatch]="true" 
+		            	[maxChars]="10" required></ng2-completer>
+		        </div>
+			</div>
+		</div>
         <div class="form-group">
             <label jhiTranslate="motorsportsDatabaseApp.eventEdition.event" for="field_event">Event</label>
             <ng2-completer id="field_event" name="event" [(ngModel)]="eventSearch" [datasource]="dataServiceEvent" [minSearchLength]="2" 

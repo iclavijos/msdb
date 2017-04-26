@@ -8,6 +8,7 @@ import {
     MotorsportsDatabaseSharedLibsModule,
     JhiLanguageHelper,
     TimeMaskPipe,
+    EventEntryCategoryFilter,
     FindLanguageFromKeyPipe,
     JhiAlertComponent,
     JhiAlertErrorComponent
@@ -26,6 +27,7 @@ export function alertServiceProvider(sanitizer: Sanitizer, translateService: Tra
     ],
     declarations: [
         TimeMaskPipe,
+        EventEntryCategoryFilter,
         FindLanguageFromKeyPipe,
         JhiAlertComponent,
         JhiAlertErrorComponent
@@ -42,6 +44,7 @@ export function alertServiceProvider(sanitizer: Sanitizer, translateService: Tra
     exports: [
         MotorsportsDatabaseSharedLibsModule,
         TimeMaskPipe,
+        EventEntryCategoryFilter,
         FindLanguageFromKeyPipe,
         JhiAlertComponent,
         JhiAlertErrorComponent

@@ -76,8 +76,7 @@ public class ExceptionTranslator {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorVM> processRuntimeException(Exception ex) {
-    	log.error("Problems processing request:", ex.getMessage());
-    	log.debug("Exception details: ", ex);
+    	log.error("Exception details: ", ex);
         BodyBuilder builder;
         ErrorVM errorVM;
         ResponseStatus responseStatus = AnnotationUtils.findAnnotation(ex.getClass(), ResponseStatus.class);

@@ -1,10 +1,13 @@
 package com.icesoft.msdb.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.icesoft.msdb.domain.Event;
 import com.icesoft.msdb.domain.EventEdition;
+import com.icesoft.msdb.service.dto.EventEditionIdYearDTO;
 
 /**
  * Service Interface for managing Event.
@@ -45,4 +48,6 @@ public interface EventService {
     Page<Event> search(String query, Pageable pageable);
 
     Page<EventEdition> findEventEditions(Long idEvent, Pageable pageable);
+    
+    List<EventEditionIdYearDTO> findEventEditionsIdYear(Long idEvent);
 }

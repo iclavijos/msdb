@@ -30,6 +30,10 @@ export class EventEditionService {
             return res.json();
         });
     }
+    
+    copyEntries(idSource: number, idTarget: number): Observable<Response> {
+        return this.http.post(`${this.resourceUrl}/${idTarget}/entries/${idSource}`, null);
+    }
 
     find(id: number): Observable<EventEdition> {
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {

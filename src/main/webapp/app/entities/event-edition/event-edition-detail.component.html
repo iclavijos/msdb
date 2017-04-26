@@ -6,8 +6,16 @@
     	</div>
     	<div class="col-lg-2 col-md-2">
     		<h2>
+    			<div class="row">
    				<a class="deco-none" *ngIf="eventEdition.previousEditionId" [routerLink]="['/event-edition', eventEdition.previousEditionId]"><i  class="fa fa-fw fa-angle-double-left" aria-hidden="true"></i></a>
+   				<div class="col-xs-2">
+   				<select class="form-control" id="field_jumpToEdition" name="jumpToEdition" (change)="jumpToEdition($event.target.value)">
+   					<option></option>
+	            	<option *ngFor="let edition of editions" [value]="edition.id">{{edition.editionYear}}</option>
+	            </select>
+	            </div>
    				<a class="deco-none" *ngIf="eventEdition.nextEditionId" [routerLink]="['/event-edition', eventEdition.nextEditionId]"><i  class="fa fa-fw fa-angle-double-right" aria-hidden="true"></i></a>
+   				</div>
     		</h2>
     	</div>
     </div>
@@ -23,9 +31,9 @@
 				        <dd>
 				            <span>{{eventEdition.editionYear}}</span>
 				        </dd>
-				        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.longEventName">Long Event Name</span></dt>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.shortEventName">Short Event Name</span></dt>
 				        <dd>
-				            <span>{{eventEdition.longEventName}}</span>
+				            <span>{{eventEdition.shortEventName}}</span>
 				        </dd>
 				        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate">Event Date</span></dt>
 				        <dd>
@@ -139,6 +147,12 @@
 		        </div>
 		    </div>
 	    	<div class="table-responsive" *ngIf="eventEntries">
+    			<div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
+	    			<select class="form-control" id="field_category" name="category" [(ngModel)]="filterCategory">
+	    				<option value="ALL"></option>
+		               	<option *ngFor="let category of eventEdition.allowedCategories" [ngValue]="category.shortname">{{category.name}}</option>
+		           	</select>
+	            </div>
 		        <table class="table table-striped">
 		            <thead>
 		            <tr>
@@ -156,47 +170,52 @@
 		            </tr>
 		            </thead>
 		            <tbody>
-		            <tr *ngFor="let eventEntry of eventEntries ;trackBy: trackId">
+		            <tr *ngFor="let eventEntry of eventEntries | eventEntryCategoryFilter: filterCategory ;trackBy: trackId">
 		            	<td>{{eventEntry.raceNumber}}</td>
 		            	<td>
-		                    <div *ngIf="eventEntry.driver">
-		                        <a [routerLink]="['../driver', eventEntry.driver?.id ]" >{{eventEntry.driver?.name}} {{eventEntry.driver?.surname}}</a>
+		                    <div *ngIf="!eventEntry.eventEdition.multidriver">
+		                        <a [routerLink]="['/driver', eventEntry.drivers[0].id ]" >{{eventEntry.drivers[0].fullName}}</a>
+		                    </div>
+		                    <div *ngIf="eventEntry.eventEdition.multidriver">
+		                    	<div *ngFor="let driver of eventEntry.drivers">
+			                        <span class="tag">{{ driver.fullName }}</span>
+			                    </div>
 		                    </div>
 		                </td>
 		                <td>{{eventEntry.entryName}}</td>
 		                <td>
 		                    <div *ngIf="eventEntry.team">
-		                        <a [routerLink]="['../team', eventEntry.team?.id ]" >{{eventEntry.team?.name}}</a>
+		                        <a [routerLink]="['/team', eventEntry.team?.id ]" >{{eventEntry.team?.name}}</a>
 		                    </div>
 		                </td>
 		                <td>
 		                    <div *ngIf="eventEntry.operatedBy">
-		                        <a [routerLink]="['../team', eventEntry.operatedBy?.id ]" >{{eventEntry.operatedBy?.name}}</a>
+		                        <a [routerLink]="['/team', eventEntry.operatedBy?.id ]" >{{eventEntry.operatedBy?.name}}</a>
 		                    </div>
 		                </td>
 		                <td *ngIf="!eventEdition.singleChassis">
 		                    <div *ngIf="eventEntry.chassis">
-		                        <a [routerLink]="['../chassis', eventEntry.chassis?.id ]" >{{eventEntry.chassis?.manufacturer}} {{eventEntry.chassis?.name}}</a>
+		                        <a [routerLink]="['/chassis', eventEntry.chassis?.id ]" >{{eventEntry.chassis?.manufacturer}} {{eventEntry.chassis?.name}}</a>
 		                    </div>
 		                </td>
 		                <td *ngIf="!eventEdition.singleEngine">
 		                    <div *ngIf="eventEntry.engine">
-		                        <a [routerLink]="['../team', eventEntry.engine?.id ]" >{{eventEntry.engine?.manufacturer}} {{eventEntry.engine?.name}}</a>
+		                        <a [routerLink]="['/engine', eventEntry.engine?.id ]" >{{eventEntry.engine?.manufacturer}} {{eventEntry.engine?.name}}</a>
 		                    </div>
 		                </td>
-		                <td  *ngIf="eventEdition.allowedCategories.length != 1">
+		                <td *ngIf="eventEdition.allowedCategories.length != 1">
 		                    <div *ngIf="eventEntry.engine">
-		                        <a [routerLink]="['../team', eventEntry.engine?.id ]" >{{eventEdition.allowedCategories[0].name}}</a>
+		                        <a [routerLink]="['/category', eventEntry.category?.id ]" >{{eventEntry.category.shortname}}</a>
 		                    </div>
 		                </td>
 		                <td *ngIf="!eventEdition.singleTyre">
 		                    <div *ngIf="eventEntry.tyres">
-		                        <a [routerLink]="['../team', eventEntry.tyres?.id ]" >{{eventEntry.tyres?.name}}</a>
+		                        <a [routerLink]="['/tyre-provider', eventEntry.tyres?.id ]" >{{eventEntry.tyres?.name}}</a>
 		                    </div>
 		                </td>
 		                <td *ngIf="!eventEdition.singleFuel">
 		                    <div *ngIf="eventEntry.fuel">
-		                        <a [routerLink]="['../team', eventEntry.fuel?.id ]" >{{eventEntry.fuel?.name}}</a>
+		                        <a [routerLink]="['/fuel-provider', eventEntry.fuel?.id ]" >{{eventEntry.fuel?.name}}</a>
 		                    </div>
 		                </td>
 		                
@@ -225,6 +244,13 @@
 		            </tr>
 		            </tbody>
 		        </table>
+		        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+	            	class="btn btn-success float-right" [routerLink]="['/', { outlets: { popup: eventEdition.id + '/copy-entries' } }]">
+		            <span class="fa fa-plus"></span>
+		            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.copyEntries.copyLabel">
+		            Create new Event Entry
+		            </span>
+		        </button>
 		        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
 	            	class="btn btn-primary float-right create-event-entry" [routerLink]="['/', { outlets: { popup: eventEdition.id + '/event-entry-new' } }]">
 		            <span class="fa fa-plus"></span>

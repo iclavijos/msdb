@@ -4,6 +4,7 @@ import { EventManager, JhiLanguageService } from 'ng-jhipster';
 import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Rx';
 import { Engine } from '../engine';
+import { EventService } from '../event/event.service';
 import { EventEdition } from './event-edition.model';
 import { EventEditionService } from './event-edition.service';
 import { EventSession } from '../event-session/event-session.model';
@@ -25,12 +26,15 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     durationTypes = DurationType;
     sessions: EventSession[];
     eventEntries: EventEntry[];
+    filterCategory: string;
+    editions: any[];
     
     keysSession: any[];
     keysDuration: any[];
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
+        private eventService: EventService,
         private eventEditionService: EventEditionService,
         private eventEntryService: EventEntryService,
         private eventManager: EventManager,
@@ -55,6 +59,8 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
             this.eventEdition = eventEdition;
             this.loadSessions(id);
             this.loadEntries(id);
+            this.eventService.findEventEditionIds(eventEdition.event.id).subscribe(
+                    (res: Response) => this.editions = res.json());
         });
     }
     
@@ -70,6 +76,11 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
                 this.eventEntries = res.json();
             }
         );
+    }
+    
+    jumpToEdition(id) {
+        if (!id) return false;
+        this.router.navigate(['/event-edition', id]);
     }
     
     previousState() {

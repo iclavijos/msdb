@@ -1,4 +1,5 @@
 export * from './mask/time-mask.pipe';
+export * from './filters/entry-category-filter.pipe';
 
 export * from './alert/alert.component';
 export * from './alert/alert-error.component';

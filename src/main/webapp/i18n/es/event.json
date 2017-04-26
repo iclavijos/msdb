@@ -33,6 +33,7 @@
             "delete": {
                 "question": "¿Seguro que quiere eliminar esta edición del evento?"
             },
+            "copy": "Seleccione el evento del que copiar los participantes",
             "detail": {
                 "title": "edición del evento"
             },
@@ -47,6 +48,7 @@
             "info": "Detalles",
             "entryList": "Inscritos",
             "results": "Resultados",
+            "multidriver": "Más de un piloto per participante?",
             "session": {
             	"createOrEditLabel": "Crea o edita una sesión",
             	"name": "Nombre",
@@ -77,8 +79,10 @@
             	"fuel": "Combustible",
             	"engine": "Motor",
             	"driver": "Piloto",
+            	"drivers": "Pilotos",
             	"chassis": "Chasis",
-            	"category": "Categoría"
+            	"category": "Categoría",
+            	"removeSelected": "Eliminar piloto seleccionado"
 			},
 			"result" : {
 	            "home": {
@@ -104,6 +108,10 @@
 	            "disqualified": "Descalificado",
 	            "retirementCause": "Motivo abandono",
 	            "difference": "Diferencia"
+	        },
+	        "copyEntries": {
+	        	"title" : "Copia participantes de otro evento",
+	        	"copyLabel": "Copia participantes"
 	        },
 		    "enumerations": {
 		    	"milliseconds": "Diezmilésimas",

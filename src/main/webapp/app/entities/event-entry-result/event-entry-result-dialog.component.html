@@ -26,9 +26,13 @@
         	<div class="col-lg-10 col-md-10">
         		<div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.driver" for="field_driver">Driver</label>
-		            <select class="form-control" id="field_driver" name="driver" [(ngModel)]="eventEntryResult.entry" required>
+		            <select *ngIf="!multidriver" class="form-control" id="field_driver" name="driver" [(ngModel)]="eventEntryResult.entry" required>
 		            	<option *ngFor="let entry of entries; trackBy: trackEntryById" 
-		            		[ngValue]="entry.id === eventEntryResult.entry?.id ? eventEntryResult.entry : entry">#{{entry.raceNumber}} {{entry.driver.fullName}}</option>
+		            		[ngValue]="entry.id === eventEntryResult.entry?.id ? eventEntryResult.entry : entry">#{{entry.raceNumber}} {{entry.drivers[0].fullName}}</option>
+		            </select>
+		            <select *ngIf="multidriver" class="form-control" id="field_driver" name="driver" [(ngModel)]="eventEntryResult.entry" required>
+		            	<option *ngFor="let entry of entries; trackBy: trackEntryById" 
+		            		[ngValue]="entry.id === eventEntryResult.entry?.id ? eventEntryResult.entry : entry">#{{entry.raceNumber}} {{entry.driversName}}</option>
 		            </select>
 		        </div>
         	</div>

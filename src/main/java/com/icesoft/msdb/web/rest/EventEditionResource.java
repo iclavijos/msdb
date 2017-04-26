@@ -2,9 +2,11 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.domain.EventEntryResult;
@@ -142,6 +145,16 @@ public class EventEditionResource {
     public ResponseEntity<EventEdition> getEventEdition(@PathVariable Long id) {
         log.debug("REST request to get EventEdition : {}", id);
         EventEdition eventEdition = eventEditionRepository.findOne(id);
+        if (eventEdition != null) {
+        	List<Long> tmp = eventEditionRepository.findNextEditionId(eventEdition.getEvent().getId(), eventEdition.getEditionYear());
+        	if (tmp != null && !tmp.isEmpty()) {
+        		eventEdition.nextEditionId(tmp.get(0));
+        	}
+        	tmp = eventEditionRepository.findPreviousEditionId(eventEdition.getEvent().getId(), eventEdition.getEditionYear());
+        	if (tmp != null && !tmp.isEmpty()) {
+        		eventEdition.previousEditionId(tmp.get(0));
+        	}
+        }
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEdition));
     }
 
@@ -174,6 +187,7 @@ public class EventEditionResource {
     @Timed
     public ResponseEntity<List<EventEdition>> searchEventEditions(@RequestParam String query, @ApiParam Pageable pageable)
         throws URISyntaxException {
+    	//TODO: Migrate to fulltext search? Or use Hibernate search?
         log.debug("REST request to search for a page of EventEditions for query {}", query);
         Page<EventEdition> page = eventEditionRepository.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/event-editions");
@@ -238,6 +252,37 @@ public class EventEditionResource {
     public List<EventEditionEntry> getEventEditionEntries(@PathVariable Long id) {
     	log.debug("REST request to get all EventEditions {} entries", id);
     	return eventEntryRepository.findByEventEditionIdOrderByRaceNumberAsc(id);
+    }
+    
+    @PostMapping("/event-editions/{idTarget}/entries/{idSource}")
+    @Timed
+    @Transactional
+    public ResponseEntity<Void> copyEntries(@PathVariable Long idTarget, @PathVariable Long idSource) {
+    	List<EventEditionEntry> entries = eventEntryRepository.findByEventEditionIdOrderByRaceNumberAsc(idSource);
+    	EventEdition target = eventEditionRepository.findOne(idTarget);
+    	for(EventEditionEntry entry : entries) {
+    		EventEditionEntry copiedEntry = new EventEditionEntry();
+    		copiedEntry
+    			.category(entry.getCategory()) 
+    			.entryName(entry.getEntryName())
+    			.eventEdition(target)
+    			.raceNumber(entry.getRaceNumber())
+    			.chassis(entry.getChassis())
+    			.engine(entry.getEngine())
+    			.fuel(entry.getFuel())
+    			.tyres(entry.getTyres())
+    			.team(entry.getTeam())
+    			.operatedBy(entry.getOperatedBy());
+    		
+    		List<Driver> copiedList = new ArrayList<>();
+    		for(Driver driver: entry.getDrivers()) {
+    			copiedList.add(driver);
+    		}
+    		copiedEntry.drivers(copiedList);
+    		
+    		eventEntryRepository.save(copiedEntry);
+    	}
+    	return ResponseEntity.ok().headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, idTarget.toString())).build();
     }
     
     @PostMapping("/event-editions/{id}/entries")

@@ -15,6 +15,8 @@ import {
     EventEditionPopupComponent,
     EventEditionDeletePopupComponent,
     EventEditionDeleteDialogComponent,
+    EventEditionCopyEntriesDialogComponent,
+    EventEditionCopyEntriesPopupComponent,
     eventEditionRoute,
     eventEditionPopupRoute,
     EventEditionResolvePagingParams,
@@ -42,6 +44,8 @@ let ENTITY_STATES = [
         EventEditionDeleteDialogComponent,
         EventEditionPopupComponent,
         EventEditionDeletePopupComponent,
+        EventEditionCopyEntriesDialogComponent,
+        EventEditionCopyEntriesPopupComponent,
     ],
     entryComponents: [
         EventEditionComponent,
@@ -49,6 +53,8 @@ let ENTITY_STATES = [
         EventEditionPopupComponent,
         EventEditionDeleteDialogComponent,
         EventEditionDeletePopupComponent,
+        EventEditionCopyEntriesDialogComponent,
+        EventEditionCopyEntriesPopupComponent,
     ],
     providers: [
         EventEditionService,

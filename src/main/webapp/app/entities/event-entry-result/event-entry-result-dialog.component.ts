@@ -29,6 +29,7 @@ export class EventEntryResultDialogComponent implements OnInit {
     sessionType = SessionType;
     private eventEditionId;
     private positions: number[];
+    private multidriver: boolean = false;
 
     constructor(
         public activeModal: NgbActiveModal,
@@ -47,6 +48,7 @@ export class EventEntryResultDialogComponent implements OnInit {
     ngOnInit() {
         this.eventSessionService.find(this.eventEntryResult.session.id).subscribe(session => {
             this.eventEntryResult.session = session;
+            this.multidriver = session.eventEdition.multidriver;
             this.eventEntryService.findEntries(this.eventEntryResult.session.eventEdition.id).subscribe(entries => {
                 this.entries = entries.json();
                 this.positions = Array.from(Array(this.entries.length),(x,i)=>i+1)

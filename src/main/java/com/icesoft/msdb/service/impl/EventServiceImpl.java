@@ -1,6 +1,7 @@
 package com.icesoft.msdb.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,17 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.Event;
 import com.icesoft.msdb.domain.EventEdition;
-import com.icesoft.msdb.domain.Racetrack;
-import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventRepository;
-import com.icesoft.msdb.repository.RacetrackLayoutRepository;
-import com.icesoft.msdb.repository.RacetrackRepository;
 import com.icesoft.msdb.service.EventService;
-import com.icesoft.msdb.service.RacetrackService;
+import com.icesoft.msdb.service.dto.EventEditionIdYearDTO;
 
 /**
- * Service Implementation for managing Racetrack.
+ * Service Implementation for managing Events.
  */
 @Service
 @Transactional
@@ -98,4 +95,13 @@ public class EventServiceImpl implements EventService {
     public Page<EventEdition> findEventEditions(Long idEvent, Pageable pageable) {
     	return eventEditionRepository.findByEventIdOrderByEditionYearDesc(idEvent, pageable);
     }
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<EventEditionIdYearDTO> findEventEditionsIdYear(Long idEvent) {
+		return eventEditionRepository.findEventEditionsIdYear(idEvent)
+				.stream()
+				.map(e -> new EventEditionIdYearDTO((Long)e[0], (Integer)e[1]))
+				.collect(Collectors.<EventEditionIdYearDTO> toList());
+	}
 }

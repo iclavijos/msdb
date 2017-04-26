@@ -7,6 +7,7 @@ import { PaginationUtil } from 'ng-jhipster';
 import { EventEditionComponent } from './event-edition.component';
 import { EventEditionDetailComponent } from './event-edition-detail.component';
 import { EventEditionPopupComponent } from './event-edition-dialog.component';
+import { EventEditionCopyEntriesPopupComponent } from './event-edition-copy-entries-dialog.component';
 import { EventEditionDeletePopupComponent } from './event-edition-delete-dialog.component';
 
 import { Principal } from '../../shared';
@@ -48,6 +49,15 @@ export const eventEditionPopupRoute: Routes = [
     },
     outlet: 'popup'
   },
+  {
+      path: ':id/copy-entries',
+      component: EventEditionCopyEntriesPopupComponent,
+      data: {
+          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+          pageTitle: 'motorsportsDatabaseApp.eventEdition.home.title'
+      },
+      outlet: 'popup'
+    },
   {
     path: 'event-edition/:id/edit',
     component: EventEditionPopupComponent,

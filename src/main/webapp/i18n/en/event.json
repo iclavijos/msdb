@@ -33,6 +33,7 @@
             "delete": {
                 "question": "Are you sure you want to delete Event Edition {{ id }}?"
             },
+            "copy": "Choose event to copy entries from",
             "detail": {
                 "title": "Event Edition"
             },
@@ -47,6 +48,7 @@
             "info": "Information",
             "entryList": "Entry List",
             "results": "Results",
+            "multidriver": "More than one driver per entry?",
             "session": {
             	"createOrEditLabel": "Create or edit a Event Session",
             	"name": "Name",
@@ -77,24 +79,26 @@
             	"fuel": "Fuel",
             	"engine": "Engine",
             	"driver": "Driver",
+            	"drivers": "Drivers",
             	"chassis": "Chassis",
-            	"category": "Category"
+            	"category": "Category",
+            	"removeSelected": "Remove selected driver"
 			},
 			"result" : {
 	            "home": {
-	                "title": "Event Entry Results",
-	                "createLabel": "Create a new Event Entry Result",
-	                "createOrEditLabel": "Create or edit a Event Entry Result",
-	                "search": "Search for Event Entry Result"
+	                "title": "Results",
+	                "createLabel": "Add a new result",
+	                "createOrEditLabel": "Create or edit a result",
+	                "search": "Search for Results"
 	            },
-	            "created": "A new Event Entry Result is created with identifier {{ param }}",
-	            "updated": "A Event Entry Result is updated with identifier {{ param }}",
-	            "deleted": "A Event Entry Result is deleted with identifier {{ param }}",
+	            "created": "A new result is created with identifier {{ param }}",
+	            "updated": "A result is updated with identifier {{ param }}",
+	            "deleted": "A result is deleted with identifier {{ param }}",
 	            "delete": {
-	                "question": "Are you sure you want to delete Event Entry Result {{ id }}?"
+	                "question": "Are you sure you want to delete result {{ id }}?"
 	            },
 	            "detail": {
-	                "title": "Event Entry Result"
+	                "title": "Result"
 	            },
 	            "finalPosition": "Final Position",
 	            "totalTime": "Total Time",
@@ -105,6 +109,10 @@
 	            "disqualified": "Disqualified",
 	            "retirementCause": "Retirement cause",
 	            "difference": "Difference"
+	        },
+	        "copyEntries": {
+	        	"title" : "Copy entries from another event",
+	        	"copyLabel": "Copy entries"
 	        },
 		    "enumerations": {
 		    	"milliseconds": "Deumilèssimes",

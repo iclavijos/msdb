@@ -28,7 +28,7 @@
 		            </div>
 		        </div>
 	        </div>
-	        <div class="col-lg-9 col-md-9">
+	        <div *ngIf="!eventEntry.eventEdition.multidriver" class="col-lg-9 col-md-9">
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.driver" for="field_driver">Driver</label>
 		            <ng2-completer id="field_driver" name="driver" [(ngModel)]="driverSearch" [datasource]="dataServiceDriver" [minSearchLength]="2" 
@@ -39,6 +39,25 @@
 		                   This field is required.
 		                </small>
 		            </div>
+		        </div>
+	        </div>
+	        <div *ngIf="eventEntry.eventEdition.multidriver" class="col-lg-9 col-md-9">
+		        <div class="form-group">
+		            <div class="row">
+						<div class="col-lg-6 col-md-6">
+							<label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.drivers" for="field_driver">Drivers</label>
+							<ng2-completer id="field_driver" name="driver" [(ngModel)]="driverSearch" [datasource]="dataServiceDriver" [minSearchLength]="2" 
+            					(selected)="onDriverSelected($event)" [inputClass]="form-control" [pause]="300"></ng2-completer>
+						</div>
+						<div class="col-lg-6 col-md-6">
+							<select class="form-control" multiple name="drivers" [value]="eventEntry.drivers" (dblclick)="removeDriver($event)" required>
+				                <option *ngFor="let driver of eventEntry.drivers" [value]="driver.id">{{driver.fullName}}</option>
+				            </select>
+						    <button type="button" class="btn" (click)="removeDriver($event)">
+						        <span class="fa fa-minus"></span>&nbsp;<span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.removeSelected">Cancel</span>
+						    </button>
+						</div>
+					</div>
 		        </div>
 	        </div>
         </div>
