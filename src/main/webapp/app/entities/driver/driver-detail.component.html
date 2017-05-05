@@ -3,38 +3,52 @@
     <h2>{{compositeName}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
-    <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.name">Name</span></dt>
-        <dd>
-            <span>{{driver.name}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.surname">Surname</span></dt>
-        <dd>
-            <span>{{driver.surname}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.birthDate">Birth Date</span></dt>
-        <dd>
-            <span>{{driver.birthDate | date:'mediumDate'}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.birthPlace">Birth Place</span></dt>
-        <dd>
-            <span>{{driver.birthPlace}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.deathDate">Death Date</span></dt>
-        <dd>
-            <span>{{driver.deathDate | date:'mediumDate'}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.deathPlace">Death Place</span></dt>
-        <dd>
-            <span>{{driver.deathPlace}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.portrait">Portrait</span></dt>
-        <dd>
-            <div *ngIf="driver.portraitUrl">
-            	<img [src]="driver.portraitUrl" style="max-width: 100%;" alt="driver image"/>
-            </div>
-        </dd>
-    </dl>
+    <ngb-tabset>
+	  <ngb-tab title="{{'motorsportsDatabaseApp.driver.bio' | translate}}">
+	    <template ngbTabContent>
+		    <div class="row">
+		    	<div class="col-sm-6">
+				    <dl class="row-md jh-entity-details">
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.birthDate">Birth Date</span></dt>
+				        <dd>
+				            <span>{{driver.birthDate | date:'mediumDate'}}</span>
+				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.birthPlace">Birth Place</span></dt>
+				        <dd>
+				            <span>{{driver.birthPlace}}</span>
+				        </dd>
+				        <dt *ngIf="driver.deathDate"><span jhiTranslate="motorsportsDatabaseApp.driver.deathDate">Death Date</span></dt>
+				        <dd *ngIf="driver.deathDate">
+				            <span>{{driver.deathDate | date:'mediumDate'}}</span>
+				        </dd>
+				        <dt *ngIf="driver.deathDate"><span jhiTranslate="motorsportsDatabaseApp.driver.deathPlace">Death Place</span></dt>
+				        <dd *ngIf="driver.deathDate">
+				            <span>{{driver.deathPlace}}</span>
+				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.age">Age</span></dt>
+				        <dd>
+				            <span *ngIf="driver.age != 0">{{driver.age}}</span>
+				        </dd>
+				    </dl>
+			    </div>
+			    <div class="col-sm-6">
+			    	<dl class="row-md jh-entity-details">
+				    	<dt><span jhiTranslate="motorsportsDatabaseApp.driver.portrait">Portrait</span></dt>
+				        <dd>
+				            <div *ngIf="driver.portraitUrl">
+				            	<img [src]="driver.portraitUrl" style="max-width: 100%;" alt="driver image"/>
+				            </div>
+				        </dd>
+				    </dl>
+			    </div>
+		    </div>
+		</template>
+	</ngb-tab>
+	<ngb-tab title="{{'motorsportsDatabaseApp.driver.statistics' | translate}}">
+	    <template ngbTabContent>
+	    </template>
+	</ngb-tab>
+	</ngb-tabset>
 
     <button type="submit"
             (click)="previousState()"

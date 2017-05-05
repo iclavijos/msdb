@@ -2,16 +2,14 @@ package com.icesoft.msdb.domain;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.time.Period;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -19,10 +17,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.icesoft.msdb.web.rest.view.View;
+import org.hibernate.search.annotations.Field;
 
 /**
  * A Driver.
@@ -36,19 +31,18 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(View.Summary.class)
     private Long id;
 
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
-    @JsonView(View.Summary.class)
+    @Field
     private String name;
 
     @NotNull
     @Size(max = 60)
     @Column(name = "surname", length = 60, nullable = false)
-    @JsonView(View.Summary.class)
+    @Field
     private String surname;
 
     @Column(name = "birth_date")
@@ -185,6 +179,13 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     
     public void setPortraitUrl(String portraitUrl) {
     	this.portraitUrl = portraitUrl;
+    }
+    
+    public int getAge() {
+    	if (birthDate == null) return 0;
+    	
+    	LocalDate end = (deathDate != null ? deathDate : LocalDate.now());
+    	return Period.between(birthDate, end).getYears();
     }
 
     @Override

@@ -22,8 +22,10 @@
             "birthPlace": "Birth Place",
             "deathDate": "Death Date",
             "deathPlace": "Death Place",
+            "age": "Edat",
             "portrait": "Portrait",
-            "participations": "Participations"
+            "bio": "Biografia",
+            "statistics": "Estadístiques"
         }
     }
 }
