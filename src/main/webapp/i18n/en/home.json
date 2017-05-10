@@ -1,19 +1,22 @@
 {
     "home": {
         "title": "Welcome to Motorsports Database!",
-        "subtitle": "This is your homepage",
         "logged": {
             "message": "You are logged in as user \"{{username}}\"."
         },
-        "question": "If you have any question on JHipster:",
         "link": {
-            "homepage": "JHipster homepage",
-            "stackoverflow": "JHipster on Stack Overflow",
-            "bugtracker": "JHipster bug tracker",
-            "chat": "JHipster public chat room",
             "follow": "follow @iclavijos on Twitter"
         },
-        "like": "If you like JHipster, don't forget to give us a star on",
-        "github": "GitHub"
+        "searchEntries": "Search entries:",
+        "searchEvents": "Search events:",
+        "entriesResult": "Entries found",
+        "drivers": "Drivers",
+        "entryName": "Entry",
+        "eventName": "Event",
+        "car": "Chassis/Engine",
+        "fastestLap": "Fastest Lap",
+        "qualyLap": "Q Fastest Time",
+        "raceLap": "Race Fastest Time",
+        "racePosition": "Race Pos."
     }
 }

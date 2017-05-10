@@ -6,11 +6,16 @@ import org.springframework.data.jpa.repository.*;
 
 import java.util.List;
 
+import javax.persistence.NamedNativeQuery;
+
 /**
  * Spring Data JPA repository for the EventEntry entity.
  */
 @SuppressWarnings("unused")
 public interface EventEntryRepository extends JpaRepository<EventEditionEntry,Long> {
 
-	List<EventEditionEntry> findByEventEditionIdOrderByRaceNumberAsc(Long id);
+	List<EventEditionEntry> findByEventEditionIdAndRaceNumber(Long eventEditionId, String raceNumber);
+	
+	@Query("SELECT e FROM EventEditionEntry e WHERE e.eventEdition.id = ?1 ORDER BY e.entryName ASC, e.raceNumber")
+	List<EventEditionEntry> findEventEditionEntries(Long eventEditionId);
 }

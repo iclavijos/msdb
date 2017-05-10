@@ -17,7 +17,6 @@ buildscript {
         classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
         classpath "com.moowork.gradle:gradle-node-plugin:1.1.1"
         classpath "io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE"
-        classpath 'gradle.plugin.com.heroku.sdk:heroku-gradle:0.2.0'
         //jhipster-needle-gradle-buildscript-dependency - JHipster will add additional gradle build script plugins here
     }
 }
@@ -93,7 +92,6 @@ apply from: 'gradle/sonar.gradle'
 apply from: 'gradle/liquibase.gradle'
 apply from: 'gradle/mapstruct.gradle'
 apply from: 'gradle/docker.gradle'
-apply from: 'gradle/heroku.gradle'
 //jhipster-needle-gradle-apply-from - JHipster will add additional gradle scripts to be applied here
 
 if (project.hasProperty('prod')) {
@@ -111,7 +109,7 @@ if (project.hasProperty('prometheus')) {
 }
 
 group = 'com.icesoft.msdb'
-version = '0.6.0-SNAPSHOT'
+version = '0.7.0-SNAPSHOT'
 
 description = ''
 
@@ -165,6 +163,7 @@ dependencies {
     compile "org.hibernate:hibernate-jcache:${hibernate_version}"
     compile "org.hibernate:hibernate-envers"
     compile "org.hibernate:hibernate-validator"
+    compile "org.hibernate:hibernate-search-orm:5.7.0.Final"
     compile ("org.liquibase:liquibase-core") {
         exclude(module: 'jetty-servlet')
     }

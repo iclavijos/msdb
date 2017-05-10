@@ -221,12 +221,6 @@
 		                
 		                <td class="text-right">
 		                    <div class="btn-group flex-btn-group-container">
-		                    	<!-- button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-		                                [routerLink]="['/', { outlets: { popup: 'event-entry/'+ eventEntry.id + '/duplicate'} }]"
-		                                replaceUrl="true"
-		                                class="btn btn-success btn-sm">
-		                            <span class="fa fa-files-o"></span>
-		                        </button -->
 		                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
 		                                [routerLink]="['/', { outlets: { popup: 'event-entry/'+ eventEntry.id + '/edit'} }]"
 		                                replaceUrl="true"

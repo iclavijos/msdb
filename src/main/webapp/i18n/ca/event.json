@@ -82,13 +82,23 @@
             	"drivers": "Pilots",
             	"chassis": "Xassís",
             	"category": "Categoria",
-            	"removeSelected": "Eliminar pilot seleccionat"
+            	"removeSelected": "Eliminar pilot seleccionat",
+            	"delete": {
+	                "question": "Esteu segurs que voleu esborrar el participant '{{id}}'?"
+	            }
 			},
 			"result" : {
 	            "home": {
 	                "title": "Classificacions",
 	                "createLabel": "Afegir un nou resultat",
 	                "createOrEditLabel": "Crea o edita un resultat"
+	            },
+	            "upload": {
+	            	"uploadLabel": "Importar resultats",
+	            	"title": "Importar resultats de sessió",
+	            	"desc": "Importar fitxer CSV amb els resultats de la sessió",
+	            	"selectFile": "Seleccionar arxiu",
+	            	"file": "Arxiu"
 	            },
 	            "created": "S'ha afegit un nou resultat",
 	            "updated": "S'ha actualitzat el resultat",

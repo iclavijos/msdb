@@ -82,13 +82,23 @@
             	"drivers": "Pilotos",
             	"chassis": "Chasis",
             	"category": "Categoría",
-            	"removeSelected": "Eliminar piloto seleccionado"
+            	"removeSelected": "Eliminar piloto seleccionado",
+            	"delete": {
+	                "question": "¿Estás seguro que quieres eliminar al participante '{{id}}'?"
+	            }
 			},
 			"result" : {
 	            "home": {
 	                "title": "Clasificaciones",
 	                "createLabel": "Añadir un nuevo resultado",
 	                "createOrEditLabel": "Crear o editar un resultado"
+	            },
+	            "upload": {
+	            	"uploadLabel": "Importar resultados",
+	            	"title": "Importar resultados de sesión",
+	            	"desc": "Importar fichero CSV con los resultados de la sesión",
+	            	"selectFile": "Seleccionar archivo",
+	            	"file": "Archivo"
 	            },
 	            "created": "Se ha añadido un nuevo resultado",
 	            "updated": "Se ha editado el resultado",

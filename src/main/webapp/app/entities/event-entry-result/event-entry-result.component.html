@@ -51,6 +51,13 @@
         </table>
     </div>
     <h2>
+    	<button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+           	class="btn btn-success float-right" [routerLink]="['/', { outlets: { popup: session.id + '/upload-results' } }]">
+            <span class="fa fa-plus"></span>
+            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.uploadLabel">
+            Upload session results
+            </span>
+        </button>
         <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
         	class="btn btn-primary float-right create-event-entry-result" [routerLink]="['/', { outlets: { popup: session.id +  '/event-entry-result-new' } }]">
             <span class="fa fa-plus"></span>

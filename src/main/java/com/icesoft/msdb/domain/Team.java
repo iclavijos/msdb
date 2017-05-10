@@ -1,18 +1,13 @@
 package com.icesoft.msdb.domain;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -20,8 +15,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.search.annotations.Field;
 
 /**
  * A Team.
@@ -41,6 +35,7 @@ public class Team extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
+    @Field
     private String name;
 
     @Size(max = 100)

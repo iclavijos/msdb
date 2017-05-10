@@ -22,6 +22,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -31,6 +34,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Table(name = "event_entry")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Indexed
 public class EventEditionEntry extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -41,11 +45,12 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
     
     @NotNull
     @Column(name = "race_number", nullable = false)
-    private Integer raceNumber;
+    private String raceNumber;
 
     @NotNull
     @Size(max = 100)
     @Column(name = "team_name", length = 100, nullable = false)
+    @Field
     private String entryName;
 
     @ManyToMany(fetch=FetchType.EAGER)
@@ -54,30 +59,39 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
         name="DRIVERS_ENTRY",
         joinColumns=@JoinColumn(name="entry_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="driver_id", referencedColumnName="ID"))
+    @IndexedEmbedded
     private List<Driver> drivers;
     
     @ManyToOne(optional = false)
+    @IndexedEmbedded
     private Team team;
     
     @ManyToOne
+    @IndexedEmbedded
     private Team operatedBy;
     
     @ManyToOne(optional = false)
+    @IndexedEmbedded
     private Chassis chassis;
     
     @ManyToOne(optional = false)
+    @IndexedEmbedded
     private Engine engine;
     
     @ManyToOne(optional = false)
+    @IndexedEmbedded
     private TyreProvider tyres;
     
     @ManyToOne
+    @IndexedEmbedded
     private FuelProvider fuel;
     
     @ManyToOne
+    @IndexedEmbedded
     private Category category;
     
     @ManyToOne
+    @IndexedEmbedded
     private EventEdition eventEdition;
     
     public Long getId() {
@@ -88,16 +102,16 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
         this.id = id;
     }
 
-    public Integer getRaceNumber() {
+    public String getRaceNumber() {
 		return raceNumber;
 	}
     
-    public EventEditionEntry raceNumber(Integer number) {
+    public EventEditionEntry raceNumber(String number) {
     	this.raceNumber = number;
     	return this;
     }
 
-	public void setRaceNumber(Integer number) {
+	public void setRaceNumber(String number) {
 		this.raceNumber = number;
 	}
 

@@ -19,6 +19,9 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -28,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "racetrack")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-//@Document(indexName = "racetrack")
+@Indexed
 public class Racetrack extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,11 +43,13 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 100)
     @Column(name = "name", length = 100, nullable = false)
+    @Field(store = Store.NO)
     private String name;
 
     @NotNull
     @Size(max = 100)
     @Column(name = "location", length = 100, nullable = false)
+    @Field(store = Store.NO)
     private String location;
 
     @Transient

@@ -25,6 +25,11 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.NumericField;
+import org.hibernate.search.annotations.Store;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -34,7 +39,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "event_edition")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-//@Document(indexName = "eventedition")
+@Indexed
 public class EventEdition extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,16 +50,19 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
     @NotNull
     @Column(name = "edition_year", nullable = false)
+    @Field(store = Store.YES)
     private Integer editionYear;
 
     @NotNull
     @Size(max = 40)
     @Column(name = "short_event_name", length = 40, nullable = false)
+    @Field(store = Store.NO)
     private String shortEventName;
 
     @NotNull
     @Size(max = 100)
     @Column(name = "long_event_name", length = 100, nullable = false)
+    @Field(store = Store.NO)
     private String longEventName;
 
     @NotNull
@@ -79,6 +87,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     private List<Category> allowedCategories;
 
     @ManyToOne
+    @IndexedEmbedded
     private RacetrackLayout trackLayout;
 
     @ManyToOne
@@ -265,6 +274,9 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 	}
 
     public Boolean isMultidriver() {
+    	if (multidriver == null) {
+    		multidriver = false;
+    	}
 		return multidriver;
 	}
 

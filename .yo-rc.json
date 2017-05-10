@@ -29,8 +29,6 @@
       "en",
       "ca",
       "es"
-    ],
-    "herokuAppName": "motorsports-database",
     "clientFramework": "angular2"
   }
 }

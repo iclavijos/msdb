@@ -3,20 +3,24 @@ import { RouterModule } from '@angular/router';
 
 import { MotorsportsDatabaseSharedModule } from '../shared';
 
-import { HOME_ROUTE, HomeComponent } from './';
+import { HomeComponent, HomeEntriesComponent, HOME_ROUTE, HomeEntriesPagingParams } from './';
 
 
 @NgModule({
     imports: [
         MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot([ HOME_ROUTE ], { useHash: true })
+        RouterModule.forRoot( HOME_ROUTE , { useHash: true })
     ],
     declarations: [
         HomeComponent,
+        HomeEntriesComponent
     ],
     entryComponents: [
+        HomeComponent,
+        HomeEntriesComponent
     ],
     providers: [
+        HomeEntriesPagingParams
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

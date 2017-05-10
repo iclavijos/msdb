@@ -11,6 +11,7 @@ import { MockLanguageService } from '../../../helpers/mock-language.service';
 import { MockActivatedRoute } from '../../../helpers/mock-route.service';
 import { EventEditionDetailComponent } from '../../../../../../main/webapp/app/entities/event-edition/event-edition-detail.component';
 import { EventEditionService } from '../../../../../../main/webapp/app/entities/event-edition/event-edition.service';
+import { EventService } from '../../../../../../main/webapp/app/entities/event/event.service';
 import { EventEntryService } from '../../../../../../main/webapp/app/entities/event-entry/event-entry.service';
 import { EventEdition } from '../../../../../../main/webapp/app/entities/event-edition/event-edition.model';
 
@@ -45,6 +46,7 @@ describe('Component Tests', () => {
                         provide: JhiLanguageService,
                         useClass: MockLanguageService
                     },
+                    EventService,
                     EventEditionService,
                     EventEntryService,
                     EventManager,

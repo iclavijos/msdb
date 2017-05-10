@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.search.annotations.Field;
 
 /**
  * A Category.
@@ -33,11 +34,13 @@ public class Category extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
+    @Field
     private String name;
 
     @NotNull
     @Size(max = 10)
     @Column(name = "shortname", length = 10, nullable = false)
+    @Field
     private String shortname;
 
     public Long getId() {

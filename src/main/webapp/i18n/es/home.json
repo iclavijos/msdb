@@ -1,19 +1,22 @@
 {
     "home": {
         "title": "¡Bienvenido a Motorsports Database!",
-        "subtitle": "Esta es tu página de inicio",
         "logged": {
             "message": "Estás conectado como \"{{username}}\"."
         },
-        "question": "Si tiene preguntas sobre JHipster:",
         "link": {
-            "homepage": "Página de inicio de JHipster",
-            "stackoverflow": "JHipster en Stack Overflow",
-            "bugtracker": "JHipster seguimiento de errores",
-            "chat": "Sala de chat pública de JHipster",
             "follow": "Siga a @iclavijos en Twitter"
         },
-        "like": "Si te gusta JHipster, danos una estrella en",
-        "github": "GitHub"
+        "searchEntries": "Buscar participaciones:",
+        "searchEvents": "Buscar citas:",
+        "entriesResult": "Participaciones encontradas",
+        "drivers": "Pilotos",
+        "entryName": "Participante",
+        "eventName": "Cita",
+        "car": "Chasis/Motor",
+        "fastestLap": "Vuelta rápida",
+        "qualyLap": "V. rápida Q",
+        "raceLap": "V. rápida Carrera",
+        "racePosition": "Pos. Carrera"
     }
 }

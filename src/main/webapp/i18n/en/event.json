@@ -82,7 +82,10 @@
             	"drivers": "Drivers",
             	"chassis": "Chassis",
             	"category": "Category",
-            	"removeSelected": "Remove selected driver"
+            	"removeSelected": "Remove selected driver",
+            	"delete": {
+	                "question": "Are you sure you want to delete entry '{{id}}'?"
+	            }
 			},
 			"result" : {
 	            "home": {
@@ -90,6 +93,13 @@
 	                "createLabel": "Add a new result",
 	                "createOrEditLabel": "Create or edit a result",
 	                "search": "Search for Results"
+	            },
+	            "upload": {
+	            	"uploadLabel": "Upload results",
+	            	"title": "Upload session results",
+	            	"desc": "Upload CSV file with session results",
+	            	"selectFile": "Select file",
+	            	"file": "File"
 	            },
 	            "created": "A new result is created with identifier {{ param }}",
 	            "updated": "A result is updated with identifier {{ param }}",

@@ -1,0 +1,42 @@
+<div class="table-responsive" *ngIf="resultEntries">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th><span>#</span></th>
+				<th><span jhiTranslate="home.drivers">Drivers</span></th>
+				<th><span jhiTranslate="home.entryName">Entry Name</span></th>
+				<th><span jhiTranslate="home.eventName">Event Name</span></th>
+				<th><span jhiTranslate="home.car">Chassis / Engine</span></th>
+				<th><span jhiTranslate="home.fastestLap">Fastest Lap</span></th>
+				<th><span jhiTranslate="home.qualyLap">Q Time</span></th>
+				<th><span jhiTranslate="home.raceLap">Race Time</span></th>
+				<th><span jhiTranslate="home.racePosition">Race Position</span></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let entry of resultEntries">
+				<td>{{entry.raceNumber}}</td>
+				<td>{{entry.driverName}}</td>
+				<td>{{entry.entryName}}</td>
+				<td><a [routerLink]="['/event-edition', entry.eventEditionId ]" >
+                        	{{entry.eventName}}
+                        </a></td>
+				<td>{{entry.chassisEngine}}</td>
+				<td>{{entry.fastestLap | timeMaskPipe}} <span *ngIf="entry.fastestLap != 0">({{entry.session}})</span></td>
+				<td>{{entry.poleTime | timeMaskPipe}} <span *ngIf="entry.poleTime != 0">(P{{entry.polePosition}})</span></td>
+				<td>{{entry.raceFastLap | timeMaskPipe}}</td>
+				<td>{{entry.raceStatus}} <span *ngIf="entry.racePosition >= 900">({{entry.retirement}})</span></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div *ngIf="resultEntries && resultEntries.length">
+	<div class="row justify-content-center">
+		<jhi-item-count [page]="page" [total]="queryCount"
+			[itemsPerPage]="itemsPerPage"></jhi-item-count>
+	</div>
+	<div class="row justify-content-center">
+		<ngb-pagination [collectionSize]="totalItems" [(page)]="page"
+			(pageChange)="loadPage(page)"></ngb-pagination>
+	</div>
+</div>

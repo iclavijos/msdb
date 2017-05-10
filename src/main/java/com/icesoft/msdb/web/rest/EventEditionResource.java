@@ -39,6 +39,7 @@ import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
@@ -63,13 +64,15 @@ public class EventEditionResource {
     private final EventSessionRepository eventSessionRepository;
     private final EventEntryRepository eventEntryRepository;
     private final EventEntryResultRepository eventResultRepository;
+    private final SearchService searchService;
 
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventSessionRepository eventSessionRepository, 
-    		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository) {
+    		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, SearchService searchService) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventSessionRepository = eventSessionRepository;
         this.eventEntryRepository = eventEntryRepository;
         this.eventResultRepository = resultRepository;
+        this.searchService = searchService;
     }
 
     /**
@@ -187,9 +190,8 @@ public class EventEditionResource {
     @Timed
     public ResponseEntity<List<EventEdition>> searchEventEditions(@RequestParam String query, @ApiParam Pageable pageable)
         throws URISyntaxException {
-    	//TODO: Migrate to fulltext search? Or use Hibernate search?
         log.debug("REST request to search for a page of EventEditions for query {}", query);
-        Page<EventEdition> page = eventEditionRepository.search(query, pageable);
+        Page<EventEdition> page = searchService.searchEventEditions(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/event-editions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -251,14 +253,14 @@ public class EventEditionResource {
     @Timed
     public List<EventEditionEntry> getEventEditionEntries(@PathVariable Long id) {
     	log.debug("REST request to get all EventEditions {} entries", id);
-    	return eventEntryRepository.findByEventEditionIdOrderByRaceNumberAsc(id);
+    	return eventEntryRepository.findEventEditionEntries(id);
     }
     
     @PostMapping("/event-editions/{idTarget}/entries/{idSource}")
     @Timed
     @Transactional
     public ResponseEntity<Void> copyEntries(@PathVariable Long idTarget, @PathVariable Long idSource) {
-    	List<EventEditionEntry> entries = eventEntryRepository.findByEventEditionIdOrderByRaceNumberAsc(idSource);
+    	List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(idSource);
     	EventEdition target = eventEditionRepository.findOne(idTarget);
     	for(EventEditionEntry entry : entries) {
     		EventEditionEntry copiedEntry = new EventEditionEntry();
@@ -320,6 +322,15 @@ public class EventEditionResource {
         log.debug("REST request to get EventEntry : {}", id);
         EventEditionEntry eventEntry = eventEntryRepository.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEntry));
+    }
+    
+    @DeleteMapping("/event-editions/entries/{id}")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
+    public ResponseEntity<Void> deleteEventEntry(@PathVariable Long id) {
+        log.debug("REST request to delete EventEntry : {}", id);
+        eventEntryRepository.delete(id);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME_ENTRY, id.toString())).build();
     }
     
     @GetMapping("/event-editions/{id}/event-sessions/{idSession}/results")

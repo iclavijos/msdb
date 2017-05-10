@@ -11,7 +11,7 @@ export class EventEntry {
 
     constructor(
         public id?: number,
-        public raceNumber?: number,
+        public raceNumber?: string,
         public entryName?: string,
         public team?: Team,
         public operatedBy?: Team,

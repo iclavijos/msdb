@@ -13,17 +13,13 @@
 			<div class="col-lg-3 col-md-3">
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.raceNumber" for="field_raceNumber">Race Number</label>
-		            <input type="number" class="form-control" name="raceNumber" id="field_raceNumber"
+		            <input type="text" class="form-control" name="raceNumber" id="field_raceNumber"
 		                [(ngModel)]="eventEntry.raceNumber"
 		            required />
 		            <div [hidden]="!(editForm.controls.raceNumber?.dirty && editForm.controls.raceNumber?.invalid)">
 		                <small class="form-text text-danger"
 		                   [hidden]="!editForm.controls.raceNumber?.errors?.required" jhiTranslate="entity.validation.required">
 		                   This field is required.
-		                </small>
-		                <small class="form-text text-danger"
-		                    [hidden]="!editForm.controls.raceNumber?.errors?.number" jhiTranslate="entity.validation.number">
-		                    This field should be a number.
 		                </small>
 		            </div>
 		        </div>

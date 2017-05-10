@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-md-12">
-        <h1 class="display-4" jhiTranslate="home.title">Welcome, Java Hipster!</h1>
+        <h1 class="display-4" jhiTranslate="home.title">Welcome to Motorsports Database</h1>
 
         <div [ngSwitch]="isAuthenticated()">
             <div class="alert alert-success" *ngSwitchCase="true">
@@ -54,6 +54,35 @@
                      </div>
                  </div>
              </div>
+         </div>
+         
+         <div class="row mb-3" *ngIf="isAuthenticated()">
+         	<div class="col-sm-6 no-padding-right">
+	            <form name="searchFormEntries" class="form-inline">
+	                <div class="input-group w-100 mt-3">
+	                	<label class="form-control-label col-md-4" jhiTranslate="home.searchEntries" for="field_name">Search entries</label>
+	                	<input type="text" class="form-control col-md-8" [(ngModel)]="searchEntriesStr" id="searchEntries" name="searchEntries" placeholder="Ex: '1951 Fangio', 'Alonso', 'Mercedes 2016', 'Australia'...">
+	                    <button class="input-group-addon btn btn-info" (click)="searchEntries(searchEntriesStr)">
+	                        <span class="fa fa-search"></span>
+	                    </button>
+	                    <button class="input-group-addon btn btn-danger" (click)="clearEntries()" *ngIf="searchEntriesStr">
+	                        <span class="fa fa-trash-o"></span>
+	                    </button>
+	                </div>
+	            </form>
+	            <form *ngIf="false" name="searchFormEvents" class="form-inline">
+	                <div class="input-group w-100 mt-3">
+	                	<label class="form-control-label col-md-4" jhiTranslate="home.searchEvents" for="field_name">Search events</label>
+	                	<input type="text" class="form-control col-md-8" [(ngModel)]="searchEventsStr" id="searchEvents" name="searchEvents" placeholder="Ex: 'Belgian GP', 'Suzuka 2010', '1997 Spain'...">
+	                    <button class="input-group-addon btn btn-info" (click)="searchEvents(searchEventsStr)">
+	                        <span class="fa fa-search"></span>
+	                    </button>
+	                    <button class="input-group-addon btn btn-danger" (click)="clearEvents()" *ngIf="searchEventsStr">
+	                        <span class="fa fa-trash-o"></span>
+	                    </button>
+	                </div>
+	            </form>
+	        </div>
          </div>
     </div>
 </div>

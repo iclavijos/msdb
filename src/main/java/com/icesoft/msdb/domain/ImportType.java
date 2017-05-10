@@ -5,5 +5,6 @@ public enum ImportType {
 	RACETRACKS,
 	POINTSSYSTEM,
 	TEAMS,
-	ENGINES
+	ENGINES,
+	SESSION_RESULTS
 }

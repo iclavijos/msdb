@@ -8,7 +8,8 @@ import {
     logsRoute,
     metricsRoute,
     userMgmtRoute,
-    userDialogRoute
+    userDialogRoute,
+    rebuildIndexesRoute
 } from './';
 
 import { UserRouteAccessService } from '../shared';
@@ -20,7 +21,8 @@ let ADMIN_ROUTES = [
     healthRoute,
     logsRoute,
     ...userMgmtRoute,
-    metricsRoute
+    metricsRoute,
+    rebuildIndexesRoute
 ];
 
 

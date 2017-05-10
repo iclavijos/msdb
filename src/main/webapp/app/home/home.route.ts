@@ -1,14 +1,46 @@
-import { Route } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Route, Routes, CanActivate } from '@angular/router';
 
 import { UserRouteAccessService } from '../shared';
-import { HomeComponent } from './';
+import { PaginationUtil } from 'ng-jhipster';
 
-export const HOME_ROUTE: Route = {
-  path: '',
-  component: HomeComponent,
-  data: {
-    authorities: [],
-    pageTitle: 'home.title'
-  },
-  canActivate: [UserRouteAccessService]
-};
+import { HomeComponent } from './home.component';
+import { HomeEntriesComponent } from './home-entries.component';
+
+@Injectable()
+export class HomeEntriesPagingParams implements Resolve<any> {
+
+  constructor(private paginationUtil: PaginationUtil) {}
+
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+      let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
+      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
+      return {
+          page: this.paginationUtil.parsePage(page),
+          predicate: this.paginationUtil.parsePredicate(sort),
+          ascending: this.paginationUtil.parseAscending(sort)
+    };
+  }
+}
+
+export const HOME_ROUTE: Routes = [
+    {
+        path: '',
+        component: HomeComponent,
+        data: {
+            authorities: [],
+            pageTitle: 'home.title'
+        }
+    },
+    {
+        path: 'homeEntries',
+        component: HomeEntriesComponent,
+        resolve: {
+            'pagingParams': HomeEntriesPagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER', 'ROLE_EDITOR', 'ROLE_ADMIN'],
+            pageTitle: 'home.entriesResult'
+        }
+    }
+];

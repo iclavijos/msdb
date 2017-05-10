@@ -17,6 +17,10 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Store;
 
 /**
  * A RacetrackLayout.
@@ -24,7 +28,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "racetrack_layout")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-//@Document(indexName = "racetracklayout")
+@Indexed
 public class RacetrackLayout extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -36,6 +40,7 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
     @NotNull
     @Size(max = 100)
     @Column(name = "name", length = 100, nullable = false)
+    @Field(store = Store.NO)
     private String name;
 
     @NotNull
@@ -56,6 +61,7 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
     private Boolean active;
 
     @ManyToOne
+    @IndexedEmbedded
     private Racetrack racetrack;
 
     public Long getId() {

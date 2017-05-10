@@ -5,15 +5,19 @@
         "logged": {
             "message": "T'has connectat amb l'usuari \"{{username}}\"."
         },
-        "question": "Si tens qualsevol pregunta sobre JHipster:",
         "link": {
-            "homepage": "Pàgina principal de JHipster",
-            "stackoverflow": "JHipster a Stack Overflow",
-            "bugtracker": "JHipster seguiment d'incidencies",
-            "chat": "JHipster public chat room",
             "follow": "Segueixi a @iclavijos a Twitter"
         },
-        "like": "Si t'agrada JHipster, no oblidis donar-nos una estrella",
-        "github": "GitHub"
+        "searchEntries": "Cercar participacions:",
+        "searchEvents": "Cercar cites:",
+        "entriesResult": "Participacions trobades",
+        "drivers": "Pilots",
+        "entryName": "Participant",
+        "eventName": "Cita",
+        "car": "Xassis/Motor",
+        "fastestLap": "Volta ràpida",
+        "qualyLap": "V ràpida Q",
+        "raceLap": "V ràpida Cursa",
+        "racePosition": "Pos. Cursa"
     }
 }

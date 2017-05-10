@@ -57,7 +57,7 @@ export class EventEntryDeletePopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe(params => {
             this.modalRef = this.eventEntryPopupService
-                .open(EventEntryDeleteDialogComponent, params['id']);
+                .open(EventEntryDeleteDialogComponent, null, params['id']);
         });
     }
 

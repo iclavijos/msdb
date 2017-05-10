@@ -3,6 +3,8 @@ package com.icesoft.msdb.web.rest;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -13,9 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +31,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.Engine;
+import com.icesoft.msdb.domain.EventEditionEntry;
+import com.icesoft.msdb.domain.EventEntryResult;
+import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.Imports;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
@@ -38,12 +41,16 @@ import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.domain.serializer.ParseDeserializer;
 import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.EngineRepository;
+import com.icesoft.msdb.repository.EventEntryRepository;
+import com.icesoft.msdb.repository.EventEntryResultRepository;
+import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.RacetrackRepository;
 import com.icesoft.msdb.repository.TeamRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.dto.EnginesImportDTO;
 import com.icesoft.msdb.service.dto.RacetrackWithLayoutsImportDTO;
+import com.icesoft.msdb.service.dto.SessionResultDTO;
 
 /**
  * REST controller for managing CSV imports
@@ -59,6 +66,9 @@ public class ImportsResource {
     @Autowired private RacetrackLayoutRepository racetrackLayoutRepository;
     @Autowired private TeamRepository teamRepository;
     @Autowired private EngineRepository engineRepository;
+    @Autowired private EventEntryRepository entryRepository;
+    @Autowired private EventSessionRepository sessionRepository;
+    @Autowired private EventEntryResultRepository resultRepository;
 
     @PostMapping("/imports")
     @Timed
@@ -73,6 +83,7 @@ public class ImportsResource {
         	case RACETRACKS: importRacetracks(data); break;
         	case TEAMS: importTeams(data); break;
         	case ENGINES: importEngines(data); break;
+        	case SESSION_RESULTS: importResults(imports.getAssociatedId(), data); break;
         	default: log.warn("The uploaded file does not correspond to any known entity");
         }
         
@@ -182,6 +193,83 @@ public class ImportsResource {
         		log.warn("Engine {} already exist in the database. Skipping...", engine);
         	}
         }
+    }
+    
+    private void importResults(Long sessionId, String data) {
+    	EventSession session = sessionRepository.findOne(sessionId);
+    	MappingIterator<SessionResultDTO> readValues = initializeIterator(SessionResultDTO.class, data);
+        while (readValues.hasNext()) {
+        	SessionResultDTO tmp = readValues.next();
+        	EventEntryResult result = new EventEntryResult();
+        	result.setSession(session);
+        	List<EventEditionEntry> entries = entryRepository.findByEventEditionIdAndRaceNumber(session.getEventEdition().getId(), tmp.getRaceNumber());
+        	if (entries == null || entries.isEmpty()) {
+        		log.warn("No entry found with race number {}. Skipping...", tmp.getRaceNumber());
+        	} else if (entries.size() > 1) {
+        		log.warn("Found more than one entry with race number {}. Skipping...", tmp.getRaceNumber());
+        	} else {
+        		result.setEntry(entries.get(0));
+        	}
+        	try {
+        		result.setFinalPosition(Integer.parseInt(tmp.getFinalPosition()));
+        	} catch (NumberFormatException e) {
+        		String pos = tmp.getFinalPosition();
+        		if (pos.equals("DNF")) {
+        			result.setFinalPosition(900);
+        		} else if (pos.equals("DNS")) {
+        			result.setFinalPosition(901);
+        		} else if (pos.equals("DQ")) {
+        			result.setFinalPosition(902);
+        		} else {
+        			log.warn("Informed final position ({}) not recognized for entry number {}. Skipping...",
+        					tmp.getFinalPosition(),
+        					tmp.getRaceNumber());
+        		}
+        	}
+        	result.setBestLapTime(timeToMillis(tmp.getBestLapTime()));
+        	result.setLapsCompleted(tmp.getLapsCompleted());
+        	result.setTotalTime(timeToMillis(tmp.getTotalTime()));
+        	result.setRetired(tmp.getRetired());
+        	result.setCause(tmp.getCause());
+        	if (StringUtils.isNotBlank(tmp.getDifference())) {
+	        	try {
+	        		float difference = Float.parseFloat(tmp.getDifference());
+	        		result.setDifference((long)(difference * 10000));
+	        		result.setDifferenceType(1);
+	        	} catch (NumberFormatException e) {
+	        		Pattern p = Pattern.compile("\\d+");
+	        		Matcher m = p.matcher(tmp.getDifference());
+	        		m.find();
+	        		result.setDifference(new Long(Integer.parseInt(m.group())));
+	        		result.setDifferenceType(2);
+	        	}
+        	}
+        	resultRepository.save(result);
+        }
+    }
+    
+    private Long timeToMillis(String time) {
+    	if (StringUtils.isEmpty(time)) {
+    		return null;
+    	}
+    	Pattern p = Pattern.compile("(\\d+)?h?([0-5]?\\d)'([0-5]?\\d)(\\.(\\d+))?");
+    	Matcher m = p.matcher(time);
+    	long total = 0;
+    	if (m.matches()) {
+    		String hoursStr = m.group(1);
+    		int hours = 0;
+    		if (hoursStr != null) {
+    			hours = Integer.parseInt(hoursStr);
+    		}
+    		int minutes = Integer.parseInt(m.group(2));
+    		int seconds = Integer.parseInt(m.group(3));
+    		int millis = Integer.parseInt(StringUtils.rightPad(m.group(5), 4, '0'));
+    		total = (long)(hours * 3600 + minutes * 60 + seconds) * 10000 + millis;
+    	} else {
+    		log.warn("The provided time {} is not valid. Ignoring it", time);
+    		return null;
+    	}
+    	return new Long(total);
     }
 
 }

@@ -46,6 +46,7 @@
                 "audits": "Audits",
                 "apidocs": "API",
                 "database": "Database",
+                "rebuildIndexes": "Rebuild search indexes",
                 "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
             },
             "imports" : {

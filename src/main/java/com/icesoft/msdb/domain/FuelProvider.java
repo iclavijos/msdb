@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.search.annotations.Field;
 
 /**
  * A FuelProvider.
@@ -33,6 +34,7 @@ public class FuelProvider extends AbstractAuditingEntity implements Serializable
     @NotNull
     @Size(max = 50)
     @Column(name = "name", length = 50, nullable = false)
+    @Field
     private String name;
 
     @Transient

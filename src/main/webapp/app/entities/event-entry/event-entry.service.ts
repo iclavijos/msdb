@@ -44,7 +44,7 @@ export class EventEntryService {
     }
 
     delete(id: number): Observable<Response> {
-        return this.http.delete(`${this.resourceUrl}/${id}`);
+        return this.http.delete(`api/event-editions/entries/${id}`);
     }
 
     search(req?: any): Observable<Response> {
