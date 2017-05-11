@@ -12,7 +12,6 @@ import com.icesoft.msdb.domain.EventEdition;
 /**
  * Spring Data JPA repository for the EventEdition entity.
  */
-@SuppressWarnings("unused")
 public interface EventEditionRepository extends JpaRepository<EventEdition,Long> {
 
 	@Query("select e from EventEdition e where e.editionYear like lower(concat('%', ?1,'%')) or "

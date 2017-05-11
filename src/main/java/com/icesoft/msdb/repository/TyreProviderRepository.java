@@ -1,12 +1,11 @@
 package com.icesoft.msdb.repository;
 
-import com.icesoft.msdb.domain.TyreProvider;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
+import com.icesoft.msdb.domain.TyreProvider;
 
 /**
  * Spring Data JPA repository for the TyreProvider entity.

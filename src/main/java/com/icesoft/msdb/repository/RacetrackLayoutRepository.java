@@ -12,7 +12,6 @@ import com.icesoft.msdb.domain.RacetrackLayout;
 /**
  * Spring Data JPA repository for the RacetrackLayout entity.
  */
-@SuppressWarnings("unused")
 public interface RacetrackLayoutRepository extends JpaRepository<RacetrackLayout,Long> {
 	
 	@Query("select r from RacetrackLayout r where "

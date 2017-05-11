@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * Spring Data JPA repository for the EventSession entity.
  */
-@SuppressWarnings("unused")
 public interface EventSessionRepository extends JpaRepository<EventSession,Long> {
 
 	List<EventSession> findByEventEditionIdOrderBySessionStartTimeAsc(Long eventEditionId);
