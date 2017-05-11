@@ -89,7 +89,6 @@ task testReport(type: TestReport) {
 }
 
 apply from: 'gradle/sonar.gradle'
-apply from: 'gradle/liquibase.gradle'
 apply from: 'gradle/mapstruct.gradle'
 apply from: 'gradle/docker.gradle'
 //jhipster-needle-gradle-apply-from - JHipster will add additional gradle scripts to be applied here
@@ -164,10 +163,7 @@ dependencies {
     compile "org.hibernate:hibernate-envers"
     compile "org.hibernate:hibernate-validator"
     compile "org.hibernate:hibernate-search-orm:5.7.0.Final"
-    compile ("org.liquibase:liquibase-core") {
-        exclude(module: 'jetty-servlet')
-    }
-    compile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
+    compile "org.flywaydb:flyway-core:4.2.0"
     compile "org.springframework.boot:spring-boot-actuator"
     compile "org.springframework.boot:spring-boot-autoconfigure"
     compile "org.springframework.boot:spring-boot-loader-tools"
@@ -216,7 +212,6 @@ dependencies {
     testCompile "org.assertj:assertj-core:${assertj_version}"
     testCompile "junit:junit"
     testCompile "org.mockito:mockito-core"
-    testCompile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
     testCompile "org.hamcrest:hamcrest-library"
     optional "org.springframework.boot:spring-boot-configuration-processor:${spring_boot_version}"
     //jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
