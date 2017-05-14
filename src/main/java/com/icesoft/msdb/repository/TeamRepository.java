@@ -12,6 +12,6 @@ import com.icesoft.msdb.domain.Team;
  */
 public interface TeamRepository extends JpaRepository<Team,Long> {
 
-    @Query("select t from Team t where t.name like lower(concat('%', ?1,'%')) or t.hqLocation like lower(concat('%', ?1,'%'))")
+    @Query("select t from Team t where t.name like lower(concat('%', ?1,'%'))")
     List<Team> search(String searchValue);
 }
