@@ -232,17 +232,17 @@ public class ImportsResource {
         	result.setRetired(tmp.getRetired());
         	result.setCause(tmp.getCause());
         	if (StringUtils.isNotBlank(tmp.getDifference())) {
-	        	try {
-	        		float difference = Float.parseFloat(tmp.getDifference());
-	        		result.setDifference((long)(difference * 10000));
+        		Long difference = timeToMillis(tmp.getDifference()); 
+        		if (difference != null) {
+        			result.setDifference(difference);
 	        		result.setDifferenceType(1);
-	        	} catch (NumberFormatException e) {
-	        		Pattern p = Pattern.compile("\\d+");
+        		} else {
+        			Pattern p = Pattern.compile("\\d+");
 	        		Matcher m = p.matcher(tmp.getDifference());
 	        		m.find();
 	        		result.setDifference(new Long(Integer.parseInt(m.group())));
 	        		result.setDifferenceType(2);
-	        	}
+        		}
         	}
         	resultRepository.save(result);
         }
@@ -252,18 +252,23 @@ public class ImportsResource {
     	if (StringUtils.isEmpty(time)) {
     		return null;
     	}
-    	Pattern p = Pattern.compile("(\\d+)?h?([0-5]?\\d)('|:)([0-5]?\\d)(\\.(\\d+))?");
+    	Pattern p = Pattern.compile("(\\d+h)?(([0-5]?\\d)('|:|m))?([0-5]?\\d)(\\.(\\d+))?");
     	Matcher m = p.matcher(time);
     	long total = 0;
     	if (m.matches()) {
     		String hoursStr = m.group(1);
     		int hours = 0;
     		if (hoursStr != null) {
-    			hours = Integer.parseInt(hoursStr);
+    			hours = Integer.parseInt(hoursStr.substring(0, hoursStr.length() - 1));
     		}
-    		int minutes = Integer.parseInt(m.group(2));
-    		int seconds = Integer.parseInt(m.group(4));
-    		int millis = Integer.parseInt(StringUtils.rightPad(m.group(6), 4, '0'));
+    		int minutes;
+    		if (m.group(3) != null) {
+    			minutes = Integer.parseInt(m.group(3));
+    		} else {
+    			minutes = 0;
+    		}
+    		int seconds = Integer.parseInt(m.group(5));
+    		int millis = Integer.parseInt(StringUtils.rightPad(m.group(7), 4, '0'));
     		total = (long)(hours * 3600 + minutes * 60 + seconds) * 10000 + millis;
     	} else {
     		log.warn("The provided time {} is not valid. Ignoring it", time);
