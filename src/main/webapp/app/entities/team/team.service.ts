@@ -7,7 +7,7 @@ import { Team } from './team.model';
 export class TeamService {
 
     private resourceUrl = 'api/teams';
-    private resourceSearchUrl = 'api/_search/teams';
+    private resourceSearchUrl = 'api/_typeahead/teams';
 
     constructor(private http: Http) { }
 
