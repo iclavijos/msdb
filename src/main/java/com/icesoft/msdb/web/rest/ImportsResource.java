@@ -202,6 +202,7 @@ public class ImportsResource {
         	SessionResultDTO tmp = readValues.next();
         	EventEntryResult result = new EventEntryResult();
         	result.setSession(session);
+        	boolean ignore = false;
         	List<EventEditionEntry> entries = entryRepository.findByEventEditionIdAndRaceNumber(session.getEventEdition().getId(), tmp.getRaceNumber());
         	if (entries == null || entries.isEmpty()) {
         		log.warn("No entry found with race number {}. Skipping...", tmp.getRaceNumber());
@@ -209,42 +210,46 @@ public class ImportsResource {
         		log.warn("Found more than one entry with race number {}. Skipping...", tmp.getRaceNumber());
         	} else {
         		result.setEntry(entries.get(0));
+        	
+	        	try {
+	        		result.setFinalPosition(Integer.parseInt(tmp.getFinalPosition()));
+	        	} catch (NumberFormatException e) {
+	        		String pos = tmp.getFinalPosition();
+	        		if (pos.equals("DNF")) {
+	        			result.setFinalPosition(900);
+	        		} else if (pos.equals("DNS")) {
+	        			result.setFinalPosition(901);
+	        		} else if (pos.equals("DQ")) {
+	        			result.setFinalPosition(902);
+	        		} else {
+	        			log.warn("Informed final position ({}) not recognized for entry number {}. Skipping...",
+	        					tmp.getFinalPosition(),
+	        					tmp.getRaceNumber());
+	        			ignore = true;
+	        		}
+	        	}
+	        	if (!ignore) {
+		        	result.setBestLapTime(timeToMillis(tmp.getBestLapTime()));
+		        	result.setLapsCompleted(tmp.getLapsCompleted());
+		        	result.setTotalTime(timeToMillis(tmp.getTotalTime()));
+		        	result.setRetired(tmp.getRetired());
+		        	result.setCause(tmp.getCause());
+		        	if (StringUtils.isNotBlank(tmp.getDifference())) {
+		        		Long difference = timeToMillis(tmp.getDifference()); 
+		        		if (difference != null) {
+		        			result.setDifference(difference);
+			        		result.setDifferenceType(1);
+		        		} else {
+		        			Pattern p = Pattern.compile("\\d+");
+			        		Matcher m = p.matcher(tmp.getDifference());
+			        		m.find();
+			        		result.setDifference(new Long(Integer.parseInt(m.group())));
+			        		result.setDifferenceType(2);
+		        		}
+		        	}
+		        	resultRepository.save(result);
+	        	}
         	}
-        	try {
-        		result.setFinalPosition(Integer.parseInt(tmp.getFinalPosition()));
-        	} catch (NumberFormatException e) {
-        		String pos = tmp.getFinalPosition();
-        		if (pos.equals("DNF")) {
-        			result.setFinalPosition(900);
-        		} else if (pos.equals("DNS")) {
-        			result.setFinalPosition(901);
-        		} else if (pos.equals("DQ")) {
-        			result.setFinalPosition(902);
-        		} else {
-        			log.warn("Informed final position ({}) not recognized for entry number {}. Skipping...",
-        					tmp.getFinalPosition(),
-        					tmp.getRaceNumber());
-        		}
-        	}
-        	result.setBestLapTime(timeToMillis(tmp.getBestLapTime()));
-        	result.setLapsCompleted(tmp.getLapsCompleted());
-        	result.setTotalTime(timeToMillis(tmp.getTotalTime()));
-        	result.setRetired(tmp.getRetired());
-        	result.setCause(tmp.getCause());
-        	if (StringUtils.isNotBlank(tmp.getDifference())) {
-        		Long difference = timeToMillis(tmp.getDifference()); 
-        		if (difference != null) {
-        			result.setDifference(difference);
-	        		result.setDifferenceType(1);
-        		} else {
-        			Pattern p = Pattern.compile("\\d+");
-	        		Matcher m = p.matcher(tmp.getDifference());
-	        		m.find();
-	        		result.setDifference(new Long(Integer.parseInt(m.group())));
-	        		result.setDifferenceType(2);
-        		}
-        	}
-        	resultRepository.save(result);
         }
     }
     
@@ -252,7 +257,7 @@ public class ImportsResource {
     	if (StringUtils.isEmpty(time)) {
     		return null;
     	}
-    	Pattern p = Pattern.compile("(\\d+h)?(([0-5]?\\d)('|:|m))?([0-5]?\\d)(\\.(\\d+))?");
+    	Pattern p = Pattern.compile("(\\d+h)?(([0-5]?\\d)('|:|m))?([0-5]?\\d)(\\.(\\d+))?s?");
     	Matcher m = p.matcher(time);
     	long total = 0;
     	if (m.matches()) {
