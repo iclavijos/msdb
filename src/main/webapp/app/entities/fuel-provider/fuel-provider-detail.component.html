@@ -1,13 +1,9 @@
 
 <div *ngIf="fuelProvider">
-    <h2><span jhiTranslate="motorsportsDatabaseApp.fuelProvider.detail.title">Fuel Provider</span> {{fuelProvider.id}}</h2>
+    <h2>{{fuelProvider.name}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
     <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="motorsportsDatabaseApp.fuelProvider.name">Name</span></dt>
-        <dd>
-            <span>{{fuelProvider.name}}</span>
-        </dd>
         <dt><span jhiTranslate="motorsportsDatabaseApp.fuelProvider.logo">Logo</span></dt>
         <dd>
             <div *ngIf="fuelProvider.logoUrl">
