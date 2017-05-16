@@ -23,6 +23,7 @@ export class EventEntry {
         public category?: Category,
         public eventEdition?: EventEdition,
         public driversName?: string,
+        public rookie?: boolean,
     ) { 
     }
     

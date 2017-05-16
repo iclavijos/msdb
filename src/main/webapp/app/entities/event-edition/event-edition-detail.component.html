@@ -175,6 +175,7 @@
 		            	<td>
 		                    <div *ngIf="!eventEntry.eventEdition.multidriver">
 		                        <a [routerLink]="['/driver', eventEntry.drivers[0].id ]" >{{eventEntry.drivers[0].fullName}}</a>
+		                        <span *ngIf="eventEntry.rookie"> (R)</span>
 		                    </div>
 		                    <div *ngIf="eventEntry.eventEdition.multidriver">
 		                    	<div *ngFor="let driver of eventEntry.drivers">

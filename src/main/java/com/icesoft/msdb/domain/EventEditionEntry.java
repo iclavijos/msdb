@@ -37,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Indexed
 public class EventEditionEntry extends AbstractAuditingEntity implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,6 +61,9 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
         inverseJoinColumns=@JoinColumn(name="driver_id", referencedColumnName="ID"))
     @IndexedEmbedded
     private List<Driver> drivers;
+    
+    @Column(name = "rookie")
+    private Boolean rookie = false;
     
     @ManyToOne(optional = false)
     @IndexedEmbedded
@@ -127,6 +130,14 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
     public void setEntryName(String entryName) {
         this.entryName = entryName;
     }
+    
+    public Boolean getRookie() {
+		return rookie;
+	}
+
+	public void setRookie(Boolean rookie) {
+		this.rookie = rookie;
+	}
 
     public List<Driver> getDrivers() {
         return drivers;

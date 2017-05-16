@@ -17,7 +17,8 @@
         <dt><span jhiTranslate="motorsportsDatabaseApp.eventEntry.driver">Driver</span></dt>
         <dd>
             <div *ngIf="eventEntry.driver">
-                <a [routerLink]="['/driver', eventEntry.driver?.id]">{{eventEntry.driver?.id}}</a>
+                <a [routerLink]="['/driver', eventEntry.driver?.id]">{{eventEntry.driver?.id}}</a>&nbsp;
+                <span *ngIf="eventEntry.rookie" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.rookie"></span>
             </div>
         </dd>
     </dl>

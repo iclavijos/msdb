@@ -26,15 +26,23 @@
 	        </div>
 	        <div *ngIf="!eventEntry.eventEdition.multidriver" class="col-lg-9 col-md-9">
 		        <div class="form-group">
-		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.driver" for="field_driver">Driver</label>
-		            <ng2-completer id="field_driver" name="driver" [(ngModel)]="driverSearch" [datasource]="dataServiceDriver" [minSearchLength]="2" 
-            			(selected)="onDriverSelected($event)" [inputClass]="form-control" [pause]="300" required></ng2-completer>
-		            <div [hidden]="!(editForm.controls.driver?.dirty && editForm.controls.driver?.invalid)">
-		                <small class="form-text text-danger"
-		                   [hidden]="!editForm.controls.driver?.errors?.required" jhiTranslate="entity.validation.required">
-		                   This field is required.
-		                </small>
-		            </div>
+		        	<div class="row">
+						<div class="col-lg-8 col-md-8">
+				            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.driver" for="field_driver">Driver</label>
+				            <ng2-completer id="field_driver" name="driver" [(ngModel)]="driverSearch" [datasource]="dataServiceDriver" [minSearchLength]="2" 
+		            			(selected)="onDriverSelected($event)" [inputClass]="form-control" [pause]="300" required></ng2-completer>
+				            <div [hidden]="!(editForm.controls.driver?.dirty && editForm.controls.driver?.invalid)">
+				                <small class="form-text text-danger"
+				                   [hidden]="!editForm.controls.driver?.errors?.required" jhiTranslate="entity.validation.required">
+				                   This field is required.
+				                </small>
+				            </div>
+				        </div>
+				        <div class="col-lg-4 col-md-4">
+				        	<label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.rookie" for="field_rookie">Rookie</label>
+				        	<i [ngClass]="eventEntry.rookie ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="eventEntry.rookie = !eventEntry.rookie"></i>
+				        </div>
+				    </div>
 		        </div>
 	        </div>
 	        <div *ngIf="eventEntry.eventEdition.multidriver" class="col-lg-9 col-md-9">

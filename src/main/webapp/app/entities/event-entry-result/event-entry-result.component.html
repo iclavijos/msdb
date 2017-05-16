@@ -19,7 +19,9 @@
             <tbody>
             <tr *ngFor="let eventEntryResult of eventEntryResults ;trackBy: trackId">
                 <td>{{eventEntryResult.finalPosition >= 900 ? '-' : eventEntryResult.finalPosition }}</td>
-                <td>#{{eventEntryResult.entry.raceNumber}} {{eventEntryResult.session.eventEdition.multidriver ? eventEntryResult.entry.driversName : eventEntryResult.entry.drivers[0].fullName}}</td>
+                <td>#{{eventEntryResult.entry.raceNumber}} {{eventEntryResult.session.eventEdition.multidriver ? eventEntryResult.entry.driversName : eventEntryResult.entry.drivers[0].fullName}}
+                 <span *ngIf="eventEntryResult.entry.rookie"> (R)</span>
+                </td>
                 <td>{{eventEntryResult.entry.entryName}}</td>
                 <td *ngIf="session.sessionType === 'RACE'">
                 	{{eventEntryResult.finalPosition > 1 && eventEntryResult.finalPosition < 900 && !eventEntryResult.retired ?
