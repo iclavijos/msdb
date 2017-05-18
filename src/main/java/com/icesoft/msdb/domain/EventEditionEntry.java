@@ -27,6 +27,8 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.icesoft.msdb.web.rest.view.MSDBView;
 
 /**
  * A EventEntry.
@@ -43,16 +45,19 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @JsonView(MSDBView.SessionResultsView.class)
     @NotNull
     @Column(name = "race_number", nullable = false)
     private String raceNumber;
 
+    @JsonView(MSDBView.SessionResultsView.class)
     @NotNull
     @Size(max = 100)
     @Column(name = "team_name", length = 100, nullable = false)
     @Field
     private String entryName;
 
+    @JsonView(MSDBView.SessionResultsView.class)
     @ManyToMany(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @JoinTable(
@@ -62,6 +67,7 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
     @IndexedEmbedded
     private List<Driver> drivers;
     
+    @JsonView(MSDBView.SessionResultsView.class)
     @Column(name = "rookie")
     private Boolean rookie = false;
     
@@ -271,6 +277,7 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
 	}
 	
 	@JsonProperty("driversName")
+	@JsonView(MSDBView.SessionResultsView.class)
 	public String getDriversName() {
 		StringBuilder builder = new StringBuilder();
 		int i = 0;

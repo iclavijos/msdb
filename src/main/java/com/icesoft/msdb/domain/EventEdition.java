@@ -29,6 +29,10 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.TermVector;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.icesoft.msdb.web.rest.view.MSDBView;
 
 /**
  * A EventEdition.
@@ -53,7 +57,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     @NotNull
     @Size(max = 40)
     @Column(name = "short_event_name", length = 40, nullable = false)
-    @Field(store = Store.NO)
+    @Field(termVector = TermVector.NO, store = Store.YES)
     private String shortEventName;
 
     @NotNull
@@ -67,6 +71,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     private LocalDate eventDate;
     
     @Column(name = "multidriver")
+    @JsonView(MSDBView.SessionResultsView.class)
     private Boolean multidriver = false;
     
     @Transient

@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventEditionEntry;
@@ -42,6 +43,7 @@ import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
+import com.icesoft.msdb.web.rest.view.MSDBView;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
@@ -335,6 +337,7 @@ public class EventEditionResource {
     
     @GetMapping("/event-editions/{id}/event-sessions/{idSession}/results")
     @Timed
+    @JsonView(MSDBView.SessionResultsView.class)
     public List<EventEntryResult> getEventSessionResults(@PathVariable Long id, @PathVariable Long idSession) {
     	log.debug("REST request to get EventEdition {} results for session {}", id, idSession);
     	return eventResultRepository.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAsc(idSession, id);

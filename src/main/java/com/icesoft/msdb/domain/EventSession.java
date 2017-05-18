@@ -19,7 +19,9 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.icesoft.msdb.domain.enums.SessionType;
+import com.icesoft.msdb.web.rest.view.MSDBView;
 
 /**
  * A EventSession.
@@ -66,6 +68,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @Column(name= "awards_points")
     private Boolean awardsPoints;
     
+    @JsonView(MSDBView.SessionResultsView.class)
     @ManyToOne
     private EventEdition eventEdition;
 
