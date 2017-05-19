@@ -257,7 +257,7 @@ public class ImportsResource {
     	if (StringUtils.isEmpty(time)) {
     		return null;
     	}
-    	Pattern p = Pattern.compile("(\\d+h)?(([0-5]?\\d)('|:|m))?([0-5]?\\d)(\\.(\\d+))?s?");
+    	Pattern p = Pattern.compile("(\\d+h)?(([0-5]?\\d)('|:|m))?([0-5]?\\d)((\\.|,)(\\d+))?s?");
     	Matcher m = p.matcher(time);
     	long total = 0;
     	if (m.matches()) {
@@ -273,7 +273,7 @@ public class ImportsResource {
     			minutes = 0;
     		}
     		int seconds = Integer.parseInt(m.group(5));
-    		int millis = Integer.parseInt(StringUtils.rightPad(m.group(7), 4, '0'));
+    		int millis = Integer.parseInt(StringUtils.rightPad(m.group(8), 4, '0'));
     		total = (long)(hours * 3600 + minutes * 60 + seconds) * 10000 + millis;
     	} else {
     		log.warn("The provided time {} is not valid. Ignoring it", time);
