@@ -30,6 +30,7 @@ public class EventEntryResult implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(MSDBView.SessionResultsView.class)
     private Long id;
 
     @JsonView(MSDBView.SessionResultsView.class)
