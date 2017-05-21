@@ -1,6 +1,8 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { Ng2CompleterModule } from 'ng2-completer';
+
 import { MotorsportsDatabaseSharedModule } from '../../shared';
 
 import {
@@ -12,6 +14,8 @@ import {
     SeriesEditionPopupComponent,
     SeriesEditionDeletePopupComponent,
     SeriesEditionDeleteDialogComponent,
+    SeriesEditionCalendarPopupComponent,
+    SeriesEditionCalendarDialogComponent,
     seriesEditionRoute,
     seriesEditionPopupRoute,
     SeriesEditionResolvePagingParams,
@@ -24,8 +28,12 @@ let ENTITY_STATES = [
 
 @NgModule({
     imports: [
+        Ng2CompleterModule,
         MotorsportsDatabaseSharedModule,
         RouterModule.forRoot(ENTITY_STATES, { useHash: true })
+    ],
+    exports: [
+        SeriesEditionComponent
     ],
     declarations: [
         SeriesEditionComponent,
@@ -34,6 +42,8 @@ let ENTITY_STATES = [
         SeriesEditionDeleteDialogComponent,
         SeriesEditionPopupComponent,
         SeriesEditionDeletePopupComponent,
+        SeriesEditionCalendarPopupComponent,
+        SeriesEditionCalendarDialogComponent,
     ],
     entryComponents: [
         SeriesEditionComponent,
@@ -41,6 +51,8 @@ let ENTITY_STATES = [
         SeriesEditionPopupComponent,
         SeriesEditionDeleteDialogComponent,
         SeriesEditionDeletePopupComponent,
+        SeriesEditionCalendarPopupComponent,
+        SeriesEditionCalendarDialogComponent,
     ],
     providers: [
         SeriesEditionService,

@@ -69,6 +69,11 @@ public class SearchServiceImpl implements SearchService {
 		return searchRepository.searchEventEditions(searchTems, pageable);
 	}
 	
+	@Override
+	public List<EventEdition> searchRelated(Long eventEditionId) {
+		return searchRepository.searchRelated(eventEditionId);
+	}
+	
 	private EventEntrySearchResultDTO createDTO(EventEditionEntry entry) {
 		long poleTime;
 		Integer polePosition;
@@ -98,7 +103,11 @@ public class SearchServiceImpl implements SearchService {
 				raceFastLap = 0;
 				retirement = result.getCause();
 			} else {
-				raceFastLap = result.getBestLapTime();
+				if (result.getBestLapTime() != null) {
+					raceFastLap = result.getBestLapTime();
+				} else {
+					raceFastLap = 0;
+				}
 			}
 			racePosition = result.getFinalPosition();
 		} else {

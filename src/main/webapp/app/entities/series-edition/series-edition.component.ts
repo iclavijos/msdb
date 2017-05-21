@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Response } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { EventManager, ParseLinks, PaginationUtil, JhiLanguageService, AlertService } from 'ng-jhipster';
 
+import { Series } from '../series/';
 import { SeriesEdition } from './series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
 import { ITEMS_PER_PAGE, Principal } from '../../shared';
@@ -15,7 +16,8 @@ import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
 })
 export class SeriesEditionComponent implements OnInit, OnDestroy {
 
-currentAccount: any;
+    @Input() series: Series;
+    currentAccount: any;
     seriesEditions: SeriesEdition[];
     error: any;
     success: any;
@@ -51,21 +53,11 @@ currentAccount: any;
             this.predicate = data['pagingParams'].predicate;
         });
         this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
-        this.jhiLanguageService.setLocations(['seriesEdition']);
+        //this.jhiLanguageService.setLocations(['seriesEdition']);
     }
 
-    loadAll() {
-        if (this.currentSearch) {
-            this.seriesEditionService.search({
-                query: this.currentSearch,
-                size: this.itemsPerPage,
-                sort: this.sort()}).subscribe(
-                    (res: Response) => this.onSuccess(res.json(), res.headers),
-                    (res: Response) => this.onError(res.json())
-                );
-            return;
-        }
-        this.seriesEditionService.query({
+    loadAll(seriesId: number) {
+        this.seriesEditionService.query(seriesId, {
             page: this.page - 1,
             size: this.itemsPerPage,
             sort: this.sort()}).subscribe(
@@ -88,7 +80,7 @@ currentAccount: any;
                 sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
             }
         });
-        this.loadAll();
+        this.loadAll(this.series.id);
     }
 
     clear() {
@@ -98,7 +90,7 @@ currentAccount: any;
             page: this.page,
             sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
         }]);
-        this.loadAll();
+        this.loadAll(this.series.id);
     }
     search (query) {
         if (!query) {
@@ -111,10 +103,10 @@ currentAccount: any;
             page: this.page,
             sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
         }]);
-        this.loadAll();
+        this.loadAll(this.series.id);
     }
     ngOnInit() {
-        this.loadAll();
+        this.loadAll(this.series.id);
         this.principal.identity().then((account) => {
             this.currentAccount = account;
         });
@@ -132,7 +124,7 @@ currentAccount: any;
 
 
     registerChangeInSeriesEditions() {
-        this.eventSubscriber = this.eventManager.subscribe('seriesEditionListModification', (response) => this.loadAll());
+        this.eventSubscriber = this.eventManager.subscribe('seriesEditionListModification', (response) => this.loadAll(this.series.id));
     }
 
     sort () {

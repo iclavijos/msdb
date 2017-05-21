@@ -54,6 +54,12 @@ export class EventEditionService {
             return this.transformDateTime(res);
         });
     }
+    
+    findScoringRaces(id: number): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${id}/scoring-races`).map((res: Response) => {
+            return this.transformDateTime(res);
+        });
+    }
 
     query(req?: any): Observable<Response> {
         let options = this.createRequestOption(req);

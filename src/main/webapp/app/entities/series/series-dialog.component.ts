@@ -8,7 +8,7 @@ import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jh
 import { Series } from './series.model';
 import { SeriesPopupService } from './series-popup.service';
 import { SeriesService } from './series.service';
-import { SeriesEdition, SeriesEditionService } from '../series-edition';
+
 @Component({
     selector: 'jhi-series-dialog',
     templateUrl: './series-dialog.component.html'
@@ -25,7 +25,6 @@ export class SeriesDialogComponent implements OnInit {
         private dataUtils: DataUtils,
         private alertService: AlertService,
         private seriesService: SeriesService,
-        private seriesEditionService: SeriesEditionService,
         private eventManager: EventManager
     ) {
         this.jhiLanguageService.setLocations(['series']);
@@ -34,9 +33,8 @@ export class SeriesDialogComponent implements OnInit {
     ngOnInit() {
         this.isSaving = false;
         this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
-//        this.seriesEditionService.query().subscribe(
-//            (res: Response) => { this.serieseditions = res.json(); }, (res: Response) => this.onError(res.json()));
     }
+    
     byteSize(field) {
         return this.dataUtils.byteSize(field);
     }
@@ -85,10 +83,6 @@ export class SeriesDialogComponent implements OnInit {
 
     private onError (error) {
         this.alertService.error(error.message, null, null);
-    }
-
-    trackSeriesEditionById(index: number, item: SeriesEdition) {
-        return item.id;
     }
 }
 

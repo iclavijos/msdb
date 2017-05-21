@@ -71,6 +71,9 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @JsonView(MSDBView.SessionResultsView.class)
     @ManyToOne
     private EventEdition eventEdition;
+    
+    @ManyToOne
+    private PointsSystem pointsSystem;
 
     public Long getId() {
         return id;
@@ -196,6 +199,14 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     public EventEdition getEventEdition() {
     	return eventEdition;
     }
+
+	public PointsSystem getPointsSystem() {
+		return pointsSystem;
+	}
+
+	public void setPointsSystem(PointsSystem pointsSystem) {
+		this.pointsSystem = pointsSystem;
+	}
 
 	@Override
     public boolean equals(Object o) {

@@ -3,6 +3,7 @@ package com.icesoft.msdb.service.dto;
 public class SessionResultDTO {
 
 	private String raceNumber;
+	private Integer startingPosition;
 	private String finalPosition;
     private String totalTime;
     private String bestLapTime;
@@ -16,6 +17,12 @@ public class SessionResultDTO {
 	}
 	public void setRaceNumber(String raceNumber) {
 		this.raceNumber = raceNumber;
+	}
+	public Integer getStartingPosition() {
+		return startingPosition;
+	}
+	public void setStartingPosition(Integer startingPosition) {
+		this.startingPosition = startingPosition;
 	}
 	public String getFinalPosition() {
 		return finalPosition;

@@ -56,7 +56,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.logo" for="field_logo">Logo</label>
             <div>
-                <img [src]="series.logoUrl" style="max-height: 100px;" *ngIf="!series.logo && series.logoUrla" alt="series logo"/>
+                <img [src]="series.logoUrl" style="max-height: 100px;" *ngIf="!series.logo && series.logoUrl" alt="series logo"/>
                 <img [src]="'data:' + series.logoContentType + ';base64,' + series.logo" style="max-height: 100px;" *ngIf="series.logo" alt="series logo"/>
                 <div *ngIf="series.logoUrl || series.logo" class="form-text text-danger clearfix">
                     <button type="button" (click)="series.logoUrl=null; series.logo=null;"

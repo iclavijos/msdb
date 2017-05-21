@@ -16,31 +16,36 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.search.annotations.Field;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.icesoft.msdb.web.rest.view.MSDBView;
+
 /**
  * A Category.
  */
 @Entity
 @Table(name = "category")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-//@Document(indexName = "category")
 public class Category extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(MSDBView.SeriesEditionsView.class)
     private Long id;
 
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
     @Field
+    @JsonView(MSDBView.SeriesEditionsView.class)
     private String name;
 
     @NotNull
     @Size(max = 10)
     @Column(name = "shortname", length = 10, nullable = false)
     @Field
+    @JsonView(MSDBView.SeriesEditionsView.class)
     private String shortname;
 
     public Long getId() {
@@ -77,7 +82,7 @@ public class Category extends AbstractAuditingEntity implements Serializable {
         this.shortname = shortname;
     }
 
-    @Override
+	@Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

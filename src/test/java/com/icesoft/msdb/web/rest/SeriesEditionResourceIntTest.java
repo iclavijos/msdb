@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
+import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
@@ -55,6 +56,9 @@ public class SeriesEditionResourceIntTest {
     private static final Boolean UPDATED_SINGLE_TYRE = true;
 
     @Autowired
+    private SeriesEditionService seriesEditionService;
+    
+    @Autowired
     private SeriesEditionRepository seriesEditionRepository;
 
     @Autowired
@@ -76,7 +80,7 @@ public class SeriesEditionResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            SeriesEditionResource seriesEditionResource = new SeriesEditionResource(seriesEditionRepository);
+            SeriesEditionResource seriesEditionResource = new SeriesEditionResource(seriesEditionService, seriesEditionRepository);
         this.restSeriesEditionMockMvc = MockMvcBuilders.standaloneSetup(seriesEditionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

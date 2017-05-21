@@ -6,9 +6,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.lucene.search.Query;
+import org.hibernate.search.engine.ProjectionConstants;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventEditionEntry;
+import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.SearchRepository;
 
 @Repository
@@ -23,6 +26,9 @@ public class SearchRepositoryImpl implements SearchRepository {
 	
 	@PersistenceContext
 	private EntityManager entityManager;
+	
+	@Autowired
+	private EventEditionRepository eventEdRepo;
 
 	@Override
 	public Page<EventEdition> searchEventEditions(String searchTems, Pageable pageable) {
@@ -109,6 +115,47 @@ public class SearchRepositoryImpl implements SearchRepository {
 		Page<EventEditionEntry> page = new PageImpl<>(results, pageable, jpaQuery.getResultSize());
 
 		return page;
+	}
+
+	@Override
+	public List<EventEdition> searchRelated(Long eventEditionId) {
+		FullTextEntityManager fullTextEntityManager =
+				org.hibernate.search.jpa.Search.
+				getFullTextEntityManager(entityManager);
+		
+		QueryBuilder qb = fullTextEntityManager.getSearchFactory()
+				.buildQueryBuilder().forEntity(EventEdition.class).get();
+
+		Query mltQuery = qb
+		        .moreLikeThis().excludeEntityUsedForComparison().comparingField("shortEventName")
+		            .toEntityWithId( eventEditionId )
+		            .createQuery();
+		
+		List<EventEdition> results = (List<EventEdition>)
+				fullTextEntityManager.createFullTextQuery(mltQuery, EventEdition.class).setProjection( ProjectionConstants.THIS, ProjectionConstants.SCORE ).getResultList();
+		
+//		EventEdition eventEdition = eventEdRepo.findOne(eventEditionId);
+//		
+//		QueryBuilder queryBuilder = 
+//				fullTextEntityManager.getSearchFactory()
+//				.buildQueryBuilder().forEntity(EventEdition.class).get();
+//
+//		// a very basic query by keywords
+//		Query query = queryBuilder
+//				.keyword()
+//				.onFields("shortEventName")
+//				.matching(eventEdition.getShortEventName())
+//				.createQuery();
+//
+//		// wrap Lucene query in an Hibernate Query object
+//		FullTextQuery jpaQuery =
+//				fullTextEntityManager.createFullTextQuery(query, EventEdition.class);
+
+		// execute search and return results (sorted by relevance as default)
+//		@SuppressWarnings("unchecked")
+//		List<EventEdition> results = jpaQuery.getResultList();
+		
+		return results;
 	}
 
 }

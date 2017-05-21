@@ -3,11 +3,15 @@ import { Http, Response, URLSearchParams, BaseRequestOptions } from '@angular/ht
 import { Observable } from 'rxjs/Rx';
 
 import { SeriesEdition } from './series-edition.model';
+
 @Injectable()
 export class SeriesEditionService {
 
     private resourceUrl = 'api/series-editions';
     private resourceSearchUrl = 'api/_search/series-editions';
+    
+    private seriesEdCache: SeriesEdition;
+    private cachedId: number = 0;
 
     constructor(private http: Http) { }
 
@@ -26,15 +30,31 @@ export class SeriesEditionService {
     }
 
     find(id: number): Observable<SeriesEdition> {
+        if (id === this.cachedId) {
+            return Observable.of(this.seriesEdCache);
+        }
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
+            this.seriesEdCache = res.json();
+            this.cachedId = id;
             return res.json();
         });
     }
+    
+    findEvents(id: number): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${id}/events`).map((res: Response) => {
+            return res;
+        });
+    }
+    
+    addEventToSeries(id:number, racesData: any) {
+        return this.http.post(`${this.resourceUrl}/${id}/events`, racesData).map((res: Response) => {
+           return res.json(); 
+        });
+    }
 
-    query(req?: any): Observable<Response> {
+    query(seriesId: number, req?: any): Observable<Response> {
         let options = this.createRequestOption(req);
-        return this.http.get(this.resourceUrl, options)
-        ;
+        return this.http.get(`api/series/${seriesId}/editions`, options);
     }
 
     delete(id: number): Observable<Response> {

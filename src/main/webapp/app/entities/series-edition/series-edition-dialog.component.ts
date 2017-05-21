@@ -5,11 +5,15 @@ import { Response } from '@angular/http';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
 
+import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
+
 import { SeriesEdition } from './series-edition.model';
 import { SeriesEditionPopupService } from './series-edition-popup.service';
 import { SeriesEditionService } from './series-edition.service';
 import { Category, CategoryService } from '../category';
 import { Series, SeriesService } from '../series';
+import { PointsSystem, PointsSystemService } from '../points-system';
+
 @Component({
     selector: 'jhi-series-edition-dialog',
     templateUrl: './series-edition-dialog.component.html'
@@ -21,6 +25,7 @@ export class SeriesEditionDialogComponent implements OnInit {
     isSaving: boolean;
 
     categories: Category[];
+    pointsSystems: PointsSystem[];
 
     series: Series[];
     constructor(
@@ -30,9 +35,10 @@ export class SeriesEditionDialogComponent implements OnInit {
         private seriesEditionService: SeriesEditionService,
         private categoryService: CategoryService,
         private seriesService: SeriesService,
+        private pointsSystemService: PointsSystemService,
         private eventManager: EventManager
     ) {
-        this.jhiLanguageService.setLocations(['seriesEdition']);
+        //this.jhiLanguageService.setLocations(['seriesEdition']);
     }
 
     ngOnInit() {
@@ -42,6 +48,8 @@ export class SeriesEditionDialogComponent implements OnInit {
             (res: Response) => { this.categories = res.json(); }, (res: Response) => this.onError(res.json()));
         this.seriesService.query().subscribe(
             (res: Response) => { this.series = res.json(); }, (res: Response) => this.onError(res.json()));
+        this.pointsSystemService.query().subscribe(
+                (res: Response) => { this.pointsSystems = res.json(); }, (res: Response) => this.onError(res.json()));
     }
     clear () {
         this.activeModal.dismiss('cancel');
@@ -72,13 +80,85 @@ export class SeriesEditionDialogComponent implements OnInit {
     private onError (error) {
         this.alertService.error(error.message, null, null);
     }
-
-    trackCategoryById(index: number, item: Category) {
-        return item.id;
+    
+    public addCategories() {
+        if (!this.seriesEdition.allowedCategories) {
+            this.seriesEdition.allowedCategories = [];
+        }
+        let availableCategories = document.getElementById('field_availableCategories') as HTMLSelectElement;
+        let i: number;
+        let options = availableCategories.options;
+        for(i = 0; i < options.length; i++) {
+            if (options[i].selected) {
+                let index = this.findIndexOfAllowedCategory(+options[i].value);
+                if (index === -1) {
+                    this.categoryService.find(+options[i].value).subscribe(
+                        (res) => { this.seriesEdition.allowedCategories.push(res); }, (res: Response) => this.onError(res.json()));
+                }
+            }
+        }
     }
-
-    trackSeriesById(index: number, item: Series) {
-        return item.id;
+    
+    public removeCategories() {
+        let allowedCategories = document.getElementById('field_allowedCategories') as HTMLSelectElement;
+        let i: number;
+        for(i = allowedCategories.options.length - 1; i >= 0; i--) {
+            if (allowedCategories.options[i].selected) {
+                let index = this.findIndexOfAllowedCategory(Number(allowedCategories.options[i].value));
+                this.seriesEdition.allowedCategories.splice(index, 1);
+            }
+        }
+    }
+    
+    private findIndexOfAllowedCategory(value: number) {
+        let i = 0;
+        for (let category of this.seriesEdition.allowedCategories) {
+            if (category.id === value) {
+                return i;
+            }
+            i++;
+        }
+        return -1;
+    }
+    
+    public addPointsSystem() {
+        if (!this.seriesEdition.pointsSystems) {
+            this.seriesEdition.pointsSystems = [];
+        }
+        let pointsSystems = document.getElementById('field_availablePointsSystems') as HTMLSelectElement;
+        let i: number;
+        let options = pointsSystems.options;
+        for(i = 0; i < options.length; i++) {
+            if (options[i].selected) {
+                let index = this.findIndexOfPointsSystem(+options[i].value);
+                if (index === -1) {
+                    this.pointsSystemService.find(+options[i].value).subscribe(
+                        (res) => { this.seriesEdition.pointsSystems.push(res); }, (res: Response) => this.onError(res.json()));
+                }
+            }
+        }
+    }
+    
+    public removePointsSystem() {
+        let pointsSystems = document.getElementById('field_pointsSystems') as HTMLSelectElement;
+        let i: number;
+        for(i = pointsSystems.options.length - 1; i >= 0; i--) {
+            if (pointsSystems.options[i].selected) {
+                let index = this.findIndexOfPointsSystem(Number(pointsSystems.options[i].value));
+                this.seriesEdition.pointsSystems.splice(index, 1);
+            }
+        }
+    }
+    
+    private findIndexOfPointsSystem(value: number) {
+        let i = 0;
+        for (let pointsSystem of this.seriesEdition.pointsSystems) {
+            if (pointsSystem.id === value) {
+                return i;
+            }
+            i++;
+        }
+        return -1;
     }
 }
 
@@ -103,7 +183,7 @@ export class SeriesEditionPopupComponent implements OnInit, OnDestroy {
                     .open(SeriesEditionDialogComponent, params['id']);
             } else {
                 this.modalRef = this.seriesEditionPopupService
-                    .open(SeriesEditionDialogComponent);
+                    .open(SeriesEditionDialogComponent, null, params['idSeries']);
             }
 
         });

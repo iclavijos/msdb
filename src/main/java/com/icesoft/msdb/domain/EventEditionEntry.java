@@ -101,6 +101,7 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
     
     @ManyToOne
     @IndexedEmbedded
+    @JsonView(MSDBView.SessionResultsView.class)
     private EventEdition eventEdition;
     
     public Long getId() {

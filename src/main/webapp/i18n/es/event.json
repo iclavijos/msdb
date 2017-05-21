@@ -118,7 +118,8 @@
 	            "dns": "No ha empezado",
 	            "disqualified": "Descalificado",
 	            "retirementCause": "Motivo abandono",
-	            "difference": "Diferencia"
+	            "difference": "Diferencia",
+	            "startingPosition": "Pos. salida"
 	        },
 	        "copyEntries": {
 	        	"title" : "Copia participantes de otro evento",

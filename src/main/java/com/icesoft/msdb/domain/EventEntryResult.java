@@ -34,6 +34,10 @@ public class EventEntryResult implements Serializable {
     private Long id;
 
     @JsonView(MSDBView.SessionResultsView.class)
+    @Column(name = "starting_position")
+    private Integer startingPosition;
+    
+    @JsonView(MSDBView.SessionResultsView.class)
     @Column(name = "final_position")
     private Integer finalPosition;
 
@@ -81,7 +85,20 @@ public class EventEntryResult implements Serializable {
         this.id = id;
     }
 
-    public Integer getFinalPosition() {
+    public Integer getStartingPosition() {
+		return startingPosition;
+	}
+    
+    public EventEntryResult startingPosition(Integer startingPosition) {
+    	this.startingPosition = startingPosition;
+    	return this;
+    }
+
+	public void setStartingPosition(Integer startingPosition) {
+		this.startingPosition = startingPosition;
+	}
+
+	public Integer getFinalPosition() {
         return finalPosition;
     }
 

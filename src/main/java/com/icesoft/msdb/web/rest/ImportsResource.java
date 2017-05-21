@@ -211,6 +211,7 @@ public class ImportsResource {
         	} else {
         		result.setEntry(entries.get(0));
         	
+        		result.setStartingPosition(tmp.getStartingPosition());
 	        	try {
 	        		result.setFinalPosition(Integer.parseInt(tmp.getFinalPosition()));
 	        	} catch (NumberFormatException e) {

@@ -57,9 +57,6 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
             this.load(params['id']);
             id = params['id'];
         });
-        this.seriesService.findEditions(id).subscribe((editions: Response) => {
-            this.seriesEditions = editions.json();
-        });
     }
 
     load (id) {
@@ -85,7 +82,6 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
                 sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
             }
         });
-        this.loadAllEditions();
     }
 
     openFile(contentType, field) {
@@ -97,26 +93,6 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
-    }
-
-    loadAllEditions() {
-        if (this.currentSearch) {
-            this.seriesService.searchEditions(this.series.id, {
-                query: this.currentSearch,
-                size: this.itemsPerPage,
-                sort: this.sort()}).subscribe(
-                    (res: Response) => this.onSuccess(res.json(), res.headers),
-                    (res: Response) => this.onError(res.json())
-                );
-            return;
-        }
-        this.seriesService.queryEditions(this.series.id, {
-            page: this.page - 1,
-            size: this.itemsPerPage,
-            sort: this.sort()}).subscribe(
-            (res: Response) => this.onSuccess(res.json(), res.headers),
-            (res: Response) => this.onError(res.json())
-        );
     }
 
     sort () {

@@ -35,18 +35,30 @@
 	                "question": "Are you sure you want to delete Series Edition {{ id }}?"
 	            },
 	            "detail": {
-	                "title": "Series Edition"
+	                "title": "Series Edition",
+	                "info": "Info",
+	                "editions": "Editions"
+	            },
+	            "calendar": {
+	            	"title": "Calendar",
+	            	"editLabel": "Edit series calendar",
+	            	"searchEvent": "Search event",
+	            	"assignPoints": "Assign points system to each scoring race of the event"
 	            },
 	            "period": "Period",
 	            "singleChassis": "Single Chassis",
 	            "singleEngine": "Single Engine",
 	            "singleTyre": "Single Tyre",
 	            "allowedCategories": "Allowed Categories",
+	            "pointsSystems": "Points systems",
 	            "series": "Series",
 	            "numEvents": "# Events",
 	            "driverChamp": "Driver champ",
 	            "teamChamp": "Teamp champ",
-	            "manufacturerChamp": "Manufacturer champ"
+	            "manufacturerChamp": "Manufacturer champ",
+	            "eventDate": "Date",
+	            "event": "Event",
+	            "winner": "Winner"
 	        }
         }
     }

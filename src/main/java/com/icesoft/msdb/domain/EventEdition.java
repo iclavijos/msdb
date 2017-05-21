@@ -31,6 +31,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TermVector;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.icesoft.msdb.web.rest.view.MSDBView;
 
@@ -47,6 +48,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(MSDBView.SeriesEditionsView.class)
     private Long id;
 
     @NotNull
@@ -64,10 +66,12 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     @Size(max = 100)
     @Column(name = "long_event_name", length = 100, nullable = false)
     @Field(store = Store.NO)
+    @JsonView(MSDBView.SeriesEditionsView.class)
     private String longEventName;
 
     @NotNull
     @Column(name = "event_date", nullable = false)
+    @JsonView(MSDBView.SeriesEditionsView.class)
     private LocalDate eventDate;
     
     @Column(name = "multidriver")
@@ -108,7 +112,12 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     private Boolean singleFuel;
     
     @OneToOne
+    @JsonIgnore
     private SeriesEdition seriesEdition;
+    
+    @ManyToOne
+    @JsonView(MSDBView.SeriesEditionDetailView.class)
+    private Driver winner;
 
     public Long getId() {
         return id;
@@ -323,6 +332,14 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
 	public void setSeriesEdition(SeriesEdition seriesEdition) {
 		this.seriesEdition = seriesEdition;
+	}
+
+	public Driver getWinner() {
+		return winner;
+	}
+
+	public void setWinner(Driver winner) {
+		this.winner = winner;
 	}
 
 	@Override

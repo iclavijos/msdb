@@ -10,6 +10,9 @@ export class SeriesService {
     private resourceEditionsUrl = 'api/series/${id}/editions';
     private resourceSearchUrl = 'api/_search/series';
     private resourceSearchEditionsUrl = 'api/_search/series/${id}/editions';
+    
+    private seriesCache: Series;
+    private cachedId: number = 0;
 
     constructor(private http: Http) { }
 
@@ -28,7 +31,12 @@ export class SeriesService {
     }
 
     find(id: number): Observable<Series> {
+        if (id === this.cachedId) {
+            return Observable.of(this.seriesCache);
+        }
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
+            this.seriesCache = res.json();
+            this.cachedId = id;
             return res.json();
         });
     }

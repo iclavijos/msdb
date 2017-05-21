@@ -1,16 +1,13 @@
 package com.icesoft.msdb.domain;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -19,7 +16,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.icesoft.msdb.web.rest.view.MSDBView;
 
 /**
  * A Series.
@@ -33,6 +31,7 @@ public class Series extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(MSDBView.SeriesEditionsView.class)
     private Long id;
 
     @NotNull
@@ -54,11 +53,6 @@ public class Series extends AbstractAuditingEntity implements Serializable {
 
     @Column(name = "logo_url")
     private String logoUrl;
-
-    @OneToMany(mappedBy = "series")
-    @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<SeriesEdition> editions = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -131,31 +125,6 @@ public class Series extends AbstractAuditingEntity implements Serializable {
 
     public void setLogoUrl(String logoUrl) {
         this.logoUrl = logoUrl;
-    }
-
-    public Set<SeriesEdition> getEditions() {
-        return editions;
-    }
-
-    public Series editions(Set<SeriesEdition> seriesEditions) {
-        this.editions = seriesEditions;
-        return this;
-    }
-
-    public Series addEditions(SeriesEdition seriesEdition) {
-        this.editions.add(seriesEdition);
-        seriesEdition.setSeries(this);
-        return this;
-    }
-
-    public Series removeEditions(SeriesEdition seriesEdition) {
-        this.editions.remove(seriesEdition);
-        seriesEdition.setSeries(null);
-        return this;
-    }
-
-    public void setEditions(Set<SeriesEdition> seriesEditions) {
-        this.editions = seriesEditions;
     }
 
     @Override

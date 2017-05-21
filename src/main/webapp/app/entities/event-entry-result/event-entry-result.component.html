@@ -6,6 +6,7 @@
             <thead>
             <tr>
             <th></th>
+            <th *ngIf="session.sessionType === 'RACE'"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.startingPosition">Starting Position</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.driver">Driver</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.team">Team</span></th>
             <th *ngIf="session.sessionType === 'RACE'"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.totalTime">Total Time</span></th>
@@ -19,6 +20,7 @@
             <tbody>
             <tr *ngFor="let eventEntryResult of eventEntryResults ;trackBy: trackId">
                 <td>{{eventEntryResult.finalPosition >= 900 ? '-' : eventEntryResult.finalPosition }}</td>
+                <td *ngIf="session.sessionType === 'RACE'">{{eventEntryResult.startingPosition }}</td>
                 <td>#{{eventEntryResult.entry.raceNumber}} {{eventEntryResult.session.eventEdition.multidriver ? eventEntryResult.entry.driversName : eventEntryResult.entry.drivers[0].fullName}}
                  <span *ngIf="eventEntryResult.entry.rookie"> (R)</span>
                 </td>

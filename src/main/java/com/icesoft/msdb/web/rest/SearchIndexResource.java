@@ -1,7 +1,9 @@
 package com.icesoft.msdb.web.rest;
 
 import java.net.URISyntaxException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
@@ -51,6 +55,17 @@ public class SearchIndexResource {
     	Page<EventEntrySearchResultDTO> page = searchService.searchEntries(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/search/entries");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+    
+    @GetMapping("/dummy/{id}")
+    public ResponseEntity<Void> dummy(@PathVariable Long id) {
+    	List related = searchService.searchRelated(id);
+    	for (int i = 0; i < related.size(); i++) {
+    		Object[] tmp = (Object[])related.get(i);
+    		EventEdition event = (EventEdition)tmp[0];
+    		System.out.println(tmp[1] + " " + event.getEditionYear() + " " + event.getShortEventName());
+    	}
+    	return ResponseEntity.ok().build();
     }
 
 }

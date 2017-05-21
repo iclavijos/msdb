@@ -2,51 +2,63 @@
     "motorsportsDatabaseApp": {
         "series" : {
             "home": {
-                "title": "Series",
-                "createLabel": "Create a new Series",
-                "createOrEditLabel": "Create or edit a Series",
-                "search": "Search for Series"
+                "title": "Campeonatos",
+                "createLabel": "Añade un nou campeonato",
+                "createOrEditLabel": "Añade o edita un campeonato",
+                "search": "Buscar campeonatos"
             },
-            "created": "A new Series is created with identifier {{ param }}",
-            "updated": "A Series is updated with identifier {{ param }}",
-            "deleted": "A Series is deleted with identifier {{ param }}",
+            "created": "Se ha añadido un nuevo campeonato",
+            "updated": "Se ha actualizado el campeonato",
+            "deleted": "Se ha borrado el campeonato",
             "delete": {
-                "question": "Are you sure you want to delete Series {{ id }}?"
+                "question": "¿Estás seguro que quieres borrar el campeonato?"
             },
             "detail": {
-                "title": "Series"
+                "title": "Campeonato"
             },
-            "name": "Name",
-            "shortname": "Shortname",
-            "organizer": "Organizer",
+            "name": "Nombre",
+            "shortname": "Abreviatura",
+            "organizer": "Organizador",
             "logo": "Logo",
-            "editions": "Editions",
+            "editions": "Ediciones",
             "seriesEdition" : {
 	            "home": {
-	                "title": "Series Editions",
-	                "createLabel": "Create a new Series Edition",
-	                "createOrEditLabel": "Create or edit a Series Edition",
-	                "search": "Search for Series Edition"
+	                "title": "Ediciones",
+	                "createLabel": "Añade una nova edición",
+	                "createOrEditLabel": "Añade o edita una edición",
+	                "search": "Buscar ediciones"
 	            },
-	            "created": "A new Series Edition is created with identifier {{ param }}",
-	            "updated": "A Series Edition is updated with identifier {{ param }}",
-	            "deleted": "A Series Edition is deleted with identifier {{ param }}",
+	            "created": "Se ha añadido una nueva edición",
+	            "updated": "Se ha actualizado la edición",
+	            "deleted": "Se ha borrado la edición",
 	            "delete": {
-	                "question": "Are you sure you want to delete Series Edition {{ id }}?"
+	                "question": "¿Estás seguro que quieres borrar la edición?"
 	            },
 	            "detail": {
-	                "title": "Series Edition"
+	                "title": "Edición",
+	                "info": "Info",
+	                "editions": "Ediciones"
 	            },
-	            "period": "Period",
-	            "singleChassis": "Single Chassis",
-	            "singleEngine": "Single Engine",
-	            "singleTyre": "Single Tyre",
-	            "allowedCategories": "Allowed Categories",
-	            "series": "Series",
+	            "calendar": {
+	            	"title": "Calendario",
+	            	"editLabel": "Edita el calendario del campeonato",
+	            	"searchEvent": "Buscar evento",
+	            	"assignPoints": "Asigna sistema de puntuación a cada carrera puntuable del evento"
+	            },
+	            "period": "Periodo",
+	            "singleChassis": "Chasis único",
+	            "singleEngine": "Motor único",
+	            "singleTyre": "Neumáticos únicos",
+	            "allowedCategories": "Categorías",
+	            "pointsSystems": "Sistemas de puntuación",
+	            "series": "Campeonato",
 	            "numEvents": "# citas",
-	            "driverChamp": "Piloto campe�n",
-	            "teamChamp": "Equipo campe�n",
-	            "manufacturerChamp": "Fabricante campe�n"
+	            "driverChamp": "Piloto campeón",
+	            "teamChamp": "Equipo campeón",
+	            "manufacturerChamp": "Fabricante campeón",
+	            "eventDate": "Fecha",
+	            "event": "Cita",
+	            "winner": "Ganador"
 	        }
         }
     }

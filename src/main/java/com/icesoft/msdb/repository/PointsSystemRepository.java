@@ -13,6 +13,8 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public interface PointsSystemRepository extends JpaRepository<PointsSystem,Long> {
+	
+	Page<PointsSystem> findByOrderByNameAsc(Pageable pageable);
 
 	Page<PointsSystem> findByNameContainsIgnoreCase(String query, Pageable pageable);
 }

@@ -173,6 +173,7 @@ public class EventResource {
         throws URISyntaxException {
         log.debug("REST request to find for a page of editions of event {}", id);
         Page<EventEdition> page = eventService.findEventEditions(id, pageable);
+        //page.getContent().parallelStream().forEach(event -> event.setSeriesEdition(null)); //TODO: Improve
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(id.toString(), page, "/events/" + id + "/editions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

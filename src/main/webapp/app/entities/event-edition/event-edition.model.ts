@@ -1,3 +1,4 @@
+import { Driver } from '../driver';
 import { Category } from '../category';
 import { RacetrackLayout } from '../racetrack-layout';
 import { Event } from '../event';
@@ -20,5 +21,6 @@ export class EventEdition {
         public singleChassis?: boolean,
         public singleEngine?: boolean,
         public singleTyre?: boolean,
+        public winner?: Driver,
     ) { }
 }

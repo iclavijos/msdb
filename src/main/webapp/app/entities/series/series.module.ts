@@ -1,6 +1,7 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { MotorsportsDatabaseSeriesEditionModule } from '../series-edition/series-edition.module';
 import { MotorsportsDatabaseSharedModule } from '../../shared';
 
 import {
@@ -25,6 +26,7 @@ let ENTITY_STATES = [
 
 @NgModule({
     imports: [
+        MotorsportsDatabaseSeriesEditionModule,
         MotorsportsDatabaseSharedModule,
         RouterModule.forRoot(ENTITY_STATES, { useHash: true })
     ],

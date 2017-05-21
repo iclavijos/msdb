@@ -8,6 +8,7 @@ import { SeriesEditionComponent } from './series-edition.component';
 import { SeriesEditionDetailComponent } from './series-edition-detail.component';
 import { SeriesEditionPopupComponent } from './series-edition-dialog.component';
 import { SeriesEditionDeletePopupComponent } from './series-edition-delete-dialog.component';
+import { SeriesEditionCalendarPopupComponent } from './series-edition-calendar-dialog.component';
 
 import { Principal } from '../../shared';
 
@@ -28,18 +29,19 @@ export class SeriesEditionResolvePagingParams implements Resolve<any> {
 }
 
 export const seriesEditionRoute: Routes = [
+//  {
+//    path: 'series-edition',
+//    component: SeriesEditionComponent,
+//    resolve: {
+//      'pagingParams': SeriesEditionResolvePagingParams
+//    },
+//    data: {
+//        authorities: ['ROLE_USER'],
+//        pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
+//    }
+//  }, 
   {
-    path: 'series-edition',
-    component: SeriesEditionComponent,
-    resolve: {
-      'pagingParams': SeriesEditionResolvePagingParams
-    },
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
-    }
-  }, {
-    path: 'series-edition/:id',
+    path: 'series/series-edition/:id',
     component: SeriesEditionDetailComponent,
     data: {
         authorities: ['ROLE_USER'],
@@ -50,10 +52,10 @@ export const seriesEditionRoute: Routes = [
 
 export const seriesEditionPopupRoute: Routes = [
   {
-    path: 'series-edition-new',
+    path: ':idSeries/series-edition-new',
     component: SeriesEditionPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
     },
     outlet: 'popup'
@@ -62,16 +64,25 @@ export const seriesEditionPopupRoute: Routes = [
     path: 'series-edition/:id/edit',
     component: SeriesEditionPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
     },
     outlet: 'popup'
   },
   {
+      path: ':id/calendar',
+      component: SeriesEditionCalendarPopupComponent,
+      data: {
+          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+          pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
+      },
+      outlet: 'popup'
+    },
+  {
     path: 'series-edition/:id/delete',
     component: SeriesEditionDeletePopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
     },
     outlet: 'popup'

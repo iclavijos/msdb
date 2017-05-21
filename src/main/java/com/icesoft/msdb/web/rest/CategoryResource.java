@@ -109,7 +109,7 @@ public class CategoryResource {
     @Timed
     public ResponseEntity<List<Category>> getAllCategories(@ApiParam Pageable pageable) throws URISyntaxException {
         log.debug("REST request to get a page of Categories");
-        Page<Category> page = categoryRepository.findAll(pageable);
+        Page<Category> page = categoryRepository.findAllByOrderByNameAsc(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/categories");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

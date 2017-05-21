@@ -26,10 +26,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
+import com.icesoft.msdb.service.SeriesEditionService;
+import com.icesoft.msdb.service.dto.EventRacePointsDTO;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
+import com.icesoft.msdb.web.rest.view.MSDBView;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
@@ -45,10 +50,12 @@ public class SeriesEditionResource {
 
     private static final String ENTITY_NAME = "seriesEdition";
         
+    private final SeriesEditionService seriesEditionService;
     private final SeriesEditionRepository seriesEditionRepository;
 
-    public SeriesEditionResource(SeriesEditionRepository seriesEditionRepository) {
-        this.seriesEditionRepository = seriesEditionRepository;
+    public SeriesEditionResource(SeriesEditionService seriesEditionService, SeriesEditionRepository seriesEditionRepository) {
+        this.seriesEditionService = seriesEditionService;
+    	this.seriesEditionRepository = seriesEditionRepository;
     }
 
     /**
@@ -119,6 +126,7 @@ public class SeriesEditionResource {
      */
     @GetMapping("/series-editions/{id}")
     @Timed
+    @JsonView(MSDBView.SeriesEditionDetailView.class)
     public ResponseEntity<SeriesEdition> getSeriesEdition(@PathVariable Long id) {
         log.debug("REST request to get SeriesEdition : {}", id);
         SeriesEdition seriesEdition = seriesEditionRepository.findOne(id);
@@ -159,6 +167,35 @@ public class SeriesEditionResource {
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/series-editions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
-
-
+    
+//    @PostMapping("/series-editions/{seriesId}/events/{eventId}")
+//    @Timed
+//    public ResponseEntity<Void> addEventToSeries(@PathVariable Long seriesId, @PathVariable Long eventId) {
+//    	log.debug("REST request to add event {} to series edition {}", eventId, seriesId);
+//    	seriesEditionService.addEventToSeries(seriesId, eventId);
+//    	return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, seriesId.toString())).build();
+//    }
+//
+//    @DeleteMapping("/series-editions/{seriesId}/events/{eventId}")
+//    @Timed
+//    public ResponseEntity<Void> removeEventFromSeries(@PathVariable Long seriesId, @PathVariable Long eventId) {
+//    	log.debug("REST request to remove event {} from series edition {}", eventId, seriesId);
+//    	seriesEditionService.removeEventFromSeries(seriesId, eventId);
+//    	return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, seriesId.toString())).build();
+//    }
+    
+    @GetMapping("/series-editions/{id}/events")
+    @Timed
+    public ResponseEntity<List<EventEdition>> getSeriesEvents(@PathVariable Long id) {
+    	return new ResponseEntity<>(
+    			seriesEditionService.findSeriesEvents(id), HttpStatus.OK);
+    }
+    
+    @PostMapping("/series-editions/{id}/events")
+    @Timed
+    public ResponseEntity<Void> addEventToSeries(@PathVariable Long id, @Valid @RequestBody List<EventRacePointsDTO> racesPointsData) {
+    	log.debug("REST request to add an event to series {}", id);
+    	seriesEditionService.addEventToSeries(id, racesPointsData);
+    	return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

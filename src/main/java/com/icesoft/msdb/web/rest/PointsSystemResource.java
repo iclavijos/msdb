@@ -101,7 +101,7 @@ public class PointsSystemResource {
     public ResponseEntity<List<PointsSystem>> getAllPointsSystems(@ApiParam Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of PointsSystems");
-        Page<PointsSystem> page = pointsSystemRepository.findAll(pageable);
+        Page<PointsSystem> page = pointsSystemRepository.findByOrderByNameAsc(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/points-systems");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

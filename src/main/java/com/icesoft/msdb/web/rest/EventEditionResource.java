@@ -160,6 +160,7 @@ public class EventEditionResource {
         		eventEdition.previousEditionId(tmp.get(0));
         	}
         }
+        //eventEdition.setSeriesEdition(null); //TODO: Improve
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEdition));
     }
 
@@ -202,7 +203,17 @@ public class EventEditionResource {
     @Timed
     public List<EventSession> getEventEditionSessions(@PathVariable Long id) {
     	log.debug("REST request to get all EventEditions {} sessions", id);
-    	return eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(id);
+    	List<EventSession> result = eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(id);
+    	//result.parallelStream().forEach(session -> session.getEventEdition().setSeriesEdition(null));
+    	return result;
+    }
+    
+    @GetMapping("/event-editions/{id}/scoring-races")
+    @Timed
+    public List<EventSession> getEventEditionScoringRaces(@PathVariable Long id) {
+    	log.debug("REST request to get all EventEditions {} scoring races", id);
+    	List<EventSession> result = eventSessionRepository.findEventEditionScoringRaces(id);
+    	return result;
     }
 
     @PostMapping("/event-editions/{id}/sessions")
@@ -255,7 +266,9 @@ public class EventEditionResource {
     @Timed
     public List<EventEditionEntry> getEventEditionEntries(@PathVariable Long id) {
     	log.debug("REST request to get all EventEditions {} entries", id);
-    	return eventEntryRepository.findEventEditionEntries(id);
+    	List<EventEditionEntry> result = eventEntryRepository.findEventEditionEntries(id);
+    	//result.parallelStream().forEach(entry -> entry.getEventEdition().setSeriesEdition(null)); //TODO: Improve
+    	return result;
     }
     
     @PostMapping("/event-editions/{idTarget}/entries/{idSource}")

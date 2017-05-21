@@ -4,6 +4,7 @@ import { EventEntry } from '../event-entry';
 export class EventEntryResult {
     constructor(
         public id?: number,
+        public startingPosition?: number,
         public finalPosition?: number,
         public totalTime?: number,
         public bestLapTime?: number,
