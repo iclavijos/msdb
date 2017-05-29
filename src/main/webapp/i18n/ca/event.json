@@ -101,6 +101,11 @@
 	            	"selectFile": "Seleccionar arxiu",
 	            	"file": "Arxiu"
 	            },
+	            "processResults": {
+	            	"label": "Processar resultats",
+	            	"title": "Processar resultats de la cursa",
+	            	"desc": "Calcular punts per cada pilot i actualitzar classificacions generals"
+	            },
 	            "created": "S'ha afegit un nou resultat",
 	            "updated": "S'ha actualitzat el resultat",
 	            "deleted": "S'ha esborrat el resultat",
@@ -119,7 +124,8 @@
 	            "disqualified": "Descalificat",
 	            "retirementCause": "Motiu abandonament",
 	            "difference": "Diferència",
-	            "startingPosition": "Pos. sortida"
+	            "startingPosition": "Pos. sortida",
+	            "lapsLed": "Voltes liderades"
 	        },
 	        "copyEntries": {
 	        	"title" : "Copia participants d'un altre event",

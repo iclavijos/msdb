@@ -110,6 +110,14 @@
 				        	class="btn btn-primary float-right create-event-session" [routerLink]="['/', { outlets: { popup: eventEdition.id + '/event-session-new' } }]">
 				            <span class="fa fa-plus"></span>
 				        </button>
+				        <button type="button" *ngIf="!convertedTime && eventEdition.sessions"
+				        	class="btn btn-primary float-right create-event-session" (click)="convertToCurrentTZ()">
+				            To converted
+				        </button>
+				        <button type="button" *ngIf="convertedTime && eventEdition.sessions"
+				        	class="btn btn-primary float-right create-event-session" (click)="convertToLocalTZ()">
+				            To local
+				        </button>
 			        </dd>
 				</div>
 			</div>

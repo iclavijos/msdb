@@ -50,6 +50,15 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
     @Column(name = "location", length = 100, nullable = false)
     @Field(store = Store.NO)
     private String location;
+    
+    @NotNull
+    @Size(max = 2)
+    @Column(name = "country_code", length = 2, nullable = false)
+    @Field(store = Store.NO)
+    private String countryCode;
+    
+    @Column(name= "time_zone")
+    private String timeZone;
 
     @Transient
     private byte[] logo;
@@ -96,7 +105,28 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
         this.location = location;
     }
 
-    public byte[] getLogo() {
+    public String getCountryCode() {
+		return countryCode;
+	}
+    
+    public Racetrack countryCode(String countryCode) {
+    	this.countryCode = countryCode;
+    	return this;
+    }
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
+	}
+
+	public String getTimeZone() {
+		return timeZone;
+	}
+
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
+	}
+
+	public byte[] getLogo() {
         return logo;
     }
 
@@ -173,6 +203,7 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
             "id=" + id +
             ", name='" + name + "'" +
             ", location='" + location + "'" +
+            ", countryCode='" + countryCode + "'" +
             ", logo='" + logo + "'" +
             ", logoUrl='" + logoUrl + "'" +
             '}';

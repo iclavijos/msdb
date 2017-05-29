@@ -13,18 +13,20 @@ import { EventEntryService } from '../event-entry/event-entry.service';
 
 import { DurationType, SessionType } from '../../shared';
 
+import * as moment from 'moment-timezone';
+
 @Component({
     selector: 'jhi-event-edition-detail',
     templateUrl: './event-edition-detail.component.html'
 })
 export class EventEditionDetailComponent implements OnInit, OnDestroy {
 
+    convertedTime = false;
     eventEdition: EventEdition;
     eventSubscriber: Subscription;
     private subscription: any;
     sessionTypes = SessionType;
     durationTypes = DurationType;
-    sessions: EventSession[];
     eventEntries: EventEntry[];
     filterCategory: string;
     editions: any[];
@@ -66,6 +68,12 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     
     loadSessions(id) {
         this.eventEditionService.findSessions(id).subscribe(eventSessions => {
+            for(let session of eventSessions.json()) {
+                let toConvert = moment(session.sessionStartTime).tz(session.eventEdition.trackLayout.racetrack.timeZone);
+                session.originalStartTime = session.sessionStartTime;
+                session.sessionStartTime = toConvert.tz('America/Toronto');//toConvert.tz(currentTZ);
+                session.shortname += ' 23';
+            }
             this.eventEdition.sessions = eventSessions.json();
         });
     }
@@ -95,6 +103,24 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     registerChangesInEvent() {
         this.eventSubscriber = this.eventManager.subscribe('eventSessionListModification', (response) => this.loadSessions(this.eventEdition.id));
         this.eventSubscriber.add(this.eventManager.subscribe('eventEntryListModification', (response) => this.loadEntries(this.eventEdition.id)));
+    }
+    
+    convertToCurrentTZ() {
+        let currentTZ = moment.tz.guess();
+        for(let session of this.eventEdition.sessions) {
+            let format = 'YYYY/MM/DD HH:mm:ss ZZ';
+            console.log(moment(session.sessionStartTime, format).tz(session.eventEdition.trackLayout.racetrack.timeZone).format(format));
+            let toConvert = moment(session.sessionStartTime, format).tz(session.eventEdition.trackLayout.racetrack.timeZone);
+            if (!session.originalStartTime) {
+                session.originalStartTime = session.sessionStartTime;
+            }
+            session.sessionStartTime = toConvert.tz('America/Toronto');//toConvert.tz(currentTZ);
+            session.shortname += ' 18';
+        }
+    }
+    
+    convertToLocalTZ() {
+        
     }
 
 }

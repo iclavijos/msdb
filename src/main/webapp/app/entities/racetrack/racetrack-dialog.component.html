@@ -25,21 +25,33 @@
                 </small>
             </div>
         </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrack.location" for="field_location">Location</label>
-            <input type="text" class="form-control" name="location" id="field_location"
-                [(ngModel)]="racetrack.location"
-            required maxlength="100" />
-            <div [hidden]="!(editForm.controls.location?.dirty && editForm.controls.location?.invalid)">
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.location?.errors?.required" jhiTranslate="entity.validation.required">
-                   This field is required.
-                </small>
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.location?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 100 }">
-                   This field cannot be longer than 100 characters.
-                </small>
-            </div>
+        <div class="row">
+        	<div class="col-lg-7 col-md-7">
+		        <div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrack.location" for="field_location">Location</label>
+		            <input type="text" class="form-control" name="location" id="field_location"
+		                [(ngModel)]="racetrack.location"
+		            required maxlength="100" />
+		            <div [hidden]="!(editForm.controls.location?.dirty && editForm.controls.location?.invalid)">
+		                <small class="form-text text-danger"
+		                   [hidden]="!editForm.controls.location?.errors?.required" jhiTranslate="entity.validation.required">
+		                   This field is required.
+		                </small>
+		                <small class="form-text text-danger"
+		                   [hidden]="!editForm.controls.location?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 100 }">
+		                   This field cannot be longer than 100 characters.
+		                </small>
+		            </div>
+		        </div>
+		    </div>
+		    <div class="col-lg-5 col-md-5">
+		    	<div class="form-group">
+		            <label jhiTranslate="motorsportsDatabaseApp.racetrack.country" for="field_country">Track Layout</label>
+		            <ng2-completer id="field_country" name="country" [(ngModel)]="countrySearch" [datasource]="dataServiceCountry" [minSearchLength]="2" 
+		            	(selected)="onCountrySelected($event)" (highlighted)="onCountrySelected($event)" [pause]="300" [autoMatch]="true" 
+		            	[maxChars]="10" required></ng2-completer>
+		        </div>
+		    </div>
         </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrack.logo" for="field_logo">Logo</label>

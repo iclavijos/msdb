@@ -102,6 +102,11 @@
 	            	"selectFile": "Select file",
 	            	"file": "File"
 	            },
+	            "processResults": {
+	            	"label": "Process results",
+	            	"title": "Process race results",
+	            	"desc": "Calculate driver's points and update classifications"
+	            },
 	            "created": "A new result is created with identifier {{ param }}",
 	            "updated": "A result is updated with identifier {{ param }}",
 	            "deleted": "A result is deleted with identifier {{ param }}",
@@ -120,7 +125,8 @@
 	            "disqualified": "Disqualified",
 	            "retirementCause": "Retirement cause",
 	            "difference": "Difference",
-	            "startingPosition": "Starting Pos."
+	            "startingPosition": "Starting Pos.",
+	            "lapsLed": "Laps lead"
 	        },
 	        "copyEntries": {
 	        	"title" : "Copy entries from another event",

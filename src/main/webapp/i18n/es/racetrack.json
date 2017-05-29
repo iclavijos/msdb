@@ -17,7 +17,8 @@
                 "title": "circuito"
             },
             "name": "Nombre",
-            "location": "Localizacion",
+            "location": "Localización",
+            "country": "País",
             "logo": "Logo",
             "layouts": "Trazados"
         },

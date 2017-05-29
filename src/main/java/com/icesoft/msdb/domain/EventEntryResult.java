@@ -69,6 +69,10 @@ public class EventEntryResult implements Serializable {
     @Column(name = "difference_type")
     private Integer differenceType;
     
+    @JsonView(MSDBView.SessionResultsView.class)
+    @Column(name = "laps_led")
+    private Integer lapsLed;
+    
     @ManyToOne
     @JsonView(MSDBView.SessionResultsView.class)
     private EventSession session;
@@ -151,6 +155,9 @@ public class EventEntryResult implements Serializable {
     }
 
     public Boolean isRetired() {
+    	if (retired == null) {
+    		retired = false;
+    	}
         return retired;
     }
 
@@ -200,6 +207,17 @@ public class EventEntryResult implements Serializable {
 
 	public void setDifferenceType(Integer differenceType) {
 		this.differenceType = differenceType;
+	}
+
+	public Integer getLapsLed() {
+		if (lapsLed == null) {
+			return 0;
+		}
+		return lapsLed;
+	}
+
+	public void setLapsLed(Integer lapsLed) {
+		this.lapsLed = lapsLed;
 	}
 
 	public EventSession getSession() {

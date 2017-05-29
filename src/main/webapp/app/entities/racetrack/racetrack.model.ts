@@ -4,6 +4,8 @@ export class Racetrack {
         public id?: number,
         public name?: string,
         public location?: string,
+        public countryCode?: string,
+        public timeZone?: string,
         public logo?: any,
         public logoUrl?: string,
         public layouts?: RacetrackLayout,

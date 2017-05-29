@@ -23,6 +23,8 @@
     "font-awesome": "4.7.0",
     "icofont": "file:./../icofont",
     "jquery": "3.1.1",
+    "moment": "^2.18.1",
+    "moment-timezone": "^0.5.13",
     "ng-jhipster": "0.1.8",
     "ng2-completer": "^1.2.0",
     "ng2-webstorage": "1.5.0",
@@ -36,6 +38,8 @@
   "devDependencies": {
     "@angular/cli": "1.0.0-beta.28.3",
     "@types/jasmine": "2.5.42",
+    "@types/moment": "^2.13.0",
+    "@types/moment-timezone": "^0.2.34",
     "@types/node": "7.0.5",
     "add-asset-html-webpack-plugin": "1.0.2",
     "angular2-template-loader": "0.6.2",

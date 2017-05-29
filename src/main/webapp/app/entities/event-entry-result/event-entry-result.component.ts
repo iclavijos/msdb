@@ -62,8 +62,14 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     trackId (index: number, item: EventEntryResult) {
         return item.id;
     }
+    
+    gap(currentLapTime: number) {
+        return currentLapTime - this.eventEntryResults[0].bestLapTime;
+    }
 
-
+    processResults() {
+        this.eventEntryResultService.processSessionResults(this.session.id).subscribe();
+    }
 
     registerChangeInEventEntryResults() {
         this.eventSubscriber = this.eventManager.subscribe('eventEntryResultListModification', (response) => this.loadAll());

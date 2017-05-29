@@ -5,10 +5,13 @@ import { Response } from '@angular/http';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jhipster';
 
+import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
+
 import { Racetrack } from './racetrack.model';
 import { RacetrackPopupService } from './racetrack-popup.service';
 import { RacetrackService } from './racetrack.service';
 import { RacetrackLayout, RacetrackLayoutService } from '../racetrack-layout';
+
 @Component({
     selector: 'jhi-racetrack-dialog',
     templateUrl: './racetrack-dialog.component.html'
@@ -18,6 +21,8 @@ export class RacetrackDialogComponent implements OnInit {
     racetrack: Racetrack;
     authorities: any[];
     isSaving: boolean;
+    protected dataServiceCountry: CompleterData;
+    countrySearch: string;
 
     racetracklayouts: RacetrackLayout[];
     constructor(
@@ -27,9 +32,11 @@ export class RacetrackDialogComponent implements OnInit {
         private alertService: AlertService,
         private racetrackService: RacetrackService,
         private racetrackLayoutService: RacetrackLayoutService,
-        private eventManager: EventManager
+        private eventManager: EventManager,
+        private completerService: CompleterService
     ) {
         this.jhiLanguageService.setLocations(['racetrack']);
+        this.dataServiceCountry = completerService.remote('api/_typeahead/countries?query=', null, 'countryName').imageField("flagImg");
     }
 
     ngOnInit() {
@@ -89,6 +96,18 @@ export class RacetrackDialogComponent implements OnInit {
 
     trackRacetrackLayoutById(index: number, item: RacetrackLayout) {
         return item.id;
+    }
+    
+    public onCountrySelected(selected: CompleterItem) {
+        if (!selected || !selected.originalObject) return;
+        let country = selected.originalObject;
+        if (selected) {
+            this.racetrack.countryCode = country.countryCode;
+            this.countrySearch = country.countryName;
+        } else {
+            this.racetrack.countryCode = null;
+            this.countrySearch = null;
+        }
     }
 }
 

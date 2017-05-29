@@ -11,6 +11,15 @@
         <jhi-alert-error></jhi-alert-error>
 
 		<div class="row">
+			<div class="col-lg-2 col-md-2" *ngIf="eventEntryResult.session.sessionType === 'RACE'">
+		        <div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.startingPosition" for="field_startingPosition">Starting Position</label>
+		            <select class="form-control" id="field_startingPosition" name="startingPosition" [(ngModel)]="eventEntryResult.startingPosition" required 
+		            	(click)="updateUI()">
+		            	<option *ngFor="let position of positions" [value]="position">{{position}}</option>
+		            </select>
+		        </div>
+        	</div>
 			<div class="col-lg-2 col-md-2">
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.finalPosition" for="field_finalPosition">Final Position</label>
@@ -20,15 +29,6 @@
 		            	<option value="900">{{ 'motorsportsDatabaseApp.eventEdition.result.retired' | translate}}</option>
 		            	<option value="901">{{ 'motorsportsDatabaseApp.eventEdition.result.dns' | translate}}</option>
 		            	<option value="902">{{ 'motorsportsDatabaseApp.eventEdition.result.disqualified' | translate}}</option>
-		            </select>
-		        </div>
-        	</div>
-        	<div class="col-lg-2 col-md-2" *ngIf="eventEntryResult.session.sessionType === 'RACE'">
-		        <div class="form-group">
-		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.startingPosition" for="field_startingPosition">Starting Position</label>
-		            <select class="form-control" id="field_startingPosition" name="startingPosition" [(ngModel)]="eventEntryResult.startingPosition" required 
-		            	(click)="updateUI()">
-		            	<option *ngFor="let position of positions" [value]="position">{{position}}</option>
 		            </select>
 		        </div>
         	</div>
@@ -48,7 +48,7 @@
         </div>
         <div *ngIf="eventEntryResult.session.sessionType !== 'RACE'">
         	<div class="row">
-				<div class="col-lg-3 col-md-3">
+				<div class="col-lg-2 col-md-2">
 			        <div class="form-group">
 			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.lapsCompleted" for="field_lapsCompleted">Laps Completed</label>
 			            <input type="number" class="form-control" name="lapsCompleted" id="field_lapsCompleted" required
@@ -56,7 +56,23 @@
 			             />
 			        </div>
 	        	</div>
-	        	<div class="col-lg-9 col-md-9">
+	        	<div class="col-lg-2 col-md-2">
+			        <div class="form-group">
+			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.lapsLed" for="field_lapsLed">Laps Led</label>
+			            <input type="number" class="form-control" name="lapsLed" id="field_lapsLed"
+			                [(ngModel)]="eventEntryResult.lapsLed"
+			             />
+			        </div>
+	        	</div>
+	        	<div class="col-lg-2 col-md-2">
+			        <div class="form-group">
+			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.startingPos" for="field_startingPos">Starting Position</label>
+			            <input type="number" class="form-control" name="startingPos" id="field_startingPos"
+			                [(ngModel)]="eventEntryResult.startingPosition"
+			             />
+			        </div>
+	        	</div>
+	        	<div class="col-lg-6 col-md-6">
 	        		<div class="form-group">
 			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.bestLapTime" for="field_bestLapTime">Best Lap Time</label>
 			            <input class="form-control" name="bestLapTime" id="field_bestLapTime" [ngModel]="eventEntryResult.bestLapTime | timeMaskPipe" pattern="([0-5]?\d')?[0-5]\d(\.[0-9]{0,4})?" 

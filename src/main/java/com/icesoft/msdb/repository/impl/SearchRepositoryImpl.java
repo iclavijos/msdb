@@ -43,9 +43,10 @@ public class SearchRepositoryImpl implements SearchRepository {
 
 		// a very basic query by keywords
 		Query query = queryBuilder
-				.keyword().wildcard()
+				.keyword().fuzzy()
 				.onFields("shortEventName", "longEventName", "trackLayout.name", "trackLayout.racetrack.name", "trackLayout.racetrack.location")
-				.matching(searchTems + "*")
+				//.matching(searchTems + "*")
+				.matching(searchTems)
 				.createQuery();
 
 		// wrap Lucene query in an Hibernate Query object

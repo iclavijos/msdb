@@ -231,7 +231,9 @@ public class ImportsResource {
 	        	}
 	        	if (!ignore) {
 		        	result.setBestLapTime(timeToMillis(tmp.getBestLapTime()));
+		        	result.setStartingPosition(tmp.getStartingPosition());
 		        	result.setLapsCompleted(tmp.getLapsCompleted());
+		        	result.setLapsLed(tmp.getLapsLed());
 		        	result.setTotalTime(timeToMillis(tmp.getTotalTime()));
 		        	result.setRetired(tmp.getRetired());
 		        	result.setCause(tmp.getCause());

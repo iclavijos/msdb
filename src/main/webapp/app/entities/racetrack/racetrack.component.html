@@ -39,7 +39,7 @@
             <tbody>
             <tr *ngFor="let racetrack of racetracks ;trackBy: trackId">
                 <td>{{racetrack.name}}</td>
-                <td>{{racetrack.location}}</td>
+                <td>{{racetrack.location}} <img *ngIf="racetrack?.countryCode" src="/images/flags/{{racetrack.countryCode}}.png"/></td>
                 <td>
                     <img *ngIf="racetrack.logoUrl" [src]="racetrack.logoUrl" style="max-height: 30px;" alt="racetrack logo"/>
                 </td>

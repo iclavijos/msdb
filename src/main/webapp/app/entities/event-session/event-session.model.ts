@@ -8,6 +8,7 @@ export class EventSession {
         public name?: string,
         public shortname?: string,
         public sessionStartTime?: any,
+        public originalStartTime?: any,
         public duration?: number,
         public durationType?: DurationType,
         public additionalLap = false,

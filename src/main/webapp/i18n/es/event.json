@@ -101,6 +101,11 @@
 	            	"selectFile": "Seleccionar archivo",
 	            	"file": "Archivo"
 	            },
+	            "processResults": {
+	            	"label": "Procesar resultados",
+	            	"title": "Procesar resultados de la carrera",
+	            	"desc": "Calcular puntos para cada piloto y actualizar clasificaciones"
+	            },
 	            "created": "Se ha añadido un nuevo resultado",
 	            "updated": "Se ha editado el resultado",
 	            "deleted": "Se ha borrado el resultado",
@@ -119,7 +124,8 @@
 	            "disqualified": "Descalificado",
 	            "retirementCause": "Motivo abandono",
 	            "difference": "Diferencia",
-	            "startingPosition": "Pos. salida"
+	            "startingPosition": "Pos. salida",
+	            "lapsLed": "Vueltas lideradas"
 	        },
 	        "copyEntries": {
 	        	"title" : "Copia participantes de otro evento",

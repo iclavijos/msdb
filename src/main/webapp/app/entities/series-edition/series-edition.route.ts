@@ -45,7 +45,7 @@ export const seriesEditionRoute: Routes = [
     component: SeriesEditionDetailComponent,
     data: {
         authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
+        pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
     }
   }
 ];
@@ -56,7 +56,7 @@ export const seriesEditionPopupRoute: Routes = [
     component: SeriesEditionPopupComponent,
     data: {
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
+        pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
     },
     outlet: 'popup'
   },
@@ -65,7 +65,7 @@ export const seriesEditionPopupRoute: Routes = [
     component: SeriesEditionPopupComponent,
     data: {
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
+        pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
     },
     outlet: 'popup'
   },
@@ -74,7 +74,7 @@ export const seriesEditionPopupRoute: Routes = [
       component: SeriesEditionCalendarPopupComponent,
       data: {
           authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-          pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
+          pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
       },
       outlet: 'popup'
     },
@@ -83,7 +83,7 @@ export const seriesEditionPopupRoute: Routes = [
     component: SeriesEditionDeletePopupComponent,
     data: {
         authorities: ['ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
+        pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
     },
     outlet: 'popup'
   }

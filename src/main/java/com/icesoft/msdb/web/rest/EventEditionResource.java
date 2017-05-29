@@ -2,9 +2,12 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -41,6 +44,7 @@ import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SearchService;
+import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 import com.icesoft.msdb.web.rest.view.MSDBView;
@@ -66,14 +70,17 @@ public class EventEditionResource {
     private final EventSessionRepository eventSessionRepository;
     private final EventEntryRepository eventEntryRepository;
     private final EventEntryResultRepository eventResultRepository;
+    private final ResultsService resultsService;
     private final SearchService searchService;
 
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventSessionRepository eventSessionRepository, 
-    		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, SearchService searchService) {
+    		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, SearchService searchService,
+    		ResultsService resultsService) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventSessionRepository = eventSessionRepository;
         this.eventEntryRepository = eventEntryRepository;
         this.eventResultRepository = resultRepository;
+        this.resultsService = resultsService;
         this.searchService = searchService;
     }
 
@@ -205,14 +212,23 @@ public class EventEditionResource {
     	log.debug("REST request to get all EventEditions {} sessions", id);
     	List<EventSession> result = eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(id);
     	//result.parallelStream().forEach(session -> session.getEventEdition().setSeriesEdition(null));
+//    	for(EventSession session : result) {
+////    		DateTimeFormatter sourceFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+////    		System.out.println("In DB: " + sourceFormatter.format(session.getSessionStartTime()));
+//    		TimeZone tz = TimeZone.getTimeZone(session.getEventEdition().getTrackLayout().getRacetrack().getTimeZone());
+//    		ZonedDateTime zdt = session.getSessionStartTime().toLocalDateTime().atZone(tz.toZoneId());
+//    		ZonedDateTime utcDate = zdt.withZoneSameInstant(ZoneOffset.UTC);
+////    		System.out.println("In TZ: " + sourceFormatter.format(utcDate));
+//    		session.setSessionStartTime(utcDate);
+//    	}
     	return result;
     }
     
-    @GetMapping("/event-editions/{id}/scoring-races")
+    @GetMapping("/event-editions/{id}/scoring-sessions")
     @Timed
-    public List<EventSession> getEventEditionScoringRaces(@PathVariable Long id) {
-    	log.debug("REST request to get all EventEditions {} scoring races", id);
-    	List<EventSession> result = eventSessionRepository.findEventEditionScoringRaces(id);
+    public List<EventSession> getEventEditionScoringSesssions(@PathVariable Long id) {
+    	log.debug("REST request to get all EventEditions {} scoring sessions", id);
+    	List<EventSession> result = eventSessionRepository.findEventEditionScoringSessions(id);
     	return result;
     }
 
@@ -225,6 +241,10 @@ public class EventEditionResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
             		ENTITY_NAME_SESSION, "idexists", "A new eventSession cannot already have an ID")).body(null);
         }
+		TimeZone tz = TimeZone.getTimeZone(eventSession.getEventEdition().getTrackLayout().getRacetrack().getTimeZone());
+		ZonedDateTime zdt = eventSession.getSessionStartTime().toLocalDateTime().atZone(tz.toZoneId());
+		ZonedDateTime utcDate = zdt.withZoneSameInstant(ZoneOffset.UTC);
+		eventSession.setSessionStartTime(utcDate);
         EventSession result = eventSessionRepository.save(eventSession);
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/sessions"))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME_SESSION, result.getId().toString()))
@@ -256,10 +276,23 @@ public class EventEditionResource {
         if (eventSession.getId() == null) {
             return createEventEditionSession(eventSession);
         }
+        TimeZone tz = TimeZone.getTimeZone(eventSession.getEventEdition().getTrackLayout().getRacetrack().getTimeZone());
+		ZonedDateTime zdt = eventSession.getSessionStartTime().toLocalDateTime().atZone(tz.toZoneId());
+		ZonedDateTime utcDate = zdt.withZoneSameInstant(ZoneOffset.UTC);
+		eventSession.setSessionStartTime(utcDate);
         EventSession result = eventSessionRepository.save(eventSession);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, eventSession.getId().toString()))
             .body(result);
+    }
+    
+    @PutMapping("/event-editions/event-sessions/{sessionId}/process-results")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    public ResponseEntity<Void> processSessionResults(@PathVariable Long sessionId) {
+    	log.debug("Processing results of session {}", sessionId);
+    	resultsService.processSessionResults(sessionId);
+    	return ResponseEntity.ok().build();
     }
     
     @GetMapping("/event-editions/{id}/entries")

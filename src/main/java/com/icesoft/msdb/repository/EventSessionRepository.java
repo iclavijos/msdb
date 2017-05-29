@@ -13,6 +13,6 @@ public interface EventSessionRepository extends JpaRepository<EventSession,Long>
 
 	List<EventSession> findByEventEditionIdOrderBySessionStartTimeAsc(Long eventEditionId);
 	
-	@Query("SELECT e FROM EventSession e WHERE e.eventEdition.id = ?1 AND e.awardsPoints = true AND e.sessionType=2")
-	List<EventSession> findEventEditionScoringRaces(Long eventEditionId);
+	@Query("SELECT e FROM EventSession e WHERE e.eventEdition.id = ?1 AND e.awardsPoints = true")
+	List<EventSession> findEventEditionScoringSessions(Long eventEditionId);
 }

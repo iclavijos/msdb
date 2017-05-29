@@ -1,6 +1,8 @@
 package com.icesoft.msdb.service.impl;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.TimeZoneApi;
+import com.google.maps.errors.ApiException;
+import com.google.maps.model.GeocodingResult;
+import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
@@ -28,12 +36,10 @@ public class RacetrackServiceImpl implements RacetrackService{
     
     private final RacetrackLayoutRepository racetrackLayoutRepository;
 
-//    private final RacetrackSearchRepository racetrackSearchRepository;
 
     public RacetrackServiceImpl(RacetrackRepository racetrackRepository, RacetrackLayoutRepository racetrackLayoutRepository) {
         this.racetrackRepository = racetrackRepository;
         this.racetrackLayoutRepository = racetrackLayoutRepository;
-        //this.racetrackSearchRepository = racetrackSearchRepository;
     }
 
     /**
@@ -45,9 +51,22 @@ public class RacetrackServiceImpl implements RacetrackService{
     @Override
     public Racetrack save(Racetrack racetrack) {
         log.debug("Request to save Racetrack : {}", racetrack);
-        Racetrack result = racetrackRepository.save(racetrack);
-        //racetrackSearchRepository.save(result);
-        return result;
+        
+        GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyBrTxr6pxxOtRuZHTZ_AGt0xTPUp8u-3y0");
+        GeocodingResult[] results;
+		try {
+			results = GeocodingApi.geocode(context, racetrack.getLocation() + ", " + racetrack.getCountryCode()).await();
+			if (results == null || results.length == 0) {
+				throw new MSDBException("No geolocation could be found for the provided information");
+			}
+			TimeZone timeZone = TimeZoneApi.getTimeZone(context, results[0].geometry.location).await();
+			racetrack.setTimeZone(timeZone.getID());
+			Racetrack result = racetrackRepository.save(racetrack);
+			return result;
+		} catch (ApiException | InterruptedException | IOException e) {
+			log.error("Error accessing Google Geolocation API", e);
+			throw new MSDBException("Problems trying to retrieve geolocation information");
+		}
     }
 
     /**

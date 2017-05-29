@@ -8,6 +8,7 @@ public class SessionResultDTO {
     private String totalTime;
     private String bestLapTime;
     private Integer lapsCompleted;
+    private Integer lapsLed;
     private Boolean retired;
     private String cause;
     private String difference;
@@ -47,6 +48,12 @@ public class SessionResultDTO {
 	}
 	public void setLapsCompleted(Integer lapsCompleted) {
 		this.lapsCompleted = lapsCompleted;
+	}
+	public Integer getLapsLed() {
+		return lapsLed;
+	}
+	public void setLapsLed(Integer lapsLed) {
+		this.lapsLed = lapsLed;
 	}
 	public Boolean getRetired() {
 		return retired;

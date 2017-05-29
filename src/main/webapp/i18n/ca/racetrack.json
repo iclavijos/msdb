@@ -18,8 +18,9 @@
             },
             "name": "Nom",
             "location": "LocalitzaciÃ³",
+            "country": "Pais",
             "logo": "Logo",
-            "layouts": "Traçats"
+            "layouts": "TraÃ§ats"
         },
         "racetrackLayout" : {
             "home": {
@@ -32,7 +33,7 @@
             "updated": "A Racetrack Layout is updated with identifier {{ param }}",
             "deleted": "A Racetrack Layout is deleted with identifier {{ param }}",
             "delete": {
-                "question": "Esteu segur que voleu esborrar el traçat '{{ id }}?'"
+                "question": "Esteu segur que voleu esborrar el traï¿½at '{{ id }}?'"
             },
             "detail": {
                 "title": "Racetrack Layout"

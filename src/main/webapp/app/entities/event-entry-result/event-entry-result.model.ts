@@ -9,6 +9,7 @@ export class EventEntryResult {
         public totalTime?: number,
         public bestLapTime?: number,
         public lapsCompleted?: number,
+        public lapsLed?: number,
         public difference?: number,
         public differenceType?: number,
         public retired?: boolean,

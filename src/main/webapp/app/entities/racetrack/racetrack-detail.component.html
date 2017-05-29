@@ -17,7 +17,7 @@
 						<span jhiTranslate="motorsportsDatabaseApp.racetrack.location">Location</span>
 					</dt>
 					<dd>
-						<span>{{racetrack.location}}</span>
+						<span>{{racetrack.location}}</span> <span *ngIf="racetrack.countryCode"><img src="/images/flags64/{{racetrack.countryCode}}.png"/></span>
 					</dd>
 					<dt>
 						<span jhiTranslate="motorsportsDatabaseApp.racetrack.logo">Logo</span>

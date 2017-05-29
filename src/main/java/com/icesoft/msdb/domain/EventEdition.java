@@ -53,13 +53,13 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
     @NotNull
     @Column(name = "edition_year", nullable = false)
-    @Field(store = Store.YES)
+    @Field(store = Store.NO)
     private Integer editionYear;
 
     @NotNull
     @Size(max = 40)
     @Column(name = "short_event_name", length = 40, nullable = false)
-    @Field(termVector = TermVector.NO, store = Store.YES)
+    @Field(store = Store.NO)
     private String shortEventName;
 
     @NotNull

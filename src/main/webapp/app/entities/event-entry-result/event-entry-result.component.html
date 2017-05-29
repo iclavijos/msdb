@@ -12,13 +12,14 @@
             <th *ngIf="session.sessionType === 'RACE'"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.totalTime">Total Time</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.bestLapTime">Best Lap Time</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.lapsCompleted">Laps Completed</span></th>
+            <th *ngIf="session.sessionType === 'RACE'"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.lapsLed">Laps Led</span></th>
             <th *ngIf="session.sessionType === 'RACE'"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.retired">Retired</span></th>
             <th *ngIf="session.sessionType === 'RACE'"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.retirementCause">Retirement Cause</span></th>
             <th></th>
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let eventEntryResult of eventEntryResults ;trackBy: trackId">
+            <tr *ngFor="let eventEntryResult of eventEntryResults; trackBy: trackId; let i = index;">
                 <td>{{eventEntryResult.finalPosition >= 900 ? '-' : eventEntryResult.finalPosition }}</td>
                 <td *ngIf="session.sessionType === 'RACE'">{{eventEntryResult.startingPosition }}</td>
                 <td>#{{eventEntryResult.entry.raceNumber}} {{eventEntryResult.session.eventEdition.multidriver ? eventEntryResult.entry.driversName : eventEntryResult.entry.drivers[0].fullName}}
@@ -30,8 +31,10 @@
                 		(eventEntryResult.differenceType == 1 ? '+' + (eventEntryResult.difference | timeMaskPipe) : eventEntryResult.difference + 'L')
                 		: eventEntryResult.totalTime | timeMaskPipe : true }}
                 </td>
-                <td>{{eventEntryResult.bestLapTime | timeMaskPipe }}</td>
+                <td>{{eventEntryResult.bestLapTime | timeMaskPipe }} 
+                	<span *ngIf="session.sessionType !== 'RACE' && i !== 0 && eventEntryResult.bestLapTime">(+{{gap(eventEntryResult.bestLapTime) | timeMaskPipe}})</span></td>
                 <td>{{eventEntryResult.lapsCompleted}}</td>
+                <td *ngIf="session.sessionType === 'RACE'">{{eventEntryResult.lapsLed}}</td>
                 <td *ngIf="session.sessionType === 'RACE'"><i [ngClass]="eventEntryResult.retired ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></td>
                 <td *ngIf="session.sessionType === 'RACE'">{{eventEntryResult.cause}}</td>
                 <td class="text-right">
@@ -55,6 +58,15 @@
         </table>
     </div>
     <h2>
+    	<div *ngIf="session.sessionType === 'RACE' && session.awardsPoints">
+    	<button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" type="button"
+           	class="btn btn-info float-right" (click)="processResults()">
+            <span class="fa fa-check-square"></span>
+            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.processResults.label">
+            Process race results
+            </span>
+        </button>
+        </div>
     	<button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
            	class="btn btn-success float-right" [routerLink]="['/', { outlets: { popup: session.id + '/upload-results' } }]">
             <span class="fa fa-plus"></span>

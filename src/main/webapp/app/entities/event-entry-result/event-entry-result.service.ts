@@ -38,6 +38,10 @@ export class EventEntryResultService {
     delete(id: number): Observable<Response> {
         return this.http.delete(`api/event-editions/event-sessions/results/${id}`);
     }
+    
+    processSessionResults(id: number): Observable<Response> {
+        return this.http.put(`api/event-editions/event-sessions/${id}/process-results`, null);
+    }
 
     private convertResponse(res: any): any {
         let jsonResponse = res.json();

@@ -113,7 +113,8 @@ public class RacetrackResource {
 	        String cdnUrl = cdnService.uploadImage(racetrack.getId().toString(), racetrack.getLogo(), ENTITY_NAME);
 	        racetrack.setLogoUrl(cdnUrl);
         } else {
-        	cdnService.deleteImage(racetrack.getId().toString(), ENTITY_NAME);
+        	//TODO: Review this part
+        	//cdnService.deleteImage(racetrack.getId().toString(), ENTITY_NAME);
         }
         Racetrack result = racetrackService.save(racetrack);
         return ResponseEntity.ok()
