@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
@@ -34,7 +33,6 @@ import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import com.icesoft.msdb.web.rest.view.MSDBView;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
@@ -126,7 +124,6 @@ public class SeriesEditionResource {
      */
     @GetMapping("/series-editions/{id}")
     @Timed
-    @JsonView(MSDBView.SeriesEditionDetailView.class)
     public ResponseEntity<SeriesEdition> getSeriesEdition(@PathVariable Long id) {
         log.debug("REST request to get SeriesEdition : {}", id);
         SeriesEdition seriesEdition = seriesEditionRepository.findOne(id);

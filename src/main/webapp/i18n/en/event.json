@@ -49,6 +49,8 @@
             "entryList": "Entry List",
             "results": "Results",
             "multidriver": "More than one driver per entry?",
+            "yourTime": "Your time",
+            "localTime": "Local time",
             "session": {
             	"createOrEditLabel": "Create or edit a Event Session",
             	"name": "Name",
@@ -133,7 +135,7 @@
 	        	"copyLabel": "Copy entries"
 	        },
 		    "enumerations": {
-		    	"milliseconds": "Deumilèssimes",
+		    	"milliseconds": "Tens of thousands",
 		    	"seconds": "Seconds",
 			    "minutes": "Minutes",
 			    "hours": "Hours",

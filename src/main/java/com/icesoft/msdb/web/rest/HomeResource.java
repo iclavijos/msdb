@@ -1,5 +1,13 @@
 package com.icesoft.msdb.web.rest;
 
+import java.time.Clock;
+import java.time.DayOfWeek;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -10,11 +18,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.EventEditionRepository;
+import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.RacetrackRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.TeamRepository;
+import com.icesoft.msdb.service.dto.CalendarDTO;
 
 @RestController
 @RequestMapping("/api")
@@ -27,14 +38,17 @@ public class HomeResource {
 	private final SeriesEditionRepository seriesEditionRepository;
 	private final TeamRepository teamRepository;
 	private final EventEditionRepository eventsEditionsRepository;
+	private final EventSessionRepository eventSessionRepository;
 
 	public HomeResource(DriverRepository driverRepo, RacetrackRepository racetrackRepo, 
-			SeriesEditionRepository seriesRepo, TeamRepository teamRepo, EventEditionRepository eventsRepo) {
+			SeriesEditionRepository seriesRepo, TeamRepository teamRepo, EventEditionRepository eventsRepo,
+			EventSessionRepository eventSessionRepo) {
 		this.driversRepository = driverRepo;
 		this.racetrackRepository = racetrackRepo;
 		this.seriesEditionRepository = seriesRepo;
 		this.teamRepository = teamRepo;
 		this.eventsEditionsRepository = eventsRepo;
+		this.eventSessionRepository = eventSessionRepo;
 	}
 	
 	@GetMapping("/home")
@@ -61,4 +75,36 @@ public class HomeResource {
         }
         return mainObj.toString();
     }
+	
+	@GetMapping("/home/calendar")
+	@Timed
+	@Cacheable(cacheNames="calendar")
+	public List<CalendarDTO> getCalendar() {
+		log.debug("REST request to get calendar");
+		ZonedDateTime now = ZonedDateTime.now(Clock.systemUTC());
+		ZonedDateTime nextSunday = now.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+		List<EventSession> sessions = eventSessionRepository.findUpcomingSessions(now, nextSunday.plusWeeks(1));
+
+		List<CalendarDTO> calendar = new ArrayList<>();
+		String currentDate = "";
+		List<EventSession> daySessions = new ArrayList<>();
+		if (sessions != null & !sessions.isEmpty()) {
+			currentDate = sessions.get(0).getSessionStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE);
+		}
+		for(EventSession s : sessions) {
+			if (currentDate.equals(s.getSessionStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE))) {
+				daySessions.add(s);
+			} else {
+				CalendarDTO day = new CalendarDTO(currentDate, daySessions);
+				calendar.add(day);
+				currentDate = s.getSessionStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE);
+				daySessions = new ArrayList<>();
+				daySessions.add(s);
+			}
+		}
+		CalendarDTO day = new CalendarDTO(currentDate, daySessions);
+		calendar.add(day);
+		
+		return calendar;
+	}
 }

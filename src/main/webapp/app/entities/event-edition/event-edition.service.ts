@@ -4,6 +4,9 @@ import { Observable } from 'rxjs/Rx';
 
 import { EventEdition } from './event-edition.model';
 import { DateUtils } from 'ng-jhipster';
+
+import * as moment from 'moment-timezone';
+
 @Injectable()
 export class EventEditionService {
 
@@ -49,15 +52,15 @@ export class EventEditionService {
         return this.http.get(`${this.eventResourceUrl}/${idEvent}/editions`, options).map((res: any) => this.convertResponse(res));
     }
     
-    findSessions(id: number): Observable<Response> {
+    findSessions(id: number, timeZone: string): Observable<Response> {
         return this.http.get(`${this.resourceUrl}/${id}/sessions`).map((res: Response) => {
-            return this.transformDateTime(res);
+            return this.transformDateTime(res, timeZone);
         });
     }
     
-    findScoringRaces(id: number): Observable<Response> {
-        return this.http.get(`${this.resourceUrl}/${id}/scoring-races`).map((res: Response) => {
-            return this.transformDateTime(res);
+    findScoringSessions(id: number, timeZone: string): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${id}/scoring-sessions`).map((res: Response) => {
+            return this.transformDateTime(res, timeZone);
         });
     }
 
@@ -89,10 +92,10 @@ export class EventEditionService {
         return res;
     }
     
-    private transformDateTime(res: any): any {
+    private transformDateTime(res: any, timeZone: string): any {
         let jsonResponse = res.json();
         for (let i = 0; i < jsonResponse.length; i++) {
-            jsonResponse[i].sessionStartTime = new Date(jsonResponse[i].sessionStartTime * 1000);
+            jsonResponse[i].sessionStartTime = moment(jsonResponse[i].sessionStartTime * 1000).tz(timeZone);
         }
         res._body = jsonResponse;
         return res;

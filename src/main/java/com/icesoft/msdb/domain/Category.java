@@ -16,9 +16,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.search.annotations.Field;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.icesoft.msdb.web.rest.view.MSDBView;
-
 /**
  * A Category.
  */
@@ -31,21 +28,18 @@ public class Category extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private Long id;
 
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
     @Field
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private String name;
 
     @NotNull
     @Size(max = 10)
     @Column(name = "shortname", length = 10, nullable = false)
     @Field
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private String shortname;
 
     public Long getId() {

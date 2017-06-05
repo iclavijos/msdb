@@ -17,4 +17,5 @@ export class EventEntryResult {
         public entry?: EventEntry,
         public session?: EventSession,
     ) { }
+    
 }

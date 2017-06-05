@@ -17,6 +17,8 @@
         "fastestLap": "Fastest Lap",
         "qualyLap": "Q Fastest Time",
         "raceLap": "Race Fastest Time",
-        "racePosition": "Race Pos."
+        "racePosition": "Race Pos.",
+        "upcomingEvents": "Upcoming events",
+        "searchDB": "Search database"
     }
 }

@@ -49,6 +49,8 @@
             "entryList": "Inscritos",
             "results": "Resultados",
             "multidriver": "Más de un piloto per participante?",
+            "yourTime": "Tu hora",
+            "localTime": "Hora local",
             "session": {
             	"createOrEditLabel": "Crea o edita una sesión",
             	"name": "Nombre",

@@ -81,8 +81,8 @@
 					            </thead>
 					            <tbody>
 					            <tr *ngFor="let eventSession of eventEdition.sessions ;trackBy: trackId">
-					                <td>{{eventSession.sessionStartTime | date:'medium'}}</td>
-					                <td>{{eventSession.shortname}}</td>
+					                <td>{{eventSession.sessionStartTime.format("DD/MM/YYYY, HH:mm:ss")}}</td>
+					                <td>{{eventSession.name}}</td>
 					                <td>{{eventSession.duration}} {{'motorsportsDatabaseApp.eventEdition.enumerations.' + durationTypes[eventSession.durationType] | translate}} 
 					                	<span *ngIf="eventSession.additionalLap">+ 1 {{'motorsportsDatabaseApp.eventEdition.session.lap' | translate}}</span>
 					                </td>
@@ -109,14 +109,14 @@
 				        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
 				        	class="btn btn-primary float-right create-event-session" [routerLink]="['/', { outlets: { popup: eventEdition.id + '/event-session-new' } }]">
 				            <span class="fa fa-plus"></span>
-				        </button>
+				        </button>&nbsp;
 				        <button type="button" *ngIf="!convertedTime && eventEdition.sessions"
-				        	class="btn btn-primary float-right create-event-session" (click)="convertToCurrentTZ()">
-				            To converted
+				        	class="btn btn-outline-primary float-right create-event-session" (click)="convertToCurrentTZ()">
+				            <span jhiTranslate="motorsportsDatabaseApp.eventEdition.yourTime">Your Time</span>
 				        </button>
 				        <button type="button" *ngIf="convertedTime && eventEdition.sessions"
-				        	class="btn btn-primary float-right create-event-session" (click)="convertToLocalTZ()">
-				            To local
+				        	class="btn btn-outline-primary float-right create-event-session" (click)="convertToLocalTZ()">
+				            <span jhiTranslate="motorsportsDatabaseApp.eventEdition.localTime">Local Time</span>
 				        </button>
 			        </dd>
 				</div>
@@ -267,9 +267,9 @@
 	<ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.results' | translate}}">
 	    <template ngbTabContent>
 	    	<ngb-tabset>
-			  <ngb-tab *ngFor="let eventSession of eventEdition.sessions" title="{{eventSession.name}}">
+			  <ngb-tab *ngFor="let eventSession of eventEdition.sessions" title="{{eventSession.shortname}}">
 			    <template ngbTabContent>
-			    	<jhi-event-entry-result [session]="eventSession">Result...</jhi-event-entry-result>
+			    	<jhi-event-entry-result [session]="eventSession" [edition]="eventEdition">Result...</jhi-event-entry-result>
 			    </template>
 			  </ngb-tab>
 			</ngb-tabset>

@@ -16,9 +16,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.icesoft.msdb.web.rest.view.MSDBView;
-
 /**
  * A Series.
  */
@@ -31,7 +28,6 @@ public class Series extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private Long id;
 
     @NotNull

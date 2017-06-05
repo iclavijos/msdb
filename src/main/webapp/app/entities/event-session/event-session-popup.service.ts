@@ -8,6 +8,8 @@ import { EventSessionService } from './event-session.service';
 import { EventEdition } from '../event-edition/event-edition.model';
 import { EventEditionService } from '../event-edition/event-edition.service';
 
+import * as moment from 'moment-timezone';
+
 @Injectable()
 export class EventSessionPopupService {
     private isOpen = false;
@@ -28,7 +30,8 @@ export class EventSessionPopupService {
         
         if (id) {
             this.eventSessionService.find(id).subscribe(eventSession => {
-                eventSession.sessionStartTime = this.datePipe.transform(eventSession.sessionStartTime * 1000, 'yyyy-MM-ddTHH:mm');
+                eventSession.sessionStartTime = moment(eventSession.sessionStartTime*1000)
+                    .tz(eventSession.eventEdition.trackLayout.racetrack.timeZone).format("YYYY-MM-DDTHH:mm");
                 this.eventSessionModalRef(component, eventSession);
             });
         } else {

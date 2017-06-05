@@ -56,32 +56,67 @@
              </div>
          </div>
          
-         <div class="row mb-3" *ngIf="isAuthenticated()">
-         	<div class="col-sm-6 no-padding-right">
-	            <form name="searchFormEntries" class="form-inline">
-	                <div class="input-group w-100 mt-3">
-	                	<label class="form-control-label col-md-4" jhiTranslate="home.searchEntries" for="field_name">Search entries</label>
-	                	<input type="text" class="form-control col-md-8" [(ngModel)]="searchEntriesStr" id="searchEntries" name="searchEntries" placeholder="Ex: '1951 Fangio', 'Alonso', 'Mercedes 2016', 'Australia'...">
-	                    <button class="input-group-addon btn btn-info" (click)="searchEntries(searchEntriesStr)">
-	                        <span class="fa fa-search"></span>
-	                    </button>
-	                    <button class="input-group-addon btn btn-danger" (click)="clearEntries()" *ngIf="searchEntriesStr">
-	                        <span class="fa fa-trash-o"></span>
-	                    </button>
-	                </div>
-	            </form>
-	            <form *ngIf="false" name="searchFormEvents" class="form-inline">
-	                <div class="input-group w-100 mt-3">
-	                	<label class="form-control-label col-md-4" jhiTranslate="home.searchEvents" for="field_name">Search events</label>
-	                	<input type="text" class="form-control col-md-8" [(ngModel)]="searchEventsStr" id="searchEvents" name="searchEvents" placeholder="Ex: 'Belgian GP', 'Suzuka 2010', '1997 Spain'...">
-	                    <button class="input-group-addon btn btn-info" (click)="searchEvents(searchEventsStr)">
-	                        <span class="fa fa-search"></span>
-	                    </button>
-	                    <button class="input-group-addon btn btn-danger" (click)="clearEvents()" *ngIf="searchEventsStr">
-	                        <span class="fa fa-trash-o"></span>
-	                    </button>
-	                </div>
-	            </form>
+         <div class="row mb-3">
+         	<div class="col-sm-5 no-padding-right" *ngIf="isAuthenticated()">
+				<div class="card">
+					<div class="card-header">{{ 'home.searchDB' | translate }}</div>
+					<div class="card-block">
+						<form name="searchFormEntries" class="form-inline">
+							<div class="input-group w-100 mt-3">
+								<label class="form-control-label col-md-3" jhiTranslate="home.searchEntries" for="field_name">Search entries</label> 
+								<input type="text" class="form-control col-md-9" [(ngModel)]="searchEntriesStr" id="searchEntries" name="searchEntries"
+									placeholder="Ex: '1951 Fangio', 'Alonso', 'Mercedes 2016', 'Australia'...">
+								<button class="input-group-addon btn btn-info"
+									(click)="searchEntries(searchEntriesStr)">
+									<span class="fa fa-search"></span>
+								</button>
+								<button class="input-group-addon btn btn-danger"
+									(click)="clearEntries()" *ngIf="searchEntriesStr">
+									<span class="fa fa-trash-o"></span>
+								</button>
+							</div>
+						</form>
+						<form *ngIf="false" name="searchFormEvents" class="form-inline">
+							<div class="input-group w-100 mt-3">
+								<label class="form-control-label col-md-4"
+									jhiTranslate="home.searchEvents" for="field_name">Search
+									events</label> <input type="text" class="form-control col-md-8"
+									[(ngModel)]="searchEventsStr" id="searchEvents"
+									name="searchEvents"
+									placeholder="Ex: 'Belgian GP', 'Suzuka 2010', '1997 Spain'...">
+								<button class="input-group-addon btn btn-info"
+									(click)="searchEvents(searchEventsStr)">
+									<span class="fa fa-search"></span>
+								</button>
+								<button class="input-group-addon btn btn-danger"
+									(click)="clearEvents()" *ngIf="searchEventsStr">
+									<span class="fa fa-trash-o"></span>
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+	        <div class="col-sm-7">
+				<div class="card">
+					<div class="card-header">{{ 'home.upcomingEvents' | translate }}</div>
+					<div class="cardScroll">
+						<div class="card-block" *ngFor="let day of calendar">
+							<h5 class="card-title">{{ day.date }}</h5>
+							<div *ngFor="let session of day.sessions">
+		                    	<p class="card-text">
+		                    		<strong>{{ session.sessionStartTime.format("HH:mm") }}
+		                    			<span *ngIf="session.sessionEndTime"> - {{ session.sessionEndTime.format("HH:mm")}}</span>
+		                    			<span *ngIf="session.durationType === 5"> ({{ session.duration}}L)</span>
+		                    			<span *ngIf="session.durationType === 3"> ({{ session.duration}}KM)</span>
+		                    			<span *ngIf="session.durationType === 4"> ({{ session.duration}}M)</span>: </strong>
+		                    				<span *ngIf="session.seriesId"><a [routerLink]="['/series/series-edition', session.seriesId ]" >{{ session.seriesName }}</a> -</span> 
+		                    					<a [routerLink]="['/event-edition', session.eventEdition.id ]" >{{ session.eventEdition.longEventName }}, {{ session.name }}</a>
+		                    	</p>
+		                    </div>
+						</div>
+					</div>
+				</div>
 	        </div>
          </div>
     </div>

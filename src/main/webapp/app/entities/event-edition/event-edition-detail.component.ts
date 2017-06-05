@@ -67,13 +67,7 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     }
     
     loadSessions(id) {
-        this.eventEditionService.findSessions(id).subscribe(eventSessions => {
-            for(let session of eventSessions.json()) {
-                let toConvert = moment(session.sessionStartTime).tz(session.eventEdition.trackLayout.racetrack.timeZone);
-                session.originalStartTime = session.sessionStartTime;
-                session.sessionStartTime = toConvert.tz('America/Toronto');//toConvert.tz(currentTZ);
-                session.shortname += ' 23';
-            }
+        this.eventEditionService.findSessions(id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe(eventSessions => {
             this.eventEdition.sessions = eventSessions.json();
         });
     }
@@ -108,19 +102,16 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     convertToCurrentTZ() {
         let currentTZ = moment.tz.guess();
         for(let session of this.eventEdition.sessions) {
-            let format = 'YYYY/MM/DD HH:mm:ss ZZ';
-            console.log(moment(session.sessionStartTime, format).tz(session.eventEdition.trackLayout.racetrack.timeZone).format(format));
-            let toConvert = moment(session.sessionStartTime, format).tz(session.eventEdition.trackLayout.racetrack.timeZone);
-            if (!session.originalStartTime) {
-                session.originalStartTime = session.sessionStartTime;
-            }
-            session.sessionStartTime = toConvert.tz('America/Toronto');//toConvert.tz(currentTZ);
-            session.shortname += ' 18';
+            session.sessionStartTime.tz(currentTZ);
         }
+        this.convertedTime = true;
     }
     
     convertToLocalTZ() {
-        
+        for(let session of this.eventEdition.sessions) {
+            session.sessionStartTime.tz(this.eventEdition.trackLayout.racetrack.timeZone);
+        }
+        this.convertedTime = false;
     }
 
 }

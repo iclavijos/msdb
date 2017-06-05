@@ -6,7 +6,7 @@
             "message": "T'has connectat amb l'usuari \"{{username}}\"."
         },
         "link": {
-            "follow": "Segueixi a @iclavijos a Twitter"
+            "follow": "Segueix a @iclavijos a Twitter"
         },
         "searchEntries": "Cercar participacions:",
         "searchEvents": "Cercar cites:",
@@ -18,6 +18,8 @@
         "fastestLap": "Volta ràpida",
         "qualyLap": "V ràpida Q",
         "raceLap": "V ràpida Cursa",
-        "racePosition": "Pos. Cursa"
+        "racePosition": "Pos. Cursa",
+        "upcomingEvents": "Propers events",
+        "searchDB": "Cercar la base de dades"
     }
 }

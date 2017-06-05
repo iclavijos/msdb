@@ -11,6 +11,7 @@
     </cache-template>
     
     <cache alias="homeInfo" uses-template="simple"/>
+    <cache alias="calendar" uses-template="simple"/>
 
     <cache alias="com.icesoft.msdb.domain.User" uses-template="simple"/>
 

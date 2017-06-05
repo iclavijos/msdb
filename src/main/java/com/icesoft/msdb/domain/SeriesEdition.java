@@ -27,10 +27,6 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.icesoft.msdb.web.rest.view.MSDBView;
-
 /**
  * A SeriesEdition.
  */
@@ -44,32 +40,26 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private Long id;
     
     @NotNull
     @Size(max = 150)
     @Column(name = "edition_name", length = 150, nullable = false)
     @Field
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private String editionName;
 
 	@NotNull
     @Size(max = 10)
     @Column(name = "period", length = 10, nullable = false)
-	@JsonView(MSDBView.SeriesEditionsView.class)
     private String period;
 
     @Column(name = "single_chassis")
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private Boolean singleChassis;
 
     @Column(name = "single_engine")
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private Boolean singleEngine;
 
     @Column(name = "single_tyre")
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private Boolean singleTyre;
     
     @ManyToMany(fetch=FetchType.EAGER)
@@ -78,7 +68,6 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         name="CATEGORIES_SERIES",
         joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="ID"))
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private List<Category> allowedCategories;
     
     @ManyToMany(fetch=FetchType.EAGER)
@@ -87,17 +76,14 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         name="POINTS_SERIES",
         joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="points_id", referencedColumnName="ID"))
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private List<PointsSystem> pointsSystems;
 
     @ManyToOne
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private Series series;
     
     @OneToMany(mappedBy = "seriesEdition", fetch=FetchType.EAGER)
     @OrderBy("eventDate ASC")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    @JsonView(MSDBView.SeriesEditionDetailView.class)
     private List<EventEdition> events;
 
     public Long getId() {

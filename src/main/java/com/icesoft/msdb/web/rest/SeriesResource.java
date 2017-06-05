@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.icesoft.msdb.domain.Series;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
@@ -35,7 +34,6 @@ import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import com.icesoft.msdb.web.rest.view.MSDBView;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
@@ -138,7 +136,6 @@ public class SeriesResource {
     
     @GetMapping("/series/{id}/editions")
     @Timed
-    @JsonView(MSDBView.SeriesEditionsView.class)
     public ResponseEntity<List<SeriesEdition>> getAllEditions(@PathVariable Long id, @ApiParam Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of Series");

@@ -9,6 +9,8 @@ import { Account, LoginModalService, Principal } from '../shared';
 
 import { HomeData } from './home.model';
 
+import * as moment from 'moment-timezone';
+
 @Component({
     selector: 'jhi-home',
     templateUrl: './home.component.html',
@@ -24,6 +26,7 @@ export class HomeComponent implements OnInit {
     homeData: HomeData = new HomeData(); //Not a nice solution. Should find out what to use (Promise? Observable? ???)
     searchEntriesStr: string;
     searchEventsStr: string;
+    calendar: any;
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
@@ -44,6 +47,24 @@ export class HomeComponent implements OnInit {
         this.registerAuthenticationSuccess();
         this.http.get('api/home').subscribe((res: Response) => {
             this.homeData = res.json();
+        });
+        this.http.get('api/home/calendar').subscribe((res: Response) => {
+            let currentTZ = moment.tz.guess();
+            let data = res.json();
+            for (let i = 0; i < data.length; i++) {
+                for (let j = 0; j < data[i].sessions.length; j++) {
+                    let session = data[i].sessions[j];
+                    session.sessionStartTime = moment(session.sessionStartTime * 1000).tz(currentTZ);
+                    if (session.durationType === 1) {
+                        session.sessionEndTime = session.sessionStartTime.clone();
+                        session.sessionEndTime.add(session.duration, 'm');
+                    } else if (session.durationType === 2) {
+                        session.sessionEndTime = session.sessionStartTime.clone();
+                        session.sessionEndTime.add(session.duration, 'h');
+                    }
+                }
+            }
+            this.calendar = data;
         });
     }
 

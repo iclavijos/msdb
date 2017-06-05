@@ -87,7 +87,7 @@ export class SeriesEditionCalendarDialogComponent implements OnInit, OnDestroy {
     private onEventSelected(selected: CompleterItem) {
         if (selected) {
             this.eventEdition = selected.originalObject;
-            this.eventEditionService.findScoringRaces(this.eventEdition.id).subscribe(eventSessions => {
+            this.eventEditionService.findScoringSessions(this.eventEdition.id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe(eventSessions => {
                 this.eventEdition.sessions = eventSessions.json();
                 this.addRaces(this.eventEdition.sessions);
             });

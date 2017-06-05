@@ -17,6 +17,8 @@
         "fastestLap": "Vuelta rápida",
         "qualyLap": "V. rápida Q",
         "raceLap": "V. rápida Carrera",
-        "racePosition": "Pos. Carrera"
+        "racePosition": "Pos. Carrera",
+        "upcomingEvents": "Próximos eventos",
+        "searchDB": "Buscar en la base de datos"
     }
 }

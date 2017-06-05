@@ -47,7 +47,6 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
     private Integer length;
 
     @NotNull
-    @Column(name = "year_first_use", nullable = false)
     private Integer yearFirstUse;
 
     @Transient

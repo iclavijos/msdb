@@ -19,9 +19,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.icesoft.msdb.domain.enums.SessionType;
-import com.icesoft.msdb.web.rest.view.MSDBView;
 
 /**
  * A EventSession.
@@ -68,7 +66,6 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @Column(name= "awards_points")
     private Boolean awardsPoints;
     
-    @JsonView(MSDBView.SessionResultsView.class)
     @ManyToOne
     private EventEdition eventEdition;
     
@@ -160,6 +157,10 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 		this.sessionType = sessionType;
 		return this;
 	}
+	
+	public boolean isRace() {
+		return sessionType.equals(SessionType.RACE);
+	}
 
 	public Boolean getAdditionalLap() {
 		return additionalLap;
@@ -206,6 +207,20 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 
 	public void setPointsSystem(PointsSystem pointsSystem) {
 		this.pointsSystem = pointsSystem;
+	}
+	
+	public Long getSeriesId() {
+		if (eventEdition!= null && eventEdition.getSeriesEdition() != null) {
+			return eventEdition.getSeriesEdition().getId();
+		}
+		return null;
+	}
+	
+	public String getSeriesName() {
+		if (eventEdition!= null && eventEdition.getSeriesEdition() != null) {
+			return eventEdition.getSeriesEdition().getSeries().getName();
+		}
+		return null;
 	}
 
 	@Override

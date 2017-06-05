@@ -17,9 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.icesoft.msdb.web.rest.view.MSDBView;
-
 /**
  * A PointsSystem.
  */
@@ -33,13 +30,11 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private Long id;
 
     @NotNull
     @Size(max = 50)
     @Column(name = "name", length = 50, nullable = false)
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private String name;
 
     @Size(max = 100)
@@ -47,7 +42,6 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     private String description;
 
     @Column(name = "points")
-    @JsonView(MSDBView.SeriesEditionsView.class)
     private String points;
 
     @Column(name = "points_most_lead_laps")

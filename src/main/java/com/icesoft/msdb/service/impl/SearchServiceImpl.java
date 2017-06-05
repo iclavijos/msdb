@@ -88,7 +88,7 @@ public class SearchServiceImpl implements SearchService {
 		List<EventEntryResult> qResults = results.stream()
 				.filter(r -> r.getSession().getSessionType() == SessionType.QUALIFYING).collect(Collectors.<EventEntryResult> toList());
 		if (qResults != null && !qResults.isEmpty()) {
-			poleTime = qResults.get(0).getBestLapTime();
+			poleTime = qResults.get(0).getBestLapTime() != null ? qResults.get(0).getBestLapTime() : 0;
 			polePosition = qResults.get(0).getFinalPosition();
 		} else {
 			poleTime = 0;

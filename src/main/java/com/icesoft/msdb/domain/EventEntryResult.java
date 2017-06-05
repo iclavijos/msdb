@@ -15,9 +15,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.icesoft.msdb.web.rest.view.MSDBView;
-
 /**
  * A EventEntryResult.
  */
@@ -30,55 +27,42 @@ public class EventEntryResult implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(MSDBView.SessionResultsView.class)
     private Long id;
 
-    @JsonView(MSDBView.SessionResultsView.class)
     @Column(name = "starting_position")
     private Integer startingPosition;
     
-    @JsonView(MSDBView.SessionResultsView.class)
     @Column(name = "final_position")
     private Integer finalPosition;
 
-    @JsonView(MSDBView.SessionResultsView.class)
     @Column(name = "total_time")
     private Long totalTime;
 
-    @JsonView(MSDBView.SessionResultsView.class)
     @Column(name = "best_lap_time")
     private Long bestLapTime;
 
-    @JsonView(MSDBView.SessionResultsView.class)
     @Column(name = "laps_completed")
     private Integer lapsCompleted;
 
-    @JsonView(MSDBView.SessionResultsView.class)
     @Column(name = "retired")
     private Boolean retired = false;
     
-    @JsonView(MSDBView.SessionResultsView.class)
     @Column(name = "cause", length=100)
     private String cause;
     
-    @JsonView(MSDBView.SessionResultsView.class)
     @Column(name = "difference")
     private Long difference;
     
-    @JsonView(MSDBView.SessionResultsView.class)
     @Column(name = "difference_type")
     private Integer differenceType;
     
-    @JsonView(MSDBView.SessionResultsView.class)
     @Column(name = "laps_led")
     private Integer lapsLed;
     
     @ManyToOne
-    @JsonView(MSDBView.SessionResultsView.class)
     private EventSession session;
     
     @OneToOne
-    @JsonView(MSDBView.SessionResultsView.class)
     private EventEditionEntry entry;
 
     public Long getId() {

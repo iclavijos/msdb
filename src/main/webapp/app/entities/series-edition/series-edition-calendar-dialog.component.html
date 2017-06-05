@@ -23,7 +23,7 @@
 		    		<li *ngFor="let race of myForm.controls.races.controls; let i=index">
 			            <div class="panel-body" [formGroupName]="i">
 			              <label class="form-control-label">{{race.value.raceName}}</label>
-			              <select class="form-control" id="field_points" name="points" formControlName="pSystemAssigned" required>
+			              <select class="form-control" id="field_points" name="points" formControlName="pSystemAssigned">
 				              <option *ngFor="let pSystem of seriesEdition.pointsSystems" [value]="pSystem.id">{{pSystem.name}}</option>
 				          </select>
 			            </div>

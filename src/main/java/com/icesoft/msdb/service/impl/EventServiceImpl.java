@@ -12,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.Event;
 import com.icesoft.msdb.domain.EventEdition;
+import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.repository.EventEditionRepository;
+import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventRepository;
 import com.icesoft.msdb.service.EventService;
 import com.icesoft.msdb.service.dto.EventEditionIdYearDTO;
@@ -28,10 +30,14 @@ public class EventServiceImpl implements EventService {
     
     private final EventRepository eventRepository;
     private final EventEditionRepository eventEditionRepository;
+    private final EventEntryRepository eventEntryRepository;
     
-    public EventServiceImpl(EventRepository eventRepository, EventEditionRepository eventEditionRepository) {
+    public EventServiceImpl(EventRepository eventRepository, 
+    			EventEditionRepository eventEditionRepository,
+    			EventEntryRepository eventEntryRepository) {
     	this.eventRepository = eventRepository;
     	this.eventEditionRepository = eventEditionRepository;
+    	this.eventEntryRepository = eventEntryRepository;
     }
 
     /**
@@ -93,7 +99,14 @@ public class EventServiceImpl implements EventService {
     
     @Override
     public Page<EventEdition> findEventEditions(Long idEvent, Pageable pageable) {
-    	return eventEditionRepository.findByEventIdOrderByEditionYearDesc(idEvent, pageable);
+    	Page<EventEdition> result = eventEditionRepository.findByEventIdOrderByEditionYearDesc(idEvent, pageable);
+    	log.debug("Retrieving winners for each edition...");
+        result.getContent().forEach(eventEdition -> {
+        	List<EventEditionEntry> winners = eventEntryRepository.findEventEditionWinners(eventEdition.getId());
+        	winners.forEach(winner -> winner.setEventEdition(null));
+        	eventEdition.setWinners(winners);
+        });
+    	return result;
     }
 
 	@Override

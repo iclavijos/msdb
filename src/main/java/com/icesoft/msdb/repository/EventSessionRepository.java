@@ -1,10 +1,12 @@
 package com.icesoft.msdb.repository;
 
-import com.icesoft.msdb.domain.EventSession;
-
-import org.springframework.data.jpa.repository.*;
-
+import java.time.ZonedDateTime;
 import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import com.icesoft.msdb.domain.EventSession;
 
 /**
  * Spring Data JPA repository for the EventSession entity.
@@ -15,4 +17,7 @@ public interface EventSessionRepository extends JpaRepository<EventSession,Long>
 	
 	@Query("SELECT e FROM EventSession e WHERE e.eventEdition.id = ?1 AND e.awardsPoints = true")
 	List<EventSession> findEventEditionScoringSessions(Long eventEditionId);
+	
+	@Query("SELECT s FROM EventSession s WHERE s.sessionStartTime BETWEEN ?1 AND ?2 ORDER BY s.sessionStartTime ASC")
+	List<EventSession> findUpcomingSessions(ZonedDateTime fromDate, ZonedDateTime toDate);
 }

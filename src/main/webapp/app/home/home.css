@@ -17,3 +17,7 @@ only screen and (                min-resolution: 2dppx) {
     }
 }
 
+.cardScroll {
+  height:450px;
+  overflow-y: scroll;
+}

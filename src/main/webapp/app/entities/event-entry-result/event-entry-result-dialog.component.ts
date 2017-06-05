@@ -70,7 +70,9 @@ export class EventEntryResultDialogComponent implements OnInit {
             this.eventEntryResult.totalTime = this.toMillis(this.totalTime);
         }
         if (this.eventEntryResult.differenceType == 1) {
-            this.eventEntryResult.difference = this.toMillis(this.timeDifference);
+            if (this.timeDifference != undefined) {
+                this.eventEntryResult.difference = this.toMillis(this.timeDifference);
+            }
         }
         if (this.eventEntryResult.id !== undefined) {
             this.eventEntryResultService.update(this.eventEntryResult)

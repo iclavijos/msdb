@@ -4,6 +4,9 @@ import { Observable } from 'rxjs/Rx';
 
 import { EventSession } from './event-session.model';
 import { DateUtils } from 'ng-jhipster';
+
+import * as moment from 'moment-timezone';
+
 @Injectable()
 export class EventSessionService {
 
@@ -14,7 +17,11 @@ export class EventSessionService {
 
     create(eventSession: EventSession): Observable<EventSession> {
         let copy: EventSession = Object.assign({}, eventSession);
-        copy.sessionStartTime = this.dateUtils.toDate(eventSession.sessionStartTime);
+        
+        copy.sessionStartTime = moment(eventSession.sessionStartTime).tz(eventSession.eventEdition.trackLayout.racetrack.timeZone);
+        copy.sessionStartTime.hours(copy.sessionStartTime.toDate().getHours());
+        copy.sessionStartTime.minutes(copy.sessionStartTime.toDate().getMinutes());
+
         return this.http.post(
                 `api/event-editions/${copy.eventEdition.id}/sessions`, copy).map((res: Response) => {
             return res.json();
@@ -24,7 +31,10 @@ export class EventSessionService {
     update(eventSession: EventSession): Observable<EventSession> {
         let copy: EventSession = Object.assign({}, eventSession);
 
-        copy.sessionStartTime = this.dateUtils.toDate(eventSession.sessionStartTime);
+        copy.sessionStartTime = moment(eventSession.sessionStartTime).tz(eventSession.eventEdition.trackLayout.racetrack.timeZone);
+        copy.sessionStartTime.hours(copy.sessionStartTime.toDate().getHours());
+        copy.sessionStartTime.minutes(copy.sessionStartTime.toDate().getMinutes());
+        
         return this.http.put(this.resourceUrl, copy).map((res: Response) => {
             return res.json();
         });
@@ -33,8 +43,7 @@ export class EventSessionService {
     find(id: number): Observable<EventSession> {
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
             let jsonResponse = res.json();
-            jsonResponse.sessionStartTime = this.dateUtils
-                .convertDateTimeFromServer(jsonResponse.sessionStartTime);
+            jsonResponse.sessionStartTime = moment(jsonResponse.sessionStartTime).tz(jsonResponse.eventEdition.trackLayout.racetrack.timeZone);
             return jsonResponse;
         });
     }
@@ -60,8 +69,8 @@ export class EventSessionService {
     private convertResponse(res: any): any {
         let jsonResponse = res.json();
         for (let i = 0; i < jsonResponse.length; i++) {
-            jsonResponse[i].sessionStartTime = this.dateUtils
-                .convertDateTimeFromServer(jsonResponse[i].sessionStartTime);
+            jsonResponse[i].sessionStartTime = moment(jsonResponse[i].sessionStartTime)
+                .tz(jsonResponse[i].eventEdition.trackLayout.racetrack.timeZone);;
         }
         res._body = jsonResponse;
         return res;

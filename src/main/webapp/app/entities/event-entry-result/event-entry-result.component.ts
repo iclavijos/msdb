@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { EventManager, ParseLinks, PaginationUtil, JhiLanguageService, AlertService } from 'ng-jhipster';
 
+import { EventEdition } from '../event-edition';
 import { EventSession } from '../event-session';
 import { EventEntryResult } from './event-entry-result.model';
 import { EventEntryResultService } from './event-entry-result.service';
@@ -19,6 +20,7 @@ import { SessionType } from '../../shared/enumerations/sessionType.enum';
 export class EventEntryResultComponent implements OnInit, OnDestroy {
 
     @Input() session: EventSession;
+    @Input() edition: EventEdition;
     sessionTypes = SessionType;
     eventEntryResults: EventEntryResult[];
     currentAccount: any;
@@ -36,6 +38,7 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     }
 
     loadAll() {
+        this.session.eventEdition = this.edition;
         this.eventEntryResultService.query(this.session).subscribe(
             (res: Response) => {
                 this.eventEntryResults = res.json();

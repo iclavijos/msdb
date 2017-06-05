@@ -7,7 +7,8 @@ public enum DurationType {
 	MINUTES(1),
 	HOURS(2),
 	KMs(3),
-	MILES(4);
+	MILES(4),
+	LAPS(5);
 	
 	private int value;
     private static Map<Integer, DurationType> map = new HashMap<>();
