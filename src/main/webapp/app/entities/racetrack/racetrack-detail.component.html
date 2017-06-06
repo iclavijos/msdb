@@ -55,7 +55,7 @@
 						<tr
 							*ngFor="let racetrackLayout of racetrackLayouts ;trackBy: trackId">
 							<td>{{racetrackLayout.name}}</td>
-							<td>{{racetrackLayout.length}}</td>
+							<td>{{racetrackLayout.length | racetrackLengthMask }}</td>
 							<td>{{racetrackLayout.yearFirstUse}}</td>
 							<td><img *ngIf="racetrackLayout.layoutImageUrl" [src]="racetrackLayout.layoutImageUrl" style="max-height: 30px;" alt="racetrack layout"/></td>
 							<td><i [ngClass]="racetrackLayout.active ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>

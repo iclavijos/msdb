@@ -1,4 +1,5 @@
 export * from './mask/time-mask.pipe';
+export * from './mask/racetrack-length.pipe';
 export * from './filters/entry-category-filter.pipe';
 
 export * from './alert/alert.component';
