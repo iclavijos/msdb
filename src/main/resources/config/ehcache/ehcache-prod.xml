@@ -10,8 +10,18 @@
         <heap unit="entries">1000</heap>
     </cache-template>
     
+    <cache-template name="longlived">
+        <expiry>
+            <ttl unit="seconds">172800</ttl>
+        </expiry>
+        <heap unit="entries">100</heap>
+    </cache-template>
+    
     <cache alias="homeInfo" uses-template="simple"/>
     <cache alias="calendar" uses-template="simple"/>
+    
+    <cache alias="driversStandingsCache" uses-template="longlived"/>
+    <cache alias="teamsStandingsCache" uses-template="longlived"/>
 
     <cache alias="com.icesoft.msdb.domain.User" uses-template="simple"/>
 

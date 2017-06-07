@@ -14,6 +14,8 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     seriesEdition: SeriesEdition;
     eventSubscriber: Subscription;
     private subscription: any;
+    driversStandings: any;
+    teamsStandings: any;
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
@@ -35,12 +37,26 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
         this.seriesEditionService.find(id).subscribe(seriesEdition => {
             this.seriesEdition = seriesEdition;
             this.loadEvents(id);
+            this.loadDriversStandings(id);
+            this.loadTeamsStandings(id);
         });
     }
     
     loadEvents(id) {
         this.seriesEditionService.findEvents(id).subscribe(events => {
            this.seriesEdition.events = events.json(); 
+        });
+    }
+    
+    loadDriversStandings(id) {
+        this.seriesEditionService.findDriversStandings(id).subscribe(standings => {
+           this.driversStandings = standings.json(); 
+        });
+    }
+    
+    loadTeamsStandings(id) {
+        this.seriesEditionService.findTeamsStandings(id).subscribe(standings => {
+           this.teamsStandings = standings.json(); 
         });
     }
     

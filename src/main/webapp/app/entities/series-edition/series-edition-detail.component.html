@@ -3,90 +3,151 @@
     <h2>{{seriesEdition.editionName}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
-    <div class="row">
-		<div class="col-lg-4 col-md-4">
-		    <dl class="row-md jh-entity-details">
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.period">Period</span></dt>
-		        <dd>
-		            <span>{{seriesEdition.period}}</span>
-		        </dd>
-		        <div class="row">
-		        	<div class="col-lg-4 col-md-4">
-				        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.singleChassis">Single Chassis</span></dt>
+    
+    <ngb-tabset>
+	  <ngb-tab title="{{'motorsportsDatabaseApp.series.seriesEdition.detail.info' | translate}}">
+	    <template ngbTabContent>
+		    <div class="row">
+				<div class="col-lg-4 col-md-4">
+				    <dl class="row-md jh-entity-details">
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.period">Period</span></dt>
 				        <dd>
-				            <span><i [ngClass]="seriesEdition.singleChassis ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+				            <span>{{seriesEdition.period}}</span>
 				        </dd>
-			        </div>
-			        <div class="col-lg-4 col-md-4">
-				        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.singleEngine">Single Engine</span></dt>
-				        <dd>
-				            <span><i [ngClass]="seriesEdition.singleEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+				        <div class="row">
+				        	<div class="col-lg-4 col-md-4">
+						        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.singleChassis">Single Chassis</span></dt>
+						        <dd>
+						            <span><i [ngClass]="seriesEdition.singleChassis ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+						        </dd>
+					        </div>
+					        <div class="col-lg-4 col-md-4">
+						        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.singleEngine">Single Engine</span></dt>
+						        <dd>
+						            <span><i [ngClass]="seriesEdition.singleEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+						        </dd>
+					        </div>
+					        <div class="col-lg-4 col-md-4">
+						        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.singleTyre">Single Tyre</span></dt>
+						        <dd>
+						            <span><i [ngClass]="seriesEdition.singleTyre ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+						        </dd>
+					        </div>
+				        </div>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.allowedCategories">Allowed Categories</span></dt>
+						<dd>
+				            <ul class="list-unstyled">
+				                <li *ngFor="let category of seriesEdition.allowedCategories">
+				                    <span>{{category.name}} ({{category.shortname}})</span>
+				                </li>
+				            </ul>
 				        </dd>
-			        </div>
-			        <div class="col-lg-4 col-md-4">
-				        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.singleTyre">Single Tyre</span></dt>
-				        <dd>
-				            <span><i [ngClass]="seriesEdition.singleTyre ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.pointsSystems">Points Systems</span></dt>
+						<dd>
+				            <ul class="list-unstyled">
+				                <li *ngFor="let pointsSystem of seriesEdition.pointsSystems">
+				                    <span>{{pointsSystem.name}} ({{pointsSystem.points}})</span>
+				                </li>
+				            </ul>
 				        </dd>
-			        </div>
-		        </div>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.allowedCategories">Allowed Categories</span></dt>
-				<dd>
-		            <ul class="list-unstyled">
-		                <li *ngFor="let category of seriesEdition.allowedCategories">
-		                    <span>{{category.name}} ({{category.shortname}})</span>
-		                </li>
-		            </ul>
-		        </dd>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.pointsSystems">Points Systems</span></dt>
-				<dd>
-		            <ul class="list-unstyled">
-		                <li *ngFor="let pointsSystem of seriesEdition.pointsSystems">
-		                    <span>{{pointsSystem.name}} ({{pointsSystem.points}})</span>
-		                </li>
-		            </ul>
-		        </dd>
-		    </dl>
-		 </div>
-		 <div class="col-lg-8 col-md-8">
-		 	<dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.calendar.title">Events</span></dt>
-			<dd>
-	            <div class="table-responsive" *ngIf="seriesEdition.events">
-			        <table class="table table-striped">
-			            <thead>
-			            <tr>
-			            <th><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.eventDate">Date</span></th>
-			            <th><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.event">Event</span></th>
-			            <th><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.winner">Winner</span></th>
-			            </tr>
-			            </thead>
-			            <tbody>
-			            <tr *ngFor="let event of seriesEdition.events">
-			            	<td>{{event.eventDate | date:'shortDate' }}</td>
-			            	<td><a [routerLink]="['/event-edition', event.id]">{{event.longEventName}}</a></td>
-			            	<td *ngIf="event.winner">{{event.winner.name}} {{event.winner.surname}}</td>
-			            	<td *ngIf="!event.winner">-</td>
-			            </tr>
-			        	</tbody>
-			        </table>
-			     </div>
-			     <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-		        	class="btn btn-primary float-right" [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar' } }]">
-		            <span class="fa fa-calendar"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-		         </button>
-		 </div>
-	</div>
-
+				    </dl>
+				 </div>
+				 <div class="col-lg-8 col-md-8">
+				 	<dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.calendar.title">Events</span></dt>
+					<dd>
+			            <div class="table-responsive" *ngIf="seriesEdition.events">
+					        <table class="table table-striped">
+					            <thead>
+					            <tr>
+					            <th><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.eventDate">Date</span></th>
+					            <th><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.event">Event</span></th>
+					            <th><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.winner">Winner</span></th>
+					            </tr>
+					            </thead>
+					            <tbody>
+					            <tr *ngFor="let event of seriesEdition.events">
+					            	<td>{{event.eventDate | date:'shortDate' }}</td>
+					            	<td><a [routerLink]="['/event-edition', event.id]">{{event.longEventName}}</a></td>
+					            	<td *ngIf="event.winner">{{event.winner.name}} {{event.winner.surname}}</td>
+					            	<td *ngIf="!event.winner">-</td>
+					            </tr>
+					        	</tbody>
+					        </table>
+					     </div>
+					     <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+				        	class="btn btn-primary float-right" [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar' } }]">
+				            <span class="fa fa-calendar"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+				         </button>
+				 </div>
+			</div>
+		
+		    <button type="button"
+		            [routerLink]="['/', { outlets: { popup: 'series-edition/'+ seriesEdition.id + '/edit'} }]"
+		            replaceUrl="true"
+		            class="btn btn-primary">
+		        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+		    </button>
+    	</template>
+     </ngb-tab>
+	     <ngb-tab title="{{'motorsportsDatabaseApp.series.seriesEdition.detail.standings' | translate}}">
+	     	<template ngbTabContent>
+			<div class="row">
+				<div class="card-deck col-md-12">
+					<div class="card col-md-4">
+						<div class="card-block">
+							<h4 class="card-title">{{'motorsportsDatabaseApp.series.seriesEdition.detail.driversStandings' | translate}}</h4>
+							<p class="card-text">
+							<table class="table table-sm">
+								<thead>
+									<tr>
+										<th></th>
+										<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.driver' | translate}}</th>
+										<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let driver of driversStandings; let i = index">
+										<td>{{i + 1}}</td>
+										<td>{{driver.driverName}}</td>
+										<td>{{driver.points}}</td>
+									</tr>
+								</tbody>
+							</table>
+							<p>
+						</div>
+					</div>
+					<div class="card col-md-4">
+						<div class="card-block">
+							<h4 class="card-title">{{'motorsportsDatabaseApp.series.seriesEdition.detail.teamsStandings' | translate}}</h4>
+							<p class="card-text">
+							<table class="table table-sm">
+								<thead>
+									<tr>
+										<th></th>
+										<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.team' | translate}}</th>
+										<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let team of teamsStandings; let i = index">
+										<td>{{i + 1}}</td>
+										<td>{{team.teamName}}</td>
+										<td>{{team.points}}</td>
+									</tr>
+								</tbody>
+							</table>
+							<p>
+						</div>
+					</div>
+				</div>
+			</div>
+			</template> 
+		</ngb-tab>
+    </ngb-tabset>
+    
     <button type="submit"
             (click)="previousState()"
             class="btn btn-info">
         <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-    </button>
-
-    <button type="button"
-            [routerLink]="['/', { outlets: { popup: 'series-edition/'+ seriesEdition.id + '/edit'} }]"
-            replaceUrl="true"
-            class="btn btn-primary">
-        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
     </button>
 </div>

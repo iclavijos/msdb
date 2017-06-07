@@ -37,7 +37,13 @@
 	            "detail": {
 	                "title": "Series Edition",
 	                "info": "Info",
-	                "editions": "Editions"
+	                "editions": "Editions",
+	                "standings": "Standings",
+	                "driversStandings": "Drivers Standings",
+	                "teamsStandings": "Teams Standings",
+	                "driver": "Driver",
+	                "team": "Team",
+	                "points": "Points"
 	            },
 	            "calendar": {
 	            	"title": "Calendar",

@@ -128,7 +128,7 @@
 	            "retirementCause": "Retirement cause",
 	            "difference": "Difference",
 	            "startingPosition": "Starting Pos.",
-	            "lapsLed": "Laps lead"
+	            "lapsLed": "Laps led"
 	        },
 	        "copyEntries": {
 	        	"title" : "Copy entries from another event",

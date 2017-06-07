@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Example;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -74,6 +75,7 @@ public class ImportsResource {
     @Timed
     @Transactional
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @CacheEvict("homeInfo")
     public ResponseEntity<?> importCSV(@Valid @RequestBody Imports imports) throws URISyntaxException {
         log.debug("REST request to import CSV contents : {}", imports.getImportType());
         

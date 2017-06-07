@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -30,7 +31,10 @@ import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.service.SeriesEditionService;
+import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
+import com.icesoft.msdb.service.dto.TeamPointsDTO;
+import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
@@ -50,10 +54,12 @@ public class SeriesEditionResource {
         
     private final SeriesEditionService seriesEditionService;
     private final SeriesEditionRepository seriesEditionRepository;
+    private final ResultsService resultsService;
 
-    public SeriesEditionResource(SeriesEditionService seriesEditionService, SeriesEditionRepository seriesEditionRepository) {
+    public SeriesEditionResource(SeriesEditionService seriesEditionService, SeriesEditionRepository seriesEditionRepository, ResultsService resultsService) {
         this.seriesEditionService = seriesEditionService;
     	this.seriesEditionRepository = seriesEditionRepository;
+    	this.resultsService = resultsService;
     }
 
     /**
@@ -165,21 +171,23 @@ public class SeriesEditionResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
     
-//    @PostMapping("/series-editions/{seriesId}/events/{eventId}")
-//    @Timed
-//    public ResponseEntity<Void> addEventToSeries(@PathVariable Long seriesId, @PathVariable Long eventId) {
-//    	log.debug("REST request to add event {} to series edition {}", eventId, seriesId);
-//    	seriesEditionService.addEventToSeries(seriesId, eventId);
-//    	return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, seriesId.toString())).build();
-//    }
-//
-//    @DeleteMapping("/series-editions/{seriesId}/events/{eventId}")
-//    @Timed
-//    public ResponseEntity<Void> removeEventFromSeries(@PathVariable Long seriesId, @PathVariable Long eventId) {
-//    	log.debug("REST request to remove event {} from series edition {}", eventId, seriesId);
-//    	seriesEditionService.removeEventFromSeries(seriesId, eventId);
-//    	return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, seriesId.toString())).build();
-//    }
+    @GetMapping("/series-editions/{id}/standings/drivers")
+    @Timed
+    @Cacheable(cacheNames="driversStandingsCache", key="#id")
+    public ResponseEntity<List<DriverPointsDTO>> getSeriesDriversStandings(@PathVariable Long id) {
+    	List<DriverPointsDTO> result = resultsService.getDriversStandings(id);
+    	
+    	return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    
+    @GetMapping("/series-editions/{id}/standings/teams")
+    @Timed
+    @Cacheable(cacheNames="teamsStandingsCache", key="#id")
+    public ResponseEntity<List<TeamPointsDTO>> getSeriesTeamssStandings(@PathVariable Long id) {
+    	List<TeamPointsDTO> result = resultsService.getTeamsStandings(id);
+    	
+    	return new ResponseEntity<>(result, HttpStatus.OK);
+    }
     
     @GetMapping("/series-editions/{id}/events")
     @Timed

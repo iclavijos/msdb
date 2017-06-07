@@ -34,6 +34,7 @@ import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.EventSession;
+import com.icesoft.msdb.domain.Series;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
@@ -291,6 +292,7 @@ public class EventEditionResource {
     
     @PutMapping("/event-editions/event-sessions/{sessionId}/process-results")
     @Timed
+    @CacheEvict("{driversStandingsCache, teamsStandingsCache}") //TODO: Improve to only remove the required key
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<Void> processSessionResults(@PathVariable Long sessionId) {
     	log.debug("Processing results of session {}", sessionId);
@@ -417,6 +419,11 @@ public class EventEditionResource {
     		if (r.getEntry().getEventEdition() != null && r.getEntry().getEventEdition().getSeriesEdition() != null) {
 	    		SeriesEdition tmp = new SeriesEdition();
 	    		tmp.setId(r.getEntry().getEventEdition().getSeriesEdition().getId());
+	    		tmp.setEditionName(r.getEntry().getEventEdition().getSeriesEdition().getEditionName());
+	    		Series tmpSeries = new Series();
+	    		tmpSeries.setId(r.getEntry().getEventEdition().getSeriesEdition().getSeries().getId());
+	    		tmp.setSeries(tmpSeries.name(r.getEntry().getEventEdition().getSeriesEdition().getSeries().getName()));
+	    		tmp.setSeries(tmpSeries);
 	    		r.getEntry().getEventEdition().setSeriesEdition(tmp);
     		}
     	});
@@ -430,8 +437,13 @@ public class EventEditionResource {
         EventEntryResult eventEntryResult = eventResultRepository.findOne(idResult);
         if (eventEntryResult.getEntry().getEventEdition() != null &&
         		eventEntryResult.getEntry().getEventEdition().getSeriesEdition() != null) {
-	        SeriesEdition tmp = new SeriesEdition();
-			tmp.setId(eventEntryResult.getEntry().getEventEdition().getSeriesEdition().getId());
+        	SeriesEdition tmp = new SeriesEdition();
+    		tmp.setId(eventEntryResult.getEntry().getEventEdition().getSeriesEdition().getId());
+    		tmp.setEditionName(eventEntryResult.getEntry().getEventEdition().getSeriesEdition().getEditionName());
+    		Series tmpSeries = new Series();
+    		tmpSeries.setId(eventEntryResult.getEntry().getEventEdition().getSeriesEdition().getSeries().getId());
+    		tmp.setSeries(tmpSeries.name(eventEntryResult.getEntry().getEventEdition().getSeriesEdition().getSeries().getName()));
+    		tmp.setSeries(tmpSeries);
 			eventEntryResult.getEntry().getEventEdition().setSeriesEdition(tmp);
         }
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEntryResult));

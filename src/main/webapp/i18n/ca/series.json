@@ -37,7 +37,13 @@
 	            "detail": {
 	                "title": "Edició",
 	                "info": "Info",
-	                "editions": "Edicions"
+	                "editions": "Edicions",
+	                "standings": "Classificacions",
+	                "driversStandings": "Classificació de pilots",
+	                "teamsStandings": "Classificació d'equips",
+	                "driver": "Pilot",
+	                "team": "Equip",
+	                "points": "Punts"
 	            },
 	            "calendar": {
 	            	"title": "Calendari",

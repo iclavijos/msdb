@@ -46,6 +46,18 @@ export class SeriesEditionService {
         });
     }
     
+    findDriversStandings(id: number): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${id}/standings/drivers`).map((res: Response) => {
+            return res;
+        });
+    }
+    
+    findTeamsStandings(id: number): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${id}/standings/teams`).map((res: Response) => {
+            return res;
+        });
+    }
+    
     addEventToSeries(id:number, racesData: any) {
         return this.http.post(`${this.resourceUrl}/${id}/events`, racesData).map((res: Response) => {
            return res.json(); 
