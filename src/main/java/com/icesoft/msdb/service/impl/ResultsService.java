@@ -22,7 +22,7 @@ import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.TeamEventPointsRepository;
-import com.icesoft.msdb.repository.impl.ViewsRepositoryImpl;
+import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 
@@ -35,7 +35,7 @@ public class ResultsService {
 	@Autowired private EventEntryResultRepository resultsRepo;
 	@Autowired private DriverEventPointsRepository driverPointsRepo;
 	@Autowired private TeamEventPointsRepository teamPointsRepo;
-	@Autowired private ViewsRepositoryImpl viewsRepo;
+	@Autowired private JDBCRepositoryImpl viewsRepo;
 
 	public void processSessionResults(Long sessionId) {
 		EventSession session = sessionRepo.findOne(sessionId);

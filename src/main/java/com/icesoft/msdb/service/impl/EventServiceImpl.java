@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.Event;
 import com.icesoft.msdb.domain.EventEdition;
-import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventRepository;
@@ -100,12 +99,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Page<EventEdition> findEventEditions(Long idEvent, Pageable pageable) {
     	Page<EventEdition> result = eventEditionRepository.findByEventIdOrderByEditionYearDesc(idEvent, pageable);
-    	log.debug("Retrieving winners for each edition...");
-        result.getContent().forEach(eventEdition -> {
-        	List<EventEditionEntry> winners = eventEntryRepository.findEventEditionWinners(eventEdition.getId());
-        	winners.forEach(winner -> winner.setEventEdition(null));
-        	eventEdition.setWinners(winners);
-        });
+
     	return result;
     }
 

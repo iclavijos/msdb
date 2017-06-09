@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -40,8 +41,10 @@ import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
+import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SearchService;
+import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
@@ -69,16 +72,18 @@ public class EventEditionResource {
     private final EventEntryResultRepository eventResultRepository;
     private final ResultsService resultsService;
     private final SearchService searchService;
+    private final JDBCRepositoryImpl jdbcRepository;
 
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventSessionRepository eventSessionRepository, 
     		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, SearchService searchService,
-    		ResultsService resultsService) {
+    		ResultsService resultsService, JDBCRepositoryImpl jdbcRepository) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventSessionRepository = eventSessionRepository;
         this.eventEntryRepository = eventEntryRepository;
         this.eventResultRepository = resultRepository;
         this.resultsService = resultsService;
         this.searchService = searchService;
+        this.jdbcRepository = jdbcRepository;
     }
 
     /**
@@ -161,8 +166,6 @@ public class EventEditionResource {
         log.debug("REST request to get EventEdition : {}", id);
         EventEdition eventEdition = eventEditionRepository.findOne(id);
         if (eventEdition != null) {
-    		eventEdition.setWinners(eventEntryRepository.findEventEditionWinners(id));
-    		eventEdition.getWinners().forEach(winner -> winner.setEventEdition(null));
         	List<Long> tmp = eventEditionRepository.findNextEditionId(eventEdition.getEvent().getId(), eventEdition.getEditionYear());
         	if (tmp != null && !tmp.isEmpty()) {
         		eventEdition.nextEditionId(tmp.get(0));
@@ -258,11 +261,7 @@ public class EventEditionResource {
     public ResponseEntity<EventSession> getEventSession(@PathVariable Long id) {
         log.debug("REST request to get EventSession : {}", id);
         EventSession eventSession = eventSessionRepository.findOne(id);
-        if (eventSession.getEventEdition().getWinners() != null && !eventSession.getEventEdition().getWinners().isEmpty()) {
-        	for(EventEditionEntry entry : eventSession.getEventEdition().getWinners()) {
-        		entry.setEventEdition(null);
-        	}
-        }
+
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventSession));
     }
     
@@ -292,7 +291,7 @@ public class EventEditionResource {
     
     @PutMapping("/event-editions/event-sessions/{sessionId}/process-results")
     @Timed
-    @CacheEvict("{driversStandingsCache, teamsStandingsCache}") //TODO: Improve to only remove the required key
+    @CacheEvict({"driversStandingsCache", "teamsStandingsCache"}) //TODO: Improve to only remove the required key
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<Void> processSessionResults(@PathVariable Long sessionId) {
     	log.debug("Processing results of session {}", sessionId);
@@ -316,16 +315,25 @@ public class EventEditionResource {
     
     @GetMapping("/event-editions/{id}/winners")
     @Timed
-    public List<EventEditionEntry> getEventEditionWinners(@PathVariable Long id) {
+    @Transactional
+    public List<EventEditionWinnersDTO> getEventEditionWinners(@PathVariable Long id) {
     	log.debug("REST request to get all EventEdition {} winners", id);
-    	List<EventEditionEntry> result = eventEntryRepository.findEventEditionWinners(id);
-    	result.parallelStream().forEach(entry -> {
-    		EventEdition tmp = new EventEdition();
-    		tmp.setId(entry.getEventEdition().getId());
-    		tmp.setMultidriver(entry.getEventEdition().isMultidriver());
-    		entry.setEventEdition(tmp);
-    	});
-    	return result;
+    	List<EventEditionWinnersDTO> winners = new ArrayList<>();
+    	
+    	List<Object[]> tmpWinners = jdbcRepository.getEventWinners(id);
+    	List<String> sessions = tmpWinners.stream().map(w -> (String)w[2]).distinct().collect(Collectors.toList());
+    	for(String session : sessions) {
+    		EventEditionWinnersDTO catWinners = new EventEditionWinnersDTO(session);
+    		for(Object[] winner : tmpWinners) {
+    			if (winner[2].equals(session)) {
+	        		EventEditionEntry entry = eventEntryRepository.findOne((Long)winner[0]);
+	        		catWinners.addWinners((String)winner[1], entry.getDriversName());
+    			}
+        	}
+    		winners.add(catWinners);
+    	}
+    	
+    	return winners;
     }
     
     @PostMapping("/event-editions/{idTarget}/entries/{idSource}")

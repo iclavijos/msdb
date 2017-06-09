@@ -4,6 +4,7 @@ import { EventManager, JhiLanguageService } from 'ng-jhipster';
 import { Subscription } from 'rxjs/Rx';
 import { SeriesEdition } from './series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
+import { EventEditionService } from '../event-edition/event-edition.service';
 
 @Component({
     selector: 'jhi-series-edition-detail',
@@ -20,6 +21,7 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     constructor(
         private jhiLanguageService: JhiLanguageService,
         private seriesEditionService: SeriesEditionService,
+        private eventEditionService: EventEditionService,
         private eventManager: EventManager,
         private route: ActivatedRoute,
         private router: Router
@@ -45,6 +47,13 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     loadEvents(id) {
         this.seriesEditionService.findEvents(id).subscribe(events => {
            this.seriesEdition.events = events.json(); 
+           for(let i = 0; i < this.seriesEdition.events.length; i++) {
+               let event = this.seriesEdition.events[i];
+               this.seriesEdition.events[i].winners = new Array()
+               this.eventEditionService.findWinners(event.id).subscribe(winners => {
+                  this.seriesEdition.events[i].winners.push(winners);
+               });
+           }
         });
     }
     

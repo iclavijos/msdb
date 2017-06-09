@@ -2,7 +2,6 @@ package com.icesoft.msdb.domain;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -109,9 +108,6 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     @JsonIgnore
     private SeriesEdition seriesEdition;
     
-    @Transient
-    private List<EventEditionEntry> winners = new ArrayList<>();
-
     public Long getId() {
         return id;
     }
@@ -325,14 +321,6 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
 	public void setSeriesEdition(SeriesEdition seriesEdition) {
 		this.seriesEdition = seriesEdition;
-	}
-
-	public List<EventEditionEntry> getWinners() {
-		return winners;
-	}
-
-	public void setWinners(List<EventEditionEntry> winners) {
-		this.winners = winners;
 	}
 
 	@Override

@@ -32,6 +32,7 @@ import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.service.SeriesEditionService;
+import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 /**
@@ -60,6 +61,8 @@ public class SeriesEditionResourceIntTest {
     
     @Autowired
     private SeriesEditionRepository seriesEditionRepository;
+    @Autowired
+    private ResultsService resultsService;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -80,7 +83,8 @@ public class SeriesEditionResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            SeriesEditionResource seriesEditionResource = new SeriesEditionResource(seriesEditionService, seriesEditionRepository);
+            SeriesEditionResource seriesEditionResource = new SeriesEditionResource(
+            		seriesEditionService, seriesEditionRepository, resultsService);
         this.restSeriesEditionMockMvc = MockMvcBuilders.standaloneSetup(seriesEditionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

@@ -36,6 +36,7 @@ import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
+import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
@@ -74,6 +75,9 @@ public class EventEditionResourceIntTest {
     private EventEntryResultRepository eventResultRepository;
     
     @Autowired
+    private JDBCRepositoryImpl jdbcRepo;
+    
+    @Autowired
     private SearchService searchService;
     
     @Autowired
@@ -99,7 +103,8 @@ public class EventEditionResourceIntTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
             EventEditionResource eventEditionResource = new EventEditionResource(
-            		eventEditionRepository, eventSessionRepository, eventEntryRepository, eventResultRepository, searchService, resultsService);
+            		eventEditionRepository, eventSessionRepository, eventEntryRepository, 
+            		eventResultRepository, searchService, resultsService, jdbcRepo);
         this.restEventEditionMockMvc = MockMvcBuilders.standaloneSetup(eventEditionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

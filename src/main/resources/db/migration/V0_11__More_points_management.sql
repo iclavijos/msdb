@@ -58,4 +58,8 @@ SELECT
             AND (eer.final_position < 900))
     GROUP BY teamId , finalPos;
     
-    select * from team;
+create or replace view events_results as
+select ed.id editionId, ee.id entryId, ee.team_name teamName, c.id catId, c.shortname catName, es.name sessionName, eer.final_position finalPos
+from event_entry_result eer, event_session es, event_entry ee, event_edition ed, categories_event ce, category c
+where eer.session_id = es.id and es.session_type = 2 and ee.id = eer.entry_id and ed.id = es.event_edition_id and ce.event_edition_id = ed.id and ce.category_id = c.id
+order by es.session_start_time ASC;

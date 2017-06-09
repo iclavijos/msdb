@@ -21,6 +21,6 @@ export class EventEdition {
         public singleChassis?: boolean,
         public singleEngine?: boolean,
         public singleTyre?: boolean,
-        public winner?: Driver,
+        public winners?: any,
     ) { }
 }

@@ -13,16 +13,21 @@ import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 
 @Repository
-public class ViewsRepositoryImpl {
+public class JDBCRepositoryImpl {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 	
-//	public List<Object[]> getDriversInSeries(Long seriesId) {
-//		List<Object[]> result = jdbcTemplate.query("SELECT driverId, driverName FROM DRIVERS_SERIES WHERE SERIES_ID = ?", 
-//				new Object[] {seriesId}, (rs, rowNum) -> new Object[] {rs.getLong("driverId"), rs.getString("driverName")});
-//		
-//		return result;
-//	}
+	public List<Object[]> getEventWinners(Long eventEditionId) {
+		String query = "select entryId, catName, sessionName "
+				+ "from events_results er "
+				+ "where not exists ( "
+				+ "select winners.* "
+				+ "from events_results winners "
+				+ "where winners.catId = er.catId and er.sessionName = winners.sessionName "
+				+ "and winners.finalPos < er.finalPos) and er.editionId = ?";
+		return jdbcTemplate.query(query, new Object[] {eventEditionId},
+				(rs, rowNum) -> new Object[] {rs.getLong("entryId"), rs.getString("catName"), rs.getString("sessionName")});
+	}
 	
 	public Map<Long, List<Object[]>> getDriversResultsInSeries(Long seriesId) {
 		List<Object[]> results = jdbcTemplate.query("SELECT driverId, finalPos, times FROM DRIVER_RESULTS WHERE seriesId = ?", 

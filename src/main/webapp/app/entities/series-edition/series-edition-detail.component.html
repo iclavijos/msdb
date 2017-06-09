@@ -68,8 +68,26 @@
 					            <tr *ngFor="let event of seriesEdition.events">
 					            	<td>{{event.eventDate | date:'shortDate' }}</td>
 					            	<td><a [routerLink]="['/event-edition', event.id]">{{event.longEventName}}</a></td>
-					            	<td *ngIf="event.winner">{{event.winner.name}} {{event.winner.surname}}</td>
-					            	<td *ngIf="!event.winner">-</td>
+					            	<td *ngIf="!event.winners || event.winners[0]?.length === 0">-</td>
+					            	<td *ngIf="event.winners && event.winners[0]?.length === 1">
+					            		<span *ngIf="event.winners[0][0].winners.length === 1">{{event.winners[0][0].winners[0].drivers}}</span>
+					            		<span *ngIf="event.winners[0][0].winners.length > 1">
+					            			<div *ngFor="let winner of event.winners[0][0].winners">
+						                        <span class="tag tag-info">{{winner.category}}: {{ winner.drivers }}</span>
+						                    </div>
+					            		</span>
+					            	</td>
+					            	<td *ngIf="event.winners && event.winners[0]?.length > 1">
+					            		<div *ngFor="let session of event.winners[0]">
+					            			<strong>{{session.session}}:</strong>
+					                        <span *ngIf="session.winners.length === 1">{{session.winners[0].drivers}}</span>
+						            		<span *ngIf="session.winners.length > 1">
+						            			<div *ngFor="let winner of session.winners">
+							                        <span class="tag tag-info"><strong>{{winner.category}}:</strong> {{ winner.drivers }}</span>
+							                    </div>
+						            		</span>
+					                    </div>
+					            	</td>
 					            </tr>
 					        	</tbody>
 					        </table>
