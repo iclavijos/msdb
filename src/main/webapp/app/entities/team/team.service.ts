@@ -7,7 +7,8 @@ import { Team } from './team.model';
 export class TeamService {
 
     private resourceUrl = 'api/teams';
-    private resourceSearchUrl = 'api/_typeahead/teams';
+    private resourceSearchUrl = 'api/_search/teams';
+    private resourceTypeAheadUrl = 'api/_typeahead/teams';
 
     constructor(private http: Http) { }
 
@@ -33,8 +34,7 @@ export class TeamService {
 
     query(req?: any): Observable<Response> {
         let options = this.createRequestOption(req);
-        return this.http.get(this.resourceUrl, options)
-        ;
+        return this.http.get(this.resourceUrl, options);
     }
 
     delete(id: number): Observable<Response> {

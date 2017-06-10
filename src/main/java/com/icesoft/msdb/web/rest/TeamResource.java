@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -160,6 +161,16 @@ public class TeamResource {
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
+    @GetMapping("/_search/teams")
+    @Timed
+    public ResponseEntity<List<Team>> searchTeams(@RequestParam String query, @ApiParam Pageable pageable)
+        throws URISyntaxException {
+        log.debug("REST request to search for a page of Teams for query '{}'", query);
+        Page<Team> page = teamRepository.findByNameContainsIgnoreCaseOrderByNameAsc(query, pageable);
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/teams");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+    
     /**
      * SEARCH  /_search/teams?query=:query : search for the team corresponding
      * to the query.
@@ -169,13 +180,11 @@ public class TeamResource {
      */
     @GetMapping("/_typeahead/teams")
     @Timed
-    public List<Team> searchTeams(@RequestParam String query) {
+    public List<Team> typeahead(@RequestParam String query) {
         log.debug("REST request to search Teams for query {}", query);
-        List<Team> result = teamRepository.search(query);
-        if (result.size() > 20) {
-        	return result.subList(0, 20);
-        }
-        return result;
+        Page<Team> result = teamRepository.findByNameContainsIgnoreCaseOrderByNameAsc(query, new PageRequest(0, 15));
+
+        return result.getContent();
     }
 
 

@@ -29,7 +29,7 @@
     <div class="table-responsive" *ngIf="teams">
         <table class="table table-striped">
             <thead>
-            <tr>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
             <th><span jhiTranslate="motorsportsDatabaseApp.team.name">Name</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.team.description">Description</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.team.hqLocation">Hq Location</span></th>
