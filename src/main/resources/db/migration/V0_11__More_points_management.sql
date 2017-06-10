@@ -26,7 +26,7 @@ create or replace view teams_series as
 select t.id teamId, t.name teamName, s.id seriesId
 from team t, series_edition s, event_entry en, event_edition ee
 where en.team_id = t.id and en.event_edition_id = ee.id and ee.series_edition_id = s.id
-group by teamId, seriesId
+group by teamId, seriesId;
 
 create or replace view driver_results as
 select d.id driverId, eer.final_position finalPos, count(*) times, se.id seriesId
@@ -48,15 +48,12 @@ SELECT
         JOIN event_entry en
         JOIN event_entry_result eer
         JOIN event_session es
-    WHERE
-        ((eer.entry_id = en.id)
-			AND en.team_id = t.id
-            AND (eer.session_id = es.id)
-            AND (es.session_type = 2)
-            AND (es.event_edition_id = ee.id)
-            AND (ee.series_edition_id = se.id)
-            AND (eer.final_position < 900))
-    GROUP BY teamId , finalPos;
+    WHERE eer.entry_id = en.id AND en.team_id = t.id AND eer.session_id = es.id
+            AND es.session_type = 2
+            AND es.event_edition_id = ee.id
+            AND ee.series_edition_id = se.id
+            AND eer.final_position < 900
+    GROUP BY teamId, finalPos;
     
 create or replace view events_results as
 select ed.id editionId, ee.id entryId, ee.team_name teamName, c.id catId, c.shortname catName, es.name sessionName, eer.final_position finalPos

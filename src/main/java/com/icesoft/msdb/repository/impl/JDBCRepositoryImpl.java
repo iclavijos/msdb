@@ -30,7 +30,7 @@ public class JDBCRepositoryImpl {
 	}
 	
 	public Map<Long, List<Object[]>> getDriversResultsInSeries(Long seriesId) {
-		List<Object[]> results = jdbcTemplate.query("SELECT driverId, finalPos, times FROM DRIVER_RESULTS WHERE seriesId = ?", 
+		List<Object[]> results = jdbcTemplate.query("SELECT driverId, finalPos, times FROM driver_results WHERE seriesId = ?", 
 				new Object[] {seriesId}, (rs, rowNum) -> new Object[] {rs.getLong("driverId"), rs.getInt("finalPos"), rs.getInt("times")});
 		
 		Map<Long, List<Object[]>> result = new HashMap<Long, List<Object[]>>();
@@ -50,7 +50,7 @@ public class JDBCRepositoryImpl {
 	}
 	
 	public Map<Long, List<Object[]>> getTeamsResultsInSeries(Long seriesId) {
-		List<Object[]> results = jdbcTemplate.query("SELECT teamId, finalPos, times FROM TEAM_RESULTS WHERE seriesId = ?", 
+		List<Object[]> results = jdbcTemplate.query("SELECT teamId, finalPos, times FROM team_results WHERE seriesId = ?", 
 				new Object[] {seriesId}, (rs, rowNum) -> new Object[] {rs.getLong("teamId"), rs.getInt("finalPos"), rs.getInt("times")});
 		
 		Map<Long, List<Object[]>> result = new HashMap<Long, List<Object[]>>();
