@@ -267,7 +267,7 @@
 	<ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.results' | translate}}">
 	    <template ngbTabContent>
 	    	<ngb-tabset>
-			  <ngb-tab *ngFor="let eventSession of eventEdition.sessions" title="{{eventSession.shortname}}">
+			  <ngb-tab *ngFor="let eventSession of eventEdition.sessions" title="{{eventSession.name}}">
 			    <template ngbTabContent>
 			    	<jhi-event-entry-result [session]="eventSession" [edition]="eventEdition">Result...</jhi-event-entry-result>
 			    </template>
