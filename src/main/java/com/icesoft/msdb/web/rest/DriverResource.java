@@ -136,6 +136,7 @@ public class DriverResource {
     public ResponseEntity<List<Driver>> getAllDrivers(@ApiParam Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of Drivers");
+       
         Page<Driver> page = driverRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/drivers");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);

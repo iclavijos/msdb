@@ -14,7 +14,7 @@ import com.icesoft.msdb.domain.Driver;
  * Spring Data JPA repository for the Driver entity.
  */
 public interface DriverRepository extends JpaRepository<Driver,Long> {
-
+	
 	@Query("select d from Driver d where "
 			+ "lower(d.name) like concat('%', lower(?1),'%') or "
 			+ "lower(d.surname) like concat('%', lower(?1),'%')")

@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -164,7 +165,8 @@ public class ImportsResource {
     	MappingIterator<Team> readValues = initializeIterator(Team.class, data);
         while (readValues.hasNext()) {
         	Team team = readValues.next();
-        	if (teamRepository.search(team.getName()).isEmpty()) {
+        	if (teamRepository.findByNameContainsIgnoreCaseOrderByNameAsc(team.getName(), new PageRequest(0, 15))
+        			.getContent().isEmpty()) {
         		log.debug("Importing team: {}", team);
 	        	teamRepository.save(team);
         	} else {

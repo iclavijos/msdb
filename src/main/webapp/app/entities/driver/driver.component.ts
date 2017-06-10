@@ -147,9 +147,9 @@ currentAccount: any;
 
     sort () {
         let result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
-        if (this.predicate !== 'id') {
-            result.push('id');
-        }
+//        if (this.predicate !== 'surname') {
+//            result.push('surname');
+//        }
         return result;
     }
 
