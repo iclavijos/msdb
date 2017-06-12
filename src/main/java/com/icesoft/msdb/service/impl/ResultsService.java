@@ -51,7 +51,7 @@ public class ResultsService {
 
 			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAsc(session.getId(), session.getEventEdition().getId());
 			int[] points = ps.disclosePoints();
-			for(int i = 0; i < results.size(); i++) {
+			for(int i = 0; i < results.size() && i < points.length; i++) {
 				//TODO: Handle shared drives (half points)
 				EventEntryResult result = results.get(i);
 				TeamEventPoints tep = teams.get(result.getEntry().getTeam().getId());
