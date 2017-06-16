@@ -46,7 +46,7 @@
 						<dd>
 				            <ul class="list-unstyled">
 				                <li *ngFor="let pointsSystem of seriesEdition.pointsSystems">
-				                    <span>{{pointsSystem.name}} ({{pointsSystem.points}})</span>
+				                    <span>{{pointsSystem.name}} ({{pointsSystem.description}})</span>
 				                </li>
 				            </ul>
 				        </dd>
@@ -134,7 +134,7 @@
 							<p>
 						</div>
 					</div>
-					<div class="card col-md-4">
+					<div class="card col-md-4" *ngIf="seriesEdition.teamsStandings">
 						<div class="card-block">
 							<h4 class="card-title">{{'motorsportsDatabaseApp.series.seriesEdition.detail.teamsStandings' | translate}}</h4>
 							<p class="card-text">
@@ -156,6 +156,8 @@
 							</table>
 							<p>
 						</div>
+					</div>
+					<div class="card col-md-4" *ngIf="seriesEdition.manufacturersStandings">
 					</div>
 				</div>
 			</div>

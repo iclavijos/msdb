@@ -85,6 +85,15 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     @OrderBy("eventDate ASC")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<EventEdition> events;
+    
+    @Column(name="drivers_standings")
+    private Boolean driversStandings = Boolean.TRUE;
+    
+    @Column(name="teams_standings")
+    private Boolean teamsStandings = Boolean.FALSE;
+    
+    @Column(name="manufacturers_standings")
+    private Boolean manufacturersStandings = Boolean.FALSE;
 
     public Long getId() {
         return id;
@@ -239,7 +248,31 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         this.series = series;
     }
 
-    @Override
+    public Boolean getDriversStandings() {
+		return driversStandings;
+	}
+
+	public void setDriversStandings(Boolean driversStandings) {
+		this.driversStandings = driversStandings;
+	}
+
+	public Boolean getTeamsStandings() {
+		return teamsStandings;
+	}
+
+	public void setTeamsStandings(Boolean teamsStandings) {
+		this.teamsStandings = teamsStandings;
+	}
+
+	public Boolean getManufacturersStandings() {
+		return manufacturersStandings;
+	}
+
+	public void setManufacturersStandings(Boolean manufacturersStandings) {
+		this.manufacturersStandings = manufacturersStandings;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

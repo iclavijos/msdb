@@ -26,6 +26,7 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router
     ) {
+        this.jhiLanguageService.setLocations(['series']);
     }
 
     ngOnInit() {
