@@ -31,6 +31,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A EventEdition.
@@ -321,6 +322,22 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
 	public void setSeriesEdition(SeriesEdition seriesEdition) {
 		this.seriesEdition = seriesEdition;
+	}
+	
+	@JsonProperty("seriesId")
+	public Long getSeriesId() {
+		if (seriesEdition != null) {
+			return seriesEdition.getId();
+		}
+		return null;
+	}
+	
+	@JsonProperty("seriesName")
+	public String getSeriesName() {
+		if (seriesEdition != null) {
+			return seriesEdition.getEditionName();
+		}
+		return null;
 	}
 
 	@Override

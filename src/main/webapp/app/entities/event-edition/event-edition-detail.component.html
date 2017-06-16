@@ -21,6 +21,7 @@
     </div>
     <hr>
     <jhi-alert-error></jhi-alert-error>
+    <a class="deco-none" *ngIf="eventEdition.seriesId" [routerLink]="['/series/series-edition', eventEdition.seriesId]"><i  class="fa fa-fw fa-angle-double-left" aria-hidden="true"></i> {{eventEdition.seriesName}}</a>
     <ngb-tabset>
 	  <ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.info' | translate}}">
 	    <template ngbTabContent>
@@ -218,13 +219,17 @@
 		                    </div>
 		                </td>
 		                <td *ngIf="!eventEdition.singleTyre">
-		                    <div *ngIf="eventEntry.tyres">
-		                        <a [routerLink]="['/tyre-provider', eventEntry.tyres?.id ]" >{{eventEntry.tyres?.name}}</a>
+		                    <div *ngIf="eventEntry.tyres?.logoUrl">
+		                        <a [routerLink]="['/tyre-provider', eventEntry.tyres?.id ]" >
+		                        	<img [src]="eventEntry.tyres?.logoUrl" style="max-width: 50px;" alt="tyres logo"/>
+		                        </a>
 		                    </div>
 		                </td>
 		                <td *ngIf="!eventEdition.singleFuel">
 		                    <div *ngIf="eventEntry.fuel">
-		                        <a [routerLink]="['/fuel-provider', eventEntry.fuel?.id ]" >{{eventEntry.fuel?.name}}</a>
+		                        <a [routerLink]="['/fuel-provider', eventEntry.fuel?.id ]" >
+		                        	<img [src]="eventEntry.fuel?.logoUrl" style="max-width: 50px;" alt="fuel logo"/>
+		                        </a>
 		                    </div>
 		                </td>
 		                
