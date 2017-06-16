@@ -2,12 +2,19 @@
     <jhi-alert></jhi-alert>
     <br/>
     <div class="table-responsive" *ngIf="eventEntryResults">
+    	<div class="float-right" *ngIf="edition.allowedCategories.length > 1">
+			<select class="form-control" id="field_category" name="category" [(ngModel)]="filterCategory">
+				<option value="ALL"></option>
+            	<option *ngFor="let category of edition.allowedCategories" [ngValue]="category.shortname">{{category.name}}</option>
+        	</select>
+        </div>
         <table class="table table-striped">
             <thead>
             <tr>
             <th></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.driver">Driver</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.team">Team</span></th>
+            <th *ngIf="edition.allowedCategories.length > 1"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category">Category</span></th>
             <th *ngIf="session.sessionType === 'RACE'"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.totalTime">Total Time</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.bestLapTime">Best Lap Time</span></th>
             <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.lapsCompleted">Laps Completed</span></th>
@@ -18,8 +25,8 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let eventEntryResult of eventEntryResults; trackBy: trackId; let i = index;">
-                <td>{{eventEntryResult.finalPosition >= 900 ? '-' : eventEntryResult.finalPosition }} 
+            <tr *ngFor="let eventEntryResult of eventEntryResults | eventEntryCategoryFilter: filterCategory; trackBy: trackId; let i = index;">
+                <td>{{eventEntryResult.finalPosition >= 900 ? '-' : i + 1 }} 
                 	<span *ngIf="session.sessionType === 'RACE' && eventEntryResult.startingPosition && eventEntryResult.finalPosition < 900">
                 		<span *ngIf="eventEntryResult.startingPosition < eventEntryResult.finalPosition" style="color: red">
                 			<i class="fa fa-arrow-down" aria-hidden="true"></i> {{eventEntryResult.startingPosition - eventEntryResult.finalPosition }}
@@ -36,6 +43,7 @@
                  <span *ngIf="eventEntryResult.entry.rookie"> (R)</span>
                 </td>
                 <td>{{eventEntryResult.entry.entryName}}</td>
+                <td *ngIf="edition.allowedCategories.length > 1">{{eventEntryResult.entry.category.shortname}}</td>
                 <td *ngIf="session.sessionType === 'RACE'">
                 	{{eventEntryResult.finalPosition > 1 && eventEntryResult.finalPosition < 900 && !eventEntryResult.retired ?
                 		(eventEntryResult.differenceType == 1 ? '+' + (eventEntryResult.difference | timeMaskPipe) : eventEntryResult.difference + 'L')
