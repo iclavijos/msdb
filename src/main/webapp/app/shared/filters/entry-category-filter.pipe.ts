@@ -7,10 +7,16 @@ import { EventEntry } from '../../entities/event-entry';
 @Injectable()
 export class EventEntryCategoryFilter implements PipeTransform {
     
-  transform(entries: EventEntry[], filter: string): any {
-      if (!filter || filter === 'ALL') return entries;
-      
-      return entries.filter(entry => entry.category.shortname === filter);
+  transform(items: any[], filter: string): any {
+      if (!filter || filter === 'ALL') return items;
+
+      return items.filter(item => {
+          if (item.category !== undefined) {
+              return item.category.shortname === filter;
+          } else {
+              return item.entry.category.shortname === filter;
+          }
+      });
   }
   
 }
