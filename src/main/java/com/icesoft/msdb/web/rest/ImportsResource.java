@@ -53,6 +53,7 @@ import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.dto.EnginesImportDTO;
 import com.icesoft.msdb.service.dto.RacetrackWithLayoutsImportDTO;
 import com.icesoft.msdb.service.dto.SessionResultDTO;
+import com.icesoft.msdb.service.impl.CacheHandler;
 
 /**
  * REST controller for managing CSV imports
@@ -71,6 +72,8 @@ public class ImportsResource {
     @Autowired private EventEntryRepository entryRepository;
     @Autowired private EventSessionRepository sessionRepository;
     @Autowired private EventEntryResultRepository resultRepository;
+    
+    @Autowired private CacheHandler cacheHandler;
 
     @PostMapping("/imports")
     @Timed
@@ -201,6 +204,10 @@ public class ImportsResource {
     
     private void importResults(Long sessionId, String data) {
     	EventSession session = sessionRepository.findOne(sessionId);
+    	
+    	if (session.isRace()) {
+    		cacheHandler.resetWinnersCache(session.getEventEdition().getId());
+    	}
     	MappingIterator<SessionResultDTO> readValues = initializeIterator(SessionResultDTO.class, data);
     	EventEntryResult first = null;
         while (readValues.hasNext()) {

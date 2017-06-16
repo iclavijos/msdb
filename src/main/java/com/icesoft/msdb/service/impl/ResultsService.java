@@ -36,8 +36,11 @@ public class ResultsService {
 	@Autowired private DriverEventPointsRepository driverPointsRepo;
 	@Autowired private TeamEventPointsRepository teamPointsRepo;
 	@Autowired private JDBCRepositoryImpl viewsRepo;
+	
+	@Autowired private CacheHandler cacheHandler;
 
 	public void processSessionResults(Long sessionId) {
+		//TODO: Improve points system and series definition to handle other classifications (manufacturers, for instance)
 		EventSession session = sessionRepo.findOne(sessionId);
 		Map<Long, DriverEventPoints> drivers = new HashMap<>();
 		Map<Long, TeamEventPoints> teams = new HashMap<>();
@@ -54,28 +57,40 @@ public class ResultsService {
 			for(int i = 0; i < results.size() && i < points.length; i++) {
 				//TODO: Handle shared drives (half points)
 				EventEntryResult result = results.get(i);
-				TeamEventPoints tep = teams.get(result.getEntry().getTeam().getId());
-				if (tep == null) {
-					tep = new TeamEventPoints();
-					tep.setSession(session);
-					tep.setTeam(result.getEntry().getTeam());
-				}
-				tep.addPoints((float)points[i]);
-				teams.put(result.getEntry().getTeam().getId(), tep);
-				
-				for(Driver d : result.getEntry().getDrivers()) {
-					log.debug(result.getFinalPosition() + "-" + d.getFullName() + ": " + points[i]);
-					DriverEventPoints dep = drivers.get(d.getId());
-					if (dep == null) {
-						dep = new DriverEventPoints();
+				if (result.getFinalPosition() < 900) {
+					if (session.getEventEdition().getSeriesEdition().getTeamsStandings()) {
+						TeamEventPoints tep = teams.get(result.getEntry().getTeam().getId());
+						if (tep == null) {
+							tep = new TeamEventPoints();
+							tep.setSession(session);
+							tep.setTeam(result.getEntry().getTeam());
+						}
+						tep.addPoints((float)points[result.getFinalPosition() - 1]);
+						log.debug(String.format("Team %s: %s points for position %s", result.getEntry().getTeam().getName(), (float)points[result.getFinalPosition() - 1], result.getFinalPosition()));
+						teams.put(result.getEntry().getTeam().getId(), tep);
 					}
-					dep.setDriver(d);
-					dep.setSession(session);
-					dep.addPoints((float)points[i]);
-					drivers.put(d.getId(), dep);
-					if (result.getStartingPosition() != null &&  result.getStartingPosition() == 1) {
-						if (ps.getPointsPole() != 0) {
-							dep.addPoints(ps.getPointsPole().floatValue());
+					
+					if (session.getEventEdition().getSeriesEdition().getManufacturersStandings()) {
+						//TODO
+					}
+					
+					for(Driver d : result.getEntry().getDrivers()) {
+						log.debug(result.getFinalPosition() + "-" + d.getFullName() + ": " + points[result.getFinalPosition() - 1]);
+						DriverEventPoints dep = drivers.get(d.getId());
+						if (dep == null) {
+							dep = new DriverEventPoints();
+						}
+						dep.setDriver(d);
+						dep.setSession(session);
+						dep.addPoints((float)points[result.getFinalPosition() - 1] * session.getPsMultiplier());
+						log.debug(String.format("Driver %s: %s points for position %s", 
+								d.getFullName(), (float)points[result.getFinalPosition() - 1] * session.getPsMultiplier(), result.getFinalPosition()));
+						drivers.put(d.getId(), dep);
+						if (result.getStartingPosition() != null &&  result.getStartingPosition() == 1) {
+							if (ps.getPointsPole() != 0 && session.getPsMultiplier().equals(new Float(1.0f))) {
+								dep.addPoints(ps.getPointsPole().floatValue());
+								log.debug(String.format("Driver %s: %s points for pole", d.getFullName(), ps.getPointsPole()));
+							}
 						}
 					}
 				}
@@ -86,12 +101,12 @@ public class ResultsService {
 											   r2.getBestLapTime() == null ? -1 : r2.getBestLapTime())).get();
 				if (fastestEntry.getBestLapTime() != null) {
 					for(Driver d : fastestEntry.getEntry().getDrivers()) {
-						log.debug("Fastest lap: " + d.getFullName() + ": " + fastestEntry.getBestLapTime());
 						DriverEventPoints dep = drivers.get(d.getId());
 						if (dep == null) {
 							dep = new DriverEventPoints();
 						}
 						dep.addPoints(ps.getPointsFastLap().floatValue());
+						log.debug(String.format("Driver %s: %s points for fastest lap", d.getFullName(), ps.getPointsFastLap()));
 						drivers.put(d.getId(), dep);
 					}
 				} else {
@@ -110,14 +125,15 @@ public class ResultsService {
 						addPointsMostLeadLaps = true;
 					}
 					for(Driver d : r.getEntry().getDrivers()) {
-						log.debug(r.getFinalPosition() + "-" + d.getFullName() + ": Led laps" + r.getLapsLed());
 						DriverEventPoints dep = drivers.get(d.getId());
 						if (dep == null) {
 							dep = new DriverEventPoints();
 						}
 						dep.addPoints(ps.getPointsLeadLap().floatValue());
+						log.debug(String.format("Driver %s: %s points for leading %s laps", d.getFullName(), ps.getPointsLeadLap(), r.getLapsLed()));
 						if (addPointsMostLeadLaps) {
 							dep.addPoints(ps.getPointsMostLeadLaps().floatValue());
+							log.debug(String.format("Driver %s: %s points for most led laps", d.getFullName(), ps.getPointsMostLeadLaps()));
 						}
 						drivers.put(d.getId(), dep);
 					}
@@ -132,6 +148,7 @@ public class ResultsService {
 				TeamEventPoints tep = teams.get(tId);
 				teamPointsRepo.save(tep);
 			}
+			cacheHandler.resetDriversStandingsCache(session.getSeriesId());
 		}
 	}
 	

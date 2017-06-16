@@ -18,15 +18,13 @@ public class JDBCRepositoryImpl {
 	@Autowired private JdbcTemplate jdbcTemplate;
 	
 	public List<Object[]> getEventWinners(Long eventEditionId) {
-		String query = "select entryId, catName, sessionName "
-				+ "from events_results er "
-				+ "where not exists ( "
-				+ "select winners.* "
-				+ "from events_results winners "
-				+ "where winners.catId = er.catId and er.sessionName = winners.sessionName "
-				+ "and winners.finalPos < er.finalPos) and er.editionId = ?";
+		String query = "select entryId, catName, sessionName, min(finalPos) finalPos "
+				+ "from events_results "
+				+ "where editionId = ? "
+				+ "group by catName, sessionName "
+				+ "order by sessionStartTime";
 		return jdbcTemplate.query(query, new Object[] {eventEditionId},
-				(rs, rowNum) -> new Object[] {rs.getLong("entryId"), rs.getString("catName"), rs.getString("sessionName")});
+				(rs, rowNum) -> new Object[] {rs.getLong("entryId"), rs.getString("catName"), rs.getString("sessionName"), rs.getInt("finalPos")});
 	}
 	
 	public Map<Long, List<Object[]>> getDriversResultsInSeries(Long seriesId) {
@@ -70,32 +68,21 @@ public class JDBCRepositoryImpl {
 	}
 	
 	public List<DriverPointsDTO> getDriversStandings(Long seriesId) {
-		List<Object[]> result = jdbcTemplate.query("select ds.driverId, ds.driverName, coalesce(dcs.points, 0) points "
-				+ "from drivers_series ds left join drivers_classification_series dcs on ds.driverId = dcs.driverId "
+		
+		List<DriverPointsDTO> result = jdbcTemplate.query("select ds.driverId, ds.driverName, coalesce(dcs.points, 0) points "
+				+ "from drivers_series ds left outer join drivers_classification_series dcs on ds.driverId = dcs.driverId and ds.seriesId = dcs.seriesId "
 				+ "where ds.seriesId = ?", 
-				new Object[] {seriesId}, (rs, rowNum) -> new Object[] {rs.getLong("driverId"), rs.getString("driverName"), rs.getFloat("points")});
+				new Object[] {seriesId}, (rs, rowNum) -> new DriverPointsDTO(rs.getLong("driverId"), rs.getString("driverName"), rs.getFloat("points")));
 		
-		List<DriverPointsDTO> standings = new ArrayList<>();
-		for(Object[] tmp : result) {
-			DriverPointsDTO dto = new DriverPointsDTO((Long)tmp[0], (String)tmp[1], (Float)tmp[2]);
-			standings.add(dto);
-		}
-		
-		return standings;
+		return result;
 	}
 	
 	public List<TeamPointsDTO> getTeamsStandings(Long seriesId) {
-		List<Object[]> result = jdbcTemplate.query("select ts.teamId, ts.teamName, coalesce(tcs.points, 0) points "
-				+ "from teams_series ts left join teams_classification_series tcs on ts.teamId = tcs.teamId "
+		List<TeamPointsDTO> result = jdbcTemplate.query("select ts.teamId, ts.teamName, coalesce(tcs.points, 0) points "
+				+ "from teams_series ts left join teams_classification_series tcs on ts.teamId = tcs.teamId and ts.seriesId = tcs.series_edition_id  "
 				+ "where ts.seriesId = ?", 
-				new Object[] {seriesId}, (rs, rowNum) -> new Object[] {rs.getLong("teamId"), rs.getString("teamName"), rs.getFloat("points")});
+				new Object[] {seriesId}, (rs, rowNum) -> new TeamPointsDTO(rs.getLong("teamId"), rs.getString("teamName"), rs.getFloat("points")));
 		
-		List<TeamPointsDTO> standings = new ArrayList<>();
-		for(Object[] tmp : result) {
-			TeamPointsDTO dto = new TeamPointsDTO((Long)tmp[0], (String)tmp[1], (Float)tmp[2]);
-			standings.add(dto);
-		}
-		
-		return standings;
+		return result;
 	}
 }
