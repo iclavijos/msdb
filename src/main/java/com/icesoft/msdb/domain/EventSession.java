@@ -71,6 +71,9 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     
     @ManyToOne
     private PointsSystem pointsSystem;
+    
+    @Column(name="ps_multiplier")
+    private Float psMultiplier = 1.0f;
 
     public Long getId() {
         return id;
@@ -209,6 +212,14 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 		this.pointsSystem = pointsSystem;
 	}
 	
+	public Float getPsMultiplier() {
+		return psMultiplier;
+	}
+
+	public void setPsMultiplier(Float psMultiplier) {
+		this.psMultiplier = psMultiplier;
+	}
+
 	public Long getSeriesId() {
 		if (eventEdition!= null && eventEdition.getSeriesEdition() != null) {
 			return eventEdition.getSeriesEdition().getId();
