@@ -54,4 +54,9 @@ public class EventEditionWinnersDTO {
 		return winners;
 	}
 	
+	public int getNumberOfCategories() {
+		if (winners == null) return 0;
+		return winners.size();
+	}
+	
 }

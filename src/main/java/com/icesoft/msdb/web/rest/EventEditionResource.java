@@ -327,15 +327,19 @@ public class EventEditionResource {
     	List<String> sessions = tmpWinners.stream().map(w -> (String)w[2]).distinct().collect(Collectors.toList());
     	for(String session : sessions) {
     		EventEditionWinnersDTO catWinners = new EventEditionWinnersDTO(session);
+    		EventEditionEntry overallWinner = null;
     		for(Object[] winner : tmpWinners) {
     			if (winner[2].equals(session)) {
 	        		EventEditionEntry entry = eventEntryRepository.findOne((Long)winner[0]);
 	        		catWinners.addWinners((String)winner[1], entry.getDriversName());
 	        		if (winner[3].equals(new Integer(1))) {
-	        			catWinners.addWinners("Overall", entry.getDriversName());
+	        			overallWinner = entry;
 	        		}
     			}
         	}
+    		if (catWinners.getNumberOfCategories() > 1) {
+    			catWinners.addWinners("Overall", overallWinner.getDriversName());
+    		}
     		catWinners.getWinners().sort((w1, w2) -> w1.compareTo(w2));
     		winners.add(catWinners);
     	}
