@@ -83,8 +83,8 @@ public class ResultsService {
 						dep.setDriver(d);
 						dep.setSession(session);
 						dep.addPoints((float)points[result.getFinalPosition() - 1] * session.getPsMultiplier());
-						log.debug(String.format("Driver %s: %s points for position %s", 
-								d.getFullName(), (float)points[result.getFinalPosition() - 1] * session.getPsMultiplier(), result.getFinalPosition()));
+						log.debug(String.format("Driver %s: %s(x%s) points for position %s", 
+								d.getFullName(), (float)points[result.getFinalPosition() - 1], session.getPsMultiplier(), result.getFinalPosition()));
 						drivers.put(d.getId(), dep);
 						if (result.getStartingPosition() != null &&  result.getStartingPosition() == 1) {
 							if (ps.getPointsPole() != 0 && session.getPsMultiplier().equals(new Float(1.0f))) {
