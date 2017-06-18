@@ -4,6 +4,7 @@ import javax.servlet.http.Cookie;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,7 @@ import org.springframework.social.connect.web.SignInAdapter;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import com.icesoft.msdb.repository.UserRepository;
 import com.icesoft.msdb.security.jwt.TokenProvider;
 
 import io.github.jhipster.config.JHipsterProperties;
@@ -23,6 +25,8 @@ public class CustomSignInAdapter implements SignInAdapter {
     private final Logger log = LoggerFactory.getLogger(CustomSignInAdapter.class);
 
     private final UserDetailsService userDetailsService;
+    
+    @Autowired UserRepository userRepository;
 
     private final JHipsterProperties jHipsterProperties;
 
@@ -40,6 +44,12 @@ public class CustomSignInAdapter implements SignInAdapter {
     public String signIn(String userId, Connection<?> connection, NativeWebRequest request){
         try {
             UserDetails user = userDetailsService.loadUserByUsername(userId);
+            userRepository.findOneByLogin(userId).ifPresent(userDB -> {
+            	if (userDB.getImageUrl() == null || !userDB.getImageUrl().equals(connection.getImageUrl())) {
+            		userDB.setImageUrl(connection.getImageUrl());
+            		userRepository.save(userDB);
+            	}
+            });
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 user,
                 null,
