@@ -125,7 +125,8 @@
             "open": "Open",
             "save": "Save",
             "view": "View",
-            "copy": "Copy"
+            "copy": "Copy",
+            "add": "Add"
         },
         "detail": {
             "field": "Field",

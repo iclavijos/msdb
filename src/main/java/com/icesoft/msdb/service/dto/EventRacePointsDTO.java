@@ -20,5 +20,9 @@ public class EventRacePointsDTO {
 	public void setpSystemAssigned(Long pSystemAssigned) {
 		this.pSystemAssigned = pSystemAssigned;
 	}
+	
+	public boolean isAssigned() {
+		return pSystemAssigned != null;
+	}
 		
 }

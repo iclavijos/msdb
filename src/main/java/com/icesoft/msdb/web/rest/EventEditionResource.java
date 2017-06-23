@@ -246,6 +246,7 @@ public class EventEditionResource {
     @PostMapping("/event-editions/{id}/sessions")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @CacheEvict("calendar")
     public ResponseEntity<EventSession> createEventEditionSession(@Valid @RequestBody EventSession eventSession) throws URISyntaxException {
         log.debug("REST request to save EventSession : {}", eventSession);
         if (eventSession.getId() != null) {
@@ -270,6 +271,7 @@ public class EventEditionResource {
     @DeleteMapping("/event-editions/event-sessions/{id}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN})
+    @CacheEvict("calendar")
     public ResponseEntity<Void> deleteEventSession(@PathVariable Long id) {
         log.debug("REST request to delete EventSession : {}", id);
         eventSessionRepository.delete(id);
@@ -279,6 +281,7 @@ public class EventEditionResource {
     @PutMapping("/event-editions/event-sessions")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @CacheEvict("calendar")
     public ResponseEntity<EventSession> updateEventSession(@Valid @RequestBody EventSession eventSession) throws URISyntaxException {
         log.debug("REST request to update EventSession : {}", eventSession);
         if (eventSession.getId() == null) {

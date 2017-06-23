@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EventManager, JhiLanguageService } from 'ng-jhipster';
+import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
 import { Subscription } from 'rxjs/Rx';
 import { SeriesEdition } from './series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
@@ -22,6 +22,7 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
         private jhiLanguageService: JhiLanguageService,
         private seriesEditionService: SeriesEditionService,
         private eventEditionService: EventEditionService,
+        private alertService: AlertService,
         private eventManager: EventManager,
         private route: ActivatedRoute,
         private router: Router
@@ -50,7 +51,7 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
            this.seriesEdition.events = events.json(); 
            for(let i = 0; i < this.seriesEdition.events.length; i++) {
                let event = this.seriesEdition.events[i];
-               this.seriesEdition.events[i].winners = new Array()
+               this.seriesEdition.events[i].winners = new Array();
                this.eventEditionService.findWinners(event.id).subscribe(winners => {
                   this.seriesEdition.events[i].winners.push(winners);
                });
@@ -70,12 +71,28 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
         });
     }
     
+    removeEvent(eventId) {
+        for(let i = 0; i < this.seriesEdition.events.length; i++) {
+            let event = this.seriesEdition.events[i];
+            if (event.id === eventId) {
+                this.seriesEdition.events.splice(i, 1);
+                this.seriesEditionService.removeEventFromSeries(this.seriesEdition.id, eventId)
+                    .subscribe((res: any) => true, (res: any) => this.onRemoveError(res));
+                break;
+            }
+        }
+    }
+    
     previousState() {
         this.router.navigate(['/series', this.seriesEdition.series.id]);
     }
 
     ngOnDestroy() {
         this.eventManager.destroy(this.eventSubscriber);
+    }
+    
+    private onRemoveError (error) {
+        this.alertService.error(error.message, null, null);
     }
 
 }

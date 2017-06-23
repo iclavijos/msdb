@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
@@ -72,6 +74,7 @@ public class SeriesEditionResource {
     @PostMapping("/series-editions")
     @Timed
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<SeriesEdition> createSeriesEdition(@Valid @RequestBody SeriesEdition seriesEdition) throws URISyntaxException {
         log.debug("REST request to save SeriesEdition : {}", seriesEdition);
         if (seriesEdition.getId() != null) {
@@ -94,6 +97,7 @@ public class SeriesEditionResource {
      */
     @PutMapping("/series-editions")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<SeriesEdition> updateSeriesEdition(@Valid @RequestBody SeriesEdition seriesEdition) throws URISyntaxException {
         log.debug("REST request to update SeriesEdition : {}", seriesEdition);
         if (seriesEdition.getId() == null) {
@@ -145,6 +149,7 @@ public class SeriesEditionResource {
     @DeleteMapping("/series-editions/{id}")
     @Timed
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteSeriesEdition(@PathVariable Long id) {
         log.debug("REST request to delete SeriesEdition : {}", id);
         seriesEditionRepository.delete(id);
@@ -192,15 +197,26 @@ public class SeriesEditionResource {
     @GetMapping("/series-editions/{id}/events")
     @Timed
     public ResponseEntity<List<EventEdition>> getSeriesEvents(@PathVariable Long id) {
+    	log.debug("REST request to retrieve all events of series edition {}", id);
     	return new ResponseEntity<>(
     			seriesEditionService.findSeriesEvents(id), HttpStatus.OK);
     }
     
-    @PostMapping("/series-editions/{id}/events")
+    @PostMapping("/series-editions/{id}/events/{idEvent}")
     @Timed
-    public ResponseEntity<Void> addEventToSeries(@PathVariable Long id, @Valid @RequestBody List<EventRacePointsDTO> racesPointsData) {
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    public ResponseEntity<Void> addEventToSeries(@PathVariable Long id, @PathVariable Long idEvent, @Valid @RequestBody List<EventRacePointsDTO> racesPointsData) {
     	log.debug("REST request to add an event to series {}", id);
-    	seriesEditionService.addEventToSeries(id, racesPointsData);
-    	return new ResponseEntity<>(HttpStatus.OK);
+    	seriesEditionService.addEventToSeries(id, idEvent, racesPointsData);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString())).build();
+    }
+    
+    @DeleteMapping("/series-editions/{id}/events/{idEvent}")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    public ResponseEntity<Void> removeEventFromSeries(@PathVariable Long id, @PathVariable Long idEvent) {
+    	log.debug("REST request to remove an event from series {}", id);
+    	seriesEditionService.removeEventFromSeries(id, idEvent);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 }

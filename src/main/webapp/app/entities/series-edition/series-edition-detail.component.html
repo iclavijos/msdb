@@ -62,6 +62,7 @@
 					            <th><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.eventDate">Date</span></th>
 					            <th><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.event">Event</span></th>
 					            <th><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.winner">Winner</span></th>
+					            <th></th>
 					            </tr>
 					            </thead>
 					            <tbody>
@@ -88,13 +89,21 @@
 						            		</span>
 					                    </div>
 					            	</td>
+					            	<td>
+					            		<button type="submit"
+				                        		 *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+				                                (click)="removeEvent(event.id)"
+				                                class="btn btn-danger btn-sm">
+				                            <span class="fa fa-remove"></span>
+				                        </button>
+					            	</td>
 					            </tr>
 					        	</tbody>
 					        </table>
 					     </div>
 					     <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
 				        	class="btn btn-primary float-right" [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar' } }]">
-				            <span class="fa fa-calendar"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Add</span>
+				            <span class="fa fa-calendar"></span>&nbsp;<span jhiTranslate="entity.action.add"> Add</span>
 				         </button>
 				 </div>
 			</div>

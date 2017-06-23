@@ -7,7 +7,7 @@ import com.icesoft.msdb.service.dto.EventRacePointsDTO;
 
 public interface SeriesEditionService {
 
-	public void addEventToSeries(Long seriesId, List<EventRacePointsDTO> racesPointsData);
+	public void addEventToSeries(Long seriesId, Long idEvent, List<EventRacePointsDTO> racesPointsData);
 	
 	public void removeEventFromSeries(Long seriesId, Long eventId);
 	

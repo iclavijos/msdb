@@ -4,7 +4,7 @@ import { FormGroup, FormArray, FormBuilder, FormControl, Validators } from '@ang
 import { Response } from '@angular/http';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, JhiLanguageService } from 'ng-jhipster';
+import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
 
 import { EventEdition, EventEditionService } from '../event-edition/';
 import { EventSession } from '../event-session/';
@@ -18,7 +18,7 @@ import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
     selector: 'jhi-series-edition-calendar-dialog',
     templateUrl: './series-edition-calendar-dialog.component.html'
 })
-export class SeriesEditionCalendarDialogComponent implements OnInit, OnDestroy {
+export class SeriesEditionCalendarDialogComponent implements OnInit {
 
     private seriesEdition: SeriesEdition;
     private eventEdition: EventEdition;
@@ -33,6 +33,7 @@ export class SeriesEditionCalendarDialogComponent implements OnInit, OnDestroy {
         private _fb: FormBuilder,
         private seriesEditionService: SeriesEditionService,
         private eventEditionService: EventEditionService,
+        private alertService: AlertService,
         public activeModal: NgbActiveModal,
         private eventManager: EventManager,
         private completerService: CompleterService,
@@ -70,18 +71,23 @@ export class SeriesEditionCalendarDialogComponent implements OnInit, OnDestroy {
     
     save() {
         this.isSaving = true;
-        this.seriesEditionService.addEventToSeries(this.seriesEdition.id, this.myForm.value.races)
-            .subscribe((res: Response) => console.log(res), (res: Response) => console.log(res));
-        this.eventManager.broadcast({ name: 'seriesEditionEventsListModification', content: 'OK'});
-        this.isSaving = false;
-        this.activeModal.dismiss(true);
+        this.seriesEditionService.addEventToSeries(this.seriesEdition.id, this.eventEdition.id, this.myForm.value.races)
+            .subscribe((res: any) => this.onSaveSuccess(res), (res: any) => this.onSaveError(res));
     }
     
-    ngOnDestroy() {
-        this.eventManager.broadcast({
-            name: 'seriesEditionEventsListModification'
-        });
-        this.activeModal.dismiss(true);
+    private onSaveSuccess (result: any) {
+        this.eventManager.broadcast({ name: 'seriesEditionEventsListModification', content: 'OK'});
+        this.isSaving = false;
+        this.activeModal.dismiss(result);
+    }
+
+    private onSaveError (error) {
+        this.isSaving = false;
+        this.onError(error);
+    }
+    
+    private onError (error) {
+        this.alertService.error(error.message, null, null);
     }
     
     private onEventSelected(selected: CompleterItem) {
