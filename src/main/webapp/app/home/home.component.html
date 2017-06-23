@@ -102,7 +102,7 @@
 					<div class="card-header">{{ 'home.upcomingEvents' | translate }}</div>
 					<div class="cardScroll">
 						<div class="card-block" *ngFor="let day of calendar">
-							<h5 class="card-title">{{ day.date }}</h5>
+							<h5 class="card-title">{{ day.date | dDate:'longDate' }}</h5>
 							<div *ngFor="let session of day.sessions">
 		                    	<p class="card-text">
 		                    		<strong>{{ session.sessionStartTime.format("HH:mm") }}

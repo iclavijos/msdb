@@ -1,20 +1,21 @@
 package com.icesoft.msdb.service.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.icesoft.msdb.domain.EventSession;
 
 public class CalendarDTO {
 
-	private String date;
+	private LocalDate date;
 	private List<EventSession> sessions;
 	
-	public CalendarDTO(String date, List<EventSession> sessions) {
+	public CalendarDTO(LocalDate date, List<EventSession> sessions) {
 		this.date = date;
 		this.sessions = sessions;
 	}
 
-	public String getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 

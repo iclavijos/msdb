@@ -2,8 +2,8 @@ package com.icesoft.msdb.web.rest;
 
 import java.time.Clock;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,18 +86,18 @@ public class HomeResource {
 		List<EventSession> sessions = eventSessionRepository.findUpcomingSessions(now, nextSunday.plusWeeks(1));
 
 		List<CalendarDTO> calendar = new ArrayList<>();
-		String currentDate = "";
+		LocalDate currentDate = null;
 		List<EventSession> daySessions = new ArrayList<>();
 		if (sessions != null & !sessions.isEmpty()) {
-			currentDate = sessions.get(0).getSessionStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE);
+			currentDate = sessions.get(0).getSessionStartTime().toLocalDate();
 		}
 		for(EventSession s : sessions) {
-			if (currentDate.equals(s.getSessionStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE))) {
+			if (currentDate.equals(s.getSessionStartTime().toLocalDate())) {
 				daySessions.add(s);
 			} else {
 				CalendarDTO day = new CalendarDTO(currentDate, daySessions);
 				calendar.add(day);
-				currentDate = s.getSessionStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE);
+				currentDate = s.getSessionStartTime().toLocalDate();
 				daySessions = new ArrayList<>();
 				daySessions.add(s);
 			}

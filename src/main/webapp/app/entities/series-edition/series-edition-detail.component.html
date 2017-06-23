@@ -66,7 +66,7 @@
 					            </thead>
 					            <tbody>
 					            <tr *ngFor="let event of seriesEdition.events">
-					            	<td>{{event.eventDate | date:'shortDate' }}</td>
+					            	<td>{{event.eventDate | dDate:'shortDate' }}</td>
 					            	<td><a [routerLink]="['/event-edition', event.id]">{{event.longEventName}}</a></td>
 					            	<td *ngIf="!event.winners || event.winners[0]?.length === 0">-</td>
 					            	<td *ngIf="event.winners && event.winners[0]?.length === 1">
@@ -94,7 +94,7 @@
 					     </div>
 					     <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
 				        	class="btn btn-primary float-right" [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar' } }]">
-				            <span class="fa fa-calendar"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+				            <span class="fa fa-calendar"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Add</span>
 				         </button>
 				 </div>
 			</div>
