@@ -4,9 +4,12 @@
     <hr>
     <jhi-alert-error></jhi-alert-error>
     
-    <div class="row">
-		<div class="col-lg-4 col-md-4">
-		    <dl class="row-md jh-entity-details">
+    <ngb-tabset>
+	  <ngb-tab title="{{'motorsportsDatabaseApp.series.seriesEdition.detail.info' | translate}}">
+	    <template ngbTabContent>
+		    <div class="row">
+				<div class="col-lg-4 col-md-4">
+				    <dl class="row-md jh-entity-details">
 		        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.period">Period</span></dt>
 		        <dd>
 		            <span>{{seriesEdition.period}}</span>
@@ -75,35 +78,91 @@
 				            			<div *ngFor="let winner of session.winners">
 					                        <span class="tag tag-info"><strong>{{winner.category}}:</strong> {{ winner.drivers }}</span>
 					                    </div>
-				            		</span>
-			                    </div>
-			            	</td>
-			            	<td>
-			            		<button type="submit"
-		                        		 *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-		                                (click)="removeEvent(event.id)"
-		                                class="btn btn-danger btn-sm">
-		                            <span class="fa fa-remove"></span>
-		                        </button>
-			            	</td>
-			            </tr>
-			        	</tbody>
-			        </table>
-			     </div>
-			     <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-		        	class="btn btn-primary float-right" [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar' } }]">
-		            <span class="fa fa-calendar"></span>&nbsp;<span jhiTranslate="entity.action.add"> Add</span>
-		         </button>
-		 </div>
-	</div>
-
-    <button type="button"
-            [routerLink]="['/', { outlets: { popup: 'series-edition/'+ seriesEdition.id + '/edit'} }]"
-            replaceUrl="true"
-            class="btn btn-primary">
-        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-    </button>
- 
+					            	</td>
+					            	<td>
+					            		<button type="submit"
+				                        		 *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+				                                (click)="removeEvent(event.id)"
+				                                class="btn btn-danger btn-sm">
+				                            <span class="fa fa-remove"></span>
+				                        </button>
+					            	</td>
+					            </tr>
+					        	</tbody>
+					        </table>
+					     </div>
+					     <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+				        	class="btn btn-primary float-right" [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar' } }]">
+				            <span class="fa fa-calendar"></span>&nbsp;<span jhiTranslate="entity.action.add"> Add</span>
+				         </button>
+				 </div>
+			</div>
+		
+		    <button type="button"
+		            [routerLink]="['/', { outlets: { popup: 'series-edition/'+ seriesEdition.id + '/edit'} }]"
+		            replaceUrl="true"
+		            class="btn btn-primary">
+		        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+		    </button>
+    	</template>
+     </ngb-tab>
+	     <ngb-tab title="{{'motorsportsDatabaseApp.series.seriesEdition.detail.standings' | translate}}">
+	     	<template ngbTabContent>
+			<div class="row">
+				<div class="card-deck col-md-12">
+					<div class="card col-md-4">
+						<div class="card-block">
+							<h4 class="card-title">{{'motorsportsDatabaseApp.series.seriesEdition.detail.driversStandings' | translate}}</h4>
+							<p class="card-text">
+							<table class="table table-sm">
+								<thead>
+									<tr>
+										<th></th>
+										<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.driver' | translate}}</th>
+										<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let driver of driversStandings; let i = index">
+										<td>{{i + 1}}</td>
+										<td>{{driver.driverName}}</td>
+										<td>{{driver.points}}</td>
+									</tr>
+								</tbody>
+							</table>
+							<p>
+						</div>
+					</div>
+					<div class="card col-md-4" *ngIf="seriesEdition.teamsStandings">
+						<div class="card-block">
+							<h4 class="card-title">{{'motorsportsDatabaseApp.series.seriesEdition.detail.teamsStandings' | translate}}</h4>
+							<p class="card-text">
+							<table class="table table-sm">
+								<thead>
+									<tr>
+										<th></th>
+										<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.team' | translate}}</th>
+										<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let team of teamsStandings; let i = index">
+										<td>{{i + 1}}</td>
+										<td>{{team.teamName}}</td>
+										<td>{{team.points}}</td>
+									</tr>
+								</tbody>
+							</table>
+							<p>
+						</div>
+					</div>
+					<div class="card col-md-4" *ngIf="seriesEdition.manufacturersStandings">
+					</div>
+				</div>
+			</div>
+			</template> 
+		</ngb-tab>
+    </ngb-tabset>
     
     <button type="submit"
             (click)="previousState()"

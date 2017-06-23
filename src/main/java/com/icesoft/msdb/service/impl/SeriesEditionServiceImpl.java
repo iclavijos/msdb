@@ -48,6 +48,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 			throw new MSDBException("No series edition found for id '" + seriesId + "'");
 		}
 		EventEdition eventEd = null;
+
 		racesPointsData.parallelStream().filter(rpd -> rpd.isAssigned()).forEach(racePoints -> {
 			EventSession session = sessionRepo.findOne(racePoints.getRaceId());
 			PointsSystem points = pointsRepo.findOne(racePoints.getpSystemAssigned());
