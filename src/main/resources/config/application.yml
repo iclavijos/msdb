@@ -48,8 +48,8 @@ spring:
     social:
         # see https://developers.google.com/+/web/signin/server-side-flow#step_1_create_a_client_id_and_client_secret
         google:
-            client-id: 841438335274-hsvmm6t88pc6falddu7n8st8m1qdkej6.apps.googleusercontent.com
-            client-secret: H9j1qSQi2nuokdK_2EdbEbJ0
+            client-id: 
+            client-secret: 
 
         # see https://developers.facebook.com/docs/facebook-login/v2.2
         facebook:
@@ -101,7 +101,7 @@ jhipster:
         default-include-pattern: /api/.*
         title: MotorsportsDatabase API
         description: MotorsportsDatabase API documentation
-        version: 0.10.0
+        version: 0.11.4
         terms-of-service-url:
         contact-name:
         contact-url:

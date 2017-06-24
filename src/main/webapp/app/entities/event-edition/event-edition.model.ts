@@ -3,6 +3,7 @@ import { Category } from '../category';
 import { RacetrackLayout } from '../racetrack-layout';
 import { Event } from '../event';
 import { EventSession } from '../event-session';
+import { SeriesEdition } from '../series-edition';
 
 export class EventEdition {
     constructor(
@@ -22,5 +23,6 @@ export class EventEdition {
         public singleEngine?: boolean,
         public singleTyre?: boolean,
         public winners?: any,
+        public seriesId?: number
     ) { }
 }

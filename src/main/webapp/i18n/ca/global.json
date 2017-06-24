@@ -125,7 +125,8 @@
             "open": "Open",
             "save": "Desa",
             "view": "Visualitza",
-            "copy": "Copia"
+            "copy": "Copia",
+            "add": "Afegeix"
         },
         "detail": {
             "field": "Camp",

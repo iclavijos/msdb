@@ -1,12 +1,15 @@
 package com.icesoft.msdb.web.rest;
 
-import java.time.Clock;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,23 +84,27 @@ public class HomeResource {
 	@Cacheable(cacheNames="calendar")
 	public List<CalendarDTO> getCalendar() {
 		log.debug("REST request to get calendar");
-		ZonedDateTime now = ZonedDateTime.now(Clock.systemUTC());
-		ZonedDateTime nextSunday = now.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
-		List<EventSession> sessions = eventSessionRepository.findUpcomingSessions(now, nextSunday.plusWeeks(1));
+		
+		LocalDateTime todayMidnight = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
+		ZonedDateTime today = ZonedDateTime.of(todayMidnight, ZoneId.of("UTC"));
+		ZonedDateTime nextSunday = today.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+		List<EventSession> sessions = eventSessionRepository.findUpcomingSessions(today, nextSunday.plusWeeks(1));
 
 		List<CalendarDTO> calendar = new ArrayList<>();
-		String currentDate = "";
+		LocalDate currentDate = null;
 		List<EventSession> daySessions = new ArrayList<>();
 		if (sessions != null & !sessions.isEmpty()) {
-			currentDate = sessions.get(0).getSessionStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE);
+			currentDate = sessions.get(0).getSessionStartTime().toLocalDate();
 		}
-		for(EventSession s : sessions) {
-			if (currentDate.equals(s.getSessionStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE))) {
+		ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+		List<EventSession> filtered = sessions.stream().filter(session -> !session.isFinished(now)).collect(Collectors.toList());
+		for(EventSession s : filtered) {
+			if (currentDate.equals(s.getSessionStartTime().toLocalDate())) {
 				daySessions.add(s);
 			} else {
 				CalendarDTO day = new CalendarDTO(currentDate, daySessions);
 				calendar.add(day);
-				currentDate = s.getSessionStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE);
+				currentDate = s.getSessionStartTime().toLocalDate();
 				daySessions = new ArrayList<>();
 				daySessions.add(s);
 			}

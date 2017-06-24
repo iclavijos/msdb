@@ -58,9 +58,15 @@ export class SeriesEditionService {
         });
     }
     
-    addEventToSeries(id:number, racesData: any) {
-        return this.http.post(`${this.resourceUrl}/${id}/events`, racesData).map((res: Response) => {
-           return res.json(); 
+    addEventToSeries(seriesId: number, eventId: number, racesData: any): Observable<Response> {
+        return this.http.post(`${this.resourceUrl}/${seriesId}/events/${eventId}`, racesData).map((res: Response) => {
+           return res; 
+        });
+    }
+    
+    removeEventFromSeries(seriesId: number, eventId: number): Observable<Response> {
+        return this.http.delete(`${this.resourceUrl}/${seriesId}/events/${eventId}`).map((res: Response) => {
+           return res; 
         });
     }
 

@@ -120,6 +120,7 @@ public class CustomSocialConnectionRepository implements ConnectionRepository {
         if (socialUserConnection != null) {
             SocialUserConnection socialUserConnectionToUdpate =  connectionToUserSocialConnection(connection, socialUserConnection.getRank());
             socialUserConnectionToUdpate.setId(socialUserConnection.getId());
+            socialUserConnectionToUdpate.setImageURL(connection.getImageUrl());
             socialUserConnectionRepository.save(socialUserConnectionToUdpate);
         }
     }

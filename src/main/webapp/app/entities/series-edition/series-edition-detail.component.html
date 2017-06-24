@@ -46,7 +46,7 @@
 						<dd>
 				            <ul class="list-unstyled">
 				                <li *ngFor="let pointsSystem of seriesEdition.pointsSystems">
-				                    <span>{{pointsSystem.name}} ({{pointsSystem.points}})</span>
+				                    <span>{{pointsSystem.name}} ({{pointsSystem.description}})</span>
 				                </li>
 				            </ul>
 				        </dd>
@@ -62,11 +62,12 @@
 					            <th><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.eventDate">Date</span></th>
 					            <th><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.event">Event</span></th>
 					            <th><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.winner">Winner</span></th>
+					            <th></th>
 					            </tr>
 					            </thead>
 					            <tbody>
 					            <tr *ngFor="let event of seriesEdition.events">
-					            	<td>{{event.eventDate | date:'shortDate' }}</td>
+					            	<td>{{event.eventDate | dDate:'shortDate' }}</td>
 					            	<td><a [routerLink]="['/event-edition', event.id]">{{event.longEventName}}</a></td>
 					            	<td *ngIf="!event.winners || event.winners[0]?.length === 0">-</td>
 					            	<td *ngIf="event.winners && event.winners[0]?.length === 1">
@@ -88,13 +89,21 @@
 						            		</span>
 					                    </div>
 					            	</td>
+					            	<td>
+					            		<button type="submit"
+				                        		 *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+				                                (click)="removeEvent(event.id)"
+				                                class="btn btn-danger btn-sm">
+				                            <span class="fa fa-remove"></span>
+				                        </button>
+					            	</td>
 					            </tr>
 					        	</tbody>
 					        </table>
 					     </div>
 					     <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
 				        	class="btn btn-primary float-right" [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar' } }]">
-				            <span class="fa fa-calendar"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+				            <span class="fa fa-calendar"></span>&nbsp;<span jhiTranslate="entity.action.add"> Add</span>
 				         </button>
 				 </div>
 			</div>
@@ -134,7 +143,7 @@
 							<p>
 						</div>
 					</div>
-					<div class="card col-md-4">
+					<div class="card col-md-4" *ngIf="seriesEdition.teamsStandings">
 						<div class="card-block">
 							<h4 class="card-title">{{'motorsportsDatabaseApp.series.seriesEdition.detail.teamsStandings' | translate}}</h4>
 							<p class="card-text">
@@ -156,6 +165,8 @@
 							</table>
 							<p>
 						</div>
+					</div>
+					<div class="card col-md-4" *ngIf="seriesEdition.manufacturersStandings">
 					</div>
 				</div>
 			</div>

@@ -10,10 +10,12 @@ import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.domain.SeriesEdition;
+import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.PointsSystemRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
+import com.icesoft.msdb.repository.TeamEventPointsRepository;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
 
@@ -25,23 +27,28 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	private final SeriesEditionRepository seriesRepo;
 	private final EventSessionRepository sessionRepo;
 	private final PointsSystemRepository pointsRepo;
+	private final DriverEventPointsRepository driverPointsRepo;
+	private final TeamEventPointsRepository teamPointsRepo;
 	
 	public SeriesEditionServiceImpl(EventEditionRepository eventRepo, SeriesEditionRepository seriesRepo, 
-			EventSessionRepository sessionRepo, PointsSystemRepository pointsRepo) {
+			EventSessionRepository sessionRepo, PointsSystemRepository pointsRepo, 
+			DriverEventPointsRepository driverPointsRepo, TeamEventPointsRepository teamPointsRepo) {
 		this.eventRepo = eventRepo;
 		this.seriesRepo = seriesRepo;
 		this.sessionRepo = sessionRepo;
 		this.pointsRepo = pointsRepo;
+		this.driverPointsRepo = driverPointsRepo;
+		this.teamPointsRepo = teamPointsRepo;
 	}
 
 	@Override
-	public void addEventToSeries(Long seriesId, List<EventRacePointsDTO> racesPointsData) {
+	public void addEventToSeries(Long seriesId, Long idEvent, List<EventRacePointsDTO> racesPointsData) {
 		SeriesEdition seriesEd = seriesRepo.findOne(seriesId);
 		if (seriesEd == null) {
 			throw new MSDBException("No series edition found for id '" + seriesId + "'");
 		}
 		EventEdition eventEd = null;
-		for(EventRacePointsDTO racePoints : racesPointsData) {
+		racesPointsData.stream().filter(rpd -> rpd.isAssigned()).forEach(racePoints -> {
 			EventSession session = sessionRepo.findOne(racePoints.getRaceId());
 			PointsSystem points = pointsRepo.findOne(racePoints.getpSystemAssigned());
 			if (session == null || points == null) {
@@ -52,9 +59,9 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 			}
 			session.setPointsSystem(points);
 			sessionRepo.save(session);
-			eventEd = session.getEventEdition();
-		}
+		});
 		
+		eventEd = eventRepo.findOne(idEvent);
 		eventEd.setSeriesEdition(seriesEd);
 		eventRepo.save(eventEd);
 	}
@@ -70,6 +77,13 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		}
 		eventEd.setSeriesEdition(null);
 		eventRepo.save(eventEd);
+		
+		//We must remove the assigned points, if there are any
+		sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventId).stream()
+			.forEach(session -> {
+				driverPointsRepo.deleteSessionPoints(session.getId());
+				teamPointsRepo.deleteSessionPoints(session.getId());
+			});
 	}
 
 	@Transactional(readOnly=true)

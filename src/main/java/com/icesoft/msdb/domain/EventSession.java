@@ -1,7 +1,10 @@
 package com.icesoft.msdb.domain;
 
 import java.io.Serializable;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -19,6 +22,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.icesoft.msdb.domain.enums.DurationType;
 import com.icesoft.msdb.domain.enums.SessionType;
 
 /**
@@ -71,6 +75,9 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     
     @ManyToOne
     private PointsSystem pointsSystem;
+    
+    @Column(name="ps_multiplier")
+    private Float psMultiplier = 1.0f;
 
     public Long getId() {
         return id;
@@ -209,6 +216,14 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 		this.pointsSystem = pointsSystem;
 	}
 	
+	public Float getPsMultiplier() {
+		return psMultiplier;
+	}
+
+	public void setPsMultiplier(Float psMultiplier) {
+		this.psMultiplier = psMultiplier;
+	}
+
 	public Long getSeriesId() {
 		if (eventEdition!= null && eventEdition.getSeriesEdition() != null) {
 			return eventEdition.getSeriesEdition().getId();
@@ -221,6 +236,17 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 			return eventEdition.getSeriesEdition().getSeries().getName();
 		}
 		return null;
+	}
+	
+	public boolean isFinished(ZonedDateTime now) {
+		DurationType durationType = DurationType.valueOf(getDurationType());
+		TemporalUnit temp = durationType.equals(DurationType.MINUTES) ? ChronoUnit.MINUTES :
+				durationType.equals(DurationType.HOURS) ? ChronoUnit.HOURS : null;
+		
+		ZonedDateTime end = null;
+		if (temp == null) end = getSessionStartTime().plus(4, ChronoUnit.HOURS);
+		else end = getSessionStartTime().plus(getDuration(), temp);
+		return end.isBefore(ZonedDateTime.now(ZoneId.of("UTC")));
 	}
 
 	@Override

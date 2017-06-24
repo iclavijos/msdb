@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -45,6 +46,7 @@ import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
+import com.icesoft.msdb.service.impl.CacheHandler;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
@@ -73,10 +75,13 @@ public class EventEditionResource {
     private final ResultsService resultsService;
     private final SearchService searchService;
     private final JDBCRepositoryImpl jdbcRepository;
-
+    
+    private final CacheHandler cacheHandler;
+    
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventSessionRepository eventSessionRepository, 
     		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, SearchService searchService,
-    		ResultsService resultsService, JDBCRepositoryImpl jdbcRepository) {
+    		ResultsService resultsService, JDBCRepositoryImpl jdbcRepository,
+    		CacheHandler cacheHandler) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventSessionRepository = eventSessionRepository;
         this.eventEntryRepository = eventEntryRepository;
@@ -84,6 +89,7 @@ public class EventEditionResource {
         this.resultsService = resultsService;
         this.searchService = searchService;
         this.jdbcRepository = jdbcRepository;
+        this.cacheHandler = cacheHandler;
     }
 
     /**
@@ -174,11 +180,7 @@ public class EventEditionResource {
         	if (tmp != null && !tmp.isEmpty()) {
         		eventEdition.previousEditionId(tmp.get(0));
         	}
-        	if (eventEdition.getSeriesEdition() != null) {
-        		SeriesEdition tmpSeries = new SeriesEdition();
-        		tmpSeries.setId(eventEdition.getSeriesEdition().getId());
-        		eventEdition.setSeriesEdition(tmpSeries);
-        	}
+
         }
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEdition));
     }
@@ -244,6 +246,7 @@ public class EventEditionResource {
     @PostMapping("/event-editions/{id}/sessions")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @CacheEvict("calendar")
     public ResponseEntity<EventSession> createEventEditionSession(@Valid @RequestBody EventSession eventSession) throws URISyntaxException {
         log.debug("REST request to save EventSession : {}", eventSession);
         if (eventSession.getId() != null) {
@@ -268,6 +271,7 @@ public class EventEditionResource {
     @DeleteMapping("/event-editions/event-sessions/{id}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN})
+    @CacheEvict("calendar")
     public ResponseEntity<Void> deleteEventSession(@PathVariable Long id) {
         log.debug("REST request to delete EventSession : {}", id);
         eventSessionRepository.delete(id);
@@ -277,6 +281,7 @@ public class EventEditionResource {
     @PutMapping("/event-editions/event-sessions")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @CacheEvict("calendar")
     public ResponseEntity<EventSession> updateEventSession(@Valid @RequestBody EventSession eventSession) throws URISyntaxException {
         log.debug("REST request to update EventSession : {}", eventSession);
         if (eventSession.getId() == null) {
@@ -316,6 +321,7 @@ public class EventEditionResource {
     @GetMapping("/event-editions/{id}/winners")
     @Timed
     @Transactional
+    @Cacheable(cacheNames="winnersCache", key="#id")
     public List<EventEditionWinnersDTO> getEventEditionWinners(@PathVariable Long id) {
     	log.debug("REST request to get all EventEdition {} winners", id);
     	List<EventEditionWinnersDTO> winners = new ArrayList<>();
@@ -324,12 +330,20 @@ public class EventEditionResource {
     	List<String> sessions = tmpWinners.stream().map(w -> (String)w[2]).distinct().collect(Collectors.toList());
     	for(String session : sessions) {
     		EventEditionWinnersDTO catWinners = new EventEditionWinnersDTO(session);
+    		EventEditionEntry overallWinner = null;
     		for(Object[] winner : tmpWinners) {
     			if (winner[2].equals(session)) {
 	        		EventEditionEntry entry = eventEntryRepository.findOne((Long)winner[0]);
 	        		catWinners.addWinners((String)winner[1], entry.getDriversName());
+	        		if (winner[3].equals(new Integer(1))) {
+	        			overallWinner = entry;
+	        		}
     			}
         	}
+    		if (catWinners.getNumberOfCategories() > 1) {
+    			catWinners.addWinners("Overall", overallWinner.getDriversName());
+    		}
+    		catWinners.getWinners().sort((w1, w2) -> w1.compareTo(w2));
     		winners.add(catWinners);
     	}
     	
@@ -423,7 +437,7 @@ public class EventEditionResource {
     	log.debug("REST request to get EventEdition {} results for session {}", id, idSession);
     	List<EventEntryResult> result = eventResultRepository.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAsc(idSession, id);
     	result.parallelStream().forEach(r -> {
-    		r.getEntry().engine(null).category(null).chassis(null).tyres(null).fuel(null).team(null);
+    		r.getEntry().engine(null).chassis(null).tyres(null).fuel(null).team(null);
     		if (r.getEntry().getEventEdition() != null && r.getEntry().getEventEdition().getSeriesEdition() != null) {
 	    		SeriesEdition tmp = new SeriesEdition();
 	    		tmp.setId(r.getEntry().getEventEdition().getSeriesEdition().getId());
@@ -467,6 +481,9 @@ public class EventEditionResource {
             		ENTITY_NAME_ENTRY, "idexists", "A new eventSessionResult cannot already have an ID")).body(null);
         }
         EventEntryResult result = eventResultRepository.save(eventSessionResult);
+        if (result.getSession().isRace()) {
+        	cacheHandler.resetWinnersCache(result.getEntry().getEventEdition().getId());
+        }
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/entries"))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME_RESULT, result.getId().toString()))
             .body(result);
@@ -481,6 +498,9 @@ public class EventEditionResource {
             return createEventSessionResult(eventSessionResult);
         }
         EventEntryResult result = eventResultRepository.save(eventSessionResult);
+        if (result.getSession().isRace()) {
+        	cacheHandler.resetWinnersCache(result.getEntry().getEventEdition().getId());
+        }
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME_RESULT, eventSessionResult.getId().toString()))
             .body(result);

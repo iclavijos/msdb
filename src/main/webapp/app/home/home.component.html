@@ -1,13 +1,6 @@
 <div class="row">
     <div class="col-md-12">
         <h1 class="display-4" jhiTranslate="home.title">Welcome to Motorsports Database</h1>
-
-        <div [ngSwitch]="isAuthenticated()">
-            <div class="alert alert-success" *ngSwitchCase="true">
-                <span *ngIf="account" jhiTranslate="home.logged.message"
-                    translateValues="{username: '{{account.login}}'}"> You are logged in as user "{{account.login}}". </span>
-            </div>
-        </div>
         
         <div class="row mb-3">
              <div class="col-xl-3 col-lg-6">
@@ -102,7 +95,7 @@
 					<div class="card-header">{{ 'home.upcomingEvents' | translate }}</div>
 					<div class="cardScroll">
 						<div class="card-block" *ngFor="let day of calendar">
-							<h5 class="card-title">{{ day.date }}</h5>
+							<h5 class="card-title">{{ day.date | dDate:'longDate' }}</h5>
 							<div *ngFor="let session of day.sessions">
 		                    	<p class="card-text">
 		                    		<strong>{{ session.sessionStartTime.format("HH:mm") }}

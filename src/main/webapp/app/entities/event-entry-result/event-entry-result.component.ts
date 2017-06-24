@@ -25,6 +25,7 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     eventEntryResults: EventEntryResult[];
     currentAccount: any;
     eventSubscriber: Subscription;
+    filterCategory: string;
 
     constructor(
         private jhiLanguageService: JhiLanguageService,

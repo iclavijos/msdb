@@ -21,5 +21,8 @@ export class SeriesEdition {
         public manufacturerChamp?: string,
         public pointsSystems?: PointsSystem[],
         public events?: EventEdition[],
+        public driversStandings?: boolean,
+        public teamsStandings?: boolean,
+        public manufacturersStandings?: boolean
     ) { }
 }

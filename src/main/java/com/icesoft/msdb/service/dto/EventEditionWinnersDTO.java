@@ -8,7 +8,7 @@ public class EventEditionWinnersDTO {
 	private final String session;
 	private final List<CategoryWinner> winners;
 	
-	class CategoryWinner {
+	public class CategoryWinner implements Comparable<CategoryWinner> {
 		private final String category;
 		private final String drivers;
 		
@@ -23,6 +23,17 @@ public class EventEditionWinnersDTO {
 
 		public String getDrivers() {
 			return drivers;
+		}
+
+		@Override
+		public int compareTo(CategoryWinner o) {
+			if (this.category.equals("Overall")) {
+				return -1;
+			}
+			if (o != null && o.category.equals("Overall")) {
+				return 1;
+			}
+			return this.getCategory().compareTo(o.getCategory());
 		}
 	}
 	
@@ -41,6 +52,11 @@ public class EventEditionWinnersDTO {
 	
 	public List<CategoryWinner> getWinners() {
 		return winners;
+	}
+	
+	public int getNumberOfCategories() {
+		if (winners == null) return 0;
+		return winners.size();
 	}
 	
 }

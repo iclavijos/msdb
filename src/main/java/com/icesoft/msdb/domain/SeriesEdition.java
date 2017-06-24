@@ -14,8 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -81,10 +79,14 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     @ManyToOne
     private Series series;
     
-    @OneToMany(mappedBy = "seriesEdition", fetch=FetchType.EAGER)
-    @OrderBy("eventDate ASC")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private List<EventEdition> events;
+    @Column(name="drivers_standings")
+    private Boolean driversStandings = Boolean.TRUE;
+    
+    @Column(name="teams_standings")
+    private Boolean teamsStandings = Boolean.FALSE;
+    
+    @Column(name="manufacturers_standings")
+    private Boolean manufacturersStandings = Boolean.FALSE;
 
     public Long getId() {
         return id;
@@ -200,31 +202,6 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     public void setPointsSystems(List<PointsSystem> pointsSystems) {
     	this.pointsSystems = pointsSystems;
     }
-    
-    public List<EventEdition> getEvents() {
-        return events;
-    }
-
-    public SeriesEdition events(List<EventEdition> events) {
-        this.events = events;
-        return this;
-    }
-
-    public SeriesEdition addEvents(EventEdition eventEdition) {
-        this.events.add(eventEdition);
-        eventEdition.setSeriesEdition(this);
-        return this;
-    }
-
-    public SeriesEdition removeEditions(EventEdition eventEdition) {
-        this.events.remove(eventEdition);
-        eventEdition.setSeriesEdition(null);
-        return this;
-    }
-
-    public void setEvents(List<EventEdition> eventEditions) {
-        this.events = eventEditions;
-    } 
 
     public Series getSeries() {
         return series;
@@ -239,7 +216,31 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         this.series = series;
     }
 
-    @Override
+    public Boolean getDriversStandings() {
+		return driversStandings;
+	}
+
+	public void setDriversStandings(Boolean driversStandings) {
+		this.driversStandings = driversStandings;
+	}
+
+	public Boolean getTeamsStandings() {
+		return teamsStandings;
+	}
+
+	public void setTeamsStandings(Boolean teamsStandings) {
+		this.teamsStandings = teamsStandings;
+	}
+
+	public Boolean getManufacturersStandings() {
+		return manufacturersStandings;
+	}
+
+	public void setManufacturersStandings(Boolean manufacturersStandings) {
+		this.manufacturersStandings = manufacturersStandings;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

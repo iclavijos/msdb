@@ -9,6 +9,7 @@ import {
     JhiLanguageHelper,
     TimeMaskPipe,
     RacetrackLengthPipe,
+    DynamicDatePipe,
     EventEntryCategoryFilter,
     FindLanguageFromKeyPipe,
     JhiAlertComponent,
@@ -18,7 +19,7 @@ import {
 
 export function alertServiceProvider(sanitizer: Sanitizer, translateService: TranslateService) {
     // set below to true to make alerts look like toast
-    let isToast = false;
+    let isToast = true;
     return new AlertService(sanitizer, isToast, translateService);
 }
 
@@ -29,6 +30,7 @@ export function alertServiceProvider(sanitizer: Sanitizer, translateService: Tra
     declarations: [
         TimeMaskPipe,
         RacetrackLengthPipe,
+        DynamicDatePipe,
         EventEntryCategoryFilter,
         FindLanguageFromKeyPipe,
         JhiAlertComponent,
@@ -47,6 +49,7 @@ export function alertServiceProvider(sanitizer: Sanitizer, translateService: Tra
         MotorsportsDatabaseSharedLibsModule,
         TimeMaskPipe,
         RacetrackLengthPipe,
+        DynamicDatePipe,
         EventEntryCategoryFilter,
         FindLanguageFromKeyPipe,
         JhiAlertComponent,

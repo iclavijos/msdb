@@ -1,7 +1,6 @@
 import { Injectable, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { DatePipe } from '@angular/common';
 import { EventSession } from './event-session.model';
 import { EventSessionService } from './event-session.service';
 
@@ -15,7 +14,6 @@ export class EventSessionPopupService {
     private isOpen = false;
     
     constructor (
-        private datePipe: DatePipe,
         private modalService: NgbModal,
         private router: Router,
         private eventSessionService: EventSessionService,

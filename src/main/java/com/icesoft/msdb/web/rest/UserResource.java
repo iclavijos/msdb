@@ -154,6 +154,7 @@ public class UserResource {
      */
     @GetMapping("/users")
     @Timed
+    @Secured(AuthoritiesConstants.ADMIN)
     public ResponseEntity<List<UserDTO>> getAllUsers(@ApiParam Pageable pageable)
         throws URISyntaxException {
         final Page<UserDTO> page = userService.getAllManagedUsers(pageable);
@@ -169,6 +170,7 @@ public class UserResource {
      */
     @GetMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
     @Timed
+    @Secured(AuthoritiesConstants.ADMIN)
     public ResponseEntity<UserDTO> getUser(@PathVariable String login) {
         log.debug("REST request to get User : {}", login);
         return ResponseUtil.wrapOrNotFound(
@@ -200,6 +202,7 @@ public class UserResource {
      */
     @GetMapping("/_search/users/{query}")
     @Timed
+    @Secured(AuthoritiesConstants.ADMIN)
     public List<User> search(@PathVariable String query) {
         return userRepository.search(query);
     }

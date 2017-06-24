@@ -1,3 +1,4 @@
+export * from './pipes/dynamicDate.pipe';
 export * from './mask/time-mask.pipe';
 export * from './mask/racetrack-length.pipe';
 export * from './filters/entry-category-filter.pipe';
