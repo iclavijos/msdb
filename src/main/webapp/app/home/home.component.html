@@ -1,13 +1,6 @@
 <div class="row">
     <div class="col-md-12">
         <h1 class="display-4" jhiTranslate="home.title">Welcome to Motorsports Database</h1>
-
-        <div [ngSwitch]="isAuthenticated()">
-            <div class="alert alert-success" *ngSwitchCase="true">
-                <span *ngIf="account" jhiTranslate="home.logged.message"
-                    translateValues="{username: '{{account.login}}'}"> You are logged in as user "{{account.login}}". </span>
-            </div>
-        </div>
         
         <div class="row mb-3">
              <div class="col-xl-3 col-lg-6">
