@@ -1,0 +1,1 @@
+ALTER TABLE msdb.driver ADD COLUMN  nationality VARCHAR(2) NULL ;

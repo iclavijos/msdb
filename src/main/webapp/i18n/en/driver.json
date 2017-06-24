@@ -25,7 +25,8 @@
             "age": "Age",
             "portrait": "Portrait",
             "bio": "Biography",
-            "statistics": "Statistics"
+            "statistics": "Statistics",
+            "nationality": "Nationality"
         }
     }
 }

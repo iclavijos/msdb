@@ -5,6 +5,7 @@ export class Driver {
         public surname?: string,
         public birthDate?: any,
         public birthPlace?: string,
+        public nationality?: string,
         public deathDate?: any,
         public deathPlace?: string,
         public portrait?: any,

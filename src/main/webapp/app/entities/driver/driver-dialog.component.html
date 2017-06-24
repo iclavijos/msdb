@@ -69,6 +69,12 @@
                 </small>
             </div>
         </div>
+    	<div class="form-group">
+            <label jhiTranslate="motorsportsDatabaseApp.driver.nationality" for="field_nationality">Natinality</label>
+            <ng2-completer id="field_nationality" name="nationality" [(ngModel)]="nationalitySearch" [datasource]="dataServiceNationality" [minSearchLength]="2" 
+            	(selected)="onCountrySelected($event)" (highlighted)="onCountrySelected($event)" [pause]="300" [autoMatch]="true" 
+            	[maxChars]="10" required></ng2-completer>
+        </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.deathDate" for="field_deathDate">Death Date</label>
             <div class="input-group">

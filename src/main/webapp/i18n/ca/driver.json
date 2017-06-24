@@ -25,7 +25,8 @@
             "age": "Edat",
             "portrait": "Portrait",
             "bio": "Biografia",
-            "statistics": "Estadístiques"
+            "statistics": "Estadístiques",
+            "nationality": "Nacionalitat"
         }
     }
 }

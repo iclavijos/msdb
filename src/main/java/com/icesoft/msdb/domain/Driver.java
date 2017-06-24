@@ -18,6 +18,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Store;
 
 /**
  * A Driver.
@@ -51,6 +52,12 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     @Size(max = 75)
     @Column(name = "birth_place", length = 75)
     private String birthPlace;
+    
+    @NotNull
+    @Size(max = 2)
+    @Column(name = "nationality", length = 2, nullable = false)
+    @Field(store = Store.NO)
+    private String nationality;
 
     @Column(name = "death_date")
     private LocalDate deathDate;
@@ -129,7 +136,20 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
         this.birthPlace = birthPlace;
     }
 
-    public LocalDate getDeathDate() {
+    public String getNationality() {
+		return nationality;
+	}
+    
+    public Driver nationality(String nationality) {
+    	this.nationality = nationality;
+    	return this;
+    }
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+
+	public LocalDate getDeathDate() {
         return deathDate;
     }
 

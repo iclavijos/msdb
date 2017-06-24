@@ -183,12 +183,14 @@
 		            	<td>{{eventEntry.raceNumber}}</td>
 		            	<td>
 		                    <div *ngIf="!eventEntry.eventEdition.multidriver">
-		                        <a [routerLink]="['/driver', eventEntry.drivers[0].id ]" >{{eventEntry.drivers[0].fullName}}</a>
+		                        <a [routerLink]="['/driver', eventEntry.drivers[0].id ]" >
+		                        	<img *ngIf="eventEntry.drivers[0].nationality" src="/images/flags16/{{eventEntry.drivers[0].nationality}}.png"/> {{eventEntry.drivers[0].fullName}}
+		                        </a>
 		                        <span *ngIf="eventEntry.rookie"> (R)</span>
 		                    </div>
 		                    <div *ngIf="eventEntry.eventEdition.multidriver">
 		                    	<div *ngFor="let driver of eventEntry.drivers">
-			                        <span class="tag">{{ driver.fullName }}</span>
+			                        <img *ngIf="driver.nationality" src="/images/flags16/{{driver.nationality}}.png"/> <span class="tag">{{ driver.fullName }}</span>
 			                    </div>
 		                    </div>
 		                </td>

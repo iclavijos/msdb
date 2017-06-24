@@ -4,6 +4,8 @@ import { Response } from '@angular/http';
 
 import { NgbActiveModal, NgbModalRef, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
+import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
+
 import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jhipster';
 
 import { MIN_DATE, CURRENT_DATE, MAX_DATE } from '../../shared';
@@ -23,6 +25,8 @@ export class DriverDialogComponent implements OnInit {
     isSaving: boolean;
     minDate = MIN_DATE;
     startDate = CURRENT_DATE;
+    protected dataServiceNationality: CompleterData;
+    nationalitySearch: string;
 
     constructor(
         public activeModal: NgbActiveModal,
@@ -30,9 +34,11 @@ export class DriverDialogComponent implements OnInit {
         private dataUtils: DataUtils,
         private alertService: AlertService,
         private driverService: DriverService,
-        private eventManager: EventManager
+        private eventManager: EventManager,
+        private completerService: CompleterService
     ) {
         this.jhiLanguageService.setLocations(['driver']);
+        this.dataServiceNationality = completerService.remote('api/_typeahead/countries?query=', null, 'countryName').imageField("flagImg");
     }
 
     ngOnInit() {
@@ -87,6 +93,18 @@ export class DriverDialogComponent implements OnInit {
 
     private onError (error) {
         this.alertService.error(error.message, null, null);
+    }
+    
+    public onCountrySelected(selected: CompleterItem) {
+        if (!selected || !selected.originalObject) return;
+        let country = selected.originalObject;
+        if (selected) {
+            this.driver.nationality = country.countryCode;
+            this.nationalitySearch = country.countryName;
+        } else {
+            this.driver.nationality = null;
+            this.nationalitySearch = null;
+        }
     }
 }
 

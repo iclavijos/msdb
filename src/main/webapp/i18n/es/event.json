@@ -73,7 +73,7 @@
             "entry":{
             	"createOrEditLabel": "Añade o edita un participante",
 			    "addLabel": "Añadir participante",
-            	"raceNumber": "Dorsal",
+            	"raceNumber": "#",
             	"teamName": "Nombre equipo",
             	"team": "Equipo",
             	"rookie": "Debutante?",

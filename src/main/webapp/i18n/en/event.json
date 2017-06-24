@@ -73,7 +73,7 @@
             "entry":{
             	"createOrEditLabel": "Create or edit an entry",
 			    "addLabel": "Add participant",
-            	"raceNumber": "Race number",
+            	"raceNumber": "#",
             	"teamName": "Team name",
             	"team": "Team",
             	"rookie": "Rookie?",
