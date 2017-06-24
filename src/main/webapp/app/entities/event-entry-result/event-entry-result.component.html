@@ -77,13 +77,6 @@
             </span>
         </button>
         </div>
-        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-           	class="btn float-right" [routerLink]="['/', { outlets: { popup: session.id + '/upload-lapbylap' } }]">
-            <span class="fa fa-plus"></span>
-            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.lapbylapLabel">
-            Upload lap by lap
-            </span>
-        </button>
     	<button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
            	class="btn btn-success float-right" [routerLink]="['/', { outlets: { popup: session.id + '/upload-results' } }]">
             <span class="fa fa-plus"></span>

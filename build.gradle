@@ -108,7 +108,7 @@ if (project.hasProperty('prometheus')) {
 }
 
 group = 'com.icesoft.msdb'
-version = '0.12.0-SNAPSHOT'
+version = '0.10.0-SNAPSHOT'
 
 description = ''
 

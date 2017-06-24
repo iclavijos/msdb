@@ -2,13 +2,9 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -41,7 +37,6 @@ import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.Imports;
-import com.icesoft.msdb.domain.LapInfo;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.domain.Team;
@@ -92,7 +87,6 @@ public class ImportsResource {
         	case TEAMS: importTeams(data); break;
         	case ENGINES: importEngines(data); break;
         	case SESSION_RESULTS: importResults(imports.getAssociatedId(), data); break;
-        	case LAP_BY_LAP: importLapByLap(imports.getAssociatedId(), data); break;
         	default: log.warn("The uploaded file does not correspond to any known entity");
         }
         
@@ -203,36 +197,6 @@ public class ImportsResource {
         		log.warn("Engine {} already exist in the database. Skipping...", engine);
         	}
         }
-    }
-    
-    private void importLapByLap(Long sessionId, String data) {
-    	EventSession session = sessionRepository.findOne(sessionId);
-    	MappingIterator<LapInfo> readValues = initializeIterator(LapInfo.class, data);
-    	Map<String, List<LapInfo>> entriesLapByLap = new HashMap<>();
-    	List<LapInfo> entryLapByLap;
-    	while (readValues.hasNext()) {
-    		LapInfo lapInfo = readValues.next();
-    		
-    		if (!entriesLapByLap.containsKey(lapInfo.getRaceNumber())) {
-    			entryLapByLap = new ArrayList<>();
-    			entriesLapByLap.put(lapInfo.getRaceNumber(), entryLapByLap);
-    		}
-    		entryLapByLap = entriesLapByLap.get(lapInfo.getRaceNumber());
-    		entryLapByLap.add(lapInfo);
-    	}
-    	for(String entryNumber : entriesLapByLap.keySet()) {
-    		entryLapByLap = entriesLapByLap.get(entryNumber);
-    		List<LapInfo> pitstops = entryLapByLap.parallelStream().filter(li -> li.getPitstop()).collect(Collectors.toList());
-    		log.debug(String.format("Race number: %s -> Stints: %s", entryNumber, pitstops.size() + 1));
-    		int currentLap = 1;
-    		for(int i = 0; i < pitstops.size(); i++) {
-    			
-    			int lapsStint = pitstops.get(i).getLapNumber() - currentLap + 1;
-    			log.debug(String.format("Stint %s -> #laps: %s", i + 1, lapsStint));
-    		}
-    		
-    		
-    	}
     }
     
     private void importResults(Long sessionId, String data) {
