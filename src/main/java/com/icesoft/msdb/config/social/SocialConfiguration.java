@@ -77,7 +77,7 @@ public class SocialConfiguration implements SocialConfigurer {
                 )
             );
         } else {
-            log.error("Cannot configure TwitterConnectionFactory id or secret null");
+            log.warn("Cannot configure TwitterConnectionFactory id or secret null");
         }
         
         // Facebook configuration
@@ -92,7 +92,7 @@ public class SocialConfiguration implements SocialConfigurer {
                 )
             );
         } else {
-            log.error("Cannot configure FacebookConnectionFactory id or secret null");
+            log.warn("Cannot configure FacebookConnectionFactory id or secret null");
         }
         
         // Google configuration
@@ -107,7 +107,7 @@ public class SocialConfiguration implements SocialConfigurer {
                 )
             );
         } else {
-            log.error("Cannot configure GoogleConnectionFactory id or secret null");
+            log.warn("Cannot configure GoogleConnectionFactory id or secret null");
         }
 
         // jhipster-needle-add-social-connection-factory
