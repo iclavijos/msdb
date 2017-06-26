@@ -88,7 +88,8 @@ public class HomeResource {
 		LocalDateTime todayMidnight = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
 		ZonedDateTime today = ZonedDateTime.of(todayMidnight, ZoneId.of("UTC"));
 		ZonedDateTime nextSunday = today.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
-		List<EventSession> sessions = eventSessionRepository.findUpcomingSessions(today, nextSunday.plusWeeks(1));
+		nextSunday = nextSunday.plusWeeks(1).withHour(23).withMinute(59);
+		List<EventSession> sessions = eventSessionRepository.findUpcomingSessions(today, nextSunday);
 
 		List<CalendarDTO> calendar = new ArrayList<>();
 		LocalDate currentDate = null;
