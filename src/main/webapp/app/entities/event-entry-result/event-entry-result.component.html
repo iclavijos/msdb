@@ -27,8 +27,8 @@
             <tbody>
             <tr *ngFor="let eventEntryResult of eventEntryResults | eventEntryCategoryFilter: filterCategory; trackBy: trackId; let i = index;">
                 <td>{{eventEntryResult.finalPosition >= 900 ? 
-                		eventEntryResult.finalPosition == 901 ? 'DSQ' : 
-                			eventEntryResult.finalPosition == 902 ? 'DNS' : '-' 
+                		eventEntryResult.finalPosition == 901 ? 'DNS' : 
+                			eventEntryResult.finalPosition == 902 ? 'DSQ' : '-' 
                 	  :	i + 1 }} 
                 	<span *ngIf="session.sessionType === 'RACE' && eventEntryResult.startingPosition && eventEntryResult.finalPosition < 900">
                 		<span *ngIf="eventEntryResult.startingPosition < eventEntryResult.finalPosition" style="color: red">
