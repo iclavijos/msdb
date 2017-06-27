@@ -52,9 +52,9 @@ spring:
         jcache:
             config: config/ehcache/ehcache-prod.xml
     data:
-        # elasticsearch:
-        #     cluster-name:
-        #     cluster-nodes: #localhost:9300
+        mongodb:
+            uri: mongodb://localhost:27017
+            database: msdb
     mail:
         host: localhost
         port: 25
