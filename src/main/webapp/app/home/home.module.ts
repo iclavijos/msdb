@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 
 import { MotorsportsDatabaseSharedModule } from '../shared';
 
-import { HomeComponent, HomeEntriesComponent, HOME_ROUTE, HomeEntriesPagingParams } from './';
+import { HomeComponent, HomeEntriesComponent, HomeEventsComponent, HOME_ROUTE, HomeEntriesPagingParams } from './';
 
 
 @NgModule({
@@ -13,11 +13,13 @@ import { HomeComponent, HomeEntriesComponent, HOME_ROUTE, HomeEntriesPagingParam
     ],
     declarations: [
         HomeComponent,
-        HomeEntriesComponent
+        HomeEntriesComponent,
+        HomeEventsComponent
     ],
     entryComponents: [
         HomeComponent,
-        HomeEntriesComponent
+        HomeEntriesComponent,
+        HomeEventsComponent
     ],
     providers: [
         HomeEntriesPagingParams

@@ -95,7 +95,7 @@ export class HomeComponent implements OnInit {
         if (!query) {
             return this.clearEvents();
         }
-
+        this.router.navigate(['/homeEvents', { search: this.searchEventsStr }]);
     }
     
     clearEntries() {

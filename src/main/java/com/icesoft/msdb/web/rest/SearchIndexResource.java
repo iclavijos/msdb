@@ -57,15 +57,13 @@ public class SearchIndexResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
     
-    @GetMapping("/dummy/{id}")
-    public ResponseEntity<Void> dummy(@PathVariable Long id) {
-    	List related = searchService.searchRelated(id);
-    	for (int i = 0; i < related.size(); i++) {
-    		Object[] tmp = (Object[])related.get(i);
-    		EventEdition event = (EventEdition)tmp[0];
-    		System.out.println(tmp[1] + " " + event.getEditionYear() + " " + event.getShortEventName());
-    	}
-    	return ResponseEntity.ok().build();
+    @GetMapping("/api/search/events")
+    @Timed
+    public ResponseEntity<List<EventEdition>> searchEvents(@RequestParam String query, Pageable pageable) throws URISyntaxException {
+    	log.debug(String.format("REST request to search events for '%s", query));
+    	Page<EventEdition> page = searchService.searchEventEditions(query, pageable);
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/search/events");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
 }

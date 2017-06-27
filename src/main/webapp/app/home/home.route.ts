@@ -6,6 +6,7 @@ import { PaginationUtil } from 'ng-jhipster';
 
 import { HomeComponent } from './home.component';
 import { HomeEntriesComponent } from './home-entries.component';
+import { HomeEventsComponent } from './home-events.component';
 
 @Injectable()
 export class HomeEntriesPagingParams implements Resolve<any> {
@@ -41,6 +42,17 @@ export const HOME_ROUTE: Routes = [
         data: {
             authorities: ['ROLE_USER', 'ROLE_EDITOR', 'ROLE_ADMIN'],
             pageTitle: 'home.entriesResult'
+        }
+    },
+    {
+        path: 'homeEvents',
+        component: HomeEventsComponent,
+        resolve: {
+            'pagingParams': HomeEntriesPagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER', 'ROLE_EDITOR', 'ROLE_ADMIN'],
+            pageTitle: 'home.eventsResult'
         }
     }
 ];
