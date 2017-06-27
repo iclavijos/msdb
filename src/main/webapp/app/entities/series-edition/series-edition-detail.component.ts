@@ -48,14 +48,15 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     
     loadEvents(id) {
         this.seriesEditionService.findEvents(id).subscribe(events => {
-           this.seriesEdition.events = events.json(); 
-           for(let i = 0; i < this.seriesEdition.events.length; i++) {
-               let event = this.seriesEdition.events[i];
-               this.seriesEdition.events[i].winners = new Array();
+           let data = events.json();
+           for(let i = 0; i < data.length; i++) {
+               let event = data[i];
+               data[i].winners = new Array();
                this.eventEditionService.findWinners(event.id).subscribe(winners => {
-                  this.seriesEdition.events[i].winners.push(winners);
+                   data[i].winners.push(winners);
                });
            }
+           this.seriesEdition.events = data;
         });
     }
     

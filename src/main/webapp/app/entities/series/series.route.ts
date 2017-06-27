@@ -18,7 +18,7 @@ export class SeriesResolvePagingParams implements Resolve<any> {
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
       let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
+      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
       return {
           page: this.paginationUtil.parsePage(page),
           predicate: this.paginationUtil.parsePredicate(sort),
