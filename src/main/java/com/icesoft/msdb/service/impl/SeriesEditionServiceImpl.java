@@ -48,7 +48,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 			throw new MSDBException("No series edition found for id '" + seriesId + "'");
 		}
 		EventEdition eventEd = null;
-		racesPointsData.stream().filter(rpd -> rpd.isAssigned()).forEach(racePoints -> {
+		racesPointsData.parallelStream().filter(rpd -> rpd.isAssigned()).forEach(racePoints -> {
 			EventSession session = sessionRepo.findOne(racePoints.getRaceId());
 			PointsSystem points = pointsRepo.findOne(racePoints.getpSystemAssigned());
 			if (session == null || points == null) {
@@ -76,6 +76,11 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 			throw new MSDBException("Provided series id does not match the already assigned one");
 		}
 		eventEd.setSeriesEdition(null);
+		sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventId).parallelStream()
+			.forEach(session -> {
+				session.setPointsSystem(null);
+				sessionRepo.save(session);
+			});
 		eventRepo.save(eventEd);
 		
 		//We must remove the assigned points, if there are any

@@ -46,8 +46,8 @@ public class ResultsService {
 		Map<Long, TeamEventPoints> teams = new HashMap<>();
 		PointsSystem ps = session.getPointsSystem();
 		
-		if (!session.getAwardsPoints()) {
-			log.debug("Skipping session {}-{} as it does not award points", session.getEventEdition().getLongEventName(), session.getName());
+		if (ps == null) {
+			log.error("Skipping session {}-{} as it does not award points", session.getEventEdition().getLongEventName(), session.getName());
 		} else {
 			driverPointsRepo.deleteSessionPoints(sessionId);
 			teamPointsRepo.deleteSessionPoints(sessionId);
@@ -96,9 +96,18 @@ public class ResultsService {
 				}
 			}
 			if (ps.getPointsFastLap() != 0) {
-				EventEntryResult fastestEntry = results.parallelStream().min(
-						(r1, r2)->Long.compare(r1.getBestLapTime() == null ? -1 : r1.getBestLapTime(), 
-											   r2.getBestLapTime() == null ? -1 : r2.getBestLapTime())).get();
+				List<EventEntryResult> fastestLapOrder = results.parallelStream().sorted(
+						(r1, r2)->Long.compare(
+									r1.getBestLapTime() == null ? -1 : r1.getBestLapTime(), 
+									r2.getBestLapTime() == null ? -1 : r2.getBestLapTime()))
+						.collect(Collectors.toList());
+				boolean lapPct = false;
+				boolean topXPositions = true; int topX = 10;
+				EventEntryResult fastestEntry;
+				if (topXPositions) {
+					fastestLapOrder = fastestLapOrder.parallelStream().filter(eer -> eer.getFinalPosition() <= topX).collect(Collectors.toList());
+				}
+				fastestEntry = fastestLapOrder.get(0);
 				if (fastestEntry.getBestLapTime() != null) {
 					for(Driver d : fastestEntry.getEntry().getDrivers()) {
 						DriverEventPoints dep = drivers.get(d.getId());

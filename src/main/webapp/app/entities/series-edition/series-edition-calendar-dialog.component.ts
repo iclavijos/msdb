@@ -93,7 +93,7 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
     private onEventSelected(selected: CompleterItem) {
         if (selected) {
             this.eventEdition = selected.originalObject;
-            this.eventEditionService.findScoringSessions(this.eventEdition.id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe(eventSessions => {
+            this.eventEditionService.findSessions(this.eventEdition.id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe(eventSessions => {
                 this.eventEdition.sessions = eventSessions.json();
                 this.addRaces(this.eventEdition.sessions);
             });

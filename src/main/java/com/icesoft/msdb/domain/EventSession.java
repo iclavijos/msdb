@@ -67,9 +67,6 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @Column(name= "additional_lap")
     private Boolean additionalLap;
     
-    @Column(name= "awards_points")
-    private Boolean awardsPoints;
-    
     @ManyToOne
     private EventEdition eventEdition;
     
@@ -182,19 +179,6 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 		return this;
 	}
 
-	public Boolean getAwardsPoints() {
-		return awardsPoints;
-	}
-
-	public void setAwardsPoints(Boolean awardsPoints) {
-		this.awardsPoints = awardsPoints;
-	}
-	
-	public EventSession awardsPoints(Boolean awardsPoints) {
-		this.awardsPoints = awardsPoints;
-		return this;
-	}
-
 	public void setEventEdition(EventEdition eventEdition) {
     	this.eventEdition = eventEdition;
     }
@@ -280,7 +264,6 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
             ", durationType='" + durationType + "'" +
             ", sessionType='" + sessionType + "'" +
             ", additionalLap='" + additionalLap + "'" +
-            ", awardsPoints='" + awardsPoints + "'" +
             ", eventEdition={" + eventEdition + "}" +
             '}';
     }

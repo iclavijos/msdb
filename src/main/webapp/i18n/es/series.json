@@ -49,7 +49,7 @@
 	            	"title": "Calendario",
 	            	"editLabel": "Edita el calendario del campeonato",
 	            	"searchEvent": "Buscar evento",
-	            	"assignPoints": "Asigna sistema de puntuación a cada carrera puntuable del evento"
+	            	"assignPoints": "Asigna sistema de puntuación a cada sesión puntuable del evento"
 	            },
 	            "period": "Periodo",
 	            "singleChassis": "Chasis único",

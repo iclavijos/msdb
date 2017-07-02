@@ -49,7 +49,7 @@
 	            	"title": "Calendari",
 	            	"editLabel": "Edita el calendari del campionat",
 	            	"searchEvent": "Cercar l'event",
-	            	"assignPoints": "Assigna sistema de puntuació per cada cursa putuable de l'event"
+	            	"assignPoints": "Assigna sistema de puntuació per cada sessió putuable de l'event"
 	            },
 	            "period": "Periòde",
 	            "singleChassis": "Xassís únic",
