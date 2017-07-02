@@ -21,6 +21,8 @@ export class EventSessionService {
         copy.sessionStartTime = moment(eventSession.sessionStartTime).tz(eventSession.eventEdition.trackLayout.racetrack.timeZone);
         copy.sessionStartTime.hours(copy.sessionStartTime.toDate().getHours());
         copy.sessionStartTime.minutes(copy.sessionStartTime.toDate().getMinutes());
+        copy.sessionStartTime.date(moment(eventSession.sessionStartTime).date());
+        copy.sessionStartTime.month(moment(eventSession.sessionStartTime).month());
 
         return this.http.post(
                 `api/event-editions/${copy.eventEdition.id}/sessions`, copy).map((res: Response) => {
@@ -34,6 +36,8 @@ export class EventSessionService {
         copy.sessionStartTime = moment(eventSession.sessionStartTime).tz(eventSession.eventEdition.trackLayout.racetrack.timeZone);
         copy.sessionStartTime.hours(copy.sessionStartTime.toDate().getHours());
         copy.sessionStartTime.minutes(copy.sessionStartTime.toDate().getMinutes());
+        copy.sessionStartTime.date(moment(eventSession.sessionStartTime).date());
+        copy.sessionStartTime.month(moment(eventSession.sessionStartTime).month());
         
         return this.http.put(this.resourceUrl, copy).map((res: Response) => {
             return res.json();
