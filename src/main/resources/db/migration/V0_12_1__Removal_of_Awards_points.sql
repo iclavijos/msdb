@@ -1,0 +1,1 @@
+ALTER TABLE event_session DROP COLUMN awards_points;
