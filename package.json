@@ -1,6 +1,6 @@
 {
   "name": "motorsports-database",
-  "version": "0.12.1",
+  "version": "0.13.0",
   "description": "Database application to store any form of motorsport result",
   "private": true,
   "cacheDirectories": [
