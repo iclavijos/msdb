@@ -16,16 +16,12 @@ import {
     RacetrackDeleteDialogComponent,
     racetrackRoute,
     racetrackPopupRoute,
-    racetrackLayoutRoute,
-    racetrackLayoutPopupRoute,
     RacetrackResolvePagingParams,
 } from './';
 
 let ENTITY_STATES = [
     ...racetrackRoute,
-    ...racetrackPopupRoute,
-    ...racetrackLayoutRoute,
-    ...racetrackLayoutPopupRoute
+    ...racetrackPopupRoute
 ];
 
 @NgModule({

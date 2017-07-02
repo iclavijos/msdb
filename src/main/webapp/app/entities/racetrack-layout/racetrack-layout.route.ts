@@ -21,7 +21,7 @@ export const racetrackLayoutRoute: Routes = [
         pageTitle: 'motorsportsDatabaseApp.racetrackLayout.home.title'
     }
   }, {
-    path: 'racetrack-layout/:id',
+    path: 'racetrack/:id/racetrack-layout/:idLayout',
     component: RacetrackLayoutDetailComponent,
     data: {
         authorities: ['ROLE_USER'],
@@ -32,7 +32,7 @@ export const racetrackLayoutRoute: Routes = [
 
 export const racetrackLayoutPopupRoute: Routes = [
   {
-    path: 'racetrack-layout-new/:id',
+    path: 'racetrack/:id/racetrack-layout-new',
     component: RacetrackLayoutPopupComponent,
     data: {
         authorities: ['ROLE_USER'],
