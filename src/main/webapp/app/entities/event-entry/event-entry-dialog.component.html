@@ -57,9 +57,9 @@
 							<select class="form-control" multiple name="drivers" [value]="eventEntry.drivers" (dblclick)="removeDriver($event)" required>
 				                <option *ngFor="let driver of eventEntry.drivers" [value]="driver.id">{{driver.fullName}}</option>
 				            </select>
-						    <button type="button" class="btn" (click)="removeDriver($event)">
-						        <span class="fa fa-minus"></span>&nbsp;<span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.removeSelected">Cancel</span>
-						    </button>
+				            <small class="form-text" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.doubleClick">
+			                   Double click on driver to remove from entry
+			                </small>
 						</div>
 					</div>
 		        </div>

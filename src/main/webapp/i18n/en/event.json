@@ -88,7 +88,8 @@
             	"removeSelected": "Remove selected driver",
             	"delete": {
 	                "question": "Are you sure you want to delete entry '{{id}}'?"
-	            }
+	            },
+	            "doubleClick": "Double click on a driver's name to remove it from the entry"
 			},
 			"result" : {
 	            "home": {

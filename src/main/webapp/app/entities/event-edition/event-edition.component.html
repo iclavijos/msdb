@@ -29,7 +29,7 @@
             <tr *ngFor="let eventEdition of eventEditions ;trackBy: trackId">
                 <td>{{eventEdition.editionYear}}</td>
                 <td>{{eventEdition.longEventName}}</td>
-                <td>{{eventEdition.eventDate | date:'shortDate'}}</td>
+                <td>{{eventEdition.eventDate | dDate:'shortDate'}}</td>
                 <td>
                     <div *ngFor="let category of eventEdition.allowedCategories">
                         <span class="tag tag-info">{{ category.shortname }}</span>
