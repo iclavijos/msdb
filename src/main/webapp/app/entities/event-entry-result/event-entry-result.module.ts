@@ -14,6 +14,8 @@ import {
     EventEntryResultDeleteDialogComponent,
     EventEntryUploadResultsPopupComponent,
     EventEntryUploadResultsDialogComponent,
+    EventEntryUploadLapByLapPopupComponent,
+    EventEntryUploadLapByLapDialogComponent,
     eventEntryResultRoute,
     eventEntryResultPopupRoute,
 } from './';
@@ -40,6 +42,8 @@ let ENTITY_STATES = [
         EventEntryResultDeletePopupComponent,
         EventEntryUploadResultsPopupComponent,
         EventEntryUploadResultsDialogComponent,
+        EventEntryUploadLapByLapPopupComponent,
+        EventEntryUploadLapByLapDialogComponent,
     ],
     entryComponents: [
         EventEntryResultComponent,
@@ -49,6 +53,8 @@ let ENTITY_STATES = [
         EventEntryResultDeletePopupComponent,
         EventEntryUploadResultsPopupComponent,
         EventEntryUploadResultsDialogComponent,
+        EventEntryUploadLapByLapPopupComponent,
+        EventEntryUploadLapByLapDialogComponent,
     ],
     providers: [
         EventEntryResultService,
