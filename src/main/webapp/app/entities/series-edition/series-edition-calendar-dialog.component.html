@@ -27,10 +27,10 @@
 				              <option *ngFor="let pSystem of seriesEdition.pointsSystems" [value]="pSystem.id">{{pSystem.name}}</option>
 				          </select>
 				          <label class="mr-sm-2" for="field_multiplier">Multiply factor</label>
-				          <select class="custom-select" id="field_multiplier" name="multiplier" formControlName="multiplier">
-				              <option value="1" selected>x1</option>
-				              <option value="1.5">x1.5</option>
-				              <option value="2">x2</option>
+				          <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="multiply">
+				          	<option value="1" selected="selected">x1</option>
+				          	<option value="1.5">x1.5</option>
+				          	<option value="2">x2</option>
 				          </select>
 			            </div>
 			        </li>

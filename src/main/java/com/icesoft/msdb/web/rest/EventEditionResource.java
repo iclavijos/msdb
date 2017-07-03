@@ -225,12 +225,15 @@ public class EventEditionResource {
     public List<EventSession> getEventEditionSessions(@PathVariable Long id) {
     	log.debug("REST request to get all EventEditions {} sessions", id);
     	List<EventSession> result = eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(id);
-//    	for(EventSession session : result) {
-//    		TimeZone tz = TimeZone.getTimeZone(session.getEventEdition().getTrackLayout().getRacetrack().getTimeZone());
-//    		ZonedDateTime zdt = session.getSessionStartTime().toLocalDateTime().atZone(tz.toZoneId());
-//    		session.setSessionStartTime(zdt);
-//    		System.out.println(session.getSessionStartTime().toInstant().toEpochMilli());
-//    	}
+    	result.parallelStream().forEach(session -> session.setEventEdition(null));
+    	return result;
+    }
+    
+    @GetMapping("/event-editions/{id}/sessions/nonfp")
+    @Timed
+    public List<EventSession> getEventEditionNonFPSessions(@PathVariable Long id) {
+    	log.debug("REST request to get all EventEditions {} sessions", id);
+    	List<EventSession> result = eventSessionRepository.findNonFPSessions(id);
     	result.parallelStream().forEach(session -> session.setEventEdition(null));
     	return result;
     }

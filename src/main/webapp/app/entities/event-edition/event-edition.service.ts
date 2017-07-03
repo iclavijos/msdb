@@ -58,6 +58,12 @@ export class EventEditionService {
         });
     }
     
+    findNonFPSessions(id: number, timeZone: string): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${id}/sessions/nonfp`).map((res: Response) => {
+            return this.transformDateTime(res, timeZone);
+        });
+    }
+    
     findWinners(id: number): Observable<Response> {
         return this.http.get(`${this.resourceUrl}/${id}/winners`).map((res: Response) => {
             return res.json();
