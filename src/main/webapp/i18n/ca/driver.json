@@ -2,30 +2,30 @@
     "motorsportsDatabaseApp": {
         "driver" : {
             "home": {
-                "title": "Drivers",
-                "createLabel": "Create a new Driver",
-                "createOrEditLabel": "Create or edit a Driver",
-                "search": "Search for Driver"
+                "title": "Pilots",
+                "createLabel": "Afegir un nou pilot",
+                "createOrEditLabel": "Afegir o editar un pilot",
+                "search": "Cercar pilots"
             },
-            "created": "A new Driver is created with identifier {{ param }}",
-            "updated": "A Driver is updated with identifier {{ param }}",
-            "deleted": "A Driver is deleted with identifier {{ param }}",
+            "created": "S'ha afegit un nou pilot",
+            "updated": "S'ha actualitzat el pilot",
+            "deleted": "S'ha esborrat el pilot",
             "delete": {
-                "question": "Are you sure you want to delete Driver {{ id }}?"
+                "question": "Estàs segur que vols esborrar el pilot {{ id }}?"
             },
             "detail": {
-                "title": "Driver"
+                "title": "Pilot"
             },
-            "name": "Name",
-            "surname": "Surname",
-            "birthDate": "Birth Date",
-            "birthPlace": "Birth Place",
-            "deathDate": "Death Date",
-            "deathPlace": "Death Place",
+            "name": "Nom",
+            "surname": "Cognom",
+            "birthDate": "Data naixement",
+            "birthPlace": "Lloc naixement",
+            "deathDate": "Data defunció",
+            "deathPlace": "Lloc defunció",
             "age": "Edat",
-            "portrait": "Portrait",
+            "portrait": "Retrat",
             "bio": "Biografia",
-            "statistics": "Estad�stiques",
+            "statistics": "Estadístiques",
             "nationality": "Nacionalitat"
         }
     }

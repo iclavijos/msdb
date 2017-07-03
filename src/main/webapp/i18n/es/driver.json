@@ -2,30 +2,30 @@
     "motorsportsDatabaseApp": {
         "driver" : {
             "home": {
-                "title": "Drivers",
-                "createLabel": "Crear nuevo Driver",
-                "createOrEditLabel": "Crear o editar Driver",
-                "search": "Search for Driver"
+                "title": "Pilotos",
+                "createLabel": "Crear nuevo piloto",
+                "createOrEditLabel": "Crear o editar piloto",
+                "search": "Buscar pilotos"
             },
             "created": "Un nuevo Driver ha sido creado con el identificador {{ param }}",
             "updated": "Un Driver ha sido actualizado con el identificador {{ param }}",
             "deleted": "Un Driver ha sido eliminado con el identificador {{ param }}",
             "delete": {
-                "question": "¿Seguro que quiere eliminar Driver {{ id }}?"
+                "question": "¿Seguro que quiere eliminar el piloto {{ id }}?"
             },
             "detail": {
-                "title": "Driver"
+                "title": "Piloto"
             },
-            "name": "Name",
-            "surname": "Surname",
-            "birthDate": "Birth Date",
-            "birthPlace": "Birth Place",
-            "deathDate": "Death Date",
-            "deathPlace": "Death Place",
+            "name": "Nombre",
+            "surname": "Apellido",
+            "birthDate": "Fecha nacimiento",
+            "birthPlace": "Lugar nacimiento",
+            "deathDate": "Fecha defunción",
+            "deathPlace": "Lugar defunción",
             "age": "Edad",
-            "portrait": "Portrait",
-            "bio": "Biograf�a",
-            "statistics": "Estad�sticas",
+            "portrait": "Retrato",
+            "bio": "Biografía",
+            "statistics": "Estadísticas",
             "nationality": "Nacionalidad"
         }
     }
