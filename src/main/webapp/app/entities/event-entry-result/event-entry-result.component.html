@@ -81,6 +81,15 @@
         <span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.pitlaneStartDesc">Indicates pitlane start</span>
     </div>
     <h2>
+    	<div *ngIf="session.pointsSystem">
+    	<button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" type="button"
+           	class="btn btn-info float-right" (click)="processResults()">
+            <span class="fa fa-check-square"></span>
+            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.processResults.label">
+            Process race results
+            </span>
+        </button>
+        </div>
         <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
            	class="btn float-right" [routerLink]="['/', { outlets: { popup: session.id + '/upload-lapbylap' } }]">
             <span class="fa fa-plus"></span>
