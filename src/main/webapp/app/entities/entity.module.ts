@@ -3,7 +3,6 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { MotorsportsDatabaseRacetrackModule } from './racetrack/racetrack.module';
 import { MotorsportsDatabaseRacetrackLayoutModule } from './racetrack-layout/racetrack-layout.module';
 import { MotorsportsDatabaseDriverModule } from './driver/driver.module';
-import { MotorsportsDatabasePointsSystemModule } from './points-system/points-system.module';
 import { MotorsportsDatabaseTyreProviderModule } from './tyre-provider/tyre-provider.module';
 import { MotorsportsDatabaseFuelProviderModule } from './fuel-provider/fuel-provider.module';
 import { MotorsportsDatabaseCategoryModule } from './category/category.module';
@@ -24,7 +23,6 @@ import { MotorsportsDatabaseEventEntryResultModule } from './event-entry-result/
         MotorsportsDatabaseRacetrackModule,
         MotorsportsDatabaseRacetrackLayoutModule,
         MotorsportsDatabaseDriverModule,
-        MotorsportsDatabasePointsSystemModule,
         MotorsportsDatabaseTyreProviderModule,
         MotorsportsDatabaseFuelProviderModule,
         MotorsportsDatabaseCategoryModule,

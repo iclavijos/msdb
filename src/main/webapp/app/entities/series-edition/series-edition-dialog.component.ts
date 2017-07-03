@@ -12,7 +12,6 @@ import { SeriesEditionPopupService } from './series-edition-popup.service';
 import { SeriesEditionService } from './series-edition.service';
 import { Category, CategoryService } from '../category';
 import { Series, SeriesService } from '../series';
-import { PointsSystem, PointsSystemService } from '../points-system';
 
 @Component({
     selector: 'jhi-series-edition-dialog',
@@ -25,7 +24,6 @@ export class SeriesEditionDialogComponent implements OnInit {
     isSaving: boolean;
 
     categories: Category[];
-    pointsSystems: PointsSystem[];
 
     series: Series[];
     constructor(
@@ -35,7 +33,6 @@ export class SeriesEditionDialogComponent implements OnInit {
         private seriesEditionService: SeriesEditionService,
         private categoryService: CategoryService,
         private seriesService: SeriesService,
-        private pointsSystemService: PointsSystemService,
         private eventManager: EventManager
     ) {
         //this.jhiLanguageService.setLocations(['seriesEdition']);
@@ -48,8 +45,6 @@ export class SeriesEditionDialogComponent implements OnInit {
             (res: Response) => { this.categories = res.json(); }, (res: Response) => this.onError(res.json()));
         this.seriesService.query().subscribe(
             (res: Response) => { this.series = res.json(); }, (res: Response) => this.onError(res.json()));
-        this.pointsSystemService.query().subscribe(
-                (res: Response) => { this.pointsSystems = res.json(); }, (res: Response) => this.onError(res.json()));
     }
     clear () {
         this.activeModal.dismiss('cancel');
@@ -114,46 +109,6 @@ export class SeriesEditionDialogComponent implements OnInit {
         let i = 0;
         for (let category of this.seriesEdition.allowedCategories) {
             if (category.id === value) {
-                return i;
-            }
-            i++;
-        }
-        return -1;
-    }
-    
-    public addPointsSystem() {
-        if (!this.seriesEdition.pointsSystems) {
-            this.seriesEdition.pointsSystems = [];
-        }
-        let pointsSystems = document.getElementById('field_availablePointsSystems') as HTMLSelectElement;
-        let i: number;
-        let options = pointsSystems.options;
-        for(i = 0; i < options.length; i++) {
-            if (options[i].selected) {
-                let index = this.findIndexOfPointsSystem(+options[i].value);
-                if (index === -1) {
-                    this.pointsSystemService.find(+options[i].value).subscribe(
-                        (res) => { this.seriesEdition.pointsSystems.push(res); }, (res: Response) => this.onError(res.json()));
-                }
-            }
-        }
-    }
-    
-    public removePointsSystem() {
-        let pointsSystems = document.getElementById('field_pointsSystems') as HTMLSelectElement;
-        let i: number;
-        for(i = pointsSystems.options.length - 1; i >= 0; i--) {
-            if (pointsSystems.options[i].selected) {
-                let index = this.findIndexOfPointsSystem(Number(pointsSystems.options[i].value));
-                this.seriesEdition.pointsSystems.splice(index, 1);
-            }
-        }
-    }
-    
-    private findIndexOfPointsSystem(value: number) {
-        let i = 0;
-        for (let pointsSystem of this.seriesEdition.pointsSystems) {
-            if (pointsSystem.id === value) {
                 return i;
             }
             i++;

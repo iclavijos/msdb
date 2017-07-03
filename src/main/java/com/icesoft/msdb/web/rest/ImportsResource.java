@@ -209,6 +209,11 @@ public class ImportsResource {
     }
     
     private void importLapByLap(Long sessionId, String data) {
+    	
+    	if (sessionLapDataRepo.exists(sessionId.toString())) {
+    		sessionLapDataRepo.delete(sessionId.toString());
+    	}
+    	
        	EventSession session = sessionRepository.findOne(sessionId);
        	MappingIterator<LapInfo> readValues = initializeIterator(LapInfo.class, data);
        	SessionLapData sessionLapData = new SessionLapData();

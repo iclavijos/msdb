@@ -99,6 +99,7 @@
 	            },
 	            "upload": {
 	            	"uploadLabel": "Importar resultats",
+	            	"lapbylapLabel": "Importar volta a volta",
 	            	"title": "Importar resultats de sessió",
 	            	"desc": "Importar fitxer CSV amb els resultats de la sessió",
 	            	"selectFile": "Seleccionar arxiu",
