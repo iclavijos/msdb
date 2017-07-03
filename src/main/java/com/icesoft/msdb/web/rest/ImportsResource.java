@@ -2,13 +2,9 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -44,6 +40,7 @@ import com.icesoft.msdb.domain.Imports;
 import com.icesoft.msdb.domain.LapInfo;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
+import com.icesoft.msdb.domain.SessionLapData;
 import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.domain.serializer.ParseDeserializer;
 import com.icesoft.msdb.repository.DriverRepository;
@@ -53,6 +50,7 @@ import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.RacetrackRepository;
+import com.icesoft.msdb.repository.SessionLapDataRepository;
 import com.icesoft.msdb.repository.TeamRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.dto.EnginesImportDTO;
@@ -77,6 +75,8 @@ public class ImportsResource {
     @Autowired private EventEntryRepository entryRepository;
     @Autowired private EventSessionRepository sessionRepository;
     @Autowired private EventEntryResultRepository resultRepository;
+    
+    @Autowired private SessionLapDataRepository sessionLapDataRepo;
     
     @Autowired private CacheHandler cacheHandler;
 
@@ -211,32 +211,29 @@ public class ImportsResource {
     private void importLapByLap(Long sessionId, String data) {
        	EventSession session = sessionRepository.findOne(sessionId);
        	MappingIterator<LapInfo> readValues = initializeIterator(LapInfo.class, data);
-       	Map<String, List<LapInfo>> entriesLapByLap = new HashMap<>();
-       	List<LapInfo> entryLapByLap;
+       	SessionLapData sessionLapData = new SessionLapData();
+       	sessionLapData.setSessionId(sessionId.toString());
+       	
        	while (readValues.hasNext()) {
-       		LapInfo lapInfo = readValues.next();
-       		
-       		if (!entriesLapByLap.containsKey(lapInfo.getRaceNumber())) {
-       			entryLapByLap = new ArrayList<>();
-       			entriesLapByLap.put(lapInfo.getRaceNumber(), entryLapByLap);
-       		}
-       		entryLapByLap = entriesLapByLap.get(lapInfo.getRaceNumber());
-       		entryLapByLap.add(lapInfo);
+       		sessionLapData.addLapData(readValues.next(), session.getEventEdition().isMultidriver());       		
        	}
-       	for(String entryNumber : entriesLapByLap.keySet()) {
-       		entryLapByLap = entriesLapByLap.get(entryNumber);
-       		List<LapInfo> pitstops = entryLapByLap.parallelStream().filter(li -> li.getPitstop()).collect(Collectors.toList());
-       		log.debug(String.format("Race number: %s -> Stints: %s", entryNumber, pitstops.size() + 1));
-       		int currentLap = 1;
-       		for(int i = 0; i < pitstops.size(); i++) {
-       			
-       			int lapsStint = pitstops.get(i).getLapNumber() - currentLap + 1;
-       			log.debug(String.format("Stint %s -> #laps: %s", i + 1, lapsStint));
-       		}
-       		
-       		
-       	}
-       }
+       	
+       	sessionLapDataRepo.save(sessionLapData);
+       	
+//       	for(String entryNumber : entriesLapByLap.keySet()) {
+//       		entryLapByLap = entriesLapByLap.get(entryNumber);
+//       		List<LapInfo> pitstops = entryLapByLap.parallelStream().filter(li -> li.getPitstop()).collect(Collectors.toList());
+//       		log.debug(String.format("Race number: %s -> Stints: %s", entryNumber, pitstops.size() + 1));
+//       		int currentLap = 1;
+//       		for(int i = 0; i < pitstops.size(); i++) {
+//       			
+//       			int lapsStint = pitstops.get(i).getLapNumber() - currentLap + 1;
+//       			log.debug(String.format("Stint %s -> #laps: %s", i + 1, lapsStint));
+//       		}
+//       		
+//       		
+//       	}
+    }
     
     private void importResults(Long sessionId, String data) {
     	EventSession session = sessionRepository.findOne(sessionId);

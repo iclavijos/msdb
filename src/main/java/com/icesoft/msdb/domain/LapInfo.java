@@ -1,13 +1,9 @@
 package com.icesoft.msdb.domain;
 
-import org.springframework.data.annotation.Id;
-
 public class LapInfo {
-
-	@Id
-	private Long id;
 	
 	private String raceNumber;
+	private String driverName;
 	private Integer lapNumber;
 	private Long lapTime;
 	private Boolean pitstop;
@@ -16,27 +12,28 @@ public class LapInfo {
 		
 	}
 	
-	public LapInfo(String raceNumber, Integer lapNumber, Long lapTime, Boolean pitstop) {
+	public LapInfo(String raceNumber, String driverName, Integer lapNumber, Long lapTime, Boolean pitstop) {
 		this.raceNumber = raceNumber;
+		this.driverName = driverName;
 		this.lapNumber = lapNumber;
 		this.lapTime = lapTime;
 		this.pitstop = pitstop;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public Long getId() {
-		return id;
-	}
-	
 	public String getRaceNumber() {
 		return raceNumber;
 	}
 
 	public Integer getLapNumber() {
 		return lapNumber;
+	}
+
+	public String getDriverName() {
+		return driverName;
+	}
+
+	public void setDriverName(String driverName) {
+		this.driverName = driverName;
 	}
 
 	public Long getLapTime() {
@@ -65,7 +62,7 @@ public class LapInfo {
 
 	@Override
 	public String toString() {
-		return "LapInfo [id=" + id + ", raceNumber=" + raceNumber + ", lapNumber=" + lapNumber + ", lapTime=" + lapTime
+		return "LapInfo [raceNumber=" + raceNumber + ", lapNumber=" + lapNumber + ", lapTime=" + lapTime
 				+ ", pitstop=" + pitstop + "]";
 	}
 	
