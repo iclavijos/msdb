@@ -79,7 +79,7 @@
         </table>
     </div>
     <h2>
-    	<div *ngIf="session.awardsPoints">
+    	<div *ngIf="session.pointsSystem">
     	<button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" type="button"
            	class="btn btn-info float-right" (click)="processResults()">
             <span class="fa fa-check-square"></span>
