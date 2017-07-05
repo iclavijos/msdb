@@ -29,6 +29,7 @@
       "en",
       "ca",
       "es"
+    ],
     "clientFramework": "angular2"
   }
 }
