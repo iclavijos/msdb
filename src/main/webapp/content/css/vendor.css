@@ -2,6 +2,8 @@
 @import '~bootstrap/dist/css/bootstrap.min.css';
 @import '~font-awesome/css/font-awesome.css';
 @import '~icofont/css/icofont.min.css';
+@import '~primeng/resources/primeng.min.css';
+@import '~primeng/resources/themes/bootstrap/theme.css';
 
 .table > tbody > tr:first-child > td {
     border: none;

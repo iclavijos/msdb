@@ -1,0 +1,1 @@
+ALTER TABLE event_entry ADD COLUMN car_image_url VARCHAR(150) NULL AFTER category_id;

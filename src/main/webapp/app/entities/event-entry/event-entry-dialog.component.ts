@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
+import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jhipster';
 
 import { EventEdition, EventEditionService } from '../event-edition';
 import { EventEntry } from './event-entry.model';
@@ -44,6 +44,7 @@ export class EventEntryDialogComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
+        private dataUtils: DataUtils,
         private alertService: AlertService,
         private eventEditionService: EventEditionService,
         private eventEntryService: EventEntryService,
@@ -85,6 +86,28 @@ export class EventEntryDialogComponent implements OnInit {
             this.fuelSearch = this.eventEntry.fuel ? this.eventEntry.fuel.name : null;
         }
     }
+    
+    byteSize(field) {
+        return this.dataUtils.byteSize(field);
+    }
+
+    openFile(contentType, field) {
+        return this.dataUtils.openFile(contentType, field);
+    }
+
+    setFileData($event, eventEntry, field, isImage) {
+        if ($event.target.files && $event.target.files[0]) {
+            let $file = $event.target.files[0];
+            if (isImage && !/^image\//.test($file.type)) {
+                return;
+            }
+            this.dataUtils.toBase64($file, (base64Data) => {
+                eventEntry[field] = base64Data;
+                eventEntry[`${field}ContentType`] = $file.type;
+            });
+        }
+    }
+    
     clear () {
         this.activeModal.dismiss('cancel');
     }

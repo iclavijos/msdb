@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -96,6 +97,12 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
     @ManyToOne
     @IndexedEmbedded
     private EventEdition eventEdition;
+    
+    @Transient
+    private byte[] carImage;
+    
+    @Column(name = "car_image_url")
+    private String carImageUrl;
     
     public Long getId() {
         return id;
@@ -285,12 +292,21 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
 		}
 		return builder.toString();
 	}
-	
-	public EventEditionEntry createCopy(EventEditionEntry source) {
-		EventEditionEntry result = new EventEditionEntry();
-		result.category(source.getCategory())
-			.chassis(source.getChassis());
-		return result;
+
+	public byte[] getCarImage() {
+		return carImage;
+	}
+
+	public void setCarImage(byte[] carImage) {
+		this.carImage = carImage;
+	}
+
+	public String getCarImageUrl() {
+		return carImageUrl;
+	}
+
+	public void setCarImageUrl(String carImageUrl) {
+		this.carImageUrl = carImageUrl;
 	}
 
 	@Override

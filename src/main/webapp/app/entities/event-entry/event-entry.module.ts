@@ -3,6 +3,8 @@ import { RouterModule } from '@angular/router';
 
 import { Ng2CompleterModule } from 'ng2-completer';
 
+import { PanelModule, AccordionModule, SharedModule } from 'primeng/primeng';
+
 import { MotorsportsDatabaseSharedModule } from '../../shared';
 
 import {
@@ -26,6 +28,9 @@ let ENTITY_STATES = [
 @NgModule({
     imports: [
         Ng2CompleterModule,
+        AccordionModule, 
+        SharedModule,
+        PanelModule,
         MotorsportsDatabaseSharedModule,
         RouterModule.forRoot(ENTITY_STATES, { useHash: true })
     ],

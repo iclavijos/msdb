@@ -21,6 +21,14 @@
 		</div>
 	</div>
 </div>
+<div class="row">
+<p-panel header="Godfather I" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
+    The story begins as Don Vito Corleone, the head of a New York Mafia family, oversees his daughter's wedding. 
+    His beloved son Michael has just come home from the war, but does not intend to become part of his father's business. 
+    Through Michael's life the nature of the family business becomes clear. The business of the family is just like the head of the family, 
+    kind and benevolent to those who give respect, but given to ruthless violence whenever anything stands against the good of the family.
+</p-panel>
+</div>
 <div class="table-responsive" *ngIf="eventEntries">
 	<div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
 		<select class="form-control" id="field_category" name="category" [(ngModel)]="filterCategory">
@@ -28,80 +36,45 @@
 			<option *ngFor="let category of eventEdition.allowedCategories" [ngValue]="category.shortname">{{category.name}}</option>
 		</select>
 	</div>
-	<table class="table table-striped">
+
+    <table class="table table-striped">
     	<thead>
             <tr>
-	            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.raceNumber">Number</span></th>
-	            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.driver">Driver</span></th>
-	            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.teamName">Team Name</span></th>
-	            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.team">Team</span></th>
-	            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.operatedBy">Operated By</span></th>
-	            <th *ngIf="!eventEdition.singleChassis"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.chassis">Chassis</span></th>
-	            <th *ngIf="!eventEdition.singleEngine"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.engine">Engine</span></th>
+            	<th class="w-5"></th>
+	            <th class="w-5"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.raceNumber">Number</span></th>
+	            <th class="w-20"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.driver">Driver</span></th>
+	            <th class="w-20"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.teamName">Team Name</span></th>
 	            <th *ngIf="eventEdition.allowedCategories.length != 1"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category">Category</span></th>
-	            <th *ngIf="!eventEdition.singleTyre"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.tyres">Tyres</span></th>
-	            <th *ngIf="!eventEdition.singleFuel"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.fuel">Fuel</span></th>
-	            <th></th>
+	            <th class="w-35"></th>
+	            <th class="w-5"></th>
             </tr>
-		</thead>
-        <tbody>
-            <tr *ngFor="let eventEntry of eventEntries | eventEntryCategoryFilter: filterCategory ;trackBy: trackId">
-            	<td>{{eventEntry.raceNumber}}</td>
-            	<td>
-                    <div *ngIf="!eventEntry.eventEdition.multidriver">
-                        <a [routerLink]="['/driver', eventEntry.drivers[0].id ]" >
-                        	<img *ngIf="eventEntry.drivers[0].nationality" src="/images/flags16/{{eventEntry.drivers[0].nationality}}.png"/> {{eventEntry.drivers[0].fullName}}
-                        </a>
-                        <span *ngIf="eventEntry.rookie"> (R)</span>
-                    </div>
-                    <div *ngIf="eventEntry.eventEdition.multidriver">
-                    	<div *ngFor="let driver of eventEntry.drivers">
-	                        <img *ngIf="driver.nationality" src="/images/flags16/{{driver.nationality}}.png"/> <span class="tag">{{ driver.fullName }}</span>
-	                    </div>
-                    </div>
+        </thead>
+
+	    <tbody>
+	    	<tr *ngFor="let eventEntry of eventEntries | eventEntryCategoryFilter: filterCategory ;trackBy: trackId"
+	    		 data-toggle="collapse" data-target="#demo" class="accordion-toggle">
+	    		<td><i class="fa fa-plus-square" aria-hidden="true"></i></td>
+		    	<td>{{eventEntry.raceNumber}}</td>
+		    	<td>
+		            <div *ngIf="!eventEntry.eventEdition.multidriver">
+		            	<img *ngIf="eventEntry.drivers[0].faceUrl" [src]="eventEntry.drivers[0].faceUrl"/>
+		                <a [routerLink]="['/driver', eventEntry.drivers[0].id ]" >
+		                	<img *ngIf="eventEntry.drivers[0].nationality" src="/images/flags16/{{eventEntry.drivers[0].nationality}}.png"/> {{eventEntry.drivers[0].fullName}}
+		                </a>
+		                <span *ngIf="eventEntry.rookie"> (R)</span>
+		            </div>
+		            <div *ngIf="eventEntry.eventEdition.multidriver">
+		            	<div *ngFor="let driver of eventEntry.drivers">
+		                 <img *ngIf="driver.nationality" src="/images/flags16/{{driver.nationality}}.png"/> <span class="tag">{{ driver.fullName }}</span>
+		             </div>
+		            </div>
+		        </td>
+		        <td>{{eventEntry.entryName}}</td>
+		        <td *ngIf="eventEdition.allowedCategories.length != 1">
+                	{{eventEntry.category.shortname}}
                 </td>
-                <td>{{eventEntry.entryName}}</td>
-                <td>
-                    <div *ngIf="eventEntry.team">
-                        <a [routerLink]="['/team', eventEntry.team?.id ]" >{{eventEntry.team?.name}}</a>
-                    </div>
-                </td>
-                <td>
-                    <div *ngIf="eventEntry.operatedBy">
-                        <a [routerLink]="['/team', eventEntry.operatedBy?.id ]" >{{eventEntry.operatedBy?.name}}</a>
-                    </div>
-                </td>
-                <td *ngIf="!eventEdition.singleChassis">
-                    <div *ngIf="eventEntry.chassis">
-                        <a [routerLink]="['/chassis', eventEntry.chassis?.id ]" >{{eventEntry.chassis?.manufacturer}} {{eventEntry.chassis?.name}}</a>
-                    </div>
-                </td>
-                <td *ngIf="!eventEdition.singleEngine">
-                    <div *ngIf="eventEntry.engine">
-                        <a [routerLink]="['/engine', eventEntry.engine?.id ]" >{{eventEntry.engine?.manufacturer}} {{eventEntry.engine?.name}}</a>
-                    </div>
-                </td>
-                <td *ngIf="eventEdition.allowedCategories.length != 1">
-                    <div *ngIf="eventEntry.engine">
-                        <a [routerLink]="['/category', eventEntry.category?.id ]" >{{eventEntry.category.shortname}}</a>
-                    </div>
-                </td>
-                <td *ngIf="!eventEdition.singleTyre">
-                    <div *ngIf="eventEntry.tyres?.logoUrl">
-                        <a [routerLink]="['/tyre-provider', eventEntry.tyres?.id ]" >
-                        	<img [src]="eventEntry.tyres?.logoUrl" style="max-width: 50px;" alt="tyres logo"/>
-                        </a>
-                    </div>
-                </td>
-                <td *ngIf="!eventEdition.singleFuel">
-                    <div *ngIf="eventEntry.fuel">
-                        <a [routerLink]="['/fuel-provider', eventEntry.fuel?.id ]" >
-                        	<img [src]="eventEntry.fuel?.logoUrl" style="max-width: 50px;" alt="fuel logo"/>
-                        </a>
-                    </div>
-                </td>
-                
-                <td class="text-right">
+		        <td><img *ngIf="eventEntry.carImageUrl" [src]="eventEntry.carImageUrl" style="max-height: 70px;" alt="car image"/></td>
+		        <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                 [routerLink]="['/', { outlets: { popup: 'event-entry/'+ eventEntry.id + '/edit'} }]"
@@ -117,9 +90,11 @@
                         </button>
                     </div>
                 </td>
-            </tr>
+	        </tr>
+	        
 	    </tbody>
 	</table>
+	
 </div>
 <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
    	class="btn btn-success float-right" [routerLink]="['/', { outlets: { popup: eventEdition.id + '/copy-entries' } }]">
