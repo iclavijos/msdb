@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 
 import { Ng2CompleterModule } from 'ng2-completer';
 
+import { MotorsportsDatabaseEventEntryModule } from '../event-entry/event-entry.module';
 import { MotorsportsDatabaseEventEntryResultModule } from '../event-entry-result/event-entry-result.module';
 import { MotorsportsDatabaseSharedModule } from '../../shared';
 
@@ -31,6 +32,7 @@ let ENTITY_STATES = [
     imports: [
         Ng2CompleterModule,
         MotorsportsDatabaseSharedModule,
+        MotorsportsDatabaseEventEntryModule,
         MotorsportsDatabaseEventEntryResultModule,
         RouterModule.forRoot(ENTITY_STATES, { useHash: true })
     ],

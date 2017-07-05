@@ -8,8 +8,6 @@ import { EventService } from '../event/event.service';
 import { EventEdition } from './event-edition.model';
 import { EventEditionService } from './event-edition.service';
 import { EventSession } from '../event-session/event-session.model';
-import { EventEntry } from '../event-entry/event-entry.model';
-import { EventEntryService } from '../event-entry/event-entry.service';
 
 import { DurationType, SessionType } from '../../shared';
 
@@ -27,7 +25,6 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     private subscription: any;
     sessionTypes = SessionType;
     durationTypes = DurationType;
-    eventEntries: EventEntry[];
     filterCategory: string;
     editions: any[];
     
@@ -38,7 +35,6 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         private jhiLanguageService: JhiLanguageService,
         private eventService: EventService,
         private eventEditionService: EventEditionService,
-        private eventEntryService: EventEntryService,
         private eventManager: EventManager,
         private route: ActivatedRoute,
         private router: Router,
@@ -60,7 +56,6 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         this.eventEditionService.find(id).subscribe(eventEdition => {
             this.eventEdition = eventEdition;
             this.loadSessions(id);
-            this.loadEntries(id);
             this.eventService.findEventEditionIds(eventEdition.event.id).subscribe(
                     (res: Response) => this.editions = res.json());
         });
@@ -70,14 +65,6 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         this.eventEditionService.findSessions(id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe(eventSessions => {
             this.eventEdition.sessions = eventSessions.json();
         });
-    }
-    
-    loadEntries(id) {
-        this.eventEntryService.findEntries(id).subscribe(
-            (res: Response) => {
-                this.eventEntries = res.json();
-            }
-        );
     }
     
     jumpToEdition(id) {
@@ -96,7 +83,6 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     
     registerChangesInEvent() {
         this.eventSubscriber = this.eventManager.subscribe('eventSessionListModification', (response) => this.loadSessions(this.eventEdition.id));
-        this.eventSubscriber.add(this.eventManager.subscribe('eventEntryListModification', (response) => this.loadEntries(this.eventEdition.id)));
     }
     
     convertToCurrentTZ() {
