@@ -15,10 +15,13 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Store;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A Driver.
@@ -199,6 +202,14 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     
     public void setPortraitUrl(String portraitUrl) {
     	this.portraitUrl = portraitUrl;
+    }
+    
+    @JsonProperty
+    public String getFaceUrl() {
+    	String tmp = this.portraitUrl;
+    	if (StringUtils.isEmpty(tmp)) return null;
+    	
+    	return tmp.replace("upload/", "upload/w_70,h_70,c_thumb,g_face/");
     }
     
     public int getAge() {
