@@ -108,7 +108,7 @@ public class RacetrackLayoutResource {
         if (racetrackLayout.getLayoutImage() != null) {
 	        String cdnUrl = cdnService.uploadImage(racetrackLayout.getId().toString(), racetrackLayout.getLayoutImage(), ENTITY_NAME);
 	        racetrackLayout.setLayoutImageUrl(cdnUrl);
-        } else {
+        } else if (racetrackLayout.getLayoutImageUrl() == null) {
         	cdnService.deleteImage(racetrackLayout.getId().toString(), ENTITY_NAME);
         }
         RacetrackLayout result = racetrackLayoutRepository.save(racetrackLayout);

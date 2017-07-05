@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.domain.FuelProvider;
 import com.icesoft.msdb.repository.FuelProviderRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
@@ -105,7 +104,7 @@ public class FuelProviderResource {
         if (fuelProvider.getLogo() != null) {
         	String cdnUrl = cdnService.uploadImage(fuelProvider.getId().toString(), fuelProvider.getLogo(), ENTITY_NAME);
         	fuelProvider.logoUrl(cdnUrl);
-        } else {
+        } else if (fuelProvider.getLogoUrl() == null) {
         	cdnService.deleteImage(fuelProvider.getId().toString(), ENTITY_NAME);
         }
         FuelProvider result = fuelProviderRepository.save(fuelProvider);

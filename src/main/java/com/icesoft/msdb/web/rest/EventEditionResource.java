@@ -44,6 +44,7 @@ import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.impl.CacheHandler;
@@ -74,13 +75,14 @@ public class EventEditionResource {
     private final EventEntryResultRepository eventResultRepository;
     private final ResultsService resultsService;
     private final SearchService searchService;
+    private final CDNService cdnService;
     private final JDBCRepositoryImpl jdbcRepository;
     
     private final CacheHandler cacheHandler;
     
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventSessionRepository eventSessionRepository, 
     		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, SearchService searchService,
-    		ResultsService resultsService, JDBCRepositoryImpl jdbcRepository,
+    		ResultsService resultsService, CDNService cdnService, JDBCRepositoryImpl jdbcRepository,
     		CacheHandler cacheHandler) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventSessionRepository = eventSessionRepository;
@@ -88,6 +90,7 @@ public class EventEditionResource {
         this.eventResultRepository = resultRepository;
         this.resultsService = resultsService;
         this.searchService = searchService;
+        this.cdnService = cdnService;
         this.jdbcRepository = jdbcRepository;
         this.cacheHandler = cacheHandler;
     }
@@ -386,6 +389,12 @@ public class EventEditionResource {
             		ENTITY_NAME_ENTRY, "idexists", "A new eventEntry cannot already have an ID")).body(null);
         }
         EventEditionEntry result = eventEntryRepository.save(eventEntry);
+        if (result.getCarImage() != null) {
+	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getCarImage(), ENTITY_NAME_ENTRY);
+			result.setCarImageUrl(cdnUrl);
+			
+			result = eventEntryRepository.save(result);
+        }
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/entries"))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME_ENTRY, result.getId().toString()))
             .body(result);
@@ -398,6 +407,10 @@ public class EventEditionResource {
         log.debug("REST request to update EventEntry : {}", eventEntry);
         if (eventEntry.getId() == null) {
             return createEventEditionEntry(eventEntry);
+        }
+        if (eventEntry.getCarImage() != null) {
+	        String cdnUrl = cdnService.uploadImage(eventEntry.getId().toString(), eventEntry.getCarImage(), ENTITY_NAME_ENTRY);
+	        eventEntry.setCarImageUrl(cdnUrl);
         }
         EventEditionEntry result = eventEntryRepository.save(eventEntry);
         return ResponseEntity.ok()

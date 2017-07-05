@@ -112,9 +112,8 @@ public class RacetrackResource {
         if (racetrack.getLogo() != null) {
 	        String cdnUrl = cdnService.uploadImage(racetrack.getId().toString(), racetrack.getLogo(), ENTITY_NAME);
 	        racetrack.setLogoUrl(cdnUrl);
-        } else {
-        	//TODO: Review this part
-        	//cdnService.deleteImage(racetrack.getId().toString(), ENTITY_NAME);
+        } else if (racetrack.getLogoUrl() == null) {
+        	cdnService.deleteImage(racetrack.getId().toString(), ENTITY_NAME);
         }
         Racetrack result = racetrackService.save(racetrack);
         return ResponseEntity.ok()
@@ -244,10 +243,10 @@ public class RacetrackResource {
         if (racetrackLayout.getId() == null) {
             return createRacetrackLayout(racetrackLayout);
         }
-        if (racetrackLayout.getLayoutImageUrl() != null) {
+        if (racetrackLayout.getLayoutImage() != null) {
 	        String cdnUrl = cdnService.uploadImage(racetrackLayout.getId().toString(), racetrackLayout.getLayoutImage(), ENTITY_NAME_LAYOUT);
 	        racetrackLayout.setLayoutImageUrl(cdnUrl);
-        } else {
+        } else if (racetrackLayout.getLayoutImageUrl() == null) {
         	cdnService.deleteImage(racetrackLayout.getId().toString(), ENTITY_NAME_LAYOUT);
         }
         RacetrackLayout result = racetrackLayoutRepository.save(racetrackLayout);

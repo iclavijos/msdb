@@ -106,7 +106,7 @@ public class EngineResource {
         if (engine.getImage() != null) {
 	        String cdnUrl = cdnService.uploadImage(engine.getId().toString(), engine.getImage(), ENTITY_NAME);
 			engine.setImageUrl(cdnUrl);
-        } else {
+        } else if (engine.getImageUrl() == null) {
         	cdnService.deleteImage(engine.getId().toString(), ENTITY_NAME);
         }
         Engine result = engineRepository.save(engine);

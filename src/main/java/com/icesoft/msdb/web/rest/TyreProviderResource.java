@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.FuelProvider;
 import com.icesoft.msdb.domain.TyreProvider;
 import com.icesoft.msdb.repository.TyreProviderRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
@@ -106,7 +105,7 @@ public class TyreProviderResource {
         if (tyreProvider.getLogo() != null) {
         	String cdnUrl = cdnService.uploadImage(tyreProvider.getId().toString(), tyreProvider.getLogo(), ENTITY_NAME);
         	tyreProvider.logoUrl(cdnUrl);
-        } else {
+        } else if (tyreProvider.getLogoUrl() == null) {
         	cdnService.deleteImage(tyreProvider.getId().toString(), ENTITY_NAME);
         }
         TyreProvider result = tyreProviderRepository.save(tyreProvider);

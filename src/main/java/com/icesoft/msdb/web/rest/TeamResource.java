@@ -107,7 +107,7 @@ public class TeamResource {
         if (team.getLogo() != null) {
         	String cdnUrl = cdnService.uploadImage(team.getId().toString(), team.getLogo(), ENTITY_NAME);
 			team.logoUrl(cdnUrl);
-        } else {
+        } else if (team.getLogoUrl() == null) {
         	cdnService.deleteImage(team.getId().toString(), ENTITY_NAME);
         }
         Team result = teamRepository.save(team);

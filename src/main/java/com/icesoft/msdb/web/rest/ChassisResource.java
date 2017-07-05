@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Chassis;
-import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.repository.ChassisRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
@@ -107,7 +106,7 @@ public class ChassisResource {
         if (chassis.getImage() != null) {
 	        String cdnUrl = cdnService.uploadImage(chassis.getId().toString(), chassis.getImage(), ENTITY_NAME);
 	        chassis.setImageUrl(cdnUrl);
-        } else {
+        } else if (chassis.getImageUrl() == null) {
         	cdnService.deleteImage(chassis.getId().toString(), ENTITY_NAME);
         }
         
