@@ -1,0 +1,50 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipType": "many-to-many",
+            "otherEntityRelationshipName": "participants",
+            "relationshipName": "participations",
+            "otherEntityName": "eventEntry",
+            "otherEntityField": "id",
+            "ownerSide": true
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 40
+        },
+        {
+            "fieldName": "description",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 100
+        },
+        {
+            "fieldName": "hqLocation",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 100
+        },
+        {
+            "fieldName": "logo",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "image"
+        }
+    ],
+    "changelogDate": "20170213140812",
+    "entityTableName": "team",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "no"
+}

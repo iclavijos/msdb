@@ -1,0 +1,54 @@
+
+<div *ngIf="driver">
+    <h2><span jhiTranslate="motorsportsDatabaseApp.driver.detail.title">Driver</span> {{driver.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.name">Name</span></dt>
+        <dd>
+            <span>{{driver.name}}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.surname">Surname</span></dt>
+        <dd>
+            <span>{{driver.surname}}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.birthDate">Birth Date</span></dt>
+        <dd>
+            <span>{{driver.birthDate | date:'mediumDate'}}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.birthPlace">Birth Place</span></dt>
+        <dd>
+            <span>{{driver.birthPlace}}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.deathDate">Death Date</span></dt>
+        <dd>
+            <span>{{driver.deathDate | date:'mediumDate'}}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.deathPlace">Death Place</span></dt>
+        <dd>
+            <span>{{driver.deathPlace}}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.portrait">Portrait</span></dt>
+        <dd>
+            <div *ngIf="driver.portrait">
+                <a (click)="openFile(driver.portraitContentType, driver.portrait)">
+                    <img [src]="'data:' + driver.portraitContentType + ';base64,' + driver.portrait" style="max-width: 100%;" alt="driver image"/>
+                </a>
+                {{driver.portraitContentType}}, {{byteSize(driver.portrait)}}
+            </div>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            (click)="previousState()"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+    </button>
+
+    <button type="button"
+            [routerLink]="['/', { outlets: { popup: 'driver/'+ driver.id + '/edit'} }]"
+            replaceUrl="true"
+            class="btn btn-primary">
+        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+    </button>
+</div>
