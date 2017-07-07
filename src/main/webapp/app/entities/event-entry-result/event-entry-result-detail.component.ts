@@ -18,7 +18,6 @@ export class EventEntryResultDetailComponent implements OnInit, OnDestroy {
         private eventEntryResultService: EventEntryResultService,
         private route: ActivatedRoute
     ) {
-        this.jhiLanguageService.setLocations(['eventEntryResult']);
     }
 
     ngOnInit() {

@@ -132,26 +132,25 @@ public class Series extends AbstractAuditingEntity implements Serializable {
             return false;
         }
         Series series = (Series) o;
-        if (series.id == null || id == null) {
+        if (series.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, series.id);
+        return Objects.equals(getId(), series.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "Series{" +
-            "id=" + id +
-            ", name='" + name + "'" +
-            ", shortname='" + shortname + "'" +
-            ", organizer='" + organizer + "'" +
-            ", logo='" + logo + "'" +
-            ", logoUrl='" + logoUrl + "'" +
+            "id=" + getId() +
+            ", name='" + getName() + "'" +
+            ", shortname='" + getShortname() + "'" +
+            ", organizer='" + getOrganizer() + "'" +
+            ", logoUrl='" + getLogoUrl() + "'" +
             '}';
     }
 }

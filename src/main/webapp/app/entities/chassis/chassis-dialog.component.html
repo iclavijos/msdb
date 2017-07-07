@@ -1,5 +1,3 @@
-
-
 <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
 
     <div class="modal-header">
@@ -12,8 +10,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.chassis.name" for="field_name">Name</label>
             <input type="text" class="form-control" name="name" id="field_name"
-                [(ngModel)]="chassis.name"
-            required maxlength="50" />
+                [(ngModel)]="chassis.name" required maxlength="50" />
             <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.name?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.name?.errors?.required" jhiTranslate="entity.validation.required">
@@ -28,8 +25,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.chassis.manufacturer" for="field_manufacturer">Manufacturer</label>
             <input type="text" class="form-control" name="manufacturer" id="field_manufacturer"
-                [(ngModel)]="chassis.manufacturer"
-            required maxlength="50" />
+                [(ngModel)]="chassis.manufacturer" required maxlength="50" />
             <div [hidden]="!(editForm.controls.manufacturer?.dirty && editForm.controls.manufacturer?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.manufacturer?.errors?.required" jhiTranslate="entity.validation.required">
@@ -44,8 +40,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.chassis.debutYear" for="field_debutYear">Debut Year</label>
             <input type="number" class="form-control" name="debutYear" id="field_debutYear"
-                [(ngModel)]="chassis.debutYear"
-            required />
+                [(ngModel)]="chassis.debutYear" required />
             <div [hidden]="!(editForm.controls.debutYear?.dirty && editForm.controls.debutYear?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.debutYear?.errors?.required" jhiTranslate="entity.validation.required">

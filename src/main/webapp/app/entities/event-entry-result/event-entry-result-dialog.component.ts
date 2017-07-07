@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
 
 import { EventEntry, EventEntryService } from '../event-entry';
 import { EventEntryResult } from './event-entry-result.model';
@@ -34,11 +34,11 @@ export class EventEntryResultDialogComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
-        private alertService: AlertService,
+        private alertService: JhiAlertService,
         private eventEntryService: EventEntryService,
         private eventEntryResultService: EventEntryResultService,
         private eventSessionService: EventSessionService,
-        private eventManager: EventManager,
+        private eventManager: JhiEventManager,
         private route: ActivatedRoute,
         private router: Router
     ) {

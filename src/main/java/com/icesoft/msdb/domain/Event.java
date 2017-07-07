@@ -116,23 +116,23 @@ public class Event extends AbstractAuditingEntity implements Serializable {
             return false;
         }
         Event event = (Event) o;
-        if (event.id == null || id == null) {
+        if (event.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, event.id);
+        return Objects.equals(getId(), event.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "Event{" +
-            "id=" + id +
-            ", name='" + name + "'" +
-            ", description='" + description + "'" +
-            '}';
+            "id=" + getId() +
+            ", name='" + getName() + "'" +
+            ", description='" + getDescription() + "'" +
+            "}";
     }
 }

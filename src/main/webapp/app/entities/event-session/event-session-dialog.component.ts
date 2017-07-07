@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
 
 import { EventSession } from './event-session.model';
 import { EventSessionPopupService } from './event-session-popup.service';
@@ -28,9 +28,9 @@ export class EventSessionDialogComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
-        private alertService: AlertService,
+        private alertService: JhiAlertService,
         private eventSessionService: EventSessionService,
-        private eventManager: EventManager,
+        private eventManager: JhiEventManager,
         private route: ActivatedRoute
     ) {
     }

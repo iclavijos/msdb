@@ -93,7 +93,7 @@ public class TeamResource {
      * @param team the team to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated team,
      * or with status 400 (Bad Request) if the team is not valid,
-     * or with status 500 (Internal Server Error) if the team couldnt be updated
+     * or with status 500 (Internal Server Error) if the team couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/teams")
@@ -119,12 +119,13 @@ public class TeamResource {
     /**
      * GET  /teams : get all the teams.
      *
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of teams in body
      */
     @GetMapping("/teams")
     @Timed
-    public ResponseEntity<List<Team>> getAllTeams(@ApiParam Pageable pageable) throws URISyntaxException {
-        log.debug("REST request to get all Teams");
+    public ResponseEntity<List<Team>> getAllTeams(@ApiParam Pageable pageable) {
+        log.debug("REST request to get a page of Teams");
         Page<Team> page = teamRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/teams");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
@@ -163,8 +164,7 @@ public class TeamResource {
 
     @GetMapping("/_search/teams")
     @Timed
-    public ResponseEntity<List<Team>> searchTeams(@RequestParam String query, @ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<Team>> searchTeams(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Teams for query '{}'", query);
         Page<Team> page = teamRepository.findByNameContainsIgnoreCaseOrderByNameAsc(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/teams");
@@ -175,14 +175,15 @@ public class TeamResource {
      * SEARCH  /_search/teams?query=:query : search for the team corresponding
      * to the query.
      *
-     * @param query the query of the team search 
+     * @param query the query of the team search
+     * @param pageable the pagination information
      * @return the result of the search
      */
     @GetMapping("/_typeahead/teams")
     @Timed
     public List<Team> typeahead(@RequestParam String query) {
         log.debug("REST request to search Teams for query {}", query);
-        Page<Team> result = teamRepository.findByNameContainsIgnoreCaseOrderByNameAsc(query, new PageRequest(0, 15));
+        Page<Team> result = teamRepository.findByNameContainsIgnoreCaseOrderByNameAsc(query, new PageRequest(0, 5));
 
         return result.getContent();
     }

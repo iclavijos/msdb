@@ -29,7 +29,7 @@
                 <td>{{eventEntryResult.finalPosition >= 900 ? 
                 		eventEntryResult.finalPosition == 901 ? 'DNS' : 
                 			eventEntryResult.finalPosition == 902 ? 'DSQ' : '-' 
-                	  :	i + 1 }} 
+                	  :	i + 1 }}
                 	<span *ngIf="session.sessionType === 'RACE' && eventEntryResult.startingPosition && eventEntryResult.finalPosition < 900">
                 		<span *ngIf="eventEntryResult.startingPosition < eventEntryResult.finalPosition" style="color: red">
                 			<i class="fa fa-arrow-down" aria-hidden="true"></i> {{eventEntryResult.startingPosition - eventEntryResult.finalPosition }}
@@ -48,7 +48,7 @@
                 <td>{{eventEntryResult.entry.entryName}}</td>
                 <td *ngIf="edition.allowedCategories.length > 1">{{eventEntryResult.entry.category.shortname}}</td>
                 <td *ngIf="session.sessionType === 'RACE'">
-                	{{eventEntryResult.finalPosition > 1 && eventEntryResult.finalPosition < 900 && !eventEntryResult.retired ?
+                	{{ classifiedNotRetired(eventEntryResult) ?
                 		(eventEntryResult.differenceType == 1 ? '+' + (eventEntryResult.difference | timeMaskPipe) : eventEntryResult.difference + 'L')
                 		: eventEntryResult.totalTime | timeMaskPipe : true }}
                 </td>

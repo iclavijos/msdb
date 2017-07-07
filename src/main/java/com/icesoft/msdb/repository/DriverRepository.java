@@ -7,12 +7,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import com.icesoft.msdb.domain.Driver;
 
 /**
  * Spring Data JPA repository for the Driver entity.
  */
+@Repository
 public interface DriverRepository extends JpaRepository<Driver,Long> {
 	
 	@Query("select d from Driver d where "

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
 
 import { RacetrackLayout } from './racetrack-layout.model';
 import { RacetrackLayoutPopupService } from './racetrack-layout-popup.service';
@@ -20,9 +20,8 @@ export class RacetrackLayoutDeleteDialogComponent {
         private jhiLanguageService: JhiLanguageService,
         private racetrackLayoutService: RacetrackLayoutService,
         public activeModal: NgbActiveModal,
-        private eventManager: EventManager
+        private eventManager: JhiEventManager
     ) {
-        this.jhiLanguageService.setLocations(['racetrack']);
     }
 
     clear () {

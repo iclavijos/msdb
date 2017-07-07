@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { JhiLanguageService, DataUtils } from 'ng-jhipster';
+import { JhiLanguageService, JhiDataUtils } from 'ng-jhipster';
 import { FuelProvider } from './fuel-provider.model';
 import { FuelProviderService } from './fuel-provider.service';
 
@@ -15,11 +15,10 @@ export class FuelProviderDetailComponent implements OnInit, OnDestroy {
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
-        private dataUtils: DataUtils,
+        private dataUtils: JhiDataUtils,
         private fuelProviderService: FuelProviderService,
         private route: ActivatedRoute
     ) {
-        this.jhiLanguageService.setLocations(['fuelProvider']);
     }
 
     ngOnInit() {

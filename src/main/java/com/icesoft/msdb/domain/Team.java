@@ -167,26 +167,25 @@ public class Team extends AbstractAuditingEntity implements Serializable {
             return false;
         }
         Team team = (Team) o;
-        if (team.id == null || id == null) {
+        if (team.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, team.id);
+        return Objects.equals(getId(), team.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "Team{" +
-            "id=" + id +
-            ", name='" + name + "'" +
-            ", description='" + description + "'" +
-            ", hqLocation='" + hqLocation + "'" +
-            ", logo='" + logo + "'" +
-            ", logoUrl='" + logoUrl + "'" +
+    		"id=" + getId() +
+            ", name='" + getName() + "'" +
+            ", description='" + getDescription() + "'" +
+            ", hqLocation='" + getHqLocation() + "'" +
+            ", logoUrl='" + getLogoUrl() + "'" +
             '}';
     }
 }

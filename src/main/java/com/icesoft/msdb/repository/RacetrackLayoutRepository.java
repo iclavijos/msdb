@@ -6,12 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import com.icesoft.msdb.domain.RacetrackLayout;
 
 /**
  * Spring Data JPA repository for the RacetrackLayout entity.
  */
+@Repository
 public interface RacetrackLayoutRepository extends JpaRepository<RacetrackLayout,Long> {
 	
 	@Query("select r from RacetrackLayout r where "

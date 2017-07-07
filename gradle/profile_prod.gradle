@@ -22,6 +22,11 @@ bootRun {
     args = []
 }
 
+
+task webpack_test(type: YarnTask, dependsOn: 'yarn_install') {
+    args = ["run", "webpack:test"]
+}
+
 task webpack(type: YarnTask, dependsOn: 'yarn_install') {
     args = ["run", "webpack:prod"]
 }
@@ -46,4 +51,5 @@ processResources {
     }
 }
 
+test.dependsOn webpack_test
 processResources.dependsOn webpack

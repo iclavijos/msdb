@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <!--
+        Added the constraints for entity EventEdition.
+    -->
+    <changeSet id="20170213140812-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="allowed_categories_id"
+                                 baseTableName="event_edition"
+                                 constraintName="fk_event_edition_allowed_categories_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="category"/>
+
+        <addForeignKeyConstraint baseColumnNames="track_layout_id"
+                                 baseTableName="event_edition"
+                                 constraintName="fk_event_edition_track_layout_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="racetrack_layout"/>
+
+        <addForeignKeyConstraint baseColumnNames="event_id"
+                                 baseTableName="event_edition"
+                                 constraintName="fk_event_edition_event_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="event"/>
+
+    </changeSet>
+</databaseChangeLog>

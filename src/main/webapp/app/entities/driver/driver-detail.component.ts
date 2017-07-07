@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { JhiLanguageService, DataUtils } from 'ng-jhipster';
+import { Subscription } from 'rxjs/Rx';
+import { JhiEventManager , JhiDataUtils } from 'ng-jhipster';
+
 import { Driver } from './driver.model';
 import { DriverService } from './driver.service';
 
@@ -11,26 +13,27 @@ import { DriverService } from './driver.service';
 export class DriverDetailComponent implements OnInit, OnDestroy {
 
     driver: Driver;
-    private subscription: any;
+    private subscription: Subscription;
+    private eventSubscriber: Subscription;
     compositeName: String;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
-        private dataUtils: DataUtils,
+        private eventManager: JhiEventManager,
+        private dataUtils: JhiDataUtils,
         private driverService: DriverService,
         private route: ActivatedRoute
     ) {
-        this.jhiLanguageService.setLocations(['driver']);
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe(params => {
+        this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
         });
+        this.registerChangeInDrivers();
     }
 
-    load (id) {
-        this.driverService.find(id).subscribe(driver => {
+    load(id) {
+        this.driverService.find(id).subscribe((driver) => {
             this.driver = driver;
             this.compositeName = this.driver.surname + ', ' + this.driver.name;
         });
@@ -48,6 +51,13 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
+        this.eventManager.destroy(this.eventSubscriber);
     }
 
+    registerChangeInDrivers() {
+        this.eventSubscriber = this.eventManager.subscribe(
+            'driverListModification',
+            (response) => this.load(this.driver.id)
+        );
+    }
 }

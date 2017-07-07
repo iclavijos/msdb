@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Http, Response } from '@angular/http';
@@ -33,11 +33,10 @@ export class HomeComponent implements OnInit {
         private principal: Principal,
         private http: Http,
         private loginModalService: LoginModalService,
-        private eventManager: EventManager,
+        private eventManager: JhiEventManager,
         private activatedRoute: ActivatedRoute,
         private router: Router,
     ) {
-        this.jhiLanguageService.setLocations(['home']);
     }
 
     ngOnInit() {

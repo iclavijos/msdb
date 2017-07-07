@@ -3,7 +3,7 @@ import { Http, Response, URLSearchParams, BaseRequestOptions } from '@angular/ht
 import { Observable } from 'rxjs/Rx';
 
 import { EventEdition } from './event-edition.model';
-import { DateUtils } from 'ng-jhipster';
+import { JhiDateUtils } from 'ng-jhipster';
 
 import * as moment from 'moment-timezone';
 
@@ -14,7 +14,7 @@ export class EventEditionService {
     private resourceSearchUrl = 'api/_search/event-editions';
     private eventResourceUrl = 'api/events';
 
-    constructor(private http: Http, private dateUtils: DateUtils) { }
+    constructor(private http: Http, private dateUtils: JhiDateUtils) { }
 
     create(eventEdition: EventEdition): Observable<EventEdition> {
         let copy: EventEdition = Object.assign({}, eventEdition);

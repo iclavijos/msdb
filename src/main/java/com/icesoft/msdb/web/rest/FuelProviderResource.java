@@ -90,7 +90,7 @@ public class FuelProviderResource {
      * @param fuelProvider the fuelProvider to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated fuelProvider,
      * or with status 400 (Bad Request) if the fuelProvider is not valid,
-     * or with status 500 (Internal Server Error) if the fuelProvider couldnt be updated
+     * or with status 500 (Internal Server Error) if the fuelProvider couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/fuel-providers")
@@ -119,12 +119,10 @@ public class FuelProviderResource {
      *
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of fuelProviders in body
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/fuel-providers")
     @Timed
-    public ResponseEntity<List<FuelProvider>> getAllFuelProviders(@ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<FuelProvider>> getAllFuelProviders(@ApiParam Pageable pageable) {
         log.debug("REST request to get a page of FuelProviders");
         Page<FuelProvider> page = fuelProviderRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/fuel-providers");
@@ -165,15 +163,13 @@ public class FuelProviderResource {
      * SEARCH  /_search/fuel-providers?query=:query : search for the fuelProvider corresponding
      * to the query.
      *
-     * @param query the query of the fuelProvider search 
+     * @param query the query of the fuelProvider search
      * @param pageable the pagination information
      * @return the result of the search
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/_search/fuel-providers")
     @Timed
-    public ResponseEntity<List<FuelProvider>> searchFuelProviders(@RequestParam String query, @ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<FuelProvider>> searchFuelProviders(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of FuelProviders for query {}", query);
         Page<FuelProvider> page = fuelProviderRepository.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/fuel-providers");

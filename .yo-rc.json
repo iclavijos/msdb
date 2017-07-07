@@ -1,6 +1,6 @@
 {
   "generator-jhipster": {
-    "jhipsterVersion": "4.0.6",
+    "jhipsterVersion": "4.5.6",
     "baseName": "MotorsportsDatabase",
     "packageName": "com.icesoft.msdb",
     "packageFolder": "com/icesoft/msdb",

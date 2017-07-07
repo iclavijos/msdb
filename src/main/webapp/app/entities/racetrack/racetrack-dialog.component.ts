@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService, JhiLanguageService, JhiDataUtils } from 'ng-jhipster';
 
 import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
 
@@ -28,14 +28,13 @@ export class RacetrackDialogComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
-        private dataUtils: DataUtils,
-        private alertService: AlertService,
+        private dataUtils: JhiDataUtils,
+        private alertService: JhiAlertService,
         private racetrackService: RacetrackService,
         private racetrackLayoutService: RacetrackLayoutService,
-        private eventManager: EventManager,
+        private eventManager: JhiEventManager,
         private completerService: CompleterService
     ) {
-        this.jhiLanguageService.setLocations(['racetrack']);
         this.dataServiceCountry = completerService.remote('api/_typeahead/countries?query=', null, 'countryName').imageField("flagImg");
     }
 

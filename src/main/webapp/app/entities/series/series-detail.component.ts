@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EventManager, DataUtils, ParseLinks, PaginationUtil, JhiLanguageService, AlertService } from 'ng-jhipster';
+import { JhiEventManager, JhiDataUtils, JhiParseLinks, JhiPaginationUtil, JhiLanguageService, JhiAlertService } from 'ng-jhipster';
 import { Response } from '@angular/http';
 import { Series } from './series.model';
 import { SeriesEdition } from '../series-edition/series-edition.model';
@@ -31,16 +31,15 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
-        private dataUtils: DataUtils,
-        private parseLinks: ParseLinks,
+        private dataUtils: JhiDataUtils,
+        private parseLinks: JhiParseLinks,
         private seriesService: SeriesService,
-        private alertService: AlertService,
+        private alertService: JhiAlertService,
         private route: ActivatedRoute,
         private router: Router,
-        private paginationUtil: PaginationUtil,
+        private paginationUtil: JhiPaginationUtil,
         private paginationConfig: PaginationConfig
     ) {
-        this.jhiLanguageService.setLocations(['series']);
         this.itemsPerPage = ITEMS_PER_PAGE;
         this.routeData = this.route.data.subscribe(data => {
             this.page = data['pagingParams'].page;

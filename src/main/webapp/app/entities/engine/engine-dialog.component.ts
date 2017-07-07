@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService, JhiLanguageService, JhiDataUtils } from 'ng-jhipster';
 
 import { Engine } from './engine.model';
 import { EnginePopupService } from './engine-popup.service';
@@ -26,13 +26,12 @@ export class EngineDialogComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
-        private dataUtils: DataUtils,
-        private alertService: AlertService,
+        private dataUtils: JhiDataUtils,
+        private alertService: JhiAlertService,
         private engineService: EngineService,
-        private eventManager: EventManager,
+        private eventManager: JhiEventManager,
         private completerService: CompleterService
     ) {
-        this.jhiLanguageService.setLocations(['engine']);
         this.dataService = completerService.remote('api/_search/engines?query=', null, 'name').descriptionField('manufacturer');
     }
 

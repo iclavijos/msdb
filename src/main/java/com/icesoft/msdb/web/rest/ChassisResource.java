@@ -36,6 +36,7 @@ import com.icesoft.msdb.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 
+
 /**
  * REST controller for managing Chassis.
  */
@@ -46,7 +47,7 @@ public class ChassisResource {
     private final Logger log = LoggerFactory.getLogger(ChassisResource.class);
 
     private static final String ENTITY_NAME = "chassis";
-        
+
     private final ChassisRepository chassisRepository;
     
     private final CDNService cdnService;
@@ -91,7 +92,7 @@ public class ChassisResource {
      * @param chassis the chassis to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated chassis,
      * or with status 400 (Bad Request) if the chassis is not valid,
-     * or with status 500 (Internal Server Error) if the chassis couldnt be updated
+     * or with status 500 (Internal Server Error) if the chassis couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/chassis")
@@ -121,12 +122,10 @@ public class ChassisResource {
      *
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of chassis in body
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/chassis")
     @Timed
-    public ResponseEntity<List<Chassis>> getAllChassis(@ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<Chassis>> getAllChassis(@ApiParam Pageable pageable) {
         log.debug("REST request to get a page of Chassis");
         Page<Chassis> page = chassisRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/chassis");
@@ -167,15 +166,13 @@ public class ChassisResource {
      * SEARCH  /_search/chassis?query=:query : search for the chassis corresponding
      * to the query.
      *
-     * @param query the query of the chassis search 
+     * @param query the query of the chassis search
      * @param pageable the pagination information
      * @return the result of the search
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/_search/chassis")
     @Timed
-    public ResponseEntity<List<Chassis>> searchChassis(@RequestParam String query, @ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<Chassis>> searchChassis(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Chassis for query {}", query);
         Page<Chassis> page = chassisRepository.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/chassis");

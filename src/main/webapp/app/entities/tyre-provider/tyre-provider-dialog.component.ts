@@ -1,13 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
+import { Observable } from 'rxjs/Rx';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { TyreProvider } from './tyre-provider.model';
 import { TyreProviderPopupService } from './tyre-provider-popup.service';
 import { TyreProviderService } from './tyre-provider.service';
+
 @Component({
     selector: 'jhi-tyre-provider-dialog',
     templateUrl: './tyre-provider-dialog.component.html'
@@ -17,21 +19,22 @@ export class TyreProviderDialogComponent implements OnInit {
     tyreProvider: TyreProvider;
     authorities: any[];
     isSaving: boolean;
+
     constructor(
         public activeModal: NgbActiveModal,
-        private jhiLanguageService: JhiLanguageService,
-        private dataUtils: DataUtils,
-        private alertService: AlertService,
+        private dataUtils: JhiDataUtils,
+        private alertService: JhiAlertService,
         private tyreProviderService: TyreProviderService,
-        private eventManager: EventManager
+        private elementRef: ElementRef,
+        private eventManager: JhiEventManager
     ) {
-        this.jhiLanguageService.setLocations(['tyreProvider']);
     }
 
     ngOnInit() {
         this.isSaving = false;
         this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
     }
+
     byteSize(field) {
         return this.dataUtils.byteSize(field);
     }
@@ -40,45 +43,65 @@ export class TyreProviderDialogComponent implements OnInit {
         return this.dataUtils.openFile(contentType, field);
     }
 
-    setFileData($event, tyreProvider, field, isImage) {
-        if ($event.target.files && $event.target.files[0]) {
-            let $file = $event.target.files[0];
-            if (isImage && !/^image\//.test($file.type)) {
+    setFileData(event, tyreProvider, field, isImage) {
+        if (event && event.target.files && event.target.files[0]) {
+            const file = event.target.files[0];
+            if (isImage && !/^image\//.test(file.type)) {
                 return;
             }
-            this.dataUtils.toBase64($file, (base64Data) => {
+            this.dataUtils.toBase64(file, (base64Data) => {
                 tyreProvider[field] = base64Data;
-                tyreProvider[`${field}ContentType`] = $file.type;
+                tyreProvider[`${field}ContentType`] = file.type;
             });
         }
     }
-    clear () {
+
+    clearInputImage(field: string, fieldContentType: string, idInput: string) {
+        this.dataUtils.clearInputImage(this.tyreProvider, this.elementRef, field, fieldContentType, idInput);
+    }
+
+    clear() {
         this.activeModal.dismiss('cancel');
     }
 
-    save () {
+    save() {
         this.isSaving = true;
         if (this.tyreProvider.id !== undefined) {
-            this.tyreProviderService.update(this.tyreProvider)
-                .subscribe((res: TyreProvider) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.tyreProviderService.update(this.tyreProvider), false);
         } else {
-            this.tyreProviderService.create(this.tyreProvider)
-                .subscribe((res: TyreProvider) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.tyreProviderService.create(this.tyreProvider), true);
         }
     }
 
-    private onSaveSuccess (result: TyreProvider) {
+    private subscribeToSaveResponse(result: Observable<TyreProvider>, isCreated: boolean) {
+        result.subscribe((res: TyreProvider) =>
+            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+    }
+
+    private onSaveSuccess(result: TyreProvider, isCreated: boolean) {
+        this.alertService.success(
+            isCreated ? 'motorsportsDatabaseApp.tyreProvider.created'
+            : 'motorsportsDatabaseApp.tyreProvider.updated',
+            { param : result.id }, null);
+
         this.eventManager.broadcast({ name: 'tyreProviderListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError (error) {
+    private onSaveError(error) {
+        try {
+            error.json();
+        } catch (exception) {
+            error.message = error.text();
+        }
         this.isSaving = false;
         this.onError(error);
     }
 
-    private onError (error) {
+    private onError(error) {
         this.alertService.error(error.message, null, null);
     }
 }
@@ -92,13 +115,13 @@ export class TyreProviderPopupComponent implements OnInit, OnDestroy {
     modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private tyreProviderPopupService: TyreProviderPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
+        this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
                 this.modalRef = this.tyreProviderPopupService
                     .open(TyreProviderDialogComponent, params['id']);
@@ -106,7 +129,6 @@ export class TyreProviderPopupComponent implements OnInit, OnDestroy {
                 this.modalRef = this.tyreProviderPopupService
                     .open(TyreProviderDialogComponent);
             }
-
         });
     }
 

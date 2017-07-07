@@ -3,24 +3,25 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Driver } from './driver.model';
 import { DriverService } from './driver.service';
+
 @Injectable()
 export class DriverPopupService {
     private isOpen = false;
-    constructor (
+    constructor(
         private modalService: NgbModal,
         private router: Router,
         private driverService: DriverService
 
     ) {}
 
-    open (component: Component, id?: number | any): NgbModalRef {
+    open(component: Component, id?: number | any): NgbModalRef {
         if (this.isOpen) {
             return;
         }
         this.isOpen = true;
 
         if (id) {
-            this.driverService.find(id).subscribe(driver => {
+            this.driverService.find(id).subscribe((driver) => {
                 if (driver.birthDate) {
                     driver.birthDate = {
                         year: driver.birthDate.getFullYear(),
@@ -43,9 +44,9 @@ export class DriverPopupService {
     }
 
     driverModalRef(component: Component, driver: Driver): NgbModalRef {
-        let modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
+        const modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
         modalRef.componentInstance.driver = driver;
-        modalRef.result.then(result => {
+        modalRef.result.then((result) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
             this.isOpen = false;
         }, (reason) => {

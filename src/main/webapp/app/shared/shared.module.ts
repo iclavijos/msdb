@@ -1,12 +1,10 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
-import { CookieService } from 'angular2-cookie/services/cookies.service';
 import {
     MotorsportsDatabaseSharedLibsModule,
     MotorsportsDatabaseSharedCommonModule,
     CSRFService,
-    AuthService,
     AuthServerProvider,
     AccountService,
     UserService,
@@ -28,10 +26,9 @@ import {
     declarations: [
         JhiSocialComponent,
         JhiLoginModalComponent,
-        HasAnyAuthorityDirective,
+        HasAnyAuthorityDirective
     ],
     providers: [
-        CookieService,
         LoginService,
         LoginModalService,
         AccountService,
@@ -40,13 +37,10 @@ import {
         CSRFService,
         AuthServerProvider,
         SocialService,
-        AuthService,
         UserService,
         DatePipe
     ],
-    entryComponents: [
-        JhiLoginModalComponent,
-    ],
+    entryComponents: [JhiLoginModalComponent],
     exports: [
         MotorsportsDatabaseSharedCommonModule,
         JhiSocialComponent,

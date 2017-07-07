@@ -24,7 +24,7 @@
     <a class="deco-none" *ngIf="eventEdition.seriesId" [routerLink]="['/series/series-edition', eventEdition.seriesId]"><i  class="fa fa-fw fa-angle-double-left" aria-hidden="true"></i> {{eventEdition.seriesName}}</a>
     <ngb-tabset>
 	  <ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.info' | translate}}">
-	    <template ngbTabContent>
+	    <ng-template ngbTabContent>
 		    <div class="row">
 				<div class="col-lg-4 col-md-4">
 				    <dl class="row-md jh-entity-details">
@@ -128,23 +128,17 @@
 		            class="btn btn-primary">
 		        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
 		    </button>
-		</template>
+		</ng-template>
 	</ngb-tab>
 	<ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.entryList' | translate}}">
-	    <template ngbTabContent>
+	    <ng-template ngbTabContent>
 	    	<jhi-event-entry [eventEdition]="eventEdition">Entries...</jhi-event-entry>
-	    </template>
+	    </ng-template>
 	</ngb-tab>
 	<ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.results' | translate}}">
-	    <template ngbTabContent>
-	    	<ngb-tabset>
-			  <ngb-tab *ngFor="let eventSession of eventEdition.sessions" title="{{eventSession.name}}">
-			    <template ngbTabContent>
-			    	<jhi-event-entry-result [session]="eventSession" [edition]="eventEdition">Result...</jhi-event-entry-result>
-			    </template>
-			  </ngb-tab>
-			</ngb-tabset>
-	    </template>
+	    <ng-template ngbTabContent>
+	    	<ng-container *ngTemplateOutlet="innerTabset"></ng-container>
+	    </ng-template>
 	</ngb-tab>
 	</ngb-tabset>
 	<button type="submit"
@@ -153,3 +147,13 @@
         <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
     </button>
 </div>
+
+<ng-template #innerTabset>
+  <ngb-tabset>
+  <ngb-tab *ngFor="let eventSession of eventEdition.sessions" title="{{eventSession.name}}">
+    <ng-template ngbTabContent>
+    	<jhi-event-entry-result [session]="eventSession" [edition]="eventEdition">Result...</jhi-event-entry-result>    	
+    </ng-template>
+  </ngb-tab>
+</ngb-tabset>
+</ng-template>

@@ -249,26 +249,26 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
             return false;
         }
         SeriesEdition seriesEdition = (SeriesEdition) o;
-        if (seriesEdition.id == null || id == null) {
+        if (seriesEdition.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, seriesEdition.id);
+        return Objects.equals(getId(), seriesEdition.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "SeriesEdition{" +
-            "id=" + id +
-            ", name='" + editionName + "'" +
-            ", period='" + period + "'" +
-            ", singleChassis='" + singleChassis + "'" +
-            ", singleEngine='" + singleEngine + "'" +
-            ", singleTyre='" + singleTyre + "'" +
-            '}';
+            "id=" + getId() +
+            ", name='" + getEditionName() + "'" +
+            ", period='" + getPeriod() + "'" +
+            ", singleChassis='" + isSingleChassis() + "'" +
+            ", singleEngine='" + isSingleEngine() + "'" +
+            ", singleTyre='" + isSingleTyre() + "'" +
+            "}";
     }
 }

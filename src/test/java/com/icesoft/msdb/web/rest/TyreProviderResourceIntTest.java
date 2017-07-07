@@ -17,7 +17,6 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,9 +49,14 @@ public class TyreProviderResourceIntTest {
 
     private static final byte[] DEFAULT_LOGO = TestUtil.createByteArray(1, "0");
     private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(2, "1");
+    private static final String DEFAULT_LOGO_CONTENT_TYPE = "image/jpg";
+    private static final String UPDATED_LOGO_CONTENT_TYPE = "image/png";
 
     @Autowired
     private TyreProviderRepository tyreProviderRepository;
+    
+    @Autowired
+    private CDNService cdnService;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -69,14 +73,11 @@ public class TyreProviderResourceIntTest {
     private MockMvc restTyreProviderMockMvc;
 
     private TyreProvider tyreProvider;
-    
-    @Mock
-    private CDNService cdnService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            TyreProviderResource tyreProviderResource = new TyreProviderResource(tyreProviderRepository, cdnService);
+        TyreProviderResource tyreProviderResource = new TyreProviderResource(tyreProviderRepository, cdnService);
         this.restTyreProviderMockMvc = MockMvcBuilders.standaloneSetup(tyreProviderResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -91,8 +92,8 @@ public class TyreProviderResourceIntTest {
      */
     public static TyreProvider createEntity(EntityManager em) {
         TyreProvider tyreProvider = new TyreProvider()
-                .name(DEFAULT_NAME)
-                .logo(DEFAULT_LOGO);
+            .name(DEFAULT_NAME)
+            .logo(DEFAULT_LOGO);
         return tyreProvider;
     }
 
@@ -107,7 +108,6 @@ public class TyreProviderResourceIntTest {
         int databaseSizeBeforeCreate = tyreProviderRepository.findAll().size();
 
         // Create the TyreProvider
-
         restTyreProviderMockMvc.perform(post("/api/tyre-providers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(tyreProvider)))
@@ -127,13 +127,12 @@ public class TyreProviderResourceIntTest {
         int databaseSizeBeforeCreate = tyreProviderRepository.findAll().size();
 
         // Create the TyreProvider with an existing ID
-        TyreProvider existingTyreProvider = new TyreProvider();
-        existingTyreProvider.setId(1L);
+        tyreProvider.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restTyreProviderMockMvc.perform(post("/api/tyre-providers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(existingTyreProvider)))
+            .content(TestUtil.convertObjectToJsonBytes(tyreProvider)))
             .andExpect(status().isBadRequest());
 
         // Validate the Alice in the database
@@ -171,6 +170,7 @@ public class TyreProviderResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(tyreProvider.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+            .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
 
@@ -186,6 +186,7 @@ public class TyreProviderResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(tyreProvider.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
+            .andExpect(jsonPath("$.logoContentType").value(DEFAULT_LOGO_CONTENT_TYPE))
             .andExpect(jsonPath("$.logo").value(Base64Utils.encodeToString(DEFAULT_LOGO)));
     }
 
@@ -207,8 +208,8 @@ public class TyreProviderResourceIntTest {
         // Update the tyreProvider
         TyreProvider updatedTyreProvider = tyreProviderRepository.findOne(tyreProvider.getId());
         updatedTyreProvider
-                .name(UPDATED_NAME)
-                .logo(UPDATED_LOGO);
+            .name(UPDATED_NAME)
+            .logo(UPDATED_LOGO);
 
         restTyreProviderMockMvc.perform(put("/api/tyre-providers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -270,11 +271,22 @@ public class TyreProviderResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(tyreProvider.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+            .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
 
     @Test
+    @Transactional
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(TyreProvider.class);
+        TyreProvider tyreProvider1 = new TyreProvider();
+        tyreProvider1.setId(1L);
+        TyreProvider tyreProvider2 = new TyreProvider();
+        tyreProvider2.setId(tyreProvider1.getId());
+        assertThat(tyreProvider1).isEqualTo(tyreProvider2);
+        tyreProvider2.setId(2L);
+        assertThat(tyreProvider1).isNotEqualTo(tyreProvider2);
+        tyreProvider1.setId(null);
+        assertThat(tyreProvider1).isNotEqualTo(tyreProvider2);
     }
 }

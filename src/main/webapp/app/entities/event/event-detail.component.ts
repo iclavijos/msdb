@@ -19,7 +19,6 @@ export class EventDetailComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router,
     ) {
-        this.jhiLanguageService.setLocations(['event']);
     }
 
     ngOnInit() {

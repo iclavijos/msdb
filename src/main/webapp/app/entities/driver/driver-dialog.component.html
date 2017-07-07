@@ -1,5 +1,3 @@
-
-
 <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
 
     <div class="modal-header">
@@ -12,8 +10,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.name" for="field_name">Name</label>
             <input type="text" class="form-control" name="name" id="field_name"
-                [(ngModel)]="driver.name"
-            required maxlength="40" />
+                [(ngModel)]="driver.name" required maxlength="40" />
             <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.name?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.name?.errors?.required" jhiTranslate="entity.validation.required">
@@ -28,8 +25,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.surname" for="field_surname">Surname</label>
             <input type="text" class="form-control" name="surname" id="field_surname"
-                [(ngModel)]="driver.surname"
-            required maxlength="60" />
+                [(ngModel)]="driver.surname" required maxlength="60" />
             <div [hidden]="!(editForm.controls.surname?.dirty && editForm.controls.surname?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.surname?.errors?.required" jhiTranslate="entity.validation.required">
@@ -60,8 +56,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.birthPlace" for="field_birthPlace">Birth Place</label>
             <input type="text" class="form-control" name="birthPlace" id="field_birthPlace"
-                [(ngModel)]="driver.birthPlace"
-            maxlength="75" />
+                [(ngModel)]="driver.birthPlace" maxlength="75" />
             <div [hidden]="!(editForm.controls.birthPlace?.dirty && editForm.controls.birthPlace?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.birthPlace?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 75 }">
@@ -88,8 +83,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.deathPlace" for="field_deathPlace">Death Place</label>
             <input type="text" class="form-control" name="deathPlace" id="field_deathPlace"
-                [(ngModel)]="driver.deathPlace"
-            maxlength="75" />
+                [(ngModel)]="driver.deathPlace" maxlength="75" />
             <div [hidden]="!(editForm.controls.deathPlace?.dirty && editForm.controls.deathPlace?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.deathPlace?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 75 }">
@@ -111,8 +105,7 @@
                 <input type="file" (change)="setFileData($event, driver, 'portrait', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
             </div>
             <input type="hidden" class="form-control" name="portrait" id="field_portrait"
-                [(ngModel)]="driver.portrait"
-             />
+                [(ngModel)]="driver.portrait"  />
             <input type="hidden" class="form-control" name="portraitContentType" id="field_portraitContentType"
                 [(ngModel)]="driver.portraitContentType" />
         </div>

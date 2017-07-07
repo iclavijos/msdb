@@ -94,7 +94,7 @@ public class RacetrackLayoutResource {
      * @param racetrackLayout the racetrackLayout to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated racetrackLayout,
      * or with status 400 (Bad Request) if the racetrackLayout is not valid,
-     * or with status 500 (Internal Server Error) if the racetrackLayout couldnt be updated
+     * or with status 500 (Internal Server Error) if the racetrackLayout couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/racetrack-layouts")
@@ -126,8 +126,7 @@ public class RacetrackLayoutResource {
     @Timed
     public List<RacetrackLayout> getAllRacetrackLayouts() {
         log.debug("REST request to get all RacetrackLayouts");
-        List<RacetrackLayout> racetrackLayouts = racetrackLayoutRepository.findAll();
-        return racetrackLayouts;
+        return racetrackLayoutRepository.findAll();
     }
 
     /**
@@ -164,12 +163,12 @@ public class RacetrackLayoutResource {
      * SEARCH  /_search/racetrack-layouts?query=:query : search for the racetrackLayout corresponding
      * to the query.
      *
-     * @param query the query of the racetrackLayout search 
+     * @param query the query of the racetrackLayout search
      * @return the result of the search
      */
     @GetMapping("/_search/layouts")
     @Timed
-    public ResponseEntity<List<RacetrackLayout>> searchRacetrackLayouts(@RequestParam String query, @ApiParam Pageable pageable) throws URISyntaxException {
+    public ResponseEntity<List<RacetrackLayout>> searchRacetrackLayouts(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search RacetracksLayouts for query {}", query);
         Page<RacetrackLayout> page = racetrackLayoutRepository.search(query.toLowerCase(), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/layouts");
@@ -180,7 +179,7 @@ public class RacetrackLayoutResource {
     @Timed
     public List<RacetrackLayoutSearchResultDTO> searchTypeaheadLayouts(@RequestParam String query) {
     	log.debug("REST request to search RacetracksLayouts for query {}", query);
-        Page<RacetrackLayout> page = racetrackLayoutRepository.search(query.toLowerCase(), new PageRequest(0, 20));
+        Page<RacetrackLayout> page = racetrackLayoutRepository.search(query.toLowerCase(), new PageRequest(0, 5));
         List<RacetrackLayoutSearchResultDTO> result = new ArrayList<>();
         for (RacetrackLayout layout : page.getContent()) {
 			result.add(new RacetrackLayoutSearchResultDTO(layout));

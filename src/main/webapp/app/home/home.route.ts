@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Route, Routes, CanActivate } from '@angular/router';
 
 import { UserRouteAccessService } from '../shared';
-import { PaginationUtil } from 'ng-jhipster';
+import { JhiPaginationUtil } from 'ng-jhipster';
 
 import { HomeComponent } from './home.component';
 import { HomeEntriesComponent } from './home-entries.component';
@@ -11,7 +11,7 @@ import { HomeEventsComponent } from './home-events.component';
 @Injectable()
 export class HomeEntriesPagingParams implements Resolve<any> {
 
-  constructor(private paginationUtil: PaginationUtil) {}
+  constructor(private paginationUtil: JhiPaginationUtil) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
       let page = route.queryParams['page'] ? route.queryParams['page'] : '1';

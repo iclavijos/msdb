@@ -94,7 +94,7 @@ public class SeriesResource {
      * @param series the series to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated series,
      * or with status 400 (Bad Request) if the series is not valid,
-     * or with status 500 (Internal Server Error) if the series couldnt be updated
+     * or with status 500 (Internal Server Error) if the series couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/series")
@@ -122,12 +122,10 @@ public class SeriesResource {
      *
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of series in body
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/series")
     @Timed
-    public ResponseEntity<List<Series>> getAllSeries(@ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<Series>> getAllSeries(@ApiParam Pageable pageable) {
         log.debug("REST request to get a page of Series");
         Page<Series> page = seriesRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/series");
@@ -136,8 +134,7 @@ public class SeriesResource {
     
     @GetMapping("/series/{id}/editions")
     @Timed
-    public ResponseEntity<List<SeriesEdition>> getAllEditions(@PathVariable Long id, @ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<SeriesEdition>> getAllEditions(@PathVariable Long id, @ApiParam Pageable pageable) {
         log.debug("REST request to get a page of Series");
         Page<SeriesEdition> page = seriesEditionRepository.findBySeriesIdOrderByPeriodDesc(id, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/series/" + id + "/editions");
@@ -178,15 +175,13 @@ public class SeriesResource {
      * SEARCH  /_search/series?query=:query : search for the series corresponding
      * to the query.
      *
-     * @param query the query of the series search 
+     * @param query the query of the series search
      * @param pageable the pagination information
      * @return the result of the search
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/_search/series")
     @Timed
-    public ResponseEntity<List<Series>> searchSeries(@RequestParam String query, @ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<Series>> searchSeries(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Series for query {}", query);
         Page<Series> page = seriesRepository.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/series");
@@ -195,8 +190,7 @@ public class SeriesResource {
     
     @GetMapping("/_search/{id}/editions")
     @Timed
-    public ResponseEntity<List<SeriesEdition>> searchSeriesEditions(@PathVariable Long id, @RequestParam String query, @ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<SeriesEdition>> searchSeriesEditions(@PathVariable Long id, @RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of SeriesEditions for query {}", query);
         //TODO: Implement proper search
         Page<SeriesEdition> page = seriesEditionRepository.search(query, pageable);

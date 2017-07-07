@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Response } from '@angular/http';
-import { DataUtils, JhiLanguageService, AlertService } from 'ng-jhipster';
+import { JhiDataUtils, JhiLanguageService, JhiAlertService } from 'ng-jhipster';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { Imports } from './';
@@ -18,11 +18,10 @@ export class ImportsComponent implements OnInit {
         private jhiLanguageService: JhiLanguageService,
         private route: ActivatedRoute,
         private router: Router,
-        private dataUtils: DataUtils,
-        private alertService: AlertService,
+        private dataUtils: JhiDataUtils,
+        private alertService: JhiAlertService,
         private importsService: ImportsService
     ) {
-        this.jhiLanguageService.setLocations(['imports']);
         this.imports = new Imports();
     }
 

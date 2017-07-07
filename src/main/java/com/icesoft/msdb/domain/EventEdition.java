@@ -349,28 +349,25 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
             return false;
         }
         EventEdition eventEdition = (EventEdition) o;
-        if (eventEdition.id == null || id == null) {
+        if (eventEdition.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, eventEdition.id);
+        return Objects.equals(getId(), eventEdition.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "EventEdition{" +
-            "id=" + id +
-            ", editionYear='" + editionYear + "'" +
-            ", shortEventName='" + shortEventName + "'" +
-            ", longEventName='" + longEventName + "'" +
-            ", eventDate='" + eventDate + "'" +
-            ", multiDriver='" + multidriver + "'" +
-            ", previousEventEdId='" + previousEditionId + "'" +
-            ", nextEventEdId='" + nextEditionId + "'" +
-            '}';
+            "id=" + getId() +
+            ", editionYear='" + getEditionYear() + "'" +
+            ", shortEventName='" + getShortEventName() + "'" +
+            ", longEventName='" + getLongEventName() + "'" +
+            ", eventDate='" + getEventDate() + "'" +
+            "}";
     }
 }

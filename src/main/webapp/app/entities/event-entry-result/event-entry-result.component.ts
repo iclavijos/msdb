@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Response } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
-import { EventManager, ParseLinks, PaginationUtil, JhiLanguageService, AlertService } from 'ng-jhipster';
+import { JhiEventManager, JhiParseLinks, JhiLanguageService, JhiAlertService } from 'ng-jhipster';
 
 import { EventEdition } from '../event-edition';
 import { EventSession } from '../event-session';
@@ -30,15 +30,14 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     constructor(
         private jhiLanguageService: JhiLanguageService,
         private eventEntryResultService: EventEntryResultService,
-        private alertService: AlertService,
-        private eventManager: EventManager,
+        private alertService: JhiAlertService,
+        private eventManager: JhiEventManager,
         private activatedRoute: ActivatedRoute,
         private principal: Principal
     ) {
-        //this.jhiLanguageService.setLocations(['eventEntryResult']);
     }
 
-    loadAll() {
+    loadAll() {    
         this.session.eventEdition = this.edition;
         this.eventEntryResultService.query(this.session).subscribe(
             (res: Response) => {
@@ -65,6 +64,10 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
 
     trackId (index: number, item: EventEntryResult) {
         return item.id;
+    }
+    
+    classifiedNotRetired(eventEntryResult: EventEntryResult) {
+        return eventEntryResult.finalPosition > 1 && eventEntryResult.finalPosition < 900 && !eventEntryResult.retired;
     }
     
     gap(currentLapTime: number) {

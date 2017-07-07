@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
 
 import { Series } from './series.model';
 import { SeriesPopupService } from './series-popup.service';
@@ -20,9 +20,8 @@ export class SeriesDeleteDialogComponent {
         private jhiLanguageService: JhiLanguageService,
         private seriesService: SeriesService,
         public activeModal: NgbActiveModal,
-        private eventManager: EventManager
+        private eventManager: JhiEventManager
     ) {
-        this.jhiLanguageService.setLocations(['series']);
     }
 
     clear () {

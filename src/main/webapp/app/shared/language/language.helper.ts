@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Title }     from '@angular/platform-browser';
+import { Title } from '@angular/platform-browser';
 import { Router, ActivatedRouteSnapshot } from '@angular/router';
-import { TranslateService, TranslationChangeEvent, LangChangeEvent } from 'ng2-translate/ng2-translate';
+import { TranslateService, TranslationChangeEvent, LangChangeEvent } from '@ngx-translate/core';
 
 import { LANGUAGES } from './language.constants';
 
 @Injectable()
 export class JhiLanguageHelper {
 
-    constructor (private translateService: TranslateService, private titleService: Title, private router: Router) {
+    constructor(private translateService: TranslateService, private titleService: Title, private router: Router) {
         this.init();
     }
 
@@ -28,12 +28,12 @@ export class JhiLanguageHelper {
              titleKey = this.getPageTitle(this.router.routerState.snapshot.root);
         }
 
-        this.translateService.get(titleKey).subscribe(title => {
+        this.translateService.get(titleKey).subscribe((title) => {
             this.titleService.setTitle(title);
         });
     }
 
-    private init () {
+    private init() {
         this.translateService.onTranslationChange.subscribe((event: TranslationChangeEvent) => {
             this.updateTitle();
         });
@@ -44,8 +44,7 @@ export class JhiLanguageHelper {
     }
 
     private getPageTitle(routeSnapshot: ActivatedRouteSnapshot) {
-        let title: string = (routeSnapshot.data && routeSnapshot.data['pageTitle']) ?
-                routeSnapshot.data['pageTitle'] : 'motorsportsDatabaseApp';
+        let title: string = (routeSnapshot.data && routeSnapshot.data['pageTitle']) ? routeSnapshot.data['pageTitle'] : 'motorsportsDatabaseApp';
         if (routeSnapshot.firstChild) {
             title = this.getPageTitle(routeSnapshot.firstChild) || title;
         }

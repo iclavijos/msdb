@@ -123,7 +123,7 @@ public class EventEditionResource {
      * @param eventEdition the eventEdition to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated eventEdition,
      * or with status 400 (Bad Request) if the eventEdition is not valid,
-     * or with status 500 (Internal Server Error) if the eventEdition couldnt be updated
+     * or with status 500 (Internal Server Error) if the eventEdition couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/event-editions")
@@ -155,8 +155,7 @@ public class EventEditionResource {
      */
     @GetMapping("/event-editions")
     @Timed
-    public ResponseEntity<List<EventEdition>> getAllEventEditions(@ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<EventEdition>> getAllEventEditions(@ApiParam Pageable pageable) {
         log.debug("REST request to get a page of EventEditions");
         Page<EventEdition> page = eventEditionRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/event-editions");
@@ -208,15 +207,13 @@ public class EventEditionResource {
      * SEARCH  /_search/event-editions?query=:query : search for the eventEdition corresponding
      * to the query.
      *
-     * @param query the query of the eventEdition search 
+     * @param query the query of the eventEdition search
      * @param pageable the pagination information
      * @return the result of the search
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/_search/event-editions")
     @Timed
-    public ResponseEntity<List<EventEdition>> searchEventEditions(@RequestParam String query, @ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<EventEdition>> searchEventEditions(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of EventEditions for query {}", query);
         Page<EventEdition> page = searchService.searchEventEditions(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/event-editions");

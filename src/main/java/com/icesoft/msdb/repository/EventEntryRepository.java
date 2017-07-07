@@ -3,15 +3,14 @@ package com.icesoft.msdb.repository;
 import com.icesoft.msdb.domain.EventEditionEntry;
 
 import org.springframework.data.jpa.repository.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
-import javax.persistence.NamedNativeQuery;
 
 /**
  * Spring Data JPA repository for the EventEntry entity.
  */
-@SuppressWarnings("unused")
+@Repository
 public interface EventEntryRepository extends JpaRepository<EventEditionEntry,Long> {
 
 	List<EventEditionEntry> findByEventEditionIdAndRaceNumber(Long eventEditionId, String raceNumber);

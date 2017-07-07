@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Response } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
-import { EventManager, ParseLinks, PaginationUtil, JhiLanguageService, AlertService } from 'ng-jhipster';
+import { JhiEventManager, JhiParseLinks, JhiPaginationUtil, JhiLanguageService, JhiAlertService } from 'ng-jhipster';
 
 import { EventSession } from './event-session.model';
 import { EventSessionService } from './event-session.service';
@@ -22,13 +22,12 @@ eventSessions: EventSession[];
     constructor(
         private jhiLanguageService: JhiLanguageService,
         private eventSessionService: EventSessionService,
-        private alertService: AlertService,
-        private eventManager: EventManager,
+        private alertService: JhiAlertService,
+        private eventManager: JhiEventManager,
         private activatedRoute: ActivatedRoute,
         private principal: Principal
     ) {
         this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
-        this.jhiLanguageService.setLocations(['eventSession']);
     }
 
     loadAll() {

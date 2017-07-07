@@ -18,7 +18,6 @@ export class PointsSystemDetailComponent implements OnInit, OnDestroy {
         private pointsSystemService: PointsSystemService,
         private route: ActivatedRoute
     ) {
-        this.jhiLanguageService.setLocations(['pointsSystem']);
     }
 
     ngOnInit() {

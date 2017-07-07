@@ -1,12 +1,9 @@
 import { ComponentFixture, TestBed, inject } from '@angular/core/testing';
-import { MockBackend } from '@angular/http/testing';
-import { Http, BaseRequestOptions } from '@angular/http';
 import { Renderer, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
-import { JhiLanguageService } from 'ng-jhipster';
-import { MockLanguageService } from '../../../../helpers/mock-language.service';
+import { MotorsportsDatabaseTestModule } from '../../../../test.module';
 import { PasswordResetInitComponent } from '../../../../../../../main/webapp/app/account/password-reset/init/password-reset-init.component';
-import { PasswordResetInit } from '../../../../../../../main/webapp/app/account/password-reset/init/password-reset-init.service';
+import { PasswordResetInitService } from '../../../../../../../main/webapp/app/account/password-reset/init/password-reset-init.service';
 
 
 describe('Component Tests', () => {
@@ -17,21 +14,10 @@ describe('Component Tests', () => {
 
         beforeEach(() => {
             fixture = TestBed.configureTestingModule({
+                imports: [MotorsportsDatabaseTestModule],
                 declarations: [PasswordResetInitComponent],
-                providers: [MockBackend,
-                    PasswordResetInit,
-                    BaseRequestOptions,
-                    {
-                        provide: Http,
-                        useFactory: (backendInstance: MockBackend, defaultOptions: BaseRequestOptions) => {
-                            return new Http(backendInstance, defaultOptions);
-                        },
-                        deps: [MockBackend, BaseRequestOptions]
-                    },
-                    {
-                        provide: JhiLanguageService,
-                        useClass: MockLanguageService
-                    },
+                providers: [
+                    PasswordResetInitService,
                     {
                         provide: Renderer,
                         useValue: {
@@ -43,11 +29,8 @@ describe('Component Tests', () => {
                         useValue: new ElementRef(null)
                     }
                 ]
-            }).overrideComponent(PasswordResetInitComponent, {
-                set: {
-                    template: ''
-                }
-            }).createComponent(PasswordResetInitComponent);
+            }).overrideTemplate(PasswordResetInitComponent, '')
+            .createComponent(PasswordResetInitComponent);
             comp = fixture.componentInstance;
             comp.ngOnInit();
         });
@@ -78,7 +61,7 @@ describe('Component Tests', () => {
         );
 
         it('notifies of success upon successful requestReset',
-            inject([PasswordResetInit], (service: PasswordResetInit) => {
+            inject([PasswordResetInitService], (service: PasswordResetInitService) => {
                 spyOn(service, 'save').and.returnValue(Observable.of({}));
                 comp.resetAccount.email = 'user@domain.com';
 
@@ -91,11 +74,11 @@ describe('Component Tests', () => {
             })
         );
 
-        it('notifies of unknown email upon e-mail address not registered/400',
-            inject([PasswordResetInit], (service: PasswordResetInit) => {
+        it('notifies of unknown email upon email address not registered/400',
+            inject([PasswordResetInitService], (service: PasswordResetInitService) => {
                 spyOn(service, 'save').and.returnValue(Observable.throw({
                     status: 400,
-                    data: 'e-mail address not registered'
+                    data: 'email address not registered'
                 }));
                 comp.resetAccount.email = 'user@domain.com';
 
@@ -109,7 +92,7 @@ describe('Component Tests', () => {
         );
 
         it('notifies of error upon error response',
-            inject([PasswordResetInit], (service: PasswordResetInit) => {
+            inject([PasswordResetInitService], (service: PasswordResetInitService) => {
                 spyOn(service, 'save').and.returnValue(Observable.throw({
                     status: 503,
                     data: 'something else'

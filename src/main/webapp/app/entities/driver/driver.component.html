@@ -11,10 +11,10 @@
     </h2>
     <jhi-alert></jhi-alert>
     <div class="row">
-        <div class="col-sm-12 no-padding-right">
+        <div class="col-sm-12">
             <form name="searchForm" class="form-inline">
                 <div class="input-group w-100 mt-3">
-                	<input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.driver.home.search' | translate }}">
+                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.driver.home.search' | translate }}">
                     <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
                         <span class="fa fa-search"></span>
                     </button>
@@ -42,7 +42,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let driver of drivers ;trackBy: trackId">
+            <tr *ngFor="let driver of drivers; trackBy: trackId">
             	<td><img *ngIf="driver?.nationality" src="/images/flags/{{driver?.nationality}}.png"/></td>
                 <td>{{driver.name}}</td>
                 <td>{{driver.surname}}</td>

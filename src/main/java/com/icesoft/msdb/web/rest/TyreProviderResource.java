@@ -46,7 +46,7 @@ public class TyreProviderResource {
     private final Logger log = LoggerFactory.getLogger(TyreProviderResource.class);
 
     private static final String ENTITY_NAME = "tyreProvider";
-        
+
     private final TyreProviderRepository tyreProviderRepository;
     
     private final CDNService cdnService;
@@ -91,7 +91,7 @@ public class TyreProviderResource {
      * @param tyreProvider the tyreProvider to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated tyreProvider,
      * or with status 400 (Bad Request) if the tyreProvider is not valid,
-     * or with status 500 (Internal Server Error) if the tyreProvider couldnt be updated
+     * or with status 500 (Internal Server Error) if the tyreProvider couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/tyre-providers")
@@ -117,14 +117,13 @@ public class TyreProviderResource {
     /**
      * GET  /tyre-providers : get all the tyreProviders.
      *
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of tyreProviders in body
-     * @throws URISyntaxException 
      */
     @GetMapping("/tyre-providers")
     @Timed
-    public ResponseEntity<List<TyreProvider>> getAllTyreProviders(@ApiParam Pageable pageable) 
-    		throws URISyntaxException {
-        log.debug("REST request to get all TyreProviders");
+    public ResponseEntity<List<TyreProvider>> getAllTyreProviders(@ApiParam Pageable pageable) {
+        log.debug("REST request to get a page of TyreProviders");
         Page<TyreProvider> page = tyreProviderRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/tyre-providers");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
@@ -164,13 +163,13 @@ public class TyreProviderResource {
      * SEARCH  /_search/tyre-providers?query=:query : search for the tyreProvider corresponding
      * to the query.
      *
-     * @param query the query of the tyreProvider search 
+     * @param query the query of the tyreProvider search
+     * @param pageable the pagination information
      * @return the result of the search
      */
     @GetMapping("/_search/tyre-providers")
     @Timed
-    public ResponseEntity<List<TyreProvider>> searchTyreProviders(@RequestParam String query, @ApiParam Pageable pageable)
-            throws URISyntaxException {
+    public ResponseEntity<List<TyreProvider>> searchTyreProviders(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of TyreProviders for query {}", query);
         Page<TyreProvider> page = tyreProviderRepository.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/tyre-providers");

@@ -2,14 +2,17 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
+import { Observable } from 'rxjs/Rx';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { Chassis } from './chassis.model';
 import { ChassisPopupService } from './chassis-popup.service';
 import { ChassisService } from './chassis.service';
 
 import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
+
+import { ResponseWrapper } from '../../shared';
 
 @Component({
     selector: 'jhi-chassis-dialog',
@@ -23,70 +26,67 @@ export class ChassisDialogComponent implements OnInit {
     private derivedFromSearch: string;
     protected dataService: CompleterData;
 
+    chassisCollection: Chassis[];
+
     constructor(
         public activeModal: NgbActiveModal,
-        private jhiLanguageService: JhiLanguageService,
-        private dataUtils: DataUtils,
-        private alertService: AlertService,
+        private alertService: JhiAlertService,
         private chassisService: ChassisService,
-        private eventManager: EventManager,
+        private eventManager: JhiEventManager,
         private completerService: CompleterService
     ) {
-        this.jhiLanguageService.setLocations(['chassis']);
         this.dataService = completerService.remote('api/_search/chassis?query=', null, 'name').descriptionField("manufacturer");
     }
 
     ngOnInit() {
         this.isSaving = false;
         this.authorities = ['ROLE_EDITOR', 'ROLE_ADMIN'];
-        if (this.chassis.derivedFrom) {
-            this.derivedFromSearch = this.chassis.manufacturer + ' ' + this.chassis.name;
-        }
+        this.chassisService.query()
+            .subscribe((res: ResponseWrapper) => { this.chassisCollection = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
     }
-    clear () {
+
+    clear() {
         this.activeModal.dismiss('cancel');
     }
-    
-    openFile(contentType, field) {
-        return this.dataUtils.openFile(contentType, field);
-    }
-    
-    setFileData($event, chassis, field, isImage) {
-        if ($event.target.files && $event.target.files[0]) {
-            let $file = $event.target.files[0];
-            if (isImage && !/^image\//.test($file.type)) {
-                return;
-            }
-            this.dataUtils.toBase64($file, (base64Data) => {
-                chassis[field] = base64Data;
-                chassis[`${field}ContentType`] = $file.type;
-            });
-        }
-    }
 
-    save () {
+    save() {
         this.isSaving = true;
         if (this.chassis.id !== undefined) {
-            this.chassisService.update(this.chassis)
-                .subscribe((res: Chassis) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.chassisService.update(this.chassis), false);
         } else {
-            this.chassisService.create(this.chassis)
-                .subscribe((res: Chassis) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.chassisService.create(this.chassis), true);
         }
     }
 
-    private onSaveSuccess (result: Chassis) {
+    private subscribeToSaveResponse(result: Observable<Chassis>, isCreated: boolean) {
+        result.subscribe((res: Chassis) =>
+            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+    }
+
+    private onSaveSuccess(result: Chassis, isCreated: boolean) {
+        this.alertService.success(
+            isCreated ? 'motorsportsDatabaseApp.chassis.created'
+            : 'motorsportsDatabaseApp.chassis.updated',
+            { param : result.id }, null);
+
         this.eventManager.broadcast({ name: 'chassisListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError (error) {
+    private onSaveError(error) {
+        try {
+            error.json();
+        } catch (exception) {
+            error.message = error.text();
+        }
         this.isSaving = false;
         this.onError(error);
     }
 
-    private onError (error) {
+    private onError(error) {
         this.alertService.error(error.message, null, null);
     }
 
@@ -114,13 +114,13 @@ export class ChassisPopupComponent implements OnInit, OnDestroy {
     modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private chassisPopupService: ChassisPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
+        this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
                 this.modalRef = this.chassisPopupService
                     .open(ChassisDialogComponent, params['id']);
@@ -128,7 +128,6 @@ export class ChassisPopupComponent implements OnInit, OnDestroy {
                 this.modalRef = this.chassisPopupService
                     .open(ChassisDialogComponent);
             }
-
         });
     }
 

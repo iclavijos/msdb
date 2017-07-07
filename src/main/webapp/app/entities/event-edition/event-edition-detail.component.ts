@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EventManager, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
 import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Rx';
 import { Engine } from '../engine';
@@ -35,11 +35,10 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         private jhiLanguageService: JhiLanguageService,
         private eventService: EventService,
         private eventEditionService: EventEditionService,
-        private eventManager: EventManager,
+        private eventManager: JhiEventManager,
         private route: ActivatedRoute,
         private router: Router,
     ) {
-        this.jhiLanguageService.setLocations(['event']);
     }
 
     ngOnInit() {

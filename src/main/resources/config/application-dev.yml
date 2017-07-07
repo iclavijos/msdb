@@ -34,21 +34,14 @@ spring:
         database: MYSQL
         show-sql: false
         properties:
-            hibernate:
-                id.new_generator_mappings: true
-                cache.use_second_level_cache: true
-                cache.use_query_cache: false
-                generate_statistics: true
-                javax.cache.provider: org.ehcache.jsr107.EhcacheCachingProvider
-                javax.cache.uri: ${spring.cache.jcache.config}
-                cache.region.factory_class: io.github.jhipster.config.jcache.SpringCacheRegionFactory
-                # Specify the DirectoryProvider to use (the Lucene Directory)
-                search.default.directory_provider: filesystem
-                search.default.indexBase: C:/Users/a581339/tmp/lucene/indexes
-        hibernate.ddl-auto: update
-    cache:
-        jcache:
-            config: config/ehcache/ehcache-dev.xml
+            hibernate.id.new_generator_mappings: true
+            hibernate.cache.use_second_level_cache: true
+            hibernate.cache.use_query_cache: false
+            hibernate.generate_statistics: true
+            hibernate.cache.region.factory_class: io.github.jhipster.config.jcache.NoDefaultJCacheRegionFactory
+            # Specify the DirectoryProvider to use (the Lucene Directory)
+            hibernate.search.default.directory_provider: filesystem
+            hibernate.search.default.indexBase: C:/Users/a581339/tmp/lucene/indexes
     data:
         mongodb:
             uri: mongodb://localhost:27017
@@ -95,6 +88,18 @@ server:
 jhipster:
     http:
         version: V_1_1 # To use HTTP/2 you will need SSL support (see above the "server.ssl" configuration)
+    cache: # Cache configuration
+        ehcache: # Ehcache configuration
+            time-to-live-seconds: 3600 # By default objects stay 1 hour in the cache
+            max-entries: 100 # Number of objects in each cache entry
+    # CORS is only enabled by default with the "dev" profile, so BrowserSync can access the API
+    cors:
+        allowed-origins: "*"
+        allowed-methods: GET, PUT, POST, DELETE, OPTIONS
+        allowed-headers: "*"
+        exposed-headers:
+        allow-credentials: true
+        max-age: 1800
     security:
         authentication:
             jwt:
@@ -117,7 +122,7 @@ jhipster:
             endpoint: /prometheusMetrics
         logs: # Reports Dropwizard metrics in the logs
             enabled: false
-            reportFrequency: 60 # in seconds
+            report-frequency: 60 # in seconds
     logging:
         logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
             enabled: false

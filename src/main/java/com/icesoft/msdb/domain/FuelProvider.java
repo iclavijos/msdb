@@ -99,24 +99,23 @@ public class FuelProvider extends AbstractAuditingEntity implements Serializable
             return false;
         }
         FuelProvider fuelProvider = (FuelProvider) o;
-        if (fuelProvider.id == null || id == null) {
+        if (fuelProvider.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, fuelProvider.id);
+        return Objects.equals(getId(), fuelProvider.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "FuelProvider{" +
-            "id=" + id +
-            ", name='" + name + "'" +
-            ", logo='" + logo + "'" +
-            ", logoUrl='" + logoUrl + "'" +
+            "id=" + getId() +
+            ", name='" + getName() + "'" +
+            ", logoUrl='" + getLogoUrl() + "'" +
             '}';
     }
 }

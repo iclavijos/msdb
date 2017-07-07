@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
 
 import { EventSession } from './event-session.model';
 import { EventSessionPopupService } from './event-session-popup.service';
@@ -20,7 +20,7 @@ export class EventSessionDeleteDialogComponent {
         private jhiLanguageService: JhiLanguageService,
         private eventSessionService: EventSessionService,
         public activeModal: NgbActiveModal,
-        private eventManager: EventManager
+        private eventManager: JhiEventManager
     ) {
         //this.jhiLanguageService.setLocations(['eventSession']);
     }

@@ -1,9 +1,9 @@
 package com.icesoft.msdb.service;
 
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
+import com.icesoft.msdb.domain.Authority;
+import com.icesoft.msdb.domain.User;
+import com.icesoft.msdb.repository.AuthorityRepository;
+import com.icesoft.msdb.repository.UserRepository;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,10 +19,10 @@ import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.stereotype.Service;
 
-import com.icesoft.msdb.domain.Authority;
-import com.icesoft.msdb.domain.User;
-import com.icesoft.msdb.repository.AuthorityRepository;
-import com.icesoft.msdb.repository.UserRepository;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class SocialService {
@@ -38,8 +38,6 @@ public class SocialService {
     private final UserRepository userRepository;
 
     private final MailService mailService;
-
-    //private final UserSearchRepository userSearchRepository;
 
     public SocialService(UsersConnectionRepository usersConnectionRepository, AuthorityRepository authorityRepository,
             PasswordEncoder passwordEncoder, UserRepository userRepository,
@@ -82,13 +80,13 @@ public class SocialService {
         }
         String providerId = connection.getKey().getProviderId();
         String imageUrl = connection.getImageUrl();
-        User user = createUserIfNotExist(userProfile, langKey, providerId, imageUrl, email);
+        User user = createUserIfNotExist(userProfile, langKey, providerId, imageUrl);
         createSocialConnection(user.getLogin(), connection);
         mailService.sendSocialRegistrationValidationEmail(user, providerId);
     }
 
-    private User createUserIfNotExist(UserProfile userProfile, String langKey, String providerId, String imageUrl, String email) {
-        //String email = userProfile.getEmail();
+    private User createUserIfNotExist(UserProfile userProfile, String langKey, String providerId, String imageUrl) {
+        String email = userProfile.getEmail();
         String userName = userProfile.getUsername();
         if (!StringUtils.isBlank(userName)) {
             userName = userName.toLowerCase(Locale.ENGLISH);

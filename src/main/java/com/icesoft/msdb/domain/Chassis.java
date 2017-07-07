@@ -203,26 +203,24 @@ public class Chassis extends AbstractAuditingEntity implements Serializable {
             return false;
         }
         Chassis chassis = (Chassis) o;
-        if (chassis.id == null || id == null) {
+        if (chassis.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, chassis.id);
+        return Objects.equals(getId(), chassis.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "Chassis{" +
-            "id=" + id +
-            ", name='" + name + "'" +
-            ", manufacturer='" + manufacturer + "'" +
-            ", debutYear='" + debutYear + "'" +
-            ", rebranded='" + rebranded + "'" +
-            ", imageUrl='" + imageUrl + "'" +
-            '}';
+            "id=" + getId() +
+            ", name='" + getName() + "'" +
+            ", manufacturer='" + getManufacturer() + "'" +
+            ", debutYear='" + getDebutYear() + "'" +
+            "}";
     }
 }

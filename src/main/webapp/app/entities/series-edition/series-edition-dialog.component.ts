@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
 
 import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
 
@@ -29,11 +29,11 @@ export class SeriesEditionDialogComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
-        private alertService: AlertService,
+        private alertService: JhiAlertService,
         private seriesEditionService: SeriesEditionService,
         private categoryService: CategoryService,
         private seriesService: SeriesService,
-        private eventManager: EventManager
+        private eventManager: JhiEventManager
     ) {
         //this.jhiLanguageService.setLocations(['seriesEdition']);
     }

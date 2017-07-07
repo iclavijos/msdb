@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 import { Ng2CompleterModule } from 'ng2-completer';
 
 import { MotorsportsDatabaseSharedModule } from '../../shared';
-
 import {
     ChassisService,
     ChassisPopupService,
@@ -19,7 +18,7 @@ import {
     ChassisResolvePagingParams,
 } from './';
 
-let ENTITY_STATES = [
+const ENTITY_STATES = [
     ...chassisRoute,
     ...chassisPopupRoute,
 ];

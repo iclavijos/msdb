@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { JhiLanguageService, DataUtils } from 'ng-jhipster';
+import { JhiLanguageService, JhiDataUtils } from 'ng-jhipster';
 import { Engine } from './engine.model';
 import { EngineService } from './engine.service';
 
@@ -15,11 +15,10 @@ export class EngineDetailComponent implements OnInit, OnDestroy {
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
-        private dataUtils: DataUtils,
+        private dataUtils: JhiDataUtils,
         private engineService: EngineService,
         private route: ActivatedRoute
     ) {
-        this.jhiLanguageService.setLocations(['engine']);
     }
 
     ngOnInit() {

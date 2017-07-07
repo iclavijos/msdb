@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
 
 import { EventEntryResult } from './event-entry-result.model';
 import { EventEntryResultPopupService } from './event-entry-result-popup.service';
@@ -20,7 +20,7 @@ export class EventEntryResultDeleteDialogComponent {
         private jhiLanguageService: JhiLanguageService,
         private eventEntryResultService: EventEntryResultService,
         public activeModal: NgbActiveModal,
-        private eventManager: EventManager
+        private eventManager: JhiEventManager
     ) {
         //this.jhiLanguageService.setLocations(['eventEntryResult']);
     }

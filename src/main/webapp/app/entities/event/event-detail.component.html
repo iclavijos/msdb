@@ -6,7 +6,7 @@
     
     <ngb-tabset>
 	  <ngb-tab title="Info">
-	    <template ngbTabContent>
+	    <ng-template ngbTabContent>
 		    <dl class="row-md jh-entity-details">
 		        <dt><span jhiTranslate="motorsportsDatabaseApp.event.name">Name</span></dt>
 		        <dd>
@@ -24,12 +24,12 @@
 		            class="btn btn-primary">
 		        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
 		    </button>
-		 </template>
+		 </ng-template>
 	  </ngb-tab>
 	  <ngb-tab title="Editions">
-	     <template ngbTabContent>
+	     <ng-template ngbTabContent>
 	     	<jhi-event-edition [event]="event">Event editions...</jhi-event-edition>
-	     </template>
+	     </ng-template>
 	  </ngb-tab>
 	</ngb-tabset>
 	 <button type="submit"

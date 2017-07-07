@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
 
 import { EventEdition } from './event-edition.model';
 import { EventEditionPopupService } from './event-edition-popup.service';
@@ -40,12 +40,12 @@ export class EventEditionDialogComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private jhiLanguageService: JhiLanguageService,
-        private alertService: AlertService,
+        private alertService: JhiAlertService,
         private eventEditionService: EventEditionService,
         private categoryService: CategoryService,
         private racetrackLayoutService: RacetrackLayoutService,
         private eventService: EventService,
-        private eventManager: EventManager,
+        private eventManager: JhiEventManager,
         private completerService: CompleterService
     ) {
         this.dataServiceLayout = completerService.remote('api/_typeahead/layouts?query=', null, 'fullName').imageField("layoutImg");

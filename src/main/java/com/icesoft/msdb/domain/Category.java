@@ -85,15 +85,15 @@ public class Category extends AbstractAuditingEntity implements Serializable {
             return false;
         }
         Category category = (Category) o;
-        if (category.id == null || id == null) {
+        if (category.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, category.id);
+        return Objects.equals(getId(), category.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override

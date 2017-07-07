@@ -239,26 +239,26 @@ public class EventEntryResult implements Serializable {
             return false;
         }
         EventEntryResult eventEntryResult = (EventEntryResult) o;
-        if (eventEntryResult.id == null || id == null) {
+        if (eventEntryResult.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, eventEntryResult.id);
+        return Objects.equals(getId(), eventEntryResult.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "EventEntryResult{" +
-            "id=" + id +
-            ", finalPosition='" + finalPosition + "'" +
-            ", totalTime='" + totalTime + "'" +
-            ", bestLapTime='" + bestLapTime + "'" +
-            ", lapsCompleted='" + lapsCompleted + "'" +
-            ", retired='" + retired + "'" +
-            '}';
+            "id=" + getId() +
+            ", finalPosition='" + getFinalPosition() + "'" +
+            ", totalTime='" + getTotalTime() + "'" +
+            ", bestLapTime='" + getBestLapTime() + "'" +
+            ", lapsCompleted='" + getLapsCompleted() + "'" +
+            ", retired='" + isRetired() + "'" +
+            "}";
     }
 }

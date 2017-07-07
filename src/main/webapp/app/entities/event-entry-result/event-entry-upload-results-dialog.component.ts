@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Response } from '@angular/http';
-import { EventManager, JhiLanguageService, AlertService, DataUtils } from 'ng-jhipster';
+import { JhiEventManager, JhiLanguageService, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { EventSession } from '../event-session';
 import { EventEntryResultPopupService } from '.';
@@ -20,10 +20,10 @@ export class EventEntryUploadResultsDialogComponent {
 
     constructor(
         public activeModal: NgbActiveModal,
-        private alertService: AlertService,
-        private dataUtils: DataUtils,
+        private alertService: JhiAlertService,
+        private dataUtils: JhiDataUtils,
         private importsService: ImportsService,
-        private eventManager: EventManager
+        private eventManager: JhiEventManager
     ) {
         this.imports = new Imports();
         this.imports.importType = 'SESSION_RESULTS';

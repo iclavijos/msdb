@@ -98,7 +98,7 @@ public class RacetrackResource {
      * @param racetrack the racetrack to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated racetrack,
      * or with status 400 (Bad Request) if the racetrack is not valid,
-     * or with status 500 (Internal Server Error) if the racetrack couldnt be updated
+     * or with status 500 (Internal Server Error) if the racetrack couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/racetracks")
@@ -124,12 +124,12 @@ public class RacetrackResource {
     /**
      * GET  /racetracks : get all the racetracks.
      *
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of racetracks in body
-     * @throws URISyntaxException 
      */
     @GetMapping("/racetracks")
     @Timed
-    public ResponseEntity<List<Racetrack>> getAllRacetracks(Pageable pageable) throws URISyntaxException {
+    public ResponseEntity<List<Racetrack>> getAllRacetracks(Pageable pageable) {
         log.debug("REST request to get all Racetracks");
         Page<Racetrack> page = racetrackService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/racetracks");
@@ -184,13 +184,13 @@ public class RacetrackResource {
      * SEARCH  /_search/racetracks?query=:query : search for the racetrack corresponding
      * to the query.
      *
-     * @param query the query of the racetrack search 
+     * @param query the query of the racetrack search
+     * @param pageable the pagination information
      * @return the result of the search
-     * @throws URISyntaxException 
      */
     @GetMapping("/_search/racetracks")
     @Timed
-    public ResponseEntity<List<Racetrack>> searchRacetracks(@RequestParam String query, @ApiParam Pageable pageable) throws URISyntaxException {
+    public ResponseEntity<List<Racetrack>> searchRacetracks(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search Racetracks for query {}", query);
         Page<Racetrack> page = racetrackService.search(query.toLowerCase(), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/racetracks");

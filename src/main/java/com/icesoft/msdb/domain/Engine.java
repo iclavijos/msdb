@@ -321,34 +321,31 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
             return false;
         }
         Engine engine = (Engine) o;
-        if (engine.id == null || id == null) {
+        if (engine.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, engine.id);
+        return Objects.equals(getId(), engine.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "Engine{" +
-            "id=" + id +
-            ", name='" + name + "'" +
-            ", manufacturer='" + manufacturer + "'" +
-            ", capacity='" + capacity + "'" +
-            ", architecture='" + architecture + "'" +
-            ", debutYear='" + debutYear + "'" +
-            ", petrolEngine='" + petrolEngine + "'" +
-            ", dieselEngine='" + dieselEngine + "'" +
-            ", electricEngine='" + electricEngine + "'" +
-            ", otherEngine='" + otherEngine + "'" +
-            ", turbo='" + turbo + "'" +
-            ", image='" + image + "'" +
-            ", imageUrl='" + imageUrl + "'" +
-            ", comments='" + comments + "'" +
-            '}';
+            "id=" + getId() +
+            ", name='" + getName() + "'" +
+            ", manufacturer='" + getManufacturer() + "'" +
+            ", capacity='" + getCapacity() + "'" +
+            ", architecture='" + getArchitecture() + "'" +
+            ", debutYear='" + getDebutYear() + "'" +
+            ", petrolEngine='" + isPetrolEngine() + "'" +
+            ", dieselEngine='" + isDieselEngine() + "'" +
+            ", electricEngine='" + isElectricEngine() + "'" +
+            ", turbo='" + isTurbo() + "'" +
+            ", comments='" + getComments() + "'" +
+            "}";
     }
 }

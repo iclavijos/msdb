@@ -164,12 +164,13 @@ public class EngineResource {
      * SEARCH  /_search/engines?query=:query : search for the engine corresponding
      * to the query.
      *
-     * @param query the query of the engine search 
+     * @param query the query of the engine search
+     * @param pageable the pagination information
      * @return the result of the search
      */
     @GetMapping("/_search/engines")
     @Timed
-    public ResponseEntity<List<Engine>> searchEngines(@RequestParam String query, @ApiParam Pageable pageable) throws URISyntaxException {
+    public ResponseEntity<List<Engine>> searchEngines(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Engines for query {}", query);
         Page<Engine> page = engineRepository.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/engines");

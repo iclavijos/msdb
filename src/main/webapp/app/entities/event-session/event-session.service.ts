@@ -3,7 +3,7 @@ import { Http, Response, URLSearchParams, BaseRequestOptions } from '@angular/ht
 import { Observable } from 'rxjs/Rx';
 
 import { EventSession } from './event-session.model';
-import { DateUtils } from 'ng-jhipster';
+import { JhiDateUtils } from 'ng-jhipster';
 
 import * as moment from 'moment-timezone';
 
@@ -13,7 +13,7 @@ export class EventSessionService {
     private resourceUrl = 'api/event-editions/event-sessions';
     private resourceSearchUrl = 'api/_search/event-sessions';
 
-    constructor(private http: Http, private dateUtils: DateUtils) { }
+    constructor(private http: Http, private dateUtils: JhiDateUtils) { }
 
     create(eventSession: EventSession): Observable<EventSession> {
         let copy: EventSession = Object.assign({}, eventSession);

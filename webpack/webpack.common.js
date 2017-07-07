@@ -4,11 +4,15 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const StringReplacePlugin = require('string-replace-webpack-plugin');
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
+const WebpackNotifierPlugin = require('webpack-notifier');
+const MergeJsonWebpackPlugin = require("merge-jsons-webpack-plugin")
 const path = require('path');
 
-module.exports = function (options) {
+const parseVersion = require('./utils.js').parseVersion;
+
+module.exports = (options) => {
     const DATAS = {
-        VERSION: JSON.stringify(require("../package.json").version),
+        VERSION: `'${parseVersion()}'`,
         DEBUG_INFO_ENABLED: options.env === 'dev'
     };
     return {
@@ -34,7 +38,14 @@ module.exports = function (options) {
                 },
                 {
                     test: /\.html$/,
-                    loader: 'raw-loader',
+                    loader: 'html-loader',
+                    options: {
+                        minimize: true,
+                        caseSensitive: true,
+                        removeAttributeQuotes:false,
+                        minifyJS:false,
+                        minifyCSS:false
+                    },
                     exclude: ['./src/main/webapp/index.html']
                 },
                 {
@@ -47,29 +58,19 @@ module.exports = function (options) {
                     loaders: ['style-loader', 'css-loader']
                 },
                 {
-                    test: /\.(jpe?g|png|gif|svg|woff|woff2|ttf|eot)$/i,
-                    loaders: [
-                        'file-loader?hash=sha512&digest=hex&name=[hash].[ext]', {
-                            loader: 'image-webpack-loader',
-                            query: {
-                                gifsicle: {
-                                    interlaced: false
-                                },
-                                optipng: {
-                                    optimizationLevel: 7
-                                }
-                            }
-                        }
-                    ]
+                    test: /\.(jpe?g|png|gif|svg|woff2?|ttf|eot)$/i,
+                    loaders: ['file-loader?hash=sha512&digest=hex&name=content/[hash].[ext]']
+                },
+                {
+                    test: /manifest.webapp$/,
+                    loader: 'file-loader?name=manifest.webapp!web-app-manifest-loader'
                 },
                 {
                     test: /app.constants.ts$/,
                     loader: StringReplacePlugin.replace({
                         replacements: [{
                             pattern: /\/\* @toreplace (\w*?) \*\//ig,
-                            replacement: function (match, p1, offset, string) {
-                                return `_${p1} = ${DATAS[p1]};`;
-                            }
+                            replacement: (match, p1, offset, string) => `_${p1} = ${DATAS[p1]};`
                         }]
                     })
                 }
@@ -81,19 +82,31 @@ module.exports = function (options) {
             }),
             new webpack.DllReferencePlugin({
                 context: './',
-                manifest: require(path.resolve('./build/www/vendor.json')),
+                manifest: require(path.resolve('./build/www/vendor.json'))
             }),
             new CopyWebpackPlugin([
+                { from: './node_modules/core-js/client/shim.min.js', to: 'core-js-shim.min.js' },
                 { from: './node_modules/swagger-ui/dist', to: 'swagger-ui/dist' },
                 { from: './src/main/webapp/swagger-ui/', to: 'swagger-ui' },
                 { from: './src/main/webapp/favicon.ico', to: 'favicon.ico' },
+                { from: './src/main/webapp/manifest.webapp', to: 'manifest.webapp' },
+                // { from: './src/main/webapp/sw.js', to: 'sw.js' },
                 { from: './src/main/webapp/robots.txt', to: 'robots.txt' },
-                { from: './src/main/webapp/i18n', to: 'i18n' },
                 { from: './src/main/webapp/content/images', to: 'images'}
             ]),
             new webpack.ProvidePlugin({
                 $: "jquery",
                 jQuery: "jquery"
+            }),
+            new MergeJsonWebpackPlugin({
+                output: {
+                    groupBy: [
+                        { pattern: "./src/main/webapp/i18n/en/*.json", fileName: "./build/www/i18n/en.json" },
+                        { pattern: "./src/main/webapp/i18n/ca/*.json", fileName: "./build/www/i18n/ca.json" },
+                        { pattern: "./src/main/webapp/i18n/es/*.json", fileName: "./build/www/i18n/es.json" }
+                        // jhipster-needle-i18n-language-webpack - JHipster will add/remove languages in this array
+                    ]
+                }
             }),
             new HtmlWebpackPlugin({
                 template: './src/main/webapp/index.html',
@@ -103,7 +116,11 @@ module.exports = function (options) {
             new AddAssetHtmlPlugin([
                 { filepath: path.resolve('./build/www/vendor.dll.js'), includeSourcemap: false }
             ]),
-            new StringReplacePlugin()
+            new StringReplacePlugin(),
+            new WebpackNotifierPlugin({
+                title: 'JHipster',
+                contentImage: path.join(__dirname, 'logo-jhipster.png')
+            })
         ]
     };
 };

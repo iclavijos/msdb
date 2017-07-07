@@ -190,28 +190,28 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
             return false;
         }
         PointsSystem pointsSystem = (PointsSystem) o;
-        if (pointsSystem.id == null || id == null) {
+        if (pointsSystem.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, pointsSystem.id);
+        return Objects.equals(getId(), pointsSystem.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "PointsSystem{" +
-            "id=" + id +
-            ", name='" + name + "'" +
-            ", description='" + description + "'" +
-            ", points='" + points + "'" +
-            ", pointsMostLeadLaps='" + pointsMostLeadLaps + "'" +
-            ", pointsFastLap='" + pointsFastLap + "'" +
-            ", pointsPole='" + pointsPole + "'" +
-            ", pointsLeadLap='" + pointsLeadLap + "'" +
-            '}';
+            "id=" + getId() +
+            ", name='" + getName() + "'" +
+            ", description='" + getDescription() + "'" +
+            ", points='" + getPoints() + "'" +
+            ", pointsMostLeadLaps='" + getPointsMostLeadLaps() + "'" +
+            ", pointsFastLap='" + getPointsFastLap() + "'" +
+            ", pointsPole='" + getPointsPole() + "'" +
+            ", pointsLeadLap='" + getPointsLeadLap() + "'" +
+            "}";
     }
 }

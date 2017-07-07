@@ -1,17 +1,16 @@
 package com.icesoft.msdb.repository;
 
-import com.icesoft.msdb.domain.PointsSystem;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.icesoft.msdb.domain.PointsSystem;
 
 /**
  * Spring Data JPA repository for the PointsSystem entity.
  */
-@SuppressWarnings("unused")
+@Repository
 public interface PointsSystemRepository extends JpaRepository<PointsSystem,Long> {
 	
 	Page<PointsSystem> findByOrderByNameAsc(Pageable pageable);

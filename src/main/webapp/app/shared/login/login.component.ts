@@ -1,9 +1,9 @@
-import { Component, OnInit, AfterViewInit, Renderer, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, Renderer, ElementRef } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
-import { JhiLanguageService, EventManager } from 'ng-jhipster';
+import { JhiEventManager } from 'ng-jhipster';
 
-import { LoginService } from '../login/login.service';
+import { LoginService } from './login.service';
 import { StateStorageService } from '../auth/state-storage.service';
 import { SocialService } from '../social/social.service';
 
@@ -11,7 +11,7 @@ import { SocialService } from '../social/social.service';
     selector: 'jhi-login-modal',
     templateUrl: './login.component.html'
 })
-export class JhiLoginModalComponent implements OnInit, AfterViewInit {
+export class JhiLoginModalComponent implements AfterViewInit {
     authenticationError: boolean;
     password: string;
     rememberMe: boolean;
@@ -19,8 +19,7 @@ export class JhiLoginModalComponent implements OnInit, AfterViewInit {
     credentials: any;
 
     constructor(
-        private eventManager: EventManager,
-        private languageService: JhiLanguageService,
+        private eventManager: JhiEventManager,
         private loginService: LoginService,
         private stateStorageService: StateStorageService,
         private elementRef: ElementRef,
@@ -32,15 +31,11 @@ export class JhiLoginModalComponent implements OnInit, AfterViewInit {
         this.credentials = {};
     }
 
-    ngOnInit() {
-        this.languageService.addLocation('login');
-    }
-
     ngAfterViewInit() {
         this.renderer.invokeElementMethod(this.elementRef.nativeElement.querySelector('#username'), 'focus', []);
     }
 
-    cancel () {
+    cancel() {
         this.credentials = {
             username: null,
             password: null,
@@ -50,7 +45,7 @@ export class JhiLoginModalComponent implements OnInit, AfterViewInit {
         this.activeModal.dismiss('cancel');
     }
 
-    login () {
+    login() {
         this.loginService.login({
             username: this.username,
             password: this.password,
@@ -58,7 +53,7 @@ export class JhiLoginModalComponent implements OnInit, AfterViewInit {
         }).then(() => {
             this.authenticationError = false;
             this.activeModal.dismiss('login success');
-            if (this.router.url === '/register' || this.router.url === '/activate' ||
+            if (this.router.url === '/register' || (/activate/.test(this.router.url)) ||
                 this.router.url === '/finishReset' || this.router.url === '/requestReset') {
                 this.router.navigate(['']);
             }
@@ -70,24 +65,21 @@ export class JhiLoginModalComponent implements OnInit, AfterViewInit {
 
             // // previousState was set in the authExpiredInterceptor before being redirected to login modal.
             // // since login is succesful, go to stored previousState and clear previousState
-            let previousState = this.stateStorageService.getPreviousState();
-            if (previousState) {
-                this.stateStorageService.resetPreviousState();
-                this.router.navigate([previousState.name], { queryParams:  previousState.params });
-            } else {
-                this.router.navigate(['/']);
+            const redirect = this.stateStorageService.getUrl();
+            if (redirect) {
+                this.router.navigate([redirect]);
             }
         }).catch(() => {
             this.authenticationError = true;
         });
     }
 
-    register () {
+    register() {
         this.activeModal.dismiss('to state register');
         this.router.navigate(['/register']);
     }
 
-    requestResetPassword () {
+    requestResetPassword() {
         this.activeModal.dismiss('to state requestReset');
         this.router.navigate(['/reset', 'request']);
     }

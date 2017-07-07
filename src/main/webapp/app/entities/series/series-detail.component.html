@@ -6,7 +6,7 @@
     
     <ngb-tabset>
 	  <ngb-tab title="{{'motorsportsDatabaseApp.series.seriesEdition.detail.info' | translate}}">
-	    <template ngbTabContent>
+	    <ng-template ngbTabContent>
 	      <dl class="row-md jh-entity-details">
 	        <dt><span jhiTranslate="motorsportsDatabaseApp.series.name">Name</span></dt>
 	        <dd>
@@ -32,12 +32,12 @@
 		        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
 		    </button>
 	    </dl>
-	    </template>
+	    </ng-template>
 	  </ngb-tab>
 	  <ngb-tab title="{{'motorsportsDatabaseApp.series.seriesEdition.detail.editions' | translate}}">
-	  	<template ngbTabContent>
+	  	<ng-template ngbTabContent>
 	  		<jhi-series-edition [series]="series">Editions...</jhi-series-edition>
-	  	</template>
+	  	</ng-template>
 	  </ngb-tab>
 	</ngb-tabset>
 	<!-- button type="submit"

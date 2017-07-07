@@ -166,27 +166,26 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
             return false;
         }
         RacetrackLayout racetrackLayout = (RacetrackLayout) o;
-        if (racetrackLayout.id == null || id == null) {
+        if (racetrackLayout.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, racetrackLayout.id);
+        return Objects.equals(getId(), racetrackLayout.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "RacetrackLayout{" +
-            "id=" + id +
-            ", name='" + name + "'" +
-            ", length='" + length + "'" +
-            ", yearFirstUse='" + yearFirstUse + "'" +
-            ", layoutImage='" + layoutImage + "'" +
-            ", layoutImageUrl='" + layoutImageUrl + "'" +
-            ", active='" + active + "'" +
+            "id=" + getId() +
+            ", name='" + getName() + "'" +
+            ", length='" + getLength() + "'" +
+            ", yearFirstUse='" + getYearFirstUse() + "'" +
+            ", layoutImageUrl='" + getLayoutImageUrl() + "'" +
+            ", active='" + isActive() + "'" +
             '}';
     }
 }

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, JhiLanguageService } from 'ng-jhipster';
+import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
 
 import { Chassis } from './chassis.model';
 import { ChassisPopupService } from './chassis-popup.service';
@@ -17,26 +17,26 @@ export class ChassisDeleteDialogComponent {
     chassis: Chassis;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
         private chassisService: ChassisService,
         public activeModal: NgbActiveModal,
-        private eventManager: EventManager
+        private alertService: JhiAlertService,
+        private eventManager: JhiEventManager
     ) {
-        this.jhiLanguageService.setLocations(['chassis']);
     }
 
-    clear () {
+    clear() {
         this.activeModal.dismiss('cancel');
     }
 
-    confirmDelete (id: number) {
-        this.chassisService.delete(id).subscribe(response => {
+    confirmDelete(id: number) {
+        this.chassisService.delete(id).subscribe((response) => {
             this.eventManager.broadcast({
                 name: 'chassisListModification',
                 content: 'Deleted an chassis'
             });
             this.activeModal.dismiss(true);
         });
+        this.alertService.success('motorsportsDatabaseApp.chassis.deleted', { param : id }, null);
     }
 }
 
@@ -49,13 +49,13 @@ export class ChassisDeletePopupComponent implements OnInit, OnDestroy {
     modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private chassisPopupService: ChassisPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
+        this.routeSub = this.route.params.subscribe((params) => {
             this.modalRef = this.chassisPopupService
                 .open(ChassisDeleteDialogComponent, params['id']);
         });

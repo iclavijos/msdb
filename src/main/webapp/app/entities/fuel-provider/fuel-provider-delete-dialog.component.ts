@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
 
 import { FuelProvider } from './fuel-provider.model';
 import { FuelProviderPopupService } from './fuel-provider-popup.service';
@@ -20,9 +20,8 @@ export class FuelProviderDeleteDialogComponent {
         private jhiLanguageService: JhiLanguageService,
         private fuelProviderService: FuelProviderService,
         public activeModal: NgbActiveModal,
-        private eventManager: EventManager
+        private eventManager: JhiEventManager
     ) {
-        this.jhiLanguageService.setLocations(['fuelProvider']);
     }
 
     clear () {

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
 
 import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
 
@@ -25,7 +25,7 @@ export class EventEditionCopyEntriesDialogComponent {
         private jhiLanguageService: JhiLanguageService,
         private eventEditionService: EventEditionService,
         public activeModal: NgbActiveModal,
-        private eventManager: EventManager,
+        private eventManager: JhiEventManager,
         private completerService: CompleterService
     ) {
         this.dataServiceEventEdition = completerService.remote('api/_search/event-editions?query=', null, 'longEventName');

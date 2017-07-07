@@ -1,11 +1,12 @@
-'use strict';
-
 const path = require('path');
 const webpack = require('webpack');
-const WATCH = process.argv.indexOf('--watch') > -1;
-const LoaderOptionsPlugin = require("webpack/lib/LoaderOptionsPlugin");
+const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 
-module.exports = function (config) {
+const WATCH = process.argv.indexOf('--watch') > -1;
+
+const root = __path => path.join(__dirname, __path);
+
+module.exports = (config) => {
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -13,7 +14,7 @@ module.exports = function (config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['jasmine'],
+        frameworks: ['jasmine', 'intl-shim'],
 
         // list of files / patterns to load in the browser
         files: [
@@ -54,7 +55,11 @@ module.exports = function (config) {
                         loaders: ['file?name=[name].[hash].[ext]', 'extract']
                     },
                     {
-                        test: /src\/main\/webapp\/.+\.ts$/,
+                        test: /\.(jpe?g|png|gif|svg|woff2?|ttf|eot)$/i,
+                        loaders: ['file-loader?hash=sha512&digest=hex&name=[hash].[ext]']
+                    },
+                    {
+                        test: /src[/|\\]main[/|\\]webapp[/|\\].+\.ts$/,
                         enforce: 'post',
                         exclude: /(test|node_modules)/,
                         loader: 'sourcemap-istanbul-instrumenter-loader?force-sourcemap=true'
@@ -81,11 +86,17 @@ module.exports = function (config) {
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['dots', 'junit', 'progress', 'coverage', 'karma-remap-istanbul'],
+        reporters: ['dots', 'junit', 'progress', 'karma-remap-istanbul', 'notify'],
 
         junitReporter: {
             outputFile: '../../../../build/test-results/karma/TESTS-results.xml'
         },
+
+        notifyReporter: {
+            reportEachFailure: true, // Default: false, will notify on every failed sepc
+            reportSuccess: true // Default: true, will notify when a suite was successful
+        },
+
 
         remapIstanbulReporter: {
             reports: { // eslint-disable-line
@@ -111,12 +122,13 @@ module.exports = function (config) {
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: ['PhantomJS'],
 
+        // Ensure all browsers can run tests written in .ts files
+        mime: {
+            'text/x-typescript': ['ts','tsx']
+        },
+
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: !WATCH
     });
 };
-
-function root(__path) {
-    return path.join(__dirname, __path);
-}

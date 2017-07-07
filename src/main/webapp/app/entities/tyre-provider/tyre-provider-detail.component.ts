@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { JhiLanguageService, DataUtils } from 'ng-jhipster';
+import { Subscription } from 'rxjs/Rx';
+import { JhiEventManager , JhiDataUtils } from 'ng-jhipster';
+
 import { TyreProvider } from './tyre-provider.model';
 import { TyreProviderService } from './tyre-provider.service';
 
@@ -11,25 +13,26 @@ import { TyreProviderService } from './tyre-provider.service';
 export class TyreProviderDetailComponent implements OnInit, OnDestroy {
 
     tyreProvider: TyreProvider;
-    private subscription: any;
+    private subscription: Subscription;
+    private eventSubscriber: Subscription;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
-        private dataUtils: DataUtils,
+        private eventManager: JhiEventManager,
+        private dataUtils: JhiDataUtils,
         private tyreProviderService: TyreProviderService,
         private route: ActivatedRoute
     ) {
-        this.jhiLanguageService.setLocations(['tyreProvider']);
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe(params => {
+        this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
         });
+        this.registerChangeInTyreProviders();
     }
 
-    load (id) {
-        this.tyreProviderService.find(id).subscribe(tyreProvider => {
+    load(id) {
+        this.tyreProviderService.find(id).subscribe((tyreProvider) => {
             this.tyreProvider = tyreProvider;
         });
     }
@@ -46,6 +49,13 @@ export class TyreProviderDetailComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
+        this.eventManager.destroy(this.eventSubscriber);
     }
 
+    registerChangeInTyreProviders() {
+        this.eventSubscriber = this.eventManager.subscribe(
+            'tyreProviderListModification',
+            (response) => this.load(this.tyreProvider.id)
+        );
+    }
 }

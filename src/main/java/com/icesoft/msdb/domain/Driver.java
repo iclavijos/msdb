@@ -212,6 +212,7 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     	return tmp.replace("upload/", "upload/w_70,h_70,c_thumb,g_face/");
     }
     
+    @JsonProperty
     public int getAge() {
     	if (birthDate == null) return 0;
     	
@@ -228,28 +229,27 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
             return false;
         }
         Driver driver = (Driver) o;
-        if (driver.id == null || id == null) {
+        if (driver.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, driver.id);
+        return Objects.equals(getId(), driver.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "Driver{" +
-            "id=" + id +
-            ", name='" + name + "'" +
-            ", surname='" + surname + "'" +
-            ", birthDate='" + birthDate + "'" +
-            ", birthPlace='" + birthPlace + "'" +
-            ", deathDate='" + deathDate + "'" +
-            ", deathPlace='" + deathPlace + "'" +
-            ", portrait='" + portrait + "'" +
-            '}';
+            "id=" + getId() +
+            ", name='" + getName() + "'" +
+            ", surname='" + getSurname() + "'" +
+            ", birthDate='" + getBirthDate() + "'" +
+            ", birthPlace='" + getBirthPlace() + "'" +
+            ", deathDate='" + getDeathDate() + "'" +
+            ", deathPlace='" + getDeathPlace() + "'" +
+            "}";
     }
 }

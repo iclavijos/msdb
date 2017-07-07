@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 import { Ng2CompleterModule } from 'ng2-completer';
 
 import { MotorsportsDatabaseSharedModule } from '../../shared';
-
 import {
     DriverService,
     DriverPopupService,
@@ -19,7 +18,7 @@ import {
     DriverResolvePagingParams,
 } from './';
 
-let ENTITY_STATES = [
+const ENTITY_STATES = [
     ...driverRoute,
     ...driverPopupRoute,
 ];
@@ -28,7 +27,7 @@ let ENTITY_STATES = [
     imports: [
         Ng2CompleterModule,
         MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true }),
+        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
     ],
     declarations: [
         DriverComponent,

@@ -2,7 +2,6 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { MotorsportsDatabaseSharedModule } from '../../shared';
-
 import {
     CategoryService,
     CategoryPopupService,
@@ -17,7 +16,7 @@ import {
     CategoryResolvePagingParams,
 } from './';
 
-let ENTITY_STATES = [
+const ENTITY_STATES = [
     ...categoryRoute,
     ...categoryPopupRoute,
 ];

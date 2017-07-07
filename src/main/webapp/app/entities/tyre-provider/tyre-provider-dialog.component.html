@@ -1,5 +1,3 @@
-
-
 <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
 
     <div class="modal-header">
@@ -12,8 +10,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.tyreProvider.name" for="field_name">Name</label>
             <input type="text" class="form-control" name="name" id="field_name"
-                [(ngModel)]="tyreProvider.name"
-            required maxlength="50" />
+                [(ngModel)]="tyreProvider.name" required maxlength="50" />
             <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.name?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.name?.errors?.required" jhiTranslate="entity.validation.required">
@@ -31,16 +28,15 @@
                 <img [src]="tyreProvider.logoUrl" style="max-height: 100px;" *ngIf="!tyreProvider.logo && tyreProvider.logoUrl" alt="tyre provider logo"/>
                 <img [src]="'data:' + tyreProvider.logoContentType + ';base64,' + tyreProvider.logo" style="max-height: 100px;" *ngIf="tyreProvider.logo" alt="tyre provider logo"/>
                 <div *ngIf="tyreProvider.logoUrl || tyreProvider.logo" class="form-text text-danger clearfix">
-                    <button type="button" (click)="tyreProvider.logoUrl=null; tyreProvider.logo=null;"
+                    <button type="button" (click)="tyreProvider.logoUrl=null;clearInputImage('logo', 'logoContentType', 'fileImage');"
                             class="btn btn-default btn-xs pull-right">
                         <span class="fa fa-times"></span>
                     </button>
                 </div>
-                <input type="file" (change)="setFileData($event, tyreProvider, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                <input type="file" id="fileImage" (change)="setFileData($event, tyreProvider, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
             </div>
             <input type="hidden" class="form-control" name="logo" id="field_logo"
-                [(ngModel)]="tyreProvider.logo"
-             />
+                [(ngModel)]="tyreProvider.logo"  />
             <input type="hidden" class="form-control" name="logoContentType" id="field_logoContentType"
                 [(ngModel)]="tyreProvider.logoContentType" />
         </div>

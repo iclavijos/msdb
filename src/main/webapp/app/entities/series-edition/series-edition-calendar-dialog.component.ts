@@ -4,7 +4,7 @@ import { FormGroup, FormArray, FormBuilder, FormControl, Validators } from '@ang
 import { Response } from '@angular/http';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
 
 import { EventEdition, EventEditionService } from '../event-edition/';
 import { EventSession } from '../event-session/';
@@ -33,9 +33,9 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
         private _fb: FormBuilder,
         private seriesEditionService: SeriesEditionService,
         private eventEditionService: EventEditionService,
-        private alertService: AlertService,
+        private alertService: JhiAlertService,
         public activeModal: NgbActiveModal,
-        private eventManager: EventManager,
+        private eventManager: JhiEventManager,
         private completerService: CompleterService,
     ) {
         this.dataService = completerService.remote('/api/_search/event-editions?query=', null, 'longEventName');

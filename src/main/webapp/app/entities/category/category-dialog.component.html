@@ -1,5 +1,3 @@
-
-
 <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
 
     <div class="modal-header">
@@ -12,8 +10,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.category.name" for="field_name">Name</label>
             <input type="text" class="form-control" name="name" id="field_name"
-                [(ngModel)]="category.name"
-            required maxlength="40" />
+                [(ngModel)]="category.name" required maxlength="40" />
             <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.name?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.name?.errors?.required" jhiTranslate="entity.validation.required">
@@ -28,8 +25,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.category.shortname" for="field_shortname">Shortname</label>
             <input type="text" class="form-control" name="shortname" id="field_shortname"
-                [(ngModel)]="category.shortname"
-            required maxlength="10" />
+                [(ngModel)]="category.shortname" required maxlength="10" />
             <div [hidden]="!(editForm.controls.shortname?.dirty && editForm.controls.shortname?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.shortname?.errors?.required" jhiTranslate="entity.validation.required">

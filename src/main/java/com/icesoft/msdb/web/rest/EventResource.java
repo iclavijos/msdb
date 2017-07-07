@@ -83,7 +83,7 @@ public class EventResource {
      * @param event the event to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated event,
      * or with status 400 (Bad Request) if the event is not valid,
-     * or with status 500 (Internal Server Error) if the event couldnt be updated
+     * or with status 500 (Internal Server Error) if the event couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/events")
@@ -106,12 +106,10 @@ public class EventResource {
      *
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of events in body
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/events")
     @Timed
-    public ResponseEntity<List<Event>> getAllEvents(@ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<Event>> getAllEvents(@ApiParam Pageable pageable) {
         log.debug("REST request to get a page of Events");
         Page<Event> page = eventService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/events");
@@ -152,15 +150,13 @@ public class EventResource {
      * SEARCH  /_search/events?query=:query : search for the event corresponding
      * to the query.
      *
-     * @param query the query of the event search 
+     * @param query the query of the event search
      * @param pageable the pagination information
      * @return the result of the search
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/_search/events")
     @Timed
-    public ResponseEntity<List<Event>> searchEvents(@RequestParam String query, @ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<Event>> searchEvents(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Events for query {}", query);
         Page<Event> page = eventService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/events");

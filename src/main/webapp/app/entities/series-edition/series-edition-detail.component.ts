@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
 import { Subscription } from 'rxjs/Rx';
 import { SeriesEdition } from './series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
@@ -22,12 +22,11 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
         private jhiLanguageService: JhiLanguageService,
         private seriesEditionService: SeriesEditionService,
         private eventEditionService: EventEditionService,
-        private alertService: AlertService,
-        private eventManager: EventManager,
+        private alertService: JhiAlertService,
+        private eventManager: JhiEventManager,
         private route: ActivatedRoute,
         private router: Router
     ) {
-        this.jhiLanguageService.setLocations(['series']);
     }
 
     ngOnInit() {

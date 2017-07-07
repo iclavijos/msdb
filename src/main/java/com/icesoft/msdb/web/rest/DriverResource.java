@@ -101,7 +101,7 @@ public class DriverResource {
      * @param driver the driver to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated driver,
      * or with status 400 (Bad Request) if the driver is not valid,
-     * or with status 500 (Internal Server Error) if the driver couldnt be updated
+     * or with status 500 (Internal Server Error) if the driver couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/drivers")
@@ -129,12 +129,10 @@ public class DriverResource {
      *
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of drivers in body
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/drivers")
     @Timed
-    public ResponseEntity<List<Driver>> getAllDrivers(@ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<Driver>> getAllDrivers(@ApiParam Pageable pageable) {
         log.debug("REST request to get a page of Drivers");
        
         Page<Driver> page = driverRepository.findAll(pageable);
@@ -188,15 +186,13 @@ public class DriverResource {
      * SEARCH  /_search/drivers?query=:query : search for the driver corresponding
      * to the query.
      *
-     * @param query the query of the driver search 
+     * @param query the query of the driver search
      * @param pageable the pagination information
      * @return the result of the search
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/_search/drivers")
     @Timed
-    public ResponseEntity<List<Driver>> searchDrivers(@RequestParam String query, @ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<Driver>> searchDrivers(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Drivers for query '{}'", query);
         Page<Driver> page = driverRepository.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/drivers");

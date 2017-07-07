@@ -1,10 +1,9 @@
 package com.icesoft.msdb.domain;
 
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,9 +15,7 @@ import java.util.Map;
 @Table(name = "jhi_persistent_audit_event")
 public class PersistentAuditEvent implements Serializable {
 
-	private static final long serialVersionUID = 9123272659821281434L;
-
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "event_id")
     private Long id;
@@ -28,7 +25,7 @@ public class PersistentAuditEvent implements Serializable {
     private String principal;
 
     @Column(name = "event_date")
-    private LocalDateTime auditEventDate;
+    private Instant auditEventDate;
     @Column(name = "event_type")
     private String auditEventType;
 
@@ -54,11 +51,11 @@ public class PersistentAuditEvent implements Serializable {
         this.principal = principal;
     }
 
-    public LocalDateTime getAuditEventDate() {
+    public Instant getAuditEventDate() {
         return auditEventDate;
     }
 
-    public void setAuditEventDate(LocalDateTime auditEventDate) {
+    public void setAuditEventDate(Instant auditEventDate) {
         this.auditEventDate = auditEventDate;
     }
 

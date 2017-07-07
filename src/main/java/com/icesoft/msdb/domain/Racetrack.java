@@ -186,26 +186,25 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
             return false;
         }
         Racetrack racetrack = (Racetrack) o;
-        if (racetrack.id == null || id == null) {
+        if (racetrack.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, racetrack.id);
+        return Objects.equals(getId(), racetrack.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "Racetrack{" +
-            "id=" + id +
-            ", name='" + name + "'" +
-            ", location='" + location + "'" +
-            ", countryCode='" + countryCode + "'" +
-            ", logo='" + logo + "'" +
-            ", logoUrl='" + logoUrl + "'" +
+            "id=" + getId() +
+            ", name='" + getName() + "'" +
+            ", location='" + getLocation() + "'" +
+            ", countryCode='" + getCountryCode() + "'" +
+            ", logoUrl='" + getLogoUrl() + "'" +
             '}';
     }
 }

@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Category;
-import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.repository.CategoryRepository;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
@@ -44,7 +43,7 @@ public class CategoryResource {
     private final Logger log = LoggerFactory.getLogger(CategoryResource.class);
 
     private static final String ENTITY_NAME = "category";
-        
+
     private final CategoryRepository categoryRepository;
 
 //    private final CategorySearchRepository categorySearchRepository;
@@ -81,7 +80,7 @@ public class CategoryResource {
      * @param category the category to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated category,
      * or with status 400 (Bad Request) if the category is not valid,
-     * or with status 500 (Internal Server Error) if the category couldnt be updated
+     * or with status 500 (Internal Server Error) if the category couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/categories")
@@ -103,13 +102,12 @@ public class CategoryResource {
      *
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of categories in body
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/categories")
     @Timed
-    public ResponseEntity<List<Category>> getAllCategories(@ApiParam Pageable pageable) throws URISyntaxException {
+    public ResponseEntity<List<Category>> getAllCategories(@ApiParam Pageable pageable) {
         log.debug("REST request to get a page of Categories");
-        Page<Category> page = categoryRepository.findAllByOrderByNameAsc(pageable);
+        Page<Category> page = categoryRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/categories");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -147,10 +145,9 @@ public class CategoryResource {
      * SEARCH  /_search/categories?query=:query : search for the category corresponding
      * to the query.
      *
-     * @param query the query of the category search 
+     * @param query the query of the category search
      * @param pageable the pagination information
      * @return the result of the search
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/_search/categories")
     @Timed

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Response } from '@angular/http';
 import { Router, ActivatedRoute } from '@angular/router';
-import { EventManager, JhiLanguageService, DataUtils } from 'ng-jhipster';
+import { JhiEventManager, JhiLanguageService, JhiDataUtils } from 'ng-jhipster';
 import { Subscription } from 'rxjs/Rx';
 import { Racetrack } from './racetrack.model';
 import { RacetrackService } from './racetrack.service';
@@ -22,14 +22,13 @@ export class RacetrackDetailComponent implements OnInit, OnDestroy {
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
-        private dataUtils: DataUtils,
+        private dataUtils: JhiDataUtils,
         private racetrackService: RacetrackService,
         private racetrackLayoutService: RacetrackLayoutService,
-        private eventManager: EventManager,
+        private eventManager: JhiEventManager,
         private route: ActivatedRoute,
         private router: Router
     ) {
-        this.jhiLanguageService.setLocations(['racetrack']);
     }
 
     ngOnInit() {

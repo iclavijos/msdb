@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed, async, inject, tick, fakeAsync } from '@angular/core/testing';
-import { MockBackend } from '@angular/http/testing';
-import { Http, BaseRequestOptions } from '@angular/http';
 import { Renderer, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { JhiLanguageService } from 'ng-jhipster';
 import { MockLanguageService } from '../../../helpers/mock-language.service';
+import { MotorsportsDatabaseTestModule } from '../../../test.module';
 import { LoginModalService } from '../../../../../../main/webapp/app/shared';
 import { Register } from '../../../../../../main/webapp/app/account/register/register.service';
 import { RegisterComponent } from '../../../../../../main/webapp/app/account/register/register.component';
-
 
 describe('Component Tests', () => {
 
@@ -18,22 +16,10 @@ describe('Component Tests', () => {
 
         beforeEach(async(() => {
             TestBed.configureTestingModule({
+                imports: [MotorsportsDatabaseTestModule],
                 declarations: [RegisterComponent],
-                providers: [MockBackend,
+                providers: [
                     Register,
-                    BaseRequestOptions,
-                    {
-                        provide: Http,
-                        useFactory: (backendInstance: MockBackend, defaultOptions: BaseRequestOptions) => {
-                            return new Http(backendInstance, defaultOptions);
-                        },
-                        deps: [MockBackend, BaseRequestOptions]
-                    },
-                    {
-                        provide: JhiLanguageService,
-                        useClass: MockLanguageService
-                    },
-                    
                     {
                         provide: LoginModalService,
                         useValue: null
@@ -47,11 +33,8 @@ describe('Component Tests', () => {
                         useValue: null
                     }
                 ]
-            }).overrideComponent(RegisterComponent, {
-                set: {
-                    template: ''
-                }
-            }).compileComponents();
+            }).overrideTemplate(RegisterComponent, '')
+            .compileComponents();
         }));
 
         beforeEach(() => {
@@ -111,12 +94,12 @@ describe('Component Tests', () => {
             )
         );
 
-        it('should notify of email existence upon 400/e-mail address already in use',
+        it('should notify of email existence upon 400/email address already in use',
             inject([Register],
                 fakeAsync((service: Register) => {
                     spyOn(service, 'save').and.returnValue(Observable.throw({
                         status: 400,
-                        _body: 'e-mail address already in use'
+                        _body: 'email address already in use'
                     }));
                     comp.registerAccount.password = comp.confirmPassword = 'password';
 

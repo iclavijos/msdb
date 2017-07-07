@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
 
 import { Engine } from './engine.model';
 import { EnginePopupService } from './engine-popup.service';
@@ -20,9 +20,8 @@ export class EngineDeleteDialogComponent {
         private jhiLanguageService: JhiLanguageService,
         private engineService: EngineService,
         public activeModal: NgbActiveModal,
-        private eventManager: EventManager
+        private eventManager: JhiEventManager
     ) {
-        this.jhiLanguageService.setLocations(['engine']);
     }
 
     clear () {

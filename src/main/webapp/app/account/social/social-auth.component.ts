@@ -1,32 +1,28 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { JhiLanguageService } from 'ng-jhipster';
-import { AuthService, LoginService } from '../../shared';
-import { CookieService } from 'angular2-cookie/core';
+import { LoginService } from '../../shared';
+import { CookieService } from 'ngx-cookie';
 
 @Component({
     selector: 'jhi-auth',
-    templateUrl: '../../shared/login/login.component.html'
+    template: ''
 })
 export class SocialAuthComponent implements OnInit {
 
-    constructor (
-        private jhiLanguageService: JhiLanguageService,
-        private Auth: AuthService,
+    constructor(
         private loginService: LoginService,
         private cookieService: CookieService,
         private router: Router
     ) {
-        this.jhiLanguageService.setLocations(['social']);
     }
 
     ngOnInit() {
-        let token = this.cookieService.get('social-authentication');
+        const token = this.cookieService.get('social-authentication');
         if (token.length) {
             this.loginService.loginWithToken(token, false).then(() => {
                     this.cookieService.remove('social-authentication');
-                    this.Auth.authorize(true);
+                    this.router.navigate(['']);
                  }, () => {
                     this.router.navigate(['social-register'], {queryParams: {'success': 'false'}});
             });

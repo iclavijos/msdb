@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Response } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
-import { EventManager, ParseLinks, PaginationUtil, JhiLanguageService, AlertService } from 'ng-jhipster';
+import { JhiEventManager, JhiParseLinks, JhiLanguageService, JhiAlertService } from 'ng-jhipster';
 
 import { EventEdition } from '../event-edition';
 import { EventEntry } from './event-entry.model';
@@ -11,7 +11,8 @@ import { Principal } from '../../shared';
 
 @Component({
     selector: 'jhi-event-entry',
-    templateUrl: './event-entry.component.html'
+    templateUrl: './event-entry.component.html',
+    styleUrls: ['event-entry.css']
 })
 export class EventEntryComponent implements OnInit, OnDestroy {
     
@@ -19,16 +20,32 @@ export class EventEntryComponent implements OnInit, OnDestroy {
     eventEntries: EventEntry[];
     currentAccount: any;
     eventSubscriber: Subscription;
+    private selectedRaceEntry: number;
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
         private eventEntryService: EventEntryService,
-        private alertService: AlertService,
-        private eventManager: EventManager,
+        private alertService: JhiAlertService,
+        private eventManager: JhiEventManager,
         private activatedRoute: ActivatedRoute,
         private principal: Principal
     ) {
         
+    }
+    
+    expandEntryData(raceNumber: number) {
+        if (this.selectedRaceEntry === raceNumber) {
+            this.selectedRaceEntry = null;
+        } else {
+            this.selectedRaceEntry = raceNumber;
+        }
+    }
+    
+    private getBigFaceUrl(portraitUrl: string) {
+        if (portraitUrl != null) {
+            return portraitUrl.replace("upload/", "upload/w_240,h_240,c_thumb,g_face,r_max/")
+        }
+        return null;
     }
 
     loadAll() {

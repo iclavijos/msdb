@@ -1,5 +1,4 @@
-import { Component, OnInit, Input, Inject } from '@angular/core';
-import { JhiLanguageService } from 'ng-jhipster';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
@@ -16,19 +15,17 @@ export class SocialRegisterComponent implements OnInit  {
     providerLabel: string;
     modalRef: NgbModalRef;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
-        private jhiLanguageService: JhiLanguageService,
         private loginModalService: LoginModalService
     ) {
-        this.jhiLanguageService.setLocations(['social']);
     }
 
     ngOnInit() {
-        this.route.queryParams.subscribe(queryParams => {
+        this.route.queryParams.subscribe((queryParams) => {
             this.success = queryParams['success'];
         });
-        this.route.params.subscribe(params => {
+        this.route.params.subscribe((params) => {
             this.provider = params['provider?{success:boolean}'];
         });
         this.error = !this.success;

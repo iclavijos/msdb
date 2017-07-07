@@ -242,29 +242,28 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
             return false;
         }
         EventSession eventSession = (EventSession) o;
-        if (eventSession.id == null || id == null) {
+        if (eventSession.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, eventSession.id);
+        return Objects.equals(getId(), eventSession.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "EventSession{" +
-            "id=" + id +
-            ", name='" + name + "'" +
-            ", shortname='" + shortname + "'" +
-            ", sessionStartTime='" + sessionStartTime + "'" +
-            ", duration='" + duration + "'" +
-            ", durationType='" + durationType + "'" +
-            ", sessionType='" + sessionType + "'" +
-            ", additionalLap='" + additionalLap + "'" +
-            ", eventEdition={" + eventEdition + "}" +
+        		"id=" + getId() +
+                ", name='" + getName() + "'" +
+                ", shortname='" + getShortname() + "'" +
+                ", sessionStartTime='" + getSessionStartTime() + "'" +
+                ", duration='" + getDuration() + "'" +
+            ", durationType='" + getDurationType() + "'" +
+            ", sessionType='" + getSessionType() + "'" +
+            ", additionalLap='" + getAdditionalLap() + "'" +
             '}';
     }
 }

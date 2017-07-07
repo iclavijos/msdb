@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, URLSearchParams, BaseRequestOptions } from '@angular/http';
+import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { JhiDateUtils } from 'ng-jhipster';
 
 import { Driver } from './driver.model';
-import { DateUtils } from 'ng-jhipster';
+import { ResponseWrapper, createRequestOption } from '../../shared';
+
 @Injectable()
 export class DriverService {
 
@@ -11,10 +13,10 @@ export class DriverService {
     private resourceSearchUrl = 'api/_search/drivers';
     private resourceTypeAheadUrl = 'api/_typeahead/drivers';
 
-    constructor(private http: Http, private dateUtils: DateUtils) { }
+    constructor(private http: Http, private dateUtils: JhiDateUtils) { }
 
     create(driver: Driver): Observable<Driver> {
-        let copy: Driver = Object.assign({}, driver);
+        const copy = this.convert(driver);
         copy.birthDate = this.dateUtils
             .convertLocalDateToServer(driver.birthDate);
         copy.deathDate = this.dateUtils
@@ -25,7 +27,7 @@ export class DriverService {
     }
 
     update(driver: Driver): Observable<Driver> {
-        let copy: Driver = Object.assign({}, driver);
+        const copy = this.convert(driver);
         copy.birthDate = this.dateUtils
             .convertLocalDateToServer(driver.birthDate);
         copy.deathDate = this.dateUtils
@@ -37,7 +39,7 @@ export class DriverService {
 
     find(id: number): Observable<Driver> {
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            let jsonResponse = res.json();
+            const jsonResponse = res.json();
             if (jsonResponse.birthDate) {
                 jsonResponse.birthDate = new Date(jsonResponse.birthDate[0], jsonResponse.birthDate[1] - 1, jsonResponse.birthDate[2]);
             }
@@ -48,25 +50,23 @@ export class DriverService {
         });
     }
 
-    query(req?: any): Observable<Response> {
-        let options = this.createRequestOption(req);
+    query(req?: any): Observable<ResponseWrapper> {
+        const options = createRequestOption(req);
         return this.http.get(this.resourceUrl, options)
-            .map((res: any) => this.convertResponse(res))
-        ;
+            .map((res: Response) => this.convertResponse(res));
     }
 
     delete(id: number): Observable<Response> {
         return this.http.delete(`${this.resourceUrl}/${id}`);
     }
 
-    search(req?: any): Observable<Response> {
-        let options = this.createRequestOption(req);
+    search(req?: any): Observable<ResponseWrapper> {
+        const options = createRequestOption(req);
         return this.http.get(this.resourceSearchUrl, options)
-            .map((res: any) => this.convertResponse(res))
-        ;
+             .map((res: any) => this.convertResponse(res));
     }
 
-    typeahead(req): Observable<Response> {
+    typeahead(req): Observable<ResponseWrapper> {
         let params: URLSearchParams = new URLSearchParams();
         params.set('query', req);
 
@@ -76,7 +76,7 @@ export class DriverService {
         ;
     }
 
-    private convertResponse(res: any): any {
+    private convertResponse(res: Response): ResponseWrapper {
         let jsonResponse = res.json();
         for (let i = 0; i < jsonResponse.length; i++) {
             if (jsonResponse[i].birthDate) {
@@ -88,23 +88,22 @@ export class DriverService {
                         jsonResponse[i].deathDate[0], jsonResponse[i].deathDate[1] - 1, jsonResponse[i].deathDate[2]);
             }
         }
-        res._body = jsonResponse;
-        return res;
+        return new ResponseWrapper(res.headers, jsonResponse, res.status);
     }
 
-    private createRequestOption(req?: any): BaseRequestOptions {
-        let options: BaseRequestOptions = new BaseRequestOptions();
-        if (req) {
-            let params: URLSearchParams = new URLSearchParams();
-            params.set('page', req.page);
-            params.set('size', req.size);
-            if (req.sort) {
-                params.paramsMap.set('sort', req.sort);
-            }
-            params.set('query', req.query);
+    private convertItemFromServer(entity: any) {
+        entity.birthDate = this.dateUtils
+            .convertLocalDateFromServer(entity.birthDate);
+        entity.deathDate = this.dateUtils
+            .convertLocalDateFromServer(entity.deathDate);
+    }
 
-            options.search = params;
-        }
-        return options;
+    private convert(driver: Driver): Driver {
+        const copy: Driver = Object.assign({}, driver);
+        copy.birthDate = this.dateUtils
+            .convertLocalDateToServer(driver.birthDate);
+        copy.deathDate = this.dateUtils
+            .convertLocalDateToServer(driver.deathDate);
+        return copy;
     }
 }

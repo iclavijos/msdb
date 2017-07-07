@@ -18,7 +18,6 @@ export class EventSessionDetailComponent implements OnInit, OnDestroy {
         private eventSessionService: EventSessionService,
         private route: ActivatedRoute
     ) {
-        this.jhiLanguageService.setLocations(['eventSession']);
     }
 
     ngOnInit() {

@@ -11,7 +11,6 @@ export class JhiRebuildIndexesComponent implements OnInit {
         private jhiLanguageService: JhiLanguageService,
         private http: Http
     ) {
-        this.jhiLanguageService.setLocations(['global']);
     }
     
     ngOnInit() {

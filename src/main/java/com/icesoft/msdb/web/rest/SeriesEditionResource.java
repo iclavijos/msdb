@@ -114,12 +114,10 @@ public class SeriesEditionResource {
      *
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of seriesEditions in body
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/series-editions")
     @Timed
-    public ResponseEntity<List<SeriesEdition>> getAllSeriesEditions(@ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<SeriesEdition>> getAllSeriesEditions(@ApiParam Pageable pageable) {
         log.debug("REST request to get a page of SeriesEditions");
         Page<SeriesEdition> page = seriesEditionRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/series-editions");
@@ -160,15 +158,13 @@ public class SeriesEditionResource {
      * SEARCH  /_search/series-editions?query=:query : search for the seriesEdition corresponding
      * to the query.
      *
-     * @param query the query of the seriesEdition search 
+     * @param query the query of the seriesEdition search
      * @param pageable the pagination information
      * @return the result of the search
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/_search/series-editions")
     @Timed
-    public ResponseEntity<List<SeriesEdition>> searchSeriesEditions(@RequestParam String query, @ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<SeriesEdition>> searchSeriesEditions(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of SeriesEditions for query {}", query);
         //TODO: Implement proper search
         Page<SeriesEdition> page = seriesEditionRepository.search(query, pageable);

@@ -1,13 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
+import { Observable } from 'rxjs/Rx';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, AlertService, JhiLanguageService, DataUtils } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { Category } from './category.model';
 import { CategoryPopupService } from './category-popup.service';
 import { CategoryService } from './category.service';
+
 @Component({
     selector: 'jhi-category-dialog',
     templateUrl: './category-dialog.component.html'
@@ -17,21 +19,22 @@ export class CategoryDialogComponent implements OnInit {
     category: Category;
     authorities: any[];
     isSaving: boolean;
+
     constructor(
         public activeModal: NgbActiveModal,
-        private jhiLanguageService: JhiLanguageService,
-        private dataUtils: DataUtils,
-        private alertService: AlertService,
+        private dataUtils: JhiDataUtils,
+        private alertService: JhiAlertService,
         private categoryService: CategoryService,
-        private eventManager: EventManager
+        private elementRef: ElementRef,
+        private eventManager: JhiEventManager
     ) {
-        this.jhiLanguageService.setLocations(['category']);
     }
 
     ngOnInit() {
         this.isSaving = false;
         this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
     }
+
     byteSize(field) {
         return this.dataUtils.byteSize(field);
     }
@@ -40,45 +43,65 @@ export class CategoryDialogComponent implements OnInit {
         return this.dataUtils.openFile(contentType, field);
     }
 
-    setFileData($event, category, field, isImage) {
-        if ($event.target.files && $event.target.files[0]) {
-            let $file = $event.target.files[0];
-            if (isImage && !/^image\//.test($file.type)) {
+    setFileData(event, category, field, isImage) {
+        if (event && event.target.files && event.target.files[0]) {
+            const file = event.target.files[0];
+            if (isImage && !/^image\//.test(file.type)) {
                 return;
             }
-            this.dataUtils.toBase64($file, (base64Data) => {
+            this.dataUtils.toBase64(file, (base64Data) => {
                 category[field] = base64Data;
-                category[`${field}ContentType`] = $file.type;
+                category[`${field}ContentType`] = file.type;
             });
         }
     }
-    clear () {
+
+    clearInputImage(field: string, fieldContentType: string, idInput: string) {
+        this.dataUtils.clearInputImage(this.category, this.elementRef, field, fieldContentType, idInput);
+    }
+
+    clear() {
         this.activeModal.dismiss('cancel');
     }
 
-    save () {
+    save() {
         this.isSaving = true;
         if (this.category.id !== undefined) {
-            this.categoryService.update(this.category)
-                .subscribe((res: Category) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.categoryService.update(this.category), false);
         } else {
-            this.categoryService.create(this.category)
-                .subscribe((res: Category) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.categoryService.create(this.category), true);
         }
     }
 
-    private onSaveSuccess (result: Category) {
+    private subscribeToSaveResponse(result: Observable<Category>, isCreated: boolean) {
+        result.subscribe((res: Category) =>
+            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+    }
+
+    private onSaveSuccess(result: Category, isCreated: boolean) {
+        this.alertService.success(
+            isCreated ? 'motorsportsDatabaseApp.category.created'
+            : 'motorsportsDatabaseApp.category.updated',
+            { param : result.id }, null);
+
         this.eventManager.broadcast({ name: 'categoryListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError (error) {
+    private onSaveError(error) {
+        try {
+            error.json();
+        } catch (exception) {
+            error.message = error.text();
+        }
         this.isSaving = false;
         this.onError(error);
     }
 
-    private onError (error) {
+    private onError(error) {
         this.alertService.error(error.message, null, null);
     }
 }
@@ -92,13 +115,13 @@ export class CategoryPopupComponent implements OnInit, OnDestroy {
     modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private categoryPopupService: CategoryPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
+        this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
                 this.modalRef = this.categoryPopupService
                     .open(CategoryDialogComponent, params['id']);
@@ -106,7 +129,6 @@ export class CategoryPopupComponent implements OnInit, OnDestroy {
                 this.modalRef = this.categoryPopupService
                     .open(CategoryDialogComponent);
             }
-
         });
     }
 
