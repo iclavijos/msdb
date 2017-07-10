@@ -30,6 +30,8 @@ export class TimeMaskPipe implements PipeTransform {
           } else {
               result += String(minutes) + '\'';
           }
+      } else {
+          result += '00\'';
       }
       
       if (seconds < 10 && minutes > 0) {
