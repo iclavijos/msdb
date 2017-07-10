@@ -3,14 +3,20 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
+import {map} from 'rxjs/operator/map';
+import {debounceTime} from 'rxjs/operator/debounceTime';
+import {distinctUntilChanged} from 'rxjs/operator/distinctUntilChanged';
+import {_catch} from 'rxjs/operator/catch';
+import {_do} from 'rxjs/operator/do';
+import {switchMap} from 'rxjs/operator/switchMap';
+import {of} from 'rxjs/observable/of';
+
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { Chassis } from './chassis.model';
 import { ChassisPopupService } from './chassis-popup.service';
 import { ChassisService } from './chassis.service';
-
-import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
 
 import { ResponseWrapper } from '../../shared';
 
@@ -23,8 +29,8 @@ export class ChassisDialogComponent implements OnInit {
     chassis: Chassis;
     authorities: any[];
     isSaving: boolean;
-    private derivedFromSearch: string;
-    protected dataService: CompleterData;
+    searching = false;
+    searchFailed = false;
 
     chassisCollection: Chassis[];
 
@@ -32,11 +38,38 @@ export class ChassisDialogComponent implements OnInit {
         public activeModal: NgbActiveModal,
         private alertService: JhiAlertService,
         private chassisService: ChassisService,
-        private eventManager: JhiEventManager,
-        private completerService: CompleterService
+        private eventManager: JhiEventManager
     ) {
-        this.dataService = completerService.remote('api/_search/chassis?query=', null, 'name').descriptionField("manufacturer");
     }
+    
+    private innersearch(term: string) {
+        if (term === '') {
+          return of.call([]);
+        }
+
+        return map.call(this.chassisService.searchChassis(term),
+          response => response.json);
+      }
+    
+    search = (text$: Observable<string>) =>
+    _do.call(
+      switchMap.call(
+        _do.call(
+          distinctUntilChanged.call(
+            debounceTime.call(text$, 300)),
+          () => this.searching = true),
+        term =>
+          _catch.call(
+            _do.call(this.innersearch(term), () => this.searchFailed = false),
+            () => {
+              this.searchFailed = true;
+              return of.call([]);
+            }
+          )
+      ),
+      () => this.searching = false);
+    
+    inputFormatter = (result: any) => result.manufacturer + ' ' + result.name;
 
     ngOnInit() {
         this.isSaving = false;
@@ -93,16 +126,7 @@ export class ChassisDialogComponent implements OnInit {
     trackChassisById(index: number, item: Chassis) {
         return item.id;
     }
-    
-    public onChassisSelected(selected: CompleterItem) {
-        if (selected) {
-            this.chassis.derivedFrom = selected.originalObject;
-            this.derivedFromSearch = this.chassis.manufacturer + ' ' + this.chassis.name;
-        } else {
-            this.chassis.derivedFrom = null;
-            this.derivedFromSearch = null;
-        }
-    }
+
 }
 
 @Component({

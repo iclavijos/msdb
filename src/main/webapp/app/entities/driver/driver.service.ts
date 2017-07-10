@@ -49,6 +49,11 @@ export class DriverService {
             return jsonResponse;
         });
     }
+    
+    searchCountries(query?: any): Observable<ResponseWrapper> {
+        return this.http.get('api/_typeahead/countries?query=' + query)
+            .map((res: Response) => this.convertResponse(res));
+    }
 
     query(req?: any): Observable<ResponseWrapper> {
         const options = createRequestOption(req);

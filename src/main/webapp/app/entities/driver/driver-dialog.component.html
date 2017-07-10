@@ -65,10 +65,12 @@
             </div>
         </div>
     	<div class="form-group">
+    		<ng-template #countryTemplate let-r="result">
+			  <img src="{{r.flagImg}}"/>&nbsp;{{r.countryName}}
+			</ng-template>
             <label jhiTranslate="motorsportsDatabaseApp.driver.nationality" for="field_nationality">Natinality</label>
-            <ng2-completer id="field_nationality" name="nationality" [(ngModel)]="nationalitySearch" [datasource]="dataServiceNationality" [minSearchLength]="2" 
-            	(selected)="onCountrySelected($event)" (highlighted)="onCountrySelected($event)" [pause]="300" [autoMatch]="true" 
-            	[maxChars]="10" required></ng2-completer>
+            <input id="field_nationality" type="text" name="field_nationality" class="form-control" [inputFormatter]="inputFormatter"
+            	[(ngModel)]="nationality" [ngbTypeahead]="search" [focusFirst]="false" [resultTemplate]="countryTemplate" placeholder="Country search" required/>
         </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.deathDate" for="field_deathDate">Death Date</label>

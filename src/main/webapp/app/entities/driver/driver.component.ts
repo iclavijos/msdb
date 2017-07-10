@@ -155,7 +155,6 @@ currentAccount: any;
         this.queryCount = this.totalItems;
         // this.page = pagingParams.page;
         this.drivers = data;
-        console.log(data);
     }
     private onError(error) {
         this.alertService.error(error.message, null, null);

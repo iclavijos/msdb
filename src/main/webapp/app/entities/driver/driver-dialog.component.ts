@@ -1,14 +1,20 @@
 import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Response } from '@angular/http';
-
-import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
+import { Jsonp, Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
+import {map} from 'rxjs/operator/map';
+import {debounceTime} from 'rxjs/operator/debounceTime';
+import {distinctUntilChanged} from 'rxjs/operator/distinctUntilChanged';
+import {_catch} from 'rxjs/operator/catch';
+import {_do} from 'rxjs/operator/do';
+import {switchMap} from 'rxjs/operator/switchMap';
+import {of} from 'rxjs/observable/of';
+
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
-import { MIN_DATE, CURRENT_DATE, MAX_DATE } from '../../shared';
+import { MIN_DATE, CURRENT_DATE, MAX_DATE, ResponseWrapper } from '../../shared';
 
 import { Driver } from './driver.model';
 import { DriverPopupService } from './driver-popup.service';
@@ -25,8 +31,9 @@ export class DriverDialogComponent implements OnInit {
     isSaving: boolean;
     minDate = MIN_DATE;
     startDate = CURRENT_DATE;
-    protected dataServiceNationality: CompleterData;
-    nationalitySearch: string;
+    nationality: any;
+    searching = false;
+    searchFailed = false;
 
     constructor(
         public activeModal: NgbActiveModal,
@@ -34,11 +41,38 @@ export class DriverDialogComponent implements OnInit {
         private alertService: JhiAlertService,
         private driverService: DriverService,
 		private elementRef: ElementRef,
-        private eventManager: JhiEventManager,
-        private completerService: CompleterService
+        private eventManager: JhiEventManager
     ) {
-        this.dataServiceNationality = completerService.remote('api/_typeahead/countries?query=', null, 'countryName').imageField("flagImg");
     }
+    
+    private innersearch(term: string) {
+        if (term === '') {
+          return of.call([]);
+        }
+
+        return map.call(this.driverService.searchCountries(term),
+          response => response.json);
+      }
+    
+    search = (text$: Observable<string>) =>
+    _do.call(
+      switchMap.call(
+        _do.call(
+          distinctUntilChanged.call(
+            debounceTime.call(text$, 300)),
+          () => this.searching = true),
+        term =>
+          _catch.call(
+            _do.call(this.innersearch(term), () => this.searchFailed = false),
+            () => {
+              this.searchFailed = true;
+              return of.call([]);
+            }
+          )
+      ),
+      () => this.searching = false);
+    
+    inputFormatter = (result: any) => result.countryName;
 
     ngOnInit() {
         this.isSaving = false;
@@ -76,6 +110,7 @@ export class DriverDialogComponent implements OnInit {
 
     save() {
         this.isSaving = true;
+        this.driver.nationality = this.nationality.countryCode;
         if (this.driver.id !== undefined) {
             this.subscribeToSaveResponse(
                 this.driverService.update(this.driver), false);
@@ -115,17 +150,6 @@ export class DriverDialogComponent implements OnInit {
         this.alertService.error(error.message, null, null);
     }
     
-    public onCountrySelected(selected: CompleterItem) {
-        if (!selected || !selected.originalObject) return;
-        let country = selected.originalObject;
-        if (selected) {
-            this.driver.nationality = country.countryCode;
-            this.nationalitySearch = country.countryName;
-        } else {
-            this.driver.nationality = null;
-            this.nationalitySearch = null;
-        }
-    }
 }
 
 @Component({

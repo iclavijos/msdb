@@ -38,6 +38,11 @@ export class ChassisService {
         return this.http.get(this.resourceUrl, options)
             .map((res: Response) => this.convertResponse(res));
     }
+    
+    searchChassis(query?: any): Observable<ResponseWrapper> {
+        return this.http.get('api/_typeahead/chassis?query=' + query)
+            .map((res: Response) => this.convertResponse(res));
+    }
 
     delete(id: number): Observable<Response> {
         return this.http.delete(`${this.resourceUrl}/${id}`);
