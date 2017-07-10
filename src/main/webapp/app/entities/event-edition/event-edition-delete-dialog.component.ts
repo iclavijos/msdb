@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
+import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
 
 import { EventEdition } from './event-edition.model';
 import { EventEditionPopupService } from './event-edition-popup.service';
@@ -17,25 +17,26 @@ export class EventEditionDeleteDialogComponent {
     eventEdition: EventEdition;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
         private eventEditionService: EventEditionService,
         public activeModal: NgbActiveModal,
+        private alertService: JhiAlertService,
         private eventManager: JhiEventManager
     ) {
     }
 
-    clear () {
+    clear() {
         this.activeModal.dismiss('cancel');
     }
 
-    confirmDelete (id: number) {
-        this.eventEditionService.delete(id).subscribe(response => {
+    confirmDelete(id: number) {
+        this.eventEditionService.delete(id).subscribe((response) => {
             this.eventManager.broadcast({
                 name: 'eventEditionListModification',
                 content: 'Deleted an eventEdition'
             });
             this.activeModal.dismiss(true);
         });
+        this.alertService.success('motorsportsDatabaseApp.eventEdition.deleted', { param : id }, null);
     }
 }
 
@@ -48,13 +49,13 @@ export class EventEditionDeletePopupComponent implements OnInit, OnDestroy {
     modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private eventEditionPopupService: EventEditionPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
+        this.routeSub = this.route.params.subscribe((params) => {
             this.modalRef = this.eventEditionPopupService
                 .open(EventEditionDeleteDialogComponent, params['id']);
         });

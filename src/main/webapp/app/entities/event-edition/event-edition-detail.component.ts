@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager } from 'ng-jhipster';
 import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Rx';
 import { Engine } from '../engine';
@@ -21,8 +21,8 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
 
     convertedTime = false;
     eventEdition: EventEdition;
-    eventSubscriber: Subscription;
-    private subscription: any;
+    private subscription: Subscription;
+    private eventSubscriber: Subscription
     sessionTypes = SessionType;
     durationTypes = DurationType;
     filterCategory: string;
@@ -32,7 +32,6 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     keysDuration: any[];
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
         private eventService: EventService,
         private eventEditionService: EventEditionService,
         private eventManager: JhiEventManager,
@@ -42,17 +41,17 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe(params => {
+        this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
         });
-        this.registerChangesInEvent();
+        this.registerChangeInEventEditions();
         
         this.keysDuration = Object.keys(this.durationTypes).filter(Number);
         this.keysSession = Object.keys(this.sessionTypes).filter(Number);
     }
 
     load (id) {
-        this.eventEditionService.find(id).subscribe(eventEdition => {
+        this.eventEditionService.find(id).subscribe((eventEdition) => {
             this.eventEdition = eventEdition;
             this.loadSessions(id);
             this.eventService.findEventEditionIds(eventEdition.event.id).subscribe(
@@ -76,12 +75,15 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.eventManager.destroy(this.eventSubscriber);
         this.subscription.unsubscribe();
+        this.eventManager.destroy(this.eventSubscriber);
     }
     
-    registerChangesInEvent() {
-        this.eventSubscriber = this.eventManager.subscribe('eventSessionListModification', (response) => this.loadSessions(this.eventEdition.id));
+    registerChangeInEventEditions() {
+        this.eventSubscriber = this.eventManager.subscribe(
+            'eventEditionListModification',
+            (response) => this.load(this.eventEdition.id)
+        );
     }
     
     convertToCurrentTZ() {

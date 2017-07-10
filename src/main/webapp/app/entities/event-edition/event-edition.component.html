@@ -1,7 +1,7 @@
 <div>
     <jhi-alert></jhi-alert>
-    <div class="row" *ngIf="!event">
-        <div class="col-sm-12 no-padding-right">
+    <!-- div class="row">
+        <div class="col-sm-12">
             <form name="searchForm" class="form-inline">
                 <div class="input-group w-100 mt-3">
                     <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.eventEdition.home.search' | translate }}">
@@ -11,7 +11,7 @@
                 </div>
             </form>
         </div>
-    </div>
+    </div -->
     <br/>
     <div class="table-responsive" *ngIf="eventEditions">
         <table class="table table-striped">

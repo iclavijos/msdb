@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, URLSearchParams, BaseRequestOptions } from '@angular/http';
+import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { JhiDateUtils } from 'ng-jhipster';
+
+import { ResponseWrapper, createRequestOption } from '../../shared';
 
 import { EventEdition } from './event-edition.model';
-import { JhiDateUtils } from 'ng-jhipster';
 
 import * as moment from 'moment-timezone';
 
@@ -17,20 +19,20 @@ export class EventEditionService {
     constructor(private http: Http, private dateUtils: JhiDateUtils) { }
 
     create(eventEdition: EventEdition): Observable<EventEdition> {
-        let copy: EventEdition = Object.assign({}, eventEdition);
-        copy.eventDate = this.dateUtils
-            .convertLocalDateToServer(eventEdition.eventDate);
+        const copy = this.convert(eventEdition);
         return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            this.convertItemFromServer(jsonResponse);
+            return jsonResponse;
         });
     }
 
     update(eventEdition: EventEdition): Observable<EventEdition> {
-        let copy: EventEdition = Object.assign({}, eventEdition);
-        copy.eventDate = this.dateUtils
-            .convertLocalDateToServer(eventEdition.eventDate);
+        const copy = this.convert(eventEdition);
         return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            this.convertItemFromServer(jsonResponse);
+            return jsonResponse;
         });
     }
     
@@ -40,15 +42,14 @@ export class EventEditionService {
 
     find(id: number): Observable<EventEdition> {
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            let jsonResponse = res.json();
-            jsonResponse.eventDate = new Date(
-                    jsonResponse.eventDate[0], jsonResponse.eventDate[1] - 1, jsonResponse.eventDate[2]);
+            const jsonResponse = res.json();
+            this.convertItemFromServer(jsonResponse);
             return jsonResponse;
         });
     }
     
     findEventEditions(idEvent: number, req?: any): Observable<Response> {
-        let options = this.createRequestOption(req);
+        let options = createRequestOption(req);
         return this.http.get(`${this.eventResourceUrl}/${idEvent}/editions`, options).map((res: any) => this.convertResponse(res));
     }
     
@@ -70,8 +71,8 @@ export class EventEditionService {
         })
     }
 
-    query(req?: any): Observable<Response> {
-        let options = this.createRequestOption(req);
+    query(req?: any): Observable<ResponseWrapper> {
+        const options = createRequestOption(req);
         return this.http.get(this.resourceUrl, options)
             .map((res: any) => this.convertResponse(res))
         ;
@@ -81,21 +82,19 @@ export class EventEditionService {
         return this.http.delete(`${this.resourceUrl}/${id}`);
     }
 
-    search(req?: any): Observable<Response> {
-        let options = this.createRequestOption(req);
+    search(req?: any): Observable<ResponseWrapper> {
+        const options = createRequestOption(req);
         return this.http.get(this.resourceSearchUrl, options)
-            .map((res: any) => this.convertResponse(res))
-        ;
+            .map((res: any) => this.convertResponse(res));
     }
 
-    private convertResponse(res: any): any {
-        let jsonResponse = res.json();
+    private convertResponse(res: Response): ResponseWrapper {
+        const jsonResponse = res.json();
         for (let i = 0; i < jsonResponse.length; i++) {
             jsonResponse[i].eventDate = new Date(
                     jsonResponse[i].eventDate[0], jsonResponse[i].eventDate[1] - 1, jsonResponse[i].eventDate[2]);
         }
-        res._body = jsonResponse;
-        return res;
+        return new ResponseWrapper(res.headers, jsonResponse, res.status);
     }
     
     private transformDateTime(res: any, timeZone: string): any {
@@ -107,19 +106,15 @@ export class EventEditionService {
         return res;
     }
 
-    private createRequestOption(req?: any): BaseRequestOptions {
-        let options: BaseRequestOptions = new BaseRequestOptions();
-        if (req) {
-            let params: URLSearchParams = new URLSearchParams();
-            params.set('page', req.page);
-            params.set('size', req.size);
-            if (req.sort) {
-                params.paramsMap.set('sort', req.sort);
-            }
-            params.set('query', req.query);
+    private convertItemFromServer(entity: any) {
+        entity.eventDate = new Date(
+                entity.eventDate[0], entity.eventDate[1] - 1, entity.eventDate[2]);
+    }
 
-            options.search = params;
-        }
-        return options;
+    private convert(eventEdition: EventEdition): EventEdition {
+        const copy: EventEdition = Object.assign({}, eventEdition);
+        copy.eventDate = this.dateUtils
+            .convertLocalDateToServer(eventEdition.eventDate);
+        return copy;
     }
 }

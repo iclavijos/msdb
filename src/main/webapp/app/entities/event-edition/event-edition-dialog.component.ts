@@ -2,8 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
+import { Observable } from 'rxjs/Rx';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { EventEdition } from './event-edition.model';
 import { EventEditionPopupService } from './event-edition-popup.service';
@@ -11,6 +12,7 @@ import { EventEditionService } from './event-edition.service';
 import { Category, CategoryService } from '../category';
 import { RacetrackLayout, RacetrackLayoutService } from '../racetrack-layout';
 import { Event, EventService } from '../event';
+import { ResponseWrapper } from '../../shared';
 
 import { MIN_DATE, CURRENT_DATE, MAX_DATE } from '../../shared';
 
@@ -39,7 +41,6 @@ export class EventEditionDialogComponent implements OnInit {
 
     constructor(
         public activeModal: NgbActiveModal,
-        private jhiLanguageService: JhiLanguageService,
         private alertService: JhiAlertService,
         private eventEditionService: EventEditionService,
         private categoryService: CategoryService,
@@ -54,9 +55,10 @@ export class EventEditionDialogComponent implements OnInit {
 
     ngOnInit() {
         this.isSaving = false;
+        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
         this.authorities = ['ROLE_EDITOR', 'ROLE_ADMIN'];
         this.categoryService.query().subscribe(
-            (res: Response) => { this.categories = res.json(); }, (res: Response) => this.onError(res.json()));
+                (res: ResponseWrapper) => { this.categories = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
 
         if (this.eventEdition.trackLayout) {
             this.trackLayoutSearch = this.eventEdition.trackLayout.racetrack.name + '-' + this.eventEdition.trackLayout.name;
@@ -65,33 +67,49 @@ export class EventEditionDialogComponent implements OnInit {
             this.eventSearch = this.eventEdition.event.name;
         }
     }
-    clear () {
+
+    clear() {
         this.activeModal.dismiss('cancel');
     }
 
-    save () {
+    save() {
         this.isSaving = true;
         if (this.eventEdition.id !== undefined) {
-            this.eventEditionService.update(this.eventEdition)
-                .subscribe((res: EventEdition) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.eventEditionService.update(this.eventEdition), false);
         } else {
-            this.eventEditionService.create(this.eventEdition)
-                .subscribe((res: EventEdition) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.eventEditionService.create(this.eventEdition), true);
         }
     }
 
-    private onSaveSuccess (result: EventEdition) {
+    private subscribeToSaveResponse(result: Observable<EventEdition>, isCreated: boolean) {
+        result.subscribe((res: EventEdition) =>
+            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+    }
+
+    private onSaveSuccess(result: EventEdition, isCreated: boolean) {
+        this.alertService.success(
+            isCreated ? 'motorsportsDatabaseApp.eventEdition.created'
+            : 'motorsportsDatabaseApp.eventEdition.updated',
+            { param : result.id }, null);
+
         this.eventManager.broadcast({ name: 'eventEditionListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError (error) {
+    private onSaveError(error) {
+        try {
+            error.json();
+        } catch (exception) {
+            error.message = error.text();
+        }
         this.isSaving = false;
         this.onError(error);
     }
 
-    private onError (error) {
+    private onError(error) {
         this.alertService.error(error.message, null, null);
     }
 
@@ -179,13 +197,13 @@ export class EventEditionPopupComponent implements OnInit, OnDestroy {
     modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private eventEditionPopupService: EventEditionPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
+        this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
                 this.modalRef = this.eventEditionPopupService
                     .open(EventEditionDialogComponent, params['id']);
@@ -193,7 +211,6 @@ export class EventEditionPopupComponent implements OnInit, OnDestroy {
                 this.modalRef = this.eventEditionPopupService
                     .open(EventEditionDialogComponent);
             }
-
         });
     }
 

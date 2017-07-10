@@ -23,7 +23,7 @@ import {
     EventEditionResolvePagingParams,
 } from './';
 
-let ENTITY_STATES = [
+const ENTITY_STATES = [
     ...eventEditionRoute,
     ...eventEditionPopupRoute,
 ];

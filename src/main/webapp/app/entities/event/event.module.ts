@@ -3,7 +3,6 @@ import { RouterModule } from '@angular/router';
 
 import { MotorsportsDatabaseEventEditionModule } from '../event-edition/event-edition.module';
 import { MotorsportsDatabaseSharedModule } from '../../shared';
-
 import {
     EventService,
     EventPopupService,
@@ -18,7 +17,7 @@ import {
     EventResolvePagingParams,
 } from './';
 
-let ENTITY_STATES = [
+const ENTITY_STATES = [
     ...eventRoute,
     ...eventPopupRoute,
 ];
@@ -35,7 +34,7 @@ let ENTITY_STATES = [
         EventDialogComponent,
         EventDeleteDialogComponent,
         EventPopupComponent,
-        EventDeletePopupComponent
+        EventDeletePopupComponent,
     ],
     entryComponents: [
         EventComponent,
