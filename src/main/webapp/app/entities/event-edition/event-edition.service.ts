@@ -87,6 +87,11 @@ export class EventEditionService {
         return this.http.get(this.resourceSearchUrl, options)
             .map((res: any) => this.convertResponse(res));
     }
+    
+    typeAhead(query?: string): Observable<ResponseWrapper> {
+        return this.http.get(`${this.resourceSearchUrl}?query=${query}`)
+            .map((res: any) => this.convertResponse(res));
+    }
 
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();

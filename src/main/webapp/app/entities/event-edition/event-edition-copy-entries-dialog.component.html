@@ -8,9 +8,11 @@
         <jhi-alert-error></jhi-alert-error>
         <p jhiTranslate="motorsportsDatabaseApp.eventEdition.copy">Choose event to copy entries from</p>
         <div class="form-group">
-	        <ng2-completer id="field_eventEdition" name="eventEdition" [(ngModel)]="eventEditionSearch" [datasource]="dataServiceEventEdition" [minSearchLength]="2" 
-	        	(selected)="onEventEditionSelected($event)" (highlighted)="onEventEditionSelected($event)" [pause]="300" [autoMatch]="true" 
-	        	[maxChars]="10" required></ng2-completer>
+        	<ng-template #eventTemplate let-r="result">
+			  {{r.longEventName}}
+			</ng-template>
+            <input id="field_copyFrom" type="text" name="field_copyFrom" class="form-control" [inputFormatter]="inputFormatter"
+            	[(ngModel)]="selectedEventEdition" [ngbTypeahead]="search" [focusFirst]="false" [resultTemplate]="eventTemplate"/>
 	    </div>
     </div>
     <div class="modal-footer">

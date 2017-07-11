@@ -4,7 +4,14 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
 
-import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
+import { Observable } from 'rxjs/Rx';
+import {map} from 'rxjs/operator/map';
+import {debounceTime} from 'rxjs/operator/debounceTime';
+import {distinctUntilChanged} from 'rxjs/operator/distinctUntilChanged';
+import {_catch} from 'rxjs/operator/catch';
+import {_do} from 'rxjs/operator/do';
+import {switchMap} from 'rxjs/operator/switchMap';
+import {of} from 'rxjs/observable/of';
 
 import { EventEdition } from './event-edition.model';
 import { EventEditionPopupService } from './event-edition-popup.service';
@@ -18,19 +25,48 @@ export class EventEditionCopyEntriesDialogComponent {
 
     eventEdition: EventEdition;
     selectedEventEdition: EventEdition;
-    protected dataServiceEventEdition: CompleterData;
     private eventEditionSearch: string;
+    searching = false;
+    searchFailed = false;
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
         private eventEditionService: EventEditionService,
         public activeModal: NgbActiveModal,
         private eventManager: JhiEventManager,
-        private completerService: CompleterService
     ) {
-        this.dataServiceEventEdition = completerService.remote('api/_search/event-editions?query=', null, 'longEventName');
-    }
 
+    }
+    
+    private innersearch(term: string) {
+        if (term === '') {
+          return of.call([]);
+        }
+
+        return map.call(this.eventEditionService.typeAhead(term),
+          response => response.json);
+      }
+    
+    search = (text$: Observable<string>) =>
+    _do.call(
+      switchMap.call(
+        _do.call(
+          distinctUntilChanged.call(
+            debounceTime.call(text$, 300)),
+          () => this.searching = true),
+        term =>
+          _catch.call(
+            _do.call(this.innersearch(term), () => this.searchFailed = false),
+            () => {
+              this.searchFailed = true;
+              return of.call([]);
+            }
+          )
+      ),
+      () => this.searching = false);
+    
+    inputFormatter = (result: any) => result.longEventName;
+    
     clear () {
         this.activeModal.dismiss('cancel');
     }
@@ -42,18 +78,6 @@ export class EventEditionCopyEntriesDialogComponent {
             });
             this.activeModal.dismiss(true);
         });
-    }
-    
-    public onEventEditionSelected(selected: CompleterItem) {
-        if (!selected.originalObject) return;
-        let eventEd = selected.originalObject;
-        if (selected) {
-            this.selectedEventEdition= eventEd;
-            this.eventEditionSearch = eventEd.longEventName;
-        } else {
-            this.selectedEventEdition = null;
-            this.eventEditionSearch = null;
-        }
     }
 }
 
