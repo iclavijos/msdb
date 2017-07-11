@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
 import { Subscription } from 'rxjs/Rx';
+import { JhiEventManager, JhiAlertService  } from 'ng-jhipster';
 import { SeriesEdition } from './series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
 import { EventEditionService } from '../event-edition/event-edition.service';
@@ -13,13 +13,12 @@ import { EventEditionService } from '../event-edition/event-edition.service';
 export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
 
     seriesEdition: SeriesEdition;
-    eventSubscriber: Subscription;
-    private subscription: any;
+    private subscription: Subscription;
+    private eventSubscriber: Subscription;
     driversStandings: any;
     teamsStandings: any;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
         private seriesEditionService: SeriesEditionService,
         private eventEditionService: EventEditionService,
         private alertService: JhiAlertService,
@@ -30,14 +29,14 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe(params => {
+        this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
         });
-        this.eventSubscriber = this.eventManager.subscribe('seriesEditionEventsListModification', (response) => this.loadEvents(this.seriesEdition.id));
+        this.registerChangeInSeriesEditions();
     }
 
-    load (id) {
-        this.seriesEditionService.find(id).subscribe(seriesEdition => {
+    load(id) {
+        this.seriesEditionService.find(id).subscribe((seriesEdition) => {
             this.seriesEdition = seriesEdition;
             this.loadEvents(id);
             this.loadDriversStandings(id);
@@ -88,11 +87,18 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.subscription.unsubscribe();
         this.eventManager.destroy(this.eventSubscriber);
+    }
+
+    registerChangeInSeriesEditions() {
+        this.eventSubscriber = this.eventManager.subscribe(
+            'seriesEditionListModification',
+            (response) => this.load(this.seriesEdition.id)
+        );
     }
     
     private onRemoveError (error) {
         this.alertService.error(error.message, null, null);
     }
-
 }

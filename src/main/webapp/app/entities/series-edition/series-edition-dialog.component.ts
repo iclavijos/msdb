@@ -2,8 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
+import { Observable } from 'rxjs/Rx';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
 
@@ -12,6 +13,7 @@ import { SeriesEditionPopupService } from './series-edition-popup.service';
 import { SeriesEditionService } from './series-edition.service';
 import { Category, CategoryService } from '../category';
 import { Series, SeriesService } from '../series';
+import { ResponseWrapper } from '../../shared';
 
 @Component({
     selector: 'jhi-series-edition-dialog',
@@ -26,53 +28,67 @@ export class SeriesEditionDialogComponent implements OnInit {
     categories: Category[];
 
     series: Series[];
+
     constructor(
         public activeModal: NgbActiveModal,
-        private jhiLanguageService: JhiLanguageService,
         private alertService: JhiAlertService,
         private seriesEditionService: SeriesEditionService,
         private categoryService: CategoryService,
         private seriesService: SeriesService,
         private eventManager: JhiEventManager
     ) {
-        //this.jhiLanguageService.setLocations(['seriesEdition']);
     }
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
-        this.categoryService.query().subscribe(
-            (res: Response) => { this.categories = res.json(); }, (res: Response) => this.onError(res.json()));
-        this.seriesService.query().subscribe(
-            (res: Response) => { this.series = res.json(); }, (res: Response) => this.onError(res.json()));
+        this.authorities = ['ROLE_EDITOR', 'ROLE_ADMIN'];
+        this.categoryService.query()
+            .subscribe((res: ResponseWrapper) => { this.categories = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
+        this.seriesService.query()
+            .subscribe((res: ResponseWrapper) => { this.series = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
     }
     clear () {
         this.activeModal.dismiss('cancel');
     }
 
-    save () {
+    save() {
         this.isSaving = true;
         if (this.seriesEdition.id !== undefined) {
-            this.seriesEditionService.update(this.seriesEdition)
-                .subscribe((res: SeriesEdition) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.seriesEditionService.update(this.seriesEdition), false);
         } else {
-            this.seriesEditionService.create(this.seriesEdition)
-                .subscribe((res: SeriesEdition) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.seriesEditionService.create(this.seriesEdition), true);
         }
     }
 
-    private onSaveSuccess (result: SeriesEdition) {
+    private subscribeToSaveResponse(result: Observable<SeriesEdition>, isCreated: boolean) {
+        result.subscribe((res: SeriesEdition) =>
+            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+    }
+
+    private onSaveSuccess(result: SeriesEdition, isCreated: boolean) {
+        this.alertService.success(
+            isCreated ? 'motorsportsDatabaseApp.seriesEdition.created'
+            : 'motorsportsDatabaseApp.seriesEdition.updated',
+            { param : result.id }, null);
+
         this.eventManager.broadcast({ name: 'seriesEditionListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError (error) {
+    private onSaveError(error) {
+        try {
+            error.json();
+        } catch (exception) {
+            error.message = error.text();
+        }
         this.isSaving = false;
         this.onError(error);
     }
 
-    private onError (error) {
+    private onError(error) {
         this.alertService.error(error.message, null, null);
     }
     
@@ -126,13 +142,13 @@ export class SeriesEditionPopupComponent implements OnInit, OnDestroy {
     modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private seriesEditionPopupService: SeriesEditionPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
+        this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
                 this.modalRef = this.seriesEditionPopupService
                     .open(SeriesEditionDialogComponent, params['id']);
@@ -140,7 +156,6 @@ export class SeriesEditionPopupComponent implements OnInit, OnDestroy {
                 this.modalRef = this.seriesEditionPopupService
                     .open(SeriesEditionDialogComponent, null, params['idSeries']);
             }
-
         });
     }
 

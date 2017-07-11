@@ -1,12 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Response } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { JhiEventManager, JhiParseLinks, JhiPaginationUtil, JhiLanguageService, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { RacetrackLayout } from './racetrack-layout.model';
 import { RacetrackLayoutService } from './racetrack-layout.service';
-import { ITEMS_PER_PAGE, Principal } from '../../shared';
+import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
 import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
 
 @Component({
@@ -20,7 +19,6 @@ export class RacetrackLayoutComponent implements OnInit, OnDestroy {
     currentSearch: string;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
         private racetrackLayoutService: RacetrackLayoutService,
         private alertService: JhiAlertService,
         private dataUtils: JhiDataUtils,
@@ -33,24 +31,24 @@ export class RacetrackLayoutComponent implements OnInit, OnDestroy {
 
     loadAll() {
         if (this.currentSearch) {
-            this.racetrackLayoutService.search({
+            this.racetrackLayoutService.query({
                 query: this.currentSearch,
                 }).subscribe(
-                    (res: Response) => this.racetrackLayouts = res.json(),
-                    (res: Response) => this.onError(res.json())
+                    (res: ResponseWrapper) => this.racetrackLayouts = res.json,
+                    (res: ResponseWrapper) => this.onError(res.json)
                 );
             return;
        }
         this.racetrackLayoutService.query().subscribe(
-            (res: Response) => {
-                this.racetrackLayouts = res.json();
+            (res: ResponseWrapper) => {
+                this.racetrackLayouts = res.json;
                 this.currentSearch = '';
             },
-            (res: Response) => this.onError(res.json())
+            (res: ResponseWrapper) => this.onError(res.json)
         );
     }
 
-    search (query) {
+    search(query) {
         if (!query) {
             return this.clear();
         }
@@ -74,7 +72,7 @@ export class RacetrackLayoutComponent implements OnInit, OnDestroy {
         this.eventManager.destroy(this.eventSubscriber);
     }
 
-    trackId (index: number, item: RacetrackLayout) {
+    trackId(index: number, item: RacetrackLayout) {
         return item.id;
     }
 
@@ -86,11 +84,10 @@ export class RacetrackLayoutComponent implements OnInit, OnDestroy {
         return this.dataUtils.openFile(contentType, field);
     }
     registerChangeInRacetrackLayouts() {
-        this.eventSubscriber = this.eventManager.subscribe('racetrackLayoutModification', (response) => this.loadAll());
+        this.eventSubscriber = this.eventManager.subscribe('racetrackLayoutListModification', (response) => this.loadAll());
     }
 
-
-    private onError (error) {
+    private onError(error) {
         this.alertService.error(error.message, null, null);
     }
 }

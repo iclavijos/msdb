@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
+import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
 
 import { RacetrackLayout } from './racetrack-layout.model';
 import { RacetrackLayoutPopupService } from './racetrack-layout-popup.service';
@@ -17,25 +17,26 @@ export class RacetrackLayoutDeleteDialogComponent {
     racetrackLayout: RacetrackLayout;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
         private racetrackLayoutService: RacetrackLayoutService,
         public activeModal: NgbActiveModal,
+        private alertService: JhiAlertService,
         private eventManager: JhiEventManager
     ) {
     }
 
-    clear () {
+    clear() {
         this.activeModal.dismiss('cancel');
     }
 
-    confirmDelete (id: number) {
-        this.racetrackLayoutService.delete(id).subscribe(response => {
+    confirmDelete(id: number) {
+        this.racetrackLayoutService.delete(id).subscribe((response) => {
             this.eventManager.broadcast({
-                name: 'racetrackLayoutsModification',
+                name: 'racetrackLayoutListModification',
                 content: 'Deleted an racetrackLayout'
             });
             this.activeModal.dismiss(true);
         });
+        this.alertService.success('motorsportsDatabaseApp.racetrackLayout.deleted', { param : id }, null);
     }
 }
 
@@ -48,13 +49,13 @@ export class RacetrackLayoutDeletePopupComponent implements OnInit, OnDestroy {
     modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private racetrackLayoutPopupService: RacetrackLayoutPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
+        this.routeSub = this.route.params.subscribe((params) => {
             this.modalRef = this.racetrackLayoutPopupService
                 .open(RacetrackLayoutDeleteDialogComponent, params['id']);
         });

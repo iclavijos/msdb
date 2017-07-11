@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { JhiLanguageService, JhiDataUtils, JhiEventManager } from 'ng-jhipster';
 import { Subscription } from 'rxjs/Rx';
+import { JhiEventManager , JhiDataUtils } from 'ng-jhipster';
+
 import { RacetrackLayout } from './racetrack-layout.model';
 import { RacetrackLayoutService } from './racetrack-layout.service';
 
@@ -12,28 +13,26 @@ import { RacetrackLayoutService } from './racetrack-layout.service';
 export class RacetrackLayoutDetailComponent implements OnInit, OnDestroy {
 
     racetrackLayout: RacetrackLayout;
-    private subscription: any;
-    eventSubscriber: Subscription;
+    private subscription: Subscription;
+    private eventSubscriber: Subscription;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
+        private eventManager: JhiEventManager,
         private dataUtils: JhiDataUtils,
         private racetrackLayoutService: RacetrackLayoutService,
-        private eventManager: JhiEventManager,
         private route: ActivatedRoute
     ) {
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe(params => {
-            this.load(params['idLayout']);
+        this.subscription = this.route.params.subscribe((params) => {
+            this.load(params['id']);
         });
-        
-        this.eventSubscriber = this.eventManager.subscribe('racetrackLayoutModification', (response) => this.load(this.racetrackLayout.id));
+        this.registerChangeInRacetrackLayouts();
     }
 
-    load (id) {
-        this.racetrackLayoutService.find(id).subscribe(racetrackLayout => {
+    load(id) {
+        this.racetrackLayoutService.find(id).subscribe((racetrackLayout) => {
             this.racetrackLayout = racetrackLayout;
         });
     }
@@ -49,8 +48,14 @@ export class RacetrackLayoutDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.eventManager.destroy(this.eventSubscriber);
         this.subscription.unsubscribe();
+        this.eventManager.destroy(this.eventSubscriber);
     }
 
+    registerChangeInRacetrackLayouts() {
+        this.eventSubscriber = this.eventManager.subscribe(
+            'racetrackLayoutListModification',
+            (response) => this.load(this.racetrackLayout.id)
+        );
+    }
 }

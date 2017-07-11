@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
+import { JhiPaginationUtil } from 'ng-jhipster';
 
 import { RacetrackLayoutComponent } from './racetrack-layout.component';
 import { RacetrackLayoutDetailComponent } from './racetrack-layout-detail.component';
@@ -10,7 +11,6 @@ import { RacetrackLayoutDeletePopupComponent } from './racetrack-layout-delete-d
 
 import { Principal } from '../../shared';
 
-
 export const racetrackLayoutRoute: Routes = [
   {
     path: 'racetrack-layout',
@@ -18,14 +18,16 @@ export const racetrackLayoutRoute: Routes = [
     data: {
         authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.racetrackLayout.home.title'
-    }
+    },
+    canActivate: [UserRouteAccessService]
   }, {
     path: 'racetrack/:id/racetrack-layout/:idLayout',
     component: RacetrackLayoutDetailComponent,
     data: {
         authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.racetrackLayout.home.title'
-    }
+    },
+    canActivate: [UserRouteAccessService]
   }
 ];
 
@@ -37,6 +39,7 @@ export const racetrackLayoutPopupRoute: Routes = [
         authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.racetrackLayout.home.title'
     },
+    canActivate: [UserRouteAccessService],
     outlet: 'popup'
   },
   {
@@ -46,6 +49,7 @@ export const racetrackLayoutPopupRoute: Routes = [
         authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.racetrackLayout.home.title'
     },
+    canActivate: [UserRouteAccessService],
     outlet: 'popup'
   },
   {
@@ -55,6 +59,7 @@ export const racetrackLayoutPopupRoute: Routes = [
         authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.racetrackLayout.home.title'
     },
+    canActivate: [UserRouteAccessService],
     outlet: 'popup'
   }
 ];

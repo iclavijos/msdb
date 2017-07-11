@@ -15,38 +15,28 @@ import { Principal } from '../../shared';
 @Injectable()
 export class SeriesEditionResolvePagingParams implements Resolve<any> {
 
-  constructor(private paginationUtil: JhiPaginationUtil) {}
+    constructor(private paginationUtil: JhiPaginationUtil) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-      let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
-      return {
-          page: this.paginationUtil.parsePage(page),
-          predicate: this.paginationUtil.parsePredicate(sort),
-          ascending: this.paginationUtil.parseAscending(sort)
-    };
-  }
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
+        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
+        return {
+            page: this.paginationUtil.parsePage(page),
+            predicate: this.paginationUtil.parsePredicate(sort),
+            ascending: this.paginationUtil.parseAscending(sort)
+      };
+    }
 }
 
 export const seriesEditionRoute: Routes = [
-//  {
-//    path: 'series-edition',
-//    component: SeriesEditionComponent,
-//    resolve: {
-//      'pagingParams': SeriesEditionResolvePagingParams
-//    },
-//    data: {
-//        authorities: ['ROLE_USER'],
-//        pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
-//    }
-//  }, 
   {
     path: 'series/series-edition/:id',
     component: SeriesEditionDetailComponent,
     data: {
         authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
-    }
+    },
+    canActivate: [UserRouteAccessService]
   }
 ];
 
@@ -58,6 +48,7 @@ export const seriesEditionPopupRoute: Routes = [
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
     },
+    canActivate: [UserRouteAccessService],
     outlet: 'popup'
   },
   {
@@ -67,6 +58,7 @@ export const seriesEditionPopupRoute: Routes = [
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
     },
+    canActivate: [UserRouteAccessService],
     outlet: 'popup'
   },
   {
@@ -76,6 +68,7 @@ export const seriesEditionPopupRoute: Routes = [
           authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
           pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
       },
+      canActivate: [UserRouteAccessService],
       outlet: 'popup'
     },
   {
@@ -85,6 +78,7 @@ export const seriesEditionPopupRoute: Routes = [
         authorities: ['ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
     },
+    canActivate: [UserRouteAccessService],
     outlet: 'popup'
   }
 ];

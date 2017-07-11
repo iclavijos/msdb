@@ -21,7 +21,7 @@ import {
     SeriesEditionResolvePagingParams,
 } from './';
 
-let ENTITY_STATES = [
+const ENTITY_STATES = [
     ...seriesEditionRoute,
     ...seriesEditionPopupRoute,
 ];

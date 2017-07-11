@@ -51,6 +51,11 @@ export class EventService {
         const options = createRequestOption(req);
         return this.http.get(this.resourceSearchUrl, options)
             .map((res: any) => this.convertResponse(res));
+	}
+	
+    searchTypeahead(query?: any): Observable<ResponseWrapper> {
+        return this.http.get('api/_typeahead/events?query=' + query)
+            .map((res: Response) => this.convertResponse(res));
     }
 
     private convertResponse(res: Response): ResponseWrapper {

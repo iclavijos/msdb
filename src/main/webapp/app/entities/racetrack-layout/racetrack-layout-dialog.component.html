@@ -12,8 +12,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrackLayout.name" for="field_name">Name</label>
             <input type="text" class="form-control" name="name" id="field_name"
-                [(ngModel)]="racetrackLayout.name"
-            required maxlength="100" />
+                [(ngModel)]="racetrackLayout.name" required maxlength="100" />
             <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.name?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.name?.errors?.required" jhiTranslate="entity.validation.required">
@@ -28,8 +27,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrackLayout.length" for="field_length">Length</label>
             <input type="number" class="form-control" name="length" id="field_length"
-                [(ngModel)]="racetrackLayout.length"
-            required />
+                [(ngModel)]="racetrackLayout.length" required />
             <div [hidden]="!(editForm.controls.length?.dirty && editForm.controls.length?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.length?.errors?.required" jhiTranslate="entity.validation.required">
@@ -44,8 +42,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrackLayout.yearFirstUse" for="field_yearFirstUse">Year First Use</label>
             <input type="number" class="form-control" name="yearFirstUse" id="field_yearFirstUse"
-                [(ngModel)]="racetrackLayout.yearFirstUse"
-            required />
+                [(ngModel)]="racetrackLayout.yearFirstUse" required />
             <div [hidden]="!(editForm.controls.yearFirstUse?.dirty && editForm.controls.yearFirstUse?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.yearFirstUse?.errors?.required" jhiTranslate="entity.validation.required">
@@ -68,11 +65,10 @@
                         <span class="fa fa-times"></span>
                     </button>
                 </div>
-                <input type="file" (change)="setFileData($event, racetrackLayout, 'layoutImage', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                <input type="file" id="fileImage" (change)="setFileData($event, racetrackLayout, 'layoutImage', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
             </div>
             <input type="hidden" class="form-control" name="layoutImage" id="field_layoutImage"
-                [(ngModel)]="racetrackLayout.layoutImage"
-             />
+                [(ngModel)]="racetrackLayout.layoutImage"  />
             <input type="hidden" class="form-control" name="layoutImageContentType" id="field_layoutImageContentType"
                 [(ngModel)]="racetrackLayout.layoutImageContentType" />
         </div>

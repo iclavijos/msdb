@@ -11,7 +11,7 @@ export class SeriesEditionPopupService {
     private parentSeries: Series;
     private seriesEdition: SeriesEdition;
     
-    constructor (
+    constructor(
         private modalService: NgbModal,
         private router: Router,
         private seriesEditionService: SeriesEditionService,
@@ -29,7 +29,7 @@ export class SeriesEditionPopupService {
         }
 
         if (id) {
-            this.seriesEditionService.find(id).subscribe(seriesEdition => {
+            this.seriesEditionService.find(id).subscribe((seriesEdition) => {
                 this.seriesEditionModalRef(component, seriesEdition);
             });
         } else {
@@ -52,9 +52,9 @@ export class SeriesEditionPopupService {
     }
 
     seriesEditionModalRef(component: Component, seriesEdition: SeriesEdition): NgbModalRef {
-        let modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
+        const modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
         modalRef.componentInstance.seriesEdition = seriesEdition;
-        modalRef.result.then(result => {
+        modalRef.result.then((result) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
             this.isOpen = false;
         }, (reason) => {
