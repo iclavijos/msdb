@@ -39,8 +39,9 @@ export class CategoryService {
             .map((res: Response) => this.convertResponse(res));
     }
 
-    delete(id: number): Observable<Response> {
-        return this.http.delete(`${this.resourceUrl}/${id}`);
+    delete(id: number): Observable<ResponseWrapper> {
+        return this.http.delete(`${this.resourceUrl}/${id}`)
+            .map((res: any) => this.convertResponse(res));
     }
 
     search(req?: any): Observable<ResponseWrapper> {
