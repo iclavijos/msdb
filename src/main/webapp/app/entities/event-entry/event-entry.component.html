@@ -44,7 +44,8 @@
 				    	<div class="col-md-6" *ngIf="!eventEntry.eventEdition.multidriver">
 			            	<img *ngIf="eventEntry.drivers[0].faceUrl" [src]="eventEntry.drivers[0].faceUrl"/>
 			            </div>
-			            <div class="col-md-4" *ngIf="eventEntry.eventEdition.multidriver"></div>
+			            <div class="col-md-4" *ngIf="eventEntry.eventEdition.multidriver">
+			            </div>
 		    		</div>
 				</div>
 		    	<div class="col-md-2">
@@ -123,8 +124,20 @@
                         {{eventEntry.category.shortname}}
                     </div>
 				</div>
-				<div class="col-md-3">
-					<img *ngIf="eventEntry.drivers[0].faceUrl" [src]="getBigFaceUrl(eventEntry.drivers[0].portraitUrl)"/>
+				<div class="col-md-6">
+					<div *ngIf="!eventEntry.eventEdition.multidriver">
+						<img *ngIf="eventEntry.drivers[0].faceUrl" [src]="getBigFaceUrl(eventEntry.drivers[0].portraitUrl)"/>
+					</div>
+					<div *ngIf="eventEntry.eventEdition.multidriver">
+						<div class="row">
+		            		<div class="col-md-2" *ngFor="let driver of eventEntry.drivers">
+		            			<figure class="figure" *ngIf="driver.faceUrl">
+								  <img [src]="getSmallFaceUrl(driver.portraitUrl)" alt="{{driver.fullName}}"/>
+								  <figcaption class="figure-caption text-center">{{driver.surname}}</figcaption>
+								</figure>
+		            		</div>
+		            	</div>
+					</div>
 				</div>
 			</div>
 		</ng-container>

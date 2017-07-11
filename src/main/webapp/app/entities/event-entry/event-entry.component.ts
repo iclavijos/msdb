@@ -43,7 +43,28 @@ export class EventEntryComponent implements OnInit, OnDestroy {
     
     private getBigFaceUrl(portraitUrl: string) {
         if (portraitUrl != null) {
-            return portraitUrl.replace("upload/", "upload/w_240,h_240,c_thumb,g_face,r_max/")
+            let url = portraitUrl.replace("upload/", "upload/w_240,h_240,c_thumb,g_face,r_max/");
+            let pos = url.lastIndexOf(".");
+            if (pos > -1) {
+                url = url.substring(0, pos);
+            }
+            url += ".png";
+            
+            return url;
+        }
+        return null;
+    }
+    
+    private getSmallFaceUrl(portraitUrl: string) {
+        if (portraitUrl != null) {
+            let url = portraitUrl.replace("upload/", "upload/w_120,h_120,c_thumb,g_face,r_max/");
+            let pos = url.lastIndexOf(".");
+            if (pos > -1) {
+                url = url.substring(0, pos);
+            }
+            url += ".png";
+            
+            return url;
         }
         return null;
     }
