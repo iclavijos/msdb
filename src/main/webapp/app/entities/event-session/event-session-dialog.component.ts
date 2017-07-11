@@ -2,8 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
+import { Observable } from 'rxjs/Rx';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { EventSession } from './event-session.model';
 import { EventSessionPopupService } from './event-session-popup.service';
@@ -27,7 +28,6 @@ export class EventSessionDialogComponent implements OnInit {
 
     constructor(
         public activeModal: NgbActiveModal,
-        private jhiLanguageService: JhiLanguageService,
         private alertService: JhiAlertService,
         private eventSessionService: EventSessionService,
         private eventManager: JhiEventManager,
@@ -42,33 +42,49 @@ export class EventSessionDialogComponent implements OnInit {
         this.keysDuration = Object.keys(this.durationTypes).filter(Number);
         this.keysSession = [0, 1, 2]; //Object.keys(this.sessionTypes).filter(key => parseInt(key)); Need to find out how not to filter out 0
     }
-    clear () {
+
+    clear() {
         this.activeModal.dismiss('cancel');
     }
 
-    save () {
+    save() {
         this.isSaving = true;
         if (this.eventSession.id !== undefined) {
-            this.eventSessionService.update(this.eventSession)
-                .subscribe((res: EventSession) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.eventSessionService.update(this.eventSession), false);
         } else {
-            this.eventSessionService.create(this.eventSession)
-                .subscribe((res: EventSession) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.eventSessionService.create(this.eventSession), true);
         }
     }
 
-    private onSaveSuccess (result: EventSession) {
+    private subscribeToSaveResponse(result: Observable<EventSession>, isCreated: boolean) {
+        result.subscribe((res: EventSession) =>
+            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+    }
+
+    private onSaveSuccess(result: EventSession, isCreated: boolean) {
+        this.alertService.success(
+            isCreated ? 'motorsportsDatabaseApp.eventSession.created'
+            : 'motorsportsDatabaseApp.eventSession.updated',
+            { param : result.id }, null);
+
         this.eventManager.broadcast({ name: 'eventSessionListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError (error) {
+    private onSaveError(error) {
+        try {
+            error.json();
+        } catch (exception) {
+            error.message = error.text();
+        }
         this.isSaving = false;
         this.onError(error);
     }
 
-    private onError (error) {
+    private onError(error) {
         this.alertService.error(error.message, null, null);
     }
 }
@@ -83,13 +99,13 @@ export class EventSessionPopupComponent implements OnInit, OnDestroy {
     routeSub: any;
     eventEditionId: number;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private eventSessionPopupService: EventSessionPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
+        this.routeSub = this.route.params.subscribe((params) => {
             if (params['idEdition']) {
                 this.eventEditionId = params['idEdition'];
             }

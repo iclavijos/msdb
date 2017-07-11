@@ -44,7 +44,7 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
         });
-        this.registerChangeInEventEditions();
+        this.registerChangesInEventEdition();
         
         this.keysDuration = Object.keys(this.durationTypes).filter(Number);
         this.keysSession = Object.keys(this.sessionTypes).filter(Number);
@@ -79,11 +79,14 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         this.eventManager.destroy(this.eventSubscriber);
     }
     
-    registerChangeInEventEditions() {
+    registerChangesInEventEdition() {
         this.eventSubscriber = this.eventManager.subscribe(
             'eventEditionListModification',
             (response) => this.load(this.eventEdition.id)
         );
+        this.eventSubscriber.add(this.eventManager.subscribe(
+            'eventSessionListModification', 
+            (response) => this.loadSessions(this.eventEdition.id)));
     }
     
     convertToCurrentTZ() {

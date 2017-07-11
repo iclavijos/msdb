@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
+import { JhiPaginationUtil } from 'ng-jhipster';
 
 import { EventSessionComponent } from './event-session.component';
 import { EventSessionDetailComponent } from './event-session-detail.component';
@@ -10,23 +11,24 @@ import { EventSessionDeletePopupComponent } from './event-session-delete-dialog.
 
 import { Principal } from '../../shared';
 
-
 export const eventSessionRoute: Routes = [
-  {
-    path: 'event-session',
-    component: EventSessionComponent,
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
+    {
+        path: 'event-session',
+        component: EventSessionComponent,
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    }, {
+        path: 'event-session/:id',
+        component: EventSessionDetailComponent,
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
+        },
+        canActivate: [UserRouteAccessService]
     }
-  }, {
-    path: 'event-session/:id',
-    component: EventSessionDetailComponent,
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
-    }
-  }
 ];
 
 export const eventSessionPopupRoute: Routes = [
@@ -37,6 +39,7 @@ export const eventSessionPopupRoute: Routes = [
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
     },
+    canActivate: [UserRouteAccessService],
     outlet: 'popup'
   },
   {
@@ -46,6 +49,7 @@ export const eventSessionPopupRoute: Routes = [
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
     },
+    canActivate: [UserRouteAccessService],
     outlet: 'popup'
   },
   {
@@ -55,6 +59,7 @@ export const eventSessionPopupRoute: Routes = [
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
     },
+    canActivate: [UserRouteAccessService],
     outlet: 'popup'
   }
 ];
