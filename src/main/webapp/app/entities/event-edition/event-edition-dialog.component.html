@@ -67,8 +67,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.longEventName" for="field_longEventName">Long Event Name</label>
             <input type="text" class="form-control" name="longEventName" id="field_longEventName"
-                [(ngModel)]="eventEdition.longEventName"
-            required maxlength="100" />
+                [(ngModel)]="eventEdition.longEventName" required maxlength="100" />
             <div [hidden]="!(editForm.controls.longEventName?.dirty && editForm.controls.longEventName?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.longEventName?.errors?.required" jhiTranslate="entity.validation.required">
@@ -112,23 +111,27 @@
 			<div class="col-lg-4 col-md-4">
 				<div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.multidriver" for="field_multidriver">Multiple drivers?</label>
-		             <i [ngClass]="eventEdition.multidriver ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="eventEdition.multidriver = !eventEdition.multidriver"></i>
+		            <i [ngClass]="eventEdition.multidriver ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="eventEdition.multidriver = !eventEdition.multidriver"></i>
 		        </div>
 			</div>
 			<div class="col-lg-8 col-md-8">
 				<div class="form-group">
+					<ng-template #layoutTemplate let-r="result">
+					  <img src="{{r.layoutImageUrl}}" style="max-height: 100px; max-width: 200px"/>&nbsp;{{r.racetrack.name}}, {{r.name}} 
+					</ng-template>
 		            <label jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout" for="field_trackLayout">Track Layout</label>
-		            <ng2-completer id="field_trackLayout" name="trackLayout" [(ngModel)]="trackLayoutSearch" [datasource]="dataServiceLayout" [minSearchLength]="2" 
-		            	(selected)="onTrackLayoutSelected($event)" (highlighted)="onTrackLayoutSelected($event)" [pause]="300" [autoMatch]="true" 
-		            	[maxChars]="10" required></ng2-completer>
+		            <input id="field_trackLayout" type="text" name="field_trackLayout" class="form-control" [inputFormatter]="inputFormatterLayout"
+		            	[(ngModel)]="eventEdition.trackLayout" [ngbTypeahead]="searchLayouts" [focusFirst]="false" [resultTemplate]="layoutTemplate"/>
 		        </div>
 			</div>
 		</div>
         <div class="form-group">
+        	<ng-template #eventTemplate let-r="result">
+			  {{r.name}}
+			</ng-template>
             <label jhiTranslate="motorsportsDatabaseApp.eventEdition.event" for="field_event">Event</label>
-            <ng2-completer id="field_event" name="event" [(ngModel)]="eventSearch" [datasource]="dataServiceEvent" [minSearchLength]="2" 
-            	(selected)="onEventSelected($event)" (highlighted)="onEventSelected($event)" [pause]="300" [autoMatch]="true" 
-            	[maxChars]="10" [disabled]="eventSelectorDisabled" required></ng2-completer>
+            <input id="field_event" type="text" name="field_event" class="form-control" [inputFormatter]="inputFormatterEvent"
+            	[(ngModel)]="eventEdition.event" [ngbTypeahead]="searchEvents" [focusFirst]="false" [resultTemplate]="eventTemplate"/>
         </div>
     </div>
     <div class="modal-footer">

@@ -3,6 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
+import {map} from 'rxjs/operator/map';
+import {debounceTime} from 'rxjs/operator/debounceTime';
+import {distinctUntilChanged} from 'rxjs/operator/distinctUntilChanged';
+import {_catch} from 'rxjs/operator/catch';
+import {_do} from 'rxjs/operator/do';
+import {switchMap} from 'rxjs/operator/switchMap';
+import {of} from 'rxjs/observable/of';
+
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
@@ -16,8 +24,6 @@ import { ResponseWrapper } from '../../shared';
 
 import { MIN_DATE, CURRENT_DATE, MAX_DATE } from '../../shared';
 
-import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
-
 @Component({
     selector: 'jhi-event-edition-dialog',
     templateUrl: './event-edition-dialog.component.html',
@@ -28,11 +34,9 @@ export class EventEditionDialogComponent implements OnInit {
     eventEdition: EventEdition;
     authorities: any[];
     isSaving: boolean;
-    protected dataServiceLayout: CompleterData;
-    protected dataServiceEvent: CompleterData;
     eventSelectorDisabled = false;
-    private trackLayoutSearch: string;
-    private eventSearch: string;
+    searching = false;
+    searchFailed = false;
     
     minDate = MIN_DATE;
     maxDate = MAX_DATE;
@@ -46,11 +50,8 @@ export class EventEditionDialogComponent implements OnInit {
         private categoryService: CategoryService,
         private racetrackLayoutService: RacetrackLayoutService,
         private eventService: EventService,
-        private eventManager: JhiEventManager,
-        private completerService: CompleterService
+        private eventManager: JhiEventManager
     ) {
-        this.dataServiceLayout = completerService.remote('api/_typeahead/layouts?query=', null, 'fullName').imageField("layoutImg");
-        this.dataServiceEvent = completerService.remote('api/_search/events?query=', null, 'name');
     }
 
     ngOnInit() {
@@ -60,13 +61,60 @@ export class EventEditionDialogComponent implements OnInit {
         this.categoryService.query().subscribe(
                 (res: ResponseWrapper) => { this.categories = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
 
-        if (this.eventEdition.trackLayout) {
-            this.trackLayoutSearch = this.eventEdition.trackLayout.racetrack.name + '-' + this.eventEdition.trackLayout.name;
+    }
+    
+    private innersearch(term: string, layout: boolean) {
+        if (term === '') {
+            return of.call([]);
         }
-        if (this.eventEdition.event) {
-            this.eventSearch = this.eventEdition.event.name;
+        
+        if (layout) {
+            return map.call(this.racetrackLayoutService.searchLayout(term),
+                    response => response.json);
+        } else {
+            return map.call(this.eventService.searchTypeahead(term),
+                    response => response.json);
         }
     }
+    
+    searchLayouts = (text$: Observable<string>) =>
+    _do.call(
+      switchMap.call(
+        _do.call(
+          distinctUntilChanged.call(
+            debounceTime.call(text$, 300)),
+          () => this.searching = true),
+        term =>
+          _catch.call(
+            _do.call(this.innersearch(term, true), () => this.searchFailed = false),
+            () => {
+              this.searchFailed = true;
+              return of.call([]);
+            }
+          )
+      ),
+      () => this.searching = false);
+    
+    searchEvents = (text$: Observable<string>) =>
+    _do.call(
+      switchMap.call(
+        _do.call(
+          distinctUntilChanged.call(
+            debounceTime.call(text$, 300)),
+          () => this.searching = true),
+        term =>
+          _catch.call(
+            _do.call(this.innersearch(term, false), () => this.searchFailed = false),
+            () => {
+              this.searchFailed = true;
+              return of.call([]);
+            }
+          )
+      ),
+      () => this.searching = false);
+    
+    inputFormatterLayout = (result: any) => result.racetrack.name + ' ' + result.name;
+    inputFormatterEvent = (result : any) => result.name;
 
     clear() {
         this.activeModal.dismiss('cancel');
@@ -123,28 +171,6 @@ export class EventEditionDialogComponent implements OnInit {
 
     trackEventById(index: number, item: Event) {
         return item.id;
-    }
-    
-    public onTrackLayoutSelected(selected: CompleterItem) {
-        if (!selected.originalObject) return;
-        let tracklayout = selected.originalObject.racetrackLayout;
-        if (selected) {
-            this.eventEdition.trackLayout = tracklayout;
-            this.trackLayoutSearch = tracklayout.racetrack.name + '-' + tracklayout.name;
-        } else {
-            this.eventEdition.trackLayout = null;
-            this.trackLayoutSearch = null;
-        }
-    }
-    
-    public onEventSelected(selected: CompleterItem) {
-        if (selected) {
-            this.eventEdition.event = selected.originalObject;
-            this.eventSearch = selected.originalObject.name;
-        } else {
-            this.eventEdition.event = null;
-            this.eventSearch = null;
-        }
     }
     
     public addCategories() {

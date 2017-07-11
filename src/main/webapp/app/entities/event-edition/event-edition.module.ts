@@ -1,8 +1,6 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { Ng2CompleterModule } from 'ng2-completer';
-
 import { MotorsportsDatabaseEventEntryModule } from '../event-entry/event-entry.module';
 import { MotorsportsDatabaseEventEntryResultModule } from '../event-entry-result/event-entry-result.module';
 import { MotorsportsDatabaseSharedModule } from '../../shared';
@@ -30,7 +28,6 @@ const ENTITY_STATES = [
 
 @NgModule({
     imports: [
-        Ng2CompleterModule,
         MotorsportsDatabaseSharedModule,
         MotorsportsDatabaseEventEntryModule,
         MotorsportsDatabaseEventEntryResultModule,
