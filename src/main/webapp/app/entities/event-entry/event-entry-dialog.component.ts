@@ -2,17 +2,29 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Response } from '@angular/http';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiAlertService, JhiLanguageService, JhiDataUtils } from 'ng-jhipster';
+import { NgbActiveModal, NgbModalRef, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
+import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
+
+import { Observable } from 'rxjs/Rx';
+import {map} from 'rxjs/operator/map';
+import {debounceTime} from 'rxjs/operator/debounceTime';
+import {distinctUntilChanged} from 'rxjs/operator/distinctUntilChanged';
+import {_catch} from 'rxjs/operator/catch';
+import {_do} from 'rxjs/operator/do';
+import {switchMap} from 'rxjs/operator/switchMap';
+import {of} from 'rxjs/observable/of';
 
 import { EventEdition, EventEditionService } from '../event-edition';
 import { EventEntry } from './event-entry.model';
 import { EventEntryPopupService } from './event-entry-popup.service';
 import { EventEntryService } from './event-entry.service';
-import { Driver } from '../driver';
+import { Driver, DriverService } from '../driver';
+import { TeamService } from '../team';
+import { ChassisService } from '../chassis';
+import { EngineService } from '../engine';
+import { TyreProviderService } from '../tyre-provider';
+import { FuelProviderService } from '../fuel-provider';
 import { Category } from '../category';
-
-import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
 
 @Component({
     selector: 'jhi-event-entry-dialog',
@@ -23,43 +35,28 @@ export class EventEntryDialogComponent implements OnInit {
     eventEntry: EventEntry;
     authorities: any[];
     isSaving: boolean;
-    private engineSearch: string;
-    private driverSearch: string;
-    private teamSearch: string;
-    private operatedBySearch: string;
-    private chassisSearch: string;
-    private tyresSearch: string;
-    private fuelSearch: string;
-
-    dataServiceEngine: CompleterData;
-    dataServiceDriver: CompleterData;
-    dataServiceTeam: CompleterData;
-    dataServiceTeamOperatedBy: CompleterData;
-    dataServiceChassis: CompleterData;
-    dataServiceFuel: CompleterData;
-    dataServiceTyres: CompleterData;
+    searching = false;
+    searchFailed = false;
+    singleDriver: Driver;
 
     allowedCategories: Category[];
 
     constructor(
         public activeModal: NgbActiveModal,
-        private jhiLanguageService: JhiLanguageService,
         private dataUtils: JhiDataUtils,
         private alertService: JhiAlertService,
         private eventEditionService: EventEditionService,
         private eventEntryService: EventEntryService,
+        private driverService: DriverService,
+        private teamService: TeamService,
+        private chassisService: ChassisService,
+        private engineService: EngineService,
+        private tyresProviderService: TyreProviderService,
+        private fuelProviderService: FuelProviderService,
         private eventManager: JhiEventManager,
-        private completerService: CompleterService,
         private route: ActivatedRoute,
         private router: Router,
     ) {
-        this.dataServiceDriver = completerService.remote('api/_typeahead/drivers?query=', null, 'fullName');
-        this.dataServiceTeam = completerService.remote('api/_typeahead/teams?query=', null, 'name');
-        this.dataServiceTeamOperatedBy = completerService.remote('api/_typeahead/teams?query=', null, 'name');
-        this.dataServiceEngine = completerService.remote('api/_typeahead/engines?query=', null, 'name').descriptionField('manufacturer');
-        this.dataServiceChassis = completerService.remote('api/_typeahead/chassis?query=', null, 'name').descriptionField('manufacturer');
-        this.dataServiceTyres = completerService.remote('api/_typeahead/tyres?query=', null, 'name');
-        this.dataServiceFuel = completerService.remote('api/_typeahead/fuel?query=', null, 'name');
     }
 
     ngOnInit() {
@@ -75,15 +72,7 @@ export class EventEntryDialogComponent implements OnInit {
             });
         } else {
             this.allowedCategories = this.eventEntry.eventEdition.allowedCategories;
-            if (!this.eventEntry.eventEdition.multidriver) {
-                this.driverSearch = this.eventEntry.drivers[0].name + ' ' + this.eventEntry.drivers[0].surname;
-            }
-            this.engineSearch = this.eventEntry.engine.manufacturer + ' ' + this.eventEntry.engine.name;
-            this.teamSearch = this.eventEntry.team.name;
-            this.operatedBySearch = this.eventEntry.operatedBy ? this.eventEntry.operatedBy.name : null;
-            this.chassisSearch = this.eventEntry.chassis.manufacturer + ' ' + this.eventEntry.chassis.name;
-            this.tyresSearch = this.eventEntry.tyres ? this.eventEntry.tyres.name : null;
-            this.fuelSearch = this.eventEntry.fuel ? this.eventEntry.fuel.name : null;
+
         }
     }
     
@@ -114,6 +103,9 @@ export class EventEntryDialogComponent implements OnInit {
 
     save () {
         this.isSaving = true;
+        if (!this.eventEntry.eventEdition.multidriver) {
+            this.eventEntry.drivers = [this.singleDriver];
+        }
         if (this.eventEntry.id !== undefined) {
             this.eventEntryService.update(this.eventEntry)
                 .subscribe((res: EventEntry) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
@@ -137,23 +129,160 @@ export class EventEntryDialogComponent implements OnInit {
     private onError (error) {
         this.alertService.error(error.message, null, null);
     }
-
-    private onDriverSelected(selected: CompleterItem) {
-        if (selected) {
-            if (!this.eventEntry.eventEdition.multidriver) {
-                this.eventEntry.drivers = [selected.originalObject.driver];
-            } else {
-                if (!this.eventEntry.drivers) {
-                    this.eventEntry.drivers = new Array();
-                }
-                this.eventEntry.drivers.push(selected.originalObject.driver);
-            }    
-        } else {
-            if (!this.eventEntry.eventEdition.multidriver) {
-                this.eventEntry.drivers = null;
-            }
+    
+    private innerDriverSearch(term: string) {
+        if (term === '') {
+            return of.call([]);
         }
-        this.driverSearch = null;
+
+        return map.call(this.driverService.typeahead(term), response => response.json);
+    }
+    
+    searchDriver = (text$: Observable<string>) => _do.call(
+      switchMap.call(
+        _do.call(distinctUntilChanged.call(debounceTime.call(text$, 300)), () => this.searching = true),
+        term => _catch.call(
+            _do.call(this.innerDriverSearch(term), () => this.searchFailed = false),
+            () => {
+              this.searchFailed = true;
+              return of.call([]);
+            }
+          )
+      ),
+      () => this.searching = false);
+    
+    inputDriverFormatter = (result: any) => result.fullName;
+    
+    private innerTeamSearch(term: string) {
+        if (term === '') {
+            return of.call([]);
+        }
+
+        return map.call(this.teamService.typeahead(term), response => response.json);
+    }
+    
+    searchTeam = (text$: Observable<string>) => _do.call(
+      switchMap.call(
+        _do.call(distinctUntilChanged.call(debounceTime.call(text$, 300)), () => this.searching = true),
+        term => _catch.call(
+            _do.call(this.innerTeamSearch(term), () => this.searchFailed = false),
+            () => {
+              this.searchFailed = true;
+              return of.call([]);
+            }
+          )
+      ),
+      () => this.searching = false);
+    
+    inputTeamFormatter = (result: any) => result.name;
+    
+    private innerChassisSearch(term: string) {
+        if (term === '') {
+          return of.call([]);
+        }
+
+        return map.call(this.chassisService.searchChassis(term),
+          response => response.json);
+      }
+    
+    searchChassis = (text$: Observable<string>) => _do.call(
+        switchMap.call(
+          _do.call(distinctUntilChanged.call(debounceTime.call(text$, 300)), () => this.searching = true),
+          term => _catch.call(
+              _do.call(this.innerChassisSearch(term), () => this.searchFailed = false),
+              () => {
+                this.searchFailed = true;
+                return of.call([]);
+              }
+            )
+        ),
+        () => this.searching = false);
+    
+    inputChassisFormatter = (result: any) => result.manufacturer + ' ' + result.name;
+    
+    private innerEngineSearch(term: string) {
+        if (term === '') {
+          return of.call([]);
+        }
+
+        return map.call(this.engineService.typeahead(term),
+          response => response.json);
+      }
+    
+    searchEngine = (text$: Observable<string>) => _do.call(
+        switchMap.call(
+          _do.call(distinctUntilChanged.call(debounceTime.call(text$, 300)), () => this.searching = true),
+          term => _catch.call(
+              _do.call(this.innerEngineSearch(term), () => this.searchFailed = false),
+              () => {
+                this.searchFailed = true;
+                return of.call([]);
+              }
+            )
+        ),
+        () => this.searching = false);
+    
+    inputEngineFormatter = (result: any) => result.manufacturer + ' ' + result.name;
+    
+    private innerTyresSearch(term: string) {
+        if (term === '') {
+          return of.call([]);
+        }
+
+        return map.call(this.tyresProviderService.typeahead(term),
+          response => response.json);
+      }
+    
+    searchTyres = (text$: Observable<string>) => _do.call(
+        switchMap.call(
+          _do.call(distinctUntilChanged.call(debounceTime.call(text$, 300)), () => this.searching = true),
+          term => _catch.call(
+              _do.call(this.innerTyresSearch(term), () => this.searchFailed = false),
+              () => {
+                this.searchFailed = true;
+                return of.call([]);
+              }
+            )
+        ),
+        () => this.searching = false);
+    
+    inputTyresFormatter = (result: any) => result.name;
+    
+    private innerFuelSearch(term: string) {
+        if (term === '') {
+          return of.call([]);
+        }
+
+        return map.call(this.fuelProviderService.typeahead(term),
+          response => response.json);
+      }
+    
+    searchFuel = (text$: Observable<string>) => _do.call(
+        switchMap.call(
+          _do.call(distinctUntilChanged.call(debounceTime.call(text$, 300)), () => this.searching = true),
+          term => _catch.call(
+              _do.call(this.innerFuelSearch(term), () => this.searchFailed = false),
+              () => {
+                this.searchFailed = true;
+                return of.call([]);
+              }
+            )
+        ),
+        () => this.searching = false);
+    
+    inputFuelFormatter = (result: any) => result.name;
+    
+    private onDriverSelected(evt: NgbTypeaheadSelectItemEvent, self) {
+        evt.preventDefault();
+        self.value = evt.item.fullName;
+        if (!this.eventEntry.eventEdition.multidriver) {
+            this.eventEntry.drivers = [evt.item];
+        } else {
+            if (!this.eventEntry.drivers) {
+                this.eventEntry.drivers = new Array();
+            }
+            this.eventEntry.drivers.push(evt.item);
+        }    
     }
     
     private removeDriver(event) {
@@ -164,66 +293,6 @@ export class EventEntryDialogComponent implements OnInit {
                 this.eventEntry.drivers.splice(i, 1);
             }
             i++;
-        }
-    }
-
-    public onTeamSelected(selected: CompleterItem) {
-        if (selected) {
-            this.eventEntry.team = selected.originalObject;
-            this.teamSearch = selected.originalObject.name;
-        } else {
-            this.eventEntry.team = null;
-            this.teamSearch = null;
-        }
-    }
-
-    public onOperatedBySelected(selected: CompleterItem) {
-        if (selected) {
-            this.eventEntry.operatedBy = selected.originalObject;
-            this.operatedBySearch = selected.originalObject.name;
-        } else {
-            this.eventEntry.operatedBy = null;
-            this.operatedBySearch = null;
-        }
-    }
-
-    public onEngineSelected(selected: CompleterItem) {
-        if (selected) {
-            this.eventEntry.engine = selected.originalObject;
-            this.engineSearch = selected.originalObject.manufacturer + ' ' + selected.originalObject.name;
-        } else {
-            this.eventEntry.engine = null;
-            this.engineSearch = null;
-        }
-    }
-
-    public onChassisSelected(selected: CompleterItem) {
-        if (selected) {
-            this.eventEntry.chassis = selected.originalObject;
-            this.chassisSearch = selected.originalObject.manufacturer + ' ' + selected.originalObject.name;
-        } else {
-            this.eventEntry.chassis = null;
-            this.chassisSearch = null;
-        }
-    }
-
-    public onTyresSelected(selected: CompleterItem) {
-        if (selected) {
-            this.eventEntry.tyres = selected.originalObject;
-            this.tyresSearch = selected.originalObject.manufacturer + ' ' + selected.originalObject.name;
-        } else {
-            this.eventEntry.tyres = null;
-            this.tyresSearch = null;
-        }
-    }
-
-    public onFuelSelected(selected: CompleterItem) {
-        if (selected) {
-            this.eventEntry.fuel = selected.originalObject;
-            this.fuelSearch = selected.originalObject.manufacturer + ' ' + selected.originalObject.name;
-        } else {
-            this.eventEntry.fuel = null;
-            this.fuelSearch = null;
         }
     }
     

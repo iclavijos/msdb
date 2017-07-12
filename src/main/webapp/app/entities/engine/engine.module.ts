@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 import { Ng2CompleterModule } from 'ng2-completer';
 
 import { MotorsportsDatabaseSharedModule } from '../../shared';
-
 import {
     EngineService,
     EnginePopupService,
@@ -19,7 +18,7 @@ import {
     EngineResolvePagingParams,
 } from './';
 
-let ENTITY_STATES = [
+const ENTITY_STATES = [
     ...engineRoute,
     ...enginePopupRoute,
 ];

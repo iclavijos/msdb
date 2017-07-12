@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { JhiLanguageService, JhiDataUtils } from 'ng-jhipster';
+import { Subscription } from 'rxjs/Rx';
+import { JhiEventManager , JhiDataUtils } from 'ng-jhipster';
+
 import { Engine } from './engine.model';
 import { EngineService } from './engine.service';
 
@@ -11,10 +13,11 @@ import { EngineService } from './engine.service';
 export class EngineDetailComponent implements OnInit, OnDestroy {
 
     engine: Engine;
-    private subscription: any;
+    private subscription: Subscription;
+    private eventSubscriber: Subscription;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
+        private eventManager: JhiEventManager,
         private dataUtils: JhiDataUtils,
         private engineService: EngineService,
         private route: ActivatedRoute
@@ -22,13 +25,14 @@ export class EngineDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe(params => {
+        this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
         });
+        this.registerChangeInEngines();
     }
 
-    load (id) {
-        this.engineService.find(id).subscribe(engine => {
+    load(id) {
+        this.engineService.find(id).subscribe((engine) => {
             this.engine = engine;
         });
     }
@@ -45,6 +49,13 @@ export class EngineDetailComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
+        this.eventManager.destroy(this.eventSubscriber);
     }
 
+    registerChangeInEngines() {
+        this.eventSubscriber = this.eventManager.subscribe(
+            'engineListModification',
+            (response) => this.load(this.engine.id)
+        );
+    }
 }

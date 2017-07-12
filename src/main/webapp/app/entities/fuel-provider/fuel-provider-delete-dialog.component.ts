@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
+import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
 
 import { FuelProvider } from './fuel-provider.model';
 import { FuelProviderPopupService } from './fuel-provider-popup.service';
@@ -17,25 +17,26 @@ export class FuelProviderDeleteDialogComponent {
     fuelProvider: FuelProvider;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
         private fuelProviderService: FuelProviderService,
         public activeModal: NgbActiveModal,
+        private alertService: JhiAlertService,
         private eventManager: JhiEventManager
     ) {
     }
 
-    clear () {
+    clear() {
         this.activeModal.dismiss('cancel');
     }
 
-    confirmDelete (id: number) {
-        this.fuelProviderService.delete(id).subscribe(response => {
+    confirmDelete(id: number) {
+        this.fuelProviderService.delete(id).subscribe((response) => {
             this.eventManager.broadcast({
                 name: 'fuelProviderListModification',
                 content: 'Deleted an fuelProvider'
             });
             this.activeModal.dismiss(true);
         });
+        this.alertService.success('motorsportsDatabaseApp.fuelProvider.deleted', { param : id }, null);
     }
 }
 
@@ -48,13 +49,13 @@ export class FuelProviderDeletePopupComponent implements OnInit, OnDestroy {
     modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private fuelProviderPopupService: FuelProviderPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
+        this.routeSub = this.route.params.subscribe((params) => {
             this.modalRef = this.fuelProviderPopupService
                 .open(FuelProviderDeleteDialogComponent, params['id']);
         });

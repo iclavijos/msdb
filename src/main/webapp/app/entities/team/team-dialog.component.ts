@@ -1,13 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
+import { Observable } from 'rxjs/Rx';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiAlertService, JhiLanguageService, JhiDataUtils } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { Team } from './team.model';
 import { TeamPopupService } from './team-popup.service';
 import { TeamService } from './team.service';
+import { ResponseWrapper } from '../../shared';
 
 @Component({
     selector: 'jhi-team-dialog',
@@ -21,10 +23,10 @@ export class TeamDialogComponent implements OnInit {
 
     constructor(
         public activeModal: NgbActiveModal,
-        private jhiLanguageService: JhiLanguageService,
         private dataUtils: JhiDataUtils,
         private alertService: JhiAlertService,
         private teamService: TeamService,
+        private elementRef: ElementRef,
         private eventManager: JhiEventManager
     ) {
     }
@@ -42,45 +44,65 @@ export class TeamDialogComponent implements OnInit {
         return this.dataUtils.openFile(contentType, field);
     }
 
-    setFileData($event, team, field, isImage) {
-        if ($event.target.files && $event.target.files[0]) {
-            let $file = $event.target.files[0];
-            if (isImage && !/^image\//.test($file.type)) {
+    setFileData(event, team, field, isImage) {
+        if (event && event.target.files && event.target.files[0]) {
+            const file = event.target.files[0];
+            if (isImage && !/^image\//.test(file.type)) {
                 return;
             }
-            this.dataUtils.toBase64($file, (base64Data) => {
+            this.dataUtils.toBase64(file, (base64Data) => {
                 team[field] = base64Data;
-                team[`${field}ContentType`] = $file.type;
+                team[`${field}ContentType`] = file.type;
             });
         }
     }
-    clear () {
+
+    clearInputImage(field: string, fieldContentType: string, idInput: string) {
+        this.dataUtils.clearInputImage(this.team, this.elementRef, field, fieldContentType, idInput);
+    }
+
+    clear() {
         this.activeModal.dismiss('cancel');
     }
 
-    save () {
+    save() {
         this.isSaving = true;
         if (this.team.id !== undefined) {
-            this.teamService.update(this.team)
-                .subscribe((res: Team) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.teamService.update(this.team), false);
         } else {
-            this.teamService.create(this.team)
-                .subscribe((res: Team) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.teamService.create(this.team), true);
         }
     }
 
-    private onSaveSuccess (result: Team) {
+    private subscribeToSaveResponse(result: Observable<Team>, isCreated: boolean) {
+        result.subscribe((res: Team) =>
+            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+    }
+
+    private onSaveSuccess(result: Team, isCreated: boolean) {
+        this.alertService.success(
+            isCreated ? 'motorsportsDatabaseApp.team.created'
+            : 'motorsportsDatabaseApp.team.updated',
+            { param : result.id }, null);
+
         this.eventManager.broadcast({ name: 'teamListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError (error) {
+    private onSaveError(error) {
+        try {
+            error.json();
+        } catch (exception) {
+            error.message = error.text();
+        }
         this.isSaving = false;
         this.onError(error);
     }
 
-    private onError (error) {
+    private onError(error) {
         this.alertService.error(error.message, null, null);
     }
 
@@ -105,13 +127,13 @@ export class TeamPopupComponent implements OnInit, OnDestroy {
     modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private teamPopupService: TeamPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
+        this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
                 this.modalRef = this.teamPopupService
                     .open(TeamDialogComponent, params['id']);
@@ -119,7 +141,6 @@ export class TeamPopupComponent implements OnInit, OnDestroy {
                 this.modalRef = this.teamPopupService
                     .open(TeamDialogComponent);
             }
-
         });
     }
 

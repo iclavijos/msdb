@@ -1,4 +1,18 @@
+<ng-template #driverTemplate let-r="result">
+	{{r.fullName}}
+</ng-template>
 
+<ng-template #teamTemplate let-r="result">
+	{{r.name}}
+</ng-template>
+
+<ng-template #chassisTemplate let-r="result">
+	{{r.manufacturer}} {{r.name}}
+</ng-template>
+
+<ng-template #engineTemplate let-r="result">
+	{{r.manufacturer}} {{r.name}}
+</ng-template>
 
 <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
 
@@ -29,8 +43,8 @@
 		        	<div class="row">
 						<div class="col-lg-8 col-md-8">
 				            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.driver" for="field_driver">Driver</label>
-				            <ng2-completer id="field_driver" name="driver" [(ngModel)]="driverSearch" [datasource]="dataServiceDriver" [minSearchLength]="2" 
-		            			(selected)="onDriverSelected($event)" [inputClass]="form-control" [pause]="300" required></ng2-completer>
+				            <input id="field_driver" type="text" name="field_driver" class="form-control" [inputFormatter]="inputDriverFormatter"
+				            	[ngbTypeahead]="searchDriver" [focusFirst]="false" [resultTemplate]="driverTemplate" [(ngModel)]="singleDriver" required/>
 				            <div [hidden]="!(editForm.controls.driver?.dirty && editForm.controls.driver?.invalid)">
 				                <small class="form-text text-danger"
 				                   [hidden]="!editForm.controls.driver?.errors?.required" jhiTranslate="entity.validation.required">
@@ -49,9 +63,9 @@
 		        <div class="form-group">
 		            <div class="row">
 						<div class="col-lg-6 col-md-6">
-							<label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.drivers" for="field_driver">Drivers</label>
-							<ng2-completer id="field_driver" name="driver" [(ngModel)]="driverSearch" [datasource]="dataServiceDriver" [minSearchLength]="2" 
-            					(selected)="onDriverSelected($event)" [inputClass]="form-control" [pause]="300"></ng2-completer>
+				            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.driver" for="field_driver">Driver</label>
+				            <input #typeahead id="field_driver" type="text" name="field_driver" class="form-control" [inputFormatter]="inputDriverFormatter"
+				            	[ngbTypeahead]="searchDriver" [focusFirst]="false" [resultTemplate]="driverTemplate" (selectItem)="onDriverSelected($event, typeahead)" required/>
 						</div>
 						<div class="col-lg-6 col-md-6">
 							<select class="form-control" multiple name="drivers" [value]="eventEntry.drivers" (dblclick)="removeDriver($event)" required>
@@ -83,8 +97,8 @@
 			<div class="col-lg-6 col-md-6">
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.team" for="field_team">Team</label>
-		            <ng2-completer id="field_team" name="team" [(ngModel)]="teamSearch" [datasource]="dataServiceTeam" [minSearchLength]="2" 
-            			(selected)="onTeamSelected($event)" [inputClass]="form-control" [pause]="300" required></ng2-completer>
+		            <input id="field_team" type="text" name="field_team" class="form-control" [inputFormatter]="inputTeamFormatter"
+				        [(ngModel)]="eventEntry.team" [ngbTypeahead]="searchTeam" [focusFirst]="false" [resultTemplate]="teamTemplate" required/>
 		            <div [hidden]="!(editForm.controls.team?.dirty && editForm.controls.team?.invalid)">
 		                <small class="form-text text-danger"
 		                   [hidden]="!editForm.controls.team?.errors?.required" jhiTranslate="entity.validation.required">
@@ -96,8 +110,8 @@
 	        <div class="col-lg-6 col-md-6">
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.operatedBy" for="field_operatedBy">Operated By</label>
-		            <ng2-completer id="field_operatedBy" name="operatedBy" [(ngModel)]="operatedBySearch" [datasource]="dataServiceTeamOperatedBy" [minSearchLength]="2" 
-            			(selected)="onOperatedBySelected($event)" [inputClass]="form-control" [pause]="300"></ng2-completer>
+		            <input id="field_operatedBy" type="text" name="field_operatedBy" class="form-control" [inputFormatter]="inputTeamFormatter"
+				        [(ngModel)]="eventEntry.operatedBy" [ngbTypeahead]="searchTeam" [focusFirst]="false" [resultTemplate]="teamTemplate"/>
 		        </div>
 	        </div>
         </div>
@@ -118,8 +132,8 @@
 			<div class="col-lg-6 col-md-6">
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.chassis" for="field_chassis">Chassis</label>
-		            <ng2-completer id="field_chassis" name="chassis" [(ngModel)]="chassisSearch" [datasource]="dataServiceChassis" [minSearchLength]="2" 
-            			(selected)="onChassisSelected($event)" [inputClass]="form-control" [pause]="300" required></ng2-completer>
+		            <input id="field_chassis" type="text" name="field_chassis" class="form-control" [inputFormatter]="inputChassisFormatter"
+				        [(ngModel)]="eventEntry.chassis" [ngbTypeahead]="searchChassis" [focusFirst]="false" [resultTemplate]="chassisTemplate" required/>
 		            <div [hidden]="!(editForm.controls.chassis?.dirty && editForm.controls.chassis?.invalid)">
 		                <small class="form-text text-danger"
 		                   [hidden]="!editForm.controls.chassis?.errors?.required" jhiTranslate="entity.validation.required">
@@ -131,8 +145,8 @@
 	        <div class="col-lg-6 col-md-6">
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.engine" for="field_engine">Engine</label>
-		            <ng2-completer id="field_engine" name="engine" [(ngModel)]="engineSearch" [datasource]="dataServiceEngine" [minSearchLength]="2" 
-            			(selected)="onEngineSelected($event)" [inputClass]="form-control" [pause]="300" required></ng2-completer>
+		            <input id="field_engine" type="text" name="field_engine" class="form-control" [inputFormatter]="inputEngineFormatter"
+				        [(ngModel)]="eventEntry.engine" [ngbTypeahead]="searchEngine" [focusFirst]="false" [resultTemplate]="engineTemplate" required/>
 		            <div [hidden]="!(editForm.controls.engine?.dirty && editForm.controls.engine?.invalid)">
 		                <small class="form-text text-danger"
 		                   [hidden]="!editForm.controls.engine?.errors?.required" jhiTranslate="entity.validation.required">
@@ -146,15 +160,15 @@
 			<div class="col-lg-6 col-md-6">
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.tyres" for="field_tyres">Tyres</label>
-		            <ng2-completer id="field_tyres" name="tyres" [(ngModel)]="tyresSearch" [datasource]="dataServiceTyres" [minSearchLength]="2" 
-            			(selected)="onTyresSelected($event)" [inputClass]="form-control" [pause]="300" required></ng2-completer>
+		            <input id="field_tyres" type="text" name="field_tyres" class="form-control" [inputFormatter]="inputTyresFormatter"
+				        [(ngModel)]="eventEntry.tyres" [ngbTypeahead]="searchTyres" [focusFirst]="false" [resultTemplate]="teamTemplate" required/>
 		        </div>
 	        </div>
 	        <div class="col-lg-6 col-md-6">
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.fuel" for="field_fuel">Fuel</label>
-		            <ng2-completer id="field_fuel" name="fuel" [(ngModel)]="fuelSearch" [datasource]="dataServiceFuel" [minSearchLength]="2" 
-            			(selected)="onFuelSelected($event)" [inputClass]="form-control" [pause]="300"></ng2-completer>
+		            <input id="field_fuel" type="text" name="field_fuel" class="form-control" [inputFormatter]="inputFuelFormatter"
+				        [(ngModel)]="eventEntry.fuel" [ngbTypeahead]="searchFuel" [focusFirst]="false" [resultTemplate]="teamTemplate"/>
 		        </div>
 	        </div>
         </div>

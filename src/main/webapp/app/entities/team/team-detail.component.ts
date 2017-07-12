@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { JhiLanguageService, JhiDataUtils } from 'ng-jhipster';
+import { Subscription } from 'rxjs/Rx';
+import { JhiEventManager , JhiDataUtils } from 'ng-jhipster';
+
 import { Team } from './team.model';
 import { TeamService } from './team.service';
 
@@ -11,10 +13,11 @@ import { TeamService } from './team.service';
 export class TeamDetailComponent implements OnInit, OnDestroy {
 
     team: Team;
-    private subscription: any;
+    private subscription: Subscription;
+    private eventSubscriber: Subscription;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
+        private eventManager: JhiEventManager,
         private dataUtils: JhiDataUtils,
         private teamService: TeamService,
         private route: ActivatedRoute,
@@ -23,13 +26,14 @@ export class TeamDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe(params => {
+        this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
         });
+        this.registerChangeInTeams();
     }
 
-    load (id) {
-        this.teamService.find(id).subscribe(team => {
+    load(id) {
+        this.teamService.find(id).subscribe((team) => {
             this.team = team;
         });
     }
@@ -46,6 +50,13 @@ export class TeamDetailComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
+        this.eventManager.destroy(this.eventSubscriber);
     }
 
+    registerChangeInTeams() {
+        this.eventSubscriber = this.eventManager.subscribe(
+            'teamListModification',
+            (response) => this.load(this.team.id)
+        );
+    }
 }

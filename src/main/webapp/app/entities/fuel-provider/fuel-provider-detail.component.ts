@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { JhiLanguageService, JhiDataUtils } from 'ng-jhipster';
+import { Subscription } from 'rxjs/Rx';
+import { JhiEventManager , JhiDataUtils } from 'ng-jhipster';
+
 import { FuelProvider } from './fuel-provider.model';
 import { FuelProviderService } from './fuel-provider.service';
 
@@ -11,10 +13,11 @@ import { FuelProviderService } from './fuel-provider.service';
 export class FuelProviderDetailComponent implements OnInit, OnDestroy {
 
     fuelProvider: FuelProvider;
-    private subscription: any;
+    private subscription: Subscription;
+    private eventSubscriber: Subscription;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
+        private eventManager: JhiEventManager,
         private dataUtils: JhiDataUtils,
         private fuelProviderService: FuelProviderService,
         private route: ActivatedRoute
@@ -22,13 +25,14 @@ export class FuelProviderDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe(params => {
+        this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
         });
+        this.registerChangeInFuelProviders();
     }
 
-    load (id) {
-        this.fuelProviderService.find(id).subscribe(fuelProvider => {
+    load(id) {
+        this.fuelProviderService.find(id).subscribe((fuelProvider) => {
             this.fuelProvider = fuelProvider;
         });
     }
@@ -45,6 +49,13 @@ export class FuelProviderDetailComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
+        this.eventManager.destroy(this.eventSubscriber);
     }
 
+    registerChangeInFuelProviders() {
+        this.eventSubscriber = this.eventManager.subscribe(
+            'fuelProviderListModification',
+            (response) => this.load(this.fuelProvider.id)
+        );
+    }
 }

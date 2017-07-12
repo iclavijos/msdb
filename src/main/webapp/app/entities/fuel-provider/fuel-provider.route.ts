@@ -14,66 +14,71 @@ import { Principal } from '../../shared';
 @Injectable()
 export class FuelProviderResolvePagingParams implements Resolve<any> {
 
-  constructor(private paginationUtil: JhiPaginationUtil) {}
+    constructor(private paginationUtil: JhiPaginationUtil) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-      let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
-      return {
-          page: this.paginationUtil.parsePage(page),
-          predicate: this.paginationUtil.parsePredicate(sort),
-          ascending: this.paginationUtil.parseAscending(sort)
-    };
-  }
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
+        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
+        return {
+            page: this.paginationUtil.parsePage(page),
+            predicate: this.paginationUtil.parsePredicate(sort),
+            ascending: this.paginationUtil.parseAscending(sort)
+      };
+    }
 }
 
 export const fuelProviderRoute: Routes = [
-  {
-    path: 'fuel-provider',
-    component: FuelProviderComponent,
-    resolve: {
-      'pagingParams': FuelProviderResolvePagingParams
-    },
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
+    {
+        path: 'fuel-provider',
+        component: FuelProviderComponent,
+        resolve: {
+            'pagingParams': FuelProviderResolvePagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    }, {
+        path: 'fuel-provider/:id',
+        component: FuelProviderDetailComponent,
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
+        },
+        canActivate: [UserRouteAccessService]
     }
-  }, {
-    path: 'fuel-provider/:id',
-    component: FuelProviderDetailComponent,
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
-    }
-  }
 ];
 
 export const fuelProviderPopupRoute: Routes = [
-  {
-    path: 'fuel-provider-new',
-    component: FuelProviderPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
+    {
+        path: 'fuel-provider-new',
+        component: FuelProviderPopupComponent,
+        data: {
+            authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+            pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
     },
-    outlet: 'popup'
-  },
-  {
-    path: 'fuel-provider/:id/edit',
-    component: FuelProviderPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
+    {
+        path: 'fuel-provider/:id/edit',
+        component: FuelProviderPopupComponent,
+        data: {
+            authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+            pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
     },
-    outlet: 'popup'
-  },
-  {
-    path: 'fuel-provider/:id/delete',
-    component: FuelProviderDeletePopupComponent,
-    data: {
-        authorities: ['ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
-    },
-    outlet: 'popup'
-  }
+    {
+        path: 'fuel-provider/:id/delete',
+        component: FuelProviderDeletePopupComponent,
+        data: {
+            authorities: ['ROLE_ADMIN'],
+            pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
+    }
 ];

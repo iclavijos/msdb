@@ -14,66 +14,71 @@ import { Principal } from '../../shared';
 @Injectable()
 export class TyreProviderResolvePagingParams implements Resolve<any> {
 
-  constructor(private paginationUtil: JhiPaginationUtil) {}
+    constructor(private paginationUtil: JhiPaginationUtil) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-      let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
-      return {
-          page: this.paginationUtil.parsePage(page),
-          predicate: this.paginationUtil.parsePredicate(sort),
-          ascending: this.paginationUtil.parseAscending(sort)
-    };
-  }
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
+        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
+        return {
+            page: this.paginationUtil.parsePage(page),
+            predicate: this.paginationUtil.parsePredicate(sort),
+            ascending: this.paginationUtil.parseAscending(sort)
+      };
+    }
 }
 
 export const tyreProviderRoute: Routes = [
-  {
-    path: 'tyre-provider',
-    component: TyreProviderComponent,
-    resolve: {
-      'pagingParams': TyreProviderResolvePagingParams
-    },
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
+    {
+        path: 'tyre-provider',
+        component: TyreProviderComponent,
+        resolve: {
+            'pagingParams': TyreProviderResolvePagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    }, {
+        path: 'tyre-provider/:id',
+        component: TyreProviderDetailComponent,
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
+        },
+        canActivate: [UserRouteAccessService]
     }
-  }, {
-    path: 'tyre-provider/:id',
-    component: TyreProviderDetailComponent,
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
-    }
-  }
 ];
 
 export const tyreProviderPopupRoute: Routes = [
-  {
-    path: 'tyre-provider-new',
-    component: TyreProviderPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
+    {
+        path: 'tyre-provider-new',
+        component: TyreProviderPopupComponent,
+        data: {
+            authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+            pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
     },
-    outlet: 'popup'
-  },
-  {
-    path: 'tyre-provider/:id/edit',
-    component: TyreProviderPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
+    {
+        path: 'tyre-provider/:id/edit',
+        component: TyreProviderPopupComponent,
+        data: {
+            authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+            pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
     },
-    outlet: 'popup'
-  },
-  {
-    path: 'tyre-provider/:id/delete',
-    component: TyreProviderDeletePopupComponent,
-    data: {
-        authorities: ['ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
-    },
-    outlet: 'popup'
-  }
+    {
+        path: 'tyre-provider/:id/delete',
+        component: TyreProviderDeletePopupComponent,
+        data: {
+            authorities: ['ROLE_ADMIN'],
+            pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
+    }
 ];
