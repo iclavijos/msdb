@@ -78,9 +78,7 @@
                 </div>
                 <input type="file" (change)="setFileData($event, chassis, 'image', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
             </div>
-            <input type="hidden" class="form-control" name="image" id="field_image"
-                [(ngModel)]="chassis.image"
-             />
+            <input type="hidden" class="form-control" name="image" id="field_image" [(ngModel)]="chassis.image"/>
             <input type="hidden" class="form-control" name="imageContentType" id="field_imageContentType"
                 [(ngModel)]="chassis.imageContentType" />
         </div>
