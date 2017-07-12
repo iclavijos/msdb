@@ -72,13 +72,7 @@ export class DriverService {
     }
 
     typeahead(req): Observable<ResponseWrapper> {
-        let params: URLSearchParams = new URLSearchParams();
-        params.set('query', req);
-
-        return this.http.get(this.resourceTypeAheadUrl, {
-                search: params
-            }).map((res: any) => res)
-        ;
+        return this.http.get(`${this.resourceSearchUrl}?query=${req}`).map((res: any) => this.convertResponse(res));
     }
 
     private convertResponse(res: Response): ResponseWrapper {
