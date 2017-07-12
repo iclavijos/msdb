@@ -89,7 +89,8 @@
             	"delete": {
 	                "question": "Are you sure you want to delete entry '{{id}}'?"
 	            },
-	            "doubleClick": "Double click on a driver's name to remove it from the entry"
+	            "doubleClick": "Double click on a driver's name to remove it from the entry",
+	            "carImage": "Car image"
 			},
 			"result" : {
 	            "home": {

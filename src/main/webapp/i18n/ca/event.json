@@ -89,7 +89,8 @@
             	"delete": {
 	                "question": "Esteu segurs que voleu esborrar el participant '{{id}}'?"
 	            },
-	            "doubleClick": "Fes doble click en un pilot per eliminar-lo com a participant"
+	            "doubleClick": "Fes doble click en un pilot per eliminar-lo com a participant",
+	            "carImage": "Imatge del vehicle"
 			},
 			"result" : {
 	            "home": {

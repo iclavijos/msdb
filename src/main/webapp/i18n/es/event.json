@@ -89,7 +89,8 @@
             	"delete": {
 	                "question": "¿Estás seguro que quieres eliminar al participante '{{id}}'?"
 	            },
-	            "doubleClick": "Haz doble click en un piloto para eliminarlo como participante"
+	            "doubleClick": "Haz doble click en un piloto para eliminarlo como participante",
+	            "carImage": "Imagen del vehículo"
 			},
 			"result" : {
 	            "home": {
