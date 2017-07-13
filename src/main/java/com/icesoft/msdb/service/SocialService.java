@@ -80,13 +80,13 @@ public class SocialService {
         }
         String providerId = connection.getKey().getProviderId();
         String imageUrl = connection.getImageUrl();
-        User user = createUserIfNotExist(userProfile, langKey, providerId, imageUrl);
+        User user = createUserIfNotExist(userProfile, langKey, providerId, imageUrl, email);
         createSocialConnection(user.getLogin(), connection);
         mailService.sendSocialRegistrationValidationEmail(user, providerId);
     }
 
-    private User createUserIfNotExist(UserProfile userProfile, String langKey, String providerId, String imageUrl) {
-        String email = userProfile.getEmail();
+    private User createUserIfNotExist(UserProfile userProfile, String langKey, String providerId, String imageUrl, String email) {
+        //String email = userProfile.getEmail();
         String userName = userProfile.getUsername();
         if (!StringUtils.isBlank(userName)) {
             userName = userName.toLowerCase(Locale.ENGLISH);
