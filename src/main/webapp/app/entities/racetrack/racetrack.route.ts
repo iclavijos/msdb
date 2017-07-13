@@ -21,64 +21,69 @@ export class RacetrackResolvePagingParams implements Resolve<any> {
 
   constructor(private paginationUtil: JhiPaginationUtil) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-      let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
-      return {
-          page: this.paginationUtil.parsePage(page),
-          predicate: this.paginationUtil.parsePredicate(sort),
-          ascending: this.paginationUtil.parseAscending(sort)
-    };
-  }
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
+        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
+        return {
+            page: this.paginationUtil.parsePage(page),
+            predicate: this.paginationUtil.parsePredicate(sort),
+            ascending: this.paginationUtil.parseAscending(sort)
+      };
+    }
 }
 
 export const racetrackRoute: Routes = [
-  {
-    path: 'racetrack',
-    component: RacetrackComponent,
-    resolve: {
-      'pagingParams': RacetrackResolvePagingParams
-    },
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
+    {
+        path: 'racetrack',
+        component: RacetrackComponent,
+        resolve: {
+            'pagingParams': RacetrackResolvePagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    }, {
+        path: 'racetrack/:id',
+        component: RacetrackDetailComponent,
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
+        },
+        canActivate: [UserRouteAccessService]
     }
-  }, {
-    path: 'racetrack/:id',
-    component: RacetrackDetailComponent,
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
-    }
-  }
 ];
 
 export const racetrackPopupRoute: Routes = [
-  {
-    path: 'racetrack-new',
-    component: RacetrackPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
+    {
+        path: 'racetrack-new',
+        component: RacetrackPopupComponent,
+        data: {
+            authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+            pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
     },
-    outlet: 'popup'
-  },
-  {
-    path: 'racetrack/:id/edit',
-    component: RacetrackPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
+    {
+        path: 'racetrack/:id/edit',
+        component: RacetrackPopupComponent,
+        data: {
+            authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+            pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
     },
-    outlet: 'popup'
-  },
-  {
-    path: 'racetrack/:id/delete',
-    component: RacetrackDeletePopupComponent,
-    data: {
-        authorities: ['ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
-    },
-    outlet: 'popup'
-  }
+    {
+        path: 'racetrack/:id/delete',
+        component: RacetrackDeletePopupComponent,
+        data: {
+            authorities: ['ROLE_ADMIN'],
+            pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
+    }
 ];

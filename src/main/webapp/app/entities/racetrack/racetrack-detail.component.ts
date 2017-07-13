@@ -1,8 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Response } from '@angular/http';
-import { Router, ActivatedRoute } from '@angular/router';
-import { JhiEventManager, JhiLanguageService, JhiDataUtils } from 'ng-jhipster';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
+import { JhiEventManager , JhiDataUtils } from 'ng-jhipster';
+
+import { ResponseWrapper } from '../../shared';
+
 import { Racetrack } from './racetrack.model';
 import { RacetrackService } from './racetrack.service';
 import { RacetrackLayout } from '../racetrack-layout/racetrack-layout.model';
@@ -16,31 +18,30 @@ export class RacetrackDetailComponent implements OnInit, OnDestroy {
 
     racetrack: Racetrack;
     racetrackLayouts: RacetrackLayout[];
-    eventSubscriber: Subscription;
-    private subscription: any;
+    private subscription: Subscription;
+    private eventSubscriber: Subscription;
     private racetrackId: number;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
+        private eventManager: JhiEventManager,
         private dataUtils: JhiDataUtils,
         private racetrackService: RacetrackService,
         private racetrackLayoutService: RacetrackLayoutService,
-        private eventManager: JhiEventManager,
         private route: ActivatedRoute,
         private router: Router
     ) {
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe(params => {
+        this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
             this.racetrackId = params['id'];
         });
-        this.registerChangeInRacetrackLayouts();
+        this.registerChangeInRacetracks();
     }
 
-    load (id) {
-        this.racetrackService.find(id).subscribe(racetrack => {
+    load(id) {
+        this.racetrackService.find(id).subscribe((racetrack) => {
             this.racetrack = racetrack;
         });
         this.loadLayouts(id);
@@ -48,12 +49,11 @@ export class RacetrackDetailComponent implements OnInit, OnDestroy {
 
     loadLayouts(id) {
         this.racetrackService.findLayouts(id).subscribe(
-                (res: Response) => {
-                    this.racetrackLayouts = res.json();
+                (res: ResponseWrapper) => {
+                    this.racetrackLayouts = res.json;
                 }
         );
     }
-
     byteSize(field) {
         return this.dataUtils.byteSize(field);
     }
@@ -61,13 +61,6 @@ export class RacetrackDetailComponent implements OnInit, OnDestroy {
     openFile(contentType, field) {
         return this.dataUtils.openFile(contentType, field);
     }
-
-    registerChangeInRacetrackLayouts() {
-        this.eventSubscriber = this.eventManager.subscribe('racetrackModification', (response) => this.load(this.racetrackId));
-        this.eventSubscriber.add(
-                this.eventManager.subscribe('racetrackLayoutModification', (response) => this.loadLayouts(this.racetrackId)));
-    }
-
     previousState() {
         this.router.navigateByUrl('racetrack');
         this.eventManager.destroy(this.eventSubscriber);
@@ -75,6 +68,16 @@ export class RacetrackDetailComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
+        this.eventManager.destroy(this.eventSubscriber);
     }
 
+    registerChangeInRacetracks() {
+        this.eventSubscriber = this.eventManager.subscribe(
+            'racetrackListModification',
+            (response) => this.load(this.racetrack.id)
+        );
+        this.eventSubscriber.add(this.eventManager.subscribe(
+            'racetrackLayoutListModification', 
+            (response) => this.loadLayouts(this.racetrack.id)));
+    }
 }

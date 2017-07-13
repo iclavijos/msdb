@@ -1,9 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
-
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiAlertService, JhiLanguageService, JhiDataUtils } from 'ng-jhipster';
 
 import { Observable } from 'rxjs/Rx';
 import {map} from 'rxjs/operator/map';
@@ -13,6 +10,9 @@ import {_catch} from 'rxjs/operator/catch';
 import {_do} from 'rxjs/operator/do';
 import {switchMap} from 'rxjs/operator/switchMap';
 import {of} from 'rxjs/observable/of';
+
+import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { Racetrack } from './racetrack.model';
 import { RacetrackPopupService } from './racetrack-popup.service';
@@ -36,13 +36,13 @@ export class RacetrackDialogComponent implements OnInit {
     racetracklayouts: RacetrackLayout[];
     constructor(
         public activeModal: NgbActiveModal,
-        private jhiLanguageService: JhiLanguageService,
         private dataUtils: JhiDataUtils,
         private alertService: JhiAlertService,
         private racetrackService: RacetrackService,
         private racetrackLayoutService: RacetrackLayoutService,
         private driverService: DriverService,
-        private eventManager: JhiEventManager,
+        private elementRef: ElementRef,
+        private eventManager: JhiEventManager
     ) {
     }
 
@@ -59,46 +59,66 @@ export class RacetrackDialogComponent implements OnInit {
         return this.dataUtils.openFile(contentType, field);
     }
 
-    setFileData($event, racetrack, field, isImage) {
-        if ($event.target.files && $event.target.files[0]) {
-            let $file = $event.target.files[0];
-            if (isImage && !/^image\//.test($file.type)) {
+    setFileData(event, racetrack, field, isImage) {
+        if (event && event.target.files && event.target.files[0]) {
+            const file = event.target.files[0];
+            if (isImage && !/^image\//.test(file.type)) {
                 return;
             }
-            this.dataUtils.toBase64($file, (base64Data) => {
+            this.dataUtils.toBase64(file, (base64Data) => {
                 racetrack[field] = base64Data;
-                racetrack[`${field}ContentType`] = $file.type;
+                racetrack[`${field}ContentType`] = file.type;
             });
         }
     }
-    clear () {
+
+    clearInputImage(field: string, fieldContentType: string, idInput: string) {
+        this.dataUtils.clearInputImage(this.racetrack, this.elementRef, field, fieldContentType, idInput);
+    }
+
+    clear() {
         this.activeModal.dismiss('cancel');
     }
 
-    save () {
+    save() {
         this.isSaving = true;
         this.racetrack.countryCode = this.country.countryCode;
         if (this.racetrack.id !== undefined) {
-            this.racetrackService.update(this.racetrack)
-                .subscribe((res: Racetrack) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.racetrackService.update(this.racetrack), false);
         } else {
-            this.racetrackService.create(this.racetrack)
-                .subscribe((res: Racetrack) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.racetrackService.create(this.racetrack), true);
         }
     }
 
-    private onSaveSuccess (result: Racetrack) {
-        this.eventManager.broadcast({ name: 'racetrackModification', content: result});
+    private subscribeToSaveResponse(result: Observable<Racetrack>, isCreated: boolean) {
+        result.subscribe((res: Racetrack) =>
+            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+    }
+
+    private onSaveSuccess(result: Racetrack, isCreated: boolean) {
+        this.alertService.success(
+            isCreated ? 'motorsportsDatabaseApp.racetrack.created'
+            : 'motorsportsDatabaseApp.racetrack.updated',
+            { param : result.id }, null);
+
+        this.eventManager.broadcast({ name: 'racetrackListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError (error) {
+    private onSaveError(error) {
+        try {
+            error.json();
+        } catch (exception) {
+            error.message = error.text();
+        }
         this.isSaving = false;
         this.onError(error);
     }
 
-    private onError (error) {
+    private onError(error) {
         this.alertService.error(error.message, null, null);
     }
 
@@ -146,13 +166,13 @@ export class RacetrackPopupComponent implements OnInit, OnDestroy {
     modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private racetrackPopupService: RacetrackPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
+        this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
                 this.modalRef = this.racetrackPopupService
                     .open(RacetrackDialogComponent, params['id']);
@@ -160,7 +180,6 @@ export class RacetrackPopupComponent implements OnInit, OnDestroy {
                 this.modalRef = this.racetrackPopupService
                     .open(RacetrackDialogComponent);
             }
-
         });
     }
 

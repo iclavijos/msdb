@@ -1,12 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Response } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { JhiEventManager, JhiParseLinks, JhiPaginationUtil, JhiLanguageService, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { Racetrack } from './racetrack.model';
 import { RacetrackService } from './racetrack.service';
-import { ITEMS_PER_PAGE, Principal } from '../../shared';
+import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
 import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
 
 @Component({
@@ -31,20 +30,19 @@ export class RacetrackComponent implements OnInit, OnDestroy {
     reverse: any;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
         private racetrackService: RacetrackService,
+        private parseLinks: JhiParseLinks,
         private alertService: JhiAlertService,
-        private dataUtils: JhiDataUtils,
-        private eventManager: JhiEventManager,
-        private activatedRoute: ActivatedRoute,
         private principal: Principal,
+        private activatedRoute: ActivatedRoute,
+        private dataUtils: JhiDataUtils,
         private router: Router,
+        private eventManager: JhiEventManager,
         private paginationUtil: JhiPaginationUtil,
-        private paginationConfig: PaginationConfig,
-        private parseLinks: JhiParseLinks
+        private paginationConfig: PaginationConfig
     ) {
         this.itemsPerPage = ITEMS_PER_PAGE;
-        this.routeData = this.activatedRoute.data.subscribe(data => {
+        this.routeData = this.activatedRoute.data.subscribe((data) => {
             this.page = data['pagingParams'].page;
             this.previousPage = data['pagingParams'].page;
             this.reverse = data['pagingParams'].ascending;
@@ -60,27 +58,25 @@ export class RacetrackComponent implements OnInit, OnDestroy {
                 query: this.currentSearch,
                 size: this.itemsPerPage,
                 sort: this.sort()}).subscribe(
-                    (res: Response) => this.onSuccess(res.json(), res.headers),
-                    (res: Response) => this.onError(res.json())
+                    (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
+                    (res: ResponseWrapper) => this.onError(res.json)
                 );
             return;
-       }
+        }
         this.racetrackService.query({
             page: this.page - 1,
             size: this.itemsPerPage,
             sort: this.sort()}).subscribe(
-            (res: Response) => this.onSuccess(res.json(), res.headers),
-            (res: Response) => this.onError(res.json())
+            (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
+            (res: ResponseWrapper) => this.onError(res.json)
         );
     }
-
-    loadPage (page: number) {
+    loadPage(page: number) {
         if (page !== this.previousPage) {
             this.previousPage = page;
             this.transition();
         }
     }
-
     transition() {
         this.router.navigate(['/racetrack'], {queryParams:
             {
@@ -93,7 +89,16 @@ export class RacetrackComponent implements OnInit, OnDestroy {
         this.loadAll();
     }
 
-    search (query) {
+    clear() {
+        this.page = 0;
+        this.currentSearch = '';
+        this.router.navigate(['/racetrack', {
+            page: this.page,
+            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+        }]);
+        this.loadAll();
+    }
+    search(query) {
         if (!query) {
             return this.clear();
         }
@@ -101,16 +106,6 @@ export class RacetrackComponent implements OnInit, OnDestroy {
         this.currentSearch = query;
         this.router.navigate(['/racetrack', {
             search: this.currentSearch,
-            page: this.page,
-            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-        }]);
-        this.loadAll();
-    }
-
-    clear() {
-        this.page = 0;
-        this.currentSearch = '';
-        this.router.navigate(['/racetrack', {
             page: this.page,
             sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
         }]);
@@ -128,7 +123,7 @@ export class RacetrackComponent implements OnInit, OnDestroy {
         this.eventManager.destroy(this.eventSubscriber);
     }
 
-    trackId (index: number, item: Racetrack) {
+    trackId(index: number, item: Racetrack) {
         return item.id;
     }
 
@@ -140,11 +135,11 @@ export class RacetrackComponent implements OnInit, OnDestroy {
         return this.dataUtils.openFile(contentType, field);
     }
     registerChangeInRacetracks() {
-        this.eventSubscriber = this.eventManager.subscribe('racetrackModification', (response) => this.loadAll());
+        this.eventSubscriber = this.eventManager.subscribe('racetrackListModification', (response) => this.loadAll());
     }
 
-    sort () {
-        let result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
+    sort() {
+        const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
         if (this.predicate !== 'id') {
             result.push('id');
         }
@@ -175,15 +170,14 @@ export class RacetrackComponent implements OnInit, OnDestroy {
         }
     }
 
-    private onSuccess (data, headers) {
+    private onSuccess(data, headers) {
         this.links = this.parseLinks.parse(headers.get('link'));
         this.totalItems = headers.get('X-Total-Count');
         this.queryCount = this.totalItems;
         // this.page = pagingParams.page;
         this.racetracks = data;
     }
-
-    private onError (error) {
+    private onError(error) {
         this.alertService.error(error.message, null, null);
     }
 }

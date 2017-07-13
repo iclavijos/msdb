@@ -2,7 +2,6 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { MotorsportsDatabaseSharedModule } from '../../shared';
-
 import {
     RacetrackService,
     RacetrackPopupService,
@@ -17,9 +16,9 @@ import {
     RacetrackResolvePagingParams,
 } from './';
 
-let ENTITY_STATES = [
+const ENTITY_STATES = [
     ...racetrackRoute,
-    ...racetrackPopupRoute
+    ...racetrackPopupRoute,
 ];
 
 @NgModule({
