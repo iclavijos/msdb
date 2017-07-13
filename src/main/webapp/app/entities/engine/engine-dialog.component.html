@@ -145,6 +145,10 @@
             <input id="field_derivedFrom" type="text" name="field_derivedFrom" class="form-control" [inputFormatter]="inputEngineFormatter"
 				[(ngModel)]="engine.derivedFrom" [ngbTypeahead]="search" [focusFirst]="false" [resultTemplate]="engineTemplate"/>
         </div>
+        <div class="form-group">
+            <label jhiTranslate="motorsportsDatabaseApp.engine.rebranded" for="field_rebranded">Rebranded</label> <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.engine.rebrandedTooltip' | translate }}"></i>
+            <i [ngClass]="engine.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="engine.rebranded = !engine.rebranded"></i>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">

@@ -29,7 +29,9 @@
             "image": "Imagen",
             "comments": "Comentarios",
             "evolutions": "Evoluciones",
-            "derivedFrom": "Derivado de"
+            "derivedFrom": "Derivado de",
+            "rebranded": "¿Renombrado?",
+            "rebrandedTooltip": "Si está marcado, este motor es el mismo que el antiguo pero sólo se ha cambiado el nombre"
         }
     }
 }

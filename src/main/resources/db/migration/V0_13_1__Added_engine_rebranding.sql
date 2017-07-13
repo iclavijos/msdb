@@ -1,0 +1,1 @@
+ALTER TABLE engine ADD COLUMN rebranded BIT(1) NULL DEFAULT NULL AFTER derived_from_id;

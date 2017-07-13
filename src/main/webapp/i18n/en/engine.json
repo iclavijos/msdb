@@ -29,7 +29,9 @@
             "image": "Image",
             "comments": "Comments",
             "evolutions": "Evolutions",
-            "derivedFrom": "Derived From"
+            "derivedFrom": "Derived From",
+            "rebranded": "Rebranded?",
+            "rebrandedTooltip": "If checked, this engine is the same as the old one but just with a name change"
         }
     }
 }

@@ -16,5 +16,6 @@ export class Engine {
         public comments?: string,
         public evolutions?: Engine,
         public derivedFrom?: Engine,
+        public rebranded = false
     ) { }
 }

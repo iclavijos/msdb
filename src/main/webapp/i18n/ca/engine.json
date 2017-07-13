@@ -7,11 +7,11 @@
                 "createOrEditLabel": "Crear o editar un motor",
                 "search": "Cercar motors"
             },
-            "created": "A new Engine is created with identifier {{ param }}",
-            "updated": "A Engine is updated with identifier {{ param }}",
-            "deleted": "A Engine is deleted with identifier {{ param }}",
+            "created": "S'ha creat un nou motor",
+            "updated": "S'ha actualitzat el motor",
+            "deleted": "S'ha esborrat el motor",
             "delete": {
-                "question": "Are you sure you want to delete Engine {{ id }}?"
+                "question": "Està segur que vol esborrar aquest motor?"
             },
             "detail": {
                 "title": "Motor"
@@ -29,7 +29,9 @@
             "image": "Image",
             "comments": "Comentaris",
             "evolutions": "Evolucions",
-            "derivedFrom": "Derivat de"
+            "derivedFrom": "Derivat de",
+            "rebranded": "Renombrat?",
+            "rebrandedTooltip": "Si està marcat, aquest motor és el mateix que l'anterior però només s'ha canviat el nom"
         }
     }
 }

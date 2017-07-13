@@ -96,6 +96,9 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
 
     @ManyToOne
     private Engine derivedFrom;
+    
+    @Column
+    private Boolean rebranded;
 
     public Long getId() {
         return id;
@@ -311,6 +314,19 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
     public void setDerivedFrom(Engine engine) {
         this.derivedFrom = engine;
     }
+    
+    public Boolean getRebranded() {
+		return rebranded;
+	}
+
+    public Engine rebranded(Boolean rebranded) {
+    	this.rebranded = rebranded;
+    	return this;
+    }
+    
+	public void setRebranded(Boolean rebranded) {
+		this.rebranded = rebranded;
+	}
 
     @Override
     public boolean equals(Object o) {

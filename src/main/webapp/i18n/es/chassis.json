@@ -21,8 +21,8 @@
             "debutYear": "Año debut",
             "evolutions": "Evoluciones",
             "derivedFrom": "Derivado de",
-            "rebranded": "Renombrado?",
-            "rebrandedTooltip": "Si está marcado, el nuevo chasis es el mismo que el antiguo pero sólo se ha cambiado el nombre",
+            "rebranded": "¿Renombrado?",
+            "rebrandedTooltip": "Si está marcado, este chasis es el mismo que el antiguo pero sólo se ha cambiado el nombre",
             "image": "Imagen"
         }
     }
