@@ -69,10 +69,13 @@ export class EventEntryDialogComponent implements OnInit {
                 if (this.allowedCategories.length === 1) {
                     this.eventEntry.category = this.allowedCategories[0];
                 }
+                
             });
         } else {
             this.allowedCategories = this.eventEntry.eventEdition.allowedCategories;
-
+            if (!this.eventEntry.eventEdition.multidriver) {
+                this.singleDriver = this.eventEntry.drivers[0];
+            }
         }
     }
     
