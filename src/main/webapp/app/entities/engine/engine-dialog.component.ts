@@ -3,14 +3,20 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
+import {map} from 'rxjs/operator/map';
+import {debounceTime} from 'rxjs/operator/debounceTime';
+import {distinctUntilChanged} from 'rxjs/operator/distinctUntilChanged';
+import {_catch} from 'rxjs/operator/catch';
+import {_do} from 'rxjs/operator/do';
+import {switchMap} from 'rxjs/operator/switchMap';
+import {of} from 'rxjs/observable/of';
+
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { Engine } from './engine.model';
 import { EnginePopupService } from './engine-popup.service';
 import { EngineService } from './engine.service';
-
-import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
 
 @Component({
     selector: 'jhi-engine-dialog',
@@ -21,8 +27,8 @@ export class EngineDialogComponent implements OnInit {
     engine: Engine;
     authorities: any[];
     isSaving: boolean;
-    private derivedFromSearch: string;
-    protected dataService: CompleterData;
+    searching = false;
+    searchFailed = false;
 
     constructor(
         public activeModal: NgbActiveModal,
@@ -31,17 +37,12 @@ export class EngineDialogComponent implements OnInit {
         private engineService: EngineService,
         private elementRef: ElementRef,
         private eventManager: JhiEventManager,
-        private completerService: CompleterService
     ) {
-        this.dataService = completerService.remote('api/_search/engines?query=', null, 'name').descriptionField('manufacturer');
     }
 
     ngOnInit() {
         this.isSaving = false;
         this.authorities = ['ROLE_EDITOR', 'ROLE_ADMIN'];
-        if (this.engine.derivedFrom) {
-            this.derivedFromSearch = this.engine.manufacturer + ' ' + this.engine.name;
-        }
     }
     byteSize(field) {
         return this.dataUtils.byteSize(field);
@@ -117,15 +118,29 @@ export class EngineDialogComponent implements OnInit {
         return item.id;
     }
 
-    public onEngineSelected(selected: CompleterItem) {
-        if (selected) {
-            this.engine.derivedFrom = selected.originalObject;
-            this.derivedFromSearch = this.engine.manufacturer + ' ' + this.engine.name;
-        } else {
-            this.engine.derivedFrom = null;
-            this.derivedFromSearch = null;
+    private innerEngineSearch(term: string) {
+        if (term === '') {
+          return of.call([]);
         }
-    }
+        console.log('lala');
+        return map.call(this.engineService.typeahead(term),
+          response => response.json);
+      }
+    
+    searchEngine = (text$: Observable<string>) => _do.call(
+        switchMap.call(
+          _do.call(distinctUntilChanged.call(debounceTime.call(text$, 300)), () => this.searching = true),
+          term => _catch.call(
+              _do.call(this.innerEngineSearch(term), () => this.searchFailed = false),
+              () => {
+                this.searchFailed = true;
+                return of.call([]);
+              }
+            )
+        ),
+        () => this.searching = false);
+    
+    inputEngineFormatter = (result: any) => result.manufacturer + ' ' + result.name;
 }
 
 @Component({

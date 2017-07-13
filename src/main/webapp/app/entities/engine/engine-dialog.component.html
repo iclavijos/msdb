@@ -138,9 +138,12 @@
         </div>
 
         <div class="form-group">
+        	<ng-template #engineTemplate let-r="result">
+				{{r.manufacturer}} {{r.name}}
+			</ng-template>
             <label jhiTranslate="motorsportsDatabaseApp.engine.derivedFrom" for="field_derivedFrom">Derived From</label>
-            <ng2-completer id="field_derivedFrom" name="derivedFrom" [(ngModel)]="derivedFromSearch" [datasource]="dataService" [minSearchLength]="2" 
-            	(selected)="onEngineSelected($event)" [inputClass]="form-control" [pause]="300" ></ng2-completer>
+            <input id="field_derivedFrom" type="text" name="field_derivedFrom" class="form-control" [inputFormatter]="inputEngineFormatter"
+				[(ngModel)]="engine.derivedFrom" [ngbTypeahead]="search" [focusFirst]="false" [resultTemplate]="engineTemplate"/>
         </div>
     </div>
     <div class="modal-footer">
