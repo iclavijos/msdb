@@ -6,13 +6,20 @@ import { Response } from '@angular/http';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
 
+import { Observable } from 'rxjs/Rx';
+import {map} from 'rxjs/operator/map';
+import {debounceTime} from 'rxjs/operator/debounceTime';
+import {distinctUntilChanged} from 'rxjs/operator/distinctUntilChanged';
+import {_catch} from 'rxjs/operator/catch';
+import {_do} from 'rxjs/operator/do';
+import {switchMap} from 'rxjs/operator/switchMap';
+import {of} from 'rxjs/observable/of';
+
 import { EventEdition, EventEditionService } from '../event-edition/';
 import { EventSession } from '../event-session/';
 import { SeriesEdition } from './series-edition.model';
 import { SeriesEditionPopupService } from './series-edition-popup.service';
 import { SeriesEditionService } from './series-edition.service';
-
-import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
 
 @Component({
     selector: 'jhi-series-edition-calendar-dialog',
@@ -22,10 +29,9 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
 
     private seriesEdition: SeriesEdition;
     private eventEdition: EventEdition;
-    private eventSearch: string;
     private isSaving: boolean;
-
-    private dataService: CompleterData;
+    searching = false;
+    searchFailed = false;
 
     public myForm: FormGroup;
 
@@ -36,9 +42,7 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
         private alertService: JhiAlertService,
         public activeModal: NgbActiveModal,
         private eventManager: JhiEventManager,
-        private completerService: CompleterService,
     ) {
-        this.dataService = completerService.remote('/api/_search/event-editions?query=', null, 'longEventName');
     }
 
     ngOnInit() {
@@ -90,7 +94,36 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
         this.alertService.error(error.message, null, null);
     }
     
-    private onEventSelected(selected: CompleterItem) {
+    private innersearch(term: string) {
+        if (term === '') {
+          return of.call([]);
+        }
+
+        return map.call(this.eventEditionService.typeAhead(term),
+          response => response.json);
+      }
+    
+    search = (text$: Observable<string>) =>
+    _do.call(
+      switchMap.call(
+        _do.call(
+          distinctUntilChanged.call(
+            debounceTime.call(text$, 300)),
+          () => this.searching = true),
+        term =>
+          _catch.call(
+            _do.call(this.innersearch(term), () => this.searchFailed = false),
+            () => {
+              this.searchFailed = true;
+              return of.call([]);
+            }
+          )
+      ),
+      () => this.searching = false);
+    
+    inputFormatter = (result: any) => result.longEventName;
+    
+    private onEventSelected(selected: any) {
         if (selected) {
             this.eventEdition = selected.originalObject;
             this.eventEditionService.findNonFPSessions(this.eventEdition.id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe(eventSessions => {
@@ -100,7 +133,6 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
         } else {
             this.eventEdition = null;
         }
-        this.eventSearch = null;
     }
 
 }

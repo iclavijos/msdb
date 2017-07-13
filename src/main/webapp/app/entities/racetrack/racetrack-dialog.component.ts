@@ -5,12 +5,20 @@ import { Response } from '@angular/http';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService, JhiLanguageService, JhiDataUtils } from 'ng-jhipster';
 
-import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
+import { Observable } from 'rxjs/Rx';
+import {map} from 'rxjs/operator/map';
+import {debounceTime} from 'rxjs/operator/debounceTime';
+import {distinctUntilChanged} from 'rxjs/operator/distinctUntilChanged';
+import {_catch} from 'rxjs/operator/catch';
+import {_do} from 'rxjs/operator/do';
+import {switchMap} from 'rxjs/operator/switchMap';
+import {of} from 'rxjs/observable/of';
 
 import { Racetrack } from './racetrack.model';
 import { RacetrackPopupService } from './racetrack-popup.service';
 import { RacetrackService } from './racetrack.service';
 import { RacetrackLayout, RacetrackLayoutService } from '../racetrack-layout';
+import { DriverService } from '../driver'; //TODO: Move country searching to its own service
 
 @Component({
     selector: 'jhi-racetrack-dialog',
@@ -21,8 +29,9 @@ export class RacetrackDialogComponent implements OnInit {
     racetrack: Racetrack;
     authorities: any[];
     isSaving: boolean;
-    protected dataServiceCountry: CompleterData;
-    countrySearch: string;
+    country: any;
+    searching = false;
+    searchFailed = false;
 
     racetracklayouts: RacetrackLayout[];
     constructor(
@@ -32,10 +41,9 @@ export class RacetrackDialogComponent implements OnInit {
         private alertService: JhiAlertService,
         private racetrackService: RacetrackService,
         private racetrackLayoutService: RacetrackLayoutService,
+        private driverService: DriverService,
         private eventManager: JhiEventManager,
-        private completerService: CompleterService
     ) {
-        this.dataServiceCountry = completerService.remote('api/_typeahead/countries?query=', null, 'countryName').imageField("flagImg");
     }
 
     ngOnInit() {
@@ -69,6 +77,7 @@ export class RacetrackDialogComponent implements OnInit {
 
     save () {
         this.isSaving = true;
+        this.racetrack.countryCode = this.country.countryCode;
         if (this.racetrack.id !== undefined) {
             this.racetrackService.update(this.racetrack)
                 .subscribe((res: Racetrack) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
@@ -97,17 +106,35 @@ export class RacetrackDialogComponent implements OnInit {
         return item.id;
     }
     
-    public onCountrySelected(selected: CompleterItem) {
-        if (!selected || !selected.originalObject) return;
-        let country = selected.originalObject;
-        if (selected) {
-            this.racetrack.countryCode = country.countryCode;
-            this.countrySearch = country.countryName;
-        } else {
-            this.racetrack.countryCode = null;
-            this.countrySearch = null;
+    private innersearch(term: string) {
+        if (term === '') {
+          return of.call([]);
         }
-    }
+
+        return map.call(this.driverService.searchCountries(term),
+          response => response.json);
+      }
+    
+    search = (text$: Observable<string>) =>
+    _do.call(
+      switchMap.call(
+        _do.call(
+          distinctUntilChanged.call(
+            debounceTime.call(text$, 300)),
+          () => this.searching = true),
+        term =>
+          _catch.call(
+            _do.call(this.innersearch(term), () => this.searchFailed = false),
+            () => {
+              this.searchFailed = true;
+              return of.call([]);
+            }
+          )
+      ),
+      () => this.searching = false);
+    
+    inputFormatter = (result: any) => result.countryName;
+
 }
 
 @Component({

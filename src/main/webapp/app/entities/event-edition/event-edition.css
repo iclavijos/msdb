@@ -3,19 +3,6 @@ a.deco-none {
     text-decoration:none;
 }
 
-:host >>> .completer-dropdown {
-    width: 80% !important;
-    position: relative !important;
-}
-
-:host >>> .completer-image-holder {
-    width: 110px !important;
-}
-
-:host >>> .completer-selected-row {
-	width: 95% !important;
-}
-
 .dual-list .list-group {
     margin-top: 8px;
 }

@@ -6,8 +6,6 @@ import { Observable } from 'rxjs/Rx';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
-import { CompleterService, CompleterData, CompleterItem } from 'ng2-completer';
-
 import { SeriesEdition } from './series-edition.model';
 import { SeriesEditionPopupService } from './series-edition-popup.service';
 import { SeriesEditionService } from './series-edition.service';
