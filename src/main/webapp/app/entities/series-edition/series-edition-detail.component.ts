@@ -96,6 +96,9 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
             'seriesEditionListModification',
             (response) => this.load(this.seriesEdition.id)
         );
+        this.eventSubscriber.add(this.eventManager.subscribe(
+            'seriesEditionEventsListModification', 
+            (response) => this.loadEvents(this.seriesEdition.id)));
     }
     
     private onRemoveError (error) {
