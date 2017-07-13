@@ -122,7 +122,6 @@ export class EngineDialogComponent implements OnInit {
         if (term === '') {
           return of.call([]);
         }
-        console.log('lala');
         return map.call(this.engineService.typeahead(term),
           response => response.json);
       }
