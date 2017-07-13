@@ -56,6 +56,7 @@ currentAccount: any;
     loadAll() {
         if (this.currentSearch) {
             this.pointsSystemService.search({
+                page: this.page - 1,
                 query: this.currentSearch,
                 size: this.itemsPerPage,
                 sort: this.sort()}).subscribe(

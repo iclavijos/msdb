@@ -64,6 +64,7 @@ export class EventEditionComponent implements OnInit, OnDestroy {
     loadAll() {
         if (this.currentSearch) {
             this.eventEditionService.search({
+                page: this.page - 1,
                 query: this.currentSearch,
                 size: this.itemsPerPage,
                 sort: this.sort()}).subscribe(

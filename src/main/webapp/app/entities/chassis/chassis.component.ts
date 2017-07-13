@@ -54,6 +54,7 @@ currentAccount: any;
     loadAll() {
         if (this.currentSearch) {
             this.chassisService.search({
+                page: this.page - 1,
                 query: this.currentSearch,
                 size: this.itemsPerPage,
                 sort: this.sort()}).subscribe(

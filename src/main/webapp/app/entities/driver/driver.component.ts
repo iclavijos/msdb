@@ -57,6 +57,7 @@ currentAccount: any;
     loadAll() {
         if (this.currentSearch) {
             this.driverService.search({
+                page: this.page - 1,
                 query: this.currentSearch,
                 size: this.itemsPerPage,
                 sort: this.sort()}).subscribe(
@@ -75,6 +76,7 @@ currentAccount: any;
     }
     
     loadPage(page: number) {
+        console.log('loadPage: ' + page + '- this.page: ' + this.page);
         if (page !== this.previousPage) {
             this.previousPage = page;
             this.transition();

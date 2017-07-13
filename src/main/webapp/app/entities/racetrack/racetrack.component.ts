@@ -56,6 +56,7 @@ export class RacetrackComponent implements OnInit, OnDestroy {
     loadAll() {
         if (this.currentSearch) {
             this.racetrackService.search({
+                page: this.page - 1,
                 query: this.currentSearch,
                 size: this.itemsPerPage,
                 sort: this.sort()}).subscribe(
