@@ -8,9 +8,12 @@
         	<div class="row">
         		<div class="col-lg-12 col-md-12">
 			        <div class="form-group">
+			        	<ng-template #eventTemplate let-r="result">
+						  {{r.longEventName}}
+						</ng-template>
 			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.calendar.searchEvent" for="field_event">Search event</label>
-			            <ng2-completer id="field_event" name="eventEdition" formControlName="eventSearch" [datasource]="dataService" [minSearchLength]="3" 
-            					(selected)="onEventSelected($event)" [inputClass]="form-control" [pause]="300"></ng2-completer>
+			            <input id="field_event" type="text" name="field_event" class="form-control" [inputFormatter]="inputFormatter"
+			            	[(ngModel)]="eventEdition" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="search" [focusFirst]="false" [resultTemplate]="eventTemplate" required/>
 			        </div>
 		        </div>
 		    </div>
