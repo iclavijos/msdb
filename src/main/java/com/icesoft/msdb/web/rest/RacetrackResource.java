@@ -268,35 +268,5 @@ public class RacetrackResource {
         return racetrackLayouts;
     }
 
-    /**
-     * GET  /racetrack-layouts/:id : get the "id" racetrackLayout.
-     *
-     * @param id the id of the racetrackLayout to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the racetrackLayout, or with status 404 (Not Found)
-     */
-    @GetMapping("/racetracks/{id}/racetrack-layouts/{idLayout}")
-    @Timed
-    public ResponseEntity<RacetrackLayout> getRacetrackLayout(@PathVariable Long idLayout) {
-        log.debug("REST request to get RacetrackLayout : {}", idLayout);
-        RacetrackLayout racetrackLayout = racetrackLayoutRepository.findOne(idLayout);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(racetrackLayout));
-    }
-
-    /**
-     * DELETE  /racetrack-layouts/:id : delete the "id" racetrackLayout.
-     *
-     * @param id the id of the racetrackLayout to delete
-     * @return the ResponseEntity with status 200 (OK)
-     */
-    @DeleteMapping("/racetracks/{id}/racetrack-layouts/{idLayout}")
-    @Timed
-    @Secured({AuthoritiesConstants.ADMIN})
-    public ResponseEntity<Void> deleteRacetrackLayout(@PathVariable Long idLayout) {
-        log.debug("REST request to delete RacetrackLayout : {}", idLayout);
-        racetrackLayoutRepository.delete(idLayout);
-        cdnService.deleteImage(idLayout.toString(), ENTITY_NAME_LAYOUT);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME_LAYOUT, idLayout.toString())).build();
-    }
-
 
 }
