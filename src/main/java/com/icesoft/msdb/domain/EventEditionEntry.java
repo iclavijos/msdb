@@ -145,6 +145,11 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
 	public void setRookie(Boolean rookie) {
 		this.rookie = rookie;
 	}
+	
+	public EventEditionEntry rookie(Boolean rookie) {
+		this.rookie = rookie;
+		return this;
+	}
 
     public List<Driver> getDrivers() {
         return drivers;

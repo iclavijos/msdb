@@ -364,6 +364,7 @@ public class EventEditionResource {
     			.tyres(entry.getTyres())
     			.team(entry.getTeam())
     			.operatedBy(entry.getOperatedBy())
+    			.rookie(entry.getRookie())
     			.setCarImageUrl(entry.getCarImageUrl());
     		
     		List<Driver> copiedList = new ArrayList<>();
