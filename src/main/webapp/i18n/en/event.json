@@ -131,7 +131,9 @@
 	            "retirementCause": "Retirement cause",
 	            "difference": "Difference",
 	            "startingPosition": "Starting Pos.",
-	            "lapsLed": "Laps led"
+	            "lapsLed": "Laps led",
+	            "pitlaneStart": "Pitlane start?",
+	            "pitlaneStartDesc":"* Indicates driver started race from pitlane"
 	        },
 	        "copyEntries": {
 	        	"title" : "Copy entries from another event",

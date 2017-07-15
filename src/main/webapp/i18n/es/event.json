@@ -130,7 +130,9 @@
 	            "retirementCause": "Motivo abandono",
 	            "difference": "Diferencia",
 	            "startingPosition": "Pos. salida",
-	            "lapsLed": "Vueltas lideradas"
+	            "lapsLed": "Vueltas lideradas",
+	            "pitlaneStart": "Salida desde pitlane?",
+	            "pitlaneStartDesc": "* Indica que el piloto ha comenzado la carrera desde el pitlane"
 	        },
 	        "copyEntries": {
 	        	"title" : "Copia participantes de otro evento",

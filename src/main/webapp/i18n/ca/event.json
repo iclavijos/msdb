@@ -130,7 +130,9 @@
 	            "retirementCause": "Motiu abandonament",
 	            "difference": "Diferència",
 	            "startingPosition": "Pos. sortida",
-	            "lapsLed": "Voltes liderades"
+	            "lapsLed": "Voltes liderades",
+	            "pitlaneStart": "Sortida des de pitlane?",
+	            "pitlaneStartDesc":"* Indica que el pilot ha començat la cursa des del pitlane"
 	        },
 	        "copyEntries": {
 	        	"title" : "Copia participants d'un altre event",

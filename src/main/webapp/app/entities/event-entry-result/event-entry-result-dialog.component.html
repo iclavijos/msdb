@@ -124,13 +124,19 @@
 	        	</div>
 	        </div>
 	        <div class="row">
-	        	<div class="col-lg-4 col-md-4">
+	        	<div class="col-lg-3 col-md-3">
+			        <div class="form-group">
+			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.pitlaneStart" for="field_pitlaneStart">Pitlane Start</label>
+			            <i [ngClass]="eventEntryResult.pitlaneStart ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="eventEntryResult.pitlaneStart = !eventEntryResult.pitlaneStart"></i>
+			        </div>
+		        </div>
+	        	<div class="col-lg-3 col-md-3">
 			        <div class="form-group">
 			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.retired" for="field_retired">Retired</label>
 			            <i [ngClass]="eventEntryResult.retired ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="eventEntryResult.retired = !eventEntryResult.retired"></i>
 			        </div>
 		        </div>
-		        <div class="col-lg-8 col-md-8" *ngIf="eventEntryResult.retired">
+		        <div class="col-lg-6 col-md-6" *ngIf="eventEntryResult.retired">
 			        <div class="form-group">
 			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.retirementCause" for="field_retirementCause">Retirement Cause</label>
 			            <input type="text" class="form-control" name="retirementCause" id="field_retirementCause"

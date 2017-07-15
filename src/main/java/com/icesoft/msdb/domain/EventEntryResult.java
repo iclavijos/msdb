@@ -59,6 +59,9 @@ public class EventEntryResult implements Serializable {
     @Column(name = "laps_led")
     private Integer lapsLed;
     
+    @Column(name = "pitlane_start")
+    private Boolean pitlaneStart = false;
+    
     @ManyToOne
     private EventSession session;
     
@@ -202,6 +205,19 @@ public class EventEntryResult implements Serializable {
 
 	public void setLapsLed(Integer lapsLed) {
 		this.lapsLed = lapsLed;
+	}
+	
+	public Boolean isPitlaneStart() {
+		return pitlaneStart;
+	}
+	
+	public void setPitlaneStart(Boolean pitlaneStart) {
+		this.pitlaneStart = pitlaneStart;
+	}
+	
+	public EventEntryResult pitlaneStart(Boolean pitlaneStart) {
+		this.pitlaneStart = pitlaneStart;
+		return this;
 	}
 
 	public EventSession getSession() {

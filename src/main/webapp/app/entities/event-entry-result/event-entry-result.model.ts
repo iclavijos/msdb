@@ -14,6 +14,7 @@ export class EventEntryResult {
         public differenceType?: number,
         public retired?: boolean,
         public cause?: string,
+        public pitlaneStart?: boolean,
         public entry?: EventEntry,
         public session?: EventSession,
     ) { }

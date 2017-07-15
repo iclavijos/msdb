@@ -12,6 +12,7 @@ public class SessionResultDTO {
     private Boolean retired;
     private String cause;
     private String difference;
+    private Boolean pitlaneStart;
     
 	public String getRaceNumber() {
 		return raceNumber;
@@ -72,6 +73,12 @@ public class SessionResultDTO {
 	}
 	public void setDifference(String difference) {
 		this.difference = difference;
+	}
+	public Boolean getPitlaneStart() {
+		return pitlaneStart;
+	}
+	public void setPitlaneStart(Boolean pitlaneStart) {
+		this.pitlaneStart = pitlaneStart;
 	}
     
 }
