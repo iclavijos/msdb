@@ -287,6 +287,7 @@ public class ImportsResource {
 		        	result.setTotalTime(timeToMillis(tmp.getTotalTime()));
 		        	result.setRetired(tmp.getRetired());
 		        	result.setCause(tmp.getCause());
+		        	result.setPitlaneStart(tmp.getPitlaneStart());
 		        	if (StringUtils.isNotBlank(tmp.getDifference())) {
 		        		Long difference = timeToMillis(tmp.getDifference()); 
 		        		if (difference != null) {
@@ -323,7 +324,7 @@ public class ImportsResource {
     	if (StringUtils.isEmpty(time)) {
     		return null;
     	}
-    	Pattern p = Pattern.compile("\\+?(\\d+h)?(([0-5]?\\d)[':m])?([0-5]?\\d)([\\.,](\\d+))?s?");
+    	Pattern p = Pattern.compile("\\+?(\\d+h)?(([0-5]?\\d)[':m])?(\\d?\\d)([\\.,](\\d+))?s?");
     	Matcher m = p.matcher(time);
     	long total = 0;
     	if (m.matches()) {
