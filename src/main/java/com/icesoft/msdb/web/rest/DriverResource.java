@@ -29,9 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Driver;
-import com.icesoft.msdb.domain.Statistics;
+import com.icesoft.msdb.domain.stats.DriverStatistics;
 import com.icesoft.msdb.repository.DriverRepository;
-import com.icesoft.msdb.repository.StatisticsRepository;
+import com.icesoft.msdb.repository.DriverStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.dto.DriverFullNameDTO;
@@ -54,11 +54,11 @@ public class DriverResource {
         
     private final DriverRepository driverRepository;
     
-    private final StatisticsRepository statsRepo;
+    private final DriverStatisticsRepository statsRepo;
 
     private final CDNService cdnService;
 
-    public DriverResource(DriverRepository driverRepository, StatisticsRepository statsRepo, CDNService cdnService) {
+    public DriverResource(DriverRepository driverRepository, DriverStatisticsRepository statsRepo, CDNService cdnService) {
         this.driverRepository = driverRepository;
         this.statsRepo = statsRepo;
         this.cdnService = cdnService;
@@ -159,9 +159,9 @@ public class DriverResource {
      */
     @GetMapping("/drivers/{id}/statistics")
     @Timed
-    public ResponseEntity<Statistics> getDriverStatistics(@PathVariable Long id) {
+    public ResponseEntity<DriverStatistics> getDriverStatistics(@PathVariable Long id) {
     	log.debug("REST request to get statistics for driver : {}", id);
-    	Statistics stats = statsRepo.findOne(id);
+    	DriverStatistics stats = statsRepo.findOne(id.toString());
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(stats));
     }
 

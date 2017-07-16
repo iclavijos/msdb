@@ -35,7 +35,7 @@ import org.springframework.util.Base64Utils;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.repository.DriverRepository;
-import com.icesoft.msdb.repository.StatisticsRepository;
+import com.icesoft.msdb.repository.DriverStatisticsRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
@@ -73,7 +73,7 @@ public class DriverResourceIntTest {
     private DriverRepository driverRepository;
     
     @Autowired
-    private StatisticsRepository statsRepo;
+    private DriverStatisticsRepository statsRepo;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;

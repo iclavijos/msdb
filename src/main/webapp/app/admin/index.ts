@@ -28,4 +28,6 @@ export * from './user-management/user-management.route';
 export * from './user-management/user-modal.service';
 export * from './rebuildIndexes/rebuildIndexes.component';
 export * from './rebuildIndexes/rebuildIndexes.route';
+export * from './rebuildStatistics/rebuildStatistics.component';
+export * from './rebuildStatistics/rebuildStatistics.route';
 export * from './admin.route';

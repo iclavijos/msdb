@@ -13,6 +13,7 @@ import { DriverService } from './driver.service';
 export class DriverDetailComponent implements OnInit, OnDestroy {
 
     driver: Driver;
+    stats: any[];
     private subscription: Subscription;
     private eventSubscriber: Subscription;
     compositeName: String;
@@ -28,6 +29,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
+            this.loadStats(params['id']);
         });
         this.registerChangeInDrivers();
     }
@@ -36,6 +38,11 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
         this.driverService.find(id).subscribe((driver) => {
             this.driver = driver;
             this.compositeName = this.driver.surname + ', ' + this.driver.name;
+        });
+    }
+    loadStats(id) {
+        this.driverService.getStats(id).subscribe((stats) => {
+           this.stats = stats.json;
         });
     }
     byteSize(field) {

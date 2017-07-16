@@ -50,6 +50,11 @@ export class DriverService {
         });
     }
     
+    getStats(id: number): Observable<ResponseWrapper> {
+        return this.http.get(`api/stats/driver/${id}`)
+            .map((res: Response) => this.convertResponse(res));
+    }
+    
     searchCountries(query?: any): Observable<ResponseWrapper> {
         return this.http.get('api/_typeahead/countries?query=' + query)
             .map((res: Response) => this.convertResponse(res));

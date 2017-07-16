@@ -198,7 +198,9 @@ dependencies {
     compile 'com.cloudinary:cloudinary-http44:1.8.1'
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.8.7'
     
-	compile 'com.google.maps:google-maps-services:0.1.20'   
+	compile 'com.google.maps:google-maps-services:0.1.20'
+	
+	compile 'org.projectlombok:lombok:1.16.18'
     
     testCompile "org.awaitility:awaitility:${awaitility_version}"
     testCompile "com.jayway.jsonpath:json-path"

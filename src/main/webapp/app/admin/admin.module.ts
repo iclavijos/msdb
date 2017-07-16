@@ -28,7 +28,8 @@ import {
     UserResolvePagingParams,
     UserResolve,
     UserModalService,
-    JhiRebuildIndexesComponent
+    JhiRebuildIndexesComponent,
+    JhiRebuildStatisticsComponent
 } from './';
 
 @NgModule({
@@ -52,7 +53,8 @@ import {
         JhiDocsComponent,
         JhiMetricsMonitoringComponent,
         JhiMetricsMonitoringModalComponent,
-        JhiRebuildIndexesComponent
+        JhiRebuildIndexesComponent,
+        JhiRebuildStatisticsComponent
     ],
     entryComponents: [
         UserMgmtDialogComponent,

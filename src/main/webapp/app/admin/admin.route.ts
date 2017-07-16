@@ -9,7 +9,8 @@ import {
     metricsRoute,
     userMgmtRoute,
     userDialogRoute,
-    rebuildIndexesRoute
+    rebuildIndexesRoute,
+    rebuildStatisticsRoute
 } from './';
 
 import { UserRouteAccessService } from '../shared';
@@ -22,7 +23,8 @@ const ADMIN_ROUTES = [
     logsRoute,
     ...userMgmtRoute,
     metricsRoute,
-    rebuildIndexesRoute
+    rebuildIndexesRoute,
+    rebuildStatisticsRoute
 ];
 
 export const adminState: Routes = [{
