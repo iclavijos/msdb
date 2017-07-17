@@ -49,6 +49,83 @@
 	</ngb-tab>
 	<ngb-tab title="{{'motorsportsDatabaseApp.driver.statistics' | translate}}">
 	    <ng-template ngbTabContent>
+	    	<div class="card" *ngFor="let categoryStats of stats">
+			  <div class="card-header">
+			    <h3>{{categoryStats.category}}</h3>
+			  </div>
+			  <div class="card-block">
+			    <div class="row">
+		    	<div class="col-sm-3">
+				    <dl class="row-md jh-entity-details">
+				        <dt><span>Participaciones</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.participations}}</span>
+				        </dd>
+				        <dt><span>Salidas</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.starts}}</span>
+				        </dd>
+				        <dt><span>Acabadas</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.finished}} ({{((categoryStats.stats.finished / categoryStats.stats.starts) * 100).toFixed(2)}}%)</span>
+				        </dd>
+				        <dt><span>Mejor posicion final</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.bestFinishingPosR}}  ({{categoryStats.stats.bestFinishingPosTimesR}} veces)</span>
+				        </dd>
+				    </dl>
+			    </div>
+			    <div class="col-sm-3">
+			    	<dl class="row-md jh-entity-details">
+				        <dt><span>Victorias</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.wins}} ({{((categoryStats.stats.wins / categoryStats.stats.starts) * 100).toFixed(2)}}%)</span>
+				        </dd>
+				        <dt><span>Poles</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.poles}} ({{((categoryStats.stats.poles / categoryStats.stats.participations) * 100).toFixed(2)}}%)</span>
+				        </dd>
+				        <dt><span>Mejor posicion parrilla</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.bestFinishingPosQ}}  ({{categoryStats.stats.bestFinishingPosTimesQ}} veces)</span>
+				        </dd>
+				        <dt><span>Vueltas rapidas</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.fastlaps}}</span>
+				        </dd>
+				    </dl>
+			    </div>
+			    <div class="col-sm-3">
+			    	<dl class="row-md jh-entity-details">
+				        <dt><span>Podiums</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.top3}}</span>
+				        </dd>
+				        <dt><span>Top 5</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.top5}}</span>
+				        </dd>
+				        <dt><span>Top 10</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.top10}}</span>
+				        </dd>
+				    </dl>
+			    </div>
+			    <div class="col-sm-3">
+			    	<dl class="row-md jh-entity-details">
+				        <dt><span>Vueltas completadas</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.lapsCompleted}}</span>
+				        </dd>
+				        <dt><span>Kms completados</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.kmsCompleted}}</span>
+				        </dd>
+				    </dl>
+			    </div>
+		    </div>
+			  </div>
+			</div>
 	    </ng-template>
 	</ngb-tab>
 	</ngb-tabset>
