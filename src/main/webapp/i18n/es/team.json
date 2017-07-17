@@ -2,25 +2,25 @@
     "motorsportsDatabaseApp": {
         "team" : {
             "home": {
-                "title": "Teams",
-                "createLabel": "Crear nuevo Team",
-                "createOrEditLabel": "Crear o editar Team",
-                "search": "Search for Team"
+                "title": "Equipos",
+                "createLabel": "Crear nuevo equipo",
+                "createOrEditLabel": "Crear o editar equipo",
+                "search": "Buscar equipos"
             },
-            "created": "Un nuevo Team ha sido creado con el identificador {{ param }}",
-            "updated": "Un Team ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un Team ha sido eliminado con el identificador {{ param }}",
+            "created": "Se ha añadido el equipo {{ param }}",
+            "updated": "Se ha actualizado el equipo {{ param }}",
+            "deleted": "Se ha eliminado el equipo {{ param }}",
             "delete": {
-                "question": "¿Seguro que quiere eliminar Team {{ id }}?"
+                "question": "¿Seguro que quieres eliminar el equipo {{ id }}?"
             },
             "detail": {
-                "title": "Team"
+                "title": "Equipo"
             },
-            "name": "Name",
-            "description": "Description",
-            "hqLocation": "Hq Location",
+            "name": "Nombre",
+            "description": "Descripción",
+            "hqLocation": "Localización sede",
             "logo": "Logo",
-            "participations": "Participations"
+            "participations": "Participaciones"
         }
     }
 }

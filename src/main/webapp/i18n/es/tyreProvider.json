@@ -2,21 +2,21 @@
     "motorsportsDatabaseApp": {
         "tyreProvider" : {
             "home": {
-                "title": "Tyre Providers",
-                "createLabel": "Crear nuevo Tyre Provider",
-                "createOrEditLabel": "Crear o editar Tyre Provider",
-                "search": "Search for Tyre Provider"
+                "title": "Proveedores neumáticos",
+                "createLabel": "Crear nuevo proveedor",
+                "createOrEditLabel": "Crear o editar proveedor",
+                "search": "Buscar proveedores"
             },
-            "created": "Un nuevo Tyre Provider ha sido creado con el identificador {{ param }}",
-            "updated": "Un Tyre Provider ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un Tyre Provider ha sido eliminado con el identificador {{ param }}",
+            "created": "Se ha añadido el proveedor {{ param }}",
+            "updated": "Se ha editado el proveedor {{ param }}",
+            "deleted": "Se ha eliminado el proveedor {{ param }}",
             "delete": {
-                "question": "¿Seguro que quiere eliminar Tyre Provider {{ id }}?"
+                "question": "¿Seguro que quiere eliminar al proveedor {{ id }}?"
             },
             "detail": {
-                "title": "Tyre Provider"
+                "title": "Proveedor de neumáticos"
             },
-            "name": "Name",
+            "name": "Nombre",
             "logo": "Logo"
         }
     }

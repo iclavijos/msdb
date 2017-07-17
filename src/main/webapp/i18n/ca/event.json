@@ -3,22 +3,22 @@
         "event" : {
             "home": {
                 "title": "Events",
-                "createLabel": "Create a new Event",
-                "createOrEditLabel": "Create or edit a Event",
-                "search": "Search for Event"
+                "createLabel": "Afegir un nou event",
+                "createOrEditLabel": "Afegir o editar un nou event",
+                "search": "Cercar events"
             },
-            "created": "A new Event is created with identifier {{ param }}",
-            "updated": "A Event is updated with identifier {{ param }}",
-            "deleted": "A Event is deleted with identifier {{ param }}",
+            "created": "S'ha afegit l'event {{ param }}",
+            "updated": "S'ha modificat l'event {{ param }}",
+            "deleted": "S'ha esborrat l'event {{ param }}",
             "delete": {
-                "question": "Are you sure you want to delete Event {{ id }}?"
+                "question": "Estàs segur que vols esborrar l'event {{ id }}?"
             },
             "detail": {
                 "title": "Event"
             },
-            "name": "Name",
-            "description": "Description",
-            "editions": "Editions"
+            "name": "Nom",
+            "description": "Descripció",
+            "editions": "Edicions"
         },
         "eventEdition" : {
             "home": {

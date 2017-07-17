@@ -7,9 +7,9 @@
                 "createOrEditLabel": "Crear o editar motor",
                 "search": "Buscar motores"
             },
-            "created": "Un nuevo mtoor ha sido creado con el identificador {{ param }}",
-            "updated": "Un Engine ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un Engine ha sido eliminado con el identificador {{ param }}",
+            "created": "Se ha añadido el motor {{ param }}",
+            "updated": "Se ha editado el motor {{ param }}",
+            "deleted": "Se ha eliminado el motor {{ param }}",
             "delete": {
                 "question": "¿Seguro que quiere eliminar el motor?"
             },

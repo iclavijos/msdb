@@ -2,23 +2,23 @@
     "motorsportsDatabaseApp": {
         "event" : {
             "home": {
-                "title": "Events",
-                "createLabel": "Crear nuevo Event",
-                "createOrEditLabel": "Crear o editar Event",
-                "search": "Search for Event"
+                "title": "Eventos",
+                "createLabel": "Crear nuevo evento",
+                "createOrEditLabel": "Crear o editar evento",
+                "search": "Buscar eventos"
             },
-            "created": "Un nuevo Event ha sido creado con el identificador {{ param }}",
-            "updated": "Un Event ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un Event ha sido eliminado con el identificador {{ param }}",
+            "created": "Se ha creado el evento {{ param }}",
+            "updated": "Se ha editado el evento {{ param }}",
+            "deleted": "Se ha borrado el evento {{ param }}",
             "delete": {
-                "question": "¿Seguro que quiere eliminar Event {{ id }}?"
+                "question": "¿Seguro que quiere eliminar el evento {{ id }}?"
             },
             "detail": {
-                "title": "Event"
+                "title": "Evento"
             },
-            "name": "Name",
-            "description": "Description",
-            "editions": "Editions"
+            "name": "Nombre",
+            "description": "Descripción",
+            "editions": "Ediciones"
         },
         "eventEdition" : {
             "home": {

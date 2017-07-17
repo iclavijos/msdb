@@ -24,26 +24,26 @@
         },
         "racetrackLayout" : {
             "home": {
-                "title": "Racetrack Layouts",
-                "createLabel": "Crear nuevo Racetrack Layout",
-                "createOrEditLabel": "Crear o editar Racetrack Layout",
-                "search": "Search for Racetrack Layout"
+                "title": "Trazado",
+                "createLabel": "Crear nuevo trazado",
+                "createOrEditLabel": "Crear o editar trazado",
+                "search": "Buscar trazados"
             },
-            "created": "Un nuevo Racetrack Layout ha sido creado con el identificador {{ param }}",
-            "updated": "Un Racetrack Layout ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un Racetrack Layout ha sido eliminado con el identificador {{ param }}",
+            "created": "Se ha añadido el trazado {{ param }}",
+            "updated": "Se ha editado el trazado {{ param }}",
+            "deleted": "Se ha eliminado el trazado {{ param }}",
             "delete": {
                 "question": "¿Seguro que quiere eliminar el trazado '{{ id }}'?"
             },
             "detail": {
-                "title": "Racetrack Layout"
+                "title": "Trazado"
             },
-            "name": "Name",
-            "length": "Length",
-            "yearFirstUse": "Year First Use",
-            "layoutImage": "Layout Image",
-            "racetrack": "Racetrack",
-            "active": "En activo"
+            "name": "Nombre",
+            "length": "Longitud",
+            "yearFirstUse": "Año primer uso",
+            "layoutImage": "Imagen",
+            "racetrack": "Circuito",
+            "active": "En activo?"
         }
     }
 }

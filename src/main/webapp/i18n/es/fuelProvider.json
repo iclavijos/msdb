@@ -2,21 +2,21 @@
     "motorsportsDatabaseApp": {
         "fuelProvider" : {
             "home": {
-                "title": "Fuel Providers",
-                "createLabel": "Crear nuevo Fuel Provider",
-                "createOrEditLabel": "Crear o editar Fuel Provider",
-                "search": "Search for Fuel Provider"
+                "title": "Proveedores de combustible",
+                "createLabel": "Crear nuevo proveedor",
+                "createOrEditLabel": "Crear o editar proveedor",
+                "search": "Buscar proveedores"
             },
-            "created": "Un nuevo Fuel Provider ha sido creado con el identificador {{ param }}",
-            "updated": "Un Fuel Provider ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un Fuel Provider ha sido eliminado con el identificador {{ param }}",
+            "created": "Se ha añadido al proveedor {{ param }}",
+            "updated": "Se ha editado al proveedor {{ param }}",
+            "deleted": "Se ha eliminado al proveedor {{ param }}",
             "delete": {
-                "question": "¿Seguro que quiere eliminar Fuel Provider {{ id }}?"
+                "question": "¿Seguro que quieres eliminar al proveedor {{ id }}?"
             },
             "detail": {
-                "title": "Fuel Provider"
+                "title": "Proveedor de combustible"
             },
-            "name": "Name",
+            "name": "Nombre",
             "logo": "Logo"
         }
     }

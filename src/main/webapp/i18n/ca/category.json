@@ -3,21 +3,21 @@
         "category" : {
             "home": {
                 "title": "Categories",
-                "createLabel": "Create a new Category",
-                "createOrEditLabel": "Create or edit a Category",
-                "search": "Search for Category"
+                "createLabel": "Afegir nova categoria",
+                "createOrEditLabel": "Afegir o editar una categoria",
+                "search": "Cercar categories"
             },
-            "created": "A new Category is created with identifier {{ param }}",
-            "updated": "A Category is updated with identifier {{ param }}",
-            "deleted": "A Category is deleted with identifier {{ param }}",
+            "created": "S'ha afegit la categoria {{ param }}",
+            "updated": "S'ha actualitzat la categoria {{ param }}",
+            "deleted": "S'ha esborrat la categoria {{ param }}",
             "delete": {
-                "question": "Are you sure you want to delete Category {{ id }}?"
+                "question": "Estàs segur que vols esborrar la categoria {{ id }}?"
             },
             "detail": {
-                "title": "Category"
+                "title": "Categoria"
             },
-            "name": "Name",
-            "shortname": "Shortname",
+            "name": "Nom",
+            "shortname": "Nom curt",
             "logo": "Logo"
         }
     }

@@ -7,11 +7,11 @@
                 "createOrEditLabel": "Crear o editar piloto",
                 "search": "Buscar pilotos"
             },
-            "created": "Un nuevo Driver ha sido creado con el identificador {{ param }}",
-            "updated": "Un Driver ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un Driver ha sido eliminado con el identificador {{ param }}",
+            "created": "Se ha añadido el piloto {{ param }}",
+            "updated": "Se ha actualizado el piloto {{ param }}",
+            "deleted": "Se ha eliminado el piloto {{ param }}",
             "delete": {
-                "question": "¿Seguro que quiere eliminar el piloto {{ id }}?"
+                "question": "¿Seguro que quiere eliminar al piloto {{ id }}?"
             },
             "detail": {
                 "title": "Piloto"
