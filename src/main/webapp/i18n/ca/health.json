@@ -14,7 +14,8 @@
             "diskSpace": "Espai al disc",
             "mail": "Compte de correu electrònic",
             "elasticsearch": "Elasticsearch",
-            "db": "Base de dades"
+            "db": "Base de dades",
+            "mongo": "MongoDB"
         },
         "table": {
             "service": "Nom del servei",

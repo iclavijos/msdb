@@ -14,7 +14,8 @@
             "diskSpace": "Espacio en disco",
             "mail": "Email",
             "elasticsearch": "Elasticsearch",
-            "db": "Base de datos"
+            "db": "Base de datos",
+            "mongo": "MongoDB"
         },
         "table": {
             "service": "Nombre del servicio",
