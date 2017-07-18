@@ -17,11 +17,14 @@ buildscript {
         classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
         classpath "com.moowork.gradle:gradle-node-plugin:1.1.1"
         classpath "io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE"
+        classpath "io.franzbecker:gradle-lombok:1.8"
         //jhipster-needle-gradle-buildscript-dependency - JHipster will add additional gradle build script plugins here
     }
 }
 
+apply plugin: 'io.franzbecker.gradle-lombok'
 apply plugin: 'java'
+
 sourceCompatibility=1.8
 targetCompatibility=1.8
 apply plugin: 'maven'
@@ -108,7 +111,7 @@ if (project.hasProperty('prometheus')) {
 }
 
 group = 'com.icesoft.msdb'
-version = '0.13.2'
+version = '0.14.0'
 
 description = ''
 
