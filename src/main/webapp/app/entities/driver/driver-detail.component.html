@@ -57,67 +57,79 @@
 			    <div class="row">
 		    	<div class="col-sm-3">
 				    <dl class="row-md jh-entity-details">
-				        <dt><span>Participaciones</span></dt>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.participations">Participations</span></dt>
 				        <dd>
 				            <span>{{categoryStats.stats.participations}}</span>
 				        </dd>
-				        <dt><span>Salidas</span></dt>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.starts">Starts</span></dt>
 				        <dd>
 				            <span>{{categoryStats.stats.starts}}</span>
 				        </dd>
-				        <dt><span>Acabadas</span></dt>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.finished">Finished</span></dt>
 				        <dd>
 				            <span>{{categoryStats.stats.finished}} ({{((categoryStats.stats.finished / categoryStats.stats.starts) * 100).toFixed(2)}}%)</span>
 				        </dd>
-				        <dt><span>Mejor posicion final</span></dt>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.bestFinalPosition">Best final position</span></dt>
 				        <dd>
-				            <span>{{categoryStats.stats.bestFinishingPosR}}  ({{categoryStats.stats.bestFinishingPosTimesR}} veces)</span>
+				            <span>{{categoryStats.stats.bestFinishingPosR}}  ({{categoryStats.stats.bestFinishingPosTimesR}} </span>
+				            	<span *ngIf="categoryStats.stats.bestFinishingPosTimesR == 1" jhiTranslate="motorsportsDatabaseApp.stats.time">time</span>
+				            	<span *ngIf="categoryStats.stats.bestFinishingPosTimesR > 1" jhiTranslate="motorsportsDatabaseApp.stats.times">times</span>)
 				        </dd>
 				    </dl>
 			    </div>
 			    <div class="col-sm-3">
 			    	<dl class="row-md jh-entity-details">
-				        <dt><span>Victorias</span></dt>
+			    		<dt><span jhiTranslate="motorsportsDatabaseApp.stats.championships">Championships</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.championships}}</span>
+				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.wins">Wins</span></dt>
 				        <dd>
 				            <span>{{categoryStats.stats.wins}} ({{((categoryStats.stats.wins / categoryStats.stats.starts) * 100).toFixed(2)}}%)</span>
 				        </dd>
-				        <dt><span>Poles</span></dt>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.poles">Poles</span></dt>
 				        <dd>
 				            <span>{{categoryStats.stats.poles}} ({{((categoryStats.stats.poles / categoryStats.stats.participations) * 100).toFixed(2)}}%)</span>
 				        </dd>
-				        <dt><span>Mejor posicion parrilla</span></dt>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.bestStartingPosition">Best starting position</span></dt>
 				        <dd>
-				            <span>{{categoryStats.stats.bestFinishingPosQ}}  ({{categoryStats.stats.bestFinishingPosTimesQ}} veces)</span>
-				        </dd>
-				        <dt><span>Vueltas rapidas</span></dt>
-				        <dd>
-				            <span>{{categoryStats.stats.fastlaps}}</span>
+				            <span>{{categoryStats.stats.bestFinishingPosQ}}  ({{categoryStats.stats.bestFinishingPosTimesQ}} </span>
+				            	<span *ngIf="categoryStats.stats.bestFinishingPosTimesQ == 1" jhiTranslate="motorsportsDatabaseApp.stats.time">time</span>
+				            	<span *ngIf="categoryStats.stats.bestFinishingPosTimesQ > 1" jhiTranslate="motorsportsDatabaseApp.stats.times">times</span>)
 				        </dd>
 				    </dl>
 			    </div>
 			    <div class="col-sm-3">
 			    	<dl class="row-md jh-entity-details">
-				        <dt><span>Podiums</span></dt>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.podiums">Podiums</span></dt>
 				        <dd>
 				            <span>{{categoryStats.stats.top3}}</span>
 				        </dd>
-				        <dt><span>Top 5</span></dt>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.top5">Top 5</span></dt>
 				        <dd>
 				            <span>{{categoryStats.stats.top5}}</span>
 				        </dd>
-				        <dt><span>Top 10</span></dt>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.top10">Top 10</span></dt>
 				        <dd>
 				            <span>{{categoryStats.stats.top10}}</span>
+				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.fastLaps">Fast laps</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.fastLaps}}</span>
 				        </dd>
 				    </dl>
 			    </div>
 			    <div class="col-sm-3">
 			    	<dl class="row-md jh-entity-details">
-				        <dt><span>Vueltas completadas</span></dt>
+			    		<dt><span jhiTranslate="motorsportsDatabaseApp.stats.grandChelems">Grand Chelems</span></dt>
+				        <dd>
+				            <span>{{categoryStats.stats.grandChelems}}</span>
+				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.lapsCompleted">Laps Completed</span></dt>
 				        <dd>
 				            <span>{{categoryStats.stats.lapsCompleted}}</span>
 				        </dd>
-				        <dt><span>Kms completados</span></dt>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.kmsCompleted">Kms. Completed</span></dt>
 				        <dd>
 				            <span>{{categoryStats.stats.kmsCompleted}}</span>
 				        </dd>

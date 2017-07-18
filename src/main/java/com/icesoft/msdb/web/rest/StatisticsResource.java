@@ -1,5 +1,6 @@
 package com.icesoft.msdb.web.rest;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -10,14 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.icesoft.msdb.domain.stats.Statistics;
-import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverStatsDTO;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
@@ -51,8 +50,11 @@ public class StatisticsResource {
 	 */
 	@GetMapping("/api/stats/driver/{driverId}")
 	public ResponseEntity<List<DriverStatsDTO>> getStatistics(@PathVariable Long driverId) {
-		Map<String, Statistics> tmp = statsService.getDriverStatistics(driverId);
-		List<DriverStatsDTO> result = tmp.entrySet().stream()
+		Map<String, Statistics> mapStats = 
+				Optional.ofNullable(statsService.getDriverStatistics(driverId))
+					.orElse(new HashMap<>());
+		
+		List<DriverStatsDTO> result = mapStats.entrySet().stream()
 			.map((entry) -> new DriverStatsDTO(entry.getKey(), entry.getValue()))
 			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))
 			.collect(Collectors.toList());
@@ -61,8 +63,10 @@ public class StatisticsResource {
 	
 	@GetMapping("/api/stats/driver/{driverId}/{year}")
 	public ResponseEntity<List<DriverStatsDTO>> getStatistics(@PathVariable Long driverId, @PathVariable String year) {
-		Map<String, Statistics> tmp = statsService.getDriverStatistics(driverId);
-		List<DriverStatsDTO> result = tmp.entrySet().stream()
+		Map<String, Statistics> mapStats = 
+				Optional.ofNullable(statsService.getDriverStatistics(driverId))
+					.orElse(new HashMap<>());
+		List<DriverStatsDTO> result = mapStats.entrySet().stream()
 			.map((entry) -> new DriverStatsDTO(entry.getKey(), entry.getValue()))
 			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))
 			.collect(Collectors.toList());

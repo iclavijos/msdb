@@ -1,7 +1,13 @@
 package com.icesoft.msdb.domain.stats;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.icesoft.msdb.domain.EventEntryResult;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -16,6 +22,7 @@ public class Statistics {
 	private int finished = 0;
 	private int retirements = 0;
 	private int wins = 0;
+	private int championships = 0;
 	private int top3 = 0;
 	private int top5 = 0;
 	private int top10 = 0;
@@ -23,6 +30,7 @@ public class Statistics {
 	private int top2Q = 0;
 	private int top3Q = 0;
 	private int fastLaps = 0;
+	private int grandChelems = 0;
 	private float points = 0;
 	private int lapsCompleted = 0;
 	private float kmsCompleted = 0f;
@@ -32,6 +40,9 @@ public class Statistics {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private Map<Integer, Integer> finalPositionsQ = new TreeMap<>();
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private List<Result> results = new ArrayList<>();
 	
 	public void incParticipations() {
 		participations++;
@@ -39,6 +50,10 @@ public class Statistics {
 	
 	public void incFastLaps() {
 		fastLaps++;
+	}
+	
+	public void incGrandChelems() {
+		grandChelems++;
 	}
 	
 	public void addPoints(float points) {
@@ -131,4 +146,65 @@ public class Statistics {
 		}
 		return null;
 	}
+	
+	public void addResult(EventEntryResult result, Boolean grandChelem, Integer finalPosition, Integer gridPosition) {
+		int order = results.size() + 1;
+		Result r = Result.builder()
+				.order(order)
+				.eventEditionId(result.getEntry().getEventEdition().getId())
+				.eventName(result.getEntry().getEventEdition().getLongEventName())
+				.year(result.getEntry().getEventEdition().getEditionYear())
+				.position(finalPosition)
+				.gridPosition(gridPosition)
+				.lapsLed(result.getLapsLed())
+				.grandChelem(grandChelem)
+				.build();
+		results.add(r);
+	}
+	
+	@JsonIgnore
+	public List<Result> getWinsList() {
+		return results.stream().filter(r -> r.getPosition() == 1).collect(Collectors.toList());
+	}
+	
+	@JsonIgnore
+	public List<Result> getWinsList(Integer year) {
+		return getWinsList().stream().filter(r -> r.getYear().equals(year)).collect(Collectors.toList());
+	}
+	
+	@JsonIgnore
+	public List<Result> getPolesList() {
+		return results.stream().filter(r -> r.getGridPosition() == 1).collect(Collectors.toList());
+	}
+	
+	@JsonIgnore
+	public List<Result> getGrandChelemsList() {
+		return results.stream().filter(r -> r.getGrandChelem()).collect(Collectors.toList());
+	}
+	
+	@JsonIgnore
+	public List<Result> getPodiumsList() {
+		return results.stream().filter(r -> r.getPosition() <= 3).collect(Collectors.toList());
+	}
+	
+	@JsonIgnore
+	public List<Result> getRacesLed() {
+		return results.stream().filter(r -> r.getLapsLed() > 0).collect(Collectors.toList());
+	}
+	
+	@JsonIgnore
+	public List<Result> getDNFsList() {
+		return results.stream().filter(r -> r.getPosition() == 900).collect(Collectors.toList());
+	}
+	
+	@JsonIgnore
+	public List<Result> getDNSsList() {
+		return results.stream().filter(r -> r.getPosition() == 902).collect(Collectors.toList());
+	}
+	
+	@JsonIgnore
+	public List<Result> getDSQsList() {
+		return results.stream().filter(r -> r.getPosition() == 901).collect(Collectors.toList());
+	}
+	
 }

@@ -47,6 +47,7 @@
                 "apidocs": "API",
                 "database": "Base de dades",
                 "rebuildIndexes": "Reconstruir índexs de cerca",
+                "rebuildStatistics": "Recalcular estadístiques",
                 "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
             },
             "imports" : {

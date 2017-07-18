@@ -1,0 +1,24 @@
+{
+    "motorsportsDatabaseApp": {
+    	"stats": {
+    		"participations": "Participaciones",
+    		"starts": "Salidas",
+    		"finished": "Acabadas",
+    		"bestFinalPosition": "Mejor posición final",
+    		"championships": "Campeonatos",
+    		"wins": "Victorias",
+    		"podiums": "Podios",
+    		"poles": "Poles",
+    		"bestStartingPosition": "Mejor posición salida",
+    		"fastLaps": "Vueltas rápidas",
+    		"top3": "Top 3",
+    		"top5": "Top 5",
+    		"top10": "Top 10",
+    		"lapsCompleted": "Vueltas completadas",
+    		"kmsCompleted": "Kms. completados",
+    		"grandChelems": "Grand Chelems",
+    		"time": "vez",
+    		"times": "veces"   		
+    	}
+    }
+}

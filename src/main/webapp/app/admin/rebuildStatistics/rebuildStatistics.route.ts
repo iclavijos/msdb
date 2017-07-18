@@ -7,6 +7,6 @@ export const rebuildStatisticsRoute: Route = {
     path: 'rebuildStatistics',
     component: JhiRebuildStatisticsComponent,
     data: {
-        pageTitle: 'global.menu.admin.rebuildIndexes'
+        pageTitle: 'global.menu.admin.rebuildStatistics'
     }
 };
