@@ -17,12 +17,10 @@ buildscript {
         classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
         classpath "com.moowork.gradle:gradle-node-plugin:1.1.1"
         classpath "io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE"
-        classpath "io.franzbecker:gradle-lombok:1.8"
         //jhipster-needle-gradle-buildscript-dependency - JHipster will add additional gradle build script plugins here
     }
 }
 
-apply plugin: 'io.franzbecker.gradle-lombok'
 apply plugin: 'java'
 
 sourceCompatibility=1.8
@@ -203,7 +201,7 @@ dependencies {
     
 	compile 'com.google.maps:google-maps-services:0.1.20'
 	
-	compile 'org.projectlombok:lombok:1.16.18'
+	compileOnly 'org.projectlombok:lombok:1.14.8'
     
     testCompile "org.awaitility:awaitility:${awaitility_version}"
     testCompile "com.jayway.jsonpath:json-path"
