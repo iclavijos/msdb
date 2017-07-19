@@ -14,6 +14,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
     driver: Driver;
     stats: any[];
+    yearsStats: number[];
     private subscription: Subscription;
     private eventSubscriber: Subscription;
     compositeName: String;
@@ -30,6 +31,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
         this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
             this.loadStats(params['id']);
+            this.loadYears(params['id']);
         });
         this.registerChangeInDrivers();
     }
@@ -43,6 +45,16 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
     loadStats(id) {
         this.driverService.getStats(id).subscribe((stats) => {
            this.stats = stats.json;
+        });
+    }
+    loadStatsYear(id, year) {
+        this.driverService.getStatsYear(id, year).subscribe((stats) => {
+           this.stats = stats.json;
+        });
+    }
+    loadYears(id) {
+        this.driverService.getYears(id).subscribe((stats) => {
+           this.yearsStats = stats.json;
         });
     }
     byteSize(field) {
@@ -66,5 +78,17 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
             'driverListModification',
             (response) => this.load(this.driver.id)
         );
+    }
+    
+    finishingPosition(position: number): string {
+        if (position === 900) return 'DNF';
+        if (position === 901) return 'DNS';
+        if (position === 902) return 'DSQ';
+        return '' + position;
+    }
+    
+    jumpToYear(year) {
+        if (!year) this.loadStats(this.driver.id);
+        else this.loadStatsYear(this.driver.id, year);
     }
 }

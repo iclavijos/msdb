@@ -62,15 +62,18 @@ public class StatisticsResource {
 	}
 	
 	@GetMapping("/api/stats/driver/{driverId}/{year}")
-	public ResponseEntity<List<DriverStatsDTO>> getStatistics(@PathVariable Long driverId, @PathVariable String year) {
-		Map<String, Statistics> mapStats = 
-				Optional.ofNullable(statsService.getDriverStatistics(driverId))
-					.orElse(new HashMap<>());
+	public ResponseEntity<List<DriverStatsDTO>> getStatistics(@PathVariable Long driverId, @PathVariable Integer year) {
+		Map<String, Statistics> mapStats = statsService.getDriverStatistics(driverId, year);
 		List<DriverStatsDTO> result = mapStats.entrySet().stream()
 			.map((entry) -> new DriverStatsDTO(entry.getKey(), entry.getValue()))
 			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))
 			.collect(Collectors.toList());
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(result));
+	}
+	
+	@GetMapping("/api/stats/driver/{driverId}/years")
+	public ResponseEntity<List<Integer>> getYearsStatistics(@PathVariable Long driverId) {
+		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(statsService.getYearsStatistics(driverId)));
 	}
 	
 	

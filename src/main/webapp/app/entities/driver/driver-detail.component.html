@@ -49,6 +49,15 @@
 	</ngb-tab>
 	<ngb-tab title="{{'motorsportsDatabaseApp.driver.statistics' | translate}}">
 	    <ng-template ngbTabContent>
+	    	<div class="row" *ngIf="yearsStats?.length > 1">
+	    		<div class="col-sm-10"></div>
+	    		<div class="col-sm-2">
+		    		<select class="form-control" id="field_jumpToEdition" name="jumpToYear" (change)="jumpToYear($event.target.value)">
+	   					<option></option>
+		            	<option *ngFor="let year of yearsStats" [value]="year">{{year}}</option>
+		            </select>
+	    		</div>
+	    	</div>
 	    	<div class="card" *ngFor="let categoryStats of stats">
 			  <div class="card-header">
 			    <h3>{{categoryStats.category}}</h3>
@@ -71,7 +80,7 @@
 				        </dd>
 				        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.bestFinalPosition">Best final position</span></dt>
 				        <dd>
-				            <span>{{categoryStats.stats.bestFinishingPosR}}  ({{categoryStats.stats.bestFinishingPosTimesR}} </span>
+				            <span>{{finishingPosition(categoryStats.stats.bestFinishingPosR)}}  ({{categoryStats.stats.bestFinishingPosTimesR}} </span>
 				            	<span *ngIf="categoryStats.stats.bestFinishingPosTimesR == 1" jhiTranslate="motorsportsDatabaseApp.stats.time">time</span>
 				            	<span *ngIf="categoryStats.stats.bestFinishingPosTimesR > 1" jhiTranslate="motorsportsDatabaseApp.stats.times">times</span>)
 				        </dd>

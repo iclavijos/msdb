@@ -9,12 +9,6 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.icesoft.msdb.domain.EventEntryResult;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-@Data
 public class Statistics {
 
 	private int participations = 0;
@@ -34,16 +28,146 @@ public class Statistics {
 	private float points = 0;
 	private int lapsCompleted = 0;
 	private float kmsCompleted = 0f;
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private Map<Integer, Integer> finalPositionsR = new TreeMap<>();
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private Map<Integer, Integer> finalPositionsQ = new TreeMap<>();
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private List<Result> results = new ArrayList<>();
 	
+	public int getParticipations() {
+		return participations;
+	}
+
+	public void setParticipations(int participations) {
+		this.participations = participations;
+	}
+
+	public int getStarts() {
+		return starts;
+	}
+
+	public void setStarts(int starts) {
+		this.starts = starts;
+	}
+
+	public int getFinished() {
+		return finished;
+	}
+
+	public void setFinished(int finished) {
+		this.finished = finished;
+	}
+
+	public int getRetirements() {
+		return retirements;
+	}
+
+	public void setRetirements(int retirements) {
+		this.retirements = retirements;
+	}
+
+	public int getWins() {
+		return wins;
+	}
+
+	public void setWins(int wins) {
+		this.wins = wins;
+	}
+
+	public int getChampionships() {
+		return championships;
+	}
+
+	public void setChampionships(int championships) {
+		this.championships = championships;
+	}
+
+	public int getTop3() {
+		return top3;
+	}
+
+	public void setTop3(int top3) {
+		this.top3 = top3;
+	}
+
+	public int getTop5() {
+		return top5;
+	}
+
+	public void setTop5(int top5) {
+		this.top5 = top5;
+	}
+
+	public int getTop10() {
+		return top10;
+	}
+
+	public void setTop10(int top10) {
+		this.top10 = top10;
+	}
+
+	public int getPoles() {
+		return poles;
+	}
+
+	public void setPoles(int poles) {
+		this.poles = poles;
+	}
+
+	public int getTop2Q() {
+		return top2Q;
+	}
+
+	public void setTop2Q(int top2q) {
+		top2Q = top2q;
+	}
+
+	public int getTop3Q() {
+		return top3Q;
+	}
+
+	public void setTop3Q(int top3q) {
+		top3Q = top3q;
+	}
+
+	public int getFastLaps() {
+		return fastLaps;
+	}
+
+	public void setFastLaps(int fastLaps) {
+		this.fastLaps = fastLaps;
+	}
+
+	public int getGrandChelems() {
+		return grandChelems;
+	}
+
+	public void setGrandChelems(int grandChelems) {
+		this.grandChelems = grandChelems;
+	}
+
+	public float getPoints() {
+		return points;
+	}
+
+	public void setPoints(float points) {
+		this.points = points;
+	}
+
+	public int getLapsCompleted() {
+		return lapsCompleted;
+	}
+
+	public void setLapsCompleted(int lapsCompleted) {
+		this.lapsCompleted = lapsCompleted;
+	}
+
+	public float getKmsCompleted() {
+		return kmsCompleted;
+	}
+
+	public void setKmsCompleted(float kmsCompleted) {
+		this.kmsCompleted = kmsCompleted;
+	}
+
 	public void incParticipations() {
 		participations++;
 	}
@@ -148,18 +272,24 @@ public class Statistics {
 	}
 	
 	public void addResult(EventEntryResult result, Boolean grandChelem, Integer finalPosition, Integer gridPosition) {
-		int order = results.size() + 1;
-		Result r = Result.builder()
-				.order(order)
-				.eventEditionId(result.getEntry().getEventEdition().getId())
-				.eventName(result.getEntry().getEventEdition().getLongEventName())
-				.year(result.getEntry().getEventEdition().getEditionYear())
-				.position(finalPosition)
-				.gridPosition(gridPosition)
-				.lapsLed(result.getLapsLed())
-				.grandChelem(grandChelem)
-				.build();
+		
+		Result r = new Result();
+		r.setEventDate(result.getEntry().getEventEdition().getEventDate());
+		r.setEventEditionId(result.getEntry().getEventEdition().getId());
+		r.setEventName(result.getEntry().getEventEdition().getLongEventName());
+		r.setGrandChelem(grandChelem);
+		r.setGridPosition(gridPosition);
+		r.setLapsLed(result.getLapsLed());
+		r.setLapsCompleted(result.getLapsCompleted());
+		r.setPosition(finalPosition);
+		r.setRetired(result.isRetired());
+		r.setYear(result.getEntry().getEventEdition().getEditionYear());
+		r.setPitlaneStart(result.isPitlaneStart());
+		
 		results.add(r);
+		results.sort((r1, r2) -> r1.getEventDate().compareTo(r2.getEventDate()));
+		int pos = results.indexOf(r);
+		r.setOrder(pos + 1);
 	}
 	
 	@JsonIgnore
@@ -194,7 +324,7 @@ public class Statistics {
 	
 	@JsonIgnore
 	public List<Result> getDNFsList() {
-		return results.stream().filter(r -> r.getPosition() == 900).collect(Collectors.toList());
+		return results.stream().filter(r -> r.getPosition() == 900 || r.getRetired()).collect(Collectors.toList());
 	}
 	
 	@JsonIgnore
@@ -205,6 +335,11 @@ public class Statistics {
 	@JsonIgnore
 	public List<Result> getDSQsList() {
 		return results.stream().filter(r -> r.getPosition() == 901).collect(Collectors.toList());
+	}
+	
+	@JsonIgnore
+	public List<Result> getPitlaneStarts() {
+		return results.stream().filter(r -> r.getPitlaneStart()).collect(Collectors.toList());
 	}
 	
 }

@@ -1,5 +1,6 @@
 package com.icesoft.msdb.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.icesoft.msdb.domain.EventEdition;
@@ -14,4 +15,8 @@ public interface StatisticsService {
 	void buildEventStatistics(EventEdition eventEdition);
 	
 	Map<String, Statistics> getDriverStatistics(Long driverId);
+	
+	Map<String, Statistics> getDriverStatistics(Long driverId, Integer year);
+	
+	List<Integer> getYearsStatistics(Long driverId);
 }

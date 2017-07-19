@@ -1,5 +1,6 @@
 package com.icesoft.msdb.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +77,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 			dStats = new DriverStatistics(driver.getId().toString());
 		}
 		Statistics stats = dStats.getStaticsForCategory(entry.getCategory().getName());
+		Statistics yearStats = dStats.getStaticsForCategory(entry.getCategory().getName(), entry.getEventEdition().getEditionYear());
 		
 		results.stream().forEach((result) -> {
 			log.debug("Processing stats for driver {} in race {}", driver.getFullName(), result.getSession().getName());
@@ -86,23 +88,28 @@ public class StatisticsServiceImpl implements StatisticsService {
 			int startPosInClass = -1;
 			if (result.getLapsCompleted() != null) {
 				stats.addLaps(result.getLapsCompleted(), result.getEntry().getEventEdition().getTrackLayout().getLength());
+				yearStats.addLaps(result.getLapsCompleted(), result.getEntry().getEventEdition().getTrackLayout().getLength());
 			}
 			
 			if (entry.getEventEdition().getAllowedCategories().size() == 1) {
 				posInClass = result.getFinalPosition().intValue();
 				startPosInClass = result.getStartingPosition() != null ? result.getStartingPosition().intValue() : -1;
 				stats.addFinishPositionR(result.getFinalPosition(), result.isRetired());
+				yearStats.addFinishPositionR(result.getFinalPosition(), result.isRetired());
 				if (result.getStartingPosition() != null) {
 					stats.addFinishPositionQ(result.getStartingPosition());
+					yearStats.addFinishPositionQ(result.getStartingPosition());
 				}
 			} else {
 				posInClass = resultsCategory.indexOf(result) + 1;
 				stats.addFinishPositionR(posInClass, result.isRetired());
+				yearStats.addFinishPositionR(posInClass, result.isRetired());
 				if (result.getStartingPosition() != null) {
 					startPosInClass = resultsCategory.parallelStream()
 						.sorted((r1, r2) -> r1.getStartingPosition().compareTo(r2.getStartingPosition()))
 						.collect(Collectors.toList()).indexOf(result);
 					stats.addFinishPositionQ(startPosInClass + 1);
+					yearStats.addFinishPositionQ(startPosInClass + 1);
 				}
 			}
 			
@@ -116,6 +123,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 					.collect(Collectors.toList()).indexOf(result) + 1;
 				if (posFL == 1) {
 					stats.incFastLaps();
+					yearStats.incFastLaps();
 				}
 			}
 			
@@ -124,13 +132,17 @@ public class StatisticsServiceImpl implements StatisticsService {
 			if (posFL == 1 && posInClass == 1 && 
 					result.getLapsCompleted() != null && result.getLapsCompleted().equals(result.getLapsLed())) {
 				stats.incGrandChelems();
+				yearStats.incGrandChelems();
 				grandChelem = true;
 			}
 			stats.addResult(result, grandChelem, posInClass, startPosInClass);
 			stats.incParticipations();
+			yearStats.addResult(result, grandChelem, posInClass, startPosInClass);
+			yearStats.incParticipations();
 		});
 		
 		dStats.updateStatistics(entry.getCategory().getName(), stats);
+		dStats.updateStatistics(entry.getCategory().getName(), yearStats, entry.getEventEdition().getEditionYear());
 		
 		driverStatsRepo.save(dStats);
 	}
@@ -156,6 +168,18 @@ public class StatisticsServiceImpl implements StatisticsService {
 	public Map<String, Statistics> getDriverStatistics(Long driverId) {
 		Optional<DriverStatistics> driverStats = Optional.ofNullable(driverStatsRepo.findOne(driverId.toString()));
 		return driverStats.map(DriverStatistics::getDriverStatistics).orElseGet(HashMap<String, Statistics> :: new);
+	}
+	
+	@Override
+	public Map<String, Statistics> getDriverStatistics(Long driverId, Integer year) {
+		Optional<DriverStatistics> driverStats = Optional.ofNullable(driverStatsRepo.findOne(driverId.toString()));
+		return driverStats.map(ds -> ds.getDriverStatisticsYear(year)).orElseGet(HashMap<String, Statistics> :: new);
+	}
+	
+	@Override
+	public List<Integer> getYearsStatistics(Long driverId) {
+		Optional<DriverStatistics> driverStats = Optional.ofNullable(driverStatsRepo.findOne(driverId.toString()));
+		return driverStats.map(ds -> ds.getYearsStatistics()).orElseGet(ArrayList<Integer>::new);
 	}
 
 }
