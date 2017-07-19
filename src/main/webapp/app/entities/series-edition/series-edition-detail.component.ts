@@ -1,9 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-<<<<<<< master
-=======
-import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
->>>>>>> f98d7c2 Improvements on series edition calendar handling
 import { Subscription } from 'rxjs/Rx';
 import { JhiEventManager, JhiAlertService  } from 'ng-jhipster';
 import { SeriesEdition } from './series-edition.model';
@@ -25,13 +21,8 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     constructor(
         private seriesEditionService: SeriesEditionService,
         private eventEditionService: EventEditionService,
-<<<<<<< master
         private alertService: JhiAlertService,
         private eventManager: JhiEventManager,
-=======
-        private alertService: AlertService,
-        private eventManager: EventManager,
->>>>>>> f98d7c2 Improvements on series edition calendar handling
         private route: ActivatedRoute,
         private router: Router
     ) {
@@ -55,17 +46,10 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     
     loadEvents(id) {
         this.seriesEditionService.findEvents(id).subscribe(events => {
-<<<<<<< master
            let data = events.json();
            for(let i = 0; i < data.length; i++) {
                let event = data[i];
                data[i].winners = new Array();
-=======
-           this.seriesEdition.events = events.json(); 
-           for(let i = 0; i < this.seriesEdition.events.length; i++) {
-               let event = this.seriesEdition.events[i];
-               this.seriesEdition.events[i].winners = new Array();
->>>>>>> f98d7c2 Improvements on series edition calendar handling
                this.eventEditionService.findWinners(event.id).subscribe(winners => {
                    data[i].winners.push(winners);
                });
@@ -119,9 +103,5 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
         this.eventSubscriber.add(this.eventManager.subscribe(
             'seriesEditionEventsListModification', 
             (response) => this.loadEvents(this.seriesEdition.id)));
-    }
-    
-    private onRemoveError (error) {
-        this.alertService.error(error.message, null, null);
     }
 }

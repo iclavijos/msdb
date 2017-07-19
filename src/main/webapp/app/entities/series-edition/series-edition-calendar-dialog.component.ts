@@ -4,7 +4,7 @@ import { FormGroup, FormArray, FormBuilder, FormControl, Validators } from '@ang
 import { Response } from '@angular/http';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-<<<<<<< master
+
 import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
 
 import { Observable } from 'rxjs/Rx';
@@ -15,9 +15,6 @@ import {_catch} from 'rxjs/operator/catch';
 import {_do} from 'rxjs/operator/do';
 import {switchMap} from 'rxjs/operator/switchMap';
 import {of} from 'rxjs/observable/of';
-=======
-import { EventManager, AlertService, JhiLanguageService } from 'ng-jhipster';
->>>>>>> f98d7c2 Improvements on series edition calendar handling
 
 import { EventEdition, EventEditionService } from '../event-edition/';
 import { EventSession } from '../event-session/';
@@ -43,11 +40,7 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
         private _fb: FormBuilder,
         private seriesEditionService: SeriesEditionService,
         private eventEditionService: EventEditionService,
-<<<<<<< master
         private alertService: JhiAlertService,
-=======
-        private alertService: AlertService,
->>>>>>> f98d7c2 Improvements on series edition calendar handling
         public activeModal: NgbActiveModal,
         private eventManager: JhiEventManager,
     ) {
@@ -85,7 +78,6 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
         this.isSaving = true;
         this.seriesEditionService.addEventToSeries(this.seriesEdition.id, this.eventEdition.id, this.myForm.value.races)
             .subscribe((res: any) => this.onSaveSuccess(res), (res: any) => this.onSaveError(res));
-<<<<<<< master
     }
     
     private onSaveSuccess (result: any) {
@@ -97,24 +89,8 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
     private onSaveError (error) {
         this.isSaving = false;
         this.onError(error);
-=======
->>>>>>> f98d7c2 Improvements on series edition calendar handling
     }
     
-<<<<<<< master
-=======
-    private onSaveSuccess (result: any) {
-        this.eventManager.broadcast({ name: 'seriesEditionEventsListModification', content: 'OK'});
-        this.isSaving = false;
-        this.activeModal.dismiss(result);
-    }
-
-    private onSaveError (error) {
-        this.isSaving = false;
-        this.onError(error);
-    }
-    
->>>>>>> f98d7c2 Improvements on series edition calendar handling
     private onError (error) {
         this.alertService.error(error.message, null, null);
     }
