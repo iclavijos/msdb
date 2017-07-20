@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { HttpModule, JsonpModule } from '@angular/http';
 
 import { MotorsportsDatabaseSharedModule } from '../../shared';
+
 import {
     DriverService,
     DriverPopupService,

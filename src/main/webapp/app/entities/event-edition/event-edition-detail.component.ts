@@ -61,7 +61,7 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     
     loadSessions(id) {
         this.eventEditionService.findSessions(id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe(eventSessions => {
-            this.eventEdition.sessions = eventSessions.json();
+            this.eventEdition.sessions = eventSessions.json;
         });
     }
     

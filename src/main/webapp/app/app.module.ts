@@ -26,7 +26,6 @@ import {
     ErrorComponent
 } from './layouts';
 
-
 @NgModule({
     imports: [
         BrowserModule,
@@ -37,7 +36,7 @@ import {
         MotorsportsDatabaseAdminModule,
         MotorsportsDatabaseAccountModule,
         MotorsportsDatabaseEntityModule,
-        MotorsportsDatabaseImportsModule,
+        MotorsportsDatabaseImportsModule
     ],
     declarations: [
         JhiMainComponent,
@@ -45,7 +44,7 @@ import {
         ErrorComponent,
         PageRibbonComponent,
         ActiveMenuDirective,
-        FooterComponent
+        FooterComponent,
     ],
     providers: [
         ProfileService,

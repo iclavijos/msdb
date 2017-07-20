@@ -132,7 +132,9 @@
         },
         "detail": {
             "field": "Camp",
-            "value": "Valor"
+            "value": "Valor",
+            "info": "Detall",
+            "statistics": "Estadístiques"
         },
         "delete": {
             "title": "Confirma eliminació"

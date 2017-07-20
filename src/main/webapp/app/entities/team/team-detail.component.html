@@ -3,26 +3,37 @@
     <h2>{{team.name}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
-    <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="motorsportsDatabaseApp.team.name">Name</span></dt>
-        <dd>
-            <span>{{team.name}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.team.description">Description</span></dt>
-        <dd>
-            <span>{{team.description}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.team.hqLocation">Hq Location</span></dt>
-        <dd>
-            <span>{{team.hqLocation}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.team.logo">Logo</span></dt>
-        <dd>
-            <div *ngIf="team.logoUrl">
-            	<img [src]="team.logoUrl" style="max-height: 200px;" alt="team logo"/>
-            </div>
-        </dd>
-    </dl>
+    <ngb-tabset>
+	  <ngb-tab title="{{'entity.detail.info' | translate}}">
+	    <ng-template ngbTabContent>
+		    <dl class="row-md jh-entity-details">
+		        <dt><span jhiTranslate="motorsportsDatabaseApp.team.name">Name</span></dt>
+		        <dd>
+		            <span>{{team.name}}</span>
+		        </dd>
+		        <dt><span jhiTranslate="motorsportsDatabaseApp.team.description">Description</span></dt>
+		        <dd>
+		            <span>{{team.description}}</span>
+		        </dd>
+		        <dt><span jhiTranslate="motorsportsDatabaseApp.team.hqLocation">Hq Location</span></dt>
+		        <dd>
+		            <span>{{team.hqLocation}}</span>
+		        </dd>
+		        <dt><span jhiTranslate="motorsportsDatabaseApp.team.logo">Logo</span></dt>
+		        <dd>
+		            <div *ngIf="team.logoUrl">
+		            	<img [src]="team.logoUrl" style="max-height: 200px;" alt="team logo"/>
+		            </div>
+		        </dd>
+		    </dl>
+		</ng-template>
+	</ngb-tab>
+	<ngb-tab title="{{'entity.detail.statistics' | translate}}">
+	    <ng-template ngbTabContent>
+	    	<jhi-statistics [id]="team.id" [statsType]="'team'">Statistics...</jhi-statistics>
+	    </ng-template>
+	</ngb-tab>
+	</ngb-tabset>
 
     <button type="submit"
             (click)="previousState()"

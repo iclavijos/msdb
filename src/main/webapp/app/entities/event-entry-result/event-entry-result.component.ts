@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Response } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiParseLinks, JhiLanguageService, JhiAlertService } from 'ng-jhipster';
+import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 
 import { EventEdition } from '../event-edition';
 import { EventSession } from '../event-session';
@@ -28,7 +28,6 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     filterCategory: string;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
         private eventEntryResultService: EventEntryResultService,
         private alertService: JhiAlertService,
         private eventManager: JhiEventManager,

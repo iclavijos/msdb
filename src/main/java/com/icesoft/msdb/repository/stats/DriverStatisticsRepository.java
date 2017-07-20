@@ -1,4 +1,4 @@
-package com.icesoft.msdb.repository;
+package com.icesoft.msdb.repository.stats;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 

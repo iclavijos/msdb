@@ -53,13 +53,13 @@ export class EventEditionService {
         return this.http.get(`${this.eventResourceUrl}/${idEvent}/editions`, options).map((res: any) => this.convertResponse(res));
     }
     
-    findSessions(id: number, timeZone: string): Observable<Response> {
+    findSessions(id: number, timeZone: string): Observable<ResponseWrapper> {
         return this.http.get(`${this.resourceUrl}/${id}/sessions`).map((res: Response) => {
             return this.transformDateTime(res, timeZone);
         });
     }
     
-    findNonFPSessions(id: number, timeZone: string): Observable<Response> {
+    findNonFPSessions(id: number, timeZone: string): Observable<ResponseWrapper> {
         return this.http.get(`${this.resourceUrl}/${id}/sessions/nonfp`).map((res: Response) => {
             return this.transformDateTime(res, timeZone);
         });
@@ -107,8 +107,7 @@ export class EventEditionService {
         for (let i = 0; i < jsonResponse.length; i++) {
             jsonResponse[i].sessionStartTime = moment(jsonResponse[i].sessionStartTime * 1000).tz(timeZone);
         }
-        res._body = jsonResponse;
-        return res;
+        return new ResponseWrapper(res.headers, jsonResponse, res.status);
     }
 
     private convertItemFromServer(entity: any) {

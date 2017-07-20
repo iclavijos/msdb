@@ -132,7 +132,9 @@
         },
         "detail": {
             "field": "Campo",
-            "value": "Valor"
+            "value": "Valor",
+            "info": "Detalle",
+            "statistics": "Estadísticas"
         },
         "delete": {
             "title": "Confirmar operación de borrado"

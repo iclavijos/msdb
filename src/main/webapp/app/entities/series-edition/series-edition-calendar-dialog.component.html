@@ -12,7 +12,7 @@
 						  {{r.longEventName}}
 						</ng-template>
 			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.calendar.searchEvent" for="field_event">Search event</label>
-			            <input id="field_event" type="text" name="field_event" class="form-control" [inputFormatter]="inputFormatter"
+			            <input id="field_event" type="text" name="field_event" class="form-control" [inputFormatter]="inputFormatter" (selectItem)="onEventSelected($event)"
 			            	[(ngModel)]="eventEdition" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="search" [focusFirst]="false" [resultTemplate]="eventTemplate" required/>
 			        </div>
 		        </div>

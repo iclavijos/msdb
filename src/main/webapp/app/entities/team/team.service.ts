@@ -53,6 +53,21 @@ export class TeamService {
     typeahead(req): Observable<ResponseWrapper> {
         return this.http.get(`${this.resourceTypeAheadUrl}?query=${req}`).map((res: any) => this.convertResponse(res));
     }
+    
+    getStats(id: number): Observable<ResponseWrapper> {
+        return this.http.get(`api/stats/team/${id}`)
+            .map((res: Response) => this.convertResponse(res));
+    }
+    
+    getStatsYear(id: number, year: number): Observable<ResponseWrapper> {
+        return this.http.get(`api/stats/team/${id}/${year}`)
+            .map((res: Response) => this.convertResponse(res));
+    }
+    
+    getYears(id: number): Observable<ResponseWrapper> {
+        return this.http.get(`api/stats/team/${id}/years`)
+            .map((res: Response) => this.convertResponse(res));
+    }
 
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();

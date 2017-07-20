@@ -126,10 +126,10 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
     
     private onEventSelected(selected: any) {
         if (selected) {
-            this.eventEdition = selected.originalObject;
-            this.eventEditionService.findNonFPSessions(this.eventEdition.id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe(eventSessions => {
-                this.eventEdition.sessions = eventSessions.json();
-                this.addRaces(this.eventEdition.sessions);
+            this.eventEdition = selected.item;
+            this.eventEditionService.findNonFPSessions(this.eventEdition.id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe((eventSessions) => {
+                this.eventEdition.sessions = eventSessions.json;
+                this.addRaces(eventSessions.json);
             });
         } else {
             this.eventEdition = null;

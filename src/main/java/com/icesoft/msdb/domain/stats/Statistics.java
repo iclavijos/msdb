@@ -1,9 +1,11 @@
 package com.icesoft.msdb.domain.stats;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,10 +29,11 @@ public class Statistics {
 	private int grandChelems = 0;
 	private float points = 0;
 	private int lapsCompleted = 0;
-	private float kmsCompleted = 0f;
+	private float metersCompleted = 0f;
 	private Map<Integer, Integer> finalPositionsR = new TreeMap<>();
 	private Map<Integer, Integer> finalPositionsQ = new TreeMap<>();
-	private List<Result> results = new ArrayList<>();
+	private ConcurrentLinkedQueue<Result> results = new ConcurrentLinkedQueue<>();
+	//private List<Result> results = Collections.synchronizedList(new ArrayList<>());
 	
 	public int getParticipations() {
 		return participations;
@@ -161,11 +164,11 @@ public class Statistics {
 	}
 
 	public float getKmsCompleted() {
-		return kmsCompleted;
+		return metersCompleted;
 	}
 
 	public void setKmsCompleted(float kmsCompleted) {
-		this.kmsCompleted = kmsCompleted;
+		this.metersCompleted = kmsCompleted;
 	}
 
 	public void incParticipations() {
@@ -186,7 +189,7 @@ public class Statistics {
 	
 	public void addLaps(int laps, int lapLength) {
 		lapsCompleted += laps;
-		kmsCompleted += (laps * lapLength) / 1000f;
+		metersCompleted += laps * lapLength;
 	}
 	
 	public void addFinishPositionR(int finalPosition, boolean retired) {
@@ -272,10 +275,10 @@ public class Statistics {
 	}
 	
 	public void addResult(EventEntryResult result, Boolean grandChelem, Integer finalPosition, Integer gridPosition) {
-		
 		Result r = new Result();
 		r.setEventDate(result.getEntry().getEventEdition().getEventDate());
 		r.setEventEditionId(result.getEntry().getEventEdition().getId());
+		r.setEntryId(result.getEntry().getId());
 		r.setEventName(result.getEntry().getEventEdition().getLongEventName());
 		r.setGrandChelem(grandChelem);
 		r.setGridPosition(gridPosition);
@@ -285,61 +288,60 @@ public class Statistics {
 		r.setRetired(result.isRetired());
 		r.setYear(result.getEntry().getEventEdition().getEditionYear());
 		r.setPitlaneStart(result.isPitlaneStart());
-		
+		if (result.getEntry().getTeam().equals(22L)) {
+			System.out.println(r);
+		}
 		results.add(r);
-		results.sort((r1, r2) -> r1.getEventDate().compareTo(r2.getEventDate()));
-		int pos = results.indexOf(r);
-		r.setOrder(pos + 1);
 	}
 	
 	@JsonIgnore
 	public List<Result> getWinsList() {
-		return results.stream().filter(r -> r.getPosition() == 1).collect(Collectors.toList());
+			return results.stream().filter(r -> r.getPosition() == 1).collect(Collectors.toList());
 	}
 	
 	@JsonIgnore
 	public List<Result> getWinsList(Integer year) {
-		return getWinsList().stream().filter(r -> r.getYear().equals(year)).collect(Collectors.toList());
+			return getWinsList().stream().filter(r -> r.getYear().equals(year)).collect(Collectors.toList());
 	}
 	
 	@JsonIgnore
 	public List<Result> getPolesList() {
-		return results.stream().filter(r -> r.getGridPosition() == 1).collect(Collectors.toList());
+			return results.stream().filter(r -> r.getGridPosition() == 1).collect(Collectors.toList());
 	}
 	
 	@JsonIgnore
 	public List<Result> getGrandChelemsList() {
-		return results.stream().filter(r -> r.getGrandChelem()).collect(Collectors.toList());
+			return results.stream().filter(r -> r.getGrandChelem()).collect(Collectors.toList());
 	}
 	
 	@JsonIgnore
 	public List<Result> getPodiumsList() {
-		return results.stream().filter(r -> r.getPosition() <= 3).collect(Collectors.toList());
+			return results.stream().filter(r -> r.getPosition() <= 3).collect(Collectors.toList());
 	}
 	
 	@JsonIgnore
 	public List<Result> getRacesLed() {
-		return results.stream().filter(r -> r.getLapsLed() > 0).collect(Collectors.toList());
+			return results.stream().filter(r -> r.getLapsLed() > 0).collect(Collectors.toList());
 	}
 	
 	@JsonIgnore
 	public List<Result> getDNFsList() {
-		return results.stream().filter(r -> r.getPosition() == 900 || r.getRetired()).collect(Collectors.toList());
+			return results.stream().filter(r -> r.getPosition() == 900 || r.getRetired()).collect(Collectors.toList());
 	}
 	
 	@JsonIgnore
 	public List<Result> getDNSsList() {
-		return results.stream().filter(r -> r.getPosition() == 902).collect(Collectors.toList());
+			return results.stream().filter(r -> r.getPosition() == 902).collect(Collectors.toList());
 	}
 	
 	@JsonIgnore
 	public List<Result> getDSQsList() {
-		return results.stream().filter(r -> r.getPosition() == 901).collect(Collectors.toList());
+			return results.stream().filter(r -> r.getPosition() == 901).collect(Collectors.toList());
 	}
 	
 	@JsonIgnore
 	public List<Result> getPitlaneStarts() {
-		return results.stream().filter(r -> r.getPitlaneStart()).collect(Collectors.toList());
+			return results.stream().filter(r -> r.getPitlaneStart()).collect(Collectors.toList());
 	}
 	
 }

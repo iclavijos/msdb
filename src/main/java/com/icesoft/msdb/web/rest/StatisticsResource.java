@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.icesoft.msdb.domain.stats.Statistics;
 import com.icesoft.msdb.service.StatisticsService;
-import com.icesoft.msdb.service.dto.DriverStatsDTO;
+import com.icesoft.msdb.service.dto.StatsDTO;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
@@ -49,32 +49,114 @@ public class StatisticsResource {
 	 * @param driverId
 	 */
 	@GetMapping("/api/stats/driver/{driverId}")
-	public ResponseEntity<List<DriverStatsDTO>> getStatistics(@PathVariable Long driverId) {
+	public ResponseEntity<List<StatsDTO>> getDriverStatistics(@PathVariable Long driverId) {
 		Map<String, Statistics> mapStats = 
 				Optional.ofNullable(statsService.getDriverStatistics(driverId))
 					.orElse(new HashMap<>());
 		
-		List<DriverStatsDTO> result = mapStats.entrySet().stream()
-			.map((entry) -> new DriverStatsDTO(entry.getKey(), entry.getValue()))
+		List<StatsDTO> result = mapStats.entrySet().stream()
+			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
 			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))
 			.collect(Collectors.toList());
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(result));
 	}
 	
 	@GetMapping("/api/stats/driver/{driverId}/{year}")
-	public ResponseEntity<List<DriverStatsDTO>> getStatistics(@PathVariable Long driverId, @PathVariable Integer year) {
+	public ResponseEntity<List<StatsDTO>> getDriverStatistics(@PathVariable Long driverId, @PathVariable Integer year) {
 		Map<String, Statistics> mapStats = statsService.getDriverStatistics(driverId, year);
-		List<DriverStatsDTO> result = mapStats.entrySet().stream()
-			.map((entry) -> new DriverStatsDTO(entry.getKey(), entry.getValue()))
+		List<StatsDTO> result = mapStats.entrySet().stream()
+			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
 			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))
 			.collect(Collectors.toList());
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(result));
 	}
 	
 	@GetMapping("/api/stats/driver/{driverId}/years")
-	public ResponseEntity<List<Integer>> getYearsStatistics(@PathVariable Long driverId) {
-		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(statsService.getYearsStatistics(driverId)));
+	public ResponseEntity<List<Integer>> getDriverYearsStatistics(@PathVariable Long driverId) {
+		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(statsService.getDriverYearsStatistics(driverId)));
 	}
 	
+	@GetMapping("/api/stats/team/{teamId}")
+	public ResponseEntity<List<StatsDTO>> getTeamStatistics(@PathVariable Long teamId) {
+		Map<String, Statistics> mapStats = 
+				Optional.ofNullable(statsService.getTeamStatistics(teamId))
+					.orElse(new HashMap<>());
+		
+		List<StatsDTO> result = mapStats.entrySet().stream()
+			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
+			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))
+			.collect(Collectors.toList());
+		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(result));
+	}
 	
+	@GetMapping("/api/stats/team/{teamId}/{year}")
+	public ResponseEntity<List<StatsDTO>> getTeamStatistics(@PathVariable Long teamId, @PathVariable Integer year) {
+		Map<String, Statistics> mapStats = statsService.getTeamStatistics(teamId, year);
+		List<StatsDTO> result = mapStats.entrySet().stream()
+			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
+			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))
+			.collect(Collectors.toList());
+		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(result));
+	}
+	
+	@GetMapping("/api/stats/team/{teamId}/years")
+	public ResponseEntity<List<Integer>> getTeamYearsStatistics(@PathVariable Long teamId) {
+		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(statsService.getTeamYearsStatistics(teamId)));
+	}
+	
+	@GetMapping("/api/stats/chassis/{chassisId}")
+	public ResponseEntity<List<StatsDTO>> getChassisStatistics(@PathVariable Long chassisId) {
+		Map<String, Statistics> mapStats = 
+				Optional.ofNullable(statsService.getChassisStatistics(chassisId))
+					.orElse(new HashMap<>());
+		
+		List<StatsDTO> result = mapStats.entrySet().stream()
+			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
+			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))
+			.collect(Collectors.toList());
+		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(result));
+	}
+	
+	@GetMapping("/api/stats/chassis/{chassisId}/{year}")
+	public ResponseEntity<List<StatsDTO>> getChassisStatistics(@PathVariable Long chassisId, @PathVariable Integer year) {
+		Map<String, Statistics> mapStats = statsService.getChassisStatistics(chassisId, year);
+		List<StatsDTO> result = mapStats.entrySet().stream()
+			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
+			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))
+			.collect(Collectors.toList());
+		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(result));
+	}
+	
+	@GetMapping("/api/stats/chassis/{chassisId}/years")
+	public ResponseEntity<List<Integer>> getChassisYearsStatistics(@PathVariable Long chassisId) {
+		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(statsService.getChassisYearsStatistics(chassisId)));
+	}
+	
+	@GetMapping("/api/stats/engine/{engineId}")
+	public ResponseEntity<List<StatsDTO>> getEngineStatistics(@PathVariable Long engineId) {
+		Map<String, Statistics> mapStats = 
+				Optional.ofNullable(statsService.getEngineStatistics(engineId))
+					.orElse(new HashMap<>());
+		
+		List<StatsDTO> result = mapStats.entrySet().stream()
+			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
+			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))
+			.collect(Collectors.toList());
+		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(result));
+	}
+	
+	@GetMapping("/api/stats/engine/{engineId}/{year}")
+	public ResponseEntity<List<StatsDTO>> getEngineStatistics(@PathVariable Long engineId, @PathVariable Integer year) {
+		Map<String, Statistics> mapStats = statsService.getEngineStatistics(engineId, year);
+		List<StatsDTO> result = mapStats.entrySet().stream()
+			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
+			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))
+			.collect(Collectors.toList());
+		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(result));
+	}
+	
+	@GetMapping("/api/stats/engine/{engineId}/years")
+	public ResponseEntity<List<Integer>> getEngineYearsStatistics(@PathVariable Long engineId) {
+		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(statsService.getEngineYearsStatistics(engineId)));
+	}
 }

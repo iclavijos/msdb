@@ -15,7 +15,8 @@ import {
     HasAnyAuthorityDirective,
     JhiSocialComponent,
     SocialService,
-    JhiLoginModalComponent
+    JhiLoginModalComponent,
+    StatisticsComponent
 } from './';
 
 @NgModule({
@@ -26,7 +27,8 @@ import {
     declarations: [
         JhiSocialComponent,
         JhiLoginModalComponent,
-        HasAnyAuthorityDirective
+        HasAnyAuthorityDirective,
+        StatisticsComponent
     ],
     providers: [
         LoginService,
@@ -46,7 +48,8 @@ import {
         JhiSocialComponent,
         JhiLoginModalComponent,
         HasAnyAuthorityDirective,
-        DatePipe
+        DatePipe,
+        StatisticsComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 

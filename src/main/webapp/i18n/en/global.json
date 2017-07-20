@@ -132,7 +132,9 @@
         },
         "detail": {
             "field": "Field",
-            "value": "Value"
+            "value": "Value",
+            "info": "Details",
+            "statistics": "Statistics"
         },
         "delete": {
             "title": "Confirm delete operation"

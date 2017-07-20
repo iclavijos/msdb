@@ -54,6 +54,21 @@ export class EngineService {
         return this.http.get(`${this.typeAheadSearchUrl}?query=${req}`)
             .map((res: any) => this.convertResponse(res));
     }
+    
+    getStats(id: number): Observable<ResponseWrapper> {
+        return this.http.get(`api/stats/engine/${id}`)
+            .map((res: Response) => this.convertResponse(res));
+    }
+    
+    getStatsYear(id: number, year: number): Observable<ResponseWrapper> {
+        return this.http.get(`api/stats/engine/${id}/${year}`)
+            .map((res: Response) => this.convertResponse(res));
+    }
+    
+    getYears(id: number): Observable<ResponseWrapper> {
+        return this.http.get(`api/stats/engine/${id}/years`)
+            .map((res: Response) => this.convertResponse(res));
+    }
 
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();

@@ -29,9 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Driver;
-import com.icesoft.msdb.domain.stats.DriverStatistics;
+import com.icesoft.msdb.domain.stats.ElementStatistics;
 import com.icesoft.msdb.repository.DriverRepository;
-import com.icesoft.msdb.repository.DriverStatisticsRepository;
+import com.icesoft.msdb.repository.stats.DriverStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.dto.DriverFullNameDTO;
@@ -159,9 +159,9 @@ public class DriverResource {
      */
     @GetMapping("/drivers/{id}/statistics")
     @Timed
-    public ResponseEntity<DriverStatistics> getDriverStatistics(@PathVariable Long id) {
+    public ResponseEntity<ElementStatistics> getDriverStatistics(@PathVariable Long id) {
     	log.debug("REST request to get statistics for driver : {}", id);
-    	DriverStatistics stats = statsRepo.findOne(id.toString());
+    	ElementStatistics stats = statsRepo.findOne(id.toString());
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(stats));
     }
 

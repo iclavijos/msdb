@@ -4,8 +4,8 @@ import java.time.LocalDate;
 
 public class Result {
 
-	Integer order;
 	Long eventEditionId;
+	Long entryId;
 	String eventName;
 	Integer year;
 	LocalDate eventDate;
@@ -17,17 +17,17 @@ public class Result {
 	Boolean grandChelem;
 	Boolean pitlaneStart;
 	
-	public Integer getOrder() {
-		return order;
-	}
-	public void setOrder(Integer order) {
-		this.order = order;
-	}
 	public Long getEventEditionId() {
 		return eventEditionId;
 	}
 	public void setEventEditionId(Long eventEditionId) {
 		this.eventEditionId = eventEditionId;
+	}
+	public Long getEntryId() {
+		return entryId;
+	}
+	public void setEntryId(Long entryId) {
+		this.entryId = entryId;
 	}
 	public String getEventName() {
 		return eventName;
@@ -88,5 +88,13 @@ public class Result {
 	}
 	public void setPitlaneStart(Boolean pitlaneStart) {
 		this.pitlaneStart = pitlaneStart;
+	}
+	
+	@Override
+	public String toString() {
+		return "Result [eventEditionId=" + eventEditionId + ", entryId=" + entryId + ", eventName=" + eventName
+				+ ", year=" + year + ", eventDate=" + eventDate + ", position=" + position + ", gridPosition="
+				+ gridPosition + ", lapsLed=" + lapsLed + ", lapsCompleted=" + lapsCompleted + ", retired=" + retired
+				+ ", grandChelem=" + grandChelem + ", pitlaneStart=" + pitlaneStart + "]";
 	}
 }
