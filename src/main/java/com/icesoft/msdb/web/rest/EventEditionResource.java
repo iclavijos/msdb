@@ -442,7 +442,7 @@ public class EventEditionResource {
     @Timed
     public List<EventEntryResult> getEventSessionResults(@PathVariable Long id, @PathVariable Long idSession) {
     	log.debug("REST request to get EventEdition {} results for session {}", id, idSession);
-    	List<EventEntryResult> result = eventResultRepository.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAsc(idSession, id);
+    	List<EventEntryResult> result = eventResultRepository.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(idSession, id);
     	result.parallelStream().forEach(r -> {
     		r.getEntry().engine(null).chassis(null).tyres(null).fuel(null).team(null);
     		if (r.getEntry().getEventEdition() != null && r.getEntry().getEventEdition().getSeriesEdition() != null) {

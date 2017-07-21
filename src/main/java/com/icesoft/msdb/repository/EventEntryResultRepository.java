@@ -14,11 +14,11 @@ import java.util.List;
 @Repository
 public interface EventEntryResultRepository extends JpaRepository<EventEntryResult,Long> {
 
-	List<EventEntryResult> findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAsc(Long idSession, Long idEventEdition);
+	List<EventEntryResult> findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(Long idSession, Long idEventEdition);
 	
 	List<EventEntryResult> findByEntryId(Long idEntry);
 	
 	List<EventEntryResult> findByEntryIdAndSessionSessionType(Long idEntry, SessionType type);
 	
-	List<EventEntryResult> findByEntryEventEditionIdAndSessionIdAndEntryCategoryIdOrderByFinalPositionAsc(Long idEventEdition, Long sessionId, Long categoryId);
+	List<EventEntryResult> findByEntryEventEditionIdAndSessionIdAndEntryCategoryIdOrderByFinalPositionAscLapsCompletedDesc(Long idEventEdition, Long sessionId, Long categoryId);
 }
