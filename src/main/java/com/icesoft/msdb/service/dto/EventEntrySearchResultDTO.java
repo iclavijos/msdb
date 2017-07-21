@@ -49,8 +49,10 @@ public class EventEntrySearchResultDTO {
 				this.raceStatus = "DNF";
 			} else if (racePosition == 901) {
 				this.raceStatus = "DNS";
+			} else if (racePosition == 902){
+				this.raceStatus = "DSQ";
 			} else {
-				this.raceStatus = "DQ";
+				this.raceStatus = "NC";
 			}
 		}
 	}

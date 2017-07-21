@@ -52,7 +52,7 @@ public class ResultsService {
 			driverPointsRepo.deleteSessionPoints(sessionId);
 			teamPointsRepo.deleteSessionPoints(sessionId);
 
-			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAsc(session.getId(), session.getEventEdition().getId());
+			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(session.getId(), session.getEventEdition().getId());
 			int[] points = ps.disclosePoints();
 			for(int i = 0; i < results.size() && i < points.length; i++) {
 				//TODO: Handle shared drives (half points)

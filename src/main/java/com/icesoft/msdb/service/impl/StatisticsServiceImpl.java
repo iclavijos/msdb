@@ -116,7 +116,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 			yearStatsDriver.incParticipations();
 			
 			log.debug("Processing stats for driver {} in race {}", driver.getFullName(), result.getSession().getName());
-			List<EventEntryResult> resultsCategory = resultsRepo.findByEntryEventEditionIdAndSessionIdAndEntryCategoryIdOrderByFinalPositionAsc(
+			List<EventEntryResult> resultsCategory = resultsRepo.findByEntryEventEditionIdAndSessionIdAndEntryCategoryIdOrderByFinalPositionAscLapsCompletedDesc(
 					entry.getEventEdition().getId(), result.getSession().getId(), entry.getCategory().getId());
 			
 			int posInClass = -1;
@@ -213,7 +213,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 			statsTyreProv.incParticipations();
 			yearStatsTyreProv.incParticipations();
 			
-			List<EventEntryResult> resultsCategory = resultsRepo.findByEntryEventEditionIdAndSessionIdAndEntryCategoryIdOrderByFinalPositionAsc(
+			List<EventEntryResult> resultsCategory = resultsRepo.findByEntryEventEditionIdAndSessionIdAndEntryCategoryIdOrderByFinalPositionAscLapsCompletedDesc(
 					entry.getEventEdition().getId(), result.getSession().getId(), entry.getCategory().getId());
 			
 			int posInClass = -1;

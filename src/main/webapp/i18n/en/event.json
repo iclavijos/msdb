@@ -128,6 +128,7 @@
 	            "retired": "Retired",
 	            "dns": "Did not start",
 	            "disqualified": "Disqualified",
+	            "nc": "Not classified",
 	            "retirementCause": "Retirement cause",
 	            "difference": "Difference",
 	            "startingPosition": "Starting Pos.",

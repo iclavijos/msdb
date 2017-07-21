@@ -270,8 +270,10 @@ public class ImportsResource {
 	        			result.setFinalPosition(900);
 	        		} else if (pos.equals("DNS")) {
 	        			result.setFinalPosition(901);
-	        		} else if (pos.equals("DQ")) {
+	        		} else if (pos.equals("DSQ")) {
 	        			result.setFinalPosition(902);
+	        		} else if (pos.equals("NC")) {
+	        			result.setFinalPosition(903);
 	        		} else {
 	        			log.warn("Informed final position ({}) not recognized for entry number {}. Skipping...",
 	        					tmp.getFinalPosition(),

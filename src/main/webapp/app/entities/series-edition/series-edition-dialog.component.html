@@ -89,6 +89,33 @@
 		        </div>
 			</div>
         </div>
+        <div class="form-group">
+            <label jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.pointsSystems" for="field_pointsSystems">Points Systems</label>
+            <div class="row">
+		        <div class="dual-list col-md-5">
+		            <div class="well text-right">
+		                <select class="form-control" multiple id="field_pointsSystems" name="pointsSystems">
+			            	<option *ngFor="let pointsSystem of seriesEdition.pointsSystems" [value]="pointsSystem.id">{{pointsSystem.name}}</option>
+			            </select>
+		            </div>
+		        </div>
+		        <div class="list-arrows col-md-1 text-center">
+		            <a class="btn btn-default btn-sm move-left" (click)="addPointsSystem()">
+		                <span class="fa fa-chevron-left"></span>
+		            </a>
+		            <a class="btn btn-default btn-sm move-right" (click)="removePointsSystem()">
+		                <span class="fa fa-chevron-right"></span>
+		            </a>
+		        </div>
+		        <div class="dual-list list-right col-md-5">
+		            <div class="well">
+		                <select class="form-control" multiple id="field_availablePointsSystems" name="availablePointsSystem">
+			                <option *ngFor="let pointsSystem of pointsSystems" [value]="pointsSystem.id">{{pointsSystem.name}}</option>
+			            </select>
+		            </div>
+		        </div>
+			</div>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
