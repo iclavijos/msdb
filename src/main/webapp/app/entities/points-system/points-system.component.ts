@@ -1,12 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Response } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { JhiEventManager, JhiParseLinks, JhiPaginationUtil, JhiLanguageService, JhiAlertService } from 'ng-jhipster';
 
 import { PointsSystem } from './points-system.model';
 import { PointsSystemService } from './points-system.service';
-import { ITEMS_PER_PAGE, Principal } from '../../shared';
+import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
 import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
 
 @Component({
@@ -32,7 +31,6 @@ currentAccount: any;
     reverse: any;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
         private pointsSystemService: PointsSystemService,
         private parseLinks: JhiParseLinks,
         private alertService: JhiAlertService,
@@ -44,7 +42,7 @@ currentAccount: any;
         private paginationConfig: PaginationConfig
     ) {
         this.itemsPerPage = ITEMS_PER_PAGE;
-        this.routeData = this.activatedRoute.data.subscribe(data => {
+        this.routeData = this.activatedRoute.data.subscribe((data) => {
             this.page = data['pagingParams'].page;
             this.previousPage = data['pagingParams'].page;
             this.reverse = data['pagingParams'].ascending;
@@ -60,8 +58,8 @@ currentAccount: any;
                 query: this.currentSearch,
                 size: this.itemsPerPage,
                 sort: this.sort()}).subscribe(
-                    (res: Response) => this.onSuccess(res.json(), res.headers),
-                    (res: Response) => this.onError(res.json())
+                    (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
+                    (res: ResponseWrapper) => this.onError(res.json)
                 );
             return;
         }
@@ -69,11 +67,11 @@ currentAccount: any;
             page: this.page - 1,
             size: this.itemsPerPage,
             sort: this.sort()}).subscribe(
-            (res: Response) => this.onSuccess(res.json(), res.headers),
-            (res: Response) => this.onError(res.json())
+            (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
+            (res: ResponseWrapper) => this.onError(res.json)
         );
     }
-    loadPage (page: number) {
+    loadPage(page: number) {
         if (page !== this.previousPage) {
             this.previousPage = page;
             this.transition();
@@ -100,7 +98,7 @@ currentAccount: any;
         }]);
         this.loadAll();
     }
-    search (query) {
+    search(query) {
         if (!query) {
             return this.clear();
         }
@@ -125,33 +123,29 @@ currentAccount: any;
         this.eventManager.destroy(this.eventSubscriber);
     }
 
-    trackId (index: number, item: PointsSystem) {
+    trackId(index: number, item: PointsSystem) {
         return item.id;
     }
-
-
-
     registerChangeInPointsSystems() {
         this.eventSubscriber = this.eventManager.subscribe('pointsSystemListModification', (response) => this.loadAll());
     }
 
-    sort () {
-        let result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
+    sort() {
+        const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
         if (this.predicate !== 'id') {
             result.push('id');
         }
         return result;
     }
 
-    private onSuccess (data, headers) {
+    private onSuccess(data, headers) {
         this.links = this.parseLinks.parse(headers.get('link'));
         this.totalItems = headers.get('X-Total-Count');
         this.queryCount = this.totalItems;
         // this.page = pagingParams.page;
         this.pointsSystems = data;
     }
-
-    private onError (error) {
+    private onError(error) {
         this.alertService.error(error.message, null, null);
     }
 }

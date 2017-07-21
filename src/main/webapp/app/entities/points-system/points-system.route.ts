@@ -14,66 +14,71 @@ import { Principal } from '../../shared';
 @Injectable()
 export class PointsSystemResolvePagingParams implements Resolve<any> {
 
-  constructor(private paginationUtil: JhiPaginationUtil) {}
+    constructor(private paginationUtil: JhiPaginationUtil) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-      let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
-      return {
-          page: this.paginationUtil.parsePage(page),
-          predicate: this.paginationUtil.parsePredicate(sort),
-          ascending: this.paginationUtil.parseAscending(sort)
-    };
-  }
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
+        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
+        return {
+            page: this.paginationUtil.parsePage(page),
+            predicate: this.paginationUtil.parsePredicate(sort),
+            ascending: this.paginationUtil.parseAscending(sort)
+      };
+    }
 }
 
 export const pointsSystemRoute: Routes = [
-  {
-    path: 'points-system',
-    component: PointsSystemComponent,
-    resolve: {
-      'pagingParams': PointsSystemResolvePagingParams
-    },
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
+    {
+        path: 'points-system',
+        component: PointsSystemComponent,
+        resolve: {
+            'pagingParams': PointsSystemResolvePagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    }, {
+        path: 'points-system/:id',
+        component: PointsSystemDetailComponent,
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
+        },
+        canActivate: [UserRouteAccessService]
     }
-  }, {
-    path: 'points-system/:id',
-    component: PointsSystemDetailComponent,
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
-    }
-  }
 ];
 
 export const pointsSystemPopupRoute: Routes = [
-  {
-    path: 'points-system-new',
-    component: PointsSystemPopupComponent,
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
+    {
+        path: 'points-system-new',
+        component: PointsSystemPopupComponent,
+        data: {
+            authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
+            pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
     },
-    outlet: 'popup'
-  },
-  {
-    path: 'points-system/:id/edit',
-    component: PointsSystemPopupComponent,
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
+    {
+        path: 'points-system/:id/edit',
+        component: PointsSystemPopupComponent,
+        data: {
+            authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
+            pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
     },
-    outlet: 'popup'
-  },
-  {
-    path: 'points-system/:id/delete',
-    component: PointsSystemDeletePopupComponent,
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
-    },
-    outlet: 'popup'
-  }
+    {
+        path: 'points-system/:id/delete',
+        component: PointsSystemDeletePopupComponent,
+        data: {
+            authorities: ['ROLE_ADMIN'],
+            pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
+    }
 ];
