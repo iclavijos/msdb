@@ -25,8 +25,8 @@
 				<td>{{entry.fastestLap | timeMaskPipe}} <span *ngIf="entry.fastestLap != 0">({{entry.session}})</span></td>
 				<td>{{entry.poleTime | timeMaskPipe}} <span *ngIf="entry.poleTime != 0">(P{{entry.polePosition}})</span></td>
 				<td>{{entry.raceFastLap | timeMaskPipe}}</td>
-				<td *ngIf="entry.racePosition < 900">{{entry.racePosition}}</td>
-				<td *ngIf="entry.racePosition >= 900">{{entry.raceStatus}}</td>
+				<td *ngIf="entry.racePosition < 800">{{entry.racePosition}}</td>
+				<td *ngIf="entry.racePosition >= 800">{{entry.raceStatus}}</td>
 			</tr>
 		</tbody>
 	</table>

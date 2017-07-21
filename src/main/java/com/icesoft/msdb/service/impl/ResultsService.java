@@ -57,7 +57,7 @@ public class ResultsService {
 			for(int i = 0; i < results.size() && i < points.length; i++) {
 				//TODO: Handle shared drives (half points)
 				EventEntryResult result = results.get(i);
-				if (result.getFinalPosition() < 900) {
+				if (result.getFinalPosition() < 800) {
 					if (session.getEventEdition().getSeriesEdition().getTeamsStandings()) {
 						TeamEventPoints tep = teams.get(result.getEntry().getTeam().getId());
 						if (tep == null) {

@@ -43,10 +43,20 @@ export class SeriesEditionDialogComponent implements OnInit {
     ngOnInit() {
         this.isSaving = false;
         this.authorities = ['ROLE_EDITOR', 'ROLE_ADMIN'];
-        this.categoryService.query()
+        this.categoryService.query({
+            page: 0,
+            query: '',
+            size: 100,
+            sort: ['name','asc']})
             .subscribe((res: ResponseWrapper) => { this.categories = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
         this.seriesService.query()
             .subscribe((res: ResponseWrapper) => { this.series = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
+        this.pointsSystemService.query({
+            page: 0,
+            query: '',
+            size: 100,
+            sort: ['name','asc']})
+            .subscribe((res: ResponseWrapper) => { this.pointsSystems = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
     }
     clear () {
         this.activeModal.dismiss('cancel');

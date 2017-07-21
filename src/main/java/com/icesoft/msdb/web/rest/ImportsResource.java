@@ -273,7 +273,7 @@ public class ImportsResource {
 	        		} else if (pos.equals("DSQ")) {
 	        			result.setFinalPosition(902);
 	        		} else if (pos.equals("NC")) {
-	        			result.setFinalPosition(903);
+	        			result.setFinalPosition(800);
 	        		} else {
 	        			log.warn("Informed final position ({}) not recognized for entry number {}. Skipping...",
 	        					tmp.getFinalPosition(),

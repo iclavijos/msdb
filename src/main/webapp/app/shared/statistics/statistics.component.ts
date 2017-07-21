@@ -101,7 +101,7 @@ export class StatisticsComponent implements OnInit {
         if (position === 900) return 'DNF';
         if (position === 901) return 'DNS';
         if (position === 902) return 'DSQ';
-        if (position === 903) return 'NC';
+        if (position === 800) return 'NC';
         return '' + position;
     }
     

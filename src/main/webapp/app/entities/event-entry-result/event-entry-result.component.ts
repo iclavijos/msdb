@@ -66,7 +66,7 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     }
     
     classifiedNotRetired(eventEntryResult: EventEntryResult) {
-        return eventEntryResult.finalPosition > 1 && eventEntryResult.finalPosition < 900 && !eventEntryResult.retired;
+        return eventEntryResult.finalPosition > 1 && eventEntryResult.finalPosition <= 800 && !eventEntryResult.retired;
     }
     
     gap(currentLapTime: number) {
