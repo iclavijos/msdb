@@ -43,6 +43,8 @@ spring:
     mvc:
         favicon:
             enabled: false
+        async:
+            request-timeout: -1
     thymeleaf:
         mode: XHTML
     social:
