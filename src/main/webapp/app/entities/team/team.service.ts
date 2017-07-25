@@ -55,17 +55,17 @@ export class TeamService {
     }
     
     getStats(id: number): Observable<ResponseWrapper> {
-        return this.http.get(`api/stats/team/${id}`)
+        return this.http.get(`api/stats/teams/${id}`)
             .map((res: Response) => this.convertResponse(res));
     }
     
     getStatsYear(id: number, year: number): Observable<ResponseWrapper> {
-        return this.http.get(`api/stats/team/${id}/${year}`)
+        return this.http.get(`api/stats/teams/${id}/${year}`)
             .map((res: Response) => this.convertResponse(res));
     }
     
     getYears(id: number): Observable<ResponseWrapper> {
-        return this.http.get(`api/stats/team/${id}/years`)
+        return this.http.get(`api/stats/teams/${id}/years`)
             .map((res: Response) => this.convertResponse(res));
     }
 

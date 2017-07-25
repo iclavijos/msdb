@@ -76,7 +76,6 @@ currentAccount: any;
     }
     
     loadPage(page: number) {
-        console.log('loadPage: ' + page + '- this.page: ' + this.page);
         if (page !== this.previousPage) {
             this.previousPage = page;
             this.transition();

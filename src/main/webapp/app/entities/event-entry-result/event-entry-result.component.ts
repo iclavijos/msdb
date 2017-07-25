@@ -74,7 +74,9 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     }
 
     processResults() {
-        this.eventEntryResultService.processSessionResults(this.session.id).subscribe();
+        this.eventEntryResultService.processSessionResults(this.session.id).subscribe(
+                () => this.alertService.success('Processed', null, null),
+                () => this.alertService.error('error', null, null));
     }
 
     registerChangeInEventEntryResults() {

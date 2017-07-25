@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.TeamEventPointsRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
+import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 
@@ -36,6 +38,8 @@ public class ResultsService {
 	@Autowired private DriverEventPointsRepository driverPointsRepo;
 	@Autowired private TeamEventPointsRepository teamPointsRepo;
 	@Autowired private JDBCRepositoryImpl viewsRepo;
+	
+	@Autowired private StatisticsService statsService;
 	
 	@Autowired private CacheHandler cacheHandler;
 
@@ -76,10 +80,9 @@ public class ResultsService {
 					
 					for(Driver d : result.getEntry().getDrivers()) {
 						log.debug(result.getFinalPosition() + "-" + d.getFullName() + ": " + points[result.getFinalPosition() - 1]);
-						DriverEventPoints dep = drivers.get(d.getId());
-						if (dep == null) {
-							dep = new DriverEventPoints();
-						}
+						DriverEventPoints dep = 
+								Optional.ofNullable(drivers.get(d.getId()))
+									.orElse(new DriverEventPoints());
 						dep.setDriver(d);
 						dep.setSession(session);
 						dep.addPoints((float)points[result.getFinalPosition() - 1] * session.getPsMultiplier());
@@ -98,8 +101,8 @@ public class ResultsService {
 			if (ps.getPointsFastLap() != 0) {
 				List<EventEntryResult> fastestLapOrder = results.parallelStream().sorted(
 						(r1, r2)->Long.compare(
-									r1.getBestLapTime() == null ? -1 : r1.getBestLapTime(), 
-									r2.getBestLapTime() == null ? -1 : r2.getBestLapTime()))
+									r1.getBestLapTime() == null ? Long.MAX_VALUE : r1.getBestLapTime(), 
+									r2.getBestLapTime() == null ? Long.MAX_VALUE : r2.getBestLapTime()))
 						.collect(Collectors.toList());
 				boolean lapPct = false;
 				boolean topXPositions = true; int topX = 10;
@@ -110,10 +113,9 @@ public class ResultsService {
 				fastestEntry = fastestLapOrder.get(0);
 				if (fastestEntry.getBestLapTime() != null) {
 					for(Driver d : fastestEntry.getEntry().getDrivers()) {
-						DriverEventPoints dep = drivers.get(d.getId());
-						if (dep == null) {
-							dep = new DriverEventPoints();
-						}
+						DriverEventPoints dep = 
+								Optional.ofNullable(drivers.get(d.getId()))
+									.orElse(new DriverEventPoints());
 						dep.addPoints(ps.getPointsFastLap().floatValue());
 						log.debug(String.format("Driver %s: %s points for fastest lap", d.getFullName(), ps.getPointsFastLap()));
 						drivers.put(d.getId(), dep);
@@ -134,10 +136,10 @@ public class ResultsService {
 						addPointsMostLeadLaps = true;
 					}
 					for(Driver d : r.getEntry().getDrivers()) {
-						DriverEventPoints dep = drivers.get(d.getId());
-						if (dep == null) {
-							dep = new DriverEventPoints();
-						}
+						DriverEventPoints dep = 
+								Optional.ofNullable(drivers.get(d.getId()))
+									.orElse(new DriverEventPoints());
+
 						dep.addPoints(ps.getPointsLeadLap().floatValue());
 						log.debug(String.format("Driver %s: %s points for leading %s laps", d.getFullName(), ps.getPointsLeadLap(), r.getLapsLed()));
 						if (addPointsMostLeadLaps) {
@@ -149,16 +151,14 @@ public class ResultsService {
 				}
 			}
 			
-			for(Long dId : drivers.keySet()) {
-				DriverEventPoints dep = drivers.get(dId);
-				driverPointsRepo.save(dep);
-			}
-			for(Long tId : teams.keySet()) {
-				TeamEventPoints tep = teams.get(tId);
-				teamPointsRepo.save(tep);
-			}
+			drivers.entrySet().parallelStream().forEach(entry -> driverPointsRepo.save(entry.getValue()));
+			teams.entrySet().parallelStream().forEach(entry -> teamPointsRepo.save(entry.getValue()));
+			
 			cacheHandler.resetDriversStandingsCache(session.getSeriesId());
 		}
+		log.info("Processed result for {}-{}. Updating statistics...", session.getEventEdition().getLongEventName(), session.getName());
+		statsService.buildEventStatistics(session.getEventEdition());
+		log.info("Statistics updated");
 	}
 	
 	public List<DriverPointsDTO> getDriversStandings(Long seriesId) {

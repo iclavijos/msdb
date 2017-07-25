@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,10 +33,12 @@ import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.stats.ElementStatistics;
 import com.icesoft.msdb.repository.DriverRepository;
+import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.stats.DriverStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.dto.DriverFullNameDTO;
+import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
@@ -53,13 +57,16 @@ public class DriverResource {
     private static final String ENTITY_NAME = "driver";
         
     private final DriverRepository driverRepository;
+    private final EventEntryRepository entryRepository;
     
     private final DriverStatisticsRepository statsRepo;
 
     private final CDNService cdnService;
 
-    public DriverResource(DriverRepository driverRepository, DriverStatisticsRepository statsRepo, CDNService cdnService) {
+    public DriverResource(DriverRepository driverRepository, EventEntryRepository entryRepository, 
+    		DriverStatisticsRepository statsRepo, CDNService cdnService) {
         this.driverRepository = driverRepository;
+        this.entryRepository = entryRepository;
         this.statsRepo = statsRepo;
         this.cdnService = cdnService;
     }
@@ -164,6 +171,55 @@ public class DriverResource {
     	ElementStatistics stats = statsRepo.findOne(id.toString());
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(stats));
     }
+    
+    @GetMapping("/drivers/{id}/participations/{category}")
+    @Timed
+    public ResponseEntity<List<EventEntrySearchResultDTO>> getDriverParticipations(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
+    	log.debug("REST request to get participations for driver {} in category {}", id, category);
+    	ElementStatistics stats = statsRepo.findOne(id.toString());
+    	List<Long> ids = stats.getStaticsForCategory(category).getParticipationsList().parallelStream().sorted((p1, p2) -> p1.getOrder().compareTo(p2.getOrder()))
+    		.map(p -> p.getEntryId()).collect(Collectors.toList());
+    	int start = pageable.getOffset();
+    	int end = start + pageable.getPageSize();
+    	if (end > ids.size()) {
+    		end = ids.size();
+    	}
+    	
+    	List<EventEntrySearchResultDTO> result = entryRepository.findEntriesInList(ids.subList(start, end)).parallelStream().map(entry -> {
+    		return stats.getStaticsForCategory(category).getResultByEntryId(entry.getId()).parallelStream().map(res -> {
+    			return new EventEntrySearchResultDTO(entry, res.getEventDate(), res.getPoleLapTime(), res.getRaceFastLapTime(), 
+    					res.getGridPosition(), res.getPosition(), res.getRetirementCause());
+    		}).collect(Collectors.toList());
+    	}).flatMap(l->l.stream()).collect(Collectors.toList());
+    	
+    	Page<EventEntrySearchResultDTO> page = new PageImpl<>(result, pageable, stats.getStaticsForCategory(category).getParticipationsList().size());
+    	HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders("", page, String.format("/drivers/%s/participations/%s", id, category));
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+    
+    @GetMapping("/drivers/{id}/wins/{category}")
+    @Timed
+    public ResponseEntity<List<EventEntrySearchResultDTO>> getDriverWins(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
+    	log.debug("REST request to get wins for driver {} in category {}", id, category);
+    	ElementStatistics stats = statsRepo.findOne(id.toString());
+    	List<Long> ids = stats.getStaticsForCategory(category).getWinsList().parallelStream().sorted((p1, p2) -> p1.getOrder().compareTo(p2.getOrder()))
+    		.map(p -> p.getEntryId()).collect(Collectors.toList());
+    	int start = pageable.getOffset();
+    	int end = start + pageable.getPageSize();
+    	if (end > ids.size()) {
+    		end = ids.size();
+    	}
+    	
+    	List<EventEntrySearchResultDTO> result = entryRepository.findEntriesInList(ids.subList(start, end)).parallelStream().map(entry -> {
+    		return stats.getStaticsForCategory(category).getResultByEntryId(entry.getId()).parallelStream().map(res -> {
+    			return new EventEntrySearchResultDTO(entry, res.getEventDate(), res.getPoleLapTime(), res.getRaceFastLapTime(), 
+    					res.getGridPosition(), res.getPosition(), res.getRetirementCause());
+    		}).collect(Collectors.toList());
+    	}).flatMap(l->l.stream()).collect(Collectors.toList());
+    	Page<EventEntrySearchResultDTO> page = new PageImpl<>(result, pageable, stats.getStaticsForCategory(category).getWinsList().size());
+    	HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders("", page, String.format("/drivers/%s/wins/%s", id, category));
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
 
     /**
      * DELETE  /drivers/:id : delete the "id" driver.
@@ -206,8 +262,8 @@ public class DriverResource {
         throws URISyntaxException {
         log.debug("REST request to search for a page of Drivers for query '{}'", query);
         List<Driver> page = driverRepository.searchNonPageable(query);
-        if (page.size() > 20) {
-        	page = page.subList(0, 20);
+        if (page.size() > 10) {
+        	page = page.subList(0, 10);
         }
         List<DriverFullNameDTO> result = new ArrayList<>();
         for (Driver driver : page) {

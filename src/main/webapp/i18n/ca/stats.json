@@ -1,6 +1,11 @@
 {
     "motorsportsDatabaseApp": {
     	"stats": {
+    		"home": {
+    			"title": "Estadístiques",
+    			"init": "S'estàn recalculant les estadístiques... esperi uns segonsStatistics being rebuilt... wait a few seconds",
+    			"rebuilt": "Estadístiques recalculades correctament"
+    		},
     		"participations": "Participacions",
     		"starts": "Sortides",
     		"finished": "Finalitzades",
@@ -18,7 +23,7 @@
     		"kmsCompleted": "Distància completada",
     		"grandChelems": "Grand Chelems",
     		"time": "vegada",
-    		"times": "vegades"   
+    		"times": "vegades"
     	}
     }
 }

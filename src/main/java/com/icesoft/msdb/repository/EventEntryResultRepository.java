@@ -21,4 +21,7 @@ public interface EventEntryResultRepository extends JpaRepository<EventEntryResu
 	List<EventEntryResult> findByEntryIdAndSessionSessionType(Long idEntry, SessionType type);
 	
 	List<EventEntryResult> findByEntryEventEditionIdAndSessionIdAndEntryCategoryIdOrderByFinalPositionAscLapsCompletedDesc(Long idEventEdition, Long sessionId, Long categoryId);
+	
+	@Query("SELECT r FROM EventEntryResult r WHERE r.bestLapTime = (SELECT MIN(r2.bestLapTime) FROM EventEntryResult r2 WHERE r2.id = ?1 AND r2.session.sessionType = ?2)")
+	List<EventEntryResult> findEntryFastestLapPerSessionType(Long entryId, SessionType sessionType);
 }

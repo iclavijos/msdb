@@ -20,21 +20,21 @@ public interface StatisticsService {
 	
 	List<Integer> getDriverYearsStatistics(Long driverId);
 	
-	Map<String, Statistics> getTeamStatistics(Long driverId);
+	Map<String, Statistics> getTeamStatistics(Long teamId);
 	
-	Map<String, Statistics> getTeamStatistics(Long driverId, Integer year);
+	Map<String, Statistics> getTeamStatistics(Long teamId, Integer year);
 	
-	List<Integer> getTeamYearsStatistics(Long driverId);
+	List<Integer> getTeamYearsStatistics(Long teamId);
 	
-	Map<String, Statistics> getChassisStatistics(Long driverId);
+	Map<String, Statistics> getChassisStatistics(Long chassisId);
 	
-	Map<String, Statistics> getChassisStatistics(Long driverId, Integer year);
+	Map<String, Statistics> getChassisStatistics(Long chassisId, Integer year);
 	
-	List<Integer> getChassisYearsStatistics(Long driverId);
+	List<Integer> getChassisYearsStatistics(Long chassisId);
 	
-	Map<String, Statistics> getEngineStatistics(Long driverId);
+	Map<String, Statistics> getEngineStatistics(Long engineId);
 	
-	Map<String, Statistics> getEngineStatistics(Long driverId, Integer year);
+	Map<String, Statistics> getEngineStatistics(Long engineId, Integer year);
 	
-	List<Integer> getEngineYearsStatistics(Long driverId);
+	List<Integer> getEngineYearsStatistics(Long engineId);
 }

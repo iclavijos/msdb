@@ -18,4 +18,7 @@ public interface EventEntryRepository extends JpaRepository<EventEditionEntry,Lo
 	@Query("SELECT e FROM EventEditionEntry e WHERE e.eventEdition.id = ?1 ORDER BY cast(e.raceNumber as integer) ASC, e.entryName ASC")
 	List<EventEditionEntry> findEventEditionEntries(Long eventEditionId);
 	
+	@Query("SELECT e FROM EventEditionEntry e WHERE e.id IN ?1 ORDER BY e.eventEdition.eventDate ASC")
+	List<EventEditionEntry> findEntriesInList(List<Long> ids);
+	
 }

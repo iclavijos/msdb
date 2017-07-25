@@ -1,6 +1,11 @@
 {
     "motorsportsDatabaseApp": {
     	"stats": {
+    		"home": {
+    			"title": "Estadísticas",
+    			"init": "Se están recalculando las estadísticas... espera unos segundos",
+    			"rebuilt": "Estadísticas recalculadas correctamente"
+    		},
     		"participations": "Participaciones",
     		"starts": "Salidas",
     		"finished": "Acabadas",

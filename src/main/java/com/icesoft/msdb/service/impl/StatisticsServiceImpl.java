@@ -87,19 +87,49 @@ public class StatisticsServiceImpl implements StatisticsService {
 		log.info("Rebuilding all statistics...");
 		deleteStatistics();
 		
-		eventEditionRepo.findAll().parallelStream().sorted((e1, e2) -> e1.getEventDate().compareTo(e2.getEventDate())).forEach((event) -> {
-			log.debug("Processing statistics for event {}", event.getLongEventName());
-			
-			entriesRepo.findEventEditionEntries(event.getId()).parallelStream().forEach((entry) -> {
-				List<EventEntryResult> results = resultsRepo.findByEntryIdAndSessionSessionType(entry.getId(), SessionType.RACE);
-				entry.getDrivers().parallelStream().forEach((driver) -> updateDriverStatistics(entry, results, driver));
-				updateOtherStatistics(entry, results);
-			});
-			
-			log.debug("Statistics for event {} rebuilt", event.getLongEventName());
+		eventEditionRepo.findAll().stream().sorted((e1, e2) -> e1.getEventDate().compareTo(e2.getEventDate())).forEach((event) -> {
+			buildEventStatistics(event);
 		});
 		
 		log.info("Statistics rebuilt...");
+	}
+	
+	@Override
+	public void buildEventStatistics(Long eventEditionId) {
+		if (eventEditionId == null) {
+			throw new MSDBException("Invalid event edition");
+		}
+		buildEventStatistics(eventEditionRepo.findOne(eventEditionId));
+	}
+
+	@Override
+	public void buildEventStatistics(EventEdition event) {
+		if (event == null) {
+			throw new MSDBException("Invalid event edition");
+		}
+		log.debug("Processing statistics for event {}", event.getLongEventName());
+		
+		removeStatisticsIfExist(event);
+		
+		entriesRepo.findEventEditionEntries(event.getId()).stream().forEach(this::processEntry);
+		
+		log.debug("Statistics for event {} rebuilt", event.getLongEventName());
+	}
+	
+	private void processEntry(EventEditionEntry entry) {
+		List<EventEntryResult> results = resultsRepo.findByEntryIdAndSessionSessionType(entry.getId(), SessionType.RACE);
+		entry.getDrivers().parallelStream().forEach(driver -> updateDriverStatistics(entry, results, driver));
+		updateOtherStatistics(entry, results);
+	}
+	
+	private void removeStatisticsIfExist(EventEdition event) {
+		//TODO
+//		entriesRepo.findEventEditionEntries(event.getId()).parallelStream().forEach((entry) -> {
+//			entry.getDrivers().parallelStream().forEach((driver) -> {
+//				DriverStatistics ds = driverStatsRepo.findOne(driver.getId().toString());
+//				ds.removeStatisticsOfEvent(event.getId());
+//			});
+//		});
 	}
 
 	private void updateDriverStatistics(EventEditionEntry entry, List<EventEntryResult> results, Driver driver) {
@@ -171,8 +201,13 @@ public class StatisticsServiceImpl implements StatisticsService {
 				yearStatsDriver.incGrandChelems();
 				grandChelem = true;
 			}
-			statsDriver.addResult(result, grandChelem, posInClass, startPosInClass);
-			yearStatsDriver.addResult(result, grandChelem, posInClass, startPosInClass);
+			List<EventEntryResult> qualyLaps = resultsRepo.findEntryFastestLapPerSessionType(result.getEntry().getId(), SessionType.QUALIFYING);
+			Long poleLapTime = 0L;
+			if (!qualyLaps.isEmpty()) {
+				poleLapTime = qualyLaps.get(0).getBestLapTime();
+			}
+			statsDriver.addResult(result, grandChelem, posInClass, startPosInClass, poleLapTime);
+			yearStatsDriver.addResult(result, grandChelem, posInClass, startPosInClass, poleLapTime);
 		});
 		
 		dStats.updateStatistics(entry.getCategory().getName(), statsDriver);
@@ -292,15 +327,19 @@ public class StatisticsServiceImpl implements StatisticsService {
 			
 			//Grand Chelem - Ignored for entities other than driver
 			boolean grandChelem = false;
-			
-			statsTeam.addResult(result, grandChelem, posInClass, startPosInClass);
-			yearStatsTeam.addResult(result, grandChelem, posInClass, startPosInClass);
-			statsChassis.addResult(result, grandChelem, posInClass, startPosInClass);
-			yearStatsChassis.addResult(result, grandChelem, posInClass, startPosInClass);
-			statsEngine.addResult(result, grandChelem, posInClass, startPosInClass);
-			yearStatsEngine.addResult(result, grandChelem, posInClass, startPosInClass);
-			statsTyreProv.addResult(result, grandChelem, posInClass, startPosInClass);
-			yearStatsTyreProv.addResult(result, grandChelem, posInClass, startPosInClass);
+			List<EventEntryResult> qualyLaps = resultsRepo.findEntryFastestLapPerSessionType(result.getEntry().getId(), SessionType.QUALIFYING);
+			Long poleLapTime = 0L;
+			if (!qualyLaps.isEmpty()) {
+				poleLapTime = qualyLaps.get(0).getBestLapTime();
+			}
+			statsTeam.addResult(result, grandChelem, posInClass, startPosInClass, poleLapTime);
+			yearStatsTeam.addResult(result, grandChelem, posInClass, startPosInClass, poleLapTime);
+			statsChassis.addResult(result, grandChelem, posInClass, startPosInClass, poleLapTime);
+			yearStatsChassis.addResult(result, grandChelem, posInClass, startPosInClass, poleLapTime);
+			statsEngine.addResult(result, grandChelem, posInClass, startPosInClass, poleLapTime);
+			yearStatsEngine.addResult(result, grandChelem, posInClass, startPosInClass, poleLapTime);
+			statsTyreProv.addResult(result, grandChelem, posInClass, startPosInClass, poleLapTime);
+			yearStatsTyreProv.addResult(result, grandChelem, posInClass, startPosInClass, poleLapTime);
 		});
 		
 		tStats.updateStatistics(entry.getCategory().getName(), statsTeam);
@@ -330,23 +369,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 		yearStatsEngine.addLaps(lapsCompleted, lapLength);
 		statsTyreProv.addLaps(lapsCompleted, lapLength);
 		yearStatsTyreProv.addLaps(lapsCompleted, lapLength);
-	}
-
-	@Override
-	public void buildEventStatistics(Long eventEditionId) {
-		if (eventEditionId == null) {
-			throw new MSDBException("Invalid event edition");
-		}
-		buildEventStatistics(eventEditionRepo.findOne(eventEditionId));
-		
-	}
-
-	@Override
-	public void buildEventStatistics(EventEdition eventEdition) {
-		if (eventEdition == null) {
-			throw new MSDBException("Invalid event edition");
-		}
-		
 	}
 
 	@Override

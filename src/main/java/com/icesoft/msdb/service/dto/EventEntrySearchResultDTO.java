@@ -1,5 +1,7 @@
 package com.icesoft.msdb.service.dto;
 
+import java.time.LocalDate;
+
 import com.icesoft.msdb.domain.EventEditionEntry;
 
 public class EventEntrySearchResultDTO {
@@ -7,6 +9,7 @@ public class EventEntrySearchResultDTO {
 	private String entryName;
 	private long driverId = -1;
 	private Long eventEditionId;
+	private LocalDate sessionDate;
 	private String driverName;
 	private String eventName;
 	private String chassisEngine;
@@ -20,10 +23,11 @@ public class EventEntrySearchResultDTO {
 	private String session;
 	private String raceStatus;
 
-	public EventEntrySearchResultDTO(EventEditionEntry entry, Long poleTime, Long raceFastLap, Integer polePosition, 
-			Integer racePosition, String retirement, Long fastestLap, String session) {
+	public EventEntrySearchResultDTO(EventEditionEntry entry, LocalDate sessionDate, Long poleTime, Long raceFastLap, Integer polePosition, 
+			Integer racePosition, String retirement) {
 		this.raceNumber = entry.getRaceNumber();
 		this.entryName = entry.getEntryName();
+		this.sessionDate = sessionDate;
 		this.eventEditionId = entry.getEventEdition().getId();
 		this.editionYear = entry.getEventEdition().getEditionYear();
 		this.eventName = entry.getEventEdition().getLongEventName();
@@ -31,19 +35,21 @@ public class EventEntrySearchResultDTO {
 			this.driverId = entry.getDrivers().get(0).getId();
 		}
 		this.driverName = entry.getDriversName();
-		chassisEngine = entry.getChassis().getManufacturer() + " " + entry.getChassis().getName();
-		chassisEngine += '/' + entry.getEngine().getManufacturer() + " " + entry.getEngine().getName();
 		double capacity = new java.math.BigDecimal(entry.getEngine().getCapacity() / 1000d)
 				.setScale(1, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
-		chassisEngine += " " + capacity + " " + entry.getEngine().getArchitecture();
+		chassisEngine = String.format("%s %s/%s %s %s %s", 
+				entry.getChassis().getManufacturer(),
+				entry.getChassis().getName(),
+				entry.getEngine().getManufacturer(),
+				entry.getEngine().getName(),
+				capacity,
+				entry.getEngine().getArchitecture());
 		
 		this.poleTime = poleTime;
 		this.polePosition = polePosition;
 		this.raceFastLap = raceFastLap;
 		this.racePosition = racePosition;
 		this.retirement = retirement;
-		this.fastestLap = fastestLap;
-		this.session = session;
 		if (racePosition >= 900) {
 			if (racePosition == 900) {
 				this.raceStatus = "DNF";
@@ -120,5 +126,13 @@ public class EventEntrySearchResultDTO {
 
 	public String getRaceStatus() {
 		return raceStatus;
+	}
+
+	public LocalDate getSessionDate() {
+		return sessionDate;
+	}
+
+	public void setSessionDate(LocalDate sessionDate) {
+		this.sessionDate = sessionDate;
 	}
 }

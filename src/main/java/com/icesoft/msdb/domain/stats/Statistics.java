@@ -1,11 +1,10 @@
 package com.icesoft.msdb.domain.stats;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,8 +31,7 @@ public class Statistics {
 	private float metersCompleted = 0f;
 	private Map<Integer, Integer> finalPositionsR = new TreeMap<>();
 	private Map<Integer, Integer> finalPositionsQ = new TreeMap<>();
-	private ConcurrentLinkedQueue<Result> results = new ConcurrentLinkedQueue<>();
-	//private List<Result> results = Collections.synchronizedList(new ArrayList<>());
+	private List<Result> results = new ArrayList<>();
 	
 	public int getParticipations() {
 		return participations;
@@ -274,12 +272,13 @@ public class Statistics {
 		return null;
 	}
 	
-	public void addResult(EventEntryResult result, Boolean grandChelem, Integer finalPosition, Integer gridPosition) {
+	public void addResult(EventEntryResult result, Boolean grandChelem, Integer finalPosition, Integer gridPosition, Long poleLapTime) {
 		Result r = new Result();
-		r.setEventDate(result.getEntry().getEventEdition().getEventDate());
+		r.setEventDate(result.getSession().getSessionStartTime().toLocalDate());
 		r.setEventEditionId(result.getEntry().getEventEdition().getId());
 		r.setEntryId(result.getEntry().getId());
 		r.setEventName(result.getEntry().getEventEdition().getLongEventName());
+		r.setSessionName(result.getSession().getName());
 		r.setGrandChelem(grandChelem);
 		r.setGridPosition(gridPosition);
 		r.setLapsLed(result.getLapsLed());
@@ -288,10 +287,37 @@ public class Statistics {
 		r.setRetired(result.isRetired());
 		r.setYear(result.getEntry().getEventEdition().getEditionYear());
 		r.setPitlaneStart(result.isPitlaneStart());
-		if (result.getEntry().getTeam().equals(22L)) {
-			System.out.println(r);
-		}
+		r.setRetirementCause(result.getCause());
+		r.setPoleLapTime(poleLapTime);
+		r.setRaceFastLapTime(result.getBestLapTime());
+		
 		results.add(r);
+		final AtomicInteger i = new AtomicInteger(1);
+		results.sort((r1, r2) -> r1.getEventDate().compareTo(r2.getEventDate()));
+		results.forEach(res -> res.setOrder(i.getAndIncrement()));
+	}
+	
+	//public Result getResultForCategory
+	
+	public void removeResult(Result result) {
+		int pos = results.indexOf(result);
+		if (pos >= 0) {
+			results.remove(pos);
+			for (int i = pos; i < results.size(); i++) {
+				Result r = results.get(i);
+				r.setOrder(r.getOrder() - 1);
+			}
+		}
+	}
+	
+	@JsonIgnore
+	public List<Result> getResultByEntryId(Long id) {
+		return results.parallelStream().filter(r -> r.getEntryId().equals(id)).collect(Collectors.toList());
+	}
+	
+	@JsonIgnore
+	public List<Result> getParticipationsList() {
+		return results;
 	}
 	
 	@JsonIgnore

@@ -125,6 +125,10 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
     inputFormatter = (result: any) => result.longEventName;
     
     private onEventSelected(selected: any) {
+        this.myForm = this._fb.group({
+            eventSearch : new FormControl(),
+            races: this._fb.array([])
+        });
         if (selected) {
             this.eventEdition = selected.item;
             this.eventEditionService.findNonFPSessions(this.eventEdition.id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe((eventSessions) => {

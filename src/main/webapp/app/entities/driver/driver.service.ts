@@ -51,17 +51,17 @@ export class DriverService {
     }
     
     getStats(id: number): Observable<ResponseWrapper> {
-        return this.http.get(`api/stats/driver/${id}`)
+        return this.http.get(`api/stats/drivers/${id}`)
             .map((res: Response) => this.convertResponse(res));
     }
     
     getStatsYear(id: number, year: number): Observable<ResponseWrapper> {
-        return this.http.get(`api/stats/driver/${id}/${year}`)
+        return this.http.get(`api/stats/drivers/${id}/${year}`)
             .map((res: Response) => this.convertResponse(res));
     }
     
     getYears(id: number): Observable<ResponseWrapper> {
-        return this.http.get(`api/stats/driver/${id}/years`)
+        return this.http.get(`api/stats/drivers/${id}/years`)
             .map((res: Response) => this.convertResponse(res));
     }
     

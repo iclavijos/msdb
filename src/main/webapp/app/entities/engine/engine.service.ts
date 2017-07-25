@@ -56,17 +56,17 @@ export class EngineService {
     }
     
     getStats(id: number): Observable<ResponseWrapper> {
-        return this.http.get(`api/stats/engine/${id}`)
+        return this.http.get(`api/stats/engines/${id}`)
             .map((res: Response) => this.convertResponse(res));
     }
     
     getStatsYear(id: number, year: number): Observable<ResponseWrapper> {
-        return this.http.get(`api/stats/engine/${id}/${year}`)
+        return this.http.get(`api/stats/engines/${id}/${year}`)
             .map((res: Response) => this.convertResponse(res));
     }
     
     getYears(id: number): Observable<ResponseWrapper> {
-        return this.http.get(`api/stats/engine/${id}/years`)
+        return this.http.get(`api/stats/engines/${id}/years`)
             .map((res: Response) => this.convertResponse(res));
     }
 

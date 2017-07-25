@@ -3,6 +3,7 @@ package com.icesoft.msdb.domain.stats;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,12 +32,7 @@ public abstract class ElementStatistics {
 	}
 	
 	public Statistics getStaticsForCategory(String categoryName) {
-		Statistics result = categoriesStats.get(categoryName);
-		
-		if (result == null) {
-			result = new Statistics();
-		}
-		return result;
+		return Optional.ofNullable(categoriesStats.get(categoryName)).orElse(new Statistics());
 	}
 	
 	public Statistics getStaticsForCategory(String categoryName, Integer year) {
@@ -46,15 +42,17 @@ public abstract class ElementStatistics {
 			yearsCategoriesStats.put(year, tmp);
 		}
 		
-		Statistics result = tmp.get(categoryName);
-		if (result == null) {
-			result = new Statistics();
-		}
-		return result;
+		return Optional.ofNullable(tmp.get(categoryName)).orElse(new Statistics());
 	}
 	
 	public List<Integer> getYearsStatistics() {
 		return yearsCategoriesStats.keySet().stream().sorted((y1, y2) -> y1.compareTo(y2)).collect(Collectors.toList());
+	}
+	
+	public void removeStatisticsOfEvent(Long eventEditionId) {
+		categoriesStats.forEach((category, catStats) -> {
+			//catStats.removeResult(result);
+		});
 	}
 	
 	@JsonIgnore

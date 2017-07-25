@@ -79,7 +79,7 @@
             </tr>
             </tbody>
         </table>
-        <span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.pitlaneStartDesc">Indicates pitlane start</span>
+        <span *ngIf="session.sessionType === 'RACE'" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.pitlaneStartDesc">Indicates pitlane start</span>
     </div>
     <h2>
     	<div *ngIf="session.pointsSystem">

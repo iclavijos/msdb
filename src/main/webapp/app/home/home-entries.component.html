@@ -4,10 +4,10 @@
 			<tr>
 				<th><span>#</span></th>
 				<th><span jhiTranslate="home.drivers">Drivers</span></th>
-				<th><span jhiTranslate="home.entryName">Entry Name</span></th>
+				<th><span jhiTranslate="home.date">Date</span></th>
 				<th><span jhiTranslate="home.eventName">Event Name</span></th>
+				<th><span jhiTranslate="home.entryName">Entry Name</span></th>
 				<th><span jhiTranslate="home.car">Chassis / Engine</span></th>
-				<th><span jhiTranslate="home.fastestLap">Fastest Lap</span></th>
 				<th><span jhiTranslate="home.qualyLap">Q Time</span></th>
 				<th><span jhiTranslate="home.raceLap">Race Time</span></th>
 				<th><span jhiTranslate="home.racePosition">Race Position</span></th>
@@ -17,16 +17,16 @@
 			<tr *ngFor="let entry of resultEntries">
 				<td>{{entry.raceNumber}}</td>
 				<td>{{entry.driverName}}</td>
-				<td>{{entry.entryName}}</td>
+				<td>{{entry.sessionDate | dDate:'shortDate'}}</td>
 				<td><a [routerLink]="['/event-edition', entry.eventEditionId ]" >
                         	{{entry.eventName}}
                         </a></td>
+				<td>{{entry.entryName}}</td>
 				<td>{{entry.chassisEngine}}</td>
-				<td>{{entry.fastestLap | timeMaskPipe}} <span *ngIf="entry.fastestLap != 0">({{entry.session}})</span></td>
 				<td>{{entry.poleTime | timeMaskPipe}} <span *ngIf="entry.poleTime != 0">(P{{entry.polePosition}})</span></td>
 				<td>{{entry.raceFastLap | timeMaskPipe}}</td>
 				<td *ngIf="entry.racePosition < 800">{{entry.racePosition}}</td>
-				<td *ngIf="entry.racePosition >= 800">{{entry.raceStatus}}</td>
+				<td *ngIf="entry.racePosition >= 800">{{entry.raceStatus}} ({{entry.retirement}})</td>
 			</tr>
 		</tbody>
 	</table>

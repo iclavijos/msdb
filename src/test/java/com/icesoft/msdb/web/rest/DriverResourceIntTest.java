@@ -35,6 +35,7 @@ import org.springframework.util.Base64Utils;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.repository.DriverRepository;
+import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.stats.DriverStatisticsRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
@@ -71,6 +72,8 @@ public class DriverResourceIntTest {
 
     @Autowired
     private DriverRepository driverRepository;
+    @Autowired
+    private EventEntryRepository eventEntryRepo;
     
     @Autowired
     private DriverStatisticsRepository statsRepo;
@@ -97,7 +100,7 @@ public class DriverResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            DriverResource driverResource = new DriverResource(driverRepository, statsRepo, cdnService);
+            DriverResource driverResource = new DriverResource(driverRepository, eventEntryRepo, statsRepo, cdnService);
         this.restDriverMockMvc = MockMvcBuilders.standaloneSetup(driverResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

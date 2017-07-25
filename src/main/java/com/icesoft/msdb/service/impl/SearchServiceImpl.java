@@ -1,5 +1,6 @@
 package com.icesoft.msdb.service.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,8 +59,8 @@ public class SearchServiceImpl implements SearchService {
 	@Override
 	public Page<EventEntrySearchResultDTO> searchEntries(String searchTems, Pageable pageable) {
 		Page<EventEditionEntry> tmp = searchRepository.searchEntries(searchTems, pageable);
-		List<EventEntrySearchResultDTO> aux = tmp.getContent().stream()
-				.map(entry -> createDTO(entry))
+		List<EventEntrySearchResultDTO> aux = tmp.getContent().parallelStream()
+				.map(this::createDTO)
 				.collect(Collectors.<EventEntrySearchResultDTO> toList());
 		return new PageImpl<>(aux, pageable, tmp.getTotalElements());
 	}
@@ -80,8 +81,7 @@ public class SearchServiceImpl implements SearchService {
 		long raceFastLap;
 		Integer racePosition;
 		String retirement = "";
-		long fastestLap;
-		String session = "";
+		LocalDate sessionDate;
 		
 		List<EventEntryResult> results = resultsRepo.findByEntryId(entry.getId());
 		
@@ -110,26 +110,14 @@ public class SearchServiceImpl implements SearchService {
 				}
 			}
 			racePosition = result.getFinalPosition();
+			sessionDate = result.getSession().getSessionStartTime().toLocalDate();
 		} else {
 			raceFastLap = 0;
 			racePosition = 0;
+			sessionDate = null;
 		}
 		
-		fastestLap = Long.MAX_VALUE;
-		for(EventEntryResult result : results) {
-			if (result.getBestLapTime() != null && result.getBestLapTime() != 0) {
-				if (result.getBestLapTime() < fastestLap) {
-					fastestLap = result.getBestLapTime();
-					session = result.getSession().getShortname();
-				}
-			}
-		}
-		if (fastestLap == Long.MAX_VALUE) {
-			fastestLap = 0;
-		}
-		
-		EventEntrySearchResultDTO dto = new EventEntrySearchResultDTO(entry, poleTime, raceFastLap, polePosition, 
-				racePosition, retirement, fastestLap, session);
+		EventEntrySearchResultDTO dto = new EventEntrySearchResultDTO(entry, sessionDate, poleTime, raceFastLap, polePosition, racePosition, retirement);
 		
 		return dto;
 	}

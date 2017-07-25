@@ -1,6 +1,11 @@
 {
     "motorsportsDatabaseApp": {
     	"stats": {
+    		"home": {
+    			"title": "Statistics",
+    			"init": "Statistics being rebuilt... wait a few seconds",
+    			"rebuilt": "Statistics successfully rebuilt"
+    		},
     		"participations": "Participations",
     		"starts": "Starts",
     		"finished": "Finished",
@@ -18,7 +23,7 @@
     		"kmsCompleted": "Distance completed",
     		"grandChelems": "Grand Chelems",
     		"time": "time",
-    		"times": "times"  
+    		"times": "times"
     	}
     }
 }

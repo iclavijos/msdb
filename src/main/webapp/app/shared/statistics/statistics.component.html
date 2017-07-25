@@ -1,12 +1,12 @@
-<div class="row" *ngIf="yearsStats?.length > 1">
-  	<div class="col-sm-10"></div>
-  		<div class="col-sm-2">
-   		<select class="form-control" id="field_jumpToEdition" name="jumpToYear" (change)="jumpToYear($event.target.value)">
- 					<option></option>
-           	<option *ngFor="let year of yearsStats" [value]="year">{{year}}</option>
-           </select>
-  		</div>
-  	</div>
+	<div class="row" *ngIf="yearsStats?.length > 1">
+		<div class="col-sm-10"></div>
+			<div class="col-sm-2">
+				<select class="form-control" id="field_jumpToEdition" name="jumpToYear" (change)="jumpToYear($event.target.value)">
+					<option></option>
+		        	<option *ngFor="let year of yearsStats" [value]="year">{{year}}</option>
+		        </select>
+			</div>
+		</div>
   	<div class="card" *ngFor="let categoryStats of stats">
   <div class="card-header">
     <h3>{{categoryStats.category}}</h3>
@@ -17,7 +17,8 @@
 	    <dl class="row-md jh-entity-details">
 	        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.participations">Participations</span></dt>
 	        <dd>
-	            <span>{{categoryStats.stats.participations}}</span>
+	            <span>{{categoryStats.stats.participations}} <a *ngIf="categoryStats.stats.participations > 0"><i class="fa fa-search" aria-hidden="true" 
+	            	(click)="getParticipations(categoryStats.category)"></i></a></span>
 	        </dd>
 	        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.starts">Starts</span></dt>
 	        <dd>
@@ -43,7 +44,9 @@
 	        </dd>
 	        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.wins">Wins</span></dt>
 	        <dd>
-	            <span>{{categoryStats.stats.wins}} ({{((categoryStats.stats.wins / categoryStats.stats.starts) * 100).toFixed(2)}}%)</span>
+	            <span>{{categoryStats.stats.wins}} ({{((categoryStats.stats.wins / categoryStats.stats.starts) * 100).toFixed(2)}}%) 
+	            	<a *ngIf="categoryStats.stats.wins > 0"><i class="fa fa-search" aria-hidden="true" 
+	            	(click)="getWins(categoryStats.category)"></i></a></span>
 	        </dd>
 	        <dt><span jhiTranslate="motorsportsDatabaseApp.stats.poles">Poles</span></dt>
 	        <dd>

@@ -6,7 +6,9 @@ public class Result {
 
 	Long eventEditionId;
 	Long entryId;
+	Integer order;
 	String eventName;
+	String sessionName;
 	Integer year;
 	LocalDate eventDate;
 	Integer position;
@@ -14,8 +16,11 @@ public class Result {
 	Integer lapsLed;
 	Integer lapsCompleted;
 	Boolean retired;
+	String retirementCause;
 	Boolean grandChelem;
 	Boolean pitlaneStart;
+	Long poleLapTime;
+	Long raceFastLapTime;
 	
 	public Long getEventEditionId() {
 		return eventEditionId;
@@ -29,11 +34,23 @@ public class Result {
 	public void setEntryId(Long entryId) {
 		this.entryId = entryId;
 	}
+	public Integer getOrder() {
+		return order;
+	}
+	public void setOrder(Integer order) {
+		this.order = order;
+	}
 	public String getEventName() {
 		return eventName;
 	}
 	public void setEventName(String eventName) {
 		this.eventName = eventName;
+	}
+	public String getSessionName() {
+		return sessionName;
+	}
+	public void setSessionName(String sessionName) {
+		this.sessionName = sessionName;
 	}
 	public Integer getYear() {
 		return year;
@@ -88,6 +105,24 @@ public class Result {
 	}
 	public void setPitlaneStart(Boolean pitlaneStart) {
 		this.pitlaneStart = pitlaneStart;
+	}	
+	public String getRetirementCause() {
+		return retirementCause;
+	}
+	public void setRetirementCause(String retirementCause) {
+		this.retirementCause = retirementCause;
+	}
+	public Long getPoleLapTime() {
+		return poleLapTime;
+	}
+	public void setPoleLapTime(Long poleLapTime) {
+		this.poleLapTime = poleLapTime;
+	}
+	public Long getRaceFastLapTime() {
+		return raceFastLapTime;
+	}
+	public void setRaceFastLapTime(Long raceFastLapTime) {
+		this.raceFastLapTime = raceFastLapTime;
 	}
 	
 	@Override
