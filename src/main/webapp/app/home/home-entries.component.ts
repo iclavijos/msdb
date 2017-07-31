@@ -46,7 +46,7 @@ export class HomeEntriesComponent implements OnInit {
         private http: Http
     ) {
         this.itemsPerPage = ITEMS_PER_PAGE;
-        this.routeData = this.activatedRoute.data.subscribe(data => {
+        this.routeData = this.activatedRoute.data.subscribe((data) => {
             this.page = data['pagingParams'].page;
             this.previousPage = data['pagingParams'].page;
             this.reverse = data['pagingParams'].ascending;
@@ -63,24 +63,28 @@ export class HomeEntriesComponent implements OnInit {
         this.principal.identity().then((account) => {
             this.currentAccount = account;
         });
-        
+        this.loadAll();
+        //activatedRoute.snapshot.params['search']
+    }
+    
+    loadAll() {
         if (this.statsType) {
             this.queryStats({
+                page: this.page - 1,
                 size: this.itemsPerPage}).subscribe(
                     (res: Response) => this.onSuccess(res.json(), res.headers));
         } else if (this.currentSearch) {
             this.query({
+                page: this.page - 1,
                 query: this.currentSearch,
                 size: this.itemsPerPage}).subscribe(
                     (res: Response) => this.onSuccess(res.json(), res.headers));
         }
-        
-        //activatedRoute.snapshot.params['search']
     }
     
-    loadPage (page: number) {
+    loadPage(page: number) {
         if (page !== this.previousPage) {
-            this.previousPage = page - 1;
+            this.previousPage = page;
             this.transition();
         }
     }
@@ -90,15 +94,10 @@ export class HomeEntriesComponent implements OnInit {
             this.router.navigate(['/homeEntries', { 
                 statsType: this.statsType, id: this.id, category: this.category, queryParams:
                 {
-                    page: this.page - 1,
+                    page: this.page,
                     size: this.itemsPerPage
                 }
             }]);
-            this.queryStats({
-                page: this.page - 1,
-                size: this.itemsPerPage
-            }).subscribe(
-                    (res: Response) => this.onSuccess(res.json(), res.headers));
         } else {
             this.router.navigate(['/homeEntries'], {queryParams:
                 {
@@ -107,13 +106,8 @@ export class HomeEntriesComponent implements OnInit {
                     search: this.currentSearch
                 }
             });
-            this.query({
-                query: this.currentSearch,
-                page: this.page - 1,
-                size: this.itemsPerPage}).subscribe(
-                    (res: Response) => this.onSuccess(res.json(), res.headers));
         }
-        
+        this.loadAll();
     }
     
     private queryStats(req?: any): Observable<Response> {

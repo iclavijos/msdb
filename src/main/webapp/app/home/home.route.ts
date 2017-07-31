@@ -9,19 +9,19 @@ import { HomeEntriesComponent } from './home-entries.component';
 import { HomeEventsComponent } from './home-events.component';
 
 @Injectable()
-export class HomeEntriesPagingParams implements Resolve<any> {
+export class HomeEntriesResolvePagingParams implements Resolve<any> {
 
   constructor(private paginationUtil: JhiPaginationUtil) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-      let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
-      return {
-          page: this.paginationUtil.parsePage(page),
-          predicate: this.paginationUtil.parsePredicate(sort),
-          ascending: this.paginationUtil.parseAscending(sort)
-    };
-  }
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
+        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
+        return {
+            page: this.paginationUtil.parsePage(page),
+            predicate: this.paginationUtil.parsePredicate(sort),
+            ascending: this.paginationUtil.parseAscending(sort)
+      };
+    }
 }
 
 export const HOME_ROUTE: Routes = [
@@ -37,10 +37,10 @@ export const HOME_ROUTE: Routes = [
         path: 'homeEntries',
         component: HomeEntriesComponent,
         resolve: {
-            'pagingParams': HomeEntriesPagingParams
+            'pagingParams': HomeEntriesResolvePagingParams
         },
         data: {
-            authorities: ['ROLE_USER', 'ROLE_EDITOR', 'ROLE_ADMIN'],
+            authorities: ['ROLE_USER'],
             pageTitle: 'home.entriesResult'
         }
     },
@@ -48,10 +48,10 @@ export const HOME_ROUTE: Routes = [
         path: 'homeEvents',
         component: HomeEventsComponent,
         resolve: {
-            'pagingParams': HomeEntriesPagingParams
+            'pagingParams': HomeEntriesResolvePagingParams
         },
         data: {
-            authorities: ['ROLE_USER', 'ROLE_EDITOR', 'ROLE_ADMIN'],
+            authorities: ['ROLE_USER'],
             pageTitle: 'home.eventsResult'
         }
     }

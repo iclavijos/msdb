@@ -2,8 +2,14 @@ package com.icesoft.msdb.domain.stats;
 
 import java.time.LocalDate;
 
+import org.springframework.data.annotation.Transient;
+
+import com.icesoft.msdb.domain.EventEntryResult;
+
 public class Result {
 
+	@Transient
+	EventEntryResult entryResult;
 	Long eventEditionId;
 	Long entryId;
 	Integer order;
@@ -19,8 +25,38 @@ public class Result {
 	String retirementCause;
 	Boolean grandChelem;
 	Boolean pitlaneStart;
+	Boolean raceFastLap;
 	Long poleLapTime;
 	Long raceFastLapTime;
+	
+	public Result() {
+		super();
+	}
+	
+	public Result(EventEntryResult result, Boolean grandChelem, Integer finalPosition, Integer gridPosition, Long poleLapTime, Boolean raceFastLap) {
+		this.entryResult = result;
+		this.setEventDate(result.getSession().getSessionStartTime().toLocalDate());
+		this.setEventEditionId(result.getEntry().getEventEdition().getId());
+		this.setEntryId(result.getEntry().getId());
+		this.setEventName(result.getEntry().getEventEdition().getLongEventName());
+		this.setSessionName(result.getSession().getName());
+		this.setGrandChelem(grandChelem);
+		this.setGridPosition(gridPosition);
+		this.setLapsLed(result.getLapsLed());
+		this.setLapsCompleted(result.getLapsCompleted());
+		this.setPosition(finalPosition);
+		this.setRetired(result.isRetired());
+		this.setYear(result.getEntry().getEventEdition().getEditionYear());
+		this.setPitlaneStart(result.isPitlaneStart());
+		this.setRetirementCause(result.getCause());
+		this.setPoleLapTime(poleLapTime);
+		this.setRaceFastLapTime(result.getBestLapTime());
+		this.setRaceFastLap(raceFastLap);
+	}
+	
+	public EventEntryResult getEntryResult() {
+		return entryResult;
+	}
 	
 	public Long getEventEditionId() {
 		return eventEditionId;
@@ -123,8 +159,14 @@ public class Result {
 	}
 	public void setRaceFastLapTime(Long raceFastLapTime) {
 		this.raceFastLapTime = raceFastLapTime;
+	}	
+	public Boolean getRaceFastLap() {
+		return raceFastLap;
 	}
-	
+	public void setRaceFastLap(Boolean raceFastLap) {
+		this.raceFastLap = raceFastLap;
+	}
+
 	@Override
 	public String toString() {
 		return "Result [eventEditionId=" + eventEditionId + ", entryId=" + entryId + ", eventName=" + eventName

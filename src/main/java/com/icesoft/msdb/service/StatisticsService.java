@@ -7,8 +7,10 @@ import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.stats.Statistics;
 
 public interface StatisticsService {
+	
+	void deleteStatistics(); 
 
-	void rebuildStatistics();
+	//void rebuildStatistics();
 	
 	void buildEventStatistics(Long eventEditionId);
 	

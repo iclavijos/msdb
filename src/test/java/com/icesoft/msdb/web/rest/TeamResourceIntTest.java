@@ -32,7 +32,9 @@ import org.springframework.util.Base64Utils;
 
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Team;
+import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.TeamRepository;
+import com.icesoft.msdb.repository.stats.TeamStatisticsRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
@@ -59,6 +61,10 @@ public class TeamResourceIntTest {
 
     @Autowired
     private TeamRepository teamRepository;
+    @Autowired
+    private EventEntryRepository entryRepository;
+    @Autowired
+    private TeamStatisticsRepository statsRepo;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -82,7 +88,7 @@ public class TeamResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            TeamResource teamResource = new TeamResource(teamRepository, cdnService);
+            TeamResource teamResource = new TeamResource(teamRepository, entryRepository, statsRepo, cdnService);
         this.restTeamMockMvc = MockMvcBuilders.standaloneSetup(teamResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

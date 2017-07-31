@@ -22,6 +22,8 @@ public interface EventEditionRepository extends JpaRepository<EventEdition,Long>
 			+ "order by e.editionYear desc, e.longEventName asc")
 	Page<EventEdition> search(String searchValue, Pageable page);
 	
+	List<EventEdition> findAllByOrderByEventDateAsc();
+	
 	Page<EventEdition> findByEventIdOrderByEditionYearDesc(Long eventId, Pageable page);
 	
 	@Query("select e.id from EventEdition e where e.event.id = ?1 and e.editionYear = ("

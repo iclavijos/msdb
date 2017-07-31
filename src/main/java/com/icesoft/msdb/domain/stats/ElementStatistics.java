@@ -70,7 +70,8 @@ public abstract class ElementStatistics {
 	}
 	
 	public void updateStatistics(String categoryName, Statistics stats, Integer year) {
-		Map<String, Statistics> catStats = yearsCategoriesStats.get(year);
+		Map<String, Statistics> catStats = 
+				Optional.ofNullable(yearsCategoriesStats.get(year)).orElse(new HashMap<>());
 		catStats.put(categoryName, stats);
 		yearsCategoriesStats.put(year, catStats);
 	}

@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.icesoft.msdb.domain.EventEntryResult;
+import com.icesoft.msdb.domain.EventEditionEntry;
 
 public class Statistics {
 
@@ -272,25 +272,25 @@ public class Statistics {
 		return null;
 	}
 	
-	public void addResult(EventEntryResult result, Boolean grandChelem, Integer finalPosition, Integer gridPosition, Long poleLapTime) {
-		Result r = new Result();
-		r.setEventDate(result.getSession().getSessionStartTime().toLocalDate());
-		r.setEventEditionId(result.getEntry().getEventEdition().getId());
-		r.setEntryId(result.getEntry().getId());
-		r.setEventName(result.getEntry().getEventEdition().getLongEventName());
-		r.setSessionName(result.getSession().getName());
-		r.setGrandChelem(grandChelem);
-		r.setGridPosition(gridPosition);
-		r.setLapsLed(result.getLapsLed());
-		r.setLapsCompleted(result.getLapsCompleted());
-		r.setPosition(finalPosition);
-		r.setRetired(result.isRetired());
-		r.setYear(result.getEntry().getEventEdition().getEditionYear());
-		r.setPitlaneStart(result.isPitlaneStart());
-		r.setRetirementCause(result.getCause());
-		r.setPoleLapTime(poleLapTime);
-		r.setRaceFastLapTime(result.getBestLapTime());
+	public void addResult(Result r) {
+		EventEditionEntry entry = r.getEntryResult().getEntry();
 		
+		incParticipations();
+		
+		if (r.getLapsCompleted() != null && !entry.getEventEdition().isMultidriver()) {
+			//We do not count laps for multidriver events
+			addLaps(r.getLapsCompleted(), entry.getEventEdition().getTrackLayout().getLength());
+		}
+		this.addFinishPositionQ(r.getGridPosition());
+		this.addFinishPositionR(r.getPosition(), r.getRetired());
+		
+		if (r.getRaceFastLap()) {
+			incFastLaps();
+		}
+		if (r.getGrandChelem()) {
+			incGrandChelems();
+		}
+
 		results.add(r);
 		final AtomicInteger i = new AtomicInteger(1);
 		results.sort((r1, r2) -> r1.getEventDate().compareTo(r2.getEventDate()));

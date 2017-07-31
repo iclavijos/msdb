@@ -4,12 +4,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,9 +29,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Chassis;
+import com.icesoft.msdb.domain.stats.ElementStatistics;
 import com.icesoft.msdb.repository.ChassisRepository;
+import com.icesoft.msdb.repository.EventEntryRepository;
+import com.icesoft.msdb.repository.stats.ChassisStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
@@ -49,11 +55,17 @@ public class ChassisResource {
     private static final String ENTITY_NAME = "chassis";
 
     private final ChassisRepository chassisRepository;
+    private final EventEntryRepository entryRepository;
+    
+    private final ChassisStatisticsRepository statsRepo;
     
     private final CDNService cdnService;
 
-    public ChassisResource(ChassisRepository chassisRepository, CDNService cdnService) {
+    public ChassisResource(ChassisRepository chassisRepository, EventEntryRepository entryRepository,
+    		ChassisStatisticsRepository chassisStatsRepo, CDNService cdnService) {
         this.chassisRepository = chassisRepository;
+        this.entryRepository = entryRepository;
+        this.statsRepo = chassisStatsRepo;
         this.cdnService = cdnService;
     }
 
@@ -160,6 +172,63 @@ public class ChassisResource {
         chassisRepository.delete(id);
         cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+    
+    
+    @GetMapping("/chassis/{chassisId}/statistics")
+	public ResponseEntity<ElementStatistics> getChassisStatistics(@PathVariable Long chassisId) {
+    	log.debug("REST request to get statistics for chassis : {}", chassisId);
+    	ElementStatistics stats = statsRepo.findOne(chassisId.toString());
+        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(stats));
+	}
+	
+    @GetMapping("/chassis/{id}/participations/{category}")
+    @Timed
+    public ResponseEntity<List<EventEntrySearchResultDTO>> getChassisParticipations(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
+    	log.debug("REST request to get participations for chassis {} in category {}", id, category);
+    	ElementStatistics stats = statsRepo.findOne(id.toString());
+    	List<Long> ids = stats.getStaticsForCategory(category).getParticipationsList().parallelStream().sorted((p1, p2) -> p1.getOrder().compareTo(p2.getOrder()))
+    		.map(p -> p.getEntryId()).collect(Collectors.toList());
+    	int start = pageable.getOffset();
+    	int end = start + pageable.getPageSize();
+    	if (end > ids.size()) {
+    		end = ids.size();
+    	}
+    	
+    	List<EventEntrySearchResultDTO> result = entryRepository.findEntriesInList(ids.subList(start, end)).parallelStream().map(entry -> {
+    		return stats.getStaticsForCategory(category).getResultByEntryId(entry.getId()).parallelStream().map(res -> {
+    			return new EventEntrySearchResultDTO(entry, res.getEventDate(), res.getPoleLapTime(), res.getRaceFastLapTime(), 
+    					res.getGridPosition(), res.getPosition(), res.getRetirementCause());
+    		}).collect(Collectors.toList());
+    	}).flatMap(l->l.stream()).collect(Collectors.toList());
+    	
+    	Page<EventEntrySearchResultDTO> page = new PageImpl<>(result, pageable, stats.getStaticsForCategory(category).getParticipationsList().size());
+    	HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders("", page, String.format("/chassis/%s/participations/%s", id, category));
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+    
+    @GetMapping("/chassis/{id}/wins/{category}")
+    @Timed
+    public ResponseEntity<List<EventEntrySearchResultDTO>> getChassisWins(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
+    	log.debug("REST request to get wins for chassis {} in category {}", id, category);
+    	ElementStatistics stats = statsRepo.findOne(id.toString());
+    	List<Long> ids = stats.getStaticsForCategory(category).getWinsList().parallelStream().sorted((p1, p2) -> p1.getOrder().compareTo(p2.getOrder()))
+    		.map(p -> p.getEntryId()).collect(Collectors.toList());
+    	int start = pageable.getOffset();
+    	int end = start + pageable.getPageSize();
+    	if (end > ids.size()) {
+    		end = ids.size();
+    	}
+    	
+    	List<EventEntrySearchResultDTO> result = entryRepository.findEntriesInList(ids.subList(start, end)).parallelStream().map(entry -> {
+    		return stats.getStaticsForCategory(category).getResultByEntryId(entry.getId()).parallelStream().map(res -> {
+    			return new EventEntrySearchResultDTO(entry, res.getEventDate(), res.getPoleLapTime(), res.getRaceFastLapTime(), 
+    					res.getGridPosition(), res.getPosition(), res.getRetirementCause());
+    		}).collect(Collectors.toList());
+    	}).flatMap(l->l.stream()).collect(Collectors.toList());
+    	Page<EventEntrySearchResultDTO> page = new PageImpl<>(result, pageable, stats.getStaticsForCategory(category).getWinsList().size());
+    	HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders("", page, String.format("/chassis/%s/wins/%s", id, category));
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**
