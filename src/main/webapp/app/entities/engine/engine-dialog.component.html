@@ -44,13 +44,8 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.capacity" for="field_capacity">Capacity</label>
             <input type="number" class="form-control" name="capacity" id="field_capacity"
-                [(ngModel)]="engine.capacity"
-            required />
+                [(ngModel)]="engine.capacity" />
             <div [hidden]="!(editForm.controls.capacity?.dirty && editForm.controls.capacity?.invalid)">
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.capacity?.errors?.required" jhiTranslate="entity.validation.required">
-                   This field is required.
-                </small>
                 <small class="form-text text-danger"
                     [hidden]="!editForm.controls.capacity?.errors?.number" jhiTranslate="entity.validation.number">
                     This field should be a number.
@@ -60,13 +55,8 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.architecture" for="field_architecture">Architecture</label>
             <input type="text" class="form-control" name="architecture" id="field_architecture"
-                [(ngModel)]="engine.architecture"
-            required maxlength="10" />
+                [(ngModel)]="engine.architecture" maxlength="10" />
             <div [hidden]="!(editForm.controls.architecture?.dirty && editForm.controls.architecture?.invalid)">
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.architecture?.errors?.required" jhiTranslate="entity.validation.required">
-                   This field is required.
-                </small>
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.architecture?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 10 }">
                    This field cannot be longer than 10 characters.
