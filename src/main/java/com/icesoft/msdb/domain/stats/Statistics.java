@@ -281,7 +281,9 @@ public class Statistics {
 			//We do not count laps for multidriver events
 			addLaps(r.getLapsCompleted(), entry.getEventEdition().getTrackLayout().getLength());
 		}
-		this.addFinishPositionQ(r.getGridPosition());
+		if (r.getGridPosition() != null) {
+			this.addFinishPositionQ(r.getGridPosition());
+		}
 		this.addFinishPositionR(r.getPosition(), r.getRetired());
 		
 		if (r.getRaceFastLap()) {

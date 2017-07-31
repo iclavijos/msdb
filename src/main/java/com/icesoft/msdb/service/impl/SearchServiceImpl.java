@@ -100,7 +100,11 @@ public class SearchServiceImpl implements SearchService {
 		if (rResults != null && !rResults.isEmpty()) {
 			EventEntryResult result = rResults.get(0);
 			if (result.isRetired()) {
-				raceFastLap = 0;
+				if (result.getBestLapTime() == null) {
+					raceFastLap = 0;
+				} else {
+					raceFastLap = result.getBestLapTime();
+				}
 				retirement = result.getCause();
 			} else {
 				if (result.getBestLapTime() != null) {

@@ -41,7 +41,9 @@ public class Result {
 		this.setEventName(result.getEntry().getEventEdition().getLongEventName());
 		this.setSessionName(result.getSession().getName());
 		this.setGrandChelem(grandChelem);
-		this.setGridPosition(gridPosition);
+		if (gridPosition != -1) {
+			this.setGridPosition(gridPosition);
+		}
 		this.setLapsLed(result.getLapsLed());
 		this.setLapsCompleted(result.getLapsCompleted());
 		this.setPosition(finalPosition);

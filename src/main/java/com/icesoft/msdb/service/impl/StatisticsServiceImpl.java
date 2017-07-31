@@ -189,6 +189,9 @@ public class StatisticsServiceImpl implements StatisticsService {
 			if (entry.getEventEdition().getAllowedCategories().size() == 1) {
 				posInClass = result.getFinalPosition().intValue();
 				startPosInClass = result.getStartingPosition() != null ? result.getStartingPosition().intValue() : -1;
+				if (startPosInClass == -1 && startPosInClass == 902) {
+					//We will look for the minimum finishing position in Q sessions
+				}
 			} else {
 				posInClass = resultsCategory.indexOf(result) + 1;
 				if (result.getStartingPosition() != null) {
@@ -207,6 +210,17 @@ public class StatisticsServiceImpl implements StatisticsService {
 							.compareTo(Optional.ofNullable(r2.getBestLapTime()).orElse(Long.MAX_VALUE)))
 					.collect(Collectors.toList()).indexOf(result) + 1;
 			}
+
+			//Qualy lap
+			List<EventEntryResult> qualyLaps = resultsRepo.findEntryFastestLapPerSessionType(result.getEntry().getId(), SessionType.QUALIFYING);
+			Long poleLapTime = 0L;
+			List<EventEntryResult> qResults = qualyLaps.stream()
+					.filter(r -> r.getSession().getSessionType() == SessionType.QUALIFYING).collect(Collectors.toList());
+			if (qResults != null && !qResults.isEmpty()) {
+				poleLapTime = qResults.get(0).getBestLapTime() != null ? qResults.get(0).getBestLapTime() : 0;
+			} else {
+				poleLapTime = 0L;
+			}
 			
 			//Grand Chelem
 			boolean grandChelem = false;
@@ -214,11 +228,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 					result.getLapsCompleted() != null && result.getLapsCompleted().equals(result.getLapsLed())) {
 				grandChelem = true;
 			}
-			List<EventEntryResult> qualyLaps = resultsRepo.findEntryFastestLapPerSessionType(result.getEntry().getId(), SessionType.QUALIFYING);
-			Long poleLapTime = 0L;
-			if (!qualyLaps.isEmpty()) {
-				poleLapTime = qualyLaps.get(0).getBestLapTime();
-			}
+
 			return new Result(result, grandChelem, posInClass, startPosInClass, poleLapTime, posFL > -1);
 		}).collect(Collectors.toList());
 	}
