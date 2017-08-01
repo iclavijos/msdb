@@ -33,6 +33,8 @@ import org.springframework.util.Base64Utils;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.repository.EngineRepository;
+import com.icesoft.msdb.repository.EventEntryRepository;
+import com.icesoft.msdb.repository.stats.EngineStatisticsRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
@@ -77,6 +79,10 @@ public class EngineResourceIntTest {
 
     @Autowired
     private EngineRepository engineRepository;
+    @Autowired
+    private EventEntryRepository eventEntryRepo;
+    @Autowired
+    private EngineStatisticsRepository engineStatsRepo;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -100,7 +106,7 @@ public class EngineResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            EngineResource engineResource = new EngineResource(engineRepository, cdnService);
+            EngineResource engineResource = new EngineResource(engineRepository, eventEntryRepo, engineStatsRepo, cdnService);
         this.restEngineMockMvc = MockMvcBuilders.standaloneSetup(engineResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

@@ -32,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Chassis;
 import com.icesoft.msdb.repository.ChassisRepository;
+import com.icesoft.msdb.repository.EventEntryRepository;
+import com.icesoft.msdb.repository.stats.ChassisStatisticsRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
@@ -55,6 +57,10 @@ public class ChassisResourceIntTest {
 
     @Autowired
     private ChassisRepository chassisRepository;
+    @Autowired
+    private EventEntryRepository eventEntryRepo;
+    @Autowired
+    private ChassisStatisticsRepository chassisStatsRepo;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -78,7 +84,7 @@ public class ChassisResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            ChassisResource chassisResource = new ChassisResource(chassisRepository, cdnService);
+            ChassisResource chassisResource = new ChassisResource(chassisRepository, eventEntryRepo, chassisStatsRepo, cdnService);
         this.restChassisMockMvc = MockMvcBuilders.standaloneSetup(chassisResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
