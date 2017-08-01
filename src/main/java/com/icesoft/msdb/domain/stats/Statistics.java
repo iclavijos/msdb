@@ -272,7 +272,7 @@ public class Statistics {
 		return null;
 	}
 	
-	public void addResult(Result r) {
+	public synchronized void addResult(Result r) {
 		EventEditionEntry entry = r.getEntryResult().getEntry();
 		
 		incParticipations();

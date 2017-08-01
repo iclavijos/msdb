@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,18 +105,33 @@ public class StatisticsServiceImpl implements StatisticsService {
 		buildEventStatistics(eventEditionRepo.findOne(eventEditionId));
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("rawtypes")
 	private void updateStats(String categoryName, Integer year, Result result, 
 			MongoRepository mongoRepo, ElementStatistics eStats) {
-		Statistics statsTeam = eStats.getStaticsForCategory(categoryName);
-		Statistics statsTeamYear = eStats.getStaticsForCategory(categoryName, year);
-		statsTeam.addResult(result);
-		statsTeamYear.addResult(result);
+		updateStats(categoryName, year, result, mongoRepo, eStats, 10);
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void updateStats(String categoryName, Integer year, Result result, 
+			MongoRepository mongoRepo, ElementStatistics eStats, int retries) {
+		Statistics statsDoc = eStats.getStaticsForCategory(categoryName);
+		Statistics statsDocYear = eStats.getStaticsForCategory(categoryName, year);
+		statsDoc.addResult(result);
+		statsDocYear.addResult(result);
 		
-		eStats.updateStatistics(categoryName, statsTeam);
-		eStats.updateStatistics(categoryName, statsTeamYear, year);
+		eStats.updateStatistics(categoryName, statsDoc);
+		eStats.updateStatistics(categoryName, statsDocYear, year);
 		
-		mongoRepo.save(eStats);
+		if (retries > 0) {
+			try {
+				mongoRepo.save(eStats);
+			} catch (OptimisticLockingFailureException e) {
+				updateStats(categoryName, year, result, mongoRepo, eStats, retries - 1);
+			}
+		} else {
+			throw new MSDBException(String.format("Could not update statistics document for entry %s @ event '%s'", 
+					result.getEntryId(), result.getEventName()));
+		}
 	}
 
 	@Override
@@ -130,33 +146,31 @@ public class StatisticsServiceImpl implements StatisticsService {
 		List<Result> results = entriesRepo.findEventEditionEntries(event.getId()).parallelStream()
 				.map(this::processEntry).flatMap(l -> l.stream())
 				.collect(Collectors.toList());
-		Map<Long, Boolean> entryProcessed = new HashMap<>();
+		
 		results.stream().forEach(result -> {
 			EventEditionEntry entry = result.getEntryResult().getEntry();
 			String categoryName = entry.getCategory().getName();
 			Integer year = entry.getEventEdition().getEditionYear();
 			
-			if (!entryProcessed.containsKey(result.getEntryId())) { //To avoid duplicate statistics for multidriver events
-				entry.getDrivers().stream().forEach(driver -> {
-					DriverStatistics dStats = Optional.ofNullable(driverStatsRepo.findOne(driver.getId().toString()))
-							.orElse(new DriverStatistics(driver.getId().toString()));
-					updateStats(categoryName, year, result, driverStatsRepo, dStats);
-				});
-				
-				TeamStatistics tStats = Optional.ofNullable(teamStatsRepo.findOne(entry.getTeam().getId().toString()))
-						.orElse(new TeamStatistics(entry.getTeam().getId().toString()));
-				updateStats(categoryName, year, result, teamStatsRepo, tStats);
-				
-				ChassisStatistics cStats = Optional.ofNullable(chassisStatsRepo.findOne(entry.getChassis().getId().toString()))
-						.orElse(new ChassisStatistics(entry.getChassis().getId().toString()));
-				updateStats(categoryName, year, result, chassisStatsRepo, cStats);
-				
-				EngineStatistics eStats = Optional.ofNullable(engineStatsRepo.findOne(entry.getEngine().getId().toString()))
-						.orElse(new EngineStatistics(entry.getEngine().getId().toString()));
-				updateStats(categoryName, year, result, engineStatsRepo, eStats);
-				
-				entryProcessed.put(result.getEntryId(), true);
-			}
+			entry.getDrivers().stream().forEach(driver -> {
+				DriverStatistics dStats = Optional.ofNullable(driverStatsRepo.findOne(driver.getId().toString()))
+						.orElse(new DriverStatistics(driver.getId().toString()));
+				updateStats(categoryName, year, result, driverStatsRepo, dStats);
+			});
+			
+			TeamStatistics tStats = Optional.ofNullable(teamStatsRepo.findOne(entry.getTeam().getId().toString()))
+					.orElse(new TeamStatistics(entry.getTeam().getId().toString()));
+			updateStats(categoryName, year, result, teamStatsRepo, tStats);
+			
+			ChassisStatistics cStats = Optional.ofNullable(chassisStatsRepo.findOne(entry.getChassis().getId().toString()))
+					.orElse(new ChassisStatistics(entry.getChassis().getId().toString()));
+			updateStats(categoryName, year, result, chassisStatsRepo, cStats);
+			
+//			engineStatsRepo.updateStatistics(entry.getEngine().getId().toString(), categoryName, year, result);
+			EngineStatistics eStats = Optional.ofNullable(engineStatsRepo.findOne(entry.getEngine().getId().toString()))
+					.orElse(new EngineStatistics(entry.getEngine().getId().toString()));
+
+			updateStats(categoryName, year, result, engineStatsRepo, eStats);
 		});
 		
 		log.debug("Statistics for event {} rebuilt", event.getLongEventName());
@@ -164,9 +178,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 	
 	private List<Result> processEntry(EventEditionEntry entry) {
 		List<EventEntryResult> results = resultsRepo.findByEntryIdAndSessionSessionType(entry.getId(), SessionType.RACE);
-		return entry.getDrivers().parallelStream()
-				.flatMap(driver -> createResultObject(entry, results).stream())
-				.collect(Collectors.toList());
+		return createResultObject(entry, results);
 	}
 	
 	private void removeStatisticsIfExist(EventEdition event) {
