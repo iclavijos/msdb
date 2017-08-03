@@ -103,7 +103,7 @@ jhipster:
         default-include-pattern: /api/.*
         title: MotorsportsDatabase API
         description: MotorsportsDatabase API documentation
-        version: 0.14.1
+        version: 0.15.0
         terms-of-service-url:
         contact-name:
         contact-url:
