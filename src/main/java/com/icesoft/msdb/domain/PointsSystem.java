@@ -47,14 +47,26 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     @Column(name = "points_most_lead_laps")
     private Integer pointsMostLeadLaps;
 
-    @Column(name = "points_fast_lap")
-    private Integer pointsFastLap;
-
     @Column(name = "points_pole")
     private Integer pointsPole;
 
     @Column(name = "points_lead_lap")
     private Integer pointsLeadLap;
+    
+    @Column(name = "points_fast_lap")
+    private Integer pointsFastLap;
+    
+    //Minimum percentage of the race to be completed to award points for fast lap
+    @Column(name = "pct_completed")
+    private Integer pctCompleted = 0;
+    
+    //Minimum race finishing position to award points for fast lap
+    @Column(name = "minimum_finishing_pos")
+    private Integer minimumFinishingPosition = 0;
+    
+    //If started from pitlane, award points for fast lap?
+    @Column(name = "pitlane_start_allowed")
+    private Boolean pitlaneStartAllowed = false;
     
     @Column(name="active")
     private Boolean active;
@@ -142,23 +154,10 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
         this.pointsMostLeadLaps = pointsMostLeadLaps;
     }
 
-    public Integer getPointsFastLap() {
-        return pointsFastLap;
-    }
-
-    public PointsSystem pointsFastLap(Integer pointsFastLap) {
-        this.pointsFastLap = pointsFastLap;
-        return this;
-    }
-
-    public void setPointsFastLap(Integer pointsFastLap) {
-        this.pointsFastLap = pointsFastLap;
-    }
-
     public Integer getPointsPole() {
         return pointsPole;
     }
-
+    
     public PointsSystem pointsPole(Integer pointsPole) {
         this.pointsPole = pointsPole;
         return this;
@@ -167,6 +166,58 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     public void setPointsPole(Integer pointsPole) {
         this.pointsPole = pointsPole;
     }
+    
+    public Integer getPointsFastLap() {
+		return pointsFastLap;
+	}
+    
+    public void setPointsFastLap(Integer pointsFastLap) {
+        this.pointsFastLap = pointsFastLap;
+    }
+    
+    public PointsSystem pointsFastLap(Integer pointsFastLap) {
+    	this.pointsFastLap = pointsFastLap;
+    	return this;
+    }
+
+	public Integer getPctCompleted() {
+		return pctCompleted;
+	}
+    
+    public PointsSystem pctCompleted(Integer pctCompleted) {
+    	this.pctCompleted = pctCompleted;
+    	return this;
+    }
+
+	public void setPctCompleted(Integer pctCompleted) {
+		this.pctCompleted = pctCompleted;
+	}
+
+	public Integer getMinimumFinishingPosition() {
+		return minimumFinishingPosition;
+	}
+	
+	public PointsSystem minimumFinishingPosition(Integer minimumFinishingPosition) {
+		this.minimumFinishingPosition = minimumFinishingPosition;
+		return this;
+	}
+
+	public void setMinimumFinishingPosition(Integer minimumFinishingPosition) {
+		this.minimumFinishingPosition = minimumFinishingPosition;
+	}
+
+	public Boolean isPitlaneStartAllowed() {
+		return pitlaneStartAllowed;
+	}
+	
+	public PointsSystem pitlaneStartAllowed(Boolean pitlaneStartAllowed) {
+		this.pitlaneStartAllowed = pitlaneStartAllowed;
+		return this;
+	}
+
+	public void setPitlaneStartAllowed(Boolean pitlaneStartAllowed) {
+		this.pitlaneStartAllowed = pitlaneStartAllowed;
+	}
 
     public Integer getPointsLeadLap() {
         return pointsLeadLap;
