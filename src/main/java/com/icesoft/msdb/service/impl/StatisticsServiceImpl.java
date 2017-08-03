@@ -76,7 +76,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 	
 	@Override
-	public void deleteStatistics() {
+	public void deleteAllStatistics() {
 		driverStatsRepo.deleteAll();
 		teamStatsRepo.deleteAll();
 		chassisStatsRepo.deleteAll();
@@ -84,18 +84,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 		tyreProvStatsRepo.deleteAll();
 		racetrackLayoutStatsRepo.deleteAll();
 	}
-	
-//	@Override
-//	public void rebuildStatistics() {
-//		log.info("Rebuilding all statistics...");
-//		deleteStatistics();
-//		
-//		eventEditionRepo.findAll().parallelStream()
-//			.sorted((e1, e2) -> e1.getEventDate().compareTo(e2.getEventDate()))
-//			.forEach(this::buildEventStatistics);
-//		
-//		log.info("Statistics rebuilt...");
-//	}
 	
 	@Override
 	public void buildEventStatistics(Long eventEditionId) {
@@ -141,8 +129,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 		}
 		log.debug("Processing statistics for event {}", event.getLongEventName());
 		
-		removeStatisticsIfExist(event);
-		
 		List<Result> results = entriesRepo.findEventEditionEntries(event.getId()).parallelStream()
 				.map(this::processEntry).flatMap(l -> l.stream())
 				.collect(Collectors.toList());
@@ -166,7 +152,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 					.orElse(new ChassisStatistics(entry.getChassis().getId().toString()));
 			updateStats(categoryName, year, result, chassisStatsRepo, cStats);
 			
-//			engineStatsRepo.updateStatistics(entry.getEngine().getId().toString(), categoryName, year, result);
 			EngineStatistics eStats = Optional.ofNullable(engineStatsRepo.findOne(entry.getEngine().getId().toString()))
 					.orElse(new EngineStatistics(entry.getEngine().getId().toString()));
 
@@ -181,14 +166,44 @@ public class StatisticsServiceImpl implements StatisticsService {
 		return createResultObject(entry, results);
 	}
 	
-	private void removeStatisticsIfExist(EventEdition event) {
-		//TODO
-//		entriesRepo.findEventEditionEntries(event.getId()).parallelStream().forEach((entry) -> {
-//			entry.getDrivers().parallelStream().forEach((driver) -> {
-//				DriverStatistics ds = driverStatsRepo.findOne(driver.getId().toString());
-//				ds.removeStatisticsOfEvent(event.getId());
-//			});
-//		});
+	@Override
+	public void removeEventStatistics(Long eventEditionId) {
+		if (eventEditionId == null) {
+			throw new MSDBException("Invalid event edition");
+		}
+		removeEventStatistics(eventEditionRepo.findOne(eventEditionId));
+	}
+	
+	@Override
+	public void removeEventStatistics(EventEdition event) {
+		Integer year = event.getEditionYear();
+		entriesRepo.findEventEditionEntries(event.getId()).stream().forEach((entry) -> {
+			entry.getDrivers().parallelStream().forEach((driver) -> {
+				DriverStatistics ds = driverStatsRepo.findOne(driver.getId().toString());
+				if (ds != null) {
+					ds.removeStatisticsOfEvent(event.getId(), year);
+					driverStatsRepo.save(ds);
+				}
+			});
+			
+			TeamStatistics ts = teamStatsRepo.findOne(entry.getTeam().getId().toString());
+			if (ts != null) {
+				ts.removeStatisticsOfEvent(event.getId(), year);
+				teamStatsRepo.save(ts);
+			}
+			
+			ChassisStatistics cs = chassisStatsRepo.findOne(entry.getChassis().getId().toString());
+			if (cs != null) {
+				cs.removeStatisticsOfEvent(event.getId(), year);
+				chassisStatsRepo.save(cs);
+			}
+			
+			EngineStatistics es = engineStatsRepo.findOne(entry.getEngine().getId().toString());
+			if (es != null) {
+				es.removeStatisticsOfEvent(event.getId(), year);
+				engineStatsRepo.save(es);
+			}
+		});
 	}
 	
 	private List<Result> createResultObject(EventEditionEntry entry, List<EventEntryResult> results) {
@@ -201,7 +216,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 			if (entry.getEventEdition().getAllowedCategories().size() == 1) {
 				posInClass = result.getFinalPosition().intValue();
 				startPosInClass = result.getStartingPosition() != null ? result.getStartingPosition().intValue() : -1;
-				if (startPosInClass == -1 && startPosInClass == 902) {
+				if (startPosInClass == -1 && startPosInClass == 901) {
 					//We will look for the minimum finishing position in Q sessions
 				}
 			} else {
@@ -241,7 +256,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 				grandChelem = true;
 			}
 
-			return new Result(result, grandChelem, posInClass, startPosInClass, poleLapTime, posFL > -1);
+			return new Result(result, grandChelem, posInClass, startPosInClass, poleLapTime, posFL == 1);
 		}).collect(Collectors.toList());
 	}
 

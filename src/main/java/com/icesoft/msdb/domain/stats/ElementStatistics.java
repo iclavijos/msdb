@@ -49,10 +49,15 @@ public abstract class ElementStatistics {
 		return yearsCategoriesStats.keySet().stream().sorted((y1, y2) -> y1.compareTo(y2)).collect(Collectors.toList());
 	}
 	
-	public void removeStatisticsOfEvent(Long eventEditionId) {
+	public void removeStatisticsOfEvent(Long eventEditionId, Integer year) {
 		categoriesStats.forEach((category, catStats) -> {
-			//catStats.removeResult(result);
+			catStats.getResultByEventId(eventEditionId).stream().forEach(result -> catStats.removeResult(result));
 		});
+		if (yearsCategoriesStats.containsKey(year)) {
+			yearsCategoriesStats.get(year).forEach((category, catStats) -> {
+				catStats.getResultByEventId(eventEditionId).stream().forEach(result -> catStats.removeResult(result));
+			});
+		}
 	}
 	
 	@JsonIgnore

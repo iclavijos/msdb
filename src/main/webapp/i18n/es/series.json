@@ -64,7 +64,8 @@
 	            "manufacturerChamp": "Fabricante campeón",
 	            "eventDate": "Fecha",
 	            "event": "Cita",
-	            "winner": "Ganador"
+	            "winner": "Ganador",
+	            "updateStadings": "Actualiza clasificaciones"
 	        }
         }
     }

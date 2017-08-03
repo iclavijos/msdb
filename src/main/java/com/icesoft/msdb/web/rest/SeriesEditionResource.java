@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import javax.validation.Valid;
 
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.SeriesEdition;
+import com.icesoft.msdb.domain.enums.SessionType;
+import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SeriesEditionService;
@@ -56,11 +59,14 @@ public class SeriesEditionResource {
         
     private final SeriesEditionService seriesEditionService;
     private final SeriesEditionRepository seriesEditionRepository;
+    private final EventSessionRepository eventSessionRepository;
     private final ResultsService resultsService;
 
-    public SeriesEditionResource(SeriesEditionService seriesEditionService, SeriesEditionRepository seriesEditionRepository, ResultsService resultsService) {
+    public SeriesEditionResource(SeriesEditionService seriesEditionService, SeriesEditionRepository seriesEditionRepository, 
+    		EventSessionRepository eventSessionRepository, ResultsService resultsService) {
         this.seriesEditionService = seriesEditionService;
     	this.seriesEditionRepository = seriesEditionRepository;
+    	this.eventSessionRepository = eventSessionRepository;
     	this.resultsService = resultsService;
     }
 
@@ -214,5 +220,19 @@ public class SeriesEditionResource {
     	log.debug("REST request to remove an event from series {}", id);
     	seriesEditionService.removeEventFromSeries(id, idEvent);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+    
+    @PostMapping("/series-editions/{id}/standings")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    public CompletableFuture<ResponseEntity<Void>> updateSeriesStandings(@PathVariable Long id) {
+    	log.debug("REST request to add an event to series {}", id);
+    	seriesEditionService.findSeriesEvents(id).stream().forEach(eventEdition -> {
+    		eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(eventEdition.getId()).stream()
+    			.filter(es -> es.getSessionType().equals(SessionType.QUALIFYING) || es.getSessionType().equals(SessionType.RACE))
+    			.forEach(es -> resultsService.processSessionResults(es.getId()));
+    	});
+    	
+        return CompletableFuture.completedFuture(ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString())).build());
     }
 }

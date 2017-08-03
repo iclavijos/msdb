@@ -8,13 +8,15 @@ import com.icesoft.msdb.domain.stats.Statistics;
 
 public interface StatisticsService {
 	
-	void deleteStatistics(); 
-
-	//void rebuildStatistics();
+	void deleteAllStatistics();
 	
 	void buildEventStatistics(Long eventEditionId);
 	
 	void buildEventStatistics(EventEdition eventEdition);
+	
+	void removeEventStatistics(Long eventEditionId);
+	
+	void removeEventStatistics(EventEdition event);
 	
 	Map<String, Statistics> getDriverStatistics(Long driverId);
 	

@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.icesoft.msdb.domain.EventEditionEntry;
 
 public class Statistics {
 
@@ -169,25 +168,14 @@ public class Statistics {
 		this.metersCompleted = kmsCompleted;
 	}
 
-	public void incParticipations() {
-		participations++;
-	}
-	
-	public void incFastLaps() {
-		fastLaps++;
-	}
-	
-	public void incGrandChelems() {
-		grandChelems++;
-	}
-	
-	public void addPoints(float points) {
-		this.points += points;
-	}
-	
 	public void addLaps(int laps, int lapLength) {
 		lapsCompleted += laps;
 		metersCompleted += laps * lapLength;
+	}
+	
+	public void removeLaps(int laps, int lapLength) {
+		lapsCompleted -= laps;
+		metersCompleted -= laps * lapLength;
 	}
 	
 	public void addFinishPositionR(int finalPosition, boolean retired) {
@@ -224,6 +212,41 @@ public class Statistics {
 		finalPositionsR.put(finalPosition, positionCount);
 	}
 	
+	public void removeFinishPositionR(int finalPosition, boolean retired) {
+		if (finalPosition <= 10) {
+			top10--;
+		}
+		if (finalPosition <=5) {
+			top5--;
+		}
+		if (finalPosition <= 3) {
+			top3--;
+		}
+		if (finalPosition == 1) {
+			wins--;
+		}
+		
+		if (finalPosition != 901) { //DNS
+			starts--;
+		}
+		
+		if (finalPosition != 900 && finalPosition != 901 && !retired) {
+			finished--;
+		}
+		
+		if (retired) {
+			retirements--;
+		}
+		
+		Integer positionCount = finalPositionsR.get(finalPosition);
+		positionCount--;
+		if (positionCount == 0) {
+			finalPositionsR.remove(finalPosition);
+		} else {
+			finalPositionsR.put(finalPosition, positionCount);
+		}
+	}
+	
 	public void addFinishPositionQ(int finalPosition) {
 		if (finalPosition <= 3) {
 			top3Q++;
@@ -240,6 +263,25 @@ public class Statistics {
 		}
 		positionCount++;
 		finalPositionsQ.put(finalPosition, positionCount);
+	}
+	
+	public void removeFinishPositionQ(int finalPosition) {
+		if (finalPosition <= 3) {
+			top3Q--;
+		}
+		if (finalPosition <= 2) {
+			top2Q--;
+		}
+		if (finalPosition == 1) {
+			poles--;
+		}
+		Integer positionCount = finalPositionsQ.get(finalPosition);
+		positionCount--;
+		if (positionCount == 0) {
+			finalPositionsQ.remove(finalPosition);
+		} else {
+			finalPositionsQ.put(finalPosition, positionCount);
+		}
 	}
 	
 	public Integer getBestFinishingPosR() {
@@ -272,14 +314,12 @@ public class Statistics {
 		return null;
 	}
 	
-	public synchronized void addResult(Result r) {
-		EventEditionEntry entry = r.getEntryResult().getEntry();
+	public void addResult(Result r) {
+		participations++;
 		
-		incParticipations();
-		
-		if (r.getLapsCompleted() != null && !entry.getEventEdition().isMultidriver()) {
+		if (r.getLapsCompleted() != null && !r.isMultidriver()) {
 			//We do not count laps for multidriver events
-			addLaps(r.getLapsCompleted(), entry.getEventEdition().getTrackLayout().getLength());
+			addLaps(r.getLapsCompleted(), r.getLapLength());
 		}
 		if (r.getGridPosition() != null) {
 			this.addFinishPositionQ(r.getGridPosition());
@@ -287,10 +327,10 @@ public class Statistics {
 		this.addFinishPositionR(r.getPosition(), r.getRetired());
 		
 		if (r.getRaceFastLap()) {
-			incFastLaps();
+			fastLaps++;
 		}
 		if (r.getGrandChelem()) {
-			incGrandChelems();
+			grandChelems++;
 		}
 
 		results.add(r);
@@ -299,17 +339,38 @@ public class Statistics {
 		results.forEach(res -> res.setOrder(i.getAndIncrement()));
 	}
 	
-	//public Result getResultForCategory
-	
-	public void removeResult(Result result) {
-		int pos = results.indexOf(result);
+	public void removeResult(Result r) {	
+		participations--;
+		
+		if (r.getLapsCompleted() != null && !r.isMultidriver()) {
+			//We do not count laps for multidriver events
+			removeLaps(r.getLapsCompleted(), r.getLapLength());
+		}
+		if (r.getGridPosition() != null) {
+			this.removeFinishPositionQ(r.getGridPosition());
+		}
+		this.removeFinishPositionR(r.getPosition(), r.getRetired());
+		
+		if (r.getRaceFastLap()) {
+			fastLaps--;
+		}
+		if (r.getGrandChelem()) {
+			grandChelems--;
+		}
+		
+		int pos = results.indexOf(r);
 		if (pos >= 0) {
 			results.remove(pos);
 			for (int i = pos; i < results.size(); i++) {
-				Result r = results.get(i);
-				r.setOrder(r.getOrder() - 1);
+				Result res = results.get(i);
+				res.setOrder(r.getOrder() - 1);
 			}
 		}
+	}
+	
+	@JsonIgnore
+	public List<Result> getResultByEventId(Long id) {
+		return results.parallelStream().filter(r -> r.getEventEditionId().equals(id)).collect(Collectors.toList());
 	}
 	
 	@JsonIgnore
@@ -359,12 +420,12 @@ public class Statistics {
 	
 	@JsonIgnore
 	public List<Result> getDNSsList() {
-			return results.stream().filter(r -> r.getPosition() == 902).collect(Collectors.toList());
+			return results.stream().filter(r -> r.getPosition() == 901).collect(Collectors.toList());
 	}
 	
 	@JsonIgnore
 	public List<Result> getDSQsList() {
-			return results.stream().filter(r -> r.getPosition() == 901).collect(Collectors.toList());
+			return results.stream().filter(r -> r.getPosition() == 902).collect(Collectors.toList());
 	}
 	
 	@JsonIgnore

@@ -70,6 +70,12 @@ export class SeriesEditionService {
            return res; 
         });
     }
+    
+    updateStandings(seriesId: number): Observable<Response> {
+        return this.http.post(`${this.resourceUrl}/${seriesId}/standings`, null).map((res: Response) => {
+            return res; 
+         });
+    }
 
     query(seriesId: number, req?: any): Observable<ResponseWrapper> {
         const options = createRequestOption(req);

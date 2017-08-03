@@ -64,7 +64,8 @@
 	            "manufacturerChamp": "Manufacturer champ",
 	            "eventDate": "Date",
 	            "event": "Event",
-	            "winner": "Winner"
+	            "winner": "Winner",
+	            "updateStadings": "Update standings"
 	        }
         }
     }

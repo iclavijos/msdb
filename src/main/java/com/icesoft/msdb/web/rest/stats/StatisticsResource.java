@@ -35,7 +35,7 @@ public class StatisticsResource {
 	@Transactional
 	public CompletableFuture<ResponseEntity<Void>> rebuildAllStatistics() {
 		log.info("Rebuilding all statistics...");
-		statsService.deleteStatistics();
+		statsService.deleteAllStatistics();
 		eventEditionRepo.findAllByOrderByEventDateAsc().parallelStream()
 			.forEach(event -> statsService.buildEventStatistics(event));
 		log.info("Statistics rebuilt...");

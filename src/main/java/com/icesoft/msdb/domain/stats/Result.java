@@ -15,12 +15,14 @@ public class Result {
 	Integer order;
 	String eventName;
 	String sessionName;
+	Boolean multidriver;
 	Integer year;
 	LocalDate eventDate;
 	Integer position;
 	Integer gridPosition;
 	Integer lapsLed;
 	Integer lapsCompleted;
+	Integer lapLength;
 	Boolean retired;
 	String retirementCause;
 	Boolean grandChelem;
@@ -35,6 +37,7 @@ public class Result {
 	
 	public Result(EventEntryResult result, Boolean grandChelem, Integer finalPosition, Integer gridPosition, Long poleLapTime, Boolean raceFastLap) {
 		this.entryResult = result;
+		this.multidriver = result.getEntry().getEventEdition().isMultidriver();
 		this.setEventDate(result.getSession().getSessionStartTime().toLocalDate());
 		this.setEventEditionId(result.getEntry().getEventEdition().getId());
 		this.setEntryId(result.getEntry().getId());
@@ -46,6 +49,7 @@ public class Result {
 		}
 		this.setLapsLed(result.getLapsLed());
 		this.setLapsCompleted(result.getLapsCompleted());
+		this.setLapLength(result.getEntry().getEventEdition().getTrackLayout().getLength());
 		this.setPosition(finalPosition);
 		this.setRetired(result.isRetired());
 		this.setYear(result.getEntry().getEventEdition().getEditionYear());
@@ -167,6 +171,18 @@ public class Result {
 	}
 	public void setRaceFastLap(Boolean raceFastLap) {
 		this.raceFastLap = raceFastLap;
+	}
+	public Boolean isMultidriver() {
+		return multidriver;
+	}
+	public void setMultidriver(Boolean multidriver) {
+		this.multidriver = multidriver;
+	}
+	public Integer getLapLength() {
+		return lapLength;
+	}
+	public void setLapLength(Integer lapLength) {
+		this.lapLength = lapLength;
 	}
 
 	@Override

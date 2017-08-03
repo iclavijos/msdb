@@ -64,7 +64,8 @@
 	            "manufacturerChamp": "Fabricant campió",
 	            "eventDate": "Data",
 	            "event": "Cita",
-	            "winner": "Guanyador"
+	            "winner": "Guanyador",
+	            "updateStadings": "Actualitza classificacions"
 	        }
         }
     }

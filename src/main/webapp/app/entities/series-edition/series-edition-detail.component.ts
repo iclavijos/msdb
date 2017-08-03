@@ -18,6 +18,10 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     driversStandings: any;
     teamsStandings: any;
 
+    private numEvents: number = 0;
+    private eventsProcessed: number = 0;
+    private displayEvents: boolean = false;
+
     constructor(
         private seriesEditionService: SeriesEditionService,
         private eventEditionService: EventEditionService,
@@ -47,11 +51,14 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     loadEvents(id) {
         this.seriesEditionService.findEvents(id).subscribe(events => {
            let data = events.json();
+           this.numEvents = data.length;
            for(let i = 0; i < data.length; i++) {
                let event = data[i];
                data[i].winners = new Array();
                this.eventEditionService.findWinners(event.id).subscribe(winners => {
                    data[i].winners.push(winners);
+                   this.eventsProcessed++;
+                   this.displayEvents = (this.eventsProcessed == this.numEvents);
                });
            }
            this.seriesEdition.events = data;
@@ -80,6 +87,13 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
                 break;
             }
         }
+    }
+    
+    updateStandings() {
+        this.alertService.info("Updating standings. Wait a few seconds...", null, null);
+        this.seriesEditionService.updateStandings(this.seriesEdition.id).subscribe(
+                (res: any) => this.alertService.success("Standings updated", null, null),
+                (res: any) => this.alertService.error("Standings could not be updated", null, null));
     }
     
     previousState() {
