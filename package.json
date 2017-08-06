@@ -1,7 +1,7 @@
 {
   "name": "motorsports-database",
-  "version": "0.15.0",
-  "description": "Database application to store any form of motorsport result",
+  "version": "0.15.1",
+  "description": "Database application to store any form of motorsport result. At the moment, rallies are out of the scope",
   "private": true,
   "cacheDirectories": [
     "node_modules"
