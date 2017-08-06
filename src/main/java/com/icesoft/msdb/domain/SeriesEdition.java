@@ -87,6 +87,9 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     
     @Column(name="manufacturers_standings")
     private Boolean manufacturersStandings = Boolean.FALSE;
+    
+    @Column(name="num_events", nullable=false)
+    private Integer numEvents;
 
     public Long getId() {
         return id;
@@ -238,6 +241,19 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 
 	public void setManufacturersStandings(Boolean manufacturersStandings) {
 		this.manufacturersStandings = manufacturersStandings;
+	}
+
+	public Integer getNumEvents() {
+		return numEvents;
+	}
+	
+	public SeriesEdition numEvents(Integer numEvents) {
+		this.numEvents = numEvents;
+		return this;
+	}
+
+	public void setNumEvents(Integer numEvents) {
+		this.numEvents = numEvents;
 	}
 
 	@Override

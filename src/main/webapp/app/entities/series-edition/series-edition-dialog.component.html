@@ -9,21 +9,37 @@
     </div>
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.period" for="field_period">Period</label>
-            <input type="text" class="form-control" name="period" id="field_period"
-                [(ngModel)]="seriesEdition.period"
-            required maxlength="10" />
-            <div [hidden]="!(editForm.controls.period?.dirty && editForm.controls.period?.invalid)">
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.period?.errors?.required" jhiTranslate="entity.validation.required">
-                   This field is required.
-                </small>
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.period?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 10 }">
-                   This field cannot be longer than 10 characters.
-                </small>
-            </div>
+        <div class="row">
+        	<div class="col-lg-6 col-md-6">
+		        <div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.period" for="field_period">Period</label>
+		            <input type="text" class="form-control" name="period" id="field_period"
+		                [(ngModel)]="seriesEdition.period"
+		            required maxlength="10" />
+		            <div [hidden]="!(editForm.controls.period?.dirty && editForm.controls.period?.invalid)">
+		                <small class="form-text text-danger"
+		                   [hidden]="!editForm.controls.period?.errors?.required" jhiTranslate="entity.validation.required">
+		                   This field is required.
+		                </small>
+		                <small class="form-text text-danger"
+		                   [hidden]="!editForm.controls.period?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 10 }">
+		                   This field cannot be longer than 10 characters.
+		                </small>
+		            </div>
+		        </div>
+		   	</div>
+		   	<div class="col-lg-6 col-md-6">
+		        <div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.numEvents" for="field_numEvents">Number Events</label>
+		            <input type="number" class="form-control" name="numEvents" id="field_numEvents" [(ngModel)]="seriesEdition.numEvents" required/>
+		            <div [hidden]="!(editForm.controls.numEvents?.dirty && editForm.controls.numEvents?.invalid)">
+		                <small class="form-text text-danger"
+		                    [hidden]="!editForm.controls.capacity?.errors?.number" jhiTranslate="entity.validation.number">
+		                    This field should be a number.
+		                </small>
+		            </div>
+		        </div>
+		    </div>
         </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.name" for="field_name">Name</label>

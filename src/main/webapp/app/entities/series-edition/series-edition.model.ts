@@ -23,6 +23,6 @@ export class SeriesEdition {
         public events?: EventEdition[],
         public driversStandings?: boolean,
         public teamsStandings?: boolean,
-        public manufacturersStandings?: boolean
+        public manufacturersStandings?: boolean,
     ) { }
 }

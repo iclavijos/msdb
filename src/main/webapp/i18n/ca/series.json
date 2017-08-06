@@ -59,14 +59,14 @@
 	            "allowedCategories": "Categories",
 	            "pointsSystems": "Sistemes de puntuació",
 	            "series": "Campionat",
-	            "numEvents": "# cites",
+	            "numEvents": "Número de cites",
 	            "driverChamp": "Pilot campió",
 	            "teamChamp": "Equip campió",
 	            "manufacturerChamp": "Fabricant campió",
 	            "eventDate": "Data",
 	            "event": "Cita",
 	            "winner": "Guanyador",
-	            "updateStadings": "Actualitza classificacions"
+	            "updateStandings": "Actualitza classificacions"
 	        }
         }
     }

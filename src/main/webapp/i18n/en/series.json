@@ -59,14 +59,14 @@
 	            "allowedCategories": "Allowed Categories",
 	            "pointsSystems": "Points systems",
 	            "series": "Series",
-	            "numEvents": "# Events",
+	            "numEvents": "Number of events",
 	            "driverChamp": "Driver champ",
 	            "teamChamp": "Teamp champ",
 	            "manufacturerChamp": "Manufacturer champ",
 	            "eventDate": "Date",
 	            "event": "Event",
 	            "winner": "Winner",
-	            "updateStadings": "Update standings"
+	            "updateStandings": "Update standings"
 	        }
         }
     }

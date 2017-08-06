@@ -59,14 +59,14 @@
 	            "allowedCategories": "Categorías",
 	            "pointsSystems": "Sistemas de puntuación",
 	            "series": "Campeonato",
-	            "numEvents": "# citas",
+	            "numEvents": "Número de citas",
 	            "driverChamp": "Piloto campeón",
 	            "teamChamp": "Equipo campeón",
 	            "manufacturerChamp": "Fabricante campeón",
 	            "eventDate": "Fecha",
 	            "event": "Cita",
 	            "winner": "Ganador",
-	            "updateStadings": "Actualiza clasificaciones"
+	            "updateStandings": "Actualiza clasificaciones"
 	        }
         }
     }
