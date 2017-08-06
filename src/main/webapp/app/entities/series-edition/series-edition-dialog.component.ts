@@ -80,8 +80,8 @@ export class SeriesEditionDialogComponent implements OnInit {
 
     private onSaveSuccess(result: SeriesEdition, isCreated: boolean) {
         this.alertService.success(
-            isCreated ? 'motorsportsDatabaseApp.seriesEdition.created'
-            : 'motorsportsDatabaseApp.seriesEdition.updated',
+            isCreated ? 'motorsportsDatabaseApp.series.seriesEdition.created'
+            : 'motorsportsDatabaseApp.series.seriesEdition.updated',
             { param : result.id }, null);
 
         this.eventManager.broadcast({ name: 'seriesEditionListModification', content: 'OK'});

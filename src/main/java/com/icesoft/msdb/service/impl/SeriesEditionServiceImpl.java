@@ -110,8 +110,12 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	@Transactional(readOnly=true)
 	@Cacheable(cacheNames="driversChampions", key="#seriesId")
 	public List<Driver> findSeriesChampionDriver(Long seriesId) {
-		int numEvents = eventRepo.countBySeriesEditionId(seriesId);
-		int puntuated = driverPointsRepo.getPuntuatedEventsInSeries(seriesId);
+		SeriesEdition seriesEd = seriesRepo.findOne(seriesId);
+		if (seriesEd == null) {
+			throw new MSDBException("Provided series id is invalid");
+		}
+		int numEvents = seriesEd.getNumEvents();
+		int puntuated = driverPointsRepo.countPunctuatedEventsInSeries(seriesId);
 		if (numEvents == puntuated) {
 			List<Long> ids = resultsService.getChampionsDriverIds(seriesId);
 			return driverRepo.findByIdIn(ids);

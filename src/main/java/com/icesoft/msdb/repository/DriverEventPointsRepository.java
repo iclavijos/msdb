@@ -22,5 +22,5 @@ public interface DriverEventPointsRepository extends JpaRepository<DriverEventPo
 	@Query("SELECT COUNT(DISTINCT e) "
 			+ "FROM EventEdition e, EventSession es, DriverEventPoints dep "
 			+ "WHERE e.seriesEdition.id = ?1 AND es.eventEdition = e AND dep.session = es")
-	Integer getPuntuatedEventsInSeries(Long seriesEditionId);
+	Integer countPunctuatedEventsInSeries(Long seriesEditionId);
 }
