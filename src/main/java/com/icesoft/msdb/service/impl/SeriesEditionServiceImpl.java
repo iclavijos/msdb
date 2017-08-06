@@ -1,16 +1,20 @@
 package com.icesoft.msdb.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.MSDBException;
+import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
+import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.PointsSystemRepository;
@@ -27,18 +31,23 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	private final SeriesEditionRepository seriesRepo;
 	private final EventSessionRepository sessionRepo;
 	private final PointsSystemRepository pointsRepo;
+	private final DriverRepository driverRepo;
 	private final DriverEventPointsRepository driverPointsRepo;
 	private final TeamEventPointsRepository teamPointsRepo;
+	private final ResultsService resultsService;
 	
 	public SeriesEditionServiceImpl(EventEditionRepository eventRepo, SeriesEditionRepository seriesRepo, 
-			EventSessionRepository sessionRepo, PointsSystemRepository pointsRepo, 
-			DriverEventPointsRepository driverPointsRepo, TeamEventPointsRepository teamPointsRepo) {
+			EventSessionRepository sessionRepo, PointsSystemRepository pointsRepo, DriverRepository driverRepo,
+			DriverEventPointsRepository driverPointsRepo, TeamEventPointsRepository teamPointsRepo,
+			ResultsService resultsService) {
 		this.eventRepo = eventRepo;
 		this.seriesRepo = seriesRepo;
 		this.sessionRepo = sessionRepo;
 		this.pointsRepo = pointsRepo;
+		this.driverRepo = driverRepo;
 		this.driverPointsRepo = driverPointsRepo;
 		this.teamPointsRepo = teamPointsRepo;
+		this.resultsService = resultsService;
 	}
 
 	@Override
@@ -95,6 +104,20 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	@Transactional(readOnly=true)
 	public List<EventEdition> findSeriesEvents(Long seriesId) {
 		return eventRepo.findBySeriesEditionIdOrderByEventDateAsc(seriesId);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	@Cacheable(cacheNames="driversChampions", key="#seriesId")
+	public List<Driver> findSeriesChampionDriver(Long seriesId) {
+		int numEvents = eventRepo.countBySeriesEditionId(seriesId);
+		int puntuated = driverPointsRepo.getPuntuatedEventsInSeries(seriesId);
+		if (numEvents == puntuated) {
+			List<Long> ids = resultsService.getChampionsDriverIds(seriesId);
+			return driverRepo.findByIdIn(ids);
+		} else {
+			return new ArrayList<>();
+		}
 	}
 
 }

@@ -91,6 +91,8 @@ public class CacheConfiguration {
             cm.createCache("teamsStandingsCache", longLivedCacheConfiguration);
             
             cm.createCache("winnersCache", alwaysCacheConfiguration);
+            
+            cm.createCache("driversChampions", alwaysCacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

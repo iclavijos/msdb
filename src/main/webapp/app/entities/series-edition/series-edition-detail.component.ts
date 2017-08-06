@@ -2,9 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { JhiEventManager, JhiAlertService  } from 'ng-jhipster';
+
 import { SeriesEdition } from './series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
 import { EventEditionService } from '../event-edition/event-edition.service';
+import { Driver } from '../driver';
 
 @Component({
     selector: 'jhi-series-edition-detail',
@@ -17,6 +19,7 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     private eventSubscriber: Subscription;
     driversStandings: any;
     teamsStandings: any;
+    driversChampions: any[];
 
     private numEvents: number = 0;
     private eventsProcessed: number = 0;
@@ -45,6 +48,7 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
             this.loadEvents(id);
             this.loadDriversStandings(id);
             this.loadTeamsStandings(id);
+            this.loadDriversChampions(id);
         });
     }
     
@@ -77,6 +81,12 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
         });
     }
     
+    loadDriversChampions(id) {
+        this.seriesEditionService.findDriversChampions(id).subscribe(champions => {
+            this.driversChampions = champions.json();
+        });
+    }
+    
     removeEvent(eventId) {
         for(let i = 0; i < this.seriesEdition.events.length; i++) {
             let event = this.seriesEdition.events[i];
@@ -92,8 +102,14 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     updateStandings() {
         this.alertService.info("Updating standings. Wait a few seconds...", null, null);
         this.seriesEditionService.updateStandings(this.seriesEdition.id).subscribe(
-                (res: any) => this.alertService.success("Standings updated", null, null),
+                (res: any) => this.standingsUpdated(),
                 (res: any) => this.alertService.error("Standings could not be updated", null, null));
+    }
+    
+    standingsUpdated() {
+        this.alertService.success("Standings updated", null, null);
+        this.loadDriversStandings(this.seriesEdition.id);
+        this.loadTeamsStandings(this.seriesEdition.id);
     }
     
     previousState() {

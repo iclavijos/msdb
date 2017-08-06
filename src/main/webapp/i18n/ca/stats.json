@@ -3,7 +3,7 @@
     	"stats": {
     		"home": {
     			"title": "Estadístiques",
-    			"init": "S'estàn recalculant les estadístiques... esperi uns segonsStatistics being rebuilt... wait a few seconds",
+    			"init": "S'estàn recalculant les estadístiques... esperi uns segons",
     			"rebuilt": "Estadístiques recalculades correctament"
     		},
     		"participations": "Participacions",
@@ -14,6 +14,7 @@
     		"wins": "Victòries",
     		"podiums": "Podis",
     		"poles": "Poles",
+    		"points": "Punts",
     		"bestStartingPosition": "Millor posició sortida",
     		"fastLaps": "Voltes ràpides",
     		"top3": "Top 3",

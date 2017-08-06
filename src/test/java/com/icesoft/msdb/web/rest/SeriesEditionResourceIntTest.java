@@ -30,8 +30,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.SeriesEdition;
+import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.service.SeriesEditionService;
+import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
@@ -62,7 +64,11 @@ public class SeriesEditionResourceIntTest {
     @Autowired
     private SeriesEditionRepository seriesEditionRepository;
     @Autowired
+    private EventSessionRepository eventSessionRepository;
+    @Autowired
     private ResultsService resultsService;
+    @Autowired
+    private StatisticsService statsService;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -84,7 +90,8 @@ public class SeriesEditionResourceIntTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
             SeriesEditionResource seriesEditionResource = new SeriesEditionResource(
-            		seriesEditionService, seriesEditionRepository, resultsService);
+            		seriesEditionService, seriesEditionRepository, eventSessionRepository, 
+            		resultsService, statsService);
         this.restSeriesEditionMockMvc = MockMvcBuilders.standaloneSetup(seriesEditionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

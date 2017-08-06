@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.icesoft.msdb.repository.EventEditionRepository;
+import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
@@ -23,10 +24,13 @@ public class StatisticsResource {
 	private final Logger log = LoggerFactory.getLogger(StatisticsResource.class);
 	
 	private final EventEditionRepository eventEditionRepo;
+	private final SeriesEditionRepository seriesEditionRepo;
 	private final StatisticsService statsService;
 	
-	public StatisticsResource(EventEditionRepository eventEditionRepo, StatisticsService statsService) {
+	public StatisticsResource(EventEditionRepository eventEditionRepo, SeriesEditionRepository seriesEditionRepo, 
+			StatisticsService statsService) {
 		this.eventEditionRepo = eventEditionRepo;
+		this.seriesEditionRepo = seriesEditionRepo;
 		this.statsService = statsService;
 	}
 	
@@ -34,10 +38,13 @@ public class StatisticsResource {
 	@Secured({AuthoritiesConstants.ADMIN})
 	@Transactional
 	public CompletableFuture<ResponseEntity<Void>> rebuildAllStatistics() {
-		log.info("Rebuilding all statistics...");
+		log.info("Rebuilding all statistics - Event based ones...");
 		statsService.deleteAllStatistics();
 		eventEditionRepo.findAllByOrderByEventDateAsc().parallelStream()
 			.forEach(event -> statsService.buildEventStatistics(event));
+		log.info("Series based ones...");
+		seriesEditionRepo.findAll().parallelStream()
+			.forEach(series -> statsService.buildSeriesStatistics(series));
 		log.info("Statistics rebuilt...");
 		return CompletableFuture.completedFuture(ResponseEntity.ok().headers(HeaderUtil.createAlert("Statistics rebuilt", null)).build());
 	}

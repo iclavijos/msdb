@@ -19,6 +19,7 @@ import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.domain.EventEntryResult;
+import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.domain.stats.ChassisStatistics;
 import com.icesoft.msdb.domain.stats.DriverStatistics;
@@ -27,6 +28,7 @@ import com.icesoft.msdb.domain.stats.EngineStatistics;
 import com.icesoft.msdb.domain.stats.Result;
 import com.icesoft.msdb.domain.stats.Statistics;
 import com.icesoft.msdb.domain.stats.TeamStatistics;
+import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
@@ -47,6 +49,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 	private final EventEditionRepository eventEditionRepo;
 	private final EventEntryRepository entriesRepo;
 	private final EventEntryResultRepository resultsRepo;
+	private final DriverEventPointsRepository driverPointsRepo;
 	private final DriverStatisticsRepository driverStatsRepo;
 	private final TeamStatisticsRepository teamStatsRepo;
 	private final ChassisStatisticsRepository chassisStatsRepo;
@@ -58,6 +61,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 			EventEditionRepository eventEditionRepo,
 			EventEntryRepository entriesRepo,
 			EventEntryResultRepository resultsRepo, 
+			DriverEventPointsRepository driverPointsRepo,
 			DriverStatisticsRepository driverStatsRepo,
 			TeamStatisticsRepository teamStatsRepo,
 			ChassisStatisticsRepository chassisStatsRepo,
@@ -67,6 +71,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 		this.eventEditionRepo = eventEditionRepo;
 		this.entriesRepo = entriesRepo;
 		this.resultsRepo = resultsRepo;
+		this.driverPointsRepo = driverPointsRepo;
 		this.driverStatsRepo = driverStatsRepo;
 		this.teamStatsRepo = teamStatsRepo;
 		this.chassisStatsRepo = chassisStatsRepo;
@@ -159,6 +164,10 @@ public class StatisticsServiceImpl implements StatisticsService {
 		});
 		
 		log.debug("Statistics for event {} rebuilt", event.getLongEventName());
+	}
+	
+	public void buildSeriesStatistics(SeriesEdition series) {
+		
 	}
 	
 	private List<Result> processEntry(EventEditionEntry entry) {
@@ -255,8 +264,13 @@ public class StatisticsServiceImpl implements StatisticsService {
 					result.getLapsCompleted() != null && result.getLapsCompleted().equals(result.getLapsLed())) {
 				grandChelem = true;
 			}
+			
+			//Points
+			Float points = Optional.ofNullable(driverPointsRepo.getDriverPointsInEvent(
+					entry.getEventEdition().getId(), 
+					entry.getDrivers().get(0).getId())).orElse(new Float(0));
 
-			return new Result(result, grandChelem, posInClass, startPosInClass, poleLapTime, posFL == 1);
+			return new Result(result, grandChelem, posInClass, startPosInClass, poleLapTime, posFL == 1, points);
 		}).collect(Collectors.toList());
 	}
 

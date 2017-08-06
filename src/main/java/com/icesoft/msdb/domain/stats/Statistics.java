@@ -332,6 +332,8 @@ public class Statistics {
 		if (r.getGrandChelem()) {
 			grandChelems++;
 		}
+		
+		points += r.getPoints();
 
 		results.add(r);
 		final AtomicInteger i = new AtomicInteger(1);
@@ -357,6 +359,7 @@ public class Statistics {
 		if (r.getGrandChelem()) {
 			grandChelems--;
 		}
+		points -= r.getPoints();
 		
 		int pos = results.indexOf(r);
 		if (pos >= 0) {

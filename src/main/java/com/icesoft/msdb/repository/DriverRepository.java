@@ -28,4 +28,6 @@ public interface DriverRepository extends JpaRepository<Driver,Long> {
 	List<Driver> searchNonPageable(String name);
 	
 	List<Driver> findByNameAndSurnameAndBirthDateAllIgnoreCase(String name, String surname, LocalDate date);
+	
+	List<Driver> findByIdIn(List<Long> ids);
 }

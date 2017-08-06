@@ -49,6 +49,23 @@
 				                </li>
 				            </ul>
 				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.champions">Champions</span></dt>
+						<dd>
+				            <div class="row">
+			            		<div class="col-md-2" *ngFor="let driver of driversChampions">
+			            			<figure class="figure">
+									  <img [src]="driver.driverImage" alt="{{driver.driverName}}"/>
+									  <figcaption class="figure-caption text-center">{{driver.driverName}}</figcaption>
+									</figure>
+			            		</div>
+			            	</div>
+			            	<div class="row" *ngIf="seriesEdition.teamsStandings">
+			            		
+			            	</div>
+			            	<div class="row" *ngIf="seriesEdition.manufacturersStandings">
+			            		
+			            	</div>
+				        </dd>
 				    </dl>
 				 </div>
 				 <div class="col-lg-8 col-md-8">

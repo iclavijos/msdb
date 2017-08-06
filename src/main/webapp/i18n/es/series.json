@@ -51,6 +51,7 @@
 	            	"searchEvent": "Buscar evento",
 	            	"assignPoints": "Asigna sistema de puntuación a cada sesión puntuable del evento"
 	            },
+	            "champions": "Campeones",
 	            "period": "Periodo",
 	            "singleChassis": "Chasis único",
 	            "singleEngine": "Motor único",

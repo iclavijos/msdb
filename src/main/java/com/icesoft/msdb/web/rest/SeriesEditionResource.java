@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -18,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.enums.SessionType;
@@ -36,8 +39,10 @@ import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SeriesEditionService;
+import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
+import com.icesoft.msdb.service.dto.SeriesDriverChampionDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
@@ -61,13 +66,15 @@ public class SeriesEditionResource {
     private final SeriesEditionRepository seriesEditionRepository;
     private final EventSessionRepository eventSessionRepository;
     private final ResultsService resultsService;
+    private final StatisticsService statsService;
 
     public SeriesEditionResource(SeriesEditionService seriesEditionService, SeriesEditionRepository seriesEditionRepository, 
-    		EventSessionRepository eventSessionRepository, ResultsService resultsService) {
+    		EventSessionRepository eventSessionRepository, ResultsService resultsService, StatisticsService statsService) {
         this.seriesEditionService = seriesEditionService;
     	this.seriesEditionRepository = seriesEditionRepository;
     	this.eventSessionRepository = eventSessionRepository;
     	this.resultsService = resultsService;
+    	this.statsService = statsService;
     }
 
     /**
@@ -225,14 +232,33 @@ public class SeriesEditionResource {
     @PostMapping("/series-editions/{id}/standings")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @Transactional
     public CompletableFuture<ResponseEntity<Void>> updateSeriesStandings(@PathVariable Long id) {
     	log.debug("REST request to add an event to series {}", id);
     	seriesEditionService.findSeriesEvents(id).stream().forEach(eventEdition -> {
     		eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(eventEdition.getId()).stream()
     			.filter(es -> es.getSessionType().equals(SessionType.QUALIFYING) || es.getSessionType().equals(SessionType.RACE))
     			.forEach(es -> resultsService.processSessionResults(es.getId()));
+    			log.info("Updating statistics...", eventEdition.getLongEventName());
+    			statsService.removeEventStatistics(eventEdition);
+    			statsService.buildEventStatistics(eventEdition);
+    			log.info("Statistics updated");
     	});
     	
         return CompletableFuture.completedFuture(ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString())).build());
+    }
+    
+    @GetMapping("/series-editions/{id}/champions/driver")
+    @Timed
+    public ResponseEntity<List<SeriesDriverChampionDTO>> getChampionDriver(@PathVariable Long id) {
+    	List<Driver> champs = seriesEditionService.findSeriesChampionDriver(id);
+    	List<SeriesDriverChampionDTO> result = champs.parallelStream().map(c -> {
+    		SeriesDriverChampionDTO dto = new SeriesDriverChampionDTO();
+        	dto.setDriverId(c.getId());
+        	dto.setDriverName(c.getFullName());
+        	return dto;
+    	}).collect(Collectors.toList());
+    	
+    	return ResponseEntity.ok(result);
     }
 }

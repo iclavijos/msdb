@@ -30,12 +30,13 @@ public class Result {
 	Boolean raceFastLap;
 	Long poleLapTime;
 	Long raceFastLapTime;
+	Float points;
 	
 	public Result() {
 		super();
 	}
 	
-	public Result(EventEntryResult result, Boolean grandChelem, Integer finalPosition, Integer gridPosition, Long poleLapTime, Boolean raceFastLap) {
+	public Result(EventEntryResult result, Boolean grandChelem, Integer finalPosition, Integer gridPosition, Long poleLapTime, Boolean raceFastLap, Float points) {
 		this.entryResult = result;
 		this.multidriver = result.getEntry().getEventEdition().isMultidriver();
 		this.setEventDate(result.getSession().getSessionStartTime().toLocalDate());
@@ -58,6 +59,7 @@ public class Result {
 		this.setPoleLapTime(poleLapTime);
 		this.setRaceFastLapTime(result.getBestLapTime());
 		this.setRaceFastLap(raceFastLap);
+		this.points = points;
 	}
 	
 	public EventEntryResult getEntryResult() {
@@ -183,6 +185,12 @@ public class Result {
 	}
 	public void setLapLength(Integer lapLength) {
 		this.lapLength = lapLength;
+	}
+	public Float getPoints() {
+		return points;
+	}
+	public void setPoints(Float points) {
+		this.points = points;
 	}
 
 	@Override

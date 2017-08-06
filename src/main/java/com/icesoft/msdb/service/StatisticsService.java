@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.icesoft.msdb.domain.EventEdition;
+import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.stats.Statistics;
 
 public interface StatisticsService {
@@ -17,6 +18,8 @@ public interface StatisticsService {
 	void removeEventStatistics(Long eventEditionId);
 	
 	void removeEventStatistics(EventEdition event);
+	
+	void buildSeriesStatistics(SeriesEdition series);
 	
 	Map<String, Statistics> getDriverStatistics(Long driverId);
 	

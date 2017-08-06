@@ -38,4 +38,6 @@ public interface EventEditionRepository extends JpaRepository<EventEdition,Long>
 	List<Object[]> findEventEditionsIdYear(Long editionId);
 	
 	List<EventEdition> findBySeriesEditionIdOrderByEventDateAsc(Long seriesEditionId);
+	
+	int countBySeriesEditionId(Long seriesEditionId);
 }

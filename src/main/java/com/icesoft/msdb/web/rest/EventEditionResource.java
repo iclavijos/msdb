@@ -38,6 +38,7 @@ import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.Series;
 import com.icesoft.msdb.domain.SeriesEdition;
+import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
@@ -46,6 +47,7 @@ import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.SearchService;
+import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.impl.CacheHandler;
 import com.icesoft.msdb.service.impl.ResultsService;
@@ -74,6 +76,7 @@ public class EventEditionResource {
     private final EventEntryRepository eventEntryRepository;
     private final EventEntryResultRepository eventResultRepository;
     private final ResultsService resultsService;
+    private final StatisticsService statsService;
     private final SearchService searchService;
     private final CDNService cdnService;
     private final JDBCRepositoryImpl jdbcRepository;
@@ -83,7 +86,7 @@ public class EventEditionResource {
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventSessionRepository eventSessionRepository, 
     		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, SearchService searchService,
     		ResultsService resultsService, CDNService cdnService, JDBCRepositoryImpl jdbcRepository,
-    		CacheHandler cacheHandler) {
+    		CacheHandler cacheHandler, StatisticsService statsService) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventSessionRepository = eventSessionRepository;
         this.eventEntryRepository = eventEntryRepository;
@@ -91,6 +94,7 @@ public class EventEditionResource {
         this.resultsService = resultsService;
         this.searchService = searchService;
         this.cdnService = cdnService;
+        this.statsService = statsService;
         this.jdbcRepository = jdbcRepository;
         this.cacheHandler = cacheHandler;
     }
@@ -293,9 +297,17 @@ public class EventEditionResource {
     @Timed
     @CacheEvict({"driversStandingsCache", "teamsStandingsCache"}) //TODO: Improve to only remove the required key
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @Transactional
     public ResponseEntity<Void> processSessionResults(@PathVariable Long sessionId) {
     	log.debug("Processing results of session {}", sessionId);
+    	EventSession session = eventSessionRepository.findOne(sessionId);
     	resultsService.processSessionResults(sessionId);
+    	if (session.getSessionType().equals(SessionType.RACE)) {
+			log.info("Updating statistics...", session.getEventEdition().getLongEventName(), session.getName());
+			statsService.removeEventStatistics(session.getEventEdition());
+			statsService.buildEventStatistics(session.getEventEdition());
+			log.info("Statistics updated");
+		}
     	return ResponseEntity.ok().build();
     }
     

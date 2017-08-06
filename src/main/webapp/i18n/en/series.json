@@ -51,6 +51,7 @@
 	            	"searchEvent": "Search event",
 	            	"assignPoints": "Assign points system to each scoring session of the event"
 	            },
+	            "champions": "Champions",
 	            "period": "Period",
 	            "singleChassis": "Single Chassis",
 	            "singleEngine": "Single Engine",

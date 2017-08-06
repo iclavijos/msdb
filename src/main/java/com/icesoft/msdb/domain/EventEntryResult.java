@@ -208,6 +208,9 @@ public class EventEntryResult implements Serializable {
 	}
 	
 	public Boolean isPitlaneStart() {
+		if (pitlaneStart == null) {
+			return false;
+		}
 		return pitlaneStart;
 	}
 	

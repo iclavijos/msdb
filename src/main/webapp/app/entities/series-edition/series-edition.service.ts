@@ -59,6 +59,12 @@ export class SeriesEditionService {
         });
     }
     
+    findDriversChampions(id: number): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${id}/champions/driver`).map((res: Response) => {
+            return res;
+        });
+    }
+    
     addEventToSeries(seriesId: number, eventId: number, racesData: any): Observable<Response> {
         return this.http.post(`${this.resourceUrl}/${seriesId}/events/${eventId}`, racesData).map((res: Response) => {
            return res; 
