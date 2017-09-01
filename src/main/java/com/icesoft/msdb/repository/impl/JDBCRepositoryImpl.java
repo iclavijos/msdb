@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,13 +19,15 @@ public class JDBCRepositoryImpl {
 	@Autowired private JdbcTemplate jdbcTemplate;
 	
 	public List<Object[]> getEventWinners(Long eventEditionId) {
-		String query = "select entryId, catName, sessionName, min(finalPos) finalPos "
+		//This needs to be improved to solve it just with a query
+		String query = "select entryId, catName, sessionName, finalPos "
 				+ "from events_results "
 				+ "where editionId = ? "
-				+ "group by catName, sessionName "
-				+ "order by sessionStartTime";
-		return jdbcTemplate.query(query, new Object[] {eventEditionId},
+				+ "order by sessionStartTime asc, finalPos asc";
+		List<Object[]> tmp = jdbcTemplate.query(query, new Object[] {eventEditionId},
 				(rs, rowNum) -> new Object[] {rs.getLong("entryId"), rs.getString("catName"), rs.getString("sessionName"), rs.getInt("finalPos")});
+		
+		return tmp.parallelStream().filter(obj -> ((Integer)obj[3]).intValue() == 1).collect(Collectors.toList());
 	}
 	
 	public Map<Long, List<Object[]>> getDriversResultsInSeries(Long seriesId) {
@@ -72,7 +75,7 @@ public class JDBCRepositoryImpl {
 		List<DriverPointsDTO> result = jdbcTemplate.query("select ds.driverId, ds.driverName, coalesce(dcs.points, 0) points "
 				+ "from drivers_series ds left outer join drivers_classification_series dcs on ds.driverId = dcs.driverId and ds.seriesId = dcs.seriesId "
 				+ "where ds.seriesId = ?", 
-				new Object[] {seriesId}, (rs, rowNum) -> new DriverPointsDTO(rs.getLong("driverId"), rs.getString("driverName"), rs.getFloat("points")));
+				new Object[] {seriesId}, (rs, rowNum) -> new DriverPointsDTO(null, rs.getLong("driverId"), rs.getString("driverName"), rs.getFloat("points")));
 		
 		return result;
 	}
