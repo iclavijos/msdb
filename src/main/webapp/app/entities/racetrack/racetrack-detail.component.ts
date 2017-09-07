@@ -62,8 +62,9 @@ export class RacetrackDetailComponent implements OnInit, OnDestroy {
         return this.dataUtils.openFile(contentType, field);
     }
     previousState() {
-        this.router.navigateByUrl('racetrack');
+        //this.router.navigateByUrl('racetrack');
         this.eventManager.destroy(this.eventSubscriber);
+        window.history.back();
     }
 
     ngOnDestroy() {

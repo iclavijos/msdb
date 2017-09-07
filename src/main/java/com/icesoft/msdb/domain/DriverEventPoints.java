@@ -33,6 +33,23 @@ public class DriverEventPoints implements Serializable {
 	
 	@Column
 	private Float points = 0f;
+	
+	@Column
+	private String reason;
+	
+	public DriverEventPoints() {
+		super();
+	}
+	
+	public DriverEventPoints(Driver driver, EventSession session, String reason) {
+		this.driver = driver;
+		this.session = session;
+		this.reason = reason;
+	}
+	
+	public Long getId() {
+		return id;
+	}
 
 	public Driver getDriver() {
 		return driver;
@@ -60,6 +77,14 @@ public class DriverEventPoints implements Serializable {
 	
 	public void addPoints(Float points) {
 		this.points += points;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 
 	@Override

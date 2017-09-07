@@ -1,0 +1,24 @@
+{
+    "motorsportsDatabaseApp": {
+        "driverPointsDetails" : {
+            "home": {
+                "title": "Detall de punts del pilot",
+                "createLabel": "Afegir punts per un altre concepto",
+                "createOrEditLabel": "Afegir o editar punts per concepte"
+            },
+            "created": "Punts per nou concepte afegits",
+            "updated": "Punts per concepte editats",
+            "deleted": "Punts per concepte eliminats",
+            "delete": {
+                "question": "Segur que vols esborrar aquest concepte?"
+            },
+            "detail": {
+                "title": "Detall de punts por concepte"
+            },
+            "points": "Punts",
+            "reason": "Raó",
+            "session": "Sessió",
+            "finishingPosition": "Posició final"
+        }
+    }
+}

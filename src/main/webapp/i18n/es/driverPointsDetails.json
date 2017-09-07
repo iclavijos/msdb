@@ -1,0 +1,24 @@
+{
+    "motorsportsDatabaseApp": {
+        "driverPointsDetails" : {
+            "home": {
+                "title": "Detalle de puntos del piloto",
+                "createLabel": "Añadir puntos por otro concepto",
+                "createOrEditLabel": "Crear o editar puntos por concepto"
+            },
+            "created": "Puntos por nuevo concepto añadidos",
+            "updated": "Puntos por concepto editados",
+            "deleted": "Puntos por concepto eliminados",
+            "delete": {
+                "question": "¿Seguro que quiere eliminar este concepto?"
+            },
+            "detail": {
+                "title": "Detalle de puntos por concepto"
+            },
+            "points": "Puntos",
+            "reason": "Razón",
+            "session": "Sesión",
+            "finishingPosition": "Posición final"
+        }
+    }
+}

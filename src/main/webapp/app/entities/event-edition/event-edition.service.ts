@@ -61,7 +61,11 @@ export class EventEditionService {
     
     findNonFPSessions(id: number, timeZone: string): Observable<ResponseWrapper> {
         return this.http.get(`${this.resourceUrl}/${id}/sessions/nonfp`).map((res: Response) => {
-            return this.transformDateTime(res, timeZone);
+            if (timeZone) {
+                return this.transformDateTime(res, timeZone);
+            } else {
+                return new ResponseWrapper(res.headers, res.json(), res.status);
+            }
         });
     }
     
@@ -69,6 +73,11 @@ export class EventEditionService {
         return this.http.get(`${this.resourceUrl}/${id}/winners`).map((res: Response) => {
             return res.json();
         })
+    }
+    
+    loadDriversPoints(id: number): Observable<ResponseWrapper> {
+        return this.http.get(`${this.resourceUrl}/${id}/points`)
+            .map((res: Response) => new ResponseWrapper(res.headers, res.json(), res.status));
     }
 
     query(req?: any): Observable<ResponseWrapper> {

@@ -137,7 +137,13 @@
 	</ngb-tab>
 	<ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.results' | translate}}">
 	    <ng-template ngbTabContent>
-	    	<ng-container *ngTemplateOutlet="innerTabset"></ng-container>
+	    	<ng-container *ngTemplateOutlet="innerTabsetResults"></ng-container>
+	    </ng-template>
+	</ngb-tab>
+	<ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.points' | translate}}">
+		<ng-template ngbTabContent>
+		    <jhi-standings [drivers]="driversPoints" [teams]="teamsStandings" 
+		    	[manufacturers]="manufacturersStandings" [eventEdition]="eventEdition" [seriesEditionId]="eventEdition.seriesId">Standings...</jhi-standings>
 	    </ng-template>
 	</ngb-tab>
 	</ngb-tabset>
@@ -148,7 +154,7 @@
     </button>
 </div>
 
-<ng-template #innerTabset>
+<ng-template #innerTabsetResults>
   <ngb-tabset>
   <ngb-tab *ngFor="let eventSession of eventEdition.sessions" title="{{eventSession.name}}">
     <ng-template ngbTabContent>

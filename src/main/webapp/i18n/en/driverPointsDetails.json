@@ -1,0 +1,24 @@
+{
+    "motorsportsDatabaseApp": {
+        "driverPointsDetails" : {
+            "home": {
+                "title": "Driver Points Details",
+                "createLabel": "Create a new driver points entry",
+                "createOrEditLabel": "Create or edit a driver points entry"
+            },
+            "created": "A new driver points entry is created",
+            "updated": "A driver points entry is updated",
+            "deleted": "A driver points entry is deleted",
+            "delete": {
+                "question": "Are you sure you want to delete driver points entry?"
+            },
+            "detail": {
+                "title": "Driver Points Details"
+            },
+            "points": "Points",
+            "reason": "Reason",
+            "session": "Session",
+            "finishingPosition": "Finishing position"
+        }
+    }
+}

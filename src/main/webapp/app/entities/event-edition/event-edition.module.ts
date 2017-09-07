@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 
 import { MotorsportsDatabaseEventEntryModule } from '../event-entry/event-entry.module';
 import { MotorsportsDatabaseEventEntryResultModule } from '../event-entry-result/event-entry-result.module';
+import { MotorsportsDatabaseStandingsModule} from '../standings/standings.module';
 import { MotorsportsDatabaseSharedModule } from '../../shared';
 
 import {
@@ -31,6 +32,7 @@ const ENTITY_STATES = [
         MotorsportsDatabaseSharedModule,
         MotorsportsDatabaseEventEntryModule,
         MotorsportsDatabaseEventEntryResultModule,
+        MotorsportsDatabaseStandingsModule,
         RouterModule.forRoot(ENTITY_STATES, { useHash: true })
     ],
     exports: [

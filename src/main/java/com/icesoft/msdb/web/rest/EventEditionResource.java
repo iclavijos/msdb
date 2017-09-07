@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -20,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventEditionEntry;
@@ -48,11 +49,13 @@ import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.StatisticsService;
+import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.impl.CacheHandler;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
+import com.icesoft.msdb.web.rest.views.ResponseViews;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
@@ -355,6 +358,25 @@ public class EventEditionResource {
     	}
     	
     	return winners;
+    }
+    
+    @GetMapping("/event-editions/{eventId}/points/{driverId}")
+    @Timed
+    @Transactional(readOnly = true)
+    @JsonView(ResponseViews.DriverPointsDetailView.class)
+    public ResponseEntity<List<DriverPointsDTO>> getEventPointsDriver(@PathVariable Long eventId, @PathVariable Long driverId) {
+    	List<DriverPointsDTO> result = resultsService.getDriverPointsEvent(eventId, driverId);
+    	
+    	return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    
+    @GetMapping("/event-editions/{eventId}/points")
+    @Timed
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<DriverPointsDTO>> getEventPoints(@PathVariable Long eventId) {
+    	List<DriverPointsDTO> result = resultsService.getDriversPointsEvent(eventId);
+    	
+    	return new ResponseEntity<>(result, HttpStatus.OK);
     }
     
     @PostMapping("/event-editions/{idTarget}/entries/{idSource}")

@@ -19,6 +19,7 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     private eventSubscriber: Subscription;
     driversStandings: any;
     teamsStandings: any;
+    manufacturersStandings: any;
     driversChampions: any[];
 
     private numEvents: number = 0;
@@ -114,7 +115,8 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     }
     
     previousState() {
-        this.router.navigate(['/series', this.seriesEdition.series.id]);
+        //this.router.navigate(['/series', this.seriesEdition.series.id]);
+        window.history.back();
     }
 
     ngOnDestroy() {

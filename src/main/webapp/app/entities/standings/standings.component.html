@@ -1,0 +1,54 @@
+<div class="row">
+	<div class="card-deck col-md-12">
+		<div class="card col-md-4">
+			<div class="card-block">
+				<h4 class="card-title">{{'motorsportsDatabaseApp.series.seriesEdition.detail.driversStandings' | translate}}</h4>
+				<div class="card-text">
+					<table class="table table-sm">
+						<thead>
+							<tr>
+								<th></th>
+								<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.driver' | translate}}</th>
+								<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let driver of drivers; let i = index">
+								<td>{{i + 1}}</td>
+								<td>{{driver.driverName}}</td>
+								<td>{{driver.points}}</td>
+								<td><div (click)="getPointsDetail(driver.driverId)"><i class="fa fa-search" aria-hidden="true"></i></div></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="card col-md-4" *ngIf="teams">
+			<div class="card-block">
+				<h4 class="card-title">{{'motorsportsDatabaseApp.series.seriesEdition.detail.teamsStandings' | translate}}</h4>
+				<div class="card-text">
+					<table class="table table-sm">
+						<thead>
+							<tr>
+								<th></th>
+								<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.team'	| translate}}</th>
+								<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let team of teams; let i = index">
+								<td>{{i + 1}}</td>
+								<td>{{team.teamName}}</td>
+								<td>{{team.points}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="card col-md-4" *ngIf="manufacturers">
+		</div>
+	</div>
+</div>

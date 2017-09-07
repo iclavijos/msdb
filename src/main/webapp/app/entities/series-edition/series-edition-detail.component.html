@@ -118,11 +118,6 @@
 					            	</td>
 					            	<td>
 					            		<button type="submit"
-				                                (click)="removeEvent(event.id)"
-				                                class="btn btn-info btn-sm">
-				                            <span class="fa fa-list-ol"></span>
-				                        </button>
-					            		<button type="submit"
 				                        		 *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
 				                                (click)="removeEvent(event.id)"
 				                                class="btn btn-primary btn-sm">
@@ -153,58 +148,8 @@
 	  </ngb-tab>
 	  <ngb-tab title="{{'motorsportsDatabaseApp.series.seriesEdition.detail.standings' | translate}}">
 	    <ng-template ngbTabContent>
-	    	<div class="row">
-				<div class="card-deck col-md-12">
-					<div class="card col-md-4">
-						<div class="card-block">
-							<h4 class="card-title">{{'motorsportsDatabaseApp.series.seriesEdition.detail.driversStandings' | translate}}</h4>
-							<div class="card-text">
-							<table class="table table-sm">
-								<thead>
-									<tr>
-										<th></th>
-										<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.driver' | translate}}</th>
-										<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr *ngFor="let driver of driversStandings; let i = index">
-										<td>{{i + 1}}</td>
-										<td>{{driver.driverName}}</td>
-										<td>{{driver.points}}</td>
-									</tr>
-								</tbody>
-							</table>
-							</div>
-						</div>
-					</div>
-					<div class="card col-md-4" *ngIf="seriesEdition.teamsStandings">
-						<div class="card-block">
-							<h4 class="card-title">{{'motorsportsDatabaseApp.series.seriesEdition.detail.teamsStandings' | translate}}</h4>
-							<div class="card-text">
-							<table class="table table-sm">
-								<thead>
-									<tr>
-										<th></th>
-										<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.team' | translate}}</th>
-										<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr *ngFor="let team of teamsStandings; let i = index">
-										<td>{{i + 1}}</td>
-										<td>{{team.teamName}}</td>
-										<td>{{team.points}}</td>
-									</tr>
-								</tbody>
-							</table>
-							</div>
-						</div>
-					</div>
-					<div class="card col-md-4" *ngIf="seriesEdition.manufacturersStandings">
-					</div>
-				</div>
-			</div>
+	    	<jhi-standings [drivers]="driversStandings" [teams]="teamsStandings" 
+	    		[manufacturers]="manufacturersStandings" [seriesEditionId]="seriesEdition.id">Standings...</jhi-standings>
 	    </ng-template>
 	  </ngb-tab>
 	</ngb-tabset>

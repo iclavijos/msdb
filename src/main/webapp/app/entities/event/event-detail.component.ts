@@ -37,7 +37,8 @@ export class EventDetailComponent implements OnInit, OnDestroy {
         });
     }
     previousState() {
-        this.router.navigate(['/event/']);
+        //this.router.navigate(['/event/']);
+        window.history.back();
     }
 
     ngOnDestroy() {
