@@ -66,7 +66,10 @@
 	            "eventDate": "Fecha",
 	            "event": "Cita",
 	            "winner": "Ganador",
-	            "updateStandings": "Actualiza clasificaciones"
+	            "updateStandings": "Actualiza clasificaciones",
+	            "updatingStandings": "Actualizando clasificaciones. Espera unos segundos",
+	            "standingsNotUpdated": "No se han podido actualizar las clasificaciones",
+	            "standingsUpdated": "Clasificaciones actualizadas"
 	        }
         }
     }

@@ -106,14 +106,14 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     }
     
     updateStandings() {
-        this.alertService.info("Updating standings. Wait a few seconds...", null, null);
+        this.alertService.info("motorsportsDatabaseApp.series.seriesEdition.updatingStandings", null, null);
         this.seriesEditionService.updateStandings(this.seriesEdition.id).subscribe(
                 (res: any) => this.standingsUpdated(),
-                (res: any) => this.alertService.error("Standings could not be updated", null, null));
+                (res: any) => this.alertService.error("motorsportsDatabaseApp.series.seriesEdition.standingsNotUpdated", null, null));
     }
     
     standingsUpdated() {
-        this.alertService.success("Standings updated", null, null);
+        this.alertService.success("motorsportsDatabaseApp.series.seriesEdition.standingsUpdated", null, null);
         this.loadDriversStandings(this.seriesEdition.id);
         this.loadTeamsStandings(this.seriesEdition.id);
     }

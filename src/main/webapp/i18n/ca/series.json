@@ -66,7 +66,11 @@
 	            "eventDate": "Data",
 	            "event": "Cita",
 	            "winner": "Guanyador",
-	            "updateStandings": "Actualitza classificacions"
+	            "updateStandings": "Actualitza classificacions",
+	            "updatingStandings": "Actualitzant classificacions. Espera uns segons...",
+	            "standingsNotUpdated": "No s'han pogut actualitzar les classificacions",
+	            "standingsUpdated": "Classificacions actualitzades"
+	            
 	        }
         }
     }
