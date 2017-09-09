@@ -52,23 +52,26 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
             eventSearch : new FormControl(),
             races: this._fb.array([])
         });
+        if (this.eventEdition) {
+           this.updateUI();
+        }
     }
     
-    initRace(race: EventSession) {
+    initSession(session: EventSession) {
         return this._fb.group({
-            raceId : race.id,
-            raceName : race.name,
-            pSystemAssigned : ''
+            raceId : session.id,
+            raceName : session.name,
+            pSystemAssigned : session.pointsSystem ? session.pointsSystem.id : '',
+            psMultiplier: session.psMultiplier ? session.psMultiplier : 1
         });
     }
 
     addRaces(races: EventSession[]) {
         const control = <FormArray>this.myForm.controls['races'];
         for(let race of races) {
-            control.push(this.initRace(race));
+            control.push(this.initSession(race));
         }
     }
-
     
     clear () {
         this.activeModal.dismiss('cancel');
@@ -131,13 +134,17 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
         });
         if (selected) {
             this.eventEdition = selected.item;
-            this.eventEditionService.findNonFPSessions(this.eventEdition.id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe((eventSessions) => {
-                this.eventEdition.sessions = eventSessions.json;
-                this.addRaces(eventSessions.json);
-            });
+            this.updateUI();
         } else {
             this.eventEdition = null;
         }
+    }
+    
+    private updateUI() {
+        this.eventEditionService.findNonFPSessions(this.eventEdition.id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe((eventSessions) => {
+            this.eventEdition.sessions = eventSessions.json;
+            this.addRaces(eventSessions.json);
+        });
     }
 
 }
@@ -158,8 +165,13 @@ export class SeriesEditionCalendarPopupComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.routeSub = this.route.params.subscribe(params => {
-            this.modalRef = this.seriesEditionPopupService
-                .openCalendar(SeriesEditionCalendarDialogComponent, params['id']);
+            if (params['eventId']) {
+                this.modalRef = this.seriesEditionPopupService
+                    .openCalendar(SeriesEditionCalendarDialogComponent, params['id'], params['eventId']);
+            } else {
+                this.modalRef = this.seriesEditionPopupService
+                    .openCalendar(SeriesEditionCalendarDialogComponent, params['id']);
+            }
         });
     }
 

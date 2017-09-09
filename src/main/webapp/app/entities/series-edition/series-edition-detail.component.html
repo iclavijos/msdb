@@ -117,9 +117,8 @@
 					                    </div>
 					            	</td>
 					            	<td>
-					            		<button type="submit"
-				                        		 *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-				                                (click)="removeEvent(event.id)"
+					            		<button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+				                                [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar-edit/' + event.id } }]"
 				                                class="btn btn-primary btn-sm">
 				                            <span class="fa fa-pencil"></span>
 				                        </button>

@@ -62,6 +62,16 @@ export const seriesEditionPopupRoute: Routes = [
     outlet: 'popup'
   },
   {
+      path: ':id/calendar-edit/:eventId',
+      component: SeriesEditionCalendarPopupComponent,
+      data: {
+          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+          pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
+      },
+      canActivate: [UserRouteAccessService],
+      outlet: 'popup'
+  },
+  {
       path: ':id/calendar',
       component: SeriesEditionCalendarPopupComponent,
       data: {
@@ -70,7 +80,7 @@ export const seriesEditionPopupRoute: Routes = [
       },
       canActivate: [UserRouteAccessService],
       outlet: 'popup'
-    },
+  },
   {
     path: 'series-edition/:id/delete',
     component: SeriesEditionDeletePopupComponent,

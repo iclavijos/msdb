@@ -58,16 +58,22 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		}
 		EventEdition eventEd = null;
 
-		racesPointsData.parallelStream().filter(rpd -> rpd.isAssigned()).forEach(racePoints -> {
+		racesPointsData.parallelStream().forEach(racePoints -> {
 			EventSession session = sessionRepo.findOne(racePoints.getRaceId());
-			PointsSystem points = pointsRepo.findOne(racePoints.getpSystemAssigned());
-			if (session == null || points == null) {
-				throw new MSDBException(
-						String.format("Provided points for race data invalid [%s, %s]", 
-								racePoints.getRaceId(), 
-								racePoints.getpSystemAssigned()));
+			if (racePoints.isAssigned()) {
+				session.setPointsSystem(null);
+				session.setPsMultiplier(0f);
+			} else {
+				PointsSystem points = pointsRepo.findOne(racePoints.getpSystemAssigned());
+				if (session == null || points == null) {
+					throw new MSDBException(
+							String.format("Provided points for race data invalid [%s, %s]", 
+									racePoints.getRaceId(), 
+									racePoints.getpSystemAssigned()));
+				}
+				session.setPointsSystem(points);
+				session.setPsMultiplier(racePoints.getPsMultiplier());
 			}
-			session.setPointsSystem(points);
 			sessionRepo.save(session);
 		});
 		

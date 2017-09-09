@@ -76,7 +76,7 @@ public class ResultsService {
 					}
 					
 					if (result.getStartingPosition() != null &&  result.getStartingPosition() == 1) {
-						if (ps.getPointsPole() != 0 && session.getPsMultiplier().equals(new Float(1.0f))) {
+						if (ps.getPointsPole() != 0) { // && session.getPsMultiplier().equals(new Float(1.0f))) {
 							DriverEventPoints dep = new DriverEventPoints(d, session, "motorsportsDatabaseApp.pointsSystem.pointsPole");
 							dep.addPoints(ps.getPointsPole().floatValue());
 							log.debug(String.format("Driver %s: %s points for pole", d.getFullName(), ps.getPointsPole()));

@@ -175,6 +175,7 @@ public class Result {
 		this.raceFastLap = raceFastLap;
 	}
 	public Boolean isMultidriver() {
+		if (multidriver == null) return false;
 		return multidriver;
 	}
 	public void setMultidriver(Boolean multidriver) {

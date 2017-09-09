@@ -136,17 +136,17 @@ public class EventEditionResource {
     @PutMapping("/event-editions")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @Transactional
     public ResponseEntity<EventEdition> updateEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to update EventEdition : {}", eventEdition);
         if (eventEdition.getId() == null) {
             return createEventEdition(eventEdition);
         }
-        EventEdition result = eventEditionRepository.save(eventEdition);
+        EventEdition result = eventEditionRepository.getOne(eventEdition.getId());
         if (result.getSeriesEdition() != null) {
-    		SeriesEdition tmpSeries = new SeriesEdition();
-    		tmpSeries.setId(eventEdition.getSeriesEdition().getId());
-    		result.setSeriesEdition(tmpSeries);
+    		eventEdition.setSeriesEdition(result.getSeriesEdition());
     	}
+        result = eventEditionRepository.save(eventEdition);
 
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, eventEdition.getId().toString()))

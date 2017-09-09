@@ -4,6 +4,7 @@ public class EventRacePointsDTO {
 	
 	private Long raceId;
 	private Long pSystemAssigned;
+	private Float psMultiplier;
 
 	public Long getRaceId() {
 		return raceId;
@@ -23,6 +24,14 @@ public class EventRacePointsDTO {
 	
 	public boolean isAssigned() {
 		return pSystemAssigned != null;
+	}
+
+	public Float getPsMultiplier() {
+		return psMultiplier;
+	}
+
+	public void setPsMultiplier(Float multiplier) {
+		this.psMultiplier = multiplier;
 	}
 		
 }

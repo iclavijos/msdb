@@ -48,8 +48,12 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
             this.seriesEdition = seriesEdition;
             this.loadEvents(id);
             this.loadDriversStandings(id);
-            this.loadTeamsStandings(id);
-            this.loadDriversChampions(id);
+            if (this.seriesEdition.teamsStandings) {
+                this.loadTeamsStandings(id);
+            }
+            if (this.seriesEdition.manufacturersStandings) {
+                this.loadDriversChampions(id);
+            }
         });
     }
     

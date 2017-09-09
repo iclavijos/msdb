@@ -106,6 +106,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     private Boolean singleFuel;
     
     @OneToOne
+    @JoinColumn(name="series_edition_id")
     @JsonIgnore
     private SeriesEdition seriesEdition;
     

@@ -1,5 +1,6 @@
 import { EventEdition } from '../event-edition/event-edition.model';
 
+import { PointsSystem } from '../points-system';
 import { DurationType, SessionType } from '../../shared';
 
 export class EventSession {
@@ -12,7 +13,8 @@ export class EventSession {
         public duration?: number,
         public durationType?: DurationType,
         public additionalLap = false,
-        public awardsPoints = false,
+        public pointsSystem?: PointsSystem,
+        public psMultiplier?: number,
         public sessionType?: SessionType,
         public eventEdition?: EventEdition,
     ) { }
