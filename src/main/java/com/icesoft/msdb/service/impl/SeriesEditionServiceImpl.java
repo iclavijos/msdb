@@ -60,7 +60,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 
 		racesPointsData.parallelStream().forEach(racePoints -> {
 			EventSession session = sessionRepo.findOne(racePoints.getRaceId());
-			if (racePoints.isAssigned()) {
+			if (!racePoints.isAssigned()) {
 				session.setPointsSystem(null);
 				session.setPsMultiplier(0f);
 			} else {
