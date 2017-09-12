@@ -74,9 +74,10 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     }
 
     processResults() {
+        this.alertService.info('motorsportsDatabase.event.eventEdition.result.processing', null, null);
         this.eventEntryResultService.processSessionResults(this.session.id).subscribe(
-                () => this.alertService.success('Processed', null, null),
-                () => this.alertService.error('error', null, null));
+                () => this.alertService.success('motorsportsDatabase.event.eventEdition.result.processed', null, null),
+                () => this.alertService.error('motorsportsDatabase.event.eventEdition.result.notProcessed', null, null));
     }
 
     registerChangeInEventEntryResults() {

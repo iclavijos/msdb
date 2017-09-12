@@ -110,7 +110,10 @@
 	            "processResults": {
 	            	"label": "Processar resultats",
 	            	"title": "Processar resultats de la cursa",
-	            	"desc": "Calcular punts per cada pilot i actualitzar classificacions generals"
+	            	"desc": "Calcular punts per cada pilot i actualitzar classificacions generals",
+	            	"processing": "Processant resultats",
+	            	"processed": "Resultats processats",
+	            	"notProcessed": "No s'han pogut processar els resultats"
 	            },
 	            "created": "S'ha afegit un nou resultat",
 	            "updated": "S'ha actualitzat el resultat",

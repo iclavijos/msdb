@@ -110,7 +110,10 @@
 	            "processResults": {
 	            	"label": "Procesar resultados",
 	            	"title": "Procesar resultados de la carrera",
-	            	"desc": "Calcular puntos para cada piloto y actualizar clasificaciones"
+	            	"desc": "Calcular puntos para cada piloto y actualizar clasificaciones",
+	            	"processing": "Procesando resultados",
+	            	"processed": "Resultados procesados",
+	            	"notProcessed": "No se han podido procesar los resultados"
 	            },
 	            "created": "Se ha añadido un nuevo resultado",
 	            "updated": "Se ha editado el resultado",
