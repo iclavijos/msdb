@@ -54,13 +54,14 @@ export class HomeComponent implements OnInit {
                 for (let j = 0; j < data[i].sessions.length; j++) {
                     let session = data[i].sessions[j];
                     session.sessionStartTime = moment(session.sessionStartTime * 1000).tz(currentTZ);
-                    if (session.durationType === 1) {
-                        session.sessionEndTime = session.sessionStartTime.clone();
-                        session.sessionEndTime.add(session.duration, 'm');
-                    } else if (session.durationType === 2) {
-                        session.sessionEndTime = session.sessionStartTime.clone();
-                        session.sessionEndTime.add(session.duration, 'h');
-                    }
+                    session.sessionEndTime = moment(session.sessionEndTime * 1000).tz(currentTZ);
+//                    if (session.durationType === 1) {
+//                        session.sessionEndTime.add(session.duration, 'm');
+//                    } else if (session.durationType === 2) {
+//                        session.sessionEndTime.add(session.duration, 'h');
+//                    } else {
+//                        
+//                    }
                 }
             }
             this.calendar = data;

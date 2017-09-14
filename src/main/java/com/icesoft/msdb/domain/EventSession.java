@@ -232,7 +232,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 				durationType.equals(DurationType.HOURS) ? ChronoUnit.HOURS : null;
 		
 		ZonedDateTime end = null;
-		if (temp == null) end = getSessionStartTime().plus(3, ChronoUnit.HOURS);
+		if (temp == null) end = getSessionStartTime().plus(2, ChronoUnit.HOURS);
 		else end = getSessionStartTime().plus(getDuration(), temp);
 		
 		return end;

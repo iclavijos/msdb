@@ -110,8 +110,10 @@ public class HomeResource {
 				daySessions.add(s);
 			}
 		}
-		CalendarDTO day = new CalendarDTO(currentDate, daySessions);
-		calendar.add(day);
+		if (!daySessions.isEmpty()) {
+			CalendarDTO day = new CalendarDTO(currentDate, daySessions);
+			calendar.add(day);
+		}
 		
 		return calendar;
 	}
