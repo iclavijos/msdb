@@ -4,7 +4,8 @@
             "title": "Calendari",
             "session": "Sessió",
             "start": "Inici",
-            "end": "Fi"
+            "end": "Fi",
+            "details": "Detall"
         }
     }
 }

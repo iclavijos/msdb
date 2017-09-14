@@ -4,7 +4,8 @@
             "title": "Calendario",
             "session": "Sesión",
             "start": "Inicio",
-            "end": "Fin"
+            "end": "Fin",
+            "details": "Detalle"
         }
     }
 }

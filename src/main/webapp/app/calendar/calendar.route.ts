@@ -8,7 +8,7 @@ export const CalendarRoute: Route = {
     path: 'calendar',
     component: Calendar,
     data: {
-        pageTitle: 'calendar.title'
+        pageTitle: 'motorsportsDatabaseApp.calendar.title'
     },
     canActivate: [UserRouteAccessService]
 };

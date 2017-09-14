@@ -16,26 +16,6 @@ import * as moment from 'moment-timezone';
         .ui-grid-row div label {
           font-weight: bold;
         }
-        .fc-event-hover {
-          position: relative !important;
-          height: 17px;
-        }
-        .fc-event-hover .fc-content {
-          position: absolute !important;
-          top: -1px;
-          left: 0;
-          background: red;
-          z-index: 99999;
-          width: auto;
-          overflow: visible !important;
-          background-color: #3a87ad;
-          padding: 1px;
-          border-radius: 2px;
-        }
-        .fc-content-skeleton tr td:last-child .fc-event-hover .fc-content {
-          left: auto;
-          right: 0;
-        }
   `]
 })
 
@@ -75,7 +55,7 @@ export class Calendar implements OnInit {
         this.eventEditionService.findCalendarEvents(new Date(start), new Date(end)).subscribe(events => {this.convertEvents(events);});
     }
     
-    private mouseOver(e) {
+    private eventClick(e) {
         this.event = new MyEvent();
         this.event.title = e.calEvent.eventName;
         this.event.sessionName = e.calEvent.sessionName;
@@ -90,15 +70,12 @@ export class Calendar implements OnInit {
         this.dialogVisible = true;
     }
     
-    private mouseOut(e) {
-        this.dialogVisible = false;
-    }
-    
     private convertEvents(sessions) {
         let currentTZ = moment.tz.guess();
         this.events = new Array();
         for(let session of sessions) {
             let newEvent = new MyEvent();
+            newEvent.id = session.id;
             newEvent.title = session.eventName + ' - ' + session.sessionName;
             newEvent.eventName = session.eventName;
             newEvent.sessionName = session.sessionName;

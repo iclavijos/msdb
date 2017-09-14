@@ -526,7 +526,7 @@ public class EventEditionResource {
 		ZonedDateTime end = ZonedDateTime.of(endDate.atTime(23, 59, 59), ZoneId.of("UTC"));
     	List<EventSession> tmp = eventSessionRepository.findUpcomingSessions(start, end);
     	return tmp.parallelStream().map(session -> {
-    		return new SessionCalendarDTO(session.getId(), 
+    		return new SessionCalendarDTO(session.getEventEdition().getId(), 
     				session.getEventEdition().getLongEventName(),
     				session.getName(), 
     				session.getSessionStartTime(), session.getSessionEndTime());
