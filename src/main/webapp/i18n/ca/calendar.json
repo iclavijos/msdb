@@ -1,0 +1,10 @@
+{
+    "motorsportsDatabaseApp": {
+        "calendar" : {
+            "title": "Calendari",
+            "session": "Sessió",
+            "start": "Inici",
+            "end": "Fi"
+        }
+    }
+}

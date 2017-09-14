@@ -223,14 +223,19 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 	}
 	
 	public boolean isFinished(ZonedDateTime now) {
+		return getSessionEndTime().isBefore(ZonedDateTime.now(ZoneId.of("UTC")));
+	}
+	
+	public ZonedDateTime getSessionEndTime() {
 		DurationType durationType = DurationType.valueOf(getDurationType());
 		TemporalUnit temp = durationType.equals(DurationType.MINUTES) ? ChronoUnit.MINUTES :
 				durationType.equals(DurationType.HOURS) ? ChronoUnit.HOURS : null;
 		
 		ZonedDateTime end = null;
-		if (temp == null) end = getSessionStartTime().plus(4, ChronoUnit.HOURS);
+		if (temp == null) end = getSessionStartTime().plus(3, ChronoUnit.HOURS);
 		else end = getSessionStartTime().plus(getDuration(), temp);
-		return end.isBefore(ZonedDateTime.now(ZoneId.of("UTC")));
+		
+		return end;
 	}
 
 	@Override

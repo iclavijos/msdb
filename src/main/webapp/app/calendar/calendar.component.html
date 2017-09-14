@@ -1,0 +1,21 @@
+<p-schedule [events]="events" [header]="header" [eventLimit]="10" [editable]="false" 
+	[locale]="currentLocale" [options]="options" (onViewRender)="loadEvents($event)"
+	(onEventMouseover)="mouseOver($event)" (onEventMouseout)="mouseOut($event)"></p-schedule>
+	
+<p-dialog [header]="event?.title" [(visible)]="dialogVisible" [responsive]="true" showEffect="fade" [modal]="false" [contentStyle]="{'overflow':'visible'}"
+    [style]="{'overflow':'visible'}" [resizable]="false">
+    <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-2"><label for="vin">{{'motorsportsDatabaseApp.calendar.session' | translate}}</label></div>
+            <div class="ui-grid-col-10"><span>{{event.sessionName}}</span></div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-2"><label for="start">{{'motorsportsDatabaseApp.calendar.start' | translate}}</label></div>
+            <div class="ui-grid-col-10"><span>{{event.start}}</span></div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-2"><label for="end">{{'motorsportsDatabaseApp.calendar.end' | translate}}</label></div>
+            <div class="ui-grid-col-10"><span>{{event.end}}</span></div>
+        </div>
+    </div>
+</p-dialog>

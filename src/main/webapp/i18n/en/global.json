@@ -57,7 +57,8 @@
             	"teams": "Teams",
             	"engines": "Engines"
             },
-            "language": "Language"
+            "language": "Language",
+            "calendar": "Calendar"
         },
         "form": {
             "username": "Username",

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
+import { DatePipe } from '@angular/common';
 import { Observable } from 'rxjs/Rx';
 import { JhiDateUtils } from 'ng-jhipster';
 
@@ -16,7 +17,7 @@ export class EventEditionService {
     private resourceSearchUrl = 'api/_search/event-editions';
     private eventResourceUrl = 'api/events';
 
-    constructor(private http: Http, private dateUtils: JhiDateUtils) { }
+    constructor(private http: Http, private dateUtils: JhiDateUtils, private datePipe: DatePipe) { }
 
     create(eventEdition: EventEdition): Observable<EventEdition> {
         const copy = this.convert(eventEdition);
@@ -78,6 +79,14 @@ export class EventEditionService {
     loadDriversPoints(id: number): Observable<ResponseWrapper> {
         return this.http.get(`${this.resourceUrl}/${id}/points`)
             .map((res: Response) => new ResponseWrapper(res.headers, res.json(), res.status));
+    }
+    
+    findCalendarEvents(startDate: Date, endDate: Date) {
+        const dateFormat = 'yyyy-MM-dd';
+        let fromDate = this.datePipe.transform(startDate, dateFormat);
+        let toDate = this.datePipe.transform(endDate, dateFormat);
+        return this.http.get(`${this.resourceUrl}/calendar/${fromDate}/${toDate}`)
+            .map((res: Response) => {return res.json();});
     }
 
     query(req?: any): Observable<ResponseWrapper> {

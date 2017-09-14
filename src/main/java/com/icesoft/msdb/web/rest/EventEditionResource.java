@@ -2,6 +2,11 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +56,7 @@ import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
+import com.icesoft.msdb.service.dto.SessionCalendarDTO;
 import com.icesoft.msdb.service.impl.CacheHandler;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
@@ -510,6 +516,21 @@ public class EventEditionResource {
 			eventEntryResult.getEntry().getEventEdition().setSeriesEdition(tmp);
         }
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEntryResult));
+    }
+    
+    @GetMapping("/event-editions/calendar/{startDate}/{endDate}")
+    @Timed
+    public List<SessionCalendarDTO> getEvents(@PathVariable LocalDate startDate, @PathVariable LocalDate endDate) {
+    	LocalDateTime startMidnight = LocalDateTime.of(startDate, LocalTime.MIDNIGHT);
+		ZonedDateTime start = ZonedDateTime.of(startMidnight, ZoneId.of("UTC"));
+		ZonedDateTime end = ZonedDateTime.of(endDate.atTime(23, 59, 59), ZoneId.of("UTC"));
+    	List<EventSession> tmp = eventSessionRepository.findUpcomingSessions(start, end);
+    	return tmp.parallelStream().map(session -> {
+    		return new SessionCalendarDTO(session.getId(), 
+    				session.getEventEdition().getLongEventName(),
+    				session.getName(), 
+    				session.getSessionStartTime(), session.getSessionEndTime());
+    	}).collect(Collectors.toList());
     }
     
     @PostMapping("/event-editions/{id}/event-sessions/{idSession}/results")

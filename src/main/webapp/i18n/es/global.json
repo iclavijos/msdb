@@ -57,7 +57,8 @@
             	"teams": "Equipos",
             	"engines": "Motores"
             },
-            "language": "Idioma"
+            "language": "Idioma",
+            "calendar": "Calendario"
         },
         "form": {
             "username": "Usuario",

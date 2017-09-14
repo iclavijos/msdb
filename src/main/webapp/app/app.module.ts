@@ -11,6 +11,7 @@ import { MotorsportsDatabaseAdminModule } from './admin/admin.module';
 import { MotorsportsDatabaseAccountModule } from './account/account.module';
 import { MotorsportsDatabaseEntityModule } from './entities/entity.module';
 import { MotorsportsDatabaseImportsModule } from './imports/imports.module';
+import { MotorsportsDatabaseCalendarModule } from './calendar/calendar.module';
 
 import { LayoutRoutingModule } from './layouts';
 import { customHttpProvider } from './blocks/interceptor/http.provider';
@@ -36,7 +37,8 @@ import {
         MotorsportsDatabaseAdminModule,
         MotorsportsDatabaseAccountModule,
         MotorsportsDatabaseEntityModule,
-        MotorsportsDatabaseImportsModule
+        MotorsportsDatabaseImportsModule,
+        MotorsportsDatabaseCalendarModule
     ],
     declarations: [
         JhiMainComponent,
