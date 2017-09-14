@@ -5,6 +5,11 @@
 <p-dialog [header]="event?.title" [(visible)]="dialogVisible" [responsive]="true" showEffect="fade" [modal]="false" [contentStyle]="{'overflow':'visible'}"
     [style]="{'overflow':'visible'}" [resizable]="false">
     <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
+    	<div class="ui-grid-row">
+            <div class="ui-grid-col-12" align="center">
+            	<img *ngIf="event.seriesLogoUrl" [src]="event.seriesLogoUrl" style="max-width: 400px" alt="series logo"/>
+            </div>
+        </div>
         <div class="ui-grid-row">
             <div class="ui-grid-col-2"><label for="vin">{{'motorsportsDatabaseApp.calendar.session' | translate}}</label></div>
             <div class="ui-grid-col-10"><span>{{event.sessionName}}</span></div>

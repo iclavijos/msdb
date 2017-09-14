@@ -526,10 +526,15 @@ public class EventEditionResource {
 		ZonedDateTime end = ZonedDateTime.of(endDate.atTime(23, 59, 59), ZoneId.of("UTC"));
     	List<EventSession> tmp = eventSessionRepository.findUpcomingSessions(start, end);
     	return tmp.parallelStream().map(session -> {
+    		String logoUrl = null;
+    		if (session.getEventEdition().getSeriesEdition() != null) {
+    			logoUrl = session.getEventEdition().getSeriesEdition().getSeries().getLogoUrl();
+    		}
     		return new SessionCalendarDTO(session.getEventEdition().getId(), 
     				session.getEventEdition().getLongEventName(),
     				session.getName(), 
-    				session.getSessionStartTime(), session.getSessionEndTime());
+    				session.getSessionStartTime(), session.getSessionEndTime(),
+    				logoUrl);
     	}).collect(Collectors.toList());
     }
     

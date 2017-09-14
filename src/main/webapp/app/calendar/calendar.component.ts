@@ -67,6 +67,7 @@ export class Calendar implements OnInit {
         this.event.start = start.locale(this.currentLocale).format("LLLL");
         this.event.end = end.locale(this.currentLocale).format("LLLL");
         this.event.allDay = e.calEvent.allDay;
+        this.event.seriesLogoUrl = e.calEvent.seriesLogoUrl;
         this.dialogVisible = true;
     }
     
@@ -81,7 +82,7 @@ export class Calendar implements OnInit {
             newEvent.sessionName = session.sessionName;
             newEvent.start = moment(session.startTime * 1000).tz(currentTZ);
             newEvent.end = moment(session.endTime * 1000).tz(currentTZ);
-
+            newEvent.seriesLogoUrl = session.seriesLogoUrl;
             this.events.push(newEvent);
         }
     }
@@ -94,5 +95,6 @@ export class MyEvent {
     sessionName: string;
     start: any;
     end: any;
+    seriesLogoUrl: string;
     allDay: boolean = false;
 }
