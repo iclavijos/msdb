@@ -115,7 +115,7 @@
         "ribbon": {
             "dev":"Development"
         },
-        "item-count": "Visualitzant {{first}} - {{second}} de {{total}} articles."
+        "item-count": "Visualitzant {{first}} - {{second}} de {{total}} elements"
     },
     "entity": {
         "action": {
