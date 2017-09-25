@@ -4,10 +4,9 @@
     <hr>
     <jhi-alert-error></jhi-alert-error>
     
-    <ngb-tabset>
-	  <ngb-tab title="Info">
-	    <ng-template ngbTabContent>
-		    <dl class="row-md jh-entity-details">
+    <div class="row">
+       	<div class="col-lg-2 col-md-2">
+       		<dl class="row-md jh-entity-details">
 		        <dt><span jhiTranslate="motorsportsDatabaseApp.event.name">Name</span></dt>
 		        <dd>
 		            <span>{{event.name}}</span>
@@ -24,17 +23,13 @@
 		            class="btn btn-primary">
 		        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
 		    </button>
-		 </ng-template>
-	  </ngb-tab>
-	  <ngb-tab title="Editions">
-	     <ng-template ngbTabContent>
-	     	<jhi-event-edition [event]="event">Event editions...</jhi-event-edition>
-	     </ng-template>
-	  </ngb-tab>
-	</ngb-tabset>
-	 <button type="submit"
-            (click)="previousState()"
-            class="btn btn-info">
+       	</div>
+       	<div class="col-lg-10 col-md-10">
+       		<jhi-event-edition [event]="event">Event editions...</jhi-event-edition>
+       	</div>
+    </div>
+    
+	<button type="submit" (click)="previousState()" class="btn btn-info">
         <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
     </button>
 </div>

@@ -4,45 +4,36 @@
     <hr>
     <jhi-alert-error></jhi-alert-error>
     
-    <ngb-tabset>
-	  <ngb-tab title="{{'motorsportsDatabaseApp.series.seriesEdition.detail.info' | translate}}">
-	    <ng-template ngbTabContent>
-	      <dl class="row-md jh-entity-details">
-	        <dt><span jhiTranslate="motorsportsDatabaseApp.series.name">Name</span></dt>
-	        <dd>
-	            <span>{{series.name}}</span>
-	        </dd>
-	        <dt><span jhiTranslate="motorsportsDatabaseApp.series.shortname">Shortname</span></dt>
-	        <dd>	
-	            <span>{{series.shortname}}</span>
-	        </dd>
-	        <dt><span jhiTranslate="motorsportsDatabaseApp.series.organizer">Organizer</span></dt>
-	        <dd>
-	            <span>{{series.organizer}}</span>
-	        </dd>
-	        <dt><span jhiTranslate="motorsportsDatabaseApp.series.logo">Logo</span></dt>
-	        <dd>
-				<img *ngIf="series.logoUrl" [src]="series.logoUrl" style="max-width: 400px" alt="series logo"/>
-			</dd>
-		
-		    <button type="button"
-		            [routerLink]="['/', { outlets: { popup: 'series/'+ series.id + '/edit'} }]"
-		            replaceUrl="true"
-		            class="btn btn-primary">
-		        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-		    </button>
-	    </dl>
-	    </ng-template>
-	  </ngb-tab>
-	  <ngb-tab title="{{'motorsportsDatabaseApp.series.seriesEdition.detail.editions' | translate}}">
-	  	<ng-template ngbTabContent>
-	  		<jhi-series-edition [series]="series">Editions...</jhi-series-edition>
-	  	</ng-template>
-	  </ngb-tab>
-	</ngb-tabset>
-	<!-- button type="submit"
-            (click)="previousState()"
-            class="btn btn-info">
-        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-    </button -->
+    <div class="row">
+       	<div class="col-lg-3 col-md-3">
+	       	<dl class="row-md jh-entity-details">
+		        <dt><span jhiTranslate="motorsportsDatabaseApp.series.name">Name</span></dt>
+		        <dd>
+		            <span>{{series.name}}</span>
+		        </dd>
+		        <dt><span jhiTranslate="motorsportsDatabaseApp.series.shortname">Shortname</span></dt>
+		        <dd>	
+		            <span>{{series.shortname}}</span>
+		        </dd>
+		        <dt><span jhiTranslate="motorsportsDatabaseApp.series.organizer">Organizer</span></dt>
+		        <dd>
+		            <span>{{series.organizer}}</span>
+		        </dd>
+		        <dt><span jhiTranslate="motorsportsDatabaseApp.series.logo">Logo</span></dt>
+		        <dd>
+					<img *ngIf="series.logoUrl" [src]="series.logoUrl" style="max-width: 400px" alt="series logo"/>
+				</dd>
+			
+			    <button type="button"
+			            [routerLink]="['/', { outlets: { popup: 'series/'+ series.id + '/edit'} }]"
+			            replaceUrl="true"
+			            class="btn btn-primary">
+			        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+			    </button>
+		    </dl>
+       	</div>
+       	<div class="col-lg-9 col-md-9">
+       		<jhi-series-edition [series]="series">Editions...</jhi-series-edition>
+       	</div>
+    </div>
 </div>
