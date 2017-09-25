@@ -51,7 +51,7 @@ public class ResultsService {
 		PointsSystem ps = session.getPointsSystem();
 		
 		if (ps == null) {
-			log.warn("Skipping session {}-{} as it does not award points", session.getEventEdition().getLongEventName(), session.getName());
+			log.debug("Skipping session {}-{} as it does not award points", session.getEventEdition().getLongEventName(), session.getName());
 		} else {
 			driverPointsRepo.deleteSessionPoints(sessionId);
 			teamPointsRepo.deleteSessionPoints(sessionId);
@@ -143,10 +143,21 @@ public class ResultsService {
 				List<EventEntryResult> ledLaps = results.parallelStream()
 						.filter(r -> r.getLapsLed() > 0)
 						.sorted((r1, r2) -> Integer.compare(r2.getLapsLed(), r1.getLapsLed())).collect(Collectors.toList());
+				
+				Comparator<EventEntryResult> c = (r1, r2) -> {
+					if (r1.getLapsLed().equals(r2.getLapsLed())) {
+						return r1.getFinalPosition().compareTo(r2.getFinalPosition());
+					} else {
+						return r1.getLapsLed().compareTo(r2.getLapsLed()) * -1;
+					}
+				};
+				
+				ledLaps.sort(c);
+				
 				int maxLedLaps = 0;
 				for(EventEntryResult r : ledLaps) {
 					boolean addPointsMostLeadLaps = false;
-					if ((r.getLapsLed() > maxLedLaps && maxLedLaps == 0) || r.getLapsLed() == maxLedLaps) {
+					if (r.getLapsLed() > maxLedLaps && maxLedLaps == 0) { //|| r.getLapsLed() == maxLedLaps) {
 						maxLedLaps = r.getLapsLed();
 						addPointsMostLeadLaps = true;
 					}
