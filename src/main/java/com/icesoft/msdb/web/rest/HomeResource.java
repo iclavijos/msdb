@@ -94,11 +94,12 @@ public class HomeResource {
 		List<CalendarDTO> calendar = new ArrayList<>();
 		LocalDate currentDate = null;
 		List<EventSession> daySessions = new ArrayList<>();
-		if (sessions != null & !sessions.isEmpty()) {
-			currentDate = sessions.get(0).getSessionStartTime().toLocalDate();
-		}
+		
 		ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
 		List<EventSession> filtered = sessions.stream().filter(session -> !session.isFinished(now)).collect(Collectors.toList());
+		if (!filtered.isEmpty()) {
+			currentDate = filtered.get(0).getSessionStartTime().toLocalDate();
+		}
 		for(EventSession s : filtered) {
 			if (currentDate.equals(s.getSessionStartTime().toLocalDate())) {
 				daySessions.add(s);
