@@ -63,9 +63,9 @@
 				        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.champions">Champions</span></dt>
 						<dd>
 				            <div class="row">
-			            		<div class="col-md-2" *ngFor="let driver of driversChampions">
+			            		<div [ngClass]="colsChamps" *ngFor="let driver of driversChampions">
 			            			<figure class="figure">
-									  <img [src]="driver.driverImage" alt="{{driver.driverName}}"/>
+									  <img [src]="driver.driverImage" alt="{{driver.driverName}}" class="img-fluid" />
 									  <figcaption class="figure-caption text-center">{{driver.driverName}}</figcaption>
 									</figure>
 			            		</div>

@@ -25,6 +25,7 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     private numEvents: number = 0;
     private eventsProcessed: number = 0;
     private displayEvents: boolean = false;
+    private colsChamps: string = 'col-md-3';
 
     constructor(
         private seriesEditionService: SeriesEditionService,
@@ -48,11 +49,12 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
             this.seriesEdition = seriesEdition;
             this.loadEvents(id);
             this.loadDriversStandings(id);
+            this.loadDriversChampions(id);
             if (this.seriesEdition.teamsStandings) {
                 this.loadTeamsStandings(id);
             }
             if (this.seriesEdition.manufacturersStandings) {
-                this.loadDriversChampions(id);
+                
             }
         });
     }
@@ -90,6 +92,9 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     loadDriversChampions(id) {
         this.seriesEditionService.findDriversChampions(id).subscribe(champions => {
             this.driversChampions = champions.json();
+            if (this.driversChampions.length > 0) {
+                this.colsChamps = "col-md-" + Math.floor(12 / this.driversChampions.length);
+            }
         });
     }
     
