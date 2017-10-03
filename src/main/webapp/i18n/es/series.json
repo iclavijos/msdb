@@ -24,7 +24,7 @@
             "seriesEdition" : {
 	            "home": {
 	                "title": "Ediciones",
-	                "createLabel": "Añade una nova edición",
+	                "createLabel": "Añade una nueva edición",
 	                "createOrEditLabel": "Añade o edita una edición",
 	                "search": "Buscar ediciones"
 	            },
