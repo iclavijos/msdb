@@ -1,39 +1,43 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 
 import { ResponseWrapper } from '../../shared';
 
-import { EventEdition } from '../event-edition';
+import { EventEdition, EventEditionService } from '../event-edition';
 
 @Component({
     selector: 'jhi-standings',
     templateUrl: './standings.component.html'
 })
-export class StandingsComponent {
+export class StandingsComponent implements OnInit {
 
+    private drivers: any;
+    private teams: any;
+    private manufacturers: any;
     @Input()
-    drivers: any;
-    @Input()
-    teams: any;
-    @Input()
-    manufacturers: any;
-    @Input()
-    eventEdition: EventEdition;
+    eventEditionId: number;
     @Input()
     seriesEditionId: number;
     
     driverPointsDetail: any;
     
     constructor(
+            private eventEditionService: EventEditionService,
             private http: Http,
             private router: Router) { }
     
+    ngOnInit() {
+        this.eventEditionService.loadDriversPoints(this.eventEditionId).subscribe(driversPoints => {
+            this.drivers = driversPoints.json;
+        });
+    }
+    
     getPointsDetail(driverId: number) {
-        if (this.eventEdition != undefined) {
+        if (this.eventEditionId != undefined) {
             this.router.navigate(['/driver-points-details', {
-                eventEditionId: this.eventEdition.id,
+                eventEditionId: this.eventEditionId,
                 driverId: driverId,
                 seriesEditionId: this.seriesEditionId
             }]);

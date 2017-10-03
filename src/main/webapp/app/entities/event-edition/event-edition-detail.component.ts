@@ -33,8 +33,6 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     
     scoringSessions: EventSession[];
     
-    driversPoints: any;
-
     constructor(
         private eventService: EventService,
         private eventEditionService: EventEditionService,
@@ -47,7 +45,6 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
-            this.loadDriversPoints(params['id']);
         });
         this.registerChangesInEventEdition();
         
@@ -68,12 +65,6 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         this.eventEditionService.findSessions(id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe(eventSessions => {
             this.eventEdition.sessions = eventSessions.json;
         });
-    }
-    
-    loadDriversPoints(id) {
-        this.eventEditionService.loadDriversPoints(id).subscribe(driversPoints => {
-            this.driversPoints = driversPoints.json;
-        }); 
     }
     
     jumpToEdition(id) {
