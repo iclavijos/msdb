@@ -32,6 +32,7 @@ import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
+import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.stats.ChassisStatisticsRepository;
 import com.icesoft.msdb.repository.stats.DriverStatisticsRepository;
 import com.icesoft.msdb.repository.stats.EngineStatisticsRepository;
@@ -49,6 +50,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 	private final EventEditionRepository eventEditionRepo;
 	private final EventEntryRepository entriesRepo;
 	private final EventEntryResultRepository resultsRepo;
+	private final SeriesEditionRepository seriesEditionRepo;
 	private final DriverEventPointsRepository driverPointsRepo;
 	private final DriverStatisticsRepository driverStatsRepo;
 	private final TeamStatisticsRepository teamStatsRepo;
@@ -61,6 +63,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 			EventEditionRepository eventEditionRepo,
 			EventEntryRepository entriesRepo,
 			EventEntryResultRepository resultsRepo, 
+			SeriesEditionRepository seriesEditionRepo,
 			DriverEventPointsRepository driverPointsRepo,
 			DriverStatisticsRepository driverStatsRepo,
 			TeamStatisticsRepository teamStatsRepo,
@@ -71,6 +74,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 		this.eventEditionRepo = eventEditionRepo;
 		this.entriesRepo = entriesRepo;
 		this.resultsRepo = resultsRepo;
+		this.seriesEditionRepo = seriesEditionRepo;
 		this.driverPointsRepo = driverPointsRepo;
 		this.driverStatsRepo = driverStatsRepo;
 		this.teamStatsRepo = teamStatsRepo;
@@ -167,7 +171,23 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 	
 	public void buildSeriesStatistics(SeriesEdition series) {
+		eventEditionRepo.findBySeriesEditionIdOrderByEventDateAsc(series.getId()).parallelStream().forEach(event -> buildEventStatistics(event));
+	}
+	
+	public void buildSeriesDriversChampions(Long id, List<Long> prevChamps, List<Long> newChamps) {
+		SeriesEdition seriesEd = seriesEditionRepo.findOne(id);
+		if (!prevChamps.isEmpty()) {
+			prevChamps.parallelStream().forEach(driverId -> {
+				DriverStatistics stats = driverStatsRepo.findOne(driverId.toString());
+				String year = seriesEd.getPeriodEnd();
+				
+			});
+			
+		}
 		
+		if (!newChamps.isEmpty()) {
+			
+		}
 	}
 	
 	private List<Result> processEntry(EventEditionEntry entry) {
@@ -266,8 +286,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 			}
 			
 			//Points
-			Float points = Optional.ofNullable(driverPointsRepo.getDriverPointsInEvent(
-					entry.getEventEdition().getId(), 
+			Float points = Optional.ofNullable(driverPointsRepo.getDriverPointsInSession(
+					result.getSession().getId(), 
 					entry.getDrivers().get(0).getId())).orElse(new Float(0));
 
 			return new Result(result, grandChelem, posInClass, startPosInClass, poleLapTime, posFL == 1, points);

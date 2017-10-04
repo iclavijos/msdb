@@ -238,12 +238,15 @@ public class SeriesEditionResource {
     	seriesEditionService.findSeriesEvents(id).stream().forEach(eventEdition -> {
     		eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(eventEdition.getId()).stream()
     			.filter(es -> es.getSessionType().equals(SessionType.QUALIFYING) || es.getSessionType().equals(SessionType.RACE))
-    			.forEach(es -> resultsService.processSessionResults(es.getId()));
+    			.forEach(es -> resultsService.processSessionResults(es.getId(), false));
     			log.info("Updating statistics...", eventEdition.getLongEventName());
     			statsService.removeEventStatistics(eventEdition);
     			statsService.buildEventStatistics(eventEdition);
     			log.info("Statistics updated");
     	});
+    	
+    	//Let's recalculate the series champion
+    	seriesEditionService.findSeriesChampionDriver(id);
     	
         return CompletableFuture.completedFuture(ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString())).build());
     }

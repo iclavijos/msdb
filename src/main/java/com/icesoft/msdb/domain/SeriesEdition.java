@@ -3,6 +3,8 @@ package com.icesoft.msdb.domain;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -60,6 +62,9 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     @Column(name = "single_tyre")
     private Boolean singleTyre;
     
+    @Column(name = "multidriver")
+    private Boolean multidriver = false;
+    
     @ManyToMany(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @JoinTable(
@@ -112,6 +117,18 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         this.period = period;
     }
     
+    public String getPeriodEnd() {
+    	Pattern p = Pattern.compile("[0-9]{4}");
+    	Matcher m = p.matcher(this.period);
+    	if (m.matches()) {
+    		return this.period;
+    	} else {
+    		p = Pattern.compile("[0-9]{4}.([0-9]{4})");
+    		m = p.matcher(this.period);
+    		return m.group(1);
+    	}
+    }
+    
     public String getEditionName() {
 		return editionName;
 	}
@@ -159,7 +176,15 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         this.singleTyre = singleTyre;
     }
     
-    public List<Category> getAllowedCategories() {
+    public Boolean isMultidriver() {
+		return multidriver;
+	}
+
+	public void setMultidriver(Boolean multidriver) {
+		this.multidriver = multidriver;
+	}
+
+	public List<Category> getAllowedCategories() {
         return allowedCategories;
     }
 

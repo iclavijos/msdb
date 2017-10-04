@@ -19,12 +19,15 @@ import com.icesoft.msdb.domain.DriverEventPoints;
 import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.PointsSystem;
+import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.TeamEventPoints;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
+import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.TeamEventPointsRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
+import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 
@@ -37,24 +40,33 @@ public class ResultsService {
 	@Autowired private EventEntryResultRepository resultsRepo;
 	@Autowired private DriverEventPointsRepository driverPointsRepo;
 	@Autowired private TeamEventPointsRepository teamPointsRepo;
+	@Autowired private SeriesEditionRepository seriesEditionRepo;
 	@Autowired private JDBCRepositoryImpl viewsRepo;
 	
-	//@Autowired private StatisticsService statsService;
+	@Autowired private StatisticsService statsService;
 	
 	@Autowired private CacheHandler cacheHandler;
 
 	public void processSessionResults(Long sessionId) {
+		processSessionResults(sessionId, true);
+	}
+	
+	public void processSessionResults(Long sessionId, Boolean calculateChamps) {
 		//TODO: Improve points system and series definition to handle other classifications (manufacturers, for instance)
 		EventSession session = sessionRepo.findOne(sessionId);
 		List<DriverEventPoints> drivers = new ArrayList<>();
 		Map<Long, TeamEventPoints> teams = new HashMap<>();
 		PointsSystem ps = session.getPointsSystem();
+		List<Long> origChamps = new ArrayList<>(), newChamps;
 		
 		if (ps == null) {
 			log.debug("Skipping session {}-{} as it does not award points", session.getEventEdition().getLongEventName(), session.getName());
 		} else {
 			driverPointsRepo.deleteSessionPoints(sessionId);
 			teamPointsRepo.deleteSessionPoints(sessionId);
+			if (calculateChamps) {
+				origChamps = getChampionsDriverIds(session.getSeriesId());
+			}
 
 			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(session.getId(), session.getEventEdition().getId());
 			int[] points = ps.disclosePoints();
@@ -180,6 +192,12 @@ public class ResultsService {
 			teams.entrySet().stream().forEach(entry -> teamPointsRepo.save(entry.getValue()));
 			
 			cacheHandler.resetDriversStandingsCache(session.getSeriesId());
+			
+			if (calculateChamps) {
+				cacheHandler.resetSeriesChampions(session.getSeriesId());
+				newChamps = getChampionsDriverIds(session.getSeriesId());
+				statsService.buildSeriesDriversChampions(session.getSeriesId(), origChamps, newChamps);
+			}
 		}
 		log.info("Processed result for {}-{}.", session.getEventEdition().getLongEventName(), session.getName());
 	}
@@ -226,6 +244,7 @@ public class ResultsService {
 		List<Long> result = new ArrayList<>();
 		List<DriverPointsDTO> standings = viewsRepo.getDriversStandings(seriesId);
 		Map<Long, List<Object[]>> positions = viewsRepo.getDriversResultsInSeries(seriesId);
+		SeriesEdition series = seriesEditionRepo.findOne(seriesId);
 		
 		Float maxPoints = standings.parallelStream().map(dp -> dp.getPoints()).max((dp1, dp2) -> dp1.compareTo(dp2)).orElse(new Float(-1));
 		
@@ -247,10 +266,16 @@ public class ResultsService {
 				return sortPositions(positionsD1, positionsD2);
 			};
 			standings.sort(c.reversed());
+			
 			DriverPointsDTO champ = standings.get(0);
-			return standings.parallelStream().filter(dp -> sortPositions(
-					positions.get(champ.getDriverId()), 
-					positions.get(dp.getDriverId())) == 0).map(dp -> dp.getDriverId()).collect(Collectors.toList());
+			if (series.isMultidriver()) {
+				return standings.parallelStream()
+						.map(dp -> dp.getDriverId()).collect(Collectors.toList());
+			} else {
+				List<Long> tmp = new ArrayList<>();
+				tmp.add(champ.getDriverId());
+				return tmp;
+			}
 		}
 	}
 	
