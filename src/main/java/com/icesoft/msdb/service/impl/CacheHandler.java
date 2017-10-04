@@ -1,16 +1,26 @@
 package com.icesoft.msdb.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CacheHandler {
+	private final Logger log = LoggerFactory.getLogger(CacheHandler.class);
 
-	@CacheEvict(key="#seriesEditionId", cacheNames={"driversStandingsCache","teamsStandingsCache"})
+	@CacheEvict(cacheNames={"driversStandingsCache","teamsStandingsCache"})
 	public void resetDriversStandingsCache(Long seriesEditionId) {
+		log.debug("Reseting drivers standings cache for series edition {}", seriesEditionId);
 	}
 	
-	@CacheEvict(key="#eventEditionId", cacheNames="winnersCache")
+	@CacheEvict(cacheNames="winnersCache")
 	public void resetWinnersCache(Long eventEditionId) {
+		log.debug("Reseting winners cache for event edition {}", eventEditionId);
+	}
+	
+	@CacheEvict(cacheNames="driversChampions")
+	public void resetSeriesChampions(Long seriesEditionId) {
+		log.debug("Reseting series champions cache for series edition {}", seriesEditionId);
 	}
 }
