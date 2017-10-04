@@ -57,7 +57,6 @@ import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.dto.SessionCalendarDTO;
-import com.icesoft.msdb.service.impl.CacheHandler;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
@@ -90,12 +89,9 @@ public class EventEditionResource {
     private final CDNService cdnService;
     private final JDBCRepositoryImpl jdbcRepository;
     
-    private final CacheHandler cacheHandler;
-    
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventSessionRepository eventSessionRepository, 
     		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, SearchService searchService,
-    		ResultsService resultsService, CDNService cdnService, JDBCRepositoryImpl jdbcRepository,
-    		CacheHandler cacheHandler, StatisticsService statsService) {
+    		ResultsService resultsService, CDNService cdnService, JDBCRepositoryImpl jdbcRepository, StatisticsService statsService) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventSessionRepository = eventSessionRepository;
         this.eventEntryRepository = eventEntryRepository;
@@ -105,7 +101,6 @@ public class EventEditionResource {
         this.cdnService = cdnService;
         this.statsService = statsService;
         this.jdbcRepository = jdbcRepository;
-        this.cacheHandler = cacheHandler;
     }
 
     /**
@@ -541,6 +536,7 @@ public class EventEditionResource {
     @PostMapping("/event-editions/{id}/event-sessions/{idSession}/results")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @CacheEvict(cacheNames="winnersCache", key="#eventSessionResult.entry.id")
     public ResponseEntity<EventEntryResult> createEventSessionResult(@Valid @RequestBody EventEntryResult eventSessionResult) throws URISyntaxException {
         log.debug("REST request to save EventEntryResult : {}", eventSessionResult);
         if (eventSessionResult.getId() != null) {
@@ -548,9 +544,7 @@ public class EventEditionResource {
             		ENTITY_NAME_ENTRY, "idexists", "A new eventSessionResult cannot already have an ID")).body(null);
         }
         EventEntryResult result = eventResultRepository.save(eventSessionResult);
-        if (result.getSession().isRace()) {
-        	cacheHandler.resetWinnersCache(result.getEntry().getEventEdition().getId());
-        }
+
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/entries"))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME_RESULT, result.getId().toString()))
             .body(result);
@@ -559,15 +553,14 @@ public class EventEditionResource {
     @PutMapping("/event-editions/{id}/event-sessions/{idSession}/results")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @CacheEvict(cacheNames="winnersCache", key="#eventSessionResult.entry.id")
     public ResponseEntity<EventEntryResult> updateEventSessionResult(@Valid @RequestBody EventEntryResult eventSessionResult) throws URISyntaxException {
         log.debug("REST request to update EventEntryResult : {}", eventSessionResult);
         if (eventSessionResult.getId() == null) {
             return createEventSessionResult(eventSessionResult);
         }
         EventEntryResult result = eventResultRepository.save(eventSessionResult);
-        if (result.getSession().isRace()) {
-        	cacheHandler.resetWinnersCache(result.getEntry().getEventEdition().getId());
-        }
+
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME_RESULT, eventSessionResult.getId().toString()))
             .body(result);
