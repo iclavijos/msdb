@@ -1,6 +1,7 @@
 package com.icesoft.msdb.domain.stats;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -10,6 +11,28 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Statistics {
+	
+	protected class ChampionshipData {
+		String name;
+		String year;
+		Long id;
+		
+		public ChampionshipData(String name, String year, Long id) {
+			this.name = name;
+			this.year = year;
+			this.id = id;
+		}
+		
+		public String getName() {
+			return name;
+		}
+		public String getYear() {
+			return year;
+		}
+		public Long getId() {
+			return id;
+		}
+	}
 
 	private int participations = 0;
 	private int starts = 0;
@@ -31,6 +54,7 @@ public class Statistics {
 	private Map<Integer, Integer> finalPositionsR = new TreeMap<>();
 	private Map<Integer, Integer> finalPositionsQ = new TreeMap<>();
 	private List<Result> results = new ArrayList<>();
+	private List<ChampionshipData> championshipsData = new ArrayList<>();
 	
 	public int getParticipations() {
 		return participations;
@@ -78,6 +102,24 @@ public class Statistics {
 
 	public void setChampionships(int championships) {
 		this.championships = championships;
+	}
+	
+	public List<ChampionshipData> getChampionshipsData() {
+		return championshipsData;
+	}
+	
+	public void addChampionship(String championship, String year, Long id) {
+		championshipsData.add(new ChampionshipData(championship, year, id));
+		Collections.sort(championshipsData, (d1, d2) -> d1.getYear().compareTo(d2.getYear()));
+		Collections.reverse(championshipsData);
+		championships++;
+	}
+	
+	public void removeChampionship(Long id) {
+		championshipsData.removeIf(d -> d.getId().equals(id));
+		if (championships > 0) {
+			championships--;
+		}
 	}
 
 	public int getTop3() {

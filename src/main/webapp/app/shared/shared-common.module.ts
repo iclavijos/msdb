@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 
 import {
     MotorsportsDatabaseSharedLibsModule,
@@ -15,7 +16,8 @@ import {
 
 @NgModule({
     imports: [
-        MotorsportsDatabaseSharedLibsModule
+        MotorsportsDatabaseSharedLibsModule,
+        RouterModule
     ],
     declarations: [
         TimeMaskPipe,
@@ -38,7 +40,8 @@ import {
         EventEntryCategoryFilter,
         FindLanguageFromKeyPipe,
         JhiAlertComponent,
-        JhiAlertErrorComponent
+        JhiAlertErrorComponent,
+        RouterModule
     ]
 })
 export class MotorsportsDatabaseSharedCommonModule {}
