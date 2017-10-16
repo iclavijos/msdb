@@ -40,7 +40,6 @@ import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.StatisticsService;
-import com.icesoft.msdb.service.impl.CacheHandler;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
@@ -92,8 +91,6 @@ public class EventEditionResourceIntTest {
     @Autowired
     private CDNService cdnService;
     
-    @Autowired private CacheHandler cacheManager;
-
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
@@ -115,8 +112,7 @@ public class EventEditionResourceIntTest {
         MockitoAnnotations.initMocks(this);
             EventEditionResource eventEditionResource = new EventEditionResource(
             		eventEditionRepository, eventSessionRepository, eventEntryRepository, 
-            		eventResultRepository, searchService, resultsService, cdnService, jdbcRepo, 
-            		cacheManager, statsService);
+            		eventResultRepository, searchService, resultsService, cdnService, jdbcRepo, statsService);
         this.restEventEditionMockMvc = MockMvcBuilders.standaloneSetup(eventEditionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
