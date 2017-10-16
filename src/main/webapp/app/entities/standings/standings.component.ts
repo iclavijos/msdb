@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Rx';
 import { ResponseWrapper } from '../../shared';
 
 import { EventEdition, EventEditionService } from '../event-edition';
+import { SeriesEditionService } from '../series-edition';
 
 @Component({
     selector: 'jhi-standings',
@@ -25,13 +26,20 @@ export class StandingsComponent implements OnInit {
     
     constructor(
             private eventEditionService: EventEditionService,
+            private seriesEditionService: SeriesEditionService,
             private http: Http,
             private router: Router) { }
     
     ngOnInit() {
-        this.eventEditionService.loadDriversPoints(this.eventEditionId).subscribe(driversPoints => {
-            this.drivers = driversPoints.json;
-        });
+    	if (this.eventEditionId) {
+	        this.eventEditionService.loadDriversPoints(this.eventEditionId).subscribe(driversPoints => {
+	            this.drivers = driversPoints.json;
+	        });
+	    } else if (this.seriesEditionId) {
+	    	this.seriesEditionService.findDriversStandings(this.seriesEditionId).subscribe(driversStandings => {
+	    		this.drivers = driversStandings.json();
+	    	});
+	    }
     }
     
     getPointsDetail(driverId: number) {

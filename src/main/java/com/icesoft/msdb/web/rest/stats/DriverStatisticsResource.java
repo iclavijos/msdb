@@ -54,7 +54,7 @@ public class DriverStatisticsResource {
 	 * @see com.icesoft.msdb.web.rest.stats.StatsResourceInterface#getDriverStatistics(java.lang.Long, java.lang.Integer)
 	 */
 	@GetMapping("/{elementId}/{year}")
-	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long elementId, @PathVariable Integer year) {
+	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long elementId, @PathVariable String year) {
 		Map<String, Statistics> mapStats = statsService.getDriverStatistics(elementId, year);
 		List<StatsDTO> result = mapStats.entrySet().stream()
 			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
@@ -67,7 +67,7 @@ public class DriverStatisticsResource {
 	 * @see com.icesoft.msdb.web.rest.stats.StatsResourceInterface#getDriverYearsStatistics(java.lang.Long)
 	 */
 	@GetMapping("/{elementId}/years")
-	public ResponseEntity<List<Integer>> getYearsStatistics(@PathVariable Long elementId) {
+	public ResponseEntity<List<String>> getYearsStatistics(@PathVariable Long elementId) {
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(statsService.getDriverYearsStatistics(elementId)));
 	}
 	

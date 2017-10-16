@@ -50,7 +50,7 @@ public class TeamStatisticsResource {
 	}
 	
 	@GetMapping("/{teamId}/{year}")
-	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long teamId, @PathVariable Integer year) {
+	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long teamId, @PathVariable String year) {
 		Map<String, Statistics> mapStats = statsService.getTeamStatistics(teamId, year);
 		List<StatsDTO> result = mapStats.entrySet().stream()
 			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
@@ -60,7 +60,7 @@ public class TeamStatisticsResource {
 	}
 	
 	@GetMapping("/{teamId}/years")
-	public ResponseEntity<List<Integer>> getYearsStatistics(@PathVariable Long teamId) {
+	public ResponseEntity<List<String>> getYearsStatistics(@PathVariable Long teamId) {
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(statsService.getTeamYearsStatistics(teamId)));
 	}
 	

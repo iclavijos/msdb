@@ -103,13 +103,13 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	private void updateStats(String categoryName, Integer year, Result result, 
+	private void updateStats(String categoryName, String year, Result result, 
 			MongoRepository mongoRepo, ElementStatistics eStats) {
 		updateStats(categoryName, year, result, mongoRepo, eStats, 10);
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void updateStats(String categoryName, Integer year, Result result, 
+	private void updateStats(String categoryName, String year, Result result, 
 			MongoRepository mongoRepo, ElementStatistics eStats, int retries) {
 		Statistics statsDoc = eStats.getStaticsForCategory(categoryName);
 		Statistics statsDocYear = eStats.getStaticsForCategory(categoryName, year);
@@ -145,7 +145,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 		results.stream().forEach(result -> {
 			EventEditionEntry entry = result.getEntryResult().getEntry();
 			String categoryName = entry.getCategory().getName();
-			Integer year = entry.getEventEdition().getEditionYear();
+			String year = entry.getEventEdition().getEditionYear().toString();
 			
 			entry.getDrivers().stream().forEach(driver -> {
 				DriverStatistics dStats = Optional.ofNullable(driverStatsRepo.findOne(driver.getId().toString()))
@@ -174,19 +174,26 @@ public class StatisticsServiceImpl implements StatisticsService {
 		eventEditionRepo.findBySeriesEditionIdOrderByEventDateAsc(series.getId()).parallelStream().forEach(event -> buildEventStatistics(event));
 	}
 	
-	public void buildSeriesDriversChampions(Long id, List<Long> prevChamps, List<Long> newChamps) {
+	public void buildSeriesDriversChampions(Long id, List<Long> prevChamps, List<Long> newChamps, String category, String seriesName) {
 		SeriesEdition seriesEd = seriesEditionRepo.findOne(id);
 		if (!prevChamps.isEmpty()) {
 			prevChamps.parallelStream().forEach(driverId -> {
 				DriverStatistics stats = driverStatsRepo.findOne(driverId.toString());
 				String year = seriesEd.getPeriodEnd();
-				
+				stats.getStaticsForCategory(category).removeChampionship(id);
+				stats.getStatisticsYear(year).ifPresent(s -> s.get(category).removeChampionship(id));
+				driverStatsRepo.save(stats);
 			});
-			
 		}
 		
 		if (!newChamps.isEmpty()) {
-			
+			newChamps.parallelStream().forEach(driverId -> {
+				DriverStatistics stats = driverStatsRepo.findOne(driverId.toString());
+				String year = seriesEd.getPeriodEnd();
+				stats.getStaticsForCategory(category).addChampionship(seriesName, year, id);
+				stats.getStatisticsYear(year).ifPresent(s -> s.get(category).addChampionship(seriesName, year, id));
+				driverStatsRepo.save(stats);
+			});
 		}
 	}
 	
@@ -205,7 +212,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 	
 	@Override
 	public void removeEventStatistics(EventEdition event) {
-		Integer year = event.getEditionYear();
+		String year = event.getEditionYear().toString();
 		entriesRepo.findEventEditionEntries(event.getId()).stream().forEach((entry) -> {
 			entry.getDrivers().parallelStream().forEach((driver) -> {
 				DriverStatistics ds = driverStatsRepo.findOne(driver.getId().toString());
@@ -301,19 +308,22 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 	
 	@Override
-	public Map<String, Statistics> getDriverStatistics(Long driverId, Integer year) {
+	public Map<String, Statistics> getDriverStatistics(Long driverId, String year) {
 		Optional<ElementStatistics> driverStats = Optional.ofNullable(driverStatsRepo.findOne(driverId.toString()));
-		return driverStats.map(ds -> ds.getStatisticsYear(year)).orElseGet(HashMap<String, Statistics> :: new);
+		return driverStats.map(ds -> ds.getStatisticsYear(year).orElseGet(HashMap<String, Statistics> :: new)).get();
 	}
 	
 	@Override
-	public List<Integer> getDriverYearsStatistics(Long driverId) {
+	public List<String> getDriverYearsStatistics(Long driverId) {
 		Optional<ElementStatistics> driverStats = Optional.ofNullable(driverStatsRepo.findOne(driverId.toString()));
-		List<Integer> result = driverStats.map(ds -> ds.getYearsStatistics()).orElseGet(ArrayList<Integer>::new);
+		List<String> result = driverStats.map(ds -> ds.getYearsStatistics()).orElseGet(ArrayList<String>::new);
 		Comparator<Integer> normal = Integer::compare;
 		Comparator<Integer> reversed = normal.reversed(); 
-		result.sort(reversed);
-		return result;
+		return result.parallelStream()
+			.map(Integer::parseInt)
+			.sorted(reversed)
+			.map(y -> y.toString())
+			.collect(Collectors.toList());
 	}
 
 	@Override
@@ -323,19 +333,22 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 
 	@Override
-	public Map<String, Statistics> getTeamStatistics(Long teamId, Integer year) {
+	public Map<String, Statistics> getTeamStatistics(Long teamId, String year) {
 		Optional<ElementStatistics> teamStats = Optional.ofNullable(teamStatsRepo.findOne(teamId.toString()));
-		return teamStats.map(ts -> ts.getStatisticsYear(year)).orElseGet(HashMap<String, Statistics> :: new);
+		return teamStats.map(ts -> ts.getStatisticsYear(year).orElseGet(HashMap<String, Statistics> :: new)).get();
 	}
 
 	@Override
-	public List<Integer> getTeamYearsStatistics(Long driverId) {
+	public List<String> getTeamYearsStatistics(Long driverId) {
 		Optional<ElementStatistics> teamStats = Optional.ofNullable(teamStatsRepo.findOne(driverId.toString()));
-		List<Integer> result = teamStats.map(ts -> ts.getYearsStatistics()).orElseGet(ArrayList<Integer>::new);
+		List<String> result = teamStats.map(ts -> ts.getYearsStatistics()).orElseGet(ArrayList<String>::new);
 		Comparator<Integer> normal = Integer::compare;
 		Comparator<Integer> reversed = normal.reversed(); 
-		result.sort(reversed);
-		return result;
+		return result.parallelStream()
+				.map(Integer::parseInt)
+				.sorted(reversed)
+				.map(y -> y.toString())
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -345,19 +358,22 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 
 	@Override
-	public Map<String, Statistics> getChassisStatistics(Long chassisId, Integer year) {
+	public Map<String, Statistics> getChassisStatistics(Long chassisId, String year) {
 		Optional<ElementStatistics> chassisStats = Optional.ofNullable(chassisStatsRepo.findOne(chassisId.toString()));
-		return chassisStats.map(cs -> cs.getStatisticsYear(year)).orElseGet(HashMap<String, Statistics> :: new);
+		return chassisStats.map(cs -> cs.getStatisticsYear(year).orElseGet(HashMap<String, Statistics> :: new)).get();
 	}
 
 	@Override
-	public List<Integer> getChassisYearsStatistics(Long chassisId) {
+	public List<String> getChassisYearsStatistics(Long chassisId) {
 		Optional<ElementStatistics> chassisStats = Optional.ofNullable(chassisStatsRepo.findOne(chassisId.toString()));
-		List<Integer> result = chassisStats.map(ts -> ts.getYearsStatistics()).orElseGet(ArrayList<Integer>::new);
+		List<String> result = chassisStats.map(ts -> ts.getYearsStatistics()).orElseGet(ArrayList<String>::new);
 		Comparator<Integer> normal = Integer::compare;
 		Comparator<Integer> reversed = normal.reversed(); 
-		result.sort(reversed);
-		return result;
+		return result.parallelStream()
+				.map(Integer::parseInt)
+				.sorted(reversed)
+				.map(y -> y.toString())
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -367,19 +383,22 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 
 	@Override
-	public Map<String, Statistics> getEngineStatistics(Long engineId, Integer year) {
+	public Map<String, Statistics> getEngineStatistics(Long engineId, String year) {
 		Optional<ElementStatistics> engineStats = Optional.ofNullable(engineStatsRepo.findOne(engineId.toString()));
-		return engineStats.map(cs -> cs.getStatisticsYear(year)).orElseGet(HashMap<String, Statistics> :: new);
+		return engineStats.map(cs -> cs.getStatisticsYear(year).orElseGet(HashMap<String, Statistics> :: new)).get();
 	}
 
 	@Override
-	public List<Integer> getEngineYearsStatistics(Long engineId) {
+	public List<String> getEngineYearsStatistics(Long engineId) {
 		Optional<ElementStatistics> engineStats = Optional.ofNullable(engineStatsRepo.findOne(engineId.toString()));
-		List<Integer> result = engineStats.map(es -> es.getYearsStatistics()).orElseGet(ArrayList<Integer>::new);
+		List<String> result = engineStats.map(es -> es.getYearsStatistics()).orElseGet(ArrayList<String>::new);
 		Comparator<Integer> normal = Integer::compare;
 		Comparator<Integer> reversed = normal.reversed(); 
-		result.sort(reversed);
-		return result;
+		return result.parallelStream()
+				.map(Integer::parseInt)
+				.sorted(reversed)
+				.map(y -> y.toString())
+				.collect(Collectors.toList());
 	}
 
 }

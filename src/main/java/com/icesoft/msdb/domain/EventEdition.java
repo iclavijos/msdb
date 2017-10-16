@@ -110,6 +110,14 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     @JsonIgnore
     private SeriesEdition seriesEdition;
     
+    @ManyToMany(fetch=FetchType.LAZY)
+    @Fetch(FetchMode.SELECT)
+    @JoinTable(
+        name="SERIES_EVENT",
+        joinColumns=@JoinColumn(name="event_id", referencedColumnName="ID"),
+        inverseJoinColumns=@JoinColumn(name="series_id", referencedColumnName="ID"))
+    private List<SeriesEdition> seriesEditions;
+    
     public Long getId() {
         return id;
     }

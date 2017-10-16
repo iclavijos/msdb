@@ -42,7 +42,7 @@
 						</div>
 			    		<div class="col-md-3">{{eventEntry.raceNumber}}</div>
 				    	<div class="col-md-6" *ngIf="!eventEntry.eventEdition.multidriver">
-			            	<img *ngIf="eventEntry.drivers[0].faceUrl" [src]="eventEntry.drivers[0].faceUrl"/>
+			            	<img *ngIf="eventEntry.drivers[0].faceUrl" [src]="eventEntry.drivers[0].faceUrl" class="img-fluid"/>
 			            </div>
 			            <div class="col-md-4" *ngIf="eventEntry.eventEdition.multidriver">
 			            </div>
@@ -89,7 +89,7 @@
 					<label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.team">Team</span></label>
 					<div *ngIf="eventEntry.team">
                         <a [routerLink]="['/team', eventEntry.team?.id ]" >
-                        	<img *ngIf="eventEntry.team?.logoUrl" [src]="eventEntry.team.logoUrl" style="max-width: 120px;"/>
+                        	<img *ngIf="eventEntry.team?.logoUrl" [src]="eventEntry.team.logoUrl" class="img-fluid"/>
                         	<span *ngIf="!eventEntry.team?.logoUrl">{{eventEntry.team?.name}}</span>
                         </a>
                     </div></br>
@@ -110,13 +110,13 @@
                     <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.tyres">Tyres</span></label>
 					<div *ngIf="eventEntry.tyres?.logoUrl">
                         <a [routerLink]="['/tyre-provider', eventEntry.tyres?.id ]" >
-                        	<img [src]="eventEntry.tyres?.logoUrl" style="max-width: 120px;" alt="tyres logo"/>
+                        	<img [src]="eventEntry.tyres?.logoUrl" class="img-fluid" alt="tyres logo"/>
                         </a>
                     </div></br>
                     <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.fuel">Fuel</span></label>
 					<div *ngIf="eventEntry.fuel">
                         <a [routerLink]="['/fuel-provider', eventEntry.fuel?.id ]" >
-                        	<img [src]="eventEntry.fuel?.logoUrl" style="max-width: 120px;" alt="fuel logo"/>
+                        	<img [src]="eventEntry.fuel?.logoUrl" class="img-fluid" alt="fuel logo"/>
                         </a>
                     </div></br>
                     <label *ngIf="eventEdition.allowedCategories.length != 1"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category">Category</span></label>

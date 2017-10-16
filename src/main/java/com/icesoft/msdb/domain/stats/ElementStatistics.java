@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public abstract class ElementStatistics {
 
 	private Map<String, Statistics> categoriesStats = new HashMap<>();
-	private Map<Integer, Map<String, Statistics>> yearsCategoriesStats = new HashMap<>();
+	private Map<String, Map<String, Statistics>> yearsCategoriesStats = new HashMap<>();
 	
 	public List<String> getCategories() {
 		List<String> result = categoriesStats.entrySet().parallelStream()
@@ -22,7 +22,7 @@ public abstract class ElementStatistics {
 		return result;
 	}
 	
-	public List<String> getCategories(Integer year) {
+	public List<String> getCategories(String year) {
 		List<String> result = yearsCategoriesStats.get(year).entrySet().parallelStream()
 				.map((entry) -> entry.getKey())
 				.collect(Collectors.toList());
@@ -35,7 +35,7 @@ public abstract class ElementStatistics {
 		return Optional.ofNullable(categoriesStats.get(categoryName)).orElse(new Statistics());
 	}
 	
-	public Statistics getStaticsForCategory(String categoryName, Integer year) {
+	public Statistics getStaticsForCategory(String categoryName, String year) {
 		Map<String, Statistics> tmp = yearsCategoriesStats.get(year);
 		if (tmp == null) {
 			tmp = new HashMap<>();
@@ -45,11 +45,11 @@ public abstract class ElementStatistics {
 		return Optional.ofNullable(tmp.get(categoryName)).orElse(new Statistics());
 	}
 	
-	public List<Integer> getYearsStatistics() {
+	public List<String> getYearsStatistics() {
 		return yearsCategoriesStats.keySet().stream().sorted((y1, y2) -> y1.compareTo(y2)).collect(Collectors.toList());
 	}
 	
-	public void removeStatisticsOfEvent(Long eventEditionId, Integer year) {
+	public void removeStatisticsOfEvent(Long eventEditionId, String year) {
 		categoriesStats.forEach((category, catStats) -> {
 			catStats.getResultByEventId(eventEditionId).stream().forEach(result -> catStats.removeResult(result));
 		});
@@ -66,15 +66,15 @@ public abstract class ElementStatistics {
 	}
 	
 	@JsonIgnore
-	public Map<String, Statistics> getStatisticsYear(Integer year) {
-		return yearsCategoriesStats.get(year);
+	public Optional<Map<String, Statistics>> getStatisticsYear(String year) {
+		return Optional.ofNullable(yearsCategoriesStats.get(year));
 	}
 	
 	public void updateStatistics(String categoryName, Statistics stats) {
 		categoriesStats.put(categoryName, stats);
 	}
 	
-	public void updateStatistics(String categoryName, Statistics stats, Integer year) {
+	public void updateStatistics(String categoryName, Statistics stats, String year) {
 		Map<String, Statistics> catStats = 
 				Optional.ofNullable(yearsCategoriesStats.get(year)).orElse(new HashMap<>());
 		catStats.put(categoryName, stats);

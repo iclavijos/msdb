@@ -147,8 +147,7 @@
 	  </ngb-tab>
 	  <ngb-tab title="{{'motorsportsDatabaseApp.series.seriesEdition.detail.standings' | translate}}">
 	    <ng-template ngbTabContent>
-	    	<jhi-standings [drivers]="driversStandings" [teams]="teamsStandings" 
-	    		[manufacturers]="manufacturersStandings" [seriesEditionId]="seriesEdition.id">Standings...</jhi-standings>
+	    	<jhi-standings [seriesEditionId]="seriesEdition.id">Standings...</jhi-standings>
 	    </ng-template>
 	  </ngb-tab>
 	</ngb-tabset>

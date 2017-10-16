@@ -196,7 +196,15 @@ public class ResultsService {
 			if (calculateChamps) {
 				cacheHandler.resetSeriesChampions(session.getSeriesId());
 				newChamps = getChampionsDriverIds(session.getSeriesId());
-				statsService.buildSeriesDriversChampions(session.getSeriesId(), origChamps, newChamps);
+				String category = "";
+				if (session.getEventEdition().getAllowedCategories().size() == 1 ) {
+					category = session.getEventEdition().getAllowedCategories().get(0).getName();
+				} else {
+					//TODO: Calculate category where drivers have competed the most
+				}
+				statsService.buildSeriesDriversChampions(
+						session.getSeriesId(), origChamps, newChamps, 
+						category, session.getEventEdition().getSeriesName());
 			}
 		}
 		log.info("Processed result for {}-{}.", session.getEventEdition().getLongEventName(), session.getName());

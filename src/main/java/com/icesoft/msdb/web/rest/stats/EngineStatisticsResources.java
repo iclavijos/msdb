@@ -48,7 +48,7 @@ private final Logger log = LoggerFactory.getLogger(EngineStatisticsResources.cla
 	}
 
 	@GetMapping("/{elementId}/{year}")
-	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long elementId, @PathVariable Integer year) {
+	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long elementId, @PathVariable String year) {
 		Map<String, Statistics> mapStats = statsService.getEngineStatistics(elementId, year);
 		List<StatsDTO> result = mapStats.entrySet().stream()
 			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
@@ -58,7 +58,7 @@ private final Logger log = LoggerFactory.getLogger(EngineStatisticsResources.cla
 	}
 
 	@GetMapping("/{elementId}/years")
-	public ResponseEntity<List<Integer>> getYearsStatistics(@PathVariable Long elementId) {
+	public ResponseEntity<List<String>> getYearsStatistics(@PathVariable Long elementId) {
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(statsService.getEngineYearsStatistics(elementId)));
 	}
 	

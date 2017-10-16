@@ -48,10 +48,9 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
         this.seriesEditionService.find(id).subscribe((seriesEdition) => {
             this.seriesEdition = seriesEdition;
             this.loadEvents(id);
-            this.loadDriversStandings(id);
             this.loadDriversChampions(id);
             if (this.seriesEdition.teamsStandings) {
-                this.loadTeamsStandings(id);
+                //this.loadTeamsStandings(id);
             }
             if (this.seriesEdition.manufacturersStandings) {
                 

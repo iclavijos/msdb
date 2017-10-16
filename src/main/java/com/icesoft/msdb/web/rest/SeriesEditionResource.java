@@ -34,7 +34,6 @@ import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.SeriesEdition;
-import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
@@ -234,17 +233,18 @@ public class SeriesEditionResource {
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
     public CompletableFuture<ResponseEntity<Void>> updateSeriesStandings(@PathVariable Long id) {
-    	log.debug("REST request to add an event to series {}", id);
-    	seriesEditionService.findSeriesEvents(id).stream().forEach(eventEdition -> {
+    	log.debug("REST request to update series {} standings", id);
+    	List<EventEdition> events = seriesEditionService.findSeriesEvents(id);
+    	events.stream().forEach(eventEdition -> {
     		eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(eventEdition.getId()).stream()
-    			.filter(es -> es.getSessionType().equals(SessionType.QUALIFYING) || es.getSessionType().equals(SessionType.RACE))
-    			.forEach(es -> resultsService.processSessionResults(es.getId(), false));
-    			log.info("Updating statistics...", eventEdition.getLongEventName());
+    			.filter(es -> es.getPointsSystem() != null)
+    			.forEach(es -> resultsService.processSessionResults(es.getId(), true)); //That's really inefficient. Need to work on improving this
+    			log.debug("Updating statistics...", eventEdition.getLongEventName());
     			statsService.removeEventStatistics(eventEdition);
     			statsService.buildEventStatistics(eventEdition);
-    			log.info("Statistics updated");
+    			log.debug("Statistics updated");
     	});
-    	
+    	    	
     	//Let's recalculate the series champion
     	seriesEditionService.findSeriesChampionDriver(id);
     	
