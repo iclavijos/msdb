@@ -1,6 +1,5 @@
 build.commands=org.eclipse.jdt.core.javabuilder,org.eclipse.wst.common.project.facet.core.builder,org.eclipse.wst.validation.validationbuilder
 connection.arguments=
-connection.gradle.distribution=GRADLE_DISTRIBUTION(LOCAL_INSTALLATION(C\:\\Desarrollo\\Herramientas\\gradle-3.2.1))
 connection.java.home=null
 connection.jvm.arguments=
 connection.project.dir=

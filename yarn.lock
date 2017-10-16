@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@angular/animations@4.1.3":
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-4.1.3.tgz#6e89a1e0fbfd6d0e90be4f2ae190aac67f83a411"
+
 "@angular/cli@1.0.6":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@angular/cli/-/cli-1.0.6.tgz#a2e861f202131a8139882c78f1859cbefcbea77e"
@@ -138,9 +142,20 @@
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@ngx-translate/http-loader/-/http-loader-0.1.0.tgz#6029325561d7868fe325a419de2770e98ff1502e"
 
+"@types/fullcalendar@^2.7.46":
+  version "2.7.46"
+  resolved "https://registry.yarnpkg.com/@types/fullcalendar/-/fullcalendar-2.7.46.tgz#a35ffa6feb738ecd7e2e6d326709cf423ae5fdf6"
+  dependencies:
+    "@types/jquery" "*"
+    moment ">=2.14.0"
+
 "@types/jasmine@2.5.47":
   version "2.5.47"
   resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-2.5.47.tgz#bbba9bcf0e95e7890c6f4a47394e8bacaa960eb6"
+
+"@types/jquery@*":
+  version "3.2.12"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.2.12.tgz#f496823108c3874c97c9a822e675a3926ee64b46"
 
 "@types/moment-timezone@^0.2.34":
   version "0.2.34"
@@ -2685,6 +2700,13 @@ fstream@^1.0.0, fstream@^1.0.10, fstream@^1.0.2:
     mkdirp ">=0.5 0"
     rimraf "2"
 
+fullcalendar@^3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/fullcalendar/-/fullcalendar-3.5.1.tgz#c70d642ca18d2854fbb97a9b4f5eecef6aa3e884"
+  dependencies:
+    jquery "2 - 3"
+    moment "^2.9.0"
+
 fullname@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/fullname/-/fullname-2.1.0.tgz#c46bf0f7c3f24fd5b3358d00e4a41380eef87350"
@@ -3789,7 +3811,7 @@ jhipster-core@1.3.3:
   dependencies:
     lodash "4.17.4"
 
-jquery@3.2.1, jquery@>=1.9.1:
+"jquery@2 - 3", jquery@3.2.1, jquery@>=1.9.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.2.1.tgz#5c4d9de652af6cd0a770154a631bba12b015c787"
 
@@ -4648,7 +4670,7 @@ moment-timezone@^0.5.13:
   dependencies:
     moment ">= 2.9.0"
 
-moment@*, "moment@>= 2.9.0", moment@>=2.14.0, moment@^2.11.2, moment@^2.18.1:
+moment@*, "moment@>= 2.9.0", moment@>=2.14.0, moment@^2.11.2, moment@^2.18.1, moment@^2.9.0:
   version "2.18.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
 
@@ -4719,10 +4741,6 @@ ng-jhipster@0.2.6:
   dependencies:
     "@ngx-translate/core" "7.0.0"
     "@ngx-translate/http-loader" "0.1.0"
-
-ng2-completer@^1.2.0:
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/ng2-completer/-/ng2-completer-1.5.2.tgz#4f2142b7d9186f64cd8cad79e7da0de9b9e128de"
 
 ng2-webstorage@1.8.0:
   version "1.8.0"
@@ -5665,9 +5683,9 @@ pretty-error@^2.0.2:
     renderkid "^2.0.1"
     utila "~0.4"
 
-primeng@^2.0.2:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/primeng/-/primeng-2.0.6.tgz#d8b95ce65fe29242465bd3e42f493fba2584746c"
+primeng@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/primeng/-/primeng-4.2.0.tgz#49c8c99de26d254f41d3fbb8759227fe1d269772"
 
 private@^0.1.6, private@~0.1.5:
   version "0.1.7"
