@@ -25,6 +25,9 @@ export class EventSessionDialogComponent implements OnInit {
     durationTypes = DurationType;
     keysSession: any[];
     keysDuration: any[];
+    isRaceAndLaps = false;
+    private selectedType = 0;
+    private selectedDuration = 0;
 
     constructor(
         public activeModal: NgbActiveModal,
@@ -38,13 +41,30 @@ export class EventSessionDialogComponent implements OnInit {
     ngOnInit() {
         this.isSaving = false;
         this.authorities = ['ROLE_EDITOR', 'ROLE_ADMIN'];
-        
+
         this.keysDuration = Object.keys(this.durationTypes).filter(Number);
         this.keysSession = [0, 1, 2]; //Object.keys(this.sessionTypes).filter(key => parseInt(key)); Need to find out how not to filter out 0
+      
+        if (this.eventSession) {
+          this.eventSession.sessionType = SessionType[SessionType[this.eventSession.sessionTypeValue]];
+          this.selectedDuration = this.eventSession.durationType;
+          this.selectedType = this.eventSession.sessionTypeValue;
+          this.isRaceAndLaps = (this.selectedType === 2 && this.selectedDuration === 5);
+        }
     }
 
     clear() {
         this.activeModal.dismiss('cancel');
+    }
+
+    private onChangeType(event) {
+      this.selectedType = parseInt(event.target.value);
+      this.isRaceAndLaps = (this.selectedType === 2 && this.selectedDuration === 5);
+    }
+
+    private onChangeDuration(event) {
+      this.selectedDuration = parseInt(event.target.value);
+      this.isRaceAndLaps = (this.selectedType === 2 && this.selectedDuration === 5);
     }
 
     save() {

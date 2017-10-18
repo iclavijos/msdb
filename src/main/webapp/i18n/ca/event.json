@@ -63,6 +63,7 @@
 	            "sessionType": "Tipus de sessió",
 	            "awardsPoints": "Concedeix punts",
 	            "additionalLap": "Volta extra?",
+	            "maxDuration": "Duració màxima (hores)",
 	            "lap": "volta",
 	            "created": "S'ha creat una nova sessió",
 	            "updated": "S'ha actualitzat la sessió",

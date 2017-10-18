@@ -63,6 +63,7 @@
 	            "sessionType": "Tipo de sesión",
 	            "awardsPoints": "Concede puntos",
 	            "additionalLap": "¿Vuelta extra?",
+	            "maxDuration": "Duración máxima (horas)",
 	            "lap": "vuelta",
 	            "created": "Se ha creado una nueva sesión",
 	            "updated": "Se ha actualizado la sesión",

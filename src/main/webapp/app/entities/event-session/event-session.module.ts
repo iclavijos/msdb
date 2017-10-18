@@ -6,7 +6,6 @@ import {
     EventSessionService,
     EventSessionPopupService,
     EventSessionComponent,
-    EventSessionDetailComponent,
     EventSessionDialogComponent,
     EventSessionPopupComponent,
     EventSessionDeletePopupComponent,
@@ -27,7 +26,6 @@ const ENTITY_STATES = [
     ],
     declarations: [
         EventSessionComponent,
-        EventSessionDetailComponent,
         EventSessionDialogComponent,
         EventSessionDeleteDialogComponent,
         EventSessionPopupComponent,

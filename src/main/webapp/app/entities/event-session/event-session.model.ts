@@ -11,11 +11,13 @@ export class EventSession {
         public sessionStartTime?: any,
         public originalStartTime?: any,
         public duration?: number,
+        public maxDuration?: number,
         public durationType?: DurationType,
         public additionalLap = false,
         public pointsSystem?: PointsSystem,
         public psMultiplier?: number,
         public sessionType?: SessionType,
+        public sessionTypeValue?: number,
         public eventEdition?: EventEdition,
     ) { }
 }

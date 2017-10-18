@@ -57,6 +57,10 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @Column(name = "duration", nullable = false)
     private Integer duration;
     
+    @NotNull
+    @Column(name = "max_duration", nullable = false)
+    private Integer maxDuration;
+    
     @Column(name= "duration_type")
     private Integer durationType;
     
@@ -136,7 +140,20 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
         this.duration = duration;
     }
     
-    public Integer getDurationType() {
+    public Integer getMaxDuration() {
+		return maxDuration;
+	}
+    
+    public EventSession maxDuration(Integer maxDuration) {
+    	this.maxDuration = maxDuration;
+    	return this;
+    }
+
+	public void setMaxDuration(Integer maxDuration) {
+		this.maxDuration = maxDuration;
+	}
+
+	public Integer getDurationType() {
 		return durationType;
 	}
     
@@ -160,6 +177,10 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 	public EventSession sessionType(SessionType sessionType) {
 		this.sessionType = sessionType;
 		return this;
+	}
+	
+	public int getSessionTypeValue() {
+		return sessionType.getValue() - 1;
 	}
 	
 	public boolean isRace() {
@@ -231,11 +252,12 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 		TemporalUnit temp = durationType.equals(DurationType.MINUTES) ? ChronoUnit.MINUTES :
 				durationType.equals(DurationType.HOURS) ? ChronoUnit.HOURS : null;
 		
-		ZonedDateTime end = null;
-		if (temp == null) end = getSessionStartTime().plus(2, ChronoUnit.HOURS);
-		else end = getSessionStartTime().plus(getDuration(), temp);
+		if (getSessionType().equals(SessionType.RACE) && getMaxDuration() != null) {
+			return getSessionStartTime().plus(getMaxDuration(), ChronoUnit.HOURS);
+		}
+		if (temp == null) return getSessionStartTime().plus(2, ChronoUnit.HOURS);
+		else return getSessionStartTime().plus(getDuration(), temp);
 		
-		return end;
 	}
 
 	@Override

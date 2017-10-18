@@ -82,7 +82,7 @@
 			                    This field should be a number.
 			                </small>
 			            </div>&nbsp;
-			            <select class="form-control" id="field_durationType" name="eventSession.durationType" [(ngModel)]="eventSession.durationType" required>
+			            <select class="form-control" id="field_durationType" name="eventSession.durationType" [(ngModel)]="eventSession.durationType" (change)="onChangeDuration($event)" required>
 					        <option *ngFor="let key of keysDuration" [value]="key" label="{{'motorsportsDatabaseApp.eventEdition.enumerations.' + durationTypes[key] | translate}}"></option>
 						</select>&nbsp;
 						<div class="form-group">
@@ -96,13 +96,20 @@
 		   <div class="col-lg-4 col-md-4">
 		   		<div class="form-group">
 			   		<label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.session.sessionType" for="field_sessionType">Session type</label>
-			   		<select class="form-control" id="field_sessionType" name="eventSession.sessionType" [(ngModel)]="eventSession.sessionType" required>
+			   		<select class="form-control" id="field_sessionType" name="eventSession.sessionType" [(ngModel)]="eventSession.sessionType" (change)="onChangeType($event)" required>
 				        <option *ngFor="let key of keysSession" [value]="key" label="{{'motorsportsDatabaseApp.eventEdition.enumerations.' + sessionTypes[key] | translate}}"></option>
 					</select>
 				</div>
 		   </div>
 		</div>
-        
+		<div class="row" *ngIf="isRaceAndLaps">
+			<div class="col-lg-3 col-md-3">
+				<div class="form-inline">
+			   		<label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.session.maxDuration" for="field_maxDuration">Max duration</label>
+			   		<input type="number" class="form-control" name="maxDuration" id="field_max_duration" [(ngModel)]="eventSession.maxDuration" required />
+			   	</div>
+			</div>
+		</div>        
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">

@@ -48,20 +48,13 @@ export class HomeComponent implements OnInit {
             this.homeData = res.json();
         });
         this.http.get('api/home/calendar').subscribe((res: Response) => {
-            let currentTZ = moment.tz.guess();
-            let data = res.json();
+            const currentTZ = moment.tz.guess();
+            const data = res.json();
             for (let i = 0; i < data.length; i++) {
                 for (let j = 0; j < data[i].sessions.length; j++) {
-                    let session = data[i].sessions[j];
+                    const session = data[i].sessions[j];
                     session.sessionStartTime = moment(session.sessionStartTime * 1000).tz(currentTZ);
                     session.sessionEndTime = moment(session.sessionEndTime * 1000).tz(currentTZ);
-//                    if (session.durationType === 1) {
-//                        session.sessionEndTime.add(session.duration, 'm');
-//                    } else if (session.durationType === 2) {
-//                        session.sessionEndTime.add(session.duration, 'h');
-//                    } else {
-//                        
-//                    }
                 }
             }
             this.calendar = data;

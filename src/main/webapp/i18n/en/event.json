@@ -63,6 +63,7 @@
 	            "sessionType": "Session type",
 	            "awardsPoints": "Awards points",
 	            "additionalLap": "Extra lap?",
+	            "maxDuration": "Maximum duration (hours)",
 	            "lap": "lap",
 	            "created": "A new session is created",
 	            "updated": "A session is updated",
