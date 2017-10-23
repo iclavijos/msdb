@@ -138,7 +138,9 @@
 	            "startingPosition": "Pos. salida",
 	            "lapsLed": "Vueltas lideradas",
 	            "pitlaneStart": "Salida desde pitlane?",
-	            "pitlaneStartDesc": "* Indica que el piloto ha comenzado la carrera desde el pitlane"
+	            "pitlaneStartDesc": "* Indica que el piloto ha comenzado la carrera desde el pitlane",
+	            "sharedDrive": "Vehículo compartido con?",
+	            "sharedWith": "Compartido con "
 	        },
 	        "copyEntries": {
 	        	"title" : "Copia participantes de otro evento",

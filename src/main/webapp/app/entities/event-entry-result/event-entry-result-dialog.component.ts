@@ -29,7 +29,8 @@ export class EventEntryResultDialogComponent implements OnInit {
     sessionType = SessionType;
     private eventEditionId;
     private positions: number[];
-    private multidriver: boolean = false;
+    private multidriver = false;
+    private sharedDrive = false;
 
     constructor(
         public activeModal: NgbActiveModal,
@@ -51,9 +52,12 @@ export class EventEntryResultDialogComponent implements OnInit {
             this.multidriver = session.eventEdition.multidriver;
             this.eventEntryService.findEntries(this.eventEntryResult.session.eventEdition.id).subscribe(entries => {
                 this.entries = entries.json();
-                this.positions = Array.from(Array(this.entries.length),(x,i)=>i+1)
+                this.positions = Array.from(Array(this.entries.length),(x,i)=>i+1);
             });
         });
+        if (this.eventEntryResult && this.eventEntryResult.sharedDriveWith !== null) {
+          this.sharedDrive = this.eventEntryResult.sharedDriveWith.id !== null;
+        }
         this.isSaving = false;
         this.authorities = ['ROLE_EDITOR', 'ROLE_ADMIN'];
     }
@@ -63,14 +67,17 @@ export class EventEntryResultDialogComponent implements OnInit {
 
     save () {
         this.isSaving = true;
+        if (!this.sharedDrive) {
+          this.eventEntryResult.sharedDriveWith = null;
+        }
         if (this.bestLapTime) {
             this.eventEntryResult.bestLapTime = this.toMillis(this.bestLapTime);
         }
         if (this.totalTime) {
             this.eventEntryResult.totalTime = this.toMillis(this.totalTime);
         }
-        if (this.eventEntryResult.differenceType == 1) {
-            if (this.timeDifference != undefined) {
+        if (this.eventEntryResult.differenceType === 1) {
+            if (this.timeDifference !== undefined) {
                 this.eventEntryResult.difference = this.toMillis(this.timeDifference);
             }
         }

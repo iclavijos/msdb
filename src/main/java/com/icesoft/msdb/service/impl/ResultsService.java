@@ -68,23 +68,32 @@ public class ResultsService {
 				origChamps = getChampionsDriverIds(session.getSeriesId());
 			}
 
-			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(session.getId(), session.getEventEdition().getId());
+			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(
+					session.getId(), session.getEventEdition().getId());
 			int[] points = ps.disclosePoints();
 			for(int i = 0; i < results.size(); i++) {
-				//TODO: Handle shared drives (half points)
 				EventEntryResult result = results.get(i);
+				Boolean sharedDrive = result.getSharedDriveWith() != null;
+				
 				float calculatedPoints = 0f;
+				if (result.getFinalPosition() < 800 && result.getFinalPosition() <= points.length) {
+					calculatedPoints = (float)points[result.getFinalPosition() - 1] * session.getPsMultiplier();
+					if (sharedDrive) {
+						calculatedPoints = calculatedPoints / 2;
+					}
+				}
+				
 				for(Driver d : result.getEntry().getDrivers()) {
 					log.debug(result.getFinalPosition() + "-" + d.getFullName() + ": " + 
 							(points.length > result.getFinalPosition() ? points[result.getFinalPosition() - 1] : 0));
 					
 					if (result.getFinalPosition() < 800 && points.length > i) {
 						DriverEventPoints dep = new DriverEventPoints(d, session, session.getName());
-						dep.addPoints((float)points[result.getFinalPosition() - 1] * session.getPsMultiplier());
+						dep.addPoints(calculatedPoints);
 						log.debug(String.format("Driver %s: %s(x%s) points for position %s", 
 							d.getFullName(), (float)points[result.getFinalPosition() - 1], session.getPsMultiplier(), result.getFinalPosition()));
 						drivers.add(dep);
-						calculatedPoints += dep.getPoints();
+						//calculatedPoints += dep.getPoints();
 					}
 					
 					if (result.getStartingPosition() != null &&  result.getStartingPosition() == 1) {
@@ -93,8 +102,15 @@ public class ResultsService {
 							dep.addPoints(ps.getPointsPole().floatValue());
 							log.debug(String.format("Driver %s: %s points for pole", d.getFullName(), ps.getPointsPole()));
 							drivers.add(dep);
-							calculatedPoints = dep.getPoints();
+							//calculatedPoints = dep.getPoints();
 						}
+					}
+				}
+				if (sharedDrive) {
+					for(Driver d: result.getSharedDriveWith().getDrivers()) {
+						DriverEventPoints dep = new DriverEventPoints(d, session, session.getName());
+						dep.addPoints(calculatedPoints);
+						drivers.add(dep);
 					}
 				}
 				
@@ -114,6 +130,7 @@ public class ResultsService {
 					//TODO
 				}
 			}
+			
 			log.debug("Race points calculated... proceeding with extra points");
 			if (ps.getPointsFastLap() != 0) {
 				List<EventEntryResult> fastestLapOrder = results.parallelStream().sorted(

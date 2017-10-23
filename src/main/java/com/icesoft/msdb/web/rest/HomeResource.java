@@ -25,7 +25,7 @@ import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
-import com.icesoft.msdb.repository.RacetrackRepository;
+import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.TeamRepository;
 import com.icesoft.msdb.service.dto.CalendarDTO;
@@ -37,13 +37,13 @@ public class HomeResource {
 	private final Logger log = LoggerFactory.getLogger(HomeResource.class);
 	
 	private final DriverRepository driversRepository;
-	private final RacetrackRepository racetrackRepository;
+	private final RacetrackLayoutRepository racetrackRepository;
 	private final SeriesEditionRepository seriesEditionRepository;
 	private final TeamRepository teamRepository;
 	private final EventEditionRepository eventsEditionsRepository;
 	private final EventSessionRepository eventSessionRepository;
 
-	public HomeResource(DriverRepository driverRepo, RacetrackRepository racetrackRepo, 
+	public HomeResource(DriverRepository driverRepo, RacetrackLayoutRepository racetrackRepo, 
 			SeriesEditionRepository seriesRepo, TeamRepository teamRepo, EventEditionRepository eventsRepo,
 			EventSessionRepository eventSessionRepo) {
 		this.driversRepository = driverRepo;

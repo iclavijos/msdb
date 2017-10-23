@@ -62,6 +62,9 @@ public class EventEntryResult implements Serializable {
     @Column(name = "pitlane_start")
     private Boolean pitlaneStart = false;
     
+    @OneToOne
+    private EventEditionEntry sharedDriveWith;
+    
     @ManyToOne
     private EventSession session;
     
@@ -247,6 +250,19 @@ public class EventEntryResult implements Serializable {
 
 	public void setEntry(EventEditionEntry entry) {
 		this.entry = entry;
+	}
+
+	public EventEditionEntry getSharedDriveWith() {
+		return sharedDriveWith;
+	}
+	
+	public EventEntryResult sharedDriveWith(EventEditionEntry sharedDriveWith) {
+		this.sharedDriveWith = sharedDriveWith;
+		return this;
+	}
+
+	public void setSharedDriveWith(EventEditionEntry sharedDriveWith) {
+		this.sharedDriveWith = sharedDriveWith;
 	}
 
 	@Override

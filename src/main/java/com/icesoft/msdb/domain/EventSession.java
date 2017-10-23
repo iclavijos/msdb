@@ -57,8 +57,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @Column(name = "duration", nullable = false)
     private Integer duration;
     
-    @NotNull
-    @Column(name = "max_duration", nullable = false)
+    @Column(name = "max_duration")
     private Integer maxDuration;
     
     @Column(name= "duration_type")

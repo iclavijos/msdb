@@ -52,16 +52,14 @@
 				<div class="col-lg-3 col-md-3">
 			        <div class="form-group">
 			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.lapsCompleted" for="field_lapsCompleted">Laps Completed</label>
-			            <input type="number" class="form-control" name="lapsCompleted" id="field_lapsCompleted" required
-			                [(ngModel)]="eventEntryResult.lapsCompleted"
-			             />
+			            <input type="number" class="form-control" name="lapsCompleted" id="field_lapsCompleted" [(ngModel)]="eventEntryResult.lapsCompleted"/>
 			        </div>
 	        	</div>
 	        	<div class="col-lg-6 col-md-6">
 	        		<div class="form-group">
 			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.bestLapTime" for="field_bestLapTime">Best Lap Time</label>
 			            <input class="form-control" name="bestLapTime" id="field_bestLapTime" [ngModel]="eventEntryResult.bestLapTime | timeMaskPipe" pattern="([0-5]?\d[':])?[0-5]\d(\.[0-9]{0,4})?" 
-			            	 title="00'00.0000" required placeholder="00'00.0000 or 00:00.0000" (ngModelChange)="bestLapTime=$event"/>
+			            	 title="00'00.0000" required placeholder="00'00.0000" (ngModelChange)="bestLapTime=$event"/>
 			        </div>
 	        	</div>
         	</div>
@@ -142,6 +140,26 @@
 			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.retirementCause" for="field_retirementCause">Retirement Cause</label>
 			            <input type="text" class="form-control" name="retirementCause" id="field_retirementCause"
 			                [(ngModel)]="eventEntryResult.cause" required maxlength="100" />
+			        </div>
+		        </div>
+	        </div>
+	        <div class="row">
+	        	<div class="col-lg-5 col-md-5">
+			        <div class="form-group">
+			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.sharedDrive" for="field_sharedDrive">Shared Drive?</label>
+			            <i [ngClass]="sharedDrive ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="sharedDrive = !sharedDrive"></i>
+			            <select *ngIf="!multidriver && sharedDrive" class="form-control" id="field_sharedDrive" name="sharedDrive" 
+			            	[(ngModel)]="eventEntryResult.sharedDriveWith" required>
+		            		<option *ngFor="let entry of entries; trackBy: trackEntryById" 
+		            			[ngValue]="entry.id === eventEntryResult.sharedDriveWith?.id ? eventEntryResult.sharedDriveWith : entry">
+		            				#{{entry.raceNumber}} {{entry.drivers[0].fullName}}</option>
+			            </select>
+			            <select *ngIf="multidriver && sharedDrive" class="form-control" id="field_sharedDrive" name="sharedDrive" 
+			            	[(ngModel)]="eventEntryResult.sharedDriveWith" required>
+			            	<option *ngFor="let entry of entries; trackBy: trackEntryById" 
+			            		[ngValue]="entry.id === eventEntryResult.sharedDriveWith?.id ? eventEntryResult.sharedDriveWith : entry">
+			            			#{{entry.raceNumber}} {{entry.driversName}}</option>
+			            </select>
 			        </div>
 		        </div>
 	        </div>

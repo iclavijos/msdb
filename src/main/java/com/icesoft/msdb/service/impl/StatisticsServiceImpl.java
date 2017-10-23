@@ -180,7 +180,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 			prevChamps.parallelStream().forEach(driverId -> {
 				DriverStatistics stats = driverStatsRepo.findOne(driverId.toString());
 				String year = seriesEd.getPeriodEnd();
-				stats.getStaticsForCategory(category).removeChampionship(id);
+				//stats.getStaticsForCategory(category).removeChampionship(id);
 				stats.getStatisticsYear(year).ifPresent(s -> s.get(category).removeChampionship(id));
 				driverStatsRepo.save(stats);
 			});

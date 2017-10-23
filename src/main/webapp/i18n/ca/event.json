@@ -138,7 +138,9 @@
 	            "startingPosition": "Pos. sortida",
 	            "lapsLed": "Voltes liderades",
 	            "pitlaneStart": "Sortida des de pitlane?",
-	            "pitlaneStartDesc":"* Indica que el pilot ha començat la cursa des del pitlane"
+	            "pitlaneStartDesc":"* Indica que el pilot ha començat la cursa des del pitlane",
+	            "sharedDrive": "Vehicle compartit amb?",
+	            "sharedWith": "Compartit amb "
 	        },
 	        "copyEntries": {
 	        	"title" : "Copia participants d'un altre event",

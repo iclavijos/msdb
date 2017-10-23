@@ -44,8 +44,25 @@
                 	</span>
                 	<span *ngIf="eventEntryResult.pitlaneStart"><strong>*</strong></span>
                 </td>
-                <td>#{{eventEntryResult.entry.raceNumber}} {{eventEntryResult.session.eventEdition.multidriver ? eventEntryResult.entry.driversName : eventEntryResult.entry.drivers[0].fullName}}
-                 <span *ngIf="eventEntryResult.entry.rookie"> (R)</span>
+                <td>
+                	<div>
+                	<div class="row">
+                		<div class="col-1">
+                			#{{eventEntryResult.entry.raceNumber}}
+                		</div>
+                		<div class="col">
+                			{{eventEntryResult.session.eventEdition.multidriver ? eventEntryResult.entry.driversName : eventEntryResult.entry.drivers[0].fullName}}
+		                 		<span *ngIf="eventEntryResult.entry.rookie"> (R)</span>
+                		</div>
+                	</div>
+                	</div>
+                	<div class="row" *ngIf="eventEntryResult.sharedDriveWith?.id">
+                		<div class="col-1">
+                		</div>
+                		<div class="col">
+                			<span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.sharedWith"></span>{{eventEntryResult.sharedDriveWith.drivers[0].fullName}}
+                		</div>
+                	</div>
                 </td>
                 <td>{{eventEntryResult.entry.entryName}}</td>
                 <td *ngIf="edition.allowedCategories.length > 1">{{eventEntryResult.entry.category.shortname}}</td>

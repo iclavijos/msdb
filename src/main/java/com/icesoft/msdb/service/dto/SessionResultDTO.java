@@ -13,6 +13,7 @@ public class SessionResultDTO {
     private String cause;
     private String difference;
     private Boolean pitlaneStart;
+    private String sharedWithNumber;
     
 	public String getRaceNumber() {
 		return raceNumber;
@@ -79,6 +80,12 @@ public class SessionResultDTO {
 	}
 	public void setPitlaneStart(Boolean pitlaneStart) {
 		this.pitlaneStart = pitlaneStart;
+	}
+	public String getSharedWithNumber() {
+		return sharedWithNumber;
+	}
+	public void setSharedWithNumber(String sharedWithNumber) {
+		this.sharedWithNumber = sharedWithNumber;
 	}
     
 }

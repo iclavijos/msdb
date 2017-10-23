@@ -17,6 +17,7 @@ export class EventEntryResult {
         public pitlaneStart?: boolean,
         public entry?: EventEntry,
         public session?: EventSession,
+        public sharedDriveWith?: EventEntry,
     ) { }
     
 }

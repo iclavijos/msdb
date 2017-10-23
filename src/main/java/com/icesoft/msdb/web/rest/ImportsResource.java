@@ -316,6 +316,16 @@ public class ImportsResource {
 		        	if (result.getFinalPosition() == 1) {
 		        		first = result;
 		        	}
+		        	if (StringUtils.isNotBlank(tmp.getSharedWithNumber())) {
+		        		List<EventEditionEntry> shareds = entryRepository.findByEventEditionIdAndRaceNumber(session.getEventEdition().getId(), tmp.getSharedWithNumber());
+		            	if (shareds == null || shareds.isEmpty()) {
+		            		log.warn("No entry found with shared race number {}. Ignoring...", tmp.getRaceNumber());
+		            	} else if (entries.size() > 1) {
+		            		log.warn("Found more than one entry with shared race number {}. Ignoring...", tmp.getRaceNumber());
+		            	} else {
+		            		result.setSharedDriveWith(shareds.get(0));
+		            	}
+		        	}
 		        	resultRepository.save(result);
 	        	}
         	}
