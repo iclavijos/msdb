@@ -1,0 +1,23 @@
+{
+    "motorsportsDatabaseApp": {
+        "tyreProvider" : {
+            "home": {
+                "title": "Tyre Providers",
+                "createLabel": "Crear nuevo Tyre Provider",
+                "createOrEditLabel": "Crear o editar Tyre Provider",
+                "search": "Search for Tyre Provider"
+            },
+            "created": "Un nuevo Tyre Provider ha sido creado con el identificador {{ param }}",
+            "updated": "Un Tyre Provider ha sido actualizado con el identificador {{ param }}",
+            "deleted": "Un Tyre Provider ha sido eliminado con el identificador {{ param }}",
+            "delete": {
+                "question": "¿Seguro que quiere eliminar Tyre Provider {{ id }}?"
+            },
+            "detail": {
+                "title": "Tyre Provider"
+            },
+            "name": "Name",
+            "logo": "Logo"
+        }
+    }
+}

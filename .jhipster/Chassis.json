@@ -1,0 +1,49 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "evolutions",
+            "otherEntityName": "chassis",
+            "otherEntityRelationshipName": "derivedFrom"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "derivedFrom",
+            "otherEntityName": "chassis",
+            "otherEntityField": "id"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 50
+        },
+        {
+            "fieldName": "manufacturer",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 50
+        },
+        {
+            "fieldName": "debutYear",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "changelogDate": "20170213140812",
+    "entityTableName": "chassis",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "no"
+}
