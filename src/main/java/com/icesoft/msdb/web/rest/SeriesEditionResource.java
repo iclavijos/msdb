@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -31,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.repository.EventSessionRepository;
@@ -41,7 +39,6 @@ import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
-import com.icesoft.msdb.service.dto.SeriesDriverChampionDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
@@ -238,30 +235,13 @@ public class SeriesEditionResource {
     	events.stream().forEach(eventEdition -> {
     		eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(eventEdition.getId()).stream()
     			.filter(es -> es.getPointsSystem() != null)
-    			.forEach(es -> resultsService.processSessionResults(es.getId(), true)); //That's really inefficient. Need to work on improving this
+    			.forEach(es -> resultsService.processSessionResults(es.getId()));
     			log.debug("Updating statistics...", eventEdition.getLongEventName());
     			statsService.removeEventStatistics(eventEdition);
     			statsService.buildEventStatistics(eventEdition);
     			log.debug("Statistics updated");
     	});
-    	    	
-    	//Let's recalculate the series champion
-    	seriesEditionService.findSeriesChampionDriver(id);
     	
         return CompletableFuture.completedFuture(ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString())).build());
-    }
-    
-    @GetMapping("/series-editions/{id}/champions/driver")
-    @Timed
-    public ResponseEntity<List<SeriesDriverChampionDTO>> getChampionDriver(@PathVariable Long id) {
-    	List<Driver> champs = seriesEditionService.findSeriesChampionDriver(id);
-    	List<SeriesDriverChampionDTO> result = champs.parallelStream().map(c -> {
-    		SeriesDriverChampionDTO dto = new SeriesDriverChampionDTO();
-        	dto.setDriverId(c.getId());
-        	dto.setDriverName(c.getFullName());
-        	return dto;
-    	}).collect(Collectors.toList());
-    	
-    	return ResponseEntity.ok(result);
     }
 }

@@ -21,8 +21,6 @@ public interface StatisticsService {
 	
 	void buildSeriesStatistics(SeriesEdition series);
 	
-	void buildSeriesDriversChampions(Long id, List<Long> prevChamps, List<Long> newChamps, String category, String champName);
-	
 	Map<String, Statistics> getDriverStatistics(Long driverId);
 	
 	Map<String, Statistics> getDriverStatistics(Long driverId, String year);

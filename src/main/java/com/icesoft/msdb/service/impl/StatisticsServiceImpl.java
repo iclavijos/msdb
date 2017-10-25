@@ -50,7 +50,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 	private final EventEditionRepository eventEditionRepo;
 	private final EventEntryRepository entriesRepo;
 	private final EventEntryResultRepository resultsRepo;
-	private final SeriesEditionRepository seriesEditionRepo;
 	private final DriverEventPointsRepository driverPointsRepo;
 	private final DriverStatisticsRepository driverStatsRepo;
 	private final TeamStatisticsRepository teamStatsRepo;
@@ -74,7 +73,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 		this.eventEditionRepo = eventEditionRepo;
 		this.entriesRepo = entriesRepo;
 		this.resultsRepo = resultsRepo;
-		this.seriesEditionRepo = seriesEditionRepo;
 		this.driverPointsRepo = driverPointsRepo;
 		this.driverStatsRepo = driverStatsRepo;
 		this.teamStatsRepo = teamStatsRepo;
@@ -172,29 +170,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 	
 	public void buildSeriesStatistics(SeriesEdition series) {
 		eventEditionRepo.findBySeriesEditionIdOrderByEventDateAsc(series.getId()).parallelStream().forEach(event -> buildEventStatistics(event));
-	}
-	
-	public void buildSeriesDriversChampions(Long id, List<Long> prevChamps, List<Long> newChamps, String category, String seriesName) {
-		SeriesEdition seriesEd = seriesEditionRepo.findOne(id);
-		if (!prevChamps.isEmpty()) {
-			prevChamps.parallelStream().forEach(driverId -> {
-				DriverStatistics stats = driverStatsRepo.findOne(driverId.toString());
-				String year = seriesEd.getPeriodEnd();
-				//stats.getStaticsForCategory(category).removeChampionship(id);
-				stats.getStatisticsYear(year).ifPresent(s -> s.get(category).removeChampionship(id));
-				driverStatsRepo.save(stats);
-			});
-		}
-		
-		if (!newChamps.isEmpty()) {
-			newChamps.parallelStream().forEach(driverId -> {
-				DriverStatistics stats = driverStatsRepo.findOne(driverId.toString());
-				String year = seriesEd.getPeriodEnd();
-				stats.getStaticsForCategory(category).addChampionship(seriesName, year, id);
-				stats.getStatisticsYear(year).ifPresent(s -> s.get(category).addChampionship(seriesName, year, id));
-				driverStatsRepo.save(stats);
-			});
-		}
 	}
 	
 	private List<Result> processEntry(EventEditionEntry entry) {

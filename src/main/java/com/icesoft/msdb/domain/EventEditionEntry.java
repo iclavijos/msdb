@@ -66,7 +66,7 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
     @Column(name = "rookie")
     private Boolean rookie = false;
     
-    @ManyToOne(optional = false)
+    @ManyToOne
     @IndexedEmbedded
     private Team team;
     
@@ -78,7 +78,7 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
     @IndexedEmbedded
     private Chassis chassis;
     
-    @ManyToOne(optional = false)
+    @ManyToOne
     @IndexedEmbedded
     private Engine engine;
     

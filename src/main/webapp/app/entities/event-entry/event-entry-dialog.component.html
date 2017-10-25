@@ -98,13 +98,7 @@
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.team" for="field_team">Team</label>
 		            <input id="field_team" type="text" name="field_team" class="form-control" [inputFormatter]="inputTeamFormatter"
-				        [(ngModel)]="eventEntry.team" [ngbTypeahead]="searchTeam" [focusFirst]="false" [resultTemplate]="teamTemplate" required/>
-		            <div [hidden]="!(editForm.controls.team?.dirty && editForm.controls.team?.invalid)">
-		                <small class="form-text text-danger"
-		                   [hidden]="!editForm.controls.team?.errors?.required" jhiTranslate="entity.validation.required">
-		                   This field is required.
-		                </small>
-		            </div>
+				        [(ngModel)]="eventEntry.team" [ngbTypeahead]="searchTeam" [focusFirst]="false" [resultTemplate]="teamTemplate"/>
 		        </div>
 	        </div>
 	        <div class="col-lg-6 col-md-6">
@@ -146,7 +140,7 @@
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.engine" for="field_engine">Engine</label>
 		            <input id="field_engine" type="text" name="field_engine" class="form-control" [inputFormatter]="inputEngineFormatter"
-				        [(ngModel)]="eventEntry.engine" [ngbTypeahead]="searchEngine" [focusFirst]="false" [resultTemplate]="engineTemplate" required/>
+				        [(ngModel)]="eventEntry.engine" [ngbTypeahead]="searchEngine" [focusFirst]="false" [resultTemplate]="engineTemplate"/>
 		            <div [hidden]="!(editForm.controls.engine?.dirty && editForm.controls.engine?.invalid)">
 		                <small class="form-text text-danger"
 		                   [hidden]="!editForm.controls.engine?.errors?.required" jhiTranslate="entity.validation.required">

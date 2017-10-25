@@ -1,22 +1,20 @@
 package com.icesoft.msdb.config;
 
-import io.github.jhipster.config.JHipsterProperties;
+import java.util.concurrent.TimeUnit;
+
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.expiry.Duration;
 import org.ehcache.expiry.Expirations;
-import org.ehcache.expiry.Expiry;
 import org.ehcache.jsr107.Eh107Configuration;
-
-import java.util.concurrent.TimeUnit;
-
-import javax.cache.expiry.ExpiryPolicy;
-
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import io.github.jhipster.config.JHipsterProperties;
 
 @Configuration
 @EnableCaching
@@ -91,8 +89,6 @@ public class CacheConfiguration {
             cm.createCache("teamsStandingsCache", longLivedCacheConfiguration);
             
             cm.createCache("winnersCache", alwaysCacheConfiguration);
-            
-            cm.createCache("driversChampions", alwaysCacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

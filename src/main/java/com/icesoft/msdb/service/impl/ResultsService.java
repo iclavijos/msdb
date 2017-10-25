@@ -27,7 +27,6 @@ import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.TeamEventPointsRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
-import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 
@@ -43,30 +42,20 @@ public class ResultsService {
 	@Autowired private SeriesEditionRepository seriesEditionRepo;
 	@Autowired private JDBCRepositoryImpl viewsRepo;
 	
-	@Autowired private StatisticsService statsService;
-	
 	@Autowired private CacheHandler cacheHandler;
 
 	public void processSessionResults(Long sessionId) {
-		processSessionResults(sessionId, true);
-	}
-	
-	public void processSessionResults(Long sessionId, Boolean calculateChamps) {
 		//TODO: Improve points system and series definition to handle other classifications (manufacturers, for instance)
 		EventSession session = sessionRepo.findOne(sessionId);
 		List<DriverEventPoints> drivers = new ArrayList<>();
 		Map<Long, TeamEventPoints> teams = new HashMap<>();
 		PointsSystem ps = session.getPointsSystem();
-		List<Long> origChamps = new ArrayList<>(), newChamps;
 		
 		if (ps == null) {
 			log.debug("Skipping session {}-{} as it does not award points", session.getEventEdition().getLongEventName(), session.getName());
 		} else {
 			driverPointsRepo.deleteSessionPoints(sessionId);
 			teamPointsRepo.deleteSessionPoints(sessionId);
-			if (calculateChamps) {
-				origChamps = getChampionsDriverIds(session.getSeriesId());
-			}
 
 			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(
 					session.getId(), session.getEventEdition().getId());
@@ -210,19 +199,6 @@ public class ResultsService {
 			
 			cacheHandler.resetDriversStandingsCache(session.getSeriesId());
 			
-			if (calculateChamps) {
-				cacheHandler.resetSeriesChampions(session.getSeriesId());
-				newChamps = getChampionsDriverIds(session.getSeriesId());
-				String category = "";
-				if (session.getEventEdition().getAllowedCategories().size() == 1 ) {
-					category = session.getEventEdition().getAllowedCategories().get(0).getName();
-				} else {
-					//TODO: Calculate category where drivers have competed the most
-				}
-				statsService.buildSeriesDriversChampions(
-						session.getSeriesId(), origChamps, newChamps, 
-						category, session.getEventEdition().getSeriesName());
-			}
 		}
 		log.info("Processed result for {}-{}.", session.getEventEdition().getLongEventName(), session.getName());
 	}

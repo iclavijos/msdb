@@ -86,7 +86,7 @@
 			</div>
 			<div class="row" *ngIf="selectedRaceEntry == eventEntry.raceNumber" [class.odd]="isOdd" [class.even]="isEven">
 				<div class="col-md-3">
-					<label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.team">Team</span></label>
+					<label *ngIf="eventEntry.team"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.team">Team</span></label>
 					<div *ngIf="eventEntry.team">
                         <a [routerLink]="['/team', eventEntry.team?.id ]" >
                         	<img *ngIf="eventEntry.team?.logoUrl" [src]="eventEntry.team.logoUrl" class="img-fluid"/>
