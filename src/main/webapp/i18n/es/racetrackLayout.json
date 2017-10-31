@@ -1,0 +1,27 @@
+{
+    "motorsportsDatabaseApp": {
+        "racetrackLayout" : {
+            "home": {
+                "title": "Racetrack Layouts",
+                "createLabel": "Crear nuevo Racetrack Layout",
+                "createOrEditLabel": "Crear o editar Racetrack Layout",
+                "search": "Search for Racetrack Layout"
+            },
+            "created": "Un nuevo Racetrack Layout ha sido creado con el identificador {{ param }}",
+            "updated": "Un Racetrack Layout ha sido actualizado con el identificador {{ param }}",
+            "deleted": "Un Racetrack Layout ha sido eliminado con el identificador {{ param }}",
+            "delete": {
+                "question": "¿Seguro que quiere eliminar Racetrack Layout {{ id }}?"
+            },
+            "detail": {
+                "title": "Racetrack Layout"
+            },
+            "name": "Name",
+            "length": "Length",
+            "yearFirstUse": "Year First Use",
+            "layoutImage": "Layout Image",
+            "active": "Active",
+            "racetrack": "Racetrack"
+        }
+    }
+}
