@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.PointsSystem;
 
 import com.icesoft.msdb.repository.PointsSystemRepository;
 import com.icesoft.msdb.repository.search.PointsSystemSearchRepository;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 import io.swagger.annotations.ApiParam;
@@ -61,7 +62,7 @@ public class PointsSystemResource {
     public ResponseEntity<PointsSystem> createPointsSystem(@Valid @RequestBody PointsSystem pointsSystem) throws URISyntaxException {
         log.debug("REST request to save PointsSystem : {}", pointsSystem);
         if (pointsSystem.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new pointsSystem cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new pointsSystem cannot already have an ID", ENTITY_NAME, "idexists");
         }
         PointsSystem result = pointsSystemRepository.save(pointsSystem);
         pointsSystemSearchRepository.save(result);

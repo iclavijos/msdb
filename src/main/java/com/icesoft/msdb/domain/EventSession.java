@@ -43,6 +43,7 @@ public class EventSession implements Serializable {
     @Column(name = "duration", nullable = false)
     private Integer duration;
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -102,6 +103,7 @@ public class EventSession implements Serializable {
     public void setDuration(Integer duration) {
         this.duration = duration;
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

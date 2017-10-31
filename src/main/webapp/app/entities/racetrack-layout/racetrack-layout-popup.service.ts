@@ -6,27 +6,37 @@ import { RacetrackLayoutService } from './racetrack-layout.service';
 
 @Injectable()
 export class RacetrackLayoutPopupService {
-    private isOpen = false;
+    private ngbModalRef: NgbModalRef;
+
     constructor(
         private modalService: NgbModal,
         private router: Router,
         private racetrackLayoutService: RacetrackLayoutService
 
-    ) {}
+    ) {
+        this.ngbModalRef = null;
+    }
 
-    open(component: Component, id?: number | any): NgbModalRef {
-        if (this.isOpen) {
-            return;
-        }
-        this.isOpen = true;
+    open(component: Component, id?: number | any): Promise<NgbModalRef> {
+        return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
 
-        if (id) {
-            this.racetrackLayoutService.find(id).subscribe((racetrackLayout) => {
-                this.racetrackLayoutModalRef(component, racetrackLayout);
-            });
-        } else {
-            return this.racetrackLayoutModalRef(component, new RacetrackLayout());
-        }
+            if (id) {
+                this.racetrackLayoutService.find(id).subscribe((racetrackLayout) => {
+                    this.ngbModalRef = this.racetrackLayoutModalRef(component, racetrackLayout);
+                    resolve(this.ngbModalRef);
+                });
+            } else {
+                // setTimeout used as a workaround for getting ExpressionChangedAfterItHasBeenCheckedError
+                setTimeout(() => {
+                    this.ngbModalRef = this.racetrackLayoutModalRef(component, new RacetrackLayout());
+                    resolve(this.ngbModalRef);
+                }, 0);
+            }
+        });
     }
 
     racetrackLayoutModalRef(component: Component, racetrackLayout: RacetrackLayout): NgbModalRef {
@@ -34,10 +44,10 @@ export class RacetrackLayoutPopupService {
         modalRef.componentInstance.racetrackLayout = racetrackLayout;
         modalRef.result.then((result) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         }, (reason) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         });
         return modalRef;
     }

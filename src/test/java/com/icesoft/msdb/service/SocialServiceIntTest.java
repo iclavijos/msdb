@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.Authority;
 import com.icesoft.msdb.domain.User;
 import com.icesoft.msdb.repository.AuthorityRepository;
 import com.icesoft.msdb.repository.UserRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.repository.search.UserSearchRepository;
 import com.icesoft.msdb.service.MailService;
 
@@ -146,7 +147,7 @@ public class SocialServiceIntTest {
         socialService.createSocialUser(connection, "fr");
 
         // Verify
-        final Optional<User> user = userRepository.findOneByEmail("mail@mail.com");
+        final Optional<User> user = userRepository.findOneByEmailIgnoreCase("mail@mail.com");
         assertThat(user).isPresent();
 
         // Teardown
@@ -167,7 +168,7 @@ public class SocialServiceIntTest {
         socialService.createSocialUser(connection, "fr");
 
         //Verify
-        User user = userRepository.findOneByEmail("mail@mail.com").get();
+        User user = userRepository.findOneByEmailIgnoreCase("mail@mail.com").get();
         assertThat(user.getFirstName()).isEqualTo("FIRST_NAME");
         assertThat(user.getLastName()).isEqualTo("LAST_NAME");
         assertThat(user.getImageUrl()).isEqualTo("IMAGE_URL");
@@ -190,10 +191,10 @@ public class SocialServiceIntTest {
         socialService.createSocialUser(connection, "fr");
 
         //Verify
-        User user = userRepository.findOneByEmail("mail@mail.com").get();
+        User user = userRepository.findOneByEmailIgnoreCase("mail@mail.com").get();
         assertThat(user.getActivated()).isEqualTo(true);
         assertThat(user.getPassword()).isNotEmpty();
-        Authority userAuthority = authorityRepository.findOne("ROLE_USER");
+        Authority userAuthority = authorityRepository.findOne(AuthoritiesConstants.USER);
         assertThat(user.getAuthorities().toArray()).containsExactly(userAuthority);
 
         // Teardown
@@ -214,7 +215,7 @@ public class SocialServiceIntTest {
         socialService.createSocialUser(connection, "fr");
 
         //Verify
-        final User user = userRepository.findOneByEmail("mail@mail.com").get();
+        final User user = userRepository.findOneByEmailIgnoreCase("mail@mail.com").get();
         assertThat(user.getLangKey()).isEqualTo("fr");
 
         // Teardown
@@ -235,7 +236,7 @@ public class SocialServiceIntTest {
         socialService.createSocialUser(connection, "fr");
 
         //Verify
-        User user = userRepository.findOneByEmail("mail@mail.com").get();
+        User user = userRepository.findOneByEmailIgnoreCase("mail@mail.com").get();
         assertThat(user.getLogin()).isEqualTo("mail@mail.com");
 
         // Teardown
@@ -256,7 +257,7 @@ public class SocialServiceIntTest {
         socialService.createSocialUser(connection, "fr");
 
         //Verify
-        User user = userRepository.findOneByEmail("mail@mail.com").get();
+        User user = userRepository.findOneByEmailIgnoreCase("mail@mail.com").get();
         assertThat(user.getLogin()).isEqualToIgnoringCase("@LOGIN");
 
         // Teardown
@@ -280,7 +281,7 @@ public class SocialServiceIntTest {
         verify(mockConnectionRepository, times(1)).addConnection(connection);
 
         // Teardown
-        User userToDelete = userRepository.findOneByEmail("mail@mail.com").get();
+        User userToDelete = userRepository.findOneByEmailIgnoreCase("mail@mail.com").get();
         userRepository.delete(userToDelete);
     }
 
@@ -307,7 +308,7 @@ public class SocialServiceIntTest {
         assertThat(userRepository.count()).isEqualTo(initialUserCount);
 
         // Teardown
-        User userToDelete = userRepository.findOneByEmail("mail@mail.com").get();
+        User userToDelete = userRepository.findOneByEmailIgnoreCase("mail@mail.com").get();
         userRepository.delete(userToDelete);
     }
 
@@ -330,7 +331,7 @@ public class SocialServiceIntTest {
         socialService.createSocialUser(connection, "fr");
 
         //Verify
-        User userToVerify = userRepository.findOneByEmail("mail@mail.com").get();
+        User userToVerify = userRepository.findOneByEmailIgnoreCase("mail@mail.com").get();
         assertThat(userToVerify.getLogin()).isEqualTo("@other_login");
         assertThat(userToVerify.getFirstName()).isEqualTo("OTHER_FIRST_NAME");
         assertThat(userToVerify.getLastName()).isEqualTo("OTHER_LAST_NAME");
@@ -356,7 +357,7 @@ public class SocialServiceIntTest {
         verify(mockMailService, times(1)).sendSocialRegistrationValidationEmail(anyObject(), anyString());
 
         // Teardown
-        User userToDelete = userRepository.findOneByEmail("mail@mail.com").get();
+        User userToDelete = userRepository.findOneByEmailIgnoreCase("mail@mail.com").get();
         userRepository.delete(userToDelete);
     }
 

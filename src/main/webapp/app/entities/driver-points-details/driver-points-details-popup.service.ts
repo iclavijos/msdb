@@ -6,27 +6,37 @@ import { DriverPointsDetailsService } from './driver-points-details.service';
 
 @Injectable()
 export class DriverPointsDetailsPopupService {
-    private isOpen = false;
+    private ngbModalRef: NgbModalRef;
+
     constructor(
         private modalService: NgbModal,
         private router: Router,
         private driverPointsDetailsService: DriverPointsDetailsService
 
-    ) {}
+    ) {
+        this.ngbModalRef = null;
+    }
 
-    open(component: Component, id?: number | any): NgbModalRef {
-        if (this.isOpen) {
-            return;
-        }
-        this.isOpen = true;
+    open(component: Component, id?: number | any): Promise<NgbModalRef> {
+        return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
 
-        if (id) {
-            this.driverPointsDetailsService.find(id).subscribe((driverPointsDetails) => {
-                this.driverPointsDetailsModalRef(component, driverPointsDetails);
-            });
-        } else {
-            return this.driverPointsDetailsModalRef(component, new DriverPointsDetails());
-        }
+            if (id) {
+                this.driverPointsDetailsService.find(id).subscribe((driverPointsDetails) => {
+                    this.ngbModalRef = this.driverPointsDetailsModalRef(component, driverPointsDetails);
+                    resolve(this.ngbModalRef);
+                });
+            } else {
+                // setTimeout used as a workaround for getting ExpressionChangedAfterItHasBeenCheckedError
+                setTimeout(() => {
+                    this.ngbModalRef = this.driverPointsDetailsModalRef(component, new DriverPointsDetails());
+                    resolve(this.ngbModalRef);
+                }, 0);
+            }
+        });
     }
 
     driverPointsDetailsModalRef(component: Component, driverPointsDetails: DriverPointsDetails): NgbModalRef {
@@ -34,10 +44,10 @@ export class DriverPointsDetailsPopupService {
         modalRef.componentInstance.driverPointsDetails = driverPointsDetails;
         modalRef.result.then((result) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         }, (reason) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         });
         return modalRef;
     }

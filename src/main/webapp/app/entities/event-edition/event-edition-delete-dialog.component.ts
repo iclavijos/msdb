@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { EventEdition } from './event-edition.model';
 import { EventEditionPopupService } from './event-edition-popup.service';
@@ -19,7 +19,6 @@ export class EventEditionDeleteDialogComponent {
     constructor(
         private eventEditionService: EventEditionService,
         public activeModal: NgbActiveModal,
-        private alertService: JhiAlertService,
         private eventManager: JhiEventManager
     ) {
     }
@@ -36,7 +35,6 @@ export class EventEditionDeleteDialogComponent {
             });
             this.activeModal.dismiss(true);
         });
-        this.alertService.success('motorsportsDatabaseApp.eventEdition.deleted', { param : id }, null);
     }
 }
 
@@ -46,7 +44,6 @@ export class EventEditionDeleteDialogComponent {
 })
 export class EventEditionDeletePopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -56,8 +53,8 @@ export class EventEditionDeletePopupComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
-            this.modalRef = this.eventEditionPopupService
-                .open(EventEditionDeleteDialogComponent, params['id']);
+            this.eventEditionPopupService
+                .open(EventEditionDeleteDialogComponent as Component, params['id']);
         });
     }
 

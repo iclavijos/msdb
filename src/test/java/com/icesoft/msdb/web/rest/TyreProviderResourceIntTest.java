@@ -25,6 +25,7 @@ import org.springframework.util.Base64Utils;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -72,10 +73,11 @@ public class TyreProviderResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        TyreProviderResource tyreProviderResource = new TyreProviderResource(tyreProviderRepository, tyreProviderSearchRepository);
+        final TyreProviderResource tyreProviderResource = new TyreProviderResource(tyreProviderRepository, tyreProviderSearchRepository);
         this.restTyreProviderMockMvc = MockMvcBuilders.standaloneSetup(tyreProviderResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -137,7 +139,7 @@ public class TyreProviderResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(tyreProvider)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the TyreProvider in the database
         List<TyreProvider> tyreProviderList = tyreProviderRepository.findAll();
         assertThat(tyreProviderList).hasSize(databaseSizeBeforeCreate);
     }

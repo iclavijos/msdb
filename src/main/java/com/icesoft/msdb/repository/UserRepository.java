@@ -1,6 +1,7 @@
 package com.icesoft.msdb.repository;
 
 import com.icesoft.msdb.domain.User;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -22,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findOneByResetKey(String resetKey);
 
-    Optional<User> findOneByEmail(String email);
+    Optional<User> findOneByEmailIgnoreCase(String email);
 
     Optional<User> findOneByLogin(String login);
 
@@ -30,6 +31,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findOneWithAuthoritiesById(Long id);
 
     @EntityGraph(attributePaths = "authorities")
+    @Cacheable(cacheNames="users")
     Optional<User> findOneWithAuthoritiesByLogin(String login);
 
     Page<User> findAllByLoginNot(Pageable pageable, String login);

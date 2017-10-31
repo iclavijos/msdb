@@ -1,7 +1,7 @@
 <div>
     <h2>
         <span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.home.title">Racetrack Layouts</span>
-        <button class="btn btn-primary float-right create-racetrack-layout" [routerLink]="['/', { outlets: { popup: ['racetrack-layout-new'] } }]">
+        <button class="btn btn-primary float-right jh-create-entity create-racetrack-layout" [routerLink]="['/', { outlets: { popup: ['racetrack-layout-new'] } }]">
             <span class="fa fa-plus"></span>
             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.racetrackLayout.home.createLabel">
             Create new Racetrack Layout
@@ -63,21 +63,21 @@
                                 [routerLink]="['../racetrack-layout', racetrackLayout.id ]"
                                 class="btn btn-info btn-sm">
                             <span class="fa fa-eye"></span>
-                            <span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
                         </button>
                         <button type="submit"
                                 [routerLink]="['/', { outlets: { popup: 'racetrack-layout/'+ racetrackLayout.id + '/edit'} }]"
                                 replaceUrl="true"
                                 class="btn btn-primary btn-sm">
                             <span class="fa fa-pencil"></span>
-                            <span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
                         </button>
                         <button type="submit"
                                 [routerLink]="['/', { outlets: { popup: 'racetrack-layout/'+ racetrackLayout.id + '/delete'} }]"
                                 replaceUrl="true"
                                 class="btn btn-danger btn-sm">
                             <span class="fa fa-remove"></span>
-                            <span class="hidden-md-down" jhiTranslate="entity.action.delete">Delete</span>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
                         </button>
                     </div>
                 </td>

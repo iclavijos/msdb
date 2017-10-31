@@ -25,6 +25,7 @@ import org.springframework.util.Base64Utils;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -75,10 +76,11 @@ public class RacetrackResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        RacetrackResource racetrackResource = new RacetrackResource(racetrackRepository, racetrackSearchRepository);
+        final RacetrackResource racetrackResource = new RacetrackResource(racetrackRepository, racetrackSearchRepository);
         this.restRacetrackMockMvc = MockMvcBuilders.standaloneSetup(racetrackResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -142,7 +144,7 @@ public class RacetrackResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(racetrack)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Racetrack in the database
         List<Racetrack> racetrackList = racetrackRepository.findAll();
         assertThat(racetrackList).hasSize(databaseSizeBeforeCreate);
     }

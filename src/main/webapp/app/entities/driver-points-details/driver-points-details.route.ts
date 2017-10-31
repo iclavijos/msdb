@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
 import { JhiPaginationUtil } from 'ng-jhipster';
@@ -8,8 +8,6 @@ import { DriverPointsDetailsComponent } from './driver-points-details.component'
 import { DriverPointsDetailsDetailComponent } from './driver-points-details-detail.component';
 import { DriverPointsDetailsPopupComponent } from './driver-points-details-dialog.component';
 import { DriverPointsDetailsDeletePopupComponent } from './driver-points-details-delete-dialog.component';
-
-import { Principal } from '../../shared';
 
 export const driverPointsDetailsRoute: Routes = [
     {

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { EventEdition } from './event-edition.model';
@@ -21,7 +21,6 @@ import { ResponseWrapper } from '../../shared';
 export class EventEditionDialogComponent implements OnInit {
 
     eventEdition: EventEdition;
-    authorities: any[];
     isSaving: boolean;
 
     categories: Category[];
@@ -33,7 +32,7 @@ export class EventEditionDialogComponent implements OnInit {
 
     constructor(
         public activeModal: NgbActiveModal,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private eventEditionService: EventEditionService,
         private categoryService: CategoryService,
         private racetrackLayoutService: RacetrackLayoutService,
@@ -44,7 +43,6 @@ export class EventEditionDialogComponent implements OnInit {
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
         this.categoryService.query()
             .subscribe((res: ResponseWrapper) => { this.categories = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
         this.racetrackLayoutService.query()
@@ -61,41 +59,30 @@ export class EventEditionDialogComponent implements OnInit {
         this.isSaving = true;
         if (this.eventEdition.id !== undefined) {
             this.subscribeToSaveResponse(
-                this.eventEditionService.update(this.eventEdition), false);
+                this.eventEditionService.update(this.eventEdition));
         } else {
             this.subscribeToSaveResponse(
-                this.eventEditionService.create(this.eventEdition), true);
+                this.eventEditionService.create(this.eventEdition));
         }
     }
 
-    private subscribeToSaveResponse(result: Observable<EventEdition>, isCreated: boolean) {
+    private subscribeToSaveResponse(result: Observable<EventEdition>) {
         result.subscribe((res: EventEdition) =>
-            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
     }
 
-    private onSaveSuccess(result: EventEdition, isCreated: boolean) {
-        this.alertService.success(
-            isCreated ? 'motorsportsDatabaseApp.eventEdition.created'
-            : 'motorsportsDatabaseApp.eventEdition.updated',
-            { param : result.id }, null);
-
+    private onSaveSuccess(result: EventEdition) {
         this.eventManager.broadcast({ name: 'eventEditionListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError(error) {
-        try {
-            error.json();
-        } catch (exception) {
-            error.message = error.text();
-        }
+    private onSaveError() {
         this.isSaving = false;
-        this.onError(error);
     }
 
-    private onError(error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error: any) {
+        this.jhiAlertService.error(error.message, null, null);
     }
 
     trackCategoryById(index: number, item: Category) {
@@ -117,7 +104,6 @@ export class EventEditionDialogComponent implements OnInit {
 })
 export class EventEditionPopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -128,11 +114,11 @@ export class EventEditionPopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
-                this.modalRef = this.eventEditionPopupService
-                    .open(EventEditionDialogComponent, params['id']);
+                this.eventEditionPopupService
+                    .open(EventEditionDialogComponent as Component, params['id']);
             } else {
-                this.modalRef = this.eventEditionPopupService
-                    .open(EventEditionDialogComponent);
+                this.eventEditionPopupService
+                    .open(EventEditionDialogComponent as Component);
             }
         });
     }

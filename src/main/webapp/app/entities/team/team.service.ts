@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { SERVER_API_URL } from '../../app.constants';
 
 import { Team } from './team.model';
 import { ResponseWrapper, createRequestOption } from '../../shared';
@@ -8,28 +9,31 @@ import { ResponseWrapper, createRequestOption } from '../../shared';
 @Injectable()
 export class TeamService {
 
-    private resourceUrl = 'api/teams';
-    private resourceSearchUrl = 'api/_search/teams';
+    private resourceUrl = SERVER_API_URL + 'api/teams';
+    private resourceSearchUrl = SERVER_API_URL + 'api/_search/teams';
 
     constructor(private http: Http) { }
 
     create(team: Team): Observable<Team> {
         const copy = this.convert(team);
         return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
     update(team: Team): Observable<Team> {
         const copy = this.convert(team);
         return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
     find(id: number): Observable<Team> {
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
@@ -51,9 +55,24 @@ export class TeamService {
 
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();
-        return new ResponseWrapper(res.headers, jsonResponse, res.status);
+        const result = [];
+        for (let i = 0; i < jsonResponse.length; i++) {
+            result.push(this.convertItemFromServer(jsonResponse[i]));
+        }
+        return new ResponseWrapper(res.headers, result, res.status);
     }
 
+    /**
+     * Convert a returned JSON object to Team.
+     */
+    private convertItemFromServer(json: any): Team {
+        const entity: Team = Object.assign(new Team(), json);
+        return entity;
+    }
+
+    /**
+     * Convert a Team to a JSON which can be sent to the server.
+     */
     private convert(team: Team): Team {
         const copy: Team = Object.assign({}, team);
         return copy;

@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.EventSession;
 
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.search.EventSessionSearchRepository;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class EventSessionResource {
     public ResponseEntity<EventSession> createEventSession(@Valid @RequestBody EventSession eventSession) throws URISyntaxException {
         log.debug("REST request to save EventSession : {}", eventSession);
         if (eventSession.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new eventSession cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new eventSession cannot already have an ID", ENTITY_NAME, "idexists");
         }
         EventSession result = eventSessionRepository.save(eventSession);
         eventSessionSearchRepository.save(result);
@@ -97,7 +98,7 @@ public class EventSessionResource {
     public List<EventSession> getAllEventSessions() {
         log.debug("REST request to get all EventSessions");
         return eventSessionRepository.findAll();
-    }
+        }
 
     /**
      * GET  /event-sessions/:id : get the "id" eventSession.

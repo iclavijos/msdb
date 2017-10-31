@@ -25,6 +25,7 @@ import org.springframework.util.Base64Utils;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -96,10 +97,11 @@ public class EngineResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        EngineResource engineResource = new EngineResource(engineRepository, engineSearchRepository);
+        final EngineResource engineResource = new EngineResource(engineRepository, engineSearchRepository);
         this.restEngineMockMvc = MockMvcBuilders.standaloneSetup(engineResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -177,7 +179,7 @@ public class EngineResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(engine)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Engine in the database
         List<Engine> engineList = engineRepository.findAll();
         assertThat(engineList).hasSize(databaseSizeBeforeCreate);
     }

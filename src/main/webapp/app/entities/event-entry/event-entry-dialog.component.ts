@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { EventEntry } from './event-entry.model';
@@ -21,7 +21,6 @@ import { ResponseWrapper } from '../../shared';
 export class EventEntryDialogComponent implements OnInit {
 
     eventEntry: EventEntry;
-    authorities: any[];
     isSaving: boolean;
 
     cars: Car[];
@@ -32,7 +31,7 @@ export class EventEntryDialogComponent implements OnInit {
 
     constructor(
         public activeModal: NgbActiveModal,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private eventEntryService: EventEntryService,
         private carService: CarService,
         private driverService: DriverService,
@@ -43,7 +42,6 @@ export class EventEntryDialogComponent implements OnInit {
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
         this.carService.query()
             .subscribe((res: ResponseWrapper) => { this.cars = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
         this.driverService.query()
@@ -60,41 +58,30 @@ export class EventEntryDialogComponent implements OnInit {
         this.isSaving = true;
         if (this.eventEntry.id !== undefined) {
             this.subscribeToSaveResponse(
-                this.eventEntryService.update(this.eventEntry), false);
+                this.eventEntryService.update(this.eventEntry));
         } else {
             this.subscribeToSaveResponse(
-                this.eventEntryService.create(this.eventEntry), true);
+                this.eventEntryService.create(this.eventEntry));
         }
     }
 
-    private subscribeToSaveResponse(result: Observable<EventEntry>, isCreated: boolean) {
+    private subscribeToSaveResponse(result: Observable<EventEntry>) {
         result.subscribe((res: EventEntry) =>
-            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
     }
 
-    private onSaveSuccess(result: EventEntry, isCreated: boolean) {
-        this.alertService.success(
-            isCreated ? 'motorsportsDatabaseApp.eventEntry.created'
-            : 'motorsportsDatabaseApp.eventEntry.updated',
-            { param : result.id }, null);
-
+    private onSaveSuccess(result: EventEntry) {
         this.eventManager.broadcast({ name: 'eventEntryListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError(error) {
-        try {
-            error.json();
-        } catch (exception) {
-            error.message = error.text();
-        }
+    private onSaveError() {
         this.isSaving = false;
-        this.onError(error);
     }
 
-    private onError(error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error: any) {
+        this.jhiAlertService.error(error.message, null, null);
     }
 
     trackCarById(index: number, item: Car) {
@@ -127,7 +114,6 @@ export class EventEntryDialogComponent implements OnInit {
 })
 export class EventEntryPopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -138,11 +124,11 @@ export class EventEntryPopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
-                this.modalRef = this.eventEntryPopupService
-                    .open(EventEntryDialogComponent, params['id']);
+                this.eventEntryPopupService
+                    .open(EventEntryDialogComponent as Component, params['id']);
             } else {
-                this.modalRef = this.eventEntryPopupService
-                    .open(EventEntryDialogComponent);
+                this.eventEntryPopupService
+                    .open(EventEntryDialogComponent as Component);
             }
         });
     }

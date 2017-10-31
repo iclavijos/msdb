@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
 import { JhiPaginationUtil } from 'ng-jhipster';
@@ -8,8 +8,6 @@ import { CategoryComponent } from './category.component';
 import { CategoryDetailComponent } from './category-detail.component';
 import { CategoryPopupComponent } from './category-dialog.component';
 import { CategoryDeletePopupComponent } from './category-delete-dialog.component';
-
-import { Principal } from '../../shared';
 
 @Injectable()
 export class CategoryResolvePagingParams implements Resolve<any> {

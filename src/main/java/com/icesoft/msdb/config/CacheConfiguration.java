@@ -37,6 +37,7 @@ public class CacheConfiguration {
     @Bean
     public JCacheManagerCustomizer cacheManagerCustomizer() {
         return cm -> {
+            cm.createCache("users", jcacheConfiguration);
             cm.createCache(com.icesoft.msdb.domain.User.class.getName(), jcacheConfiguration);
             cm.createCache(com.icesoft.msdb.domain.Authority.class.getName(), jcacheConfiguration);
             cm.createCache(com.icesoft.msdb.domain.User.class.getName() + ".authorities", jcacheConfiguration);

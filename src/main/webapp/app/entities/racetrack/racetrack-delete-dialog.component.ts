@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { Racetrack } from './racetrack.model';
 import { RacetrackPopupService } from './racetrack-popup.service';
@@ -19,7 +19,6 @@ export class RacetrackDeleteDialogComponent {
     constructor(
         private racetrackService: RacetrackService,
         public activeModal: NgbActiveModal,
-        private alertService: JhiAlertService,
         private eventManager: JhiEventManager
     ) {
     }
@@ -36,7 +35,6 @@ export class RacetrackDeleteDialogComponent {
             });
             this.activeModal.dismiss(true);
         });
-        this.alertService.success('motorsportsDatabaseApp.racetrack.deleted', { param : id }, null);
     }
 }
 
@@ -46,7 +44,6 @@ export class RacetrackDeleteDialogComponent {
 })
 export class RacetrackDeletePopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -56,8 +53,8 @@ export class RacetrackDeletePopupComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
-            this.modalRef = this.racetrackPopupService
-                .open(RacetrackDeleteDialogComponent, params['id']);
+            this.racetrackPopupService
+                .open(RacetrackDeleteDialogComponent as Component, params['id']);
         });
     }
 

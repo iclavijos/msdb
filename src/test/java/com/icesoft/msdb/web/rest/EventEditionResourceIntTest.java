@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -77,10 +78,11 @@ public class EventEditionResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        EventEditionResource eventEditionResource = new EventEditionResource(eventEditionRepository, eventEditionSearchRepository);
+        final EventEditionResource eventEditionResource = new EventEditionResource(eventEditionRepository, eventEditionSearchRepository);
         this.restEventEditionMockMvc = MockMvcBuilders.standaloneSetup(eventEditionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -144,7 +146,7 @@ public class EventEditionResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(eventEdition)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the EventEdition in the database
         List<EventEdition> eventEditionList = eventEditionRepository.findAll();
         assertThat(eventEditionList).hasSize(databaseSizeBeforeCreate);
     }

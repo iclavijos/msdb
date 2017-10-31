@@ -11,6 +11,6 @@ import org.springframework.data.jpa.repository.*;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface DriverRepository extends JpaRepository<Driver,Long> {
-    
+public interface DriverRepository extends JpaRepository<Driver, Long> {
+
 }

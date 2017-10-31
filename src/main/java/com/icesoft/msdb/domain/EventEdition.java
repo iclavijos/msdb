@@ -52,6 +52,7 @@ public class EventEdition implements Serializable {
     @ManyToOne
     private Event event;
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -150,6 +151,7 @@ public class EventEdition implements Serializable {
     public void setEvent(Event event) {
         this.event = event;
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

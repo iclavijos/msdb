@@ -53,6 +53,7 @@ public class Series implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<SeriesEdition> editions = new HashSet<>();
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -150,6 +151,7 @@ public class Series implements Serializable {
     public void setEditions(Set<SeriesEdition> seriesEditions) {
         this.editions = seriesEditions;
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

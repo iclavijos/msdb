@@ -11,6 +11,6 @@ import org.springframework.data.jpa.repository.*;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface EventEntryResultRepository extends JpaRepository<EventEntryResult,Long> {
-    
+public interface EventEntryResultRepository extends JpaRepository<EventEntryResult, Long> {
+
 }

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { DriverPointsDetails } from './driver-points-details.model';
@@ -17,12 +17,11 @@ import { DriverPointsDetailsService } from './driver-points-details.service';
 export class DriverPointsDetailsDialogComponent implements OnInit {
 
     driverPointsDetails: DriverPointsDetails;
-    authorities: any[];
     isSaving: boolean;
 
     constructor(
         public activeModal: NgbActiveModal,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private driverPointsDetailsService: DriverPointsDetailsService,
         private eventManager: JhiEventManager
     ) {
@@ -30,7 +29,6 @@ export class DriverPointsDetailsDialogComponent implements OnInit {
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
     }
 
     clear() {
@@ -41,41 +39,30 @@ export class DriverPointsDetailsDialogComponent implements OnInit {
         this.isSaving = true;
         if (this.driverPointsDetails.id !== undefined) {
             this.subscribeToSaveResponse(
-                this.driverPointsDetailsService.update(this.driverPointsDetails), false);
+                this.driverPointsDetailsService.update(this.driverPointsDetails));
         } else {
             this.subscribeToSaveResponse(
-                this.driverPointsDetailsService.create(this.driverPointsDetails), true);
+                this.driverPointsDetailsService.create(this.driverPointsDetails));
         }
     }
 
-    private subscribeToSaveResponse(result: Observable<DriverPointsDetails>, isCreated: boolean) {
+    private subscribeToSaveResponse(result: Observable<DriverPointsDetails>) {
         result.subscribe((res: DriverPointsDetails) =>
-            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
     }
 
-    private onSaveSuccess(result: DriverPointsDetails, isCreated: boolean) {
-        this.alertService.success(
-            isCreated ? 'motorsportsDatabaseApp.driverPointsDetails.created'
-            : 'motorsportsDatabaseApp.driverPointsDetails.updated',
-            { param : result.id }, null);
-
+    private onSaveSuccess(result: DriverPointsDetails) {
         this.eventManager.broadcast({ name: 'driverPointsDetailsListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError(error) {
-        try {
-            error.json();
-        } catch (exception) {
-            error.message = error.text();
-        }
+    private onSaveError() {
         this.isSaving = false;
-        this.onError(error);
     }
 
-    private onError(error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error: any) {
+        this.jhiAlertService.error(error.message, null, null);
     }
 }
 
@@ -85,7 +72,6 @@ export class DriverPointsDetailsDialogComponent implements OnInit {
 })
 export class DriverPointsDetailsPopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -96,11 +82,11 @@ export class DriverPointsDetailsPopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
-                this.modalRef = this.driverPointsDetailsPopupService
-                    .open(DriverPointsDetailsDialogComponent, params['id']);
+                this.driverPointsDetailsPopupService
+                    .open(DriverPointsDetailsDialogComponent as Component, params['id']);
             } else {
-                this.modalRef = this.driverPointsDetailsPopupService
-                    .open(DriverPointsDetailsDialogComponent);
+                this.driverPointsDetailsPopupService
+                    .open(DriverPointsDetailsDialogComponent as Component);
             }
         });
     }

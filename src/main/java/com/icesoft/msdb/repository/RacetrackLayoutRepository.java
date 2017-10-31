@@ -11,6 +11,6 @@ import org.springframework.data.jpa.repository.*;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface RacetrackLayoutRepository extends JpaRepository<RacetrackLayout,Long> {
-    
+public interface RacetrackLayoutRepository extends JpaRepository<RacetrackLayout, Long> {
+
 }

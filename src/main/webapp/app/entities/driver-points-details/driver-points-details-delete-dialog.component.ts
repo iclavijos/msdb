@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { DriverPointsDetails } from './driver-points-details.model';
 import { DriverPointsDetailsPopupService } from './driver-points-details-popup.service';
@@ -19,7 +19,6 @@ export class DriverPointsDetailsDeleteDialogComponent {
     constructor(
         private driverPointsDetailsService: DriverPointsDetailsService,
         public activeModal: NgbActiveModal,
-        private alertService: JhiAlertService,
         private eventManager: JhiEventManager
     ) {
     }
@@ -36,7 +35,6 @@ export class DriverPointsDetailsDeleteDialogComponent {
             });
             this.activeModal.dismiss(true);
         });
-        this.alertService.success('motorsportsDatabaseApp.driverPointsDetails.deleted', { param : id }, null);
     }
 }
 
@@ -46,7 +44,6 @@ export class DriverPointsDetailsDeleteDialogComponent {
 })
 export class DriverPointsDetailsDeletePopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -56,8 +53,8 @@ export class DriverPointsDetailsDeletePopupComponent implements OnInit, OnDestro
 
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
-            this.modalRef = this.driverPointsDetailsPopupService
-                .open(DriverPointsDetailsDeleteDialogComponent, params['id']);
+            this.driverPointsDetailsPopupService
+                .open(DriverPointsDetailsDeleteDialogComponent as Component, params['id']);
         });
     }
 

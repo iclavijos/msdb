@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { Racetrack } from './racetrack.model';
@@ -17,13 +17,12 @@ import { RacetrackService } from './racetrack.service';
 export class RacetrackDialogComponent implements OnInit {
 
     racetrack: Racetrack;
-    authorities: any[];
     isSaving: boolean;
 
     constructor(
         public activeModal: NgbActiveModal,
         private dataUtils: JhiDataUtils,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private racetrackService: RacetrackService,
         private elementRef: ElementRef,
         private eventManager: JhiEventManager
@@ -32,7 +31,6 @@ export class RacetrackDialogComponent implements OnInit {
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
     }
 
     byteSize(field) {
@@ -43,17 +41,8 @@ export class RacetrackDialogComponent implements OnInit {
         return this.dataUtils.openFile(contentType, field);
     }
 
-    setFileData(event, racetrack, field, isImage) {
-        if (event && event.target.files && event.target.files[0]) {
-            const file = event.target.files[0];
-            if (isImage && !/^image\//.test(file.type)) {
-                return;
-            }
-            this.dataUtils.toBase64(file, (base64Data) => {
-                racetrack[field] = base64Data;
-                racetrack[`${field}ContentType`] = file.type;
-            });
-        }
+    setFileData(event, entity, field, isImage) {
+        this.dataUtils.setFileData(event, entity, field, isImage);
     }
 
     clearInputImage(field: string, fieldContentType: string, idInput: string) {
@@ -68,41 +57,30 @@ export class RacetrackDialogComponent implements OnInit {
         this.isSaving = true;
         if (this.racetrack.id !== undefined) {
             this.subscribeToSaveResponse(
-                this.racetrackService.update(this.racetrack), false);
+                this.racetrackService.update(this.racetrack));
         } else {
             this.subscribeToSaveResponse(
-                this.racetrackService.create(this.racetrack), true);
+                this.racetrackService.create(this.racetrack));
         }
     }
 
-    private subscribeToSaveResponse(result: Observable<Racetrack>, isCreated: boolean) {
+    private subscribeToSaveResponse(result: Observable<Racetrack>) {
         result.subscribe((res: Racetrack) =>
-            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
     }
 
-    private onSaveSuccess(result: Racetrack, isCreated: boolean) {
-        this.alertService.success(
-            isCreated ? 'motorsportsDatabaseApp.racetrack.created'
-            : 'motorsportsDatabaseApp.racetrack.updated',
-            { param : result.id }, null);
-
+    private onSaveSuccess(result: Racetrack) {
         this.eventManager.broadcast({ name: 'racetrackListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError(error) {
-        try {
-            error.json();
-        } catch (exception) {
-            error.message = error.text();
-        }
+    private onSaveError() {
         this.isSaving = false;
-        this.onError(error);
     }
 
-    private onError(error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error: any) {
+        this.jhiAlertService.error(error.message, null, null);
     }
 }
 
@@ -112,7 +90,6 @@ export class RacetrackDialogComponent implements OnInit {
 })
 export class RacetrackPopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -123,11 +100,11 @@ export class RacetrackPopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
-                this.modalRef = this.racetrackPopupService
-                    .open(RacetrackDialogComponent, params['id']);
+                this.racetrackPopupService
+                    .open(RacetrackDialogComponent as Component, params['id']);
             } else {
-                this.modalRef = this.racetrackPopupService
-                    .open(RacetrackDialogComponent);
+                this.racetrackPopupService
+                    .open(RacetrackDialogComponent as Component);
             }
         });
     }

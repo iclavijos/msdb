@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
 import { JhiPaginationUtil } from 'ng-jhipster';
@@ -8,8 +8,6 @@ import { SeriesEditionComponent } from './series-edition.component';
 import { SeriesEditionDetailComponent } from './series-edition-detail.component';
 import { SeriesEditionPopupComponent } from './series-edition-dialog.component';
 import { SeriesEditionDeletePopupComponent } from './series-edition-delete-dialog.component';
-
-import { Principal } from '../../shared';
 
 @Injectable()
 export class SeriesEditionResolvePagingParams implements Resolve<any> {

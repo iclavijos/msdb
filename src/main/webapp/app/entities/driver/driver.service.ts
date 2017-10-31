@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { SERVER_API_URL } from '../../app.constants';
+
 import { JhiDateUtils } from 'ng-jhipster';
 
 import { Driver } from './driver.model';
@@ -9,8 +11,8 @@ import { ResponseWrapper, createRequestOption } from '../../shared';
 @Injectable()
 export class DriverService {
 
-    private resourceUrl = 'api/drivers';
-    private resourceSearchUrl = 'api/_search/drivers';
+    private resourceUrl = SERVER_API_URL + 'api/drivers';
+    private resourceSearchUrl = SERVER_API_URL + 'api/_search/drivers';
 
     constructor(private http: Http, private dateUtils: JhiDateUtils) { }
 
@@ -18,8 +20,7 @@ export class DriverService {
         const copy = this.convert(driver);
         return this.http.post(this.resourceUrl, copy).map((res: Response) => {
             const jsonResponse = res.json();
-            this.convertItemFromServer(jsonResponse);
-            return jsonResponse;
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
@@ -27,16 +28,14 @@ export class DriverService {
         const copy = this.convert(driver);
         return this.http.put(this.resourceUrl, copy).map((res: Response) => {
             const jsonResponse = res.json();
-            this.convertItemFromServer(jsonResponse);
-            return jsonResponse;
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
     find(id: number): Observable<Driver> {
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
             const jsonResponse = res.json();
-            this.convertItemFromServer(jsonResponse);
-            return jsonResponse;
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
@@ -58,19 +57,28 @@ export class DriverService {
 
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();
+        const result = [];
         for (let i = 0; i < jsonResponse.length; i++) {
-            this.convertItemFromServer(jsonResponse[i]);
+            result.push(this.convertItemFromServer(jsonResponse[i]));
         }
-        return new ResponseWrapper(res.headers, jsonResponse, res.status);
+        return new ResponseWrapper(res.headers, result, res.status);
     }
 
-    private convertItemFromServer(entity: any) {
+    /**
+     * Convert a returned JSON object to Driver.
+     */
+    private convertItemFromServer(json: any): Driver {
+        const entity: Driver = Object.assign(new Driver(), json);
         entity.birthDate = this.dateUtils
-            .convertLocalDateFromServer(entity.birthDate);
+            .convertLocalDateFromServer(json.birthDate);
         entity.deathDate = this.dateUtils
-            .convertLocalDateFromServer(entity.deathDate);
+            .convertLocalDateFromServer(json.deathDate);
+        return entity;
     }
 
+    /**
+     * Convert a Driver to a JSON which can be sent to the server.
+     */
     private convert(driver: Driver): Driver {
         const copy: Driver = Object.assign({}, driver);
         copy.birthDate = this.dateUtils

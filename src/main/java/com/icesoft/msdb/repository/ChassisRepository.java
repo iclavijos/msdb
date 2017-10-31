@@ -11,6 +11,6 @@ import org.springframework.data.jpa.repository.*;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface ChassisRepository extends JpaRepository<Chassis,Long> {
-    
+public interface ChassisRepository extends JpaRepository<Chassis, Long> {
+
 }

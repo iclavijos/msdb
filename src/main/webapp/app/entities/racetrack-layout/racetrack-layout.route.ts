@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
 import { JhiPaginationUtil } from 'ng-jhipster';
@@ -8,8 +8,6 @@ import { RacetrackLayoutComponent } from './racetrack-layout.component';
 import { RacetrackLayoutDetailComponent } from './racetrack-layout-detail.component';
 import { RacetrackLayoutPopupComponent } from './racetrack-layout-dialog.component';
 import { RacetrackLayoutDeletePopupComponent } from './racetrack-layout-delete-dialog.component';
-
-import { Principal } from '../../shared';
 
 export const racetrackLayoutRoute: Routes = [
     {

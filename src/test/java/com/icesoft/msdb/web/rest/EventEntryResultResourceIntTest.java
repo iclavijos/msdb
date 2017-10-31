@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -78,10 +79,11 @@ public class EventEntryResultResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        EventEntryResultResource eventEntryResultResource = new EventEntryResultResource(eventEntryResultRepository, eventEntryResultSearchRepository);
+        final EventEntryResultResource eventEntryResultResource = new EventEntryResultResource(eventEntryResultRepository, eventEntryResultSearchRepository);
         this.restEventEntryResultMockMvc = MockMvcBuilders.standaloneSetup(eventEntryResultResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -147,7 +149,7 @@ public class EventEntryResultResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(eventEntryResult)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the EventEntryResult in the database
         List<EventEntryResult> eventEntryResultList = eventEntryResultRepository.findAll();
         assertThat(eventEntryResultList).hasSize(databaseSizeBeforeCreate);
     }

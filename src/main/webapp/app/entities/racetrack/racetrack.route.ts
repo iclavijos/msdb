@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
 import { JhiPaginationUtil } from 'ng-jhipster';
@@ -8,8 +8,6 @@ import { RacetrackComponent } from './racetrack.component';
 import { RacetrackDetailComponent } from './racetrack-detail.component';
 import { RacetrackPopupComponent } from './racetrack-dialog.component';
 import { RacetrackDeletePopupComponent } from './racetrack-delete-dialog.component';
-
-import { Principal } from '../../shared';
 
 @Injectable()
 export class RacetrackResolvePagingParams implements Resolve<any> {

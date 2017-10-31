@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { EventSession } from './event-session.model';
@@ -17,12 +17,11 @@ import { EventSessionService } from './event-session.service';
 export class EventSessionDialogComponent implements OnInit {
 
     eventSession: EventSession;
-    authorities: any[];
     isSaving: boolean;
 
     constructor(
         public activeModal: NgbActiveModal,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private eventSessionService: EventSessionService,
         private eventManager: JhiEventManager
     ) {
@@ -30,7 +29,6 @@ export class EventSessionDialogComponent implements OnInit {
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
     }
 
     clear() {
@@ -41,41 +39,30 @@ export class EventSessionDialogComponent implements OnInit {
         this.isSaving = true;
         if (this.eventSession.id !== undefined) {
             this.subscribeToSaveResponse(
-                this.eventSessionService.update(this.eventSession), false);
+                this.eventSessionService.update(this.eventSession));
         } else {
             this.subscribeToSaveResponse(
-                this.eventSessionService.create(this.eventSession), true);
+                this.eventSessionService.create(this.eventSession));
         }
     }
 
-    private subscribeToSaveResponse(result: Observable<EventSession>, isCreated: boolean) {
+    private subscribeToSaveResponse(result: Observable<EventSession>) {
         result.subscribe((res: EventSession) =>
-            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
     }
 
-    private onSaveSuccess(result: EventSession, isCreated: boolean) {
-        this.alertService.success(
-            isCreated ? 'motorsportsDatabaseApp.eventSession.created'
-            : 'motorsportsDatabaseApp.eventSession.updated',
-            { param : result.id }, null);
-
+    private onSaveSuccess(result: EventSession) {
         this.eventManager.broadcast({ name: 'eventSessionListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError(error) {
-        try {
-            error.json();
-        } catch (exception) {
-            error.message = error.text();
-        }
+    private onSaveError() {
         this.isSaving = false;
-        this.onError(error);
     }
 
-    private onError(error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error: any) {
+        this.jhiAlertService.error(error.message, null, null);
     }
 }
 
@@ -85,7 +72,6 @@ export class EventSessionDialogComponent implements OnInit {
 })
 export class EventSessionPopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -96,11 +82,11 @@ export class EventSessionPopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
-                this.modalRef = this.eventSessionPopupService
-                    .open(EventSessionDialogComponent, params['id']);
+                this.eventSessionPopupService
+                    .open(EventSessionDialogComponent as Component, params['id']);
             } else {
-                this.modalRef = this.eventSessionPopupService
-                    .open(EventSessionDialogComponent);
+                this.eventSessionPopupService
+                    .open(EventSessionDialogComponent as Component);
             }
         });
     }

@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -72,10 +73,11 @@ public class ChassisResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        ChassisResource chassisResource = new ChassisResource(chassisRepository, chassisSearchRepository);
+        final ChassisResource chassisResource = new ChassisResource(chassisRepository, chassisSearchRepository);
         this.restChassisMockMvc = MockMvcBuilders.standaloneSetup(chassisResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -137,7 +139,7 @@ public class ChassisResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(chassis)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Chassis in the database
         List<Chassis> chassisList = chassisRepository.findAll();
         assertThat(chassisList).hasSize(databaseSizeBeforeCreate);
     }

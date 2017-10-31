@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.EventEdition;
 
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 import io.swagger.annotations.ApiParam;
@@ -61,7 +62,7 @@ public class EventEditionResource {
     public ResponseEntity<EventEdition> createEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to save EventEdition : {}", eventEdition);
         if (eventEdition.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new eventEdition cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new eventEdition cannot already have an ID", ENTITY_NAME, "idexists");
         }
         EventEdition result = eventEditionRepository.save(eventEdition);
         eventEditionSearchRepository.save(result);

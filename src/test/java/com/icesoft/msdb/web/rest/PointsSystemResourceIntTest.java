@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -84,10 +85,11 @@ public class PointsSystemResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        PointsSystemResource pointsSystemResource = new PointsSystemResource(pointsSystemRepository, pointsSystemSearchRepository);
+        final PointsSystemResource pointsSystemResource = new PointsSystemResource(pointsSystemRepository, pointsSystemSearchRepository);
         this.restPointsSystemMockMvc = MockMvcBuilders.standaloneSetup(pointsSystemResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -157,7 +159,7 @@ public class PointsSystemResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(pointsSystem)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the PointsSystem in the database
         List<PointsSystem> pointsSystemList = pointsSystemRepository.findAll();
         assertThat(pointsSystemList).hasSize(databaseSizeBeforeCreate);
     }

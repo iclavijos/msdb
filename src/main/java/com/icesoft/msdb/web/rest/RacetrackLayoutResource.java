@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.RacetrackLayout;
 
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.search.RacetrackLayoutSearchRepository;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class RacetrackLayoutResource {
     public ResponseEntity<RacetrackLayout> createRacetrackLayout(@Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
         log.debug("REST request to save RacetrackLayout : {}", racetrackLayout);
         if (racetrackLayout.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new racetrackLayout cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new racetrackLayout cannot already have an ID", ENTITY_NAME, "idexists");
         }
         RacetrackLayout result = racetrackLayoutRepository.save(racetrackLayout);
         racetrackLayoutSearchRepository.save(result);
@@ -97,7 +98,7 @@ public class RacetrackLayoutResource {
     public List<RacetrackLayout> getAllRacetrackLayouts() {
         log.debug("REST request to get all RacetrackLayouts");
         return racetrackLayoutRepository.findAll();
-    }
+        }
 
     /**
      * GET  /racetrack-layouts/:id : get the "id" racetrackLayout.

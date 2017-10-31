@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
 import { JhiPaginationUtil } from 'ng-jhipster';
@@ -8,8 +8,6 @@ import { EventSessionComponent } from './event-session.component';
 import { EventSessionDetailComponent } from './event-session-detail.component';
 import { EventSessionPopupComponent } from './event-session-dialog.component';
 import { EventSessionDeletePopupComponent } from './event-session-delete-dialog.component';
-
-import { Principal } from '../../shared';
 
 export const eventSessionRoute: Routes = [
     {

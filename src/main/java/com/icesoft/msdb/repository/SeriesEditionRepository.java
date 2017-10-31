@@ -11,6 +11,6 @@ import org.springframework.data.jpa.repository.*;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface SeriesEditionRepository extends JpaRepository<SeriesEdition,Long> {
-    
+public interface SeriesEditionRepository extends JpaRepository<SeriesEdition, Long> {
+
 }

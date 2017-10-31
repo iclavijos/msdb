@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.EventEntryResult;
 
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.search.EventEntryResultSearchRepository;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class EventEntryResultResource {
     public ResponseEntity<EventEntryResult> createEventEntryResult(@RequestBody EventEntryResult eventEntryResult) throws URISyntaxException {
         log.debug("REST request to save EventEntryResult : {}", eventEntryResult);
         if (eventEntryResult.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new eventEntryResult cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new eventEntryResult cannot already have an ID", ENTITY_NAME, "idexists");
         }
         EventEntryResult result = eventEntryResultRepository.save(eventEntryResult);
         eventEntryResultSearchRepository.save(result);
@@ -96,7 +97,7 @@ public class EventEntryResultResource {
     public List<EventEntryResult> getAllEventEntryResults() {
         log.debug("REST request to get all EventEntryResults");
         return eventEntryResultRepository.findAll();
-    }
+        }
 
     /**
      * GET  /event-entry-results/:id : get the "id" eventEntryResult.

@@ -63,11 +63,11 @@
                 <img [src]="'data:' + racetrackLayout.layoutImageContentType + ';base64,' + racetrackLayout.layoutImage" style="max-height: 100px;" *ngIf="racetrackLayout.layoutImage" alt="racetrackLayout image"/>
                 <div *ngIf="racetrackLayout.layoutImage" class="form-text text-danger clearfix">
                     <span class="pull-left">{{racetrackLayout.layoutImageContentType}}, {{byteSize(racetrackLayout.layoutImage)}}</span>
-                    <button type="button" (click)="clearInputImage('layoutImage', 'layoutImageContentType', 'fileImage')" class="btn btn-default btn-xs pull-right">
+                    <button type="button" (click)="clearInputImage('layoutImage', 'layoutImageContentType', 'fileImage')" class="btn btn-secondary btn-xs pull-right">
                         <span class="fa fa-times"></span>
                     </button>
                 </div>
-                <input type="file" id="fileImage" (change)="setFileData($event, racetrackLayout, 'layoutImage', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                <input type="file" id="file_layoutImage" (change)="setFileData($event, racetrackLayout, 'layoutImage', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
             </div>
             <input type="hidden" class="form-control" name="layoutImage" id="field_layoutImage"
                 [(ngModel)]="racetrackLayout.layoutImage"  />
@@ -81,7 +81,7 @@
         </div>
 
         <div class="form-group">
-            <label jhiTranslate="motorsportsDatabaseApp.racetrackLayout.racetrack" for="field_racetrack">Racetrack</label>
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrackLayout.racetrack" for="field_racetrack">Racetrack</label>
             <select class="form-control" id="field_racetrack" name="racetrack" [(ngModel)]="racetrackLayout.racetrack" >
                 <option [ngValue]="null"></option>
                 <option [ngValue]="racetrackOption.id === racetrackLayout.racetrack?.id ? racetrackLayout.racetrack : racetrackOption" *ngFor="let racetrackOption of racetracks; trackBy: trackRacetrackById">{{racetrackOption.id}}</option>
@@ -89,7 +89,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
             <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
         <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">

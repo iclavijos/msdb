@@ -49,6 +49,7 @@ public class PointsSystem implements Serializable {
     @Column(name = "points_lead_lap")
     private Integer pointsLeadLap;
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -147,6 +148,7 @@ public class PointsSystem implements Serializable {
     public void setPointsLeadLap(Integer pointsLeadLap) {
         this.pointsLeadLap = pointsLeadLap;
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

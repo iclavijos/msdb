@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.DriverPointsDetails;
 
 import com.icesoft.msdb.repository.DriverPointsDetailsRepository;
 import com.icesoft.msdb.repository.search.DriverPointsDetailsSearchRepository;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class DriverPointsDetailsResource {
     public ResponseEntity<DriverPointsDetails> createDriverPointsDetails(@RequestBody DriverPointsDetails driverPointsDetails) throws URISyntaxException {
         log.debug("REST request to save DriverPointsDetails : {}", driverPointsDetails);
         if (driverPointsDetails.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new driverPointsDetails cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new driverPointsDetails cannot already have an ID", ENTITY_NAME, "idexists");
         }
         DriverPointsDetails result = driverPointsDetailsRepository.save(driverPointsDetails);
         driverPointsDetailsSearchRepository.save(result);
@@ -96,7 +97,7 @@ public class DriverPointsDetailsResource {
     public List<DriverPointsDetails> getAllDriverPointsDetails() {
         log.debug("REST request to get all DriverPointsDetails");
         return driverPointsDetailsRepository.findAll();
-    }
+        }
 
     /**
      * GET  /driver-points-details/:id : get the "id" driverPointsDetails.

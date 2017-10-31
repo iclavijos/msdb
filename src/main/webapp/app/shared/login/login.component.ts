@@ -5,7 +5,6 @@ import { JhiEventManager } from 'ng-jhipster';
 
 import { LoginService } from './login.service';
 import { StateStorageService } from '../auth/state-storage.service';
-import { SocialService } from '../social/social.service';
 
 @Component({
     selector: 'jhi-login-modal',
@@ -24,7 +23,6 @@ export class JhiLoginModalComponent implements AfterViewInit {
         private stateStorageService: StateStorageService,
         private elementRef: ElementRef,
         private renderer: Renderer,
-        private socialService: SocialService,
         private router: Router,
         public activeModal: NgbActiveModal
     ) {
@@ -53,8 +51,8 @@ export class JhiLoginModalComponent implements AfterViewInit {
         }).then(() => {
             this.authenticationError = false;
             this.activeModal.dismiss('login success');
-            if (this.router.url === '/register' || (/activate/.test(this.router.url)) ||
-                this.router.url === '/finishReset' || this.router.url === '/requestReset') {
+            if (this.router.url === '/register' || (/^\/activate\//.test(this.router.url)) ||
+                (/^\/reset\//.test(this.router.url))) {
                 this.router.navigate(['']);
             }
 
@@ -67,6 +65,7 @@ export class JhiLoginModalComponent implements AfterViewInit {
             // // since login is succesful, go to stored previousState and clear previousState
             const redirect = this.stateStorageService.getUrl();
             if (redirect) {
+                this.stateStorageService.storeUrl(null);
                 this.router.navigate([redirect]);
             }
         }).catch(() => {

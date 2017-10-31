@@ -38,6 +38,7 @@ public class EventEntryResult implements Serializable {
     @Column(name = "retired")
     private Boolean retired;
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -110,6 +111,7 @@ public class EventEntryResult implements Serializable {
     public void setRetired(Boolean retired) {
         this.retired = retired;
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

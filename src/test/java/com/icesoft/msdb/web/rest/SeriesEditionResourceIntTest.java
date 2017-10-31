@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -75,10 +76,11 @@ public class SeriesEditionResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        SeriesEditionResource seriesEditionResource = new SeriesEditionResource(seriesEditionRepository, seriesEditionSearchRepository);
+        final SeriesEditionResource seriesEditionResource = new SeriesEditionResource(seriesEditionRepository, seriesEditionSearchRepository);
         this.restSeriesEditionMockMvc = MockMvcBuilders.standaloneSetup(seriesEditionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -142,7 +144,7 @@ public class SeriesEditionResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(seriesEdition)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the SeriesEdition in the database
         List<SeriesEdition> seriesEditionList = seriesEditionRepository.findAll();
         assertThat(seriesEditionList).hasSize(databaseSizeBeforeCreate);
     }

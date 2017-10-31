@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -63,10 +64,11 @@ public class DriverPointsDetailsResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        DriverPointsDetailsResource driverPointsDetailsResource = new DriverPointsDetailsResource(driverPointsDetailsRepository, driverPointsDetailsSearchRepository);
+        final DriverPointsDetailsResource driverPointsDetailsResource = new DriverPointsDetailsResource(driverPointsDetailsRepository, driverPointsDetailsSearchRepository);
         this.restDriverPointsDetailsMockMvc = MockMvcBuilders.standaloneSetup(driverPointsDetailsResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -122,7 +124,7 @@ public class DriverPointsDetailsResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(driverPointsDetails)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the DriverPointsDetails in the database
         List<DriverPointsDetails> driverPointsDetailsList = driverPointsDetailsRepository.findAll();
         assertThat(driverPointsDetailsList).hasSize(databaseSizeBeforeCreate);
     }

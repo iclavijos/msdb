@@ -53,6 +53,7 @@ public class Team implements Serializable {
                inverseJoinColumns = @JoinColumn(name="participations_id", referencedColumnName="id"))
     private Set<EventEntry> participations = new HashSet<>();
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -150,6 +151,7 @@ public class Team implements Serializable {
     public void setParticipations(Set<EventEntry> eventEntries) {
         this.participations = eventEntries;
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

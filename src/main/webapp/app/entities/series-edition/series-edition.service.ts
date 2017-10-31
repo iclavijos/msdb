@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { SERVER_API_URL } from '../../app.constants';
 
 import { SeriesEdition } from './series-edition.model';
 import { ResponseWrapper, createRequestOption } from '../../shared';
@@ -8,28 +9,31 @@ import { ResponseWrapper, createRequestOption } from '../../shared';
 @Injectable()
 export class SeriesEditionService {
 
-    private resourceUrl = 'api/series-editions';
-    private resourceSearchUrl = 'api/_search/series-editions';
+    private resourceUrl = SERVER_API_URL + 'api/series-editions';
+    private resourceSearchUrl = SERVER_API_URL + 'api/_search/series-editions';
 
     constructor(private http: Http) { }
 
     create(seriesEdition: SeriesEdition): Observable<SeriesEdition> {
         const copy = this.convert(seriesEdition);
         return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
     update(seriesEdition: SeriesEdition): Observable<SeriesEdition> {
         const copy = this.convert(seriesEdition);
         return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
     find(id: number): Observable<SeriesEdition> {
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
@@ -51,9 +55,24 @@ export class SeriesEditionService {
 
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();
-        return new ResponseWrapper(res.headers, jsonResponse, res.status);
+        const result = [];
+        for (let i = 0; i < jsonResponse.length; i++) {
+            result.push(this.convertItemFromServer(jsonResponse[i]));
+        }
+        return new ResponseWrapper(res.headers, result, res.status);
     }
 
+    /**
+     * Convert a returned JSON object to SeriesEdition.
+     */
+    private convertItemFromServer(json: any): SeriesEdition {
+        const entity: SeriesEdition = Object.assign(new SeriesEdition(), json);
+        return entity;
+    }
+
+    /**
+     * Convert a SeriesEdition to a JSON which can be sent to the server.
+     */
     private convert(seriesEdition: SeriesEdition): SeriesEdition {
         const copy: SeriesEdition = Object.assign({}, seriesEdition);
         return copy;

@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.Series;
 
 import com.icesoft.msdb.repository.SeriesRepository;
 import com.icesoft.msdb.repository.search.SeriesSearchRepository;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 import io.swagger.annotations.ApiParam;
@@ -61,7 +62,7 @@ public class SeriesResource {
     public ResponseEntity<Series> createSeries(@Valid @RequestBody Series series) throws URISyntaxException {
         log.debug("REST request to save Series : {}", series);
         if (series.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new series cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new series cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Series result = seriesRepository.save(series);
         seriesSearchRepository.save(result);

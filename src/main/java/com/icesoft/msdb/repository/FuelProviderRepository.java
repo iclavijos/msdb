@@ -11,6 +11,6 @@ import org.springframework.data.jpa.repository.*;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface FuelProviderRepository extends JpaRepository<FuelProvider,Long> {
-    
+public interface FuelProviderRepository extends JpaRepository<FuelProvider, Long> {
+
 }

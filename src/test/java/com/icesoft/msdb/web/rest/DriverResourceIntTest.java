@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -89,10 +90,11 @@ public class DriverResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        DriverResource driverResource = new DriverResource(driverRepository, driverSearchRepository);
+        final DriverResource driverResource = new DriverResource(driverRepository, driverSearchRepository);
         this.restDriverMockMvc = MockMvcBuilders.standaloneSetup(driverResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -164,7 +166,7 @@ public class DriverResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(driver)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Driver in the database
         List<Driver> driverList = driverRepository.findAll();
         assertThat(driverList).hasSize(databaseSizeBeforeCreate);
     }

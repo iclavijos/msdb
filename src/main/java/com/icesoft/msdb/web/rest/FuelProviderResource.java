@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.FuelProvider;
 
 import com.icesoft.msdb.repository.FuelProviderRepository;
 import com.icesoft.msdb.repository.search.FuelProviderSearchRepository;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 import io.swagger.annotations.ApiParam;
@@ -61,7 +62,7 @@ public class FuelProviderResource {
     public ResponseEntity<FuelProvider> createFuelProvider(@Valid @RequestBody FuelProvider fuelProvider) throws URISyntaxException {
         log.debug("REST request to save FuelProvider : {}", fuelProvider);
         if (fuelProvider.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new fuelProvider cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new fuelProvider cannot already have an ID", ENTITY_NAME, "idexists");
         }
         FuelProvider result = fuelProviderRepository.save(fuelProvider);
         fuelProviderSearchRepository.save(result);

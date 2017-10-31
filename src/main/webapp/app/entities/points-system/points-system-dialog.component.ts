@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { PointsSystem } from './points-system.model';
@@ -17,12 +17,11 @@ import { PointsSystemService } from './points-system.service';
 export class PointsSystemDialogComponent implements OnInit {
 
     pointsSystem: PointsSystem;
-    authorities: any[];
     isSaving: boolean;
 
     constructor(
         public activeModal: NgbActiveModal,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private pointsSystemService: PointsSystemService,
         private eventManager: JhiEventManager
     ) {
@@ -30,7 +29,6 @@ export class PointsSystemDialogComponent implements OnInit {
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
     }
 
     clear() {
@@ -41,41 +39,30 @@ export class PointsSystemDialogComponent implements OnInit {
         this.isSaving = true;
         if (this.pointsSystem.id !== undefined) {
             this.subscribeToSaveResponse(
-                this.pointsSystemService.update(this.pointsSystem), false);
+                this.pointsSystemService.update(this.pointsSystem));
         } else {
             this.subscribeToSaveResponse(
-                this.pointsSystemService.create(this.pointsSystem), true);
+                this.pointsSystemService.create(this.pointsSystem));
         }
     }
 
-    private subscribeToSaveResponse(result: Observable<PointsSystem>, isCreated: boolean) {
+    private subscribeToSaveResponse(result: Observable<PointsSystem>) {
         result.subscribe((res: PointsSystem) =>
-            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
     }
 
-    private onSaveSuccess(result: PointsSystem, isCreated: boolean) {
-        this.alertService.success(
-            isCreated ? 'motorsportsDatabaseApp.pointsSystem.created'
-            : 'motorsportsDatabaseApp.pointsSystem.updated',
-            { param : result.id }, null);
-
+    private onSaveSuccess(result: PointsSystem) {
         this.eventManager.broadcast({ name: 'pointsSystemListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError(error) {
-        try {
-            error.json();
-        } catch (exception) {
-            error.message = error.text();
-        }
+    private onSaveError() {
         this.isSaving = false;
-        this.onError(error);
     }
 
-    private onError(error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error: any) {
+        this.jhiAlertService.error(error.message, null, null);
     }
 }
 
@@ -85,7 +72,6 @@ export class PointsSystemDialogComponent implements OnInit {
 })
 export class PointsSystemPopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -96,11 +82,11 @@ export class PointsSystemPopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
-                this.modalRef = this.pointsSystemPopupService
-                    .open(PointsSystemDialogComponent, params['id']);
+                this.pointsSystemPopupService
+                    .open(PointsSystemDialogComponent as Component, params['id']);
             } else {
-                this.modalRef = this.pointsSystemPopupService
-                    .open(PointsSystemDialogComponent);
+                this.pointsSystemPopupService
+                    .open(PointsSystemDialogComponent as Component);
             }
         });
     }

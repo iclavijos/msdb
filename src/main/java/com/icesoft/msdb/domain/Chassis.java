@@ -49,6 +49,7 @@ public class Chassis implements Serializable {
     @ManyToOne
     private Chassis derivedFrom;
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -133,6 +134,7 @@ public class Chassis implements Serializable {
     public void setDerivedFrom(Chassis chassis) {
         this.derivedFrom = chassis;
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

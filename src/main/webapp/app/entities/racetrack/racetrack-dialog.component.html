@@ -48,11 +48,11 @@
                 <img [src]="'data:' + racetrack.logoContentType + ';base64,' + racetrack.logo" style="max-height: 100px;" *ngIf="racetrack.logo" alt="racetrack image"/>
                 <div *ngIf="racetrack.logo" class="form-text text-danger clearfix">
                     <span class="pull-left">{{racetrack.logoContentType}}, {{byteSize(racetrack.logo)}}</span>
-                    <button type="button" (click)="clearInputImage('logo', 'logoContentType', 'fileImage')" class="btn btn-default btn-xs pull-right">
+                    <button type="button" (click)="clearInputImage('logo', 'logoContentType', 'fileImage')" class="btn btn-secondary btn-xs pull-right">
                         <span class="fa fa-times"></span>
                     </button>
                 </div>
-                <input type="file" id="fileImage" (change)="setFileData($event, racetrack, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                <input type="file" id="file_logo" (change)="setFileData($event, racetrack, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
             </div>
             <input type="hidden" class="form-control" name="logo" id="field_logo"
                 [(ngModel)]="racetrack.logo"  />
@@ -62,7 +62,7 @@
 
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
             <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
         <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">

@@ -11,6 +11,6 @@ import org.springframework.data.jpa.repository.*;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface PointsSystemRepository extends JpaRepository<PointsSystem,Long> {
-    
+public interface PointsSystemRepository extends JpaRepository<PointsSystem, Long> {
+
 }

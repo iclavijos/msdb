@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
 import { JhiPaginationUtil } from 'ng-jhipster';
@@ -8,8 +8,6 @@ import { PointsSystemComponent } from './points-system.component';
 import { PointsSystemDetailComponent } from './points-system-detail.component';
 import { PointsSystemPopupComponent } from './points-system-dialog.component';
 import { PointsSystemDeletePopupComponent } from './points-system-delete-dialog.component';
-
-import { Principal } from '../../shared';
 
 @Injectable()
 export class PointsSystemResolvePagingParams implements Resolve<any> {

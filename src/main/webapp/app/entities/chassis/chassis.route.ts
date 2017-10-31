@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
 import { JhiPaginationUtil } from 'ng-jhipster';
@@ -8,8 +8,6 @@ import { ChassisComponent } from './chassis.component';
 import { ChassisDetailComponent } from './chassis-detail.component';
 import { ChassisPopupComponent } from './chassis-dialog.component';
 import { ChassisDeletePopupComponent } from './chassis-delete-dialog.component';
-
-import { Principal } from '../../shared';
 
 @Injectable()
 export class ChassisResolvePagingParams implements Resolve<any> {

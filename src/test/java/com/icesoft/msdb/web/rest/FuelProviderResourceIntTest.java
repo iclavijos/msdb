@@ -25,6 +25,7 @@ import org.springframework.util.Base64Utils;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -72,10 +73,11 @@ public class FuelProviderResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        FuelProviderResource fuelProviderResource = new FuelProviderResource(fuelProviderRepository, fuelProviderSearchRepository);
+        final FuelProviderResource fuelProviderResource = new FuelProviderResource(fuelProviderRepository, fuelProviderSearchRepository);
         this.restFuelProviderMockMvc = MockMvcBuilders.standaloneSetup(fuelProviderResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -137,7 +139,7 @@ public class FuelProviderResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(fuelProvider)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the FuelProvider in the database
         List<FuelProvider> fuelProviderList = fuelProviderRepository.findAll();
         assertThat(fuelProviderList).hasSize(databaseSizeBeforeCreate);
     }

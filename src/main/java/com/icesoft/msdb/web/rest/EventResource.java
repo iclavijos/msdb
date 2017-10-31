@@ -3,6 +3,7 @@ package com.icesoft.msdb.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Event;
 import com.icesoft.msdb.service.EventService;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 import io.swagger.annotations.ApiParam;
@@ -55,7 +56,7 @@ public class EventResource {
     public ResponseEntity<Event> createEvent(@Valid @RequestBody Event event) throws URISyntaxException {
         log.debug("REST request to save Event : {}", event);
         if (event.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new event cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new event cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Event result = eventService.save(event);
         return ResponseEntity.created(new URI("/api/events/" + result.getId()))

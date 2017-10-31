@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { FuelProvider } from './fuel-provider.model';
 import { FuelProviderPopupService } from './fuel-provider-popup.service';
@@ -19,7 +19,6 @@ export class FuelProviderDeleteDialogComponent {
     constructor(
         private fuelProviderService: FuelProviderService,
         public activeModal: NgbActiveModal,
-        private alertService: JhiAlertService,
         private eventManager: JhiEventManager
     ) {
     }
@@ -36,7 +35,6 @@ export class FuelProviderDeleteDialogComponent {
             });
             this.activeModal.dismiss(true);
         });
-        this.alertService.success('motorsportsDatabaseApp.fuelProvider.deleted', { param : id }, null);
     }
 }
 
@@ -46,7 +44,6 @@ export class FuelProviderDeleteDialogComponent {
 })
 export class FuelProviderDeletePopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -56,8 +53,8 @@ export class FuelProviderDeletePopupComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
-            this.modalRef = this.fuelProviderPopupService
-                .open(FuelProviderDeleteDialogComponent, params['id']);
+            this.fuelProviderPopupService
+                .open(FuelProviderDeleteDialogComponent as Component, params['id']);
         });
     }
 

@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.EventEntry;
 
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class EventEntryResource {
     public ResponseEntity<EventEntry> createEventEntry(@Valid @RequestBody EventEntry eventEntry) throws URISyntaxException {
         log.debug("REST request to save EventEntry : {}", eventEntry);
         if (eventEntry.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new eventEntry cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new eventEntry cannot already have an ID", ENTITY_NAME, "idexists");
         }
         EventEntry result = eventEntryRepository.save(eventEntry);
         eventEntrySearchRepository.save(result);
@@ -97,7 +98,7 @@ public class EventEntryResource {
     public List<EventEntry> getAllEventEntries() {
         log.debug("REST request to get all EventEntries");
         return eventEntryRepository.findAll();
-    }
+        }
 
     /**
      * GET  /event-entries/:id : get the "id" eventEntry.

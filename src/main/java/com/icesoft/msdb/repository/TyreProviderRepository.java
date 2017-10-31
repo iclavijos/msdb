@@ -11,6 +11,6 @@ import org.springframework.data.jpa.repository.*;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface TyreProviderRepository extends JpaRepository<TyreProvider,Long> {
-    
+public interface TyreProviderRepository extends JpaRepository<TyreProvider, Long> {
+
 }

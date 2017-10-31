@@ -25,6 +25,7 @@ import org.springframework.util.Base64Utils;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -78,10 +79,11 @@ public class SeriesResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        SeriesResource seriesResource = new SeriesResource(seriesRepository, seriesSearchRepository);
+        final SeriesResource seriesResource = new SeriesResource(seriesRepository, seriesSearchRepository);
         this.restSeriesMockMvc = MockMvcBuilders.standaloneSetup(seriesResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -147,7 +149,7 @@ public class SeriesResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(series)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Series in the database
         List<Series> seriesList = seriesRepository.findAll();
         assertThat(seriesList).hasSize(databaseSizeBeforeCreate);
     }

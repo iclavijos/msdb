@@ -29,6 +29,7 @@ import java.time.ZoneId;
 import java.util.List;
 
 import static com.icesoft.msdb.web.rest.TestUtil.sameInstant;
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -80,10 +81,11 @@ public class EventSessionResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        EventSessionResource eventSessionResource = new EventSessionResource(eventSessionRepository, eventSessionSearchRepository);
+        final EventSessionResource eventSessionResource = new EventSessionResource(eventSessionRepository, eventSessionSearchRepository);
         this.restEventSessionMockMvc = MockMvcBuilders.standaloneSetup(eventSessionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -147,7 +149,7 @@ public class EventSessionResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(eventSession)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the EventSession in the database
         List<EventSession> eventSessionList = eventSessionRepository.findAll();
         assertThat(eventSessionList).hasSize(databaseSizeBeforeCreate);
     }
