@@ -1,5 +1,3 @@
-
-
 <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
 
     <div class="modal-header">
@@ -51,8 +49,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.shortEventName" for="field_shortEventName">Short Event Name</label>
             <input type="text" class="form-control" name="shortEventName" id="field_shortEventName"
-                [(ngModel)]="eventEdition.shortEventName"
-            required maxlength="40" />
+                [(ngModel)]="eventEdition.shortEventName" required maxlength="40" />
             <div [hidden]="!(editForm.controls.shortEventName?.dirty && editForm.controls.shortEventName?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.shortEventName?.errors?.required" jhiTranslate="entity.validation.required">
@@ -81,7 +78,7 @@
         </div>
 
         <div class="form-group">
-            <label jhiTranslate="motorsportsDatabaseApp.eventEdition.allowedCategories" for="field_allowedCategories">Allowed Categories</label>
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.allowedCategories" for="field_allowedCategories">Allowed Categories</label>
             <div class="row">
 		        <div class="dual-list col-md-5">
 		            <div class="well text-right">
@@ -129,13 +126,13 @@
         	<ng-template #eventTemplate let-r="result">
 			  {{r.name}}
 			</ng-template>
-            <label jhiTranslate="motorsportsDatabaseApp.eventEdition.event" for="field_event">Event</label>
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.event" for="field_event">Event</label>
             <input id="field_event" type="text" name="field_event" class="form-control" [inputFormatter]="inputFormatterEvent"
             	[(ngModel)]="eventEdition.event" [ngbTypeahead]="searchEvents" [focusFirst]="false" [resultTemplate]="eventTemplate"/>
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
             <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
         <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">

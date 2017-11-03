@@ -166,11 +166,11 @@ export class SeriesEditionCalendarPopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe(params => {
             if (params['eventId']) {
-                this.modalRef = this.seriesEditionPopupService
-                    .openCalendar(SeriesEditionCalendarDialogComponent, params['id'], params['eventId']);
+                this.seriesEditionPopupService
+                    .openCalendar(SeriesEditionCalendarDialogComponent as Component, params['id'], params['eventId']);
             } else {
-                this.modalRef = this.seriesEditionPopupService
-                    .openCalendar(SeriesEditionCalendarDialogComponent, params['id']);
+                this.seriesEditionPopupService
+                    .openCalendar(SeriesEditionCalendarDialogComponent as Component, params['id']);
             }
         });
     }

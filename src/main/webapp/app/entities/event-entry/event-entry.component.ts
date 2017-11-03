@@ -25,12 +25,11 @@ export class EventEntryComponent implements OnInit, OnDestroy {
     constructor(
         private jhiLanguageService: JhiLanguageService,
         private eventEntryService: EventEntryService,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private eventManager: JhiEventManager,
         private activatedRoute: ActivatedRoute,
         private principal: Principal
     ) {
-        
     }
     
     expandEntryData(raceNumber: number) {
@@ -89,16 +88,14 @@ export class EventEntryComponent implements OnInit, OnDestroy {
         this.eventManager.destroy(this.eventSubscriber);
     }
 
-    trackId (index: number, item: EventEntry) {
+    trackId(index: number, item: EventEntry) {
         return item.id;
     }
-
     registerChangeInEventEntries() {
         this.eventSubscriber = this.eventManager.subscribe('eventEntryListModification', (response) => this.loadAll());
     }
 
-
-    private onError (error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error) {
+        this.jhiAlertService.error(error.message, null, null);
     }
 }

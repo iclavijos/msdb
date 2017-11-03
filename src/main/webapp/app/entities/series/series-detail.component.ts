@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs/Rx';
 import { JhiEventManager, JhiDataUtils, JhiParseLinks, JhiPaginationUtil, JhiLanguageService, JhiAlertService } from 'ng-jhipster';
 import { Response } from '@angular/http';
 import { Series } from './series.model';
@@ -52,14 +53,14 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         let id = 0;
-        this.subscription = this.route.params.subscribe(params => {
+        this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
             id = params['id'];
         });
     }
 
-    load (id) {
-        this.seriesService.find(id).subscribe(series => {
+    load(id) {
+        this.seriesService.find(id).subscribe((series) => {
             this.series = series;
         });
     }

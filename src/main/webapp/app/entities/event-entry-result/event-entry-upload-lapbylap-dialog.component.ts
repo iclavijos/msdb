@@ -33,14 +33,8 @@ export class EventEntryUploadLapByLapDialogComponent {
         this.activeModal.dismiss('cancel');
     }
     
-    setFileData($event) {
-        if ($event.target.files && $event.target.files[0]) {
-            let $file = $event.target.files[0];
-
-            this.dataUtils.toBase64($file, (base64Data) => {
-                this.imports.csvContents = base64Data;
-            });
-        }
+    setFileData(event, entity, field, isImage) {
+        this.dataUtils.setFileData(event, entity, field, isImage);
     }
 
     confirmUpload () {
@@ -77,8 +71,8 @@ export class EventEntryUploadLapByLapPopupComponent implements OnInit, OnDestroy
 
     ngOnInit() {
         this.routeSub = this.route.params.subscribe(params => {
-            this.modalRef = this.eventEntryResultPopupService
-                .openUploadDialog(EventEntryUploadLapByLapDialogComponent, params['id']);
+            this.eventEntryResultPopupService
+                .openUploadDialog(EventEntryUploadLapByLapDialogComponent as Component, params['id']);
         });
     }
 

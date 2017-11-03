@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
 import { JhiPaginationUtil } from 'ng-jhipster';
@@ -8,8 +8,6 @@ import { TyreProviderComponent } from './tyre-provider.component';
 import { TyreProviderDetailComponent } from './tyre-provider-detail.component';
 import { TyreProviderPopupComponent } from './tyre-provider-dialog.component';
 import { TyreProviderDeletePopupComponent } from './tyre-provider-delete-dialog.component';
-
-import { Principal } from '../../shared';
 
 @Injectable()
 export class TyreProviderResolvePagingParams implements Resolve<any> {

@@ -1,36 +1,44 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, URLSearchParams, BaseRequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { SERVER_API_URL } from '../../app.constants';
 
 import { EventSession } from '../event-session';
 import { EventEntryResult } from './event-entry-result.model';
+import { ResponseWrapper, createRequestOption } from '../../shared';
 
 @Injectable()
 export class EventEntryResultService {
 
+    private resourceUrl = SERVER_API_URL + 'api/event-entry-results';
+    private resourceSearchUrl = SERVER_API_URL + 'api/_search/event-entry-results';
+
     constructor(private http: Http) { }
 
     create(eventEntryResult: EventEntryResult): Observable<EventEntryResult> {
-        let copy: EventEntryResult = Object.assign({}, eventEntryResult);
+        const copy: EventEntryResult = Object.assign({}, eventEntryResult);
         return this.http.post(`api/event-editions/${eventEntryResult.session.eventEdition.id}/event-sessions/${eventEntryResult.session.id}/results`, copy).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
     update(eventEntryResult: EventEntryResult): Observable<EventEntryResult> {
-        let copy: EventEntryResult = Object.assign({}, eventEntryResult);
-        return this.http.put(`api/event-editions/${eventEntryResult.session.eventEdition.id}/event-sessions/${eventEntryResult.session.id}/results`, copy).map((res: Response) => {
-            return res.json();
+        const copy = this.convert(eventEntryResult);
+        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
     find(id: number): Observable<EventEntryResult> {
         return this.http.get(`api/event-editions/event-sessions/results/${id}`).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
-    query(session: EventSession): Observable<Response> {
+    query(session: EventSession): Observable<ResponseWrapper> {
         return this.http.get(`api/event-editions/${session.eventEdition.id}/event-sessions/${session.id}/results`)
             .map((res: any) => this.convertResponse(res));
     }
@@ -43,21 +51,13 @@ export class EventEntryResultService {
         return this.http.put(`api/event-editions/event-sessions/${id}/process-results`, null);
     }
 
-    private convertResponse(res: any): any {
-        let jsonResponse = res.json();
+    private convertResponse(res: Response): ResponseWrapper {
+        const jsonResponse = res.json();
+        const result = [];
         for (let i = 0; i < jsonResponse.length; i++) {
-//            if (jsonResponse[i].bestLapTime) {
-//                jsonResponse[i].bestLapTime = this.convertTime(jsonResponse[i].bestLapTime);
-//            }
-//            if (jsonResponse[i].totalTime) {
-//                jsonResponse[i].totalTime = this.convertTime(jsonResponse[i].totalTime, true);
-//            }
-//            if (jsonResponse[i].difference && jsonResponse[i].differenceType == 1) {
-//                jsonResponse[i].difference = this.convertTime(jsonResponse[i].difference);
-//            }
+            result.push(this.convertItemFromServer(jsonResponse[i]));
         }
-        res._body = jsonResponse;
-        return res;
+        return new ResponseWrapper(res.headers, result, res.status);
     }
     
     private convertTime(timeMillis: number, handleHours?: boolean) {
@@ -96,19 +96,19 @@ export class EventEntryResultService {
         return result;
     }
 
-    private createRequestOption(req?: any): BaseRequestOptions {
-        let options: BaseRequestOptions = new BaseRequestOptions();
-        if (req) {
-            let params: URLSearchParams = new URLSearchParams();
-            params.set('page', req.page);
-            params.set('size', req.size);
-            if (req.sort) {
-                params.paramsMap.set('sort', req.sort);
-            }
-            params.set('query', req.query);
+    /**
+     * Convert a returned JSON object to EventEntryResult.
+     */
+    private convertItemFromServer(json: any): EventEntryResult {
+        const entity: EventEntryResult = Object.assign(new EventEntryResult(), json);
+        return entity;
+    }
 
-            options.search = params;
-        }
-        return options;
+    /**
+     * Convert a EventEntryResult to a JSON which can be sent to the server.
+     */
+    private convert(eventEntryResult: EventEntryResult): EventEntryResult {
+        const copy: EventEntryResult = Object.assign({}, eventEntryResult);
+        return copy;
     }
 }

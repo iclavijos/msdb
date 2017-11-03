@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { EventEntryResult } from './event-entry-result.model';
 import { EventEntryResultPopupService } from './event-entry-result-popup.service';
@@ -17,20 +17,18 @@ export class EventEntryResultDeleteDialogComponent {
     eventEntryResult: EventEntryResult;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
         private eventEntryResultService: EventEntryResultService,
         public activeModal: NgbActiveModal,
         private eventManager: JhiEventManager
     ) {
-        //this.jhiLanguageService.setLocations(['eventEntryResult']);
     }
 
-    clear () {
+    clear() {
         this.activeModal.dismiss('cancel');
     }
 
-    confirmDelete (id: number) {
-        this.eventEntryResultService.delete(id).subscribe(response => {
+    confirmDelete(id: number) {
+        this.eventEntryResultService.delete(id).subscribe((response) => {
             this.eventManager.broadcast({
                 name: 'eventEntryResultListModification',
                 content: 'Deleted an eventEntryResult'
@@ -46,18 +44,17 @@ export class EventEntryResultDeleteDialogComponent {
 })
 export class EventEntryResultDeletePopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private eventEntryResultPopupService: EventEntryResultPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
-            this.modalRef = this.eventEntryResultPopupService
-                .open(EventEntryResultDeleteDialogComponent, null, params['id']);
+        this.routeSub = this.route.params.subscribe((params) => {
+            this.eventEntryResultPopupService
+                .open(EventEntryResultDeleteDialogComponent as Component, null, params['id']);
         });
     }
 

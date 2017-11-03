@@ -2,8 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Response } from '@angular/http';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
+import { Observable } from 'rxjs/Rx';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { EventEntry, EventEntryService } from '../event-entry';
 import { EventEntryResult } from './event-entry-result.model';
@@ -34,8 +35,7 @@ export class EventEntryResultDialogComponent implements OnInit {
 
     constructor(
         public activeModal: NgbActiveModal,
-        private jhiLanguageService: JhiLanguageService,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private eventEntryService: EventEntryService,
         private eventEntryResultService: EventEntryResultService,
         private eventSessionService: EventSessionService,
@@ -43,7 +43,6 @@ export class EventEntryResultDialogComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router
     ) {
-        //this.jhiLanguageService.setLocations(['eventEntryResult']);
     }
 
     ngOnInit() {
@@ -82,14 +81,19 @@ export class EventEntryResultDialogComponent implements OnInit {
             }
         }
         if (this.eventEntryResult.id !== undefined) {
-            this.eventEntryResultService.update(this.eventEntryResult)
-                .subscribe((res: EventEntryResult) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.eventEntryResultService.update(this.eventEntryResult));
         } else {
-            this.eventEntryResultService.create(this.eventEntryResult)
-                .subscribe((res: EventEntryResult) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.eventEntryResultService.create(this.eventEntryResult));
         }
     }
-    
+
+    private subscribeToSaveResponse(result: Observable<EventEntryResult>) {
+        result.subscribe((res: EventEntryResult) =>
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
+    }
+        
     trackEntryById(index: number, item: EventEntry) {
         return item.id;
     }
@@ -139,19 +143,18 @@ export class EventEntryResultDialogComponent implements OnInit {
         return parseInt((hours * 3600 + minutes * 60 + seconds).toString() + tenthousands);
     }
 
-    private onSaveSuccess (result: EventEntryResult) {
+    private onSaveSuccess(result: EventEntryResult) {
         this.eventManager.broadcast({ name: 'eventEntryResultListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError (error) {
+    private onSaveError() {
         this.isSaving = false;
-        this.onError(error);
     }
 
-    private onError (error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error: any) {
+        this.jhiAlertService.error(error.message, null, null);
     }
 }
 
@@ -161,23 +164,22 @@ export class EventEntryResultDialogComponent implements OnInit {
 })
 export class EventEntryResultPopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private eventEntryResultPopupService: EventEntryResultPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
+        this.routeSub = this.route.params.subscribe((params) => {
             let idSession = params['idSession'];
             if ( params['id'] ) {
-                this.modalRef = this.eventEntryResultPopupService
-                    .open(EventEntryResultDialogComponent, idSession, params['id']);
+                this.eventEntryResultPopupService
+                    .open(EventEntryResultDialogComponent as Component, idSession, params['id']);
             } else {
-                this.modalRef = this.eventEntryResultPopupService
-                    .open(EventEntryResultDialogComponent, idSession);
+                this.eventEntryResultPopupService
+                    .open(EventEntryResultDialogComponent as Component, idSession);
             }
 
         });

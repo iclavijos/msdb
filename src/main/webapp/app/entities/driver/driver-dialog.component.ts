@@ -11,7 +11,7 @@ import {_do} from 'rxjs/operator/do';
 import {switchMap} from 'rxjs/operator/switchMap';
 import {of} from 'rxjs/observable/of';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { MIN_DATE, CURRENT_DATE, MAX_DATE, ResponseWrapper } from '../../shared';
@@ -38,7 +38,7 @@ export class DriverDialogComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private dataUtils: JhiDataUtils,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private driverService: DriverService,
 		private elementRef: ElementRef,
         private eventManager: JhiEventManager
@@ -87,17 +87,8 @@ export class DriverDialogComponent implements OnInit {
         return this.dataUtils.openFile(contentType, field);
     }
 
-    setFileData(event, driver, field, isImage) {
-        if (event && event.target.files && event.target.files[0]) {
-            const file = event.target.files[0];
-            if (isImage && !/^image\//.test(file.type)) {
-                return;
-            }
-            this.dataUtils.toBase64(file, (base64Data) => {
-                driver[field] = base64Data;
-                driver[`${field}ContentType`] = file.type;
-            });
-        }
+    setFileData(event, entity, field, isImage) {
+        this.dataUtils.setFileData(event, entity, field, isImage);
     }
 
     clearInputImage(field: string, fieldContentType: string, idInput: string) {
@@ -113,43 +104,31 @@ export class DriverDialogComponent implements OnInit {
         this.driver.nationality = this.nationality.countryCode;
         if (this.driver.id !== undefined) {
             this.subscribeToSaveResponse(
-                this.driverService.update(this.driver), false);
+                this.driverService.update(this.driver));
         } else {
             this.subscribeToSaveResponse(
-                this.driverService.create(this.driver), true);
+                this.driverService.create(this.driver));
         }
     }
 
-    private subscribeToSaveResponse(result: Observable<Driver>, isCreated: boolean) {
+    private subscribeToSaveResponse(result: Observable<Driver>) {
         result.subscribe((res: Driver) =>
-            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
     }
 
-    private onSaveSuccess(result: Driver, isCreated: boolean) {
-        this.alertService.success(
-            isCreated ? 'motorsportsDatabaseApp.driver.created'
-            : 'motorsportsDatabaseApp.driver.updated',
-            { param : result.id }, null);
-
+    private onSaveSuccess(result: Driver) {
         this.eventManager.broadcast({ name: 'driverListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError(error) {
-        try {
-            error.json();
-        } catch (exception) {
-            error.message = error.text();
-        }
+    private onSaveError() {
         this.isSaving = false;
-        this.onError(error);
     }
 
-    private onError(error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error: any) {
+        this.jhiAlertService.error(error.message, null, null);
     }
-    
 }
 
 @Component({
@@ -158,7 +137,6 @@ export class DriverDialogComponent implements OnInit {
 })
 export class DriverPopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -169,11 +147,11 @@ export class DriverPopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
-                this.modalRef = this.driverPopupService
-                    .open(DriverDialogComponent, params['id']);
+                this.driverPopupService
+                    .open(DriverDialogComponent as Component, params['id']);
             } else {
-                this.modalRef = this.driverPopupService
-                    .open(DriverDialogComponent);
+                this.driverPopupService
+                    .open(DriverDialogComponent as Component);
             }
         });
     }

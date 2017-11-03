@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { SERVER_API_URL } from '../../app.constants';
+
 import { JhiDateUtils } from 'ng-jhipster';
 
 import { Driver } from './driver.model';
@@ -9,8 +11,8 @@ import { ResponseWrapper, createRequestOption } from '../../shared';
 @Injectable()
 export class DriverService {
 
-    private resourceUrl = 'api/drivers';
-    private resourceSearchUrl = 'api/_search/drivers';
+    private resourceUrl = SERVER_API_URL + 'api/drivers';
+    private resourceSearchUrl = SERVER_API_URL + 'api/_search/drivers';
     private resourceTypeAheadUrl = 'api/_typeahead/drivers';
 
     constructor(private http: Http, private dateUtils: JhiDateUtils) { }
@@ -83,7 +85,7 @@ export class DriverService {
     search(req?: any): Observable<ResponseWrapper> {
         const options = createRequestOption(req);
         return this.http.get(this.resourceSearchUrl, options)
-             .map((res: any) => this.convertResponse(res));
+            .map((res: any) => this.convertResponse(res));
     }
 
     typeahead(req): Observable<ResponseWrapper> {
@@ -91,7 +93,8 @@ export class DriverService {
     }
 
     private convertResponse(res: Response): ResponseWrapper {
-        let jsonResponse = res.json();
+        const jsonResponse = res.json();
+        const result = [];
         for (let i = 0; i < jsonResponse.length; i++) {
             if (jsonResponse[i].birthDate) {
                 jsonResponse[i].birthDate = new Date(
@@ -101,17 +104,26 @@ export class DriverService {
                 jsonResponse[i].deathDate = new Date(
                         jsonResponse[i].deathDate[0], jsonResponse[i].deathDate[1] - 1, jsonResponse[i].deathDate[2]);
             }
+            result.push(jsonResponse[i]);
         }
         return new ResponseWrapper(res.headers, jsonResponse, res.status);
     }
 
-    private convertItemFromServer(entity: any) {
+    /**
+     * Convert a returned JSON object to Driver.
+     */
+    private convertItemFromServer(json: any): Driver {
+        const entity: Driver = Object.assign(new Driver(), json);
         entity.birthDate = this.dateUtils
-            .convertLocalDateFromServer(entity.birthDate);
+            .convertLocalDateFromServer(json.birthDate);
         entity.deathDate = this.dateUtils
-            .convertLocalDateFromServer(entity.deathDate);
+            .convertLocalDateFromServer(json.deathDate);
+        return entity;
     }
 
+    /**
+     * Convert a Driver to a JSON which can be sent to the server.
+     */
     private convert(driver: Driver): Driver {
         const copy: Driver = Object.assign({}, driver);
         copy.birthDate = this.dateUtils

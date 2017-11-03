@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { Category } from './category.model';
@@ -17,13 +17,12 @@ import { CategoryService } from './category.service';
 export class CategoryDialogComponent implements OnInit {
 
     category: Category;
-    authorities: any[];
     isSaving: boolean;
 
     constructor(
         public activeModal: NgbActiveModal,
         private dataUtils: JhiDataUtils,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private categoryService: CategoryService,
         private elementRef: ElementRef,
         private eventManager: JhiEventManager
@@ -32,7 +31,6 @@ export class CategoryDialogComponent implements OnInit {
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
     }
 
     byteSize(field) {
@@ -43,17 +41,8 @@ export class CategoryDialogComponent implements OnInit {
         return this.dataUtils.openFile(contentType, field);
     }
 
-    setFileData(event, category, field, isImage) {
-        if (event && event.target.files && event.target.files[0]) {
-            const file = event.target.files[0];
-            if (isImage && !/^image\//.test(file.type)) {
-                return;
-            }
-            this.dataUtils.toBase64(file, (base64Data) => {
-                category[field] = base64Data;
-                category[`${field}ContentType`] = file.type;
-            });
-        }
+    setFileData(event, entity, field, isImage) {
+        this.dataUtils.setFileData(event, entity, field, isImage);
     }
 
     clearInputImage(field: string, fieldContentType: string, idInput: string) {
@@ -68,41 +57,30 @@ export class CategoryDialogComponent implements OnInit {
         this.isSaving = true;
         if (this.category.id !== undefined) {
             this.subscribeToSaveResponse(
-                this.categoryService.update(this.category), false);
+                this.categoryService.update(this.category));
         } else {
             this.subscribeToSaveResponse(
-                this.categoryService.create(this.category), true);
+                this.categoryService.create(this.category));
         }
     }
 
-    private subscribeToSaveResponse(result: Observable<Category>, isCreated: boolean) {
+    private subscribeToSaveResponse(result: Observable<Category>) {
         result.subscribe((res: Category) =>
-            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
     }
 
-    private onSaveSuccess(result: Category, isCreated: boolean) {
-        this.alertService.success(
-            isCreated ? 'motorsportsDatabaseApp.category.created'
-            : 'motorsportsDatabaseApp.category.updated',
-            { param : result.id }, null);
-
+    private onSaveSuccess(result: Category) {
         this.eventManager.broadcast({ name: 'categoryListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError(error) {
-        try {
-            error.json();
-        } catch (exception) {
-            error.message = error.text();
-        }
+    private onSaveError() {
         this.isSaving = false;
-        this.onError(error);
     }
 
-    private onError(error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error: any) {
+        this.jhiAlertService.error(error.message, null, null);
     }
 }
 
@@ -112,7 +90,6 @@ export class CategoryDialogComponent implements OnInit {
 })
 export class CategoryPopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -123,11 +100,11 @@ export class CategoryPopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
-                this.modalRef = this.categoryPopupService
-                    .open(CategoryDialogComponent, params['id']);
+                this.categoryPopupService
+                    .open(CategoryDialogComponent as Component, params['id']);
             } else {
-                this.modalRef = this.categoryPopupService
-                    .open(CategoryDialogComponent);
+                this.categoryPopupService
+                    .open(CategoryDialogComponent as Component);
             }
         });
     }

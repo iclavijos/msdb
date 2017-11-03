@@ -3,7 +3,7 @@
         "series" : {
             "home": {
                 "title": "Campeonatos",
-                "createLabel": "Añade un nou campeonato",
+                "createLabel": "Añade un nuevo campeonato",
                 "createOrEditLabel": "Añade o edita un campeonato",
                 "search": "Buscar campeonatos"
             },

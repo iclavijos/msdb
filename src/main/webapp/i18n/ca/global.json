@@ -58,7 +58,8 @@
             	"engines": "Motors"
             },
             "language": "Idioma",
-            "calendar": "Calendari"
+            "calendar": "Calendari",
+            "browseDB": "Explora base de dades"
         },
         "form": {
             "username": "Iniciar sessió",

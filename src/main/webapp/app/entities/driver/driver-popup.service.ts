@@ -6,41 +6,51 @@ import { DriverService } from './driver.service';
 
 @Injectable()
 export class DriverPopupService {
-    private isOpen = false;
+    private ngbModalRef: NgbModalRef;
+
     constructor(
         private modalService: NgbModal,
         private router: Router,
         private driverService: DriverService
 
-    ) {}
+    ) {
+        this.ngbModalRef = null;
+    }
 
-    open(component: Component, id?: number | any): NgbModalRef {
-        if (this.isOpen) {
-            return;
-        }
-        this.isOpen = true;
+    open(component: Component, id?: number | any): Promise<NgbModalRef> {
+        return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
 
-        if (id) {
-            this.driverService.find(id).subscribe((driver) => {
-                if (driver.birthDate) {
-                    driver.birthDate = {
-                        year: driver.birthDate.getFullYear(),
-                        month: driver.birthDate.getMonth() + 1,
-                        day: driver.birthDate.getDate()
-                    };
-                }
-                if (driver.deathDate) {
-                    driver.deathDate = {
-                        year: driver.deathDate.getFullYear(),
-                        month: driver.deathDate.getMonth() + 1,
-                        day: driver.deathDate.getDate()
-                    };
-                }
-                this.driverModalRef(component, driver);
-            });
-        } else {
-            return this.driverModalRef(component, new Driver());
-        }
+            if (id) {
+                this.driverService.find(id).subscribe((driver) => {
+                    if (driver.birthDate) {
+                        driver.birthDate = {
+                            year: driver.birthDate.getFullYear(),
+                            month: driver.birthDate.getMonth() + 1,
+                            day: driver.birthDate.getDate()
+                        };
+                    }
+                    if (driver.deathDate) {
+                        driver.deathDate = {
+                            year: driver.deathDate.getFullYear(),
+                            month: driver.deathDate.getMonth() + 1,
+                            day: driver.deathDate.getDate()
+                        };
+                    }
+                    this.ngbModalRef = this.driverModalRef(component, driver);
+                    resolve(this.ngbModalRef);
+                });
+            } else {
+                // setTimeout used as a workaround for getting ExpressionChangedAfterItHasBeenCheckedError
+                setTimeout(() => {
+                    this.ngbModalRef = this.driverModalRef(component, new Driver());
+                    resolve(this.ngbModalRef);
+                }, 0);
+            }
+        });
     }
 
     driverModalRef(component: Component, driver: Driver): NgbModalRef {
@@ -48,10 +58,10 @@ export class DriverPopupService {
         modalRef.componentInstance.driver = driver;
         modalRef.result.then((result) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         }, (reason) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         });
         return modalRef;
     }

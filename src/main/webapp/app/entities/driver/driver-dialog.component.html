@@ -43,7 +43,7 @@
                 <input id="field_birthDate" type="text" class="form-control" name="birthDate" ngbDatepicker  #birthDateDp="ngbDatepicker" [(ngModel)]="driver.birthDate"
                 placeholder="yyyy-mm-dd" [minDate]="minDate" [maxDate]="startDate"/>
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" (click)="birthDateDp.open()"><i class="fa fa-calendar"></i></button>
+                    <button type="button" class="btn btn-secondary" (click)="birthDateDp.toggle()"><i class="fa fa-calendar"></i></button>
                 </span>
             </div>
             <div [hidden]="!(editForm.controls.birthDate?.dirty && editForm.controls.birthDate?.invalid)">
@@ -78,7 +78,7 @@
                 <input id="field_deathDate" type="text" class="form-control" name="deathDate" ngbDatepicker  #deathDateDp="ngbDatepicker" [(ngModel)]="driver.deathDate"
                 placeholder="yyyy-mm-dd" [minDate]="minDate" [maxDate]="startDate"/>
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" (click)="deathDateDp.open()"><i class="fa fa-calendar"></i></button>
+                    <button type="button" class="btn btn-secondary" (click)="deathDateDp.toggle()"><i class="fa fa-calendar"></i></button>
                 </span>
             </div>
         </div>
@@ -100,11 +100,11 @@
                 <img [src]="'data:' + driver.portraitContentType + ';base64,' + driver.portrait" style="max-height: 100px;" *ngIf="driver.portrait" alt="driver portrait"/>
                 <div *ngIf="driver.portraitUrl || driver.portrait" class="form-text text-danger clearfix">
                     <button type="button" (click)="driver.portraitUrl=null; driver.portrait=null;"
-                            class="btn btn-default btn-xs pull-right">
+                            class="btn btn-secondary btn-xs pull-right">
                         <span class="fa fa-times"></span>
                     </button>
                 </div>
-                <input type="file" (change)="setFileData($event, driver, 'portrait', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                <input type="file" id="file_portrait" (change)="setFileData($event, driver, 'portrait', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
             </div>
             <input type="hidden" class="form-control" name="portrait" id="field_portrait"
                 [(ngModel)]="driver.portrait"  />
@@ -114,7 +114,7 @@
 
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
             <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
         <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">

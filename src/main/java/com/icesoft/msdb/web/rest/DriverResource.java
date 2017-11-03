@@ -42,6 +42,8 @@ import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
+
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 
@@ -85,7 +87,7 @@ public class DriverResource {
     public ResponseEntity<Driver> createDriver(@Valid @RequestBody Driver driver) throws URISyntaxException {
         log.debug("REST request to save Driver : {}", driver);
         if (driver.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new driver cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new driver cannot already have an ID", ENTITY_NAME, "idexists");
         }
         
         Driver result = driverRepository.save(driver);

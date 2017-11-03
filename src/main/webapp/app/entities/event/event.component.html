@@ -2,7 +2,7 @@
     <h2>
         <span jhiTranslate="motorsportsDatabaseApp.event.home.title">Events</span>
         <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
-        	class="btn btn-primary float-right create-event" [routerLink]="['/', { outlets: { popup: ['event-new'] } }]">
+        	class="btn btn-primary float-right jh-create-entity create-event" [routerLink]="['/', { outlets: { popup: ['event-new'] } }]">
             <span class="fa fa-plus"></span>
             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.event.home.createLabel">
             Create new Event
@@ -66,10 +66,10 @@
     </div>
         <div *ngIf="events && events.length">
             <div class="row justify-content-center">
-                <jhi-item-count [page]="page" [total]="queryCount" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+                <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
             </div>
             <div class="row justify-content-center">
-                <ngb-pagination [collectionSize]="totalItems" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
+                <ngb-pagination [collectionSize]="totalItems" [maxSize]="5" [pageSize]="itemsPerPage" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
             </div>
         </div>
 </div>

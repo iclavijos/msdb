@@ -123,7 +123,6 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     }
     
     previousState() {
-        //this.router.navigate(['/series', this.seriesEdition.series.id]);
         window.history.back();
     }
 

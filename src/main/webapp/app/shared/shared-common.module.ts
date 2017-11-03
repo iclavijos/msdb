@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
@@ -30,7 +30,11 @@ import {
     ],
     providers: [
         JhiLanguageHelper,
-        Title
+        Title,
+        {
+            provide: LOCALE_ID,
+            useValue: 'en'
+        },
     ],
     exports: [
         MotorsportsDatabaseSharedLibsModule,

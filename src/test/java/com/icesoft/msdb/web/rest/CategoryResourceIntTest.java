@@ -1,5 +1,6 @@
 package com.icesoft.msdb.web.rest;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -27,7 +28,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Base64Utils;
 
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Category;
@@ -71,10 +71,11 @@ public class CategoryResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            CategoryResource categoryResource = new CategoryResource(categoryRepository);
+        final CategoryResource categoryResource = new CategoryResource(categoryRepository);
         this.restCategoryMockMvc = MockMvcBuilders.standaloneSetup(categoryResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -102,7 +103,6 @@ public class CategoryResourceIntTest {
         int databaseSizeBeforeCreate = categoryRepository.findAll().size();
 
         // Create the Category
-
         restCategoryMockMvc.perform(post("/api/categories")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(category)))
@@ -122,16 +122,15 @@ public class CategoryResourceIntTest {
         int databaseSizeBeforeCreate = categoryRepository.findAll().size();
 
         // Create the Category with an existing ID
-        Category existingCategory = new Category();
-        existingCategory.setId(1L);
+        category.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restCategoryMockMvc.perform(post("/api/categories")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(existingCategory)))
+            .content(TestUtil.convertObjectToJsonBytes(category)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Category in the database
         List<Category> categoryList = categoryRepository.findAll();
         assertThat(categoryList).hasSize(databaseSizeBeforeCreate);
     }
@@ -288,7 +287,17 @@ public class CategoryResourceIntTest {
     }
 
     @Test
+    @Transactional
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Category.class);
+        Category category1 = new Category();
+        category1.setId(1L);
+        Category category2 = new Category();
+        category2.setId(category1.getId());
+        assertThat(category1).isEqualTo(category2);
+        category2.setId(2L);
+        assertThat(category1).isNotEqualTo(category2);
+        category1.setId(null);
+        assertThat(category1).isNotEqualTo(category2);
     }
 }

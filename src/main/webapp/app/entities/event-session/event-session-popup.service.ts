@@ -11,45 +11,52 @@ import * as moment from 'moment-timezone';
 
 @Injectable()
 export class EventSessionPopupService {
-    private isOpen = false;
+    private ngbModalRef: NgbModalRef;
+
     
     constructor (
         private modalService: NgbModal,
         private router: Router,
         private eventSessionService: EventSessionService,
         private eventEditionService: EventEditionService,
-    ) {}
+    ) {
+        this.ngbModalRef = null;
+    }
 
-    open (component: Component, id?: number | any, idEdition?: number | any): NgbModalRef {
-        if (this.isOpen) {
-            return;
-        }
-        this.isOpen = true; 
-        
-        if (id) {
-            this.eventSessionService.find(id).subscribe(eventSession => {
-                eventSession.sessionStartTime = moment(eventSession.sessionStartTime*1000)
-                    .tz(eventSession.eventEdition.trackLayout.racetrack.timeZone).format("YYYY-MM-DDTHH:mm");
-                this.eventSessionModalRef(component, eventSession);
-            });
-        } else {
-            this.eventEditionService.find(idEdition).subscribe(eventEdition => {
-                let eventSess = new EventSession();
-                eventSess.eventEdition = eventEdition;
-                return this.eventSessionModalRef(component, eventSess);
-            });
-        }
+    open(component: Component, id?: number | any, idEdition?: number | any): Promise<NgbModalRef> {
+        return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
+
+            if (id) {
+                this.eventSessionService.find(id).subscribe((eventSession) => {
+                    eventSession.sessionStartTime = moment(eventSession.sessionStartTime*1000)
+                        .tz(eventSession.eventEdition.trackLayout.racetrack.timeZone).format("YYYY-MM-DDTHH:mm");
+                    this.eventSessionModalRef(component, eventSession);
+                    resolve(this.ngbModalRef);
+                });
+            } else {
+                this.eventEditionService.find(idEdition).subscribe((eventEdition) => {
+                    let eventSess = new EventSession();
+                    eventSess.eventEdition = eventEdition;
+                    this.eventSessionModalRef(component, eventSess);
+                    resolve(this.ngbModalRef);
+                });
+            }
+        });
     }
 
     eventSessionModalRef(component: Component, eventSession: EventSession): NgbModalRef {
-        let modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
+        const modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
         modalRef.componentInstance.eventSession = eventSession;
-        modalRef.result.then(result => {
+        modalRef.result.then((result) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         }, (reason) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         });
         return modalRef;
     }

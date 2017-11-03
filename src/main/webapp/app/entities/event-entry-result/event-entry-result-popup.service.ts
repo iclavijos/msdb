@@ -9,68 +9,80 @@ import { EventEntryResultService } from './event-entry-result.service';
 
 @Injectable()
 export class EventEntryResultPopupService {
-    private isOpen = false;
-    constructor (
+    private ngbModalRef: NgbModalRef;
+
+    constructor(
         private modalService: NgbModal,
         private router: Router,
         private eventEntryResultService: EventEntryResultService,
         private eventSessionService: EventSessionService
-    ) {}
+    ) {
+        this.ngbModalRef = null;
+    }
 
-    open (component: Component, idSession?: number | any, id?: number | any): NgbModalRef {
-        if (this.isOpen) {
-            return;
-        }
-        this.isOpen = true;
+    open(component: Component, idSession?: number | any, id?: number | any): Promise<NgbModalRef> {
+        return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
 
-        if (id) {
-            this.eventEntryResultService.find(id).subscribe(eventEntryResult => {
-                this.eventEntryResultModalRef(component, eventEntryResult);
-            });
-        } else {
-            return this.eventEntryResultModalRef(component, new EventEntryResult(), idSession);
-        }
+            if (id) {
+                this.eventEntryResultService.find(id).subscribe((eventEntryResult) => {
+                    this.ngbModalRef = this.eventEntryResultModalRef(component, eventEntryResult);
+                    resolve(this.ngbModalRef);
+                });
+            } else {
+                // setTimeout used as a workaround for getting ExpressionChangedAfterItHasBeenCheckedError
+                setTimeout(() => {
+                    this.ngbModalRef = this.eventEntryResultModalRef(component, new EventEntryResult(), idSession);
+                    resolve(this.ngbModalRef);
+                }, 0);
+            }
+        });
     }
     
-    openUploadDialog(component: Component, idSession?: number | any): NgbModalRef {
-        if (this.isOpen) {
-            return;
-        }
-        this.isOpen = true;
-
-        this.eventSessionService.find(idSession).subscribe(eventSessionResult => {
-            this.eventSessionUploadResultModalRef(component, eventSessionResult);
+    openUploadDialog(component: Component, idSession?: number | any): Promise<NgbModalRef> {
+        return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
+            
+            this.eventSessionService.find(idSession).subscribe(eventSessionResult => {
+                this.ngbModalRef = this.eventSessionUploadResultModalRef(component, eventSessionResult);
+                resolve(this.ngbModalRef);
+            });
         });
-
     }
 
     eventEntryResultModalRef(component: Component, eventEntryResult: EventEntryResult, idSession?: number | any): NgbModalRef {
-        let modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
+        const modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
         modalRef.componentInstance.eventEntryResult = eventEntryResult;
         if (!eventEntryResult.id) {
             eventEntryResult.session = new EventSession();
             eventEntryResult.session.id = idSession;
         }
-        modalRef.result.then(result => {
+        modalRef.result.then((result) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         }, (reason) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         });
         return modalRef;
     }
     
     eventSessionUploadResultModalRef(component: Component, eventSession: EventSession): NgbModalRef {
-        let modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
+        const modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
         modalRef.componentInstance.eventSession = eventSession;
 
-        modalRef.result.then(result => {
+        modalRef.result.then((result) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         }, (reason) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         });
         return modalRef;
     }

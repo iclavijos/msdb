@@ -36,6 +36,7 @@ import com.icesoft.msdb.repository.FuelProviderRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 /**
  * Test class for the FuelProviderResource REST controller.
  *
@@ -76,10 +77,11 @@ public class FuelProviderResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            FuelProviderResource fuelProviderResource = new FuelProviderResource(fuelProviderRepository, cdnService);
+        final FuelProviderResource fuelProviderResource = new FuelProviderResource(fuelProviderRepository, cdnService);
         this.restFuelProviderMockMvc = MockMvcBuilders.standaloneSetup(fuelProviderResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -91,8 +93,8 @@ public class FuelProviderResourceIntTest {
      */
     public static FuelProvider createEntity(EntityManager em) {
         FuelProvider fuelProvider = new FuelProvider()
-                .name(DEFAULT_NAME)
-                .logo(DEFAULT_LOGO);
+            .name(DEFAULT_NAME)
+            .logo(DEFAULT_LOGO);
         return fuelProvider;
     }
 
@@ -107,7 +109,6 @@ public class FuelProviderResourceIntTest {
         int databaseSizeBeforeCreate = fuelProviderRepository.findAll().size();
 
         // Create the FuelProvider
-
         restFuelProviderMockMvc.perform(post("/api/fuel-providers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(fuelProvider)))
@@ -119,7 +120,6 @@ public class FuelProviderResourceIntTest {
         FuelProvider testFuelProvider = fuelProviderList.get(fuelProviderList.size() - 1);
         assertThat(testFuelProvider.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testFuelProvider.getLogo()).isEqualTo(DEFAULT_LOGO);
-
     }
 
     @Test
@@ -128,16 +128,15 @@ public class FuelProviderResourceIntTest {
         int databaseSizeBeforeCreate = fuelProviderRepository.findAll().size();
 
         // Create the FuelProvider with an existing ID
-        FuelProvider existingFuelProvider = new FuelProvider();
-        existingFuelProvider.setId(1L);
+        fuelProvider.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restFuelProviderMockMvc.perform(post("/api/fuel-providers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(existingFuelProvider)))
+            .content(TestUtil.convertObjectToJsonBytes(fuelProvider)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the FuelProvider in the database
         List<FuelProvider> fuelProviderList = fuelProviderRepository.findAll();
         assertThat(fuelProviderList).hasSize(databaseSizeBeforeCreate);
     }
@@ -208,8 +207,8 @@ public class FuelProviderResourceIntTest {
         // Update the fuelProvider
         FuelProvider updatedFuelProvider = fuelProviderRepository.findOne(fuelProvider.getId());
         updatedFuelProvider
-                .name(UPDATED_NAME)
-                .logo(UPDATED_LOGO);
+            .name(UPDATED_NAME)
+            .logo(UPDATED_LOGO);
 
         restFuelProviderMockMvc.perform(put("/api/fuel-providers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -276,7 +275,17 @@ public class FuelProviderResourceIntTest {
     }
 
     @Test
+    @Transactional
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(FuelProvider.class);
+        FuelProvider fuelProvider1 = new FuelProvider();
+        fuelProvider1.setId(1L);
+        FuelProvider fuelProvider2 = new FuelProvider();
+        fuelProvider2.setId(fuelProvider1.getId());
+        assertThat(fuelProvider1).isEqualTo(fuelProvider2);
+        fuelProvider2.setId(2L);
+        assertThat(fuelProvider1).isNotEqualTo(fuelProvider2);
+        fuelProvider1.setId(null);
+        assertThat(fuelProvider1).isNotEqualTo(fuelProvider2);
     }
 }

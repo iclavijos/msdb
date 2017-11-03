@@ -4,48 +4,48 @@
         
         <div class="row mb-3">
              <div class="col-xl-3 col-lg-6">
-                 <div class="card card-inverse card-success">
-                     <div class="card-block bg-success">
-                         <div class="rotate">
-                         	<i class="icofont icofont-racer icofont-5x"></i>
-                         </div>
-                         <h6 class="text-uppercase">{{ 'global.menu.entities.driver' | translate}}</h6>
-                         <h1 class="display-1">{{homeData.drivers}}</h1>
-                     </div>
-                 </div>
+             	<div class="card">
+	             	<div class="card-body bg-success rounded cardGreyText">
+	             		<div class="rotate">
+	                    	<i class="icofont icofont-racer icofont-5x"></i>
+	                    </div>
+				        <h6 class="text-uppercase">{{ 'global.menu.entities.driver' | translate}}</h6>
+	                    <h1 class="display-1">{{homeData.drivers}}</h1>
+				    </div>
+			    </div>
              </div>
              <div class="col-xl-3 col-lg-6">
-                 <div class="card card-inverse card-danger">
-                     <div class="card-block bg-danger">
-                         <div class="rotate">
+             	<div class="card">
+	             	<div class="card-body bg-danger rounded cardGreyText">
+	             		<div class="rotate">
                              <i class="icofont icofont-track icofont-5x"></i>
                          </div>
                          <h6 class="text-uppercase">{{ 'global.menu.entities.racetrack' | translate}}</h6>
                          <h1 class="display-1">{{homeData.racetracks}}</h1>
-                     </div>
-                 </div>
+				    </div>
+			    </div>             
              </div>
              <div class="col-xl-3 col-lg-6">
-                 <div class="card card-inverse card-info">
-                     <div class="card-block bg-info">
-                         <div class="rotate">
+             	<div class="card">
+	             	<div class="card-body bg-info rounded cardGreyText">
+	             		<div class="rotate">
                              <i class="icofont icofont-racing-car icofont-5x"></i>
                          </div>
                          <h6 class="text-uppercase">{{ 'global.menu.entities.team' | translate}}</h6>
                          <h1 class="display-1">{{homeData.teams}}</h1>
-                     </div>
-                 </div>
+				    </div>
+			    </div>
              </div>
              <div class="col-xl-3 col-lg-6">
-                 <div class="card card-inverse card-warning">
-                     <div class="card-block bg-warning">
-                         <div class="rotate">
+				<div class="card">
+	             	<div class="card-body bg-warning rounded cardGreyText">
+	             		<div class="rotate">
                              <i class="icofont icofont-trophy-alt icofont-5x"></i>
                          </div>
                          <h6 class="text-uppercase">{{ 'global.menu.entities.event' | translate}}</h6>
                          <h1 class="display-1">{{homeData.events}}</h1>
-                     </div>
-                 </div>
+				    </div>
+			    </div>
              </div>
          </div>
          
@@ -57,7 +57,7 @@
 						<form name="searchFormEntries" class="form-inline">
 							<div class="input-group w-100 mt-3">
 								<label class="form-control-label col-md-3" jhiTranslate="home.searchEntries" for="field_name">Search entries</label> 
-								<input type="text" class="form-control col-md-9" [(ngModel)]="searchEntriesStr" id="searchEntries" name="searchEntries"
+								<input type="text" class="form-control col-md-8" [(ngModel)]="searchEntriesStr" id="searchEntries" name="searchEntries"
 									placeholder="Ex: '1951 Fangio', 'Alonso', 'Mercedes 2016', 'Australia'...">
 								<button class="input-group-addon btn btn-info"
 									(click)="searchEntries(searchEntriesStr)">
@@ -72,7 +72,7 @@
 						<form name="searchFormEvents" class="form-inline">
 							<div class="input-group w-100 mt-3">
 								<label class="form-control-label col-md-3" jhiTranslate="home.searchEvents" for="field_name">Search events</label>
-								<input type="text" class="form-control col-md-9" [(ngModel)]="searchEventsStr" id="searchEvents" name="searchEvents"
+								<input type="text" class="form-control col-md-8" [(ngModel)]="searchEventsStr" id="searchEvents" name="searchEvents"
 									placeholder="Ex: 'Belgian GP', 'Suzuka 2010', '1997 Spain'...">
 								<button class="input-group-addon btn btn-info"
 									(click)="searchEvents(searchEventsStr)">
@@ -84,6 +84,7 @@
 								</button>
 							</div>
 						</form>
+						<br/>
 					</div>
 				</div>
 			</div>
@@ -93,22 +94,22 @@
 					<div class="cardScroll">
 						<div class="card-block" *ngFor="let day of calendar">
 							<h5 class="card-title">{{ day.date | dDate:'longDate' }}</h5>
-							<div *ngFor="let session of day.sessions">
-		                    	<p class="card-text">
+							<div class="card-body">
+								<p *ngFor="let session of day.sessions">
 		                    		<strong>{{ session.sessionStartTime.format("HH:mm") }}
-		                    			<span *ngIf="session.sessionEndTime"> - {{ session.sessionEndTime.format("HH:mm")}}</span>
-		                    			<span *ngIf="session.durationType === 5"> ({{ session.duration}}L)</span>
-		                    			<span *ngIf="session.durationType === 3"> ({{ session.duration}}KM)</span>
-		                    			<span *ngIf="session.durationType === 4"> ({{ session.duration}}M)</span>: </strong>
-		                    				<span *ngIf="isAuthenticated()">
-		                    				<span *ngIf="session.seriesId"><a [routerLink]="['/series/series-edition', session.seriesId ]" >{{ session.seriesName }}</a> -</span> 
-		                    					<a [routerLink]="['/event-edition', session.eventEdition.id ]" >{{ session.eventEdition.longEventName }}, {{ session.name }}</a>
-		                    				</span>
-		                    				<span *ngIf="!isAuthenticated()">
-		                    				<span *ngIf="session.seriesId">{{ session.seriesName }} -</span> {{ session.eventEdition.longEventName }}, {{ session.name }}
-		                    				</span>
+	                    			<span *ngIf="session.sessionEndTime"> - {{ session.sessionEndTime.format("HH:mm")}}</span>
+	                    			<span *ngIf="session.durationType === 5"> ({{ session.duration}}L)</span>
+	                    			<span *ngIf="session.durationType === 3"> ({{ session.duration}}KM)</span>
+	                    			<span *ngIf="session.durationType === 4"> ({{ session.duration}}M)</span>: </strong>
+                    				<span *ngIf="isAuthenticated()">
+                    				<span *ngIf="session.seriesId"><a [routerLink]="['/series/series-edition', session.seriesId ]" >{{ session.seriesName }}</a> -</span> 
+                    					<a [routerLink]="['/event-edition', session.eventEdition.id ]" >{{ session.eventEdition.longEventName }}, {{ session.name }}</a>
+                    				</span>
+                    				<span *ngIf="!isAuthenticated()">
+                    					<span *ngIf="session.seriesId">{{ session.seriesName }} -</span> {{ session.eventEdition.longEventName }}, {{ session.name }}
+                    				</span>
 		                    	</p>
-		                    </div>
+							</div>
 						</div>
 					</div>
 				</div>

@@ -3,6 +3,7 @@ export * from './mask/time-mask.pipe';
 export * from './mask/racetrack-length.pipe';
 export * from './filters/entry-category-filter.pipe';
 
+export * from './constants/error.constants';
 export * from './constants/pagination.constants';
 export * from './constants/dates.constants';
 export * from './alert/alert.component';
@@ -18,8 +19,8 @@ export * from './language/language.constants';
 export * from './language/language.helper';
 export * from './language/find-language-from-key.pipe';
 export * from './login/login.component';
-export * from './login/login.service';
 export * from './login/login-modal.service';
+export * from './login/login.service';
 export * from './user/account.model';
 export * from './user/user.model';
 export * from './user/user.service';

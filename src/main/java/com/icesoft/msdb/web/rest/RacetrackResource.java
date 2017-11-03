@@ -34,6 +34,7 @@ import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.RacetrackService;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
@@ -78,7 +79,7 @@ public class RacetrackResource {
     public ResponseEntity<Racetrack> createRacetrack(@Valid @RequestBody Racetrack racetrack) throws URISyntaxException {
         log.debug("REST request to save Racetrack : {}", racetrack);
         if (racetrack.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new racetrack cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new racetrack cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Racetrack result = racetrackService.save(racetrack);
         if (result.getLogo() != null) {

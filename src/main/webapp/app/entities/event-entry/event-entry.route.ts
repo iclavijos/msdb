@@ -18,7 +18,8 @@ export const eventEntryRoute: Routes = [
     data: {
         authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
-    }
+    },
+        canActivate: [UserRouteAccessService]
   }
 ];
 
@@ -30,6 +31,7 @@ export const eventEntryPopupRoute: Routes = [
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
     },
+        canActivate: [UserRouteAccessService],
     outlet: 'popup'
   },
   {
@@ -39,6 +41,7 @@ export const eventEntryPopupRoute: Routes = [
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
     },
+        canActivate: [UserRouteAccessService],
     outlet: 'popup'
   },
   {
@@ -48,6 +51,7 @@ export const eventEntryPopupRoute: Routes = [
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
     },
+        canActivate: [UserRouteAccessService],
     outlet: 'popup'
   }
 ];

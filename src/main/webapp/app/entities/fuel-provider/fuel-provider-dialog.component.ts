@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { FuelProvider } from './fuel-provider.model';
@@ -17,13 +17,12 @@ import { FuelProviderService } from './fuel-provider.service';
 export class FuelProviderDialogComponent implements OnInit {
 
     fuelProvider: FuelProvider;
-    authorities: any[];
     isSaving: boolean;
 
     constructor(
         public activeModal: NgbActiveModal,
         private dataUtils: JhiDataUtils,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private fuelProviderService: FuelProviderService,
         private elementRef: ElementRef,
         private eventManager: JhiEventManager
@@ -32,7 +31,6 @@ export class FuelProviderDialogComponent implements OnInit {
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
     }
 
     byteSize(field) {
@@ -43,17 +41,8 @@ export class FuelProviderDialogComponent implements OnInit {
         return this.dataUtils.openFile(contentType, field);
     }
 
-    setFileData(event, fuelProvider, field, isImage) {
-        if (event && event.target.files && event.target.files[0]) {
-            const file = event.target.files[0];
-            if (isImage && !/^image\//.test(file.type)) {
-                return;
-            }
-            this.dataUtils.toBase64(file, (base64Data) => {
-                fuelProvider[field] = base64Data;
-                fuelProvider[`${field}ContentType`] = file.type;
-            });
-        }
+    setFileData(event, entity, field, isImage) {
+        this.dataUtils.setFileData(event, entity, field, isImage);
     }
 
     clearInputImage(field: string, fieldContentType: string, idInput: string) {
@@ -68,41 +57,30 @@ export class FuelProviderDialogComponent implements OnInit {
         this.isSaving = true;
         if (this.fuelProvider.id !== undefined) {
             this.subscribeToSaveResponse(
-                this.fuelProviderService.update(this.fuelProvider), false);
+                this.fuelProviderService.update(this.fuelProvider));
         } else {
             this.subscribeToSaveResponse(
-                this.fuelProviderService.create(this.fuelProvider), true);
+                this.fuelProviderService.create(this.fuelProvider));
         }
     }
 
-    private subscribeToSaveResponse(result: Observable<FuelProvider>, isCreated: boolean) {
+    private subscribeToSaveResponse(result: Observable<FuelProvider>) {
         result.subscribe((res: FuelProvider) =>
-            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
     }
 
-    private onSaveSuccess(result: FuelProvider, isCreated: boolean) {
-        this.alertService.success(
-            isCreated ? 'motorsportsDatabaseApp.fuelProvider.created'
-            : 'motorsportsDatabaseApp.fuelProvider.updated',
-            { param : result.id }, null);
-
+    private onSaveSuccess(result: FuelProvider) {
         this.eventManager.broadcast({ name: 'fuelProviderListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError(error) {
-        try {
-            error.json();
-        } catch (exception) {
-            error.message = error.text();
-        }
+    private onSaveError() {
         this.isSaving = false;
-        this.onError(error);
     }
 
-    private onError(error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error: any) {
+        this.jhiAlertService.error(error.message, null, null);
     }
 }
 
@@ -112,7 +90,6 @@ export class FuelProviderDialogComponent implements OnInit {
 })
 export class FuelProviderPopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -123,11 +100,11 @@ export class FuelProviderPopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
-                this.modalRef = this.fuelProviderPopupService
-                    .open(FuelProviderDialogComponent, params['id']);
+                this.fuelProviderPopupService
+                    .open(FuelProviderDialogComponent as Component, params['id']);
             } else {
-                this.modalRef = this.fuelProviderPopupService
-                    .open(FuelProviderDialogComponent);
+                this.fuelProviderPopupService
+                    .open(FuelProviderDialogComponent as Component);
             }
         });
     }

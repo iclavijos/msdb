@@ -1,24 +1,25 @@
-import groovy.json.JsonSlurper
 import org.gradle.internal.os.OperatingSystem
 
 buildscript {
     repositories {
         mavenLocal()
-        mavenCentral()
         jcenter()
         maven { url "http://repo.spring.io/plugins-release" }
-        maven { url "http://repo.spring.io/milestone" }
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.1"
-        classpath "net.ltgt.gradle:gradle-apt-plugin:0.9"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}"
         classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
-        classpath "com.moowork.gradle:gradle-node-plugin:1.1.1"
-        classpath "io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE"
         //jhipster-needle-gradle-buildscript-dependency - JHipster will add additional gradle build script plugins here
     }
+}
+
+plugins {
+    id "org.sonarqube" version "2.5"
+    id "net.ltgt.apt" version "0.11"
+    id "io.spring.dependency-management" version "1.0.3.RELEASE"
+    id "com.moowork.node" version "1.2.0"
+    //jhipster-needle-gradle-plugins - JHipster will add additional gradle plugins here
 }
 
 apply plugin: 'java'
@@ -31,7 +32,13 @@ apply plugin: 'war'
 apply plugin: 'propdeps'
 apply plugin: 'com.moowork.node'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'idea'
 defaultTasks 'bootRun'
+
+group = 'com.icesoft.msdb'
+version = '0.18.0'
+
+description = ''
 
 bootRepackage {
    mainClass = 'com.icesoft.msdb.MotorsportsDatabaseApp'
@@ -65,7 +72,7 @@ if (OperatingSystem.current().isWindows()) {
         addResources = false
         dependsOn pathingJar
         doFirst {
-            classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
+            classpath = files("$buildDir/classes/java/main", "$buildDir/resources/main", pathingJar.archivePath)
         }
     }
 } else {
@@ -75,8 +82,7 @@ if (OperatingSystem.current().isWindows()) {
 }
 
 test {
-    include '**/*UnitTest*'
-    include '**/*IntTest*'
+    exclude '**/CucumberTest*'
 
     // uncomment if the tests reports are not generated
     // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
@@ -89,9 +95,10 @@ task testReport(type: TestReport) {
     reportOn test
 }
 
+
+apply from: 'gradle/docker.gradle'
 apply from: 'gradle/sonar.gradle'
 apply from: 'gradle/mapstruct.gradle'
-apply from: 'gradle/docker.gradle'
 //jhipster-needle-gradle-apply-from - JHipster will add additional gradle scripts to be applied here
 
 if (project.hasProperty('prod')) {
@@ -108,11 +115,6 @@ if (project.hasProperty('prometheus')) {
     apply from: 'gradle/prometheus.gradle'
 }
 
-group = 'com.icesoft.msdb'
-version = '0.18.0'
-
-description = ''
-
 configurations {
     providedRuntime
     compile.exclude module: "spring-boot-starter-tomcat"
@@ -120,14 +122,7 @@ configurations {
 
 repositories {
     mavenLocal()
-    mavenCentral()
     jcenter()
-    maven { url 'http://repo.spring.io/milestone' }
-    maven { url 'http://repo.spring.io/snapshot' }
-    maven { url 'https://repository.jboss.org/nexus/content/repositories/releases' }
-    maven { url 'https://oss.sonatype.org/content/repositories/releases' }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-    maven { url 'http://repo.maven.apache.org/maven2' }
 }
 
 dependencies {
@@ -138,9 +133,7 @@ dependencies {
     compile "io.dropwizard.metrics:metrics-servlet:${dropwizard_metrics_version}"
     compile "io.dropwizard.metrics:metrics-json:${dropwizard_metrics_version}"
     compile "io.dropwizard.metrics:metrics-servlets:${dropwizard_metrics_version}"
-    compile ("net.logstash.logback:logstash-logback-encoder:${logstash_logback_encoder_version}") {
-        exclude(group: 'ch.qos.logback')
-    }
+    compile "net.logstash.logback:logstash-logback-encoder:${logstash_logback_encoder_version}"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-json-org"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-hppc"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
@@ -160,6 +153,7 @@ dependencies {
     compile "org.hibernate:hibernate-envers:${hibernate_version}"
     compile "org.hibernate:hibernate-entitymanager:${hibernate_version}"
     compile "org.hibernate:hibernate-validator"
+    compile "org.hibernate:hibernate-entitymanager:${hibernate_version}"
     compile "org.hibernate:hibernate-search-orm:5.7.0.Final"
     compile "org.flywaydb:flyway-core:4.2.0"
     compile "org.springframework.boot:spring-boot-actuator"
@@ -176,6 +170,7 @@ dependencies {
     }
     compile "org.springframework.boot:spring-boot-starter-undertow"
     compile "org.springframework.boot:spring-boot-starter-thymeleaf"
+    compile "org.zalando:problem-spring-web:${problem_spring_web_version}"
     compile "org.springframework.boot:spring-boot-starter-cloud-connectors"
     compile ("org.springframework:spring-context-support")
     compile "org.springframework.security:spring-security-config"
@@ -219,16 +214,12 @@ dependencies {
     //jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
 }
 
-clean {
-    delete "target"
-}
-
 task cleanResources(type: Delete) {
     delete 'build/resources'
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.5'
+    gradleVersion = '4.2.1'
 }
 
 task stage(dependsOn: 'bootRepackage') {

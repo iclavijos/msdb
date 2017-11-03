@@ -1,5 +1,3 @@
-
-
 <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
 
     <div class="modal-header">
@@ -12,8 +10,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.team.name" for="field_name">Name</label>
             <input type="text" class="form-control" name="name" id="field_name"
-                [(ngModel)]="team.name"
-            required maxlength="40" />
+                [(ngModel)]="team.name" required maxlength="40" />
             <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.name?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.name?.errors?.required" jhiTranslate="entity.validation.required">
@@ -28,8 +25,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.team.description" for="field_description">Description</label>
             <input type="text" class="form-control" name="description" id="field_description"
-                [(ngModel)]="team.description"
-            maxlength="100" />
+                [(ngModel)]="team.description" maxlength="100" />
             <div [hidden]="!(editForm.controls.description?.dirty && editForm.controls.description?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.description?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 100 }">
@@ -40,8 +36,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.team.hqLocation" for="field_hqLocation">Hq Location</label>
             <input type="text" class="form-control" name="hqLocation" id="field_hqLocation"
-                [(ngModel)]="team.hqLocation"
-            maxlength="100" />
+                [(ngModel)]="team.hqLocation" maxlength="100" />
             <div [hidden]="!(editForm.controls.hqLocation?.dirty && editForm.controls.hqLocation?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.hqLocation?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 100 }">
@@ -60,17 +55,16 @@
                         <span class="fa fa-times"></span>
                     </button>
                 </div>
-                <input type="file" (change)="setFileData($event, team, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                <input type="file" id="file_logo" (change)="setFileData($event, team, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
             </div>
             <input type="hidden" class="form-control" name="logo" id="field_logo"
-                [(ngModel)]="team.logo"
-             />
+                [(ngModel)]="team.logo"  />
             <input type="hidden" class="form-control" name="logoContentType" id="field_logoContentType"
                 [(ngModel)]="team.logoContentType" />
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
             <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
         <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">

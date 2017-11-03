@@ -58,6 +58,7 @@ import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.dto.SessionCalendarDTO;
 import com.icesoft.msdb.service.impl.ResultsService;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 import com.icesoft.msdb.web.rest.views.ResponseViews;
@@ -117,7 +118,7 @@ public class EventEditionResource {
     public ResponseEntity<EventEdition> createEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to save EventEdition : {}", eventEdition);
         if (eventEdition.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new eventEdition cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new eventEdition cannot already have an ID", ENTITY_NAME, "idexists");
         }
         EventEdition result = eventEditionRepository.save(eventEdition);
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId()))

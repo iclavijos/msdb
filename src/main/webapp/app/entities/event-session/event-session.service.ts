@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { SERVER_API_URL } from '../../app.constants';
 
 import { EventSession } from './event-session.model';
 import { JhiDateUtils } from 'ng-jhipster';
@@ -12,24 +13,25 @@ import * as moment from 'moment-timezone';
 @Injectable()
 export class EventSessionService {
 
-    private resourceUrl = 'api/event-editions/event-sessions';
-    private resourceSearchUrl = 'api/_search/event-sessions';
+    private resourceUrl = SERVER_API_URL + 'api/event-sessions';
+    private resourceSearchUrl = SERVER_API_URL + 'api/_search/event-sessions';
 
     constructor(private http: Http, private dateUtils: JhiDateUtils) { }
 
     create(eventSession: EventSession): Observable<EventSession> {
        const copy = this.convert(eventSession);
-        
-        copy.sessionStartTime = moment(eventSession.sessionStartTime).tz(eventSession.eventEdition.trackLayout.racetrack.timeZone);
-        copy.sessionStartTime.hours(copy.sessionStartTime.toDate().getHours());
-        copy.sessionStartTime.minutes(copy.sessionStartTime.toDate().getMinutes());
-        copy.sessionStartTime.date(moment(eventSession.sessionStartTime).date());
-        copy.sessionStartTime.month(moment(eventSession.sessionStartTime).month());
 
-        return this.http.post(
+       copy.sessionStartTime = moment(eventSession.sessionStartTime).tz(eventSession.eventEdition.trackLayout.racetrack.timeZone);
+       copy.sessionStartTime.hours(copy.sessionStartTime.toDate().getHours());
+       copy.sessionStartTime.minutes(copy.sessionStartTime.toDate().getMinutes());
+       copy.sessionStartTime.date(moment(eventSession.sessionStartTime).date());
+       copy.sessionStartTime.month(moment(eventSession.sessionStartTime).month());
+
+       return this.http.post(
                 `api/event-editions/${copy.eventEdition.id}/sessions`, copy).map((res: Response) => {
-            return res.json();
-        });
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
+       });
     }
 
     update(eventSession: EventSession): Observable<EventSession> {
@@ -42,13 +44,14 @@ export class EventSessionService {
         copy.sessionStartTime.month(moment(eventSession.sessionStartTime).month());
         
         return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
     find(id: number): Observable<EventSession> {
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            let jsonResponse = res.json();
+            const jsonResponse = res.json();
             jsonResponse.sessionStartTime = moment(jsonResponse.sessionStartTime).tz(jsonResponse.eventEdition.trackLayout.racetrack.timeZone);
             return jsonResponse;
         });
@@ -79,11 +82,19 @@ export class EventSessionService {
         return new ResponseWrapper(res.headers, jsonResponse, res.status);
     }
 
-    private convertItemFromServer(entity: any) {
+    /**
+     * Convert a returned JSON object to EventSession.
+     */
+    private convertItemFromServer(json: any): EventSession {
+        const entity: EventSession = Object.assign(new EventSession(), json);
         entity.sessionStartTime = this.dateUtils
-            .convertDateTimeFromServer(entity.sessionStartTime);
+            .convertDateTimeFromServer(json.sessionStartTime);
+        return entity;
     }
 
+    /**
+     * Convert a EventSession to a JSON which can be sent to the server.
+     */
     private convert(eventSession: EventSession): EventSession {
         const copy: EventSession = Object.assign({}, eventSession);
 

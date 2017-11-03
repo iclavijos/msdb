@@ -29,11 +29,11 @@
                 <img [src]="'data:' + tyreProvider.logoContentType + ';base64,' + tyreProvider.logo" style="max-height: 100px;" *ngIf="tyreProvider.logo" alt="tyre provider logo"/>
                 <div *ngIf="tyreProvider.logoUrl || tyreProvider.logo" class="form-text text-danger clearfix">
                     <button type="button" (click)="tyreProvider.logoUrl=null;clearInputImage('logo', 'logoContentType', 'fileImage');"
-                            class="btn btn-default btn-xs pull-right">
+                            class="btn btn-secondary btn-xs pull-right">
                         <span class="fa fa-times"></span>
                     </button>
                 </div>
-                <input type="file" id="fileImage" (change)="setFileData($event, tyreProvider, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                <input type="file" id="file_logo" (change)="setFileData($event, tyreProvider, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
             </div>
             <input type="hidden" class="form-control" name="logo" id="field_logo"
                 [(ngModel)]="tyreProvider.logo"  />
@@ -43,7 +43,7 @@
 
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
             <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
         <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">

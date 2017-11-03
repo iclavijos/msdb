@@ -1,5 +1,3 @@
-
-
 <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
 
     <div class="modal-header">
@@ -12,8 +10,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.name" for="field_name">Name</label>
             <input type="text" class="form-control" name="name" id="field_name"
-                [(ngModel)]="series.name"
-            required maxlength="100" />
+                [(ngModel)]="series.name" required maxlength="100" />
             <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.name?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.name?.errors?.required" jhiTranslate="entity.validation.required">
@@ -28,8 +25,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.shortname" for="field_shortname">Shortname</label>
             <input type="text" class="form-control" name="shortname" id="field_shortname"
-                [(ngModel)]="series.shortname"
-            required maxlength="30" />
+                [(ngModel)]="series.shortname" required maxlength="30" />
             <div [hidden]="!(editForm.controls.shortname?.dirty && editForm.controls.shortname?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.shortname?.errors?.required" jhiTranslate="entity.validation.required">
@@ -44,8 +40,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.organizer" for="field_organizer">Organizer</label>
             <input type="text" class="form-control" name="organizer" id="field_organizer"
-                [(ngModel)]="series.organizer"
-            maxlength="50" />
+                [(ngModel)]="series.organizer" maxlength="50" />
             <div [hidden]="!(editForm.controls.organizer?.dirty && editForm.controls.organizer?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.organizer?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 50 }">
@@ -60,22 +55,21 @@
                 <img [src]="'data:' + series.logoContentType + ';base64,' + series.logo" style="max-height: 100px;" *ngIf="series.logo" alt="series logo"/>
                 <div *ngIf="series.logoUrl || series.logo" class="form-text text-danger clearfix">
                     <button type="button" (click)="series.logoUrl=null; series.logo=null;"
-                            class="btn btn-default btn-xs pull-right">
+                            class="btn btn-secondary btn-xs pull-right">
                         <span class="fa fa-times"></span>
                     </button>
                 </div>
-                <input type="file" (change)="setFileData($event, series, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                <input type="file" id="file_logo" (change)="setFileData($event, series, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
             </div>
             <input type="hidden" class="form-control" name="logo" id="field_logo"
-                [(ngModel)]="series.logo"
-             />
+                [(ngModel)]="series.logo"  />
             <input type="hidden" class="form-control" name="logoContentType" id="field_logoContentType"
                 [(ngModel)]="series.logoContentType" />
         </div>
 
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
             <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
         <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">

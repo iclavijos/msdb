@@ -6,27 +6,37 @@ import { TyreProviderService } from './tyre-provider.service';
 
 @Injectable()
 export class TyreProviderPopupService {
-    private isOpen = false;
+    private ngbModalRef: NgbModalRef;
+
     constructor(
         private modalService: NgbModal,
         private router: Router,
         private tyreProviderService: TyreProviderService
 
-    ) {}
+    ) {
+        this.ngbModalRef = null;
+    }
 
-    open(component: Component, id?: number | any): NgbModalRef {
-        if (this.isOpen) {
-            return;
-        }
-        this.isOpen = true;
+    open(component: Component, id?: number | any): Promise<NgbModalRef> {
+        return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
 
-        if (id) {
-            this.tyreProviderService.find(id).subscribe((tyreProvider) => {
-                this.tyreProviderModalRef(component, tyreProvider);
-            });
-        } else {
-            return this.tyreProviderModalRef(component, new TyreProvider());
-        }
+            if (id) {
+                this.tyreProviderService.find(id).subscribe((tyreProvider) => {
+                    this.ngbModalRef = this.tyreProviderModalRef(component, tyreProvider);
+                    resolve(this.ngbModalRef);
+                });
+            } else {
+                // setTimeout used as a workaround for getting ExpressionChangedAfterItHasBeenCheckedError
+                setTimeout(() => {
+                    this.ngbModalRef = this.tyreProviderModalRef(component, new TyreProvider());
+                    resolve(this.ngbModalRef);
+                }, 0);
+            }
+        });
     }
 
     tyreProviderModalRef(component: Component, tyreProvider: TyreProvider): NgbModalRef {
@@ -34,10 +44,10 @@ export class TyreProviderPopupService {
         modalRef.componentInstance.tyreProvider = tyreProvider;
         modalRef.result.then((result) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         }, (reason) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         });
         return modalRef;
     }

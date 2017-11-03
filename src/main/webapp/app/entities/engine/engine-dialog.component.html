@@ -1,5 +1,3 @@
-
-
 <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
 
     <div class="modal-header">
@@ -12,8 +10,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.name" for="field_name">Name</label>
             <input type="text" class="form-control" name="name" id="field_name"
-                [(ngModel)]="engine.name"
-            required maxlength="50" />
+                [(ngModel)]="engine.name" required maxlength="50" />
             <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.name?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.name?.errors?.required" jhiTranslate="entity.validation.required">
@@ -28,8 +25,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.manufacturer" for="field_manufacturer">Manufacturer</label>
             <input type="text" class="form-control" name="manufacturer" id="field_manufacturer"
-                [(ngModel)]="engine.manufacturer"
-            required maxlength="50" />
+                [(ngModel)]="engine.manufacturer" required maxlength="50" />
             <div [hidden]="!(editForm.controls.manufacturer?.dirty && editForm.controls.manufacturer?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.manufacturer?.errors?.required" jhiTranslate="entity.validation.required">
@@ -66,8 +62,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.debutYear" for="field_debutYear">Debut Year</label>
             <input type="number" class="form-control" name="debutYear" id="field_debutYear"
-                [(ngModel)]="engine.debutYear"
-            required />
+                [(ngModel)]="engine.debutYear" required />
             <div [hidden]="!(editForm.controls.debutYear?.dirty && editForm.controls.debutYear?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.debutYear?.errors?.required" jhiTranslate="entity.validation.required">
@@ -121,8 +116,7 @@
                 <input type="file" (change)="setFileData($event, engine, 'image', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
             </div>
             <input type="hidden" class="form-control" name="image" id="field_image"
-                [(ngModel)]="engine.image"
-             />
+                [(ngModel)]="engine.image"  />
             <input type="hidden" class="form-control" name="imageContentType" id="field_imageContentType"
                 [(ngModel)]="engine.imageContentType" />
         </div>
@@ -141,7 +135,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
             <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
         <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">

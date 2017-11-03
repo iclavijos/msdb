@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { SERVER_API_URL } from '../../app.constants';
 
 import { Engine } from './engine.model';
 import { ResponseWrapper, createRequestOption } from '../../shared';
@@ -8,8 +9,8 @@ import { ResponseWrapper, createRequestOption } from '../../shared';
 @Injectable()
 export class EngineService {
 
-    private resourceUrl = 'api/engines';
-    private resourceSearchUrl = 'api/_search/engines';
+    private resourceUrl = SERVER_API_URL + 'api/engines';
+    private resourceSearchUrl = SERVER_API_URL + 'api/_search/engines';
     private typeAheadSearchUrl = 'api/_typeahead/engines';
 
     constructor(private http: Http) { }
@@ -17,20 +18,23 @@ export class EngineService {
     create(engine: Engine): Observable<Engine> {
         const copy = this.convert(engine);
         return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
     update(engine: Engine): Observable<Engine> {
         const copy = this.convert(engine);
         return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
     find(id: number): Observable<Engine> {
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
@@ -72,9 +76,24 @@ export class EngineService {
 
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();
-        return new ResponseWrapper(res.headers, jsonResponse, res.status);
+        const result = [];
+        for (let i = 0; i < jsonResponse.length; i++) {
+            result.push(this.convertItemFromServer(jsonResponse[i]));
+        }
+        return new ResponseWrapper(res.headers, result, res.status);
     }
 
+    /**
+     * Convert a returned JSON object to Engine.
+     */
+    private convertItemFromServer(json: any): Engine {
+        const entity: Engine = Object.assign(new Engine(), json);
+        return entity;
+    }
+
+    /**
+     * Convert a Engine to a JSON which can be sent to the server.
+     */
     private convert(engine: Engine): Engine {
         const copy: Engine = Object.assign({}, engine);
         return copy;

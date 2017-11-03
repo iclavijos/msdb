@@ -12,7 +12,6 @@ import { EventEntryResultDeletePopupComponent } from './event-entry-result-delet
 
 import { Principal } from '../../shared';
 
-
 export const eventEntryResultRoute: Routes = [
   {
     path: 'event-entry-result',
@@ -20,14 +19,16 @@ export const eventEntryResultRoute: Routes = [
     data: {
         authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
-    }
+    },
+        canActivate: [UserRouteAccessService]
   }, {
     path: 'event-entry-result/:id',
     component: EventEntryResultDetailComponent,
     data: {
         authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
-    }
+    },
+        canActivate: [UserRouteAccessService]
   }
 ];
 
@@ -39,6 +40,7 @@ export const eventEntryResultPopupRoute: Routes = [
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
     },
+        canActivate: [UserRouteAccessService],
     outlet: 'popup'
   },
   {
@@ -48,6 +50,7 @@ export const eventEntryResultPopupRoute: Routes = [
           authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
           pageTitle: 'motorsportsDatabaseApp.eventEntryResult.copy.title'
       },
+        canActivate: [UserRouteAccessService],
       outlet: 'popup'
   },
   {
@@ -57,6 +60,7 @@ export const eventEntryResultPopupRoute: Routes = [
           authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
           pageTitle: 'motorsportsDatabaseApp.eventEntryResult.copy.title'
       },
+        canActivate: [UserRouteAccessService],
       outlet: 'popup'
   },
   {
@@ -66,6 +70,7 @@ export const eventEntryResultPopupRoute: Routes = [
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
     },
+        canActivate: [UserRouteAccessService],
     outlet: 'popup'
   },
   {
@@ -75,6 +80,7 @@ export const eventEntryResultPopupRoute: Routes = [
         authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
     },
+        canActivate: [UserRouteAccessService],
     outlet: 'popup'
   }
 ];

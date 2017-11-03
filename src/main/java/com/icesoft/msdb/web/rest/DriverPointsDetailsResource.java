@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.DriverEventPoints;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
@@ -54,7 +55,7 @@ public class DriverPointsDetailsResource {
     public ResponseEntity<DriverEventPoints> createDriverPointsDetails(@RequestBody DriverEventPoints driverPointsDetails) throws URISyntaxException {
         log.debug("REST request to save DriverPointsDetails : {}", driverPointsDetails);
         if (driverPointsDetails.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new driverPointsDetails cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new driverPointsDetails cannot already have an ID", ENTITY_NAME, "idexists");
         }
         driverPointsDetails.setReason(driverPointsDetails.getSession().getName() + " - " + driverPointsDetails.getReason());
         DriverEventPoints result = driverPointsDetailsRepository.save(driverPointsDetails);

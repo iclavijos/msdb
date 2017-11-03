@@ -81,8 +81,8 @@ export class EventEntryUploadResultsPopupComponent implements OnInit, OnDestroy 
 
     ngOnInit() {
         this.routeSub = this.route.params.subscribe(params => {
-            this.modalRef = this.eventEntryResultPopupService
-                .openUploadDialog(EventEntryUploadResultsDialogComponent, params['id']);
+            this.eventEntryResultPopupService
+                .openUploadDialog(EventEntryUploadResultsDialogComponent as Component, params['id']);
         });
     }
 

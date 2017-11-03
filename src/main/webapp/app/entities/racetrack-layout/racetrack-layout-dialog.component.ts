@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { RacetrackLayout } from './racetrack-layout.model';
@@ -26,7 +26,7 @@ export class RacetrackLayoutDialogComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private dataUtils: JhiDataUtils,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private racetrackLayoutService: RacetrackLayoutService,
         private racetrackService: RacetrackService,
         private elementRef: ElementRef,
@@ -46,17 +46,8 @@ export class RacetrackLayoutDialogComponent implements OnInit {
         return this.dataUtils.openFile(contentType, field);
     }
 
-    setFileData(event, racetrackLayout, field, isImage) {
-        if (event && event.target.files && event.target.files[0]) {
-            const file = event.target.files[0];
-            if (isImage && !/^image\//.test(file.type)) {
-                return;
-            }
-            this.dataUtils.toBase64(file, (base64Data) => {
-                racetrackLayout[field] = base64Data;
-                racetrackLayout[`${field}ContentType`] = file.type;
-            });
-        }
+    setFileData(event, entity, field, isImage) {
+        this.dataUtils.setFileData(event, entity, field, isImage);
     }
 
     clearInputImage(field: string, fieldContentType: string, idInput: string) {
@@ -71,10 +62,10 @@ export class RacetrackLayoutDialogComponent implements OnInit {
         this.isSaving = true;
         if (this.racetrackLayout.id !== undefined) {
             this.subscribeToSaveResponse(
-                this.racetrackLayoutService.update(this.racetrackLayout), false);
+                this.racetrackLayoutService.update(this.racetrackLayout));
         } else {
             this.subscribeToSaveResponse(
-                this.racetrackLayoutService.create(this.racetrackLayout), true);
+                this.racetrackLayoutService.create(this.racetrackLayout));
         }
     }
     
@@ -82,34 +73,23 @@ export class RacetrackLayoutDialogComponent implements OnInit {
         this.racetrackLayout.active = !this.racetrackLayout.active;
     }
 
-	private subscribeToSaveResponse(result: Observable<RacetrackLayout>, isCreated: boolean) {
+    private subscribeToSaveResponse(result: Observable<RacetrackLayout>) {
         result.subscribe((res: RacetrackLayout) =>
-            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
     }
     
-    private onSaveSuccess(result: RacetrackLayout, isCreated: boolean) {
-        this.alertService.success(
-            isCreated ? 'motorsportsDatabaseApp.racetrackLayout.created'
-            : 'motorsportsDatabaseApp.racetrackLayout.updated',
-            { param : result.id }, null);
-
+    private onSaveSuccess(result: RacetrackLayout) {
         this.eventManager.broadcast({ name: 'racetrackLayoutListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError(error) {
-        try {
-            error.json();
-        } catch (exception) {
-            error.message = error.text();
-        }
+    private onSaveError() {
         this.isSaving = false;
-        this.onError(error);
     }
 
-    private onError(error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error: any) {
+        this.jhiAlertService.error(error.message, null, null);
     }
 
     trackRacetrackById(index: number, item: Racetrack) {
@@ -123,7 +103,6 @@ export class RacetrackLayoutDialogComponent implements OnInit {
 })
 export class RacetrackLayoutPopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -140,13 +119,12 @@ export class RacetrackLayoutPopupComponent implements OnInit, OnDestroy {
                 }
             });
             if ( params['id'] && !isNewLayout) {
-                this.modalRef = this.racetrackLayoutPopupService
-                    .open(RacetrackLayoutDialogComponent, params['id']);
+                this.racetrackLayoutPopupService
+                    .open(RacetrackLayoutDialogComponent as Component, params['id']);
             } else {
-                this.modalRef = this.racetrackLayoutPopupService
-                    .open(RacetrackLayoutDialogComponent, params['id'], true);
+                this.racetrackLayoutPopupService
+                    .open(RacetrackLayoutDialogComponent as Component, params['id'], true);
             }
-
         });
     }
 

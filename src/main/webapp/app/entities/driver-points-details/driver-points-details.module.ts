@@ -13,7 +13,8 @@ import {
     DriverPointsDetailsDeleteDialogComponent,
     driverPointsDetailsRoute,
     driverPointsDetailsPopupRoute,
-    DriverPointsSeriesPopupComponent
+    DriverPointsSeriesPopupComponent,
+    DriverPointsSeriesDialogComponent
 } from './';
 
 const ENTITY_STATES = [
@@ -33,7 +34,8 @@ const ENTITY_STATES = [
         DriverPointsDetailsDeleteDialogComponent,
         DriverPointsDetailsPopupComponent,
         DriverPointsDetailsDeletePopupComponent,
-        DriverPointsSeriesPopupComponent
+        DriverPointsSeriesPopupComponent,
+        DriverPointsSeriesDialogComponent
     ],
     entryComponents: [
         DriverPointsDetailsComponent,

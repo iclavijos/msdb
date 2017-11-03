@@ -97,8 +97,8 @@ export class EventEditionCopyEntriesPopupComponent implements OnInit, OnDestroy 
 
     ngOnInit() {
         this.routeSub = this.route.params.subscribe(params => {
-            this.modalRef = this.eventEditionPopupService
-                .open(EventEditionCopyEntriesDialogComponent, params['id']);
+            this.eventEditionPopupService
+                .open(EventEditionCopyEntriesDialogComponent as Component, params['id']);
         });
     }
 

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { SeriesEdition } from './series-edition.model';
@@ -31,7 +31,7 @@ export class SeriesEditionDialogComponent implements OnInit {
 
     constructor(
         public activeModal: NgbActiveModal,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private seriesEditionService: SeriesEditionService,
         private categoryService: CategoryService,
         private seriesService: SeriesService,
@@ -66,41 +66,30 @@ export class SeriesEditionDialogComponent implements OnInit {
         this.isSaving = true;
         if (this.seriesEdition.id !== undefined) {
             this.subscribeToSaveResponse(
-                this.seriesEditionService.update(this.seriesEdition), false);
+                this.seriesEditionService.update(this.seriesEdition));
         } else {
             this.subscribeToSaveResponse(
-                this.seriesEditionService.create(this.seriesEdition), true);
+                this.seriesEditionService.create(this.seriesEdition));
         }
     }
 
-    private subscribeToSaveResponse(result: Observable<SeriesEdition>, isCreated: boolean) {
+    private subscribeToSaveResponse(result: Observable<SeriesEdition>) {
         result.subscribe((res: SeriesEdition) =>
-            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
     }
 
-    private onSaveSuccess(result: SeriesEdition, isCreated: boolean) {
-        this.alertService.success(
-            isCreated ? 'motorsportsDatabaseApp.series.seriesEdition.created'
-            : 'motorsportsDatabaseApp.series.seriesEdition.updated',
-            { param : result.id }, null);
-
+    private onSaveSuccess(result: SeriesEdition) {
         this.eventManager.broadcast({ name: 'seriesEditionListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError(error) {
-        try {
-            error.json();
-        } catch (exception) {
-            error.message = error.text();
-        }
+    private onSaveError() {
         this.isSaving = false;
-        this.onError(error);
     }
 
-    private onError(error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error: any) {
+        this.jhiAlertService.error(error.message, null, null);
     }
     
     public addCategories() {
@@ -190,7 +179,6 @@ export class SeriesEditionDialogComponent implements OnInit {
 })
 export class SeriesEditionPopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -201,11 +189,11 @@ export class SeriesEditionPopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
-                this.modalRef = this.seriesEditionPopupService
-                    .open(SeriesEditionDialogComponent, params['id']);
+                this.seriesEditionPopupService
+                    .open(SeriesEditionDialogComponent as Component, params['id']);
             } else {
-                this.modalRef = this.seriesEditionPopupService
-                    .open(SeriesEditionDialogComponent, null, params['idSeries']);
+                this.seriesEditionPopupService
+                    .open(SeriesEditionDialogComponent as Component, null, params['idSeries']);
             }
         });
     }

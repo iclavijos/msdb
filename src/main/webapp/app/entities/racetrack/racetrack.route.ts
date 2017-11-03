@@ -14,12 +14,10 @@ import { RacetrackLayoutDetailComponent } from '../racetrack-layout/racetrack-la
 import { RacetrackLayoutPopupComponent } from '../racetrack-layout/racetrack-layout-dialog.component';
 import { RacetrackLayoutDeletePopupComponent } from '../racetrack-layout/racetrack-layout-delete-dialog.component';
 
-import { Principal } from '../../shared';
-
 @Injectable()
 export class RacetrackResolvePagingParams implements Resolve<any> {
 
-  constructor(private paginationUtil: JhiPaginationUtil) {}
+    constructor(private paginationUtil: JhiPaginationUtil) {}
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
         const page = route.queryParams['page'] ? route.queryParams['page'] : '1';

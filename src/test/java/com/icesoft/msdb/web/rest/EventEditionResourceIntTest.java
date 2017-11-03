@@ -43,6 +43,7 @@ import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 /**
  * Test class for the EventEditionResource REST controller.
  *
@@ -110,12 +111,13 @@ public class EventEditionResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            EventEditionResource eventEditionResource = new EventEditionResource(
+        final EventEditionResource eventEditionResource = new EventEditionResource(
             		eventEditionRepository, eventSessionRepository, eventEntryRepository, 
             		eventResultRepository, searchService, resultsService, cdnService, jdbcRepo, statsService);
         this.restEventEditionMockMvc = MockMvcBuilders.standaloneSetup(eventEditionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -127,10 +129,10 @@ public class EventEditionResourceIntTest {
      */
     public static EventEdition createEntity(EntityManager em) {
         EventEdition eventEdition = new EventEdition()
-                .editionYear(DEFAULT_EDITION_YEAR)
-                .shortEventName(DEFAULT_SHORT_EVENT_NAME)
-                .longEventName(DEFAULT_LONG_EVENT_NAME)
-                .eventDate(DEFAULT_EVENT_DATE);
+            .editionYear(DEFAULT_EDITION_YEAR)
+            .shortEventName(DEFAULT_SHORT_EVENT_NAME)
+            .longEventName(DEFAULT_LONG_EVENT_NAME)
+            .eventDate(DEFAULT_EVENT_DATE);
         return eventEdition;
     }
 
@@ -145,7 +147,6 @@ public class EventEditionResourceIntTest {
         int databaseSizeBeforeCreate = eventEditionRepository.findAll().size();
 
         // Create the EventEdition
-
         restEventEditionMockMvc.perform(post("/api/event-editions")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(eventEdition)))
@@ -168,16 +169,15 @@ public class EventEditionResourceIntTest {
         int databaseSizeBeforeCreate = eventEditionRepository.findAll().size();
 
         // Create the EventEdition with an existing ID
-        EventEdition existingEventEdition = new EventEdition();
-        existingEventEdition.setId(1L);
+        eventEdition.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restEventEditionMockMvc.perform(post("/api/event-editions")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(existingEventEdition)))
+            .content(TestUtil.convertObjectToJsonBytes(eventEdition)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the EventEdition in the database
         List<EventEdition> eventEditionList = eventEditionRepository.findAll();
         assertThat(eventEditionList).hasSize(databaseSizeBeforeCreate);
     }
@@ -306,10 +306,10 @@ public class EventEditionResourceIntTest {
         // Update the eventEdition
         EventEdition updatedEventEdition = eventEditionRepository.findOne(eventEdition.getId());
         updatedEventEdition
-                .editionYear(UPDATED_EDITION_YEAR)
-                .shortEventName(UPDATED_SHORT_EVENT_NAME)
-                .longEventName(UPDATED_LONG_EVENT_NAME)
-                .eventDate(UPDATED_EVENT_DATE);
+            .editionYear(UPDATED_EDITION_YEAR)
+            .shortEventName(UPDATED_SHORT_EVENT_NAME)
+            .longEventName(UPDATED_LONG_EVENT_NAME)
+            .eventDate(UPDATED_EVENT_DATE);
 
         restEventEditionMockMvc.perform(put("/api/event-editions")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -380,7 +380,17 @@ public class EventEditionResourceIntTest {
     }
 
     @Test
+    @Transactional
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(EventEdition.class);
+        EventEdition eventEdition1 = new EventEdition();
+        eventEdition1.setId(1L);
+        EventEdition eventEdition2 = new EventEdition();
+        eventEdition2.setId(eventEdition1.getId());
+        assertThat(eventEdition1).isEqualTo(eventEdition2);
+        eventEdition2.setId(2L);
+        assertThat(eventEdition1).isNotEqualTo(eventEdition2);
+        eventEdition1.setId(null);
+        assertThat(eventEdition1).isNotEqualTo(eventEdition2);
     }
 }

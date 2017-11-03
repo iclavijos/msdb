@@ -38,6 +38,7 @@ import com.icesoft.msdb.repository.stats.TeamStatisticsRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 /**
  * Test class for the TeamResource REST controller.
  *
@@ -92,6 +93,7 @@ public class TeamResourceIntTest {
         this.restTeamMockMvc = MockMvcBuilders.standaloneSetup(teamResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -152,7 +154,7 @@ public class TeamResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(existingTeam)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Team in the database
         List<Team> teamList = teamRepository.findAll();
         assertThat(teamList).hasSize(databaseSizeBeforeCreate);
     }
@@ -300,7 +302,17 @@ public class TeamResourceIntTest {
     }
 
     @Test
+    @Transactional
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Team.class);
+        Team team1 = new Team();
+        team1.setId(1L);
+        Team team2 = new Team();
+        team2.setId(team1.getId());
+        assertThat(team1).isEqualTo(team2);
+        team2.setId(2L);
+        assertThat(team1).isNotEqualTo(team2);
+        team1.setId(null);
+        assertThat(team1).isNotEqualTo(team2);
     }
 }

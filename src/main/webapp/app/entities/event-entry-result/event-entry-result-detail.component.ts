@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { JhiLanguageService } from 'ng-jhipster';
+import { Subscription } from 'rxjs/Rx';
+import { JhiEventManager } from 'ng-jhipster';
+
 import { EventEntryResult } from './event-entry-result.model';
 import { EventEntryResultService } from './event-entry-result.service';
 
@@ -11,23 +13,25 @@ import { EventEntryResultService } from './event-entry-result.service';
 export class EventEntryResultDetailComponent implements OnInit, OnDestroy {
 
     eventEntryResult: EventEntryResult;
-    private subscription: any;
+    private subscription: Subscription;
+    private eventSubscriber: Subscription;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
+        private eventManager: JhiEventManager,
         private eventEntryResultService: EventEntryResultService,
         private route: ActivatedRoute
     ) {
     }
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe(params => {
+        this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
         });
+        this.registerChangeInEventEntryResults();
     }
 
-    load (id) {
-        this.eventEntryResultService.find(id).subscribe(eventEntryResult => {
+    load(id) {
+        this.eventEntryResultService.find(id).subscribe((eventEntryResult) => {
             this.eventEntryResult = eventEntryResult;
         });
     }
@@ -37,6 +41,13 @@ export class EventEntryResultDetailComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
+        this.eventManager.destroy(this.eventSubscriber);
     }
 
+    registerChangeInEventEntryResults() {
+        this.eventSubscriber = this.eventManager.subscribe(
+            'eventEntryResultListModification',
+            (response) => this.load(this.eventEntryResult.id)
+        );
+    }
 }

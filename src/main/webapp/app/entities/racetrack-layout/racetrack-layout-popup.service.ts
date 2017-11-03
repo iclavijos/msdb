@@ -9,44 +9,51 @@ import { RacetrackLayoutService } from './racetrack-layout.service';
 
 @Injectable()
 export class RacetrackLayoutPopupService {
-    private isOpen = false;
+    private ngbModalRef: NgbModalRef;
+
     constructor(
         private modalService: NgbModal,
         private router: Router,
         private racetrackService: RacetrackService,
         private racetrackLayoutService: RacetrackLayoutService
 
-    ) {}
+    ) {
+        this.ngbModalRef = null;
+    }
 
-    open (component: Component, id?: number | any, isNewLayout = false): NgbModalRef {
-        if (this.isOpen) {
-            return;
-        }
-        this.isOpen = true;
-
-        if (!isNewLayout) {
-            this.racetrackLayoutService.find(id).subscribe((racetrackLayout) => {
-                this.racetrackLayoutModalRef(component, racetrackLayout);
-            });
-        } else {
-            this.racetrackService.find(id).subscribe((racetrack) => {
-                return this.racetrackLayoutModalRef(component, new RacetrackLayout(), racetrack);
-            });
-        }
+    open(component: Component, id?: number | any, isNewLayout = false): Promise<NgbModalRef> {
+        return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
+            
+            if (!isNewLayout) {
+            	this.racetrackLayoutService.find(id).subscribe((racetrackLayout) => {
+                	this.ngbModalRef = this.racetrackLayoutModalRef(component, racetrackLayout);
+                    resolve(this.ngbModalRef);
+	            });
+    	    } else {
+        	    this.racetrackService.find(id).subscribe((racetrack) => {
+        	    	this.ngbModalRef = this.racetrackLayoutModalRef(component, new RacetrackLayout(), racetrack);
+                    resolve(this.ngbModalRef);
+            	});
+        	}
+        });
     }
 
     racetrackLayoutModalRef(component: Component, racetrackLayout: RacetrackLayout, racetrack?: Racetrack): NgbModalRef {
         if (racetrack != null) {
             racetrackLayout.racetrack = racetrack;
         }
-        let modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
+        const modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
         modalRef.componentInstance.racetrackLayout = racetrackLayout;
         modalRef.result.then((result) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         }, (reason) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         });
         return modalRef;
     }

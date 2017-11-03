@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { SERVER_API_URL } from '../../app.constants';
 
 import { FuelProvider } from './fuel-provider.model';
 import { ResponseWrapper, createRequestOption } from '../../shared';
@@ -8,8 +9,8 @@ import { ResponseWrapper, createRequestOption } from '../../shared';
 @Injectable()
 export class FuelProviderService {
 
-    private resourceUrl = 'api/fuel-providers';
-    private resourceSearchUrl = 'api/_search/fuel-providers';
+    private resourceUrl = SERVER_API_URL + 'api/fuel-providers';
+    private resourceSearchUrl = SERVER_API_URL + 'api/_search/fuel-providers';
     private typeaheadSearchUrl= 'api/_typeahead/fuel';
 
     constructor(private http: Http) { }
@@ -17,20 +18,23 @@ export class FuelProviderService {
     create(fuelProvider: FuelProvider): Observable<FuelProvider> {
         const copy = this.convert(fuelProvider);
         return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
     update(fuelProvider: FuelProvider): Observable<FuelProvider> {
         const copy = this.convert(fuelProvider);
         return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
     find(id: number): Observable<FuelProvider> {
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
@@ -57,9 +61,24 @@ export class FuelProviderService {
 
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();
-        return new ResponseWrapper(res.headers, jsonResponse, res.status);
+        const result = [];
+        for (let i = 0; i < jsonResponse.length; i++) {
+            result.push(this.convertItemFromServer(jsonResponse[i]));
+        }
+        return new ResponseWrapper(res.headers, result, res.status);
     }
 
+    /**
+     * Convert a returned JSON object to FuelProvider.
+     */
+    private convertItemFromServer(json: any): FuelProvider {
+        const entity: FuelProvider = Object.assign(new FuelProvider(), json);
+        return entity;
+    }
+
+    /**
+     * Convert a FuelProvider to a JSON which can be sent to the server.
+     */
     private convert(fuelProvider: FuelProvider): FuelProvider {
         const copy: FuelProvider = Object.assign({}, fuelProvider);
         return copy;

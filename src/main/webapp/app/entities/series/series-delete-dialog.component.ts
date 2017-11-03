@@ -24,12 +24,12 @@ export class SeriesDeleteDialogComponent {
     ) {
     }
 
-    clear () {
+    clear() {
         this.activeModal.dismiss('cancel');
     }
 
-    confirmDelete (id: number) {
-        this.seriesService.delete(id).subscribe(response => {
+    confirmDelete(id: number) {
+        this.seriesService.delete(id).subscribe((response) => {
             this.eventManager.broadcast({
                 name: 'seriesListModification',
                 content: 'Deleted an series'
@@ -45,18 +45,17 @@ export class SeriesDeleteDialogComponent {
 })
 export class SeriesDeletePopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private seriesPopupService: SeriesPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
-            this.modalRef = this.seriesPopupService
-                .open(SeriesDeleteDialogComponent, params['id']);
+        this.routeSub = this.route.params.subscribe((params) => {
+            this.seriesPopupService
+                .open(SeriesDeleteDialogComponent as Component, params['id']);
         });
     }
 

@@ -8,8 +8,7 @@ import { EventEdition } from '../event-edition';
 import { EventSession } from '../event-session';
 import { EventEntryResult } from './event-entry-result.model';
 import { EventEntryResultService } from './event-entry-result.service';
-import { ITEMS_PER_PAGE, Principal } from '../../shared';
-import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
+import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
 
 import { SessionType } from '../../shared/enumerations/sessionType.enum';
 
@@ -29,20 +28,18 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
 
     constructor(
         private eventEntryResultService: EventEntryResultService,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private eventManager: JhiEventManager,
         private activatedRoute: ActivatedRoute,
         private principal: Principal
     ) {
     }
 
-    loadAll() {    
+    loadAll() {
         this.session.eventEdition = this.edition;
         this.eventEntryResultService.query(this.session).subscribe(
-            (res: Response) => {
-                this.eventEntryResults = res.json();
-            },
-            (res: Response) => this.onError(res.json())
+            (res: ResponseWrapper) => this.eventEntryResults = res.json,
+            (res: ResponseWrapper) => this.onError(res.json)
         );
     }
 
@@ -61,7 +58,7 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
         this.eventManager.destroy(this.eventSubscriber);
     }
 
-    trackId (index: number, item: EventEntryResult) {
+    trackId(index: number, item: EventEntryResult) {
         return item.id;
     }
     
@@ -74,18 +71,17 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     }
 
     processResults() {
-        this.alertService.info('motorsportsDatabaseApp.eventEdition.result.processResults.processing', null, null);
+        this.jhiAlertService.info('motorsportsDatabaseApp.eventEdition.result.processResults.processing', null, null);
         this.eventEntryResultService.processSessionResults(this.session.id).subscribe(
-                () => this.alertService.success('motorsportsDatabaseApp.eventEdition.result.processResults.processed', null, null),
-                () => this.alertService.error('motorsportsDatabaseApp.eventEdition.result.processResults.notProcessed', null, null));
+                () => this.jhiAlertService.success('motorsportsDatabaseApp.eventEdition.result.processResults.processed', null, null),
+                () => this.jhiAlertService.error('motorsportsDatabaseApp.eventEdition.result.processResults.notProcessed', null, null));
     }
 
     registerChangeInEventEntryResults() {
         this.eventSubscriber = this.eventManager.subscribe('eventEntryResultListModification', (response) => this.loadAll());
     }
 
-
-    private onError (error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error) {
+        this.jhiAlertService.error(error.message, null, null);
     }
 }

@@ -41,6 +41,7 @@ import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 import com.icesoft.msdb.service.impl.ResultsService;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
@@ -87,7 +88,7 @@ public class SeriesEditionResource {
     public ResponseEntity<SeriesEdition> createSeriesEdition(@Valid @RequestBody SeriesEdition seriesEdition) throws URISyntaxException {
         log.debug("REST request to save SeriesEdition : {}", seriesEdition);
         if (seriesEdition.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new seriesEdition cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new seriesEdition cannot already have an ID", ENTITY_NAME, "idexists");
         }
         SeriesEdition result = seriesEditionRepository.save(seriesEdition);
         return ResponseEntity.created(new URI("/api/series-editions/" + result.getId()))
@@ -101,7 +102,7 @@ public class SeriesEditionResource {
      * @param seriesEdition the seriesEdition to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated seriesEdition,
      * or with status 400 (Bad Request) if the seriesEdition is not valid,
-     * or with status 500 (Internal Server Error) if the seriesEdition couldnt be updated
+     * or with status 500 (Internal Server Error) if the seriesEdition couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/series-editions")

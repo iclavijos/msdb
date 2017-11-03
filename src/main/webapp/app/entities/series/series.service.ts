@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, URLSearchParams, BaseRequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { SERVER_API_URL } from '../../app.constants';
 
 import { Series } from './series.model';
+import { ResponseWrapper, createRequestOption } from '../../shared';
+
 @Injectable()
 export class SeriesService {
 
-    private resourceUrl = 'api/series';
-    private resourceEditionsUrl = 'api/series/${id}/editions';
+    private resourceUrl = SERVER_API_URL + 'api/series';
+    private resourceEditionsUrl = SERVER_API_URL + 'api/series/${id}/editions';
     private resourceSearchUrl = 'api/_search/series';
     private resourceSearchEditionsUrl = 'api/_search/series/${id}/editions';
     
@@ -17,16 +20,18 @@ export class SeriesService {
     constructor(private http: Http) { }
 
     create(series: Series): Observable<Series> {
-        let copy: Series = Object.assign({}, series);
+        const copy = this.convert(series);
         return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
     update(series: Series): Observable<Series> {
-        let copy: Series = Object.assign({}, series);
+        const copy = this.convert(series);
         return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
@@ -37,23 +42,21 @@ export class SeriesService {
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
             this.seriesCache = res.json();
             this.cachedId = id;
-            return res.json();
+            const jsonResponse = res.json();
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
-    findEditions(id: number): Observable<Response> {
-        return this.http.get(`${this.resourceUrl}/${id}/editions`);
-    }
-
-    query(req?: any): Observable<Response> {
-        let options = this.createRequestOption(req);
+    query(req?: any): Observable<ResponseWrapper> {
+        const options = createRequestOption(req);
         return this.http.get(this.resourceUrl, options)
-        ;
+        	.map((res: Response) => this.convertResponse(res));
     }
 
-    queryEditions(id: number, req?: any): Observable<Response> {
-        let options = this.createRequestOption(req);
+    queryEditions(id: number, req?: any): Observable<ResponseWrapper> {
+        const options = createRequestOption(req);
         return this.http.get(this.resourceEditionsUrl, options)
+        	.map((res: Response) => this.convertResponse(res));
         ;
     }
 
@@ -61,29 +64,39 @@ export class SeriesService {
         return this.http.delete(`${this.resourceUrl}/${id}`);
     }
 
-    search(req?: any): Observable<Response> {
-        let options = this.createRequestOption(req);
-        return this.http.get(this.resourceSearchUrl, options);
+    search(req?: any): Observable<ResponseWrapper> {
+        const options = createRequestOption(req);
+        return this.http.get(this.resourceSearchUrl, options)
+            .map((res: any) => this.convertResponse(res));
+    }
+
+    private convertResponse(res: Response): ResponseWrapper {
+        const jsonResponse = res.json();
+        const result = [];
+        for (let i = 0; i < jsonResponse.length; i++) {
+            result.push(this.convertItemFromServer(jsonResponse[i]));
+        }
+        return new ResponseWrapper(res.headers, result, res.status);
+    }
+
+    /**
+     * Convert a returned JSON object to Series.
+     */
+    private convertItemFromServer(json: any): Series {
+        const entity: Series = Object.assign(new Series(), json);
+        return entity;
+    }
+
+    /**
+     * Convert a Series to a JSON which can be sent to the server.
+     */
+    private convert(series: Series): Series {
+        const copy: Series = Object.assign({}, series);
+        return copy;
     }
 
     searchEditions(id: number, req?: any): Observable<Response> {
-        let options = this.createRequestOption(req);
+        let options = createRequestOption(req);
         return this.http.get(this.resourceSearchEditionsUrl, options);
-    }
-
-    private createRequestOption(req?: any): BaseRequestOptions {
-        let options: BaseRequestOptions = new BaseRequestOptions();
-        if (req) {
-            let params: URLSearchParams = new URLSearchParams();
-            params.set('page', req.page);
-            params.set('size', req.size);
-            if (req.sort) {
-                params.paramsMap.set('sort', req.sort);
-            }
-            params.set('query', req.query);
-
-            options.search = params;
-        }
-        return options;
     }
 }

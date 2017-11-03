@@ -10,7 +10,8 @@ import { EventEdition, EventEditionService } from '../event-edition';
 
 @Injectable()
 export class SeriesEditionPopupService {
-    private isOpen = false;
+    private ngbModalRef: NgbModalRef;
+
     private parentSeries: Series;
     private seriesEdition: SeriesEdition;
     
@@ -20,46 +21,54 @@ export class SeriesEditionPopupService {
         private seriesEditionService: SeriesEditionService,
         private seriesService: SeriesService,
         private eventEditionService: EventEditionService,
-    ) {}
-
-    open (component: Component, id?: number | any, idSeries?: number | any ): NgbModalRef {
-        if (this.isOpen) {
-            return;
-        }
-        this.isOpen = true;
-        
-        if (idSeries) {
-            this.seriesService.find(idSeries).subscribe(series => this.parentSeries = series);
-        }
-
-        if (id) {
-            this.seriesEditionService.find(id).subscribe((seriesEdition) => {
-                this.seriesEditionModalRef(component, seriesEdition);
-            });
-        } else {
-            this.seriesEdition = new SeriesEdition();
-            this.seriesEdition.series = this.parentSeries;
-            return this.seriesEditionModalRef(component, this.seriesEdition);
-        }
+    ) {
+        this.ngbModalRef = null;
     }
-    
-    openCalendar (component: Component, id: number, eventId?: number): NgbModalRef {
-        if (this.isOpen) {
-            return;
-        }
-        this.isOpen = true;
 
-        this.seriesEditionService.find(id).subscribe(seriesEdition => {
-            if (eventId) {
-                this.eventEditionService.find(eventId).subscribe((eventEdition) => {
-                    this.seriesEditionModalRef(component, seriesEdition, eventEdition);
+    open(component: Component, id?: number | any, idSeries?: number | any ): Promise<NgbModalRef> {
+        return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
+            
+            if (idSeries) {
+                this.seriesService.find(idSeries).subscribe(series => this.parentSeries = series);
+            }
+
+            if (id) {
+                this.seriesEditionService.find(id).subscribe((seriesEdition) => {
+                    this.ngbModalRef = this.seriesEditionModalRef(component, seriesEdition);
+                    resolve(this.ngbModalRef);
                 });
             } else {
-                this.seriesEditionModalRef(component, seriesEdition);
+                this.seriesEdition = new SeriesEdition();
+                this.seriesEdition.series = this.parentSeries;
+                this.ngbModalRef = this.seriesEditionModalRef(component, this.seriesEdition);
+                resolve(this.ngbModalRef);
             }
         });
-        
+    }
+    
+    openCalendar (component: Component, id: number, eventId?: number): Promise<NgbModalRef> {
+        return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
 
+	        this.seriesEditionService.find(id).subscribe(seriesEdition => {
+	            if (eventId) {
+	                this.eventEditionService.find(eventId).subscribe((eventEdition) => {
+	                     this.ngbModalRef = this.seriesEditionModalRef(component, seriesEdition, eventEdition);
+	                     resolve(this.ngbModalRef);
+	                });
+	            } else {
+	                 this.ngbModalRef = this.seriesEditionModalRef(component, seriesEdition);
+	                 resolve(this.ngbModalRef);
+	            }
+	        });
+        });
     }
 
     seriesEditionModalRef(component: Component, seriesEdition: SeriesEdition, eventEdition?: EventEdition): NgbModalRef {
@@ -70,10 +79,10 @@ export class SeriesEditionPopupService {
         }
         modalRef.result.then((result) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         }, (reason) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         });
         return modalRef;
     }

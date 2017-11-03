@@ -1,5 +1,5 @@
-var dataCacheName = '"MotorsportsDatabase-v1';
-var cacheName = '"MotorsportsDatabase-1';
+var dataCacheName = 'MotorsportsDatabase-v1';
+var cacheName = 'MotorsportsDatabase-1';
 var filesToCache = [
     '/',
     '/index.html'

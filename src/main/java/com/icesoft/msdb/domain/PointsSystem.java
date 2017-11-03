@@ -80,6 +80,7 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     	return this;
     }
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 	public void setActive(Boolean active) {
 		this.active = active;
 	}
@@ -231,6 +232,7 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     public void setPointsLeadLap(Integer pointsLeadLap) {
         this.pointsLeadLap = pointsLeadLap;
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

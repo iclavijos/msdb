@@ -40,6 +40,8 @@ import com.icesoft.msdb.repository.stats.DriverStatisticsRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
+
 /**
  * Test class for the DriverResource REST controller.
  *
@@ -100,10 +102,11 @@ public class DriverResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            DriverResource driverResource = new DriverResource(driverRepository, eventEntryRepo, statsRepo, cdnService);
+        final DriverResource driverResource = new DriverResource(driverRepository, eventEntryRepo, statsRepo, cdnService);
         this.restDriverMockMvc = MockMvcBuilders.standaloneSetup(driverResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -115,13 +118,13 @@ public class DriverResourceIntTest {
      */
     public static Driver createEntity(EntityManager em) {
         Driver driver = new Driver()
-                .name(DEFAULT_NAME)
-                .surname(DEFAULT_SURNAME)
-                .birthDate(DEFAULT_BIRTH_DATE)
-                .birthPlace(DEFAULT_BIRTH_PLACE)
-                .deathDate(DEFAULT_DEATH_DATE)
-                .deathPlace(DEFAULT_DEATH_PLACE)
-                .portrait(DEFAULT_PORTRAIT);
+            .name(DEFAULT_NAME)
+            .surname(DEFAULT_SURNAME)
+            .birthDate(DEFAULT_BIRTH_DATE)
+            .birthPlace(DEFAULT_BIRTH_PLACE)
+            .deathDate(DEFAULT_DEATH_DATE)
+            .deathPlace(DEFAULT_DEATH_PLACE)
+            .portrait(DEFAULT_PORTRAIT);
         return driver;
     }
 
@@ -136,7 +139,6 @@ public class DriverResourceIntTest {
         int databaseSizeBeforeCreate = driverRepository.findAll().size();
 
         // Create the Driver
-
         restDriverMockMvc.perform(post("/api/drivers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(driver)))
@@ -162,16 +164,15 @@ public class DriverResourceIntTest {
         int databaseSizeBeforeCreate = driverRepository.findAll().size();
 
         // Create the Driver with an existing ID
-        Driver existingDriver = new Driver();
-        existingDriver.setId(1L);
+        driver.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restDriverMockMvc.perform(post("/api/drivers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(existingDriver)))
+            .content(TestUtil.convertObjectToJsonBytes(driver)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Driver in the database
         List<Driver> driverList = driverRepository.findAll();
         assertThat(driverList).hasSize(databaseSizeBeforeCreate);
     }
@@ -288,13 +289,13 @@ public class DriverResourceIntTest {
         // Update the driver
         Driver updatedDriver = driverRepository.findOne(driver.getId());
         updatedDriver
-                .name(UPDATED_NAME)
-                .surname(UPDATED_SURNAME)
-                .birthDate(UPDATED_BIRTH_DATE)
-                .birthPlace(UPDATED_BIRTH_PLACE)
-                .deathDate(UPDATED_DEATH_DATE)
-                .deathPlace(UPDATED_DEATH_PLACE)
-                .portrait(UPDATED_PORTRAIT);
+            .name(UPDATED_NAME)
+            .surname(UPDATED_SURNAME)
+            .birthDate(UPDATED_BIRTH_DATE)
+            .birthPlace(UPDATED_BIRTH_PLACE)
+            .deathDate(UPDATED_DEATH_DATE)
+            .deathPlace(UPDATED_DEATH_PLACE)
+            .portrait(UPDATED_PORTRAIT);
 
         restDriverMockMvc.perform(put("/api/drivers")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -371,7 +372,17 @@ public class DriverResourceIntTest {
     }
 
     @Test
+    @Transactional
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Driver.class);
+        Driver driver1 = new Driver();
+        driver1.setId(1L);
+        Driver driver2 = new Driver();
+        driver2.setId(driver1.getId());
+        assertThat(driver1).isEqualTo(driver2);
+        driver2.setId(2L);
+        assertThat(driver1).isNotEqualTo(driver2);
+        driver1.setId(null);
+        assertThat(driver1).isNotEqualTo(driver2);
     }
 }

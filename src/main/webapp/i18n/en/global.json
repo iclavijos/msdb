@@ -58,7 +58,8 @@
             	"engines": "Engines"
             },
             "language": "Language",
-            "calendar": "Calendar"
+            "calendar": "Calendar",
+            "browseDB": "Browse database"
         },
         "form": {
             "username": "Username",

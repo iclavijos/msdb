@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { DatePipe } from '@angular/common';
 import { Observable } from 'rxjs/Rx';
+import { SERVER_API_URL } from '../../app.constants';
+
 import { JhiDateUtils } from 'ng-jhipster';
 
 import { ResponseWrapper, createRequestOption } from '../../shared';
@@ -13,8 +15,8 @@ import * as moment from 'moment-timezone';
 @Injectable()
 export class EventEditionService {
 
-    private resourceUrl = 'api/event-editions';
-    private resourceSearchUrl = 'api/_search/event-editions';
+    private resourceUrl = SERVER_API_URL + 'api/event-editions';
+    private resourceSearchUrl = SERVER_API_URL + 'api/_search/event-editions';
     private eventResourceUrl = 'api/events';
 
     constructor(private http: Http, private dateUtils: JhiDateUtils, private datePipe: DatePipe) { }
@@ -23,8 +25,7 @@ export class EventEditionService {
         const copy = this.convert(eventEdition);
         return this.http.post(this.resourceUrl, copy).map((res: Response) => {
             const jsonResponse = res.json();
-            this.convertItemFromServer(jsonResponse);
-            return jsonResponse;
+            return this.convertItemFromServer(jsonResponse);
         });
     }
 
@@ -32,8 +33,7 @@ export class EventEditionService {
         const copy = this.convert(eventEdition);
         return this.http.put(this.resourceUrl, copy).map((res: Response) => {
             const jsonResponse = res.json();
-            this.convertItemFromServer(jsonResponse);
-            return jsonResponse;
+            return this.convertItemFromServer(jsonResponse);
         });
     }
     
@@ -44,14 +44,13 @@ export class EventEditionService {
     find(id: number): Observable<EventEdition> {
         return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
             const jsonResponse = res.json();
-            this.convertItemFromServer(jsonResponse);
-            return jsonResponse;
+            return this.convertItemFromServer(jsonResponse);
         });
     }
     
-    findEventEditions(idEvent: number, req?: any): Observable<Response> {
+    findEventEditions(idEvent: number, req?: any): Observable<ResponseWrapper> {
         let options = createRequestOption(req);
-        return this.http.get(`${this.eventResourceUrl}/${idEvent}/editions`, options).map((res: any) => this.convertResponse(res));
+        return this.http.get(`${this.eventResourceUrl}/${idEvent}/editions`, options).map((res: Response) => this.convertResponse(res));
     }
     
     findSessions(id: number, timeZone: string): Observable<ResponseWrapper> {
@@ -128,11 +127,19 @@ export class EventEditionService {
         return new ResponseWrapper(res.headers, jsonResponse, res.status);
     }
 
-    private convertItemFromServer(entity: any) {
+    /**
+     * Convert a returned JSON object to EventEdition.
+     */
+    private convertItemFromServer(json: any): EventEdition {
+        const entity: EventEdition = Object.assign(new EventEdition(), json);
         entity.eventDate = new Date(
                 entity.eventDate[0], entity.eventDate[1] - 1, entity.eventDate[2]);
+        return entity;
     }
 
+    /**
+     * Convert a EventEdition to a JSON which can be sent to the server.
+     */
     private convert(eventEdition: EventEdition): EventEdition {
         const copy: EventEdition = Object.assign({}, eventEdition);
         copy.eventDate = this.dateUtils

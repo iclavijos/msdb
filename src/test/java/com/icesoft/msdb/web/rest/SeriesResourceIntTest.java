@@ -37,6 +37,8 @@ import com.icesoft.msdb.repository.SeriesRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
+
 /**
  * Test class for the SeriesResource REST controller.
  *
@@ -90,6 +92,7 @@ public class SeriesResourceIntTest {
         this.restSeriesMockMvc = MockMvcBuilders.standaloneSetup(seriesResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -151,7 +154,7 @@ public class SeriesResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(existingSeries)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Series in the database
         List<Series> seriesList = seriesRepository.findAll();
         assertThat(seriesList).hasSize(databaseSizeBeforeCreate);
     }
@@ -318,7 +321,17 @@ public class SeriesResourceIntTest {
     }
 
     @Test
+    @Transactional
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Series.class);
+        Series series1 = new Series();
+        series1.setId(1L);
+        Series series2 = new Series();
+        series2.setId(series1.getId());
+        assertThat(series1).isEqualTo(series2);
+        series2.setId(2L);
+        assertThat(series1).isNotEqualTo(series2);
+        series1.setId(null);
+        assertThat(series1).isNotEqualTo(series2);
     }
 }

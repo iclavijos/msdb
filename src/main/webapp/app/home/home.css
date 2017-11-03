@@ -21,3 +21,7 @@ only screen and (                min-resolution: 2dppx) {
   height:450px;
   overflow-y: scroll;
 }
+
+.cardGreyText {
+	color: #E0E0E0;
+}

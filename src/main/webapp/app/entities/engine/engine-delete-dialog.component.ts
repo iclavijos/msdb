@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { Engine } from './engine.model';
 import { EnginePopupService } from './engine-popup.service';
@@ -19,7 +19,6 @@ export class EngineDeleteDialogComponent {
     constructor(
         private engineService: EngineService,
         public activeModal: NgbActiveModal,
-        private alertService: JhiAlertService,
         private eventManager: JhiEventManager
     ) {
     }
@@ -36,7 +35,6 @@ export class EngineDeleteDialogComponent {
             });
             this.activeModal.dismiss(true);
         });
-        this.alertService.success('motorsportsDatabaseApp.engine.deleted', { param : id }, null);
     }
 }
 
@@ -46,7 +44,6 @@ export class EngineDeleteDialogComponent {
 })
 export class EngineDeletePopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -56,8 +53,8 @@ export class EngineDeletePopupComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
-            this.modalRef = this.enginePopupService
-                .open(EngineDeleteDialogComponent, params['id']);
+            this.enginePopupService
+                .open(EngineDeleteDialogComponent as Component, params['id']);
         });
     }
 

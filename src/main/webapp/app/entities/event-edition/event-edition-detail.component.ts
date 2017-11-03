@@ -46,13 +46,13 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         this.subscription = this.route.params.subscribe((params) => {
             this.load(params['id']);
         });
-        this.registerChangesInEventEdition();
+        this.registerChangeInEventEditions();
         
         this.keysDuration = Object.keys(this.durationTypes).filter(Number);
         this.keysSession = Object.keys(this.sessionTypes).filter(Number);
     }
 
-    load (id) {
+    load(id) {
         this.eventEditionService.find(id).subscribe((eventEdition) => {
             this.eventEdition = eventEdition;
             this.loadSessions(id);
@@ -81,8 +81,8 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         this.subscription.unsubscribe();
         this.eventManager.destroy(this.eventSubscriber);
     }
-    
-    registerChangesInEventEdition() {
+
+    registerChangeInEventEditions() {
         this.eventSubscriber = this.eventManager.subscribe(
             'eventEditionListModification',
             (response) => this.load(this.eventEdition.id)

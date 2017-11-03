@@ -38,6 +38,7 @@ import com.icesoft.msdb.repository.stats.EngineStatisticsRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 /**
  * Test class for the EngineResource REST controller.
  *
@@ -106,10 +107,11 @@ public class EngineResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            EngineResource engineResource = new EngineResource(engineRepository, eventEntryRepo, engineStatsRepo, cdnService);
+        final EngineResource engineResource = new EngineResource(engineRepository, eventEntryRepo, engineStatsRepo, cdnService);
         this.restEngineMockMvc = MockMvcBuilders.standaloneSetup(engineResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -121,16 +123,16 @@ public class EngineResourceIntTest {
      */
     public static Engine createEntity(EntityManager em) {
         Engine engine = new Engine()
-                .name(DEFAULT_NAME)
-                .manufacturer(DEFAULT_MANUFACTURER)
-                .capacity(DEFAULT_CAPACITY)
-                .architecture(DEFAULT_ARCHITECTURE)
-                .debutYear(DEFAULT_DEBUT_YEAR)
-                .petrolEngine(DEFAULT_PETROL_ENGINE)
-                .dieselEngine(DEFAULT_DIESEL_ENGINE)
-                .electricEngine(DEFAULT_ELECTRIC_ENGINE)
-                .turbo(DEFAULT_TURBO)
-                .image(DEFAULT_IMAGE);
+            .name(DEFAULT_NAME)
+            .manufacturer(DEFAULT_MANUFACTURER)
+            .capacity(DEFAULT_CAPACITY)
+            .architecture(DEFAULT_ARCHITECTURE)
+            .debutYear(DEFAULT_DEBUT_YEAR)
+            .petrolEngine(DEFAULT_PETROL_ENGINE)
+            .dieselEngine(DEFAULT_DIESEL_ENGINE)
+            .electricEngine(DEFAULT_ELECTRIC_ENGINE)
+            .turbo(DEFAULT_TURBO)
+            .image(DEFAULT_IMAGE);
         return engine;
     }
 
@@ -145,7 +147,6 @@ public class EngineResourceIntTest {
         int databaseSizeBeforeCreate = engineRepository.findAll().size();
 
         // Create the Engine
-
         restEngineMockMvc.perform(post("/api/engines")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(engine)))
@@ -174,16 +175,15 @@ public class EngineResourceIntTest {
         int databaseSizeBeforeCreate = engineRepository.findAll().size();
 
         // Create the Engine with an existing ID
-        Engine existingEngine = new Engine();
-        existingEngine.setId(1L);
+        engine.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restEngineMockMvc.perform(post("/api/engines")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(existingEngine)))
+            .content(TestUtil.convertObjectToJsonBytes(engine)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Engine in the database
         List<Engine> engineList = engineRepository.findAll();
         assertThat(engineList).hasSize(databaseSizeBeforeCreate);
     }
@@ -342,16 +342,16 @@ public class EngineResourceIntTest {
         // Update the engine
         Engine updatedEngine = engineRepository.findOne(engine.getId());
         updatedEngine
-                .name(UPDATED_NAME)
-                .manufacturer(UPDATED_MANUFACTURER)
-                .capacity(UPDATED_CAPACITY)
-                .architecture(UPDATED_ARCHITECTURE)
-                .debutYear(UPDATED_DEBUT_YEAR)
-                .petrolEngine(UPDATED_PETROL_ENGINE)
-                .dieselEngine(UPDATED_DIESEL_ENGINE)
-                .electricEngine(UPDATED_ELECTRIC_ENGINE)
-                .turbo(UPDATED_TURBO)
-                .image(UPDATED_IMAGE);
+            .name(UPDATED_NAME)
+            .manufacturer(UPDATED_MANUFACTURER)
+            .capacity(UPDATED_CAPACITY)
+            .architecture(UPDATED_ARCHITECTURE)
+            .debutYear(UPDATED_DEBUT_YEAR)
+            .petrolEngine(UPDATED_PETROL_ENGINE)
+            .dieselEngine(UPDATED_DIESEL_ENGINE)
+            .electricEngine(UPDATED_ELECTRIC_ENGINE)
+            .turbo(UPDATED_TURBO)
+            .image(UPDATED_IMAGE);
 
         restEngineMockMvc.perform(put("/api/engines")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -434,7 +434,17 @@ public class EngineResourceIntTest {
     }
 
     @Test
+    @Transactional
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Engine.class);
+        Engine engine1 = new Engine();
+        engine1.setId(1L);
+        Engine engine2 = new Engine();
+        engine2.setId(engine1.getId());
+        assertThat(engine1).isEqualTo(engine2);
+        engine2.setId(2L);
+        assertThat(engine1).isNotEqualTo(engine2);
+        engine1.setId(null);
+        assertThat(engine1).isNotEqualTo(engine2);
     }
 }

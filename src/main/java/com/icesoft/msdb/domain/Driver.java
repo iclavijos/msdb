@@ -75,6 +75,7 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     @Column(name = "portrait_url")
     private String portraitUrl;
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -219,6 +220,7 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     	LocalDate end = (deathDate != null ? deathDate : LocalDate.now());
     	return Period.between(birthDate, end).getYears();
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

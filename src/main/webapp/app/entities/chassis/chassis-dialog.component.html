@@ -57,7 +57,7 @@
         	<ng-template #chassisTemplate let-r="result">
 			  {{r.manufacturer}}&nbsp;{{r.name}}&nbsp;({{r.debutYear}})
 			</ng-template>
-            <label jhiTranslate="motorsportsDatabaseApp.chassis.derivedFrom" for="field_derivedFrom">Derived From</label>
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.chassis.derivedFrom" for="field_derivedFrom">Derived From</label>
             <input id="field_derivedFrom" type="text" name="field_derivedFrom" class="form-control" [inputFormatter]="inputFormatter"
             	[(ngModel)]="chassis.derivedFrom" [ngbTypeahead]="search" [focusFirst]="false" [resultTemplate]="chassisTemplate"/>
         </div>
@@ -84,7 +84,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
             <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
         <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">

@@ -43,6 +43,7 @@ public class FuelProvider extends AbstractAuditingEntity implements Serializable
     @Column(name = "logo_url")
     private String logoUrl;
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -89,6 +90,7 @@ public class FuelProvider extends AbstractAuditingEntity implements Serializable
     public void setLogoUrl(String logoUrl) {
         this.logoUrl = logoUrl;
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

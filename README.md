@@ -1,5 +1,5 @@
 # MotorsportsDatabase
-This application was generated using JHipster 4.0.6, you can find documentation and help at [https://jhipster.github.io/documentation-archive/v4.0.6](https://jhipster.github.io/documentation-archive/v4.0.6).
+This application was generated using JHipster 4.10.2, you can find documentation and help at [http://www.jhipster.tech/documentation-archive/v4.10.2](http://www.jhipster.tech/documentation-archive/v4.10.2).
 
 ## Development
 
@@ -11,7 +11,7 @@ Before you can build this project, you must install and configure the following 
    Depending on your system, you can install Yarn either from source or as a pre-packaged bundle.
 
 After installing Node, you should be able to run the following command to install development tools.
-You will only need to run this command when dependencies change in `package.json`.
+You will only need to run this command when dependencies change in [package.json](package.json).
 
     yarn install
 
@@ -25,10 +25,30 @@ auto-refreshes when files change on your hard drive.
     yarn start
 
 [Yarn][] is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
-specifying a newer version in `package.json`. You can also run `yarn update` and `yarn install` to manage dependencies.
+specifying a newer version in [package.json](package.json). You can also run `yarn update` and `yarn install` to manage dependencies.
 Add the `help` flag on any command to see how you can use it. For example, `yarn help update`.
 
 The `yarn run` command will list all of the scripts available to run for this project.
+
+### Service workers
+
+Service workers are commented by default, to enable them please uncomment the following code.
+
+* The service worker registering script in index.html
+```
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+        .register('./sw.js')
+        .then(function() { console.log('Service Worker Registered'); });
+    }
+</script>
+```
+* The copy file option in webpack-common.js
+```js
+{ from: './src/main/webapp/sw.js', to: 'sw.js' },
+```
+Note: Add the respective scripts/assets in `sw.js` that is needed to be cached.
 
 ### Managing dependencies
 
@@ -42,12 +62,12 @@ To benefit from TypeScript type definitions from [DefinitelyTyped][] repository 
 
 Then you would import the JS and CSS files specified in library's installation instructions so that [Webpack][] knows about them:
 
-Edit `src/main/webapp/app/vendor.ts`file:
+Edit [src/main/webapp/app/vendor.ts](src/main/webapp/app/vendor.ts) file:
 ~~~
 import 'leaflet/dist/leaflet.js';
 ~~~
 
-Edit `src/main/webapp/content/css/vendor.css` file:
+Edit [src/main/webapp/content/css/vendor.css](src/main/webapp/content/css/vendor.css) file:
 ~~~
 @import '~leaflet/dist/leaflet.css';
 ~~~
@@ -69,6 +89,7 @@ will generate few files:
     create src/main/webapp/app/my-component/my-component.component.html
     create src/main/webapp/app/my-component/my-component.component.ts
     update src/main/webapp/app/app.module.ts
+
 
 ## Building for production
 
@@ -93,7 +114,7 @@ To launch your application's tests, run:
 
 ### Client tests
 
-Unit tests are run by [Karma][] and written with [Jasmine][]. They're located in `src/test/javascript/` and can be run with:
+Unit tests are run by [Karma][] and written with [Jasmine][]. They're located in [src/test/javascript/](src/test/javascript/) and can be run with:
 
     yarn test
 
@@ -127,14 +148,14 @@ For more information refer to [Using Docker and Docker-Compose][], this page als
 
 To set up a CI environment, consult the [Setting up Continuous Integration][] page.
 
-[JHipster Homepage and latest documentation]: https://jhipster.github.io
-[JHipster 4.0.6 archive]: https://jhipster.github.io/documentation-archive/v4.0.6
+[JHipster Homepage and latest documentation]: http://www.jhipster.tech
+[JHipster 4.10.2 archive]: http://www.jhipster.tech/documentation-archive/v4.10.2
 
-[Using JHipster in development]: https://jhipster.github.io/documentation-archive/v4.0.6/development/
-[Using Docker and Docker-Compose]: https://jhipster.github.io/documentation-archive/v4.0.6/docker-compose
-[Using JHipster in production]: https://jhipster.github.io/documentation-archive/v4.0.6/production/
-[Running tests page]: https://jhipster.github.io/documentation-archive/v4.0.6/running-tests/
-[Setting up Continuous Integration]: https://jhipster.github.io/documentation-archive/v4.0.6/setting-up-ci/
+[Using JHipster in development]: http://www.jhipster.tech/documentation-archive/v4.10.2/development/
+[Using Docker and Docker-Compose]: http://www.jhipster.tech/documentation-archive/v4.10.2/docker-compose
+[Using JHipster in production]: http://www.jhipster.tech/documentation-archive/v4.10.2/production/
+[Running tests page]: http://www.jhipster.tech/documentation-archive/v4.10.2/running-tests/
+[Setting up Continuous Integration]: http://www.jhipster.tech/documentation-archive/v4.10.2/setting-up-ci/
 
 
 [Node.js]: https://nodejs.org/

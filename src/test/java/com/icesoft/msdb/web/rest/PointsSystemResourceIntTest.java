@@ -33,6 +33,8 @@ import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.repository.PointsSystemRepository;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
+
 /**
  * Test class for the PointsSystemResource REST controller.
  *
@@ -85,10 +87,11 @@ public class PointsSystemResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            PointsSystemResource pointsSystemResource = new PointsSystemResource(pointsSystemRepository);
+        final PointsSystemResource pointsSystemResource = new PointsSystemResource(pointsSystemRepository);
         this.restPointsSystemMockMvc = MockMvcBuilders.standaloneSetup(pointsSystemResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -100,13 +103,13 @@ public class PointsSystemResourceIntTest {
      */
     public static PointsSystem createEntity(EntityManager em) {
         PointsSystem pointsSystem = new PointsSystem()
-                .name(DEFAULT_NAME)
-                .description(DEFAULT_DESCRIPTION)
-                .points(DEFAULT_POINTS)
-                .pointsMostLeadLaps(DEFAULT_POINTS_MOST_LEAD_LAPS)
-                .pointsFastLap(DEFAULT_POINTS_FAST_LAP)
-                .pointsPole(DEFAULT_POINTS_POLE)
-                .pointsLeadLap(DEFAULT_POINTS_LEAD_LAP);
+            .name(DEFAULT_NAME)
+            .description(DEFAULT_DESCRIPTION)
+            .points(DEFAULT_POINTS)
+            .pointsMostLeadLaps(DEFAULT_POINTS_MOST_LEAD_LAPS)
+            .pointsFastLap(DEFAULT_POINTS_FAST_LAP)
+            .pointsPole(DEFAULT_POINTS_POLE)
+            .pointsLeadLap(DEFAULT_POINTS_LEAD_LAP);
         return pointsSystem;
     }
 
@@ -121,7 +124,6 @@ public class PointsSystemResourceIntTest {
         int databaseSizeBeforeCreate = pointsSystemRepository.findAll().size();
 
         // Create the PointsSystem
-
         restPointsSystemMockMvc.perform(post("/api/points-systems")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(pointsSystem)))
@@ -147,16 +149,15 @@ public class PointsSystemResourceIntTest {
         int databaseSizeBeforeCreate = pointsSystemRepository.findAll().size();
 
         // Create the PointsSystem with an existing ID
-        PointsSystem existingPointsSystem = new PointsSystem();
-        existingPointsSystem.setId(1L);
+        pointsSystem.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPointsSystemMockMvc.perform(post("/api/points-systems")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(existingPointsSystem)))
+            .content(TestUtil.convertObjectToJsonBytes(pointsSystem)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the PointsSystem in the database
         List<PointsSystem> pointsSystemList = pointsSystemRepository.findAll();
         assertThat(pointsSystemList).hasSize(databaseSizeBeforeCreate);
     }
@@ -255,13 +256,13 @@ public class PointsSystemResourceIntTest {
         // Update the pointsSystem
         PointsSystem updatedPointsSystem = pointsSystemRepository.findOne(pointsSystem.getId());
         updatedPointsSystem
-                .name(UPDATED_NAME)
-                .description(UPDATED_DESCRIPTION)
-                .points(UPDATED_POINTS)
-                .pointsMostLeadLaps(UPDATED_POINTS_MOST_LEAD_LAPS)
-                .pointsFastLap(UPDATED_POINTS_FAST_LAP)
-                .pointsPole(UPDATED_POINTS_POLE)
-                .pointsLeadLap(UPDATED_POINTS_LEAD_LAP);
+            .name(UPDATED_NAME)
+            .description(UPDATED_DESCRIPTION)
+            .points(UPDATED_POINTS)
+            .pointsMostLeadLaps(UPDATED_POINTS_MOST_LEAD_LAPS)
+            .pointsFastLap(UPDATED_POINTS_FAST_LAP)
+            .pointsPole(UPDATED_POINTS_POLE)
+            .pointsLeadLap(UPDATED_POINTS_LEAD_LAP);
 
         restPointsSystemMockMvc.perform(put("/api/points-systems")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -338,7 +339,17 @@ public class PointsSystemResourceIntTest {
     }
 
     @Test
+    @Transactional
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(PointsSystem.class);
+        PointsSystem pointsSystem1 = new PointsSystem();
+        pointsSystem1.setId(1L);
+        PointsSystem pointsSystem2 = new PointsSystem();
+        pointsSystem2.setId(pointsSystem1.getId());
+        assertThat(pointsSystem1).isEqualTo(pointsSystem2);
+        pointsSystem2.setId(2L);
+        assertThat(pointsSystem1).isNotEqualTo(pointsSystem2);
+        pointsSystem1.setId(null);
+        assertThat(pointsSystem1).isNotEqualTo(pointsSystem2);
     }
 }

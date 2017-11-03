@@ -37,6 +37,8 @@ import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.RacetrackService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
+
 /**
  * Test class for the RacetrackResource REST controller.
  *
@@ -87,6 +89,7 @@ public class RacetrackResourceIntTest {
         this.restRacetrackMockMvc = MockMvcBuilders.standaloneSetup(racetrackResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -146,7 +149,7 @@ public class RacetrackResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(existingRacetrack)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Racetrack in the database
         List<Racetrack> racetrackList = racetrackRepository.findAll();
         assertThat(racetrackList).hasSize(databaseSizeBeforeCreate);
     }
@@ -307,7 +310,17 @@ public class RacetrackResourceIntTest {
     }
 
     @Test
+    @Transactional
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Racetrack.class);
+        Racetrack racetrack1 = new Racetrack();
+        racetrack1.setId(1L);
+        Racetrack racetrack2 = new Racetrack();
+        racetrack2.setId(racetrack1.getId());
+        assertThat(racetrack1).isEqualTo(racetrack2);
+        racetrack2.setId(2L);
+        assertThat(racetrack1).isNotEqualTo(racetrack2);
+        racetrack1.setId(null);
+        assertThat(racetrack1).isNotEqualTo(racetrack2);
     }
 }

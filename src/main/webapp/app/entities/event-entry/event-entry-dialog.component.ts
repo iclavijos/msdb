@@ -44,7 +44,7 @@ export class EventEntryDialogComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private dataUtils: JhiDataUtils,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private eventEditionService: EventEditionService,
         private eventEntryService: EventEntryService,
         private driverService: DriverService,
@@ -100,37 +100,41 @@ export class EventEntryDialogComponent implements OnInit {
         }
     }
     
-    clear () {
+    clear() {
         this.activeModal.dismiss('cancel');
     }
 
-    save () {
+    save() {
         this.isSaving = true;
         if (!this.eventEntry.eventEdition.multidriver) {
             this.eventEntry.drivers = [this.singleDriver];
         }
         if (this.eventEntry.id !== undefined) {
-            this.eventEntryService.update(this.eventEntry)
-                .subscribe((res: EventEntry) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.eventEntryService.update(this.eventEntry));
         } else {
-            this.eventEntryService.create(this.eventEntry)
-                .subscribe((res: EventEntry) => this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
+            this.subscribeToSaveResponse(
+                this.eventEntryService.create(this.eventEntry));
         }
     }
 
-    private onSaveSuccess (result: EventEntry) {
+    private subscribeToSaveResponse(result: Observable<EventEntry>) {
+        result.subscribe((res: EventEntry) =>
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
+    }
+
+    private onSaveSuccess(result: EventEntry) {
         this.eventManager.broadcast({ name: 'eventEntryListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError (error) {
+    private onSaveError() {
         this.isSaving = false;
-        this.onError(error);
     }
 
-    private onError (error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error: any) {
+        this.jhiAlertService.error(error.message, null, null);
     }
     
     private innerDriverSearch(term: string) {
@@ -310,25 +314,22 @@ export class EventEntryDialogComponent implements OnInit {
 })
 export class EventEntryPopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
-
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private eventEntryPopupService: EventEntryPopupService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
+        this.routeSub = this.route.params.subscribe((params) => {
             let idEdition = params['idEdition'];
             if ( params['id'] ) {
-                this.modalRef = this.eventEntryPopupService
-                    .open(EventEntryDialogComponent, idEdition, params['id']);
+                this.eventEntryPopupService
+                    .open(EventEntryDialogComponent as Component, idEdition, params['id']);
             } else {
-                this.modalRef = this.eventEntryPopupService
-                    .open(EventEntryDialogComponent, idEdition);
+                this.eventEntryPopupService
+                    .open(EventEntryDialogComponent as Component, idEdition);
             }
 
         });

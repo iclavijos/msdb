@@ -11,12 +11,13 @@ import {_do} from 'rxjs/operator/do';
 import {switchMap} from 'rxjs/operator/switchMap';
 import {of} from 'rxjs/observable/of';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { Engine } from './engine.model';
 import { EnginePopupService } from './engine-popup.service';
 import { EngineService } from './engine.service';
+import { ResponseWrapper } from '../../shared';
 
 @Component({
     selector: 'jhi-engine-dialog',
@@ -33,10 +34,10 @@ export class EngineDialogComponent implements OnInit {
     constructor(
         public activeModal: NgbActiveModal,
         private dataUtils: JhiDataUtils,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private engineService: EngineService,
         private elementRef: ElementRef,
-        private eventManager: JhiEventManager,
+        private eventManager: JhiEventManager
     ) {
     }
 
@@ -52,17 +53,8 @@ export class EngineDialogComponent implements OnInit {
         return this.dataUtils.openFile(contentType, field);
     }
 
-    setFileData(event, engine, field, isImage) {
-        if (event && event.target.files && event.target.files[0]) {
-            const file = event.target.files[0];
-            if (isImage && !/^image\//.test(file.type)) {
-                return;
-            }
-            this.dataUtils.toBase64(file, (base64Data) => {
-                engine[field] = base64Data;
-                engine[`${field}ContentType`] = file.type;
-            });
-        }
+    setFileData(event, entity, field, isImage) {
+        this.dataUtils.setFileData(event, entity, field, isImage);
     }
 
     clearInputImage(field: string, fieldContentType: string, idInput: string) {
@@ -77,41 +69,30 @@ export class EngineDialogComponent implements OnInit {
         this.isSaving = true;
         if (this.engine.id !== undefined) {
             this.subscribeToSaveResponse(
-                this.engineService.update(this.engine), false);
+                this.engineService.update(this.engine));
         } else {
             this.subscribeToSaveResponse(
-                this.engineService.create(this.engine), true);
+                this.engineService.create(this.engine));
         }
     }
 
-    private subscribeToSaveResponse(result: Observable<Engine>, isCreated: boolean) {
+    private subscribeToSaveResponse(result: Observable<Engine>) {
         result.subscribe((res: Engine) =>
-            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
     }
 
-    private onSaveSuccess(result: Engine, isCreated: boolean) {
-        this.alertService.success(
-            isCreated ? 'motorsportsDatabaseApp.engine.created'
-            : 'motorsportsDatabaseApp.engine.updated',
-            { param : result.id }, null);
-
+    private onSaveSuccess(result: Engine) {
         this.eventManager.broadcast({ name: 'engineListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
     }
 
-    private onSaveError(error) {
-        try {
-            error.json();
-        } catch (exception) {
-            error.message = error.text();
-        }
+    private onSaveError() {
         this.isSaving = false;
-        this.onError(error);
     }
 
-    private onError(error) {
-        this.alertService.error(error.message, null, null);
+    private onError(error: any) {
+        this.jhiAlertService.error(error.message, null, null);
     }
 
     trackEngineById(index: number, item: Engine) {
@@ -148,7 +129,6 @@ export class EngineDialogComponent implements OnInit {
 })
 export class EnginePopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -159,11 +139,11 @@ export class EnginePopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
-                this.modalRef = this.enginePopupService
-                    .open(EngineDialogComponent, params['id']);
+                this.enginePopupService
+                    .open(EngineDialogComponent as Component, params['id']);
             } else {
-                this.modalRef = this.enginePopupService
-                    .open(EngineDialogComponent);
+                this.enginePopupService
+                    .open(EngineDialogComponent as Component);
             }
         });
     }

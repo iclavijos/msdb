@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
 import { JhiPaginationUtil } from 'ng-jhipster';
@@ -8,8 +8,6 @@ import { TeamComponent } from './team.component';
 import { TeamDetailComponent } from './team-detail.component';
 import { TeamPopupComponent } from './team-dialog.component';
 import { TeamDeletePopupComponent } from './team-delete-dialog.component';
-
-import { Principal } from '../../shared';
 
 @Injectable()
 export class TeamResolvePagingParams implements Resolve<any> {

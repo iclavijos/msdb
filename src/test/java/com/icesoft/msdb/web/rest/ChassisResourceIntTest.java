@@ -37,6 +37,7 @@ import com.icesoft.msdb.repository.stats.ChassisStatisticsRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 /**
  * Test class for the ChassisResource REST controller.
  *
@@ -88,6 +89,7 @@ public class ChassisResourceIntTest {
         this.restChassisMockMvc = MockMvcBuilders.standaloneSetup(chassisResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -99,9 +101,9 @@ public class ChassisResourceIntTest {
      */
     public static Chassis createEntity(EntityManager em) {
         Chassis chassis = new Chassis()
-                .name(DEFAULT_NAME)
-                .manufacturer(DEFAULT_MANUFACTURER)
-                .debutYear(DEFAULT_DEBUT_YEAR);
+            .name(DEFAULT_NAME)
+            .manufacturer(DEFAULT_MANUFACTURER)
+            .debutYear(DEFAULT_DEBUT_YEAR);
         return chassis;
     }
 
@@ -116,7 +118,6 @@ public class ChassisResourceIntTest {
         int databaseSizeBeforeCreate = chassisRepository.findAll().size();
 
         // Create the Chassis
-
         restChassisMockMvc.perform(post("/api/chassis")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(chassis)))
@@ -138,16 +139,15 @@ public class ChassisResourceIntTest {
         int databaseSizeBeforeCreate = chassisRepository.findAll().size();
 
         // Create the Chassis with an existing ID
-        Chassis existingChassis = new Chassis();
-        existingChassis.setId(1L);
+        chassis.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restChassisMockMvc.perform(post("/api/chassis")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(existingChassis)))
+            .content(TestUtil.convertObjectToJsonBytes(chassis)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Chassis in the database
         List<Chassis> chassisList = chassisRepository.findAll();
         assertThat(chassisList).hasSize(databaseSizeBeforeCreate);
     }
@@ -256,9 +256,9 @@ public class ChassisResourceIntTest {
         // Update the chassis
         Chassis updatedChassis = chassisRepository.findOne(chassis.getId());
         updatedChassis
-                .name(UPDATED_NAME)
-                .manufacturer(UPDATED_MANUFACTURER)
-                .debutYear(UPDATED_DEBUT_YEAR);
+            .name(UPDATED_NAME)
+            .manufacturer(UPDATED_MANUFACTURER)
+            .debutYear(UPDATED_DEBUT_YEAR);
 
         restChassisMockMvc.perform(put("/api/chassis")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -327,7 +327,17 @@ public class ChassisResourceIntTest {
     }
 
     @Test
+    @Transactional
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Chassis.class);
+        Chassis chassis1 = new Chassis();
+        chassis1.setId(1L);
+        Chassis chassis2 = new Chassis();
+        chassis2.setId(chassis1.getId());
+        assertThat(chassis1).isEqualTo(chassis2);
+        chassis2.setId(2L);
+        assertThat(chassis1).isNotEqualTo(chassis2);
+        chassis1.setId(null);
+        assertThat(chassis1).isNotEqualTo(chassis2);
     }
 }

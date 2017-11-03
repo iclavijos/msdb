@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { EventEntry } from './event-entry.model';
 import { EventEntryPopupService } from './event-entry-popup.service';
@@ -17,20 +17,18 @@ export class EventEntryDeleteDialogComponent {
     eventEntry: EventEntry;
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
         private eventEntryService: EventEntryService,
         public activeModal: NgbActiveModal,
         private eventManager: JhiEventManager
     ) {
-        //this.jhiLanguageService.setLocations(['eventEntry']);
     }
 
-    clear () {
+    clear() {
         this.activeModal.dismiss('cancel');
     }
 
-    confirmDelete (id: number) {
-        this.eventEntryService.delete(id).subscribe(response => {
+    confirmDelete(id: number) {
+        this.eventEntryService.delete(id).subscribe((response) => {
             this.eventManager.broadcast({
                 name: 'eventEntryListModification',
                 content: 'Deleted an eventEntry'
@@ -46,18 +44,17 @@ export class EventEntryDeleteDialogComponent {
 })
 export class EventEntryDeletePopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
-    constructor (
+    constructor(
         private route: ActivatedRoute,
         private eventEntryPopupService: EventEntryPopupService
     ) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
-            this.modalRef = this.eventEntryPopupService
-                .open(EventEntryDeleteDialogComponent, null, params['id']);
+        this.routeSub = this.route.params.subscribe((params) => {
+            this.eventEntryPopupService
+                .open(EventEntryDeleteDialogComponent as Component, null, params['id']);
         });
     }
 

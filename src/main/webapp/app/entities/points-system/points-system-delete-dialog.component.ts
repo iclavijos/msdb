@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { PointsSystem } from './points-system.model';
 import { PointsSystemPopupService } from './points-system-popup.service';
@@ -19,7 +19,6 @@ export class PointsSystemDeleteDialogComponent {
     constructor(
         private pointsSystemService: PointsSystemService,
         public activeModal: NgbActiveModal,
-        private alertService: JhiAlertService,
         private eventManager: JhiEventManager
     ) {
     }
@@ -36,7 +35,6 @@ export class PointsSystemDeleteDialogComponent {
             });
             this.activeModal.dismiss(true);
         });
-        this.alertService.success('motorsportsDatabaseApp.pointsSystem.deleted', { param : id }, null);
     }
 }
 
@@ -46,7 +44,6 @@ export class PointsSystemDeleteDialogComponent {
 })
 export class PointsSystemDeletePopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -56,8 +53,8 @@ export class PointsSystemDeletePopupComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
-            this.modalRef = this.pointsSystemPopupService
-                .open(PointsSystemDeleteDialogComponent, params['id']);
+            this.pointsSystemPopupService
+                .open(PointsSystemDeleteDialogComponent as Component, params['id']);
         });
     }
 

@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Category;
 import com.icesoft.msdb.repository.CategoryRepository;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
@@ -65,7 +66,7 @@ public class CategoryResource {
     public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category) throws URISyntaxException {
         log.debug("REST request to save Category : {}", category);
         if (category.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new category cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new category cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Category result = categoryRepository.save(category);
 //        categorySearchRepository.save(result);
@@ -151,8 +152,7 @@ public class CategoryResource {
      */
     @GetMapping("/_search/categories")
     @Timed
-    public ResponseEntity<List<Category>> searchCategories(@RequestParam String query, @ApiParam Pageable pageable)
-        throws URISyntaxException {
+    public ResponseEntity<List<Category>> searchCategories(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Categories for query {}", query);
         Page<Category> page = categoryRepository.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/categories");

@@ -34,6 +34,7 @@ import com.icesoft.msdb.repository.EventRepository;
 import com.icesoft.msdb.service.EventService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 /**
  * Test class for the EventResource REST controller.
  *
@@ -74,10 +75,11 @@ public class EventResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        EventResource eventResource = new EventResource(eventService);
+        final EventResource eventResource = new EventResource(eventService);
         this.restEventMockMvc = MockMvcBuilders.standaloneSetup(eventResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -89,8 +91,8 @@ public class EventResourceIntTest {
      */
     public static Event createEntity(EntityManager em) {
         Event event = new Event()
-                .name(DEFAULT_NAME)
-                .description(DEFAULT_DESCRIPTION);
+            .name(DEFAULT_NAME)
+            .description(DEFAULT_DESCRIPTION);
         return event;
     }
 
@@ -105,7 +107,6 @@ public class EventResourceIntTest {
         int databaseSizeBeforeCreate = eventRepository.findAll().size();
 
         // Create the Event
-
         restEventMockMvc.perform(post("/api/events")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(event)))
@@ -126,16 +127,15 @@ public class EventResourceIntTest {
         int databaseSizeBeforeCreate = eventRepository.findAll().size();
 
         // Create the Event with an existing ID
-        Event existingEvent = new Event();
-        existingEvent.setId(1L);
+        event.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restEventMockMvc.perform(post("/api/events")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(existingEvent)))
+            .content(TestUtil.convertObjectToJsonBytes(event)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Event in the database
         List<Event> eventList = eventRepository.findAll();
         assertThat(eventList).hasSize(databaseSizeBeforeCreate);
     }
@@ -225,8 +225,8 @@ public class EventResourceIntTest {
         // Update the event
         Event updatedEvent = eventRepository.findOne(event.getId());
         updatedEvent
-                .name(UPDATED_NAME)
-                .description(UPDATED_DESCRIPTION);
+            .name(UPDATED_NAME)
+            .description(UPDATED_DESCRIPTION);
 
         restEventMockMvc.perform(put("/api/events")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -294,7 +294,17 @@ public class EventResourceIntTest {
     }
 
     @Test
+    @Transactional
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Event.class);
+        Event event1 = new Event();
+        event1.setId(1L);
+        Event event2 = new Event();
+        event2.setId(event1.getId());
+        assertThat(event1).isEqualTo(event2);
+        event2.setId(2L);
+        assertThat(event1).isNotEqualTo(event2);
+        event1.setId(null);
+        assertThat(event1).isNotEqualTo(event2);
     }
 }

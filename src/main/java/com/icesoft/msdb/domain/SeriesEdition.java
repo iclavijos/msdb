@@ -96,6 +96,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     @Column(name="num_events", nullable=false)
     private Integer numEvents;
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -243,6 +244,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     public void setSeries(Series series) {
         this.series = series;
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     public Boolean getDriversStandings() {
 		return driversStandings;

@@ -4,6 +4,7 @@ import com.icesoft.msdb.domain.Authority;
 import com.icesoft.msdb.domain.User;
 import com.icesoft.msdb.repository.AuthorityRepository;
 import com.icesoft.msdb.repository.UserRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -100,7 +101,7 @@ public class SocialService {
             throw new IllegalArgumentException("Email cannot be null with an existing login");
         }
         if (!StringUtils.isBlank(email)) {
-            Optional<User> user = userRepository.findOneByEmail(email);
+            Optional<User> user = userRepository.findOneByEmailIgnoreCase(email);
             if (user.isPresent()) {
                 log.info("User already exist associate the connection to this account");
                 return user.get();
@@ -110,7 +111,7 @@ public class SocialService {
         String login = getLoginDependingOnProviderId(userProfile, providerId);
         String encryptedPassword = passwordEncoder.encode(RandomStringUtils.random(10));
         Set<Authority> authorities = new HashSet<>(1);
-        authorities.add(authorityRepository.findOne("ROLE_USER"));
+        authorities.add(authorityRepository.findOne(AuthoritiesConstants.USER));
 
         User newUser = new User();
         newUser.setLogin(login);
@@ -128,7 +129,7 @@ public class SocialService {
     }
 
     /**
-     * @return login if provider manage a login like Twitter or Github otherwise email address.
+     * @return login if provider manage a login like Twitter or GitHub otherwise email address.
      *         Because provider like Google or Facebook didn't provide login or login like "12099388847393"
      */
     private String getLoginDependingOnProviderId(UserProfile userProfile, String providerId) {
