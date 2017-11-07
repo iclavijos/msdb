@@ -69,7 +69,10 @@
 	            "updateStandings": "Actualiza clasificaciones",
 	            "updatingStandings": "Actualizando clasificaciones. Espera unos segundos",
 	            "standingsNotUpdated": "No se han podido actualizar las clasificaciones",
-	            "standingsUpdated": "Clasificaciones actualizadas"
+	            "standingsUpdated": "Clasificaciones actualizadas",
+	            "updateDriversChampions": "Edita pilotos campeones",
+	            "updateTeamsChampions": "Edita equipos campeones",
+	            "updateManufacturersChampions": "Edita fabricantes campeones"
 	        }
         }
     }

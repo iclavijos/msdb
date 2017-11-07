@@ -241,44 +241,44 @@ public class ResultsService {
 				(Float)dep[3], (String)dep[4])).collect(Collectors.toList());
 	}
 	
-	protected List<Long> getChampionsDriverIds(Long seriesId) {
-		List<Long> result = new ArrayList<>();
-		List<DriverPointsDTO> standings = viewsRepo.getDriversStandings(seriesId);
-		Map<Long, List<Object[]>> positions = viewsRepo.getDriversResultsInSeries(seriesId);
-		SeriesEdition series = seriesEditionRepo.findOne(seriesId);
-		
-		Float maxPoints = standings.parallelStream().map(dp -> dp.getPoints()).max((dp1, dp2) -> dp1.compareTo(dp2)).orElse(new Float(-1));
-		
-		standings = standings.parallelStream().filter(dp -> dp.getPoints().equals(maxPoints)).collect(Collectors.toList());
-		if (standings.isEmpty()) {
-			return result;
-		} else if (standings.size() == 1) {
-			result.add(standings.get(0).getDriverId());
-			return result;
-		} else {
-			if (standings.get(0).getPoints().equals(0f)) {
-				return result;
-			}
-			
-			Comparator<DriverPointsDTO> c = (o1, o2) -> {
-				List<Object[]> positionsD1 = positions.get(o1.getDriverId());
-				List<Object[]> positionsD2 = positions.get(o2.getDriverId());
-				
-				return sortPositions(positionsD1, positionsD2);
-			};
-			standings.sort(c.reversed());
-			
-			DriverPointsDTO champ = standings.get(0);
-			if (series.isMultidriver()) {
-				return standings.parallelStream()
-						.map(dp -> dp.getDriverId()).collect(Collectors.toList());
-			} else {
-				List<Long> tmp = new ArrayList<>();
-				tmp.add(champ.getDriverId());
-				return tmp;
-			}
-		}
-	}
+//	protected List<Long> getChampionsDriverIds(Long seriesId) {
+//		List<Long> result = new ArrayList<>();
+//		List<DriverPointsDTO> standings = viewsRepo.getDriversStandings(seriesId);
+//		Map<Long, List<Object[]>> positions = viewsRepo.getDriversResultsInSeries(seriesId);
+//		SeriesEdition series = seriesEditionRepo.findOne(seriesId);
+//		
+//		Float maxPoints = standings.parallelStream().map(dp -> dp.getPoints()).max((dp1, dp2) -> dp1.compareTo(dp2)).orElse(new Float(-1));
+//		
+//		standings = standings.parallelStream().filter(dp -> dp.getPoints().equals(maxPoints)).collect(Collectors.toList());
+//		if (standings.isEmpty()) {
+//			return result;
+//		} else if (standings.size() == 1) {
+//			result.add(standings.get(0).getDriverId());
+//			return result;
+//		} else {
+//			if (standings.get(0).getPoints().equals(0f)) {
+//				return result;
+//			}
+//			
+//			Comparator<DriverPointsDTO> c = (o1, o2) -> {
+//				List<Object[]> positionsD1 = positions.get(o1.getDriverId());
+//				List<Object[]> positionsD2 = positions.get(o2.getDriverId());
+//				
+//				return sortPositions(positionsD1, positionsD2);
+//			};
+//			standings.sort(c.reversed());
+//			
+//			DriverPointsDTO champ = standings.get(0);
+//			if (series.isMultidriver()) {
+//				return standings.parallelStream()
+//						.map(dp -> dp.getDriverId()).collect(Collectors.toList());
+//			} else {
+//				List<Long> tmp = new ArrayList<>();
+//				tmp.add(champ.getDriverId());
+//				return tmp;
+//			}
+//		}
+//	}
 	
 	public List<TeamPointsDTO> getTeamsStandings(Long seriesId) {
 		List<TeamPointsDTO> standings = viewsRepo.getTeamsStandings(seriesId);

@@ -88,5 +88,16 @@ export const seriesEditionPopupRoute: Routes = [
     },
     canActivate: [UserRouteAccessService],
     outlet: 'popup'
-  }
+  },
+//  {
+//      path: ':id/drivers-champions-edit',
+//      component: SeriesEditionDriversChampionsPopupComponent,
+//      data: {
+//          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+//          pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
+//      },
+//      canActivate: [UserRouteAccessService],
+//      outlet: 'popup'
+//  }
+  
 ];

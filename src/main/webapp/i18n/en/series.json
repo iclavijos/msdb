@@ -69,7 +69,10 @@
 	            "updateStandings": "Update standings",
 	            "updatingStandings": "Updating standings. Wait a few seconds...",
 	            "standingsNotUpdated": "Standings could not be updated",
-	            "standingsUpdated": "Standings updated"
+	            "standingsUpdated": "Standings updated",
+	            "updateDriversChampions": "Edit drivers champions",
+	            "updateTeamsChampions": "Edit teams champions",
+	            "updateManufacturersChampions": "Edit manufacturers champions"
 	        }
         }
     }
