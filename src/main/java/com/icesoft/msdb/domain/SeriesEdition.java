@@ -27,6 +27,8 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
+import com.icesoft.msdb.MSDBException;
+
 /**
  * A SeriesEdition.
  */
@@ -126,7 +128,11 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     	} else {
     		p = Pattern.compile("[0-9]{4}.([0-9]{4})");
     		m = p.matcher(this.period);
-    		return m.group(1);
+    		if (m.matches()) {
+    			return m.group(1);
+    		} else {
+    			throw new MSDBException("Invalid series period defined");
+    		}
     	}
     }
     
