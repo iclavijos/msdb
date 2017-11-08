@@ -27,12 +27,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Category;
 import com.icesoft.msdb.repository.CategoryRepository;
+import com.icesoft.msdb.repository.search.CategorySearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
+
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Category.
@@ -47,11 +50,11 @@ public class CategoryResource {
 
     private final CategoryRepository categoryRepository;
 
-//    private final CategorySearchRepository categorySearchRepository;
+    private final CategorySearchRepository categorySearchRepository;
 
-    public CategoryResource(CategoryRepository categoryRepository) {//, CategorySearchRepository categorySearchRepository) {
+    public CategoryResource(CategoryRepository categoryRepository, CategorySearchRepository categorySearchRepository) {
         this.categoryRepository = categoryRepository;
-//        this.categorySearchRepository = categorySearchRepository;
+        this.categorySearchRepository = categorySearchRepository;
     }
 
     /**
@@ -69,7 +72,7 @@ public class CategoryResource {
             throw new BadRequestAlertException("A new category cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Category result = categoryRepository.save(category);
-//        categorySearchRepository.save(result);
+        categorySearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/categories/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -92,7 +95,7 @@ public class CategoryResource {
             return createCategory(category);
         }
         Category result = categoryRepository.save(category);
-//        categorySearchRepository.save(result);
+        categorySearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, category.getId().toString()))
             .body(result);
@@ -138,7 +141,7 @@ public class CategoryResource {
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         log.debug("REST request to delete Category : {}", id);
         categoryRepository.delete(id);
-//        categorySearchRepository.delete(id);
+        categorySearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -154,10 +157,9 @@ public class CategoryResource {
     @Timed
     public ResponseEntity<List<Category>> searchCategories(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Categories for query {}", query);
-        Page<Category> page = categoryRepository.search(query, pageable);
+        Page<Category> page = categorySearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/categories");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
-
 
 }

@@ -23,9 +23,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -35,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Table(name = "event_entry")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Indexed
+@Document(indexName = "evententry")
 public class EventEditionEntry extends AbstractAuditingEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -51,7 +49,6 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
     @NotNull
     @Size(max = 100)
     @Column(name = "team_name", length = 100, nullable = false)
-    @Field
     private String entryName;
 
     @ManyToMany(fetch=FetchType.EAGER)
@@ -60,42 +57,33 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
         name="DRIVERS_ENTRY",
         joinColumns=@JoinColumn(name="entry_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="driver_id", referencedColumnName="ID"))
-    @IndexedEmbedded
     private List<Driver> drivers;
     
     @Column(name = "rookie")
     private Boolean rookie = false;
     
     @ManyToOne
-    @IndexedEmbedded
     private Team team;
     
     @ManyToOne
-    @IndexedEmbedded
     private Team operatedBy;
     
     @ManyToOne(optional = false)
-    @IndexedEmbedded
     private Chassis chassis;
     
     @ManyToOne
-    @IndexedEmbedded
     private Engine engine;
     
     @ManyToOne(optional = false)
-    @IndexedEmbedded
     private TyreProvider tyres;
     
     @ManyToOne
-    @IndexedEmbedded
     private FuelProvider fuel;
     
     @ManyToOne
-    @IndexedEmbedded
     private Category category;
     
     @ManyToOne
-    @IndexedEmbedded
     private EventEdition eventEdition;
     
     @Transient

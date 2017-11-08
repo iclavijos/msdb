@@ -32,6 +32,7 @@ import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.domain.stats.ElementStatistics;
 import com.icesoft.msdb.repository.EngineRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
+import com.icesoft.msdb.repository.search.EngineSearchRepository;
 import com.icesoft.msdb.repository.stats.EngineStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
@@ -43,6 +44,8 @@ import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
+
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Engine.
@@ -56,15 +59,17 @@ public class EngineResource {
     private static final String ENTITY_NAME = "engine";
         
     private final EngineRepository engineRepository;
+    private final EngineSearchRepository engineSearchRepository;
     private final EventEntryRepository entryRepository;
     
     private final EngineStatisticsRepository statsRepo;
 
     private final CDNService cdnService;
 
-    public EngineResource(EngineRepository engineRepository, EventEntryRepository entryRepository, 
+    public EngineResource(EngineRepository engineRepository, EngineSearchRepository engineSearchRepository, EventEntryRepository entryRepository, 
     		EngineStatisticsRepository statsRepo, CDNService cdnService) {
         this.engineRepository = engineRepository;
+        this.engineSearchRepository = engineSearchRepository;
         this.entryRepository = entryRepository;
         this.statsRepo = statsRepo;
         this.cdnService = cdnService;
@@ -86,12 +91,14 @@ public class EngineResource {
             throw new BadRequestAlertException("A new engine cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Engine result = engineRepository.save(engine);
+        engineSearchRepository.save(result);
         
         if (engine.getImage() != null) {
 	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), engine.getImage(), ENTITY_NAME);
 			result.setImageUrl(cdnUrl);
 			
 			result = engineRepository.save(result);
+			engineSearchRepository.save(result);
         }
         
         return ResponseEntity.created(new URI("/api/engines/" + result.getId()))
@@ -124,6 +131,7 @@ public class EngineResource {
         	cdnService.deleteImage(engine.getId().toString(), ENTITY_NAME);
         }
         Engine result = engineRepository.save(engine);
+        engineSearchRepository.save(result);
         
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, engine.getId().toString()))
@@ -137,8 +145,8 @@ public class EngineResource {
      */
     @GetMapping("/engines")
     @Timed
-    public ResponseEntity<List<Engine>> getAllEngines(@ApiParam Pageable pageable) throws URISyntaxException {
-        log.debug("REST request to get all Engines");
+    public ResponseEntity<List<Engine>> getAllEngines(@ApiParam Pageable pageable) {
+        log.debug("REST request to get a page of Engines");
         Page<Engine> page = engineRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/engines");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
@@ -170,6 +178,7 @@ public class EngineResource {
     public ResponseEntity<Void> deleteEngine(@PathVariable Long id) {
         log.debug("REST request to delete Engine : {}", id);
         engineRepository.delete(id);
+        engineSearchRepository.delete(id);
         cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
@@ -243,7 +252,7 @@ public class EngineResource {
     @Timed
     public ResponseEntity<List<Engine>> searchEngines(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Engines for query {}", query);
-        Page<Engine> page = engineRepository.search(query, pageable);
+        Page<Engine> page = engineSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/engines");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -252,7 +261,7 @@ public class EngineResource {
     @Timed
     public List<Engine> typeahead(@RequestParam String query) {
         log.debug("REST request to search for a page of Engines for query {}", query);
-        Page<Engine> page = engineRepository.search(query, null);
+        Page<Engine> page = engineSearchRepository.search(queryStringQuery(query), null);
         return page.getContent();
     }
 }

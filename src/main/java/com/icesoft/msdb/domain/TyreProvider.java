@@ -2,7 +2,7 @@ package com.icesoft.msdb.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.search.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -15,6 +15,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "tyre_provider")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Document(indexName = "tyreprovider")
 public class TyreProvider extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -26,7 +27,6 @@ public class TyreProvider extends AbstractAuditingEntity implements Serializable
     @NotNull
     @Size(max = 50)
     @Column(name = "name", length = 50, nullable = false)
-    @Field
     private String name;
 
     @Transient

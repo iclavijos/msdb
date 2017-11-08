@@ -1,21 +1,15 @@
 package com.icesoft.msdb.domain;
 
-import java.io.Serializable;
-import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.search.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.Document;
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Objects;
 
 /**
  * A Team.
@@ -23,7 +17,7 @@ import org.hibernate.search.annotations.Field;
 @Entity
 @Table(name = "team")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-//@Document(indexName = "team")
+@Document(indexName = "team")
 public class Team extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,7 +29,6 @@ public class Team extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
-    @Field
     private String name;
 
     @Size(max = 100)
@@ -51,14 +44,6 @@ public class Team extends AbstractAuditingEntity implements Serializable {
     
     @Column
     private String logoUrl;
-
-//    @ManyToMany
-//    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-//    @JoinTable(name = "team_participations",
-//               joinColumns = @JoinColumn(name="teams_id", referencedColumnName="id"),
-//               inverseJoinColumns = @JoinColumn(name="participations_id", referencedColumnName="id"))
-//    @JsonIgnore
-//    private Set<EventEditionEntry> participations = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -134,30 +119,6 @@ public class Team extends AbstractAuditingEntity implements Serializable {
     	this.logoUrl = logoUrl;
     }
 
-//    public Set<EventEditionEntry> getParticipations() {
-//        return participations;
-//    }
-//
-//    public Team participations(Set<EventEditionEntry> eventEntries) {
-//        this.participations = eventEntries;
-//        return this;
-//    }
-//
-//    public Team addParticipations(EventEditionEntry eventEntry) {
-//        this.participations.add(eventEntry);
-//        eventEntry.getParticipants().add(this);
-//        return this;
-//    }
-//
-//    public Team removeParticipations(EventEditionEntry eventEntry) {
-//        this.participations.remove(eventEntry);
-//        eventEntry.getParticipants().remove(this);
-//        return this;
-//    }
-//
-//    public void setParticipations(Set<EventEditionEntry> eventEntries) {
-//        this.participations = eventEntries;
-//    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override

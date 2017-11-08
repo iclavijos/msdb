@@ -49,6 +49,13 @@ spring:
         mongodb:
             uri: mongodb://localhost:27017
             database: nosqlsample
+        elasticsearch:
+            cluster-name:
+            cluster-nodes:
+            properties:
+                path:
+                    logs: build/elasticsearch/log
+                    data: build/elasticsearch/data
     mail:
         host: localhost
         port: 25

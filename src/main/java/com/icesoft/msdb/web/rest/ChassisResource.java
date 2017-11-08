@@ -32,6 +32,7 @@ import com.icesoft.msdb.domain.Chassis;
 import com.icesoft.msdb.domain.stats.ElementStatistics;
 import com.icesoft.msdb.repository.ChassisRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
+import com.icesoft.msdb.repository.search.ChassisSearchRepository;
 import com.icesoft.msdb.repository.stats.ChassisStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
@@ -43,6 +44,7 @@ import com.icesoft.msdb.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Chassis.
@@ -60,11 +62,14 @@ public class ChassisResource {
     
     private final ChassisStatisticsRepository statsRepo;
     
+    private final ChassisSearchRepository chassisSearchRepository;
+    
     private final CDNService cdnService;
 
-    public ChassisResource(ChassisRepository chassisRepository, EventEntryRepository entryRepository,
+    public ChassisResource(ChassisRepository chassisRepository, ChassisSearchRepository chassisSearchRepository, EventEntryRepository entryRepository,
     		ChassisStatisticsRepository chassisStatsRepo, CDNService cdnService) {
         this.chassisRepository = chassisRepository;
+        this.chassisSearchRepository = chassisSearchRepository;
         this.entryRepository = entryRepository;
         this.statsRepo = chassisStatsRepo;
         this.cdnService = cdnService;
@@ -86,6 +91,7 @@ public class ChassisResource {
             throw new BadRequestAlertException("A new chassis cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Chassis result = chassisRepository.save(chassis);
+        chassisSearchRepository.save(result);
         
         if (chassis.getImage() != null) {
 	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), chassis.getImage(), ENTITY_NAME);
@@ -125,6 +131,7 @@ public class ChassisResource {
         }
         
         Chassis result = chassisRepository.save(chassis);
+        chassisSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, chassis.getId().toString()))
             .body(result);
@@ -172,6 +179,7 @@ public class ChassisResource {
         log.debug("REST request to delete Chassis : {}", id);
         chassisRepository.delete(id);
         cdnService.deleteImage(id.toString(), ENTITY_NAME);
+        chassisSearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
     
@@ -244,7 +252,7 @@ public class ChassisResource {
     @Timed
     public ResponseEntity<List<Chassis>> searchChassis(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Chassis for query {}", query);
-        Page<Chassis> page = chassisRepository.search(query, pageable);
+        Page<Chassis> page = chassisSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/chassis");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -253,7 +261,7 @@ public class ChassisResource {
     @Timed
     public List<Chassis> typeahead(@RequestParam String query) {
         log.debug("REST request to search for a page of Chassis for query {}", query);
-        Page<Chassis> page = chassisRepository.search(query, null);
+        Page<Chassis> page = chassisSearchRepository.search(queryStringQuery(query), null);
         return page.getContent();
     }
 }

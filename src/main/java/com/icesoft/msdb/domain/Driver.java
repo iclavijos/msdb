@@ -1,27 +1,21 @@
 package com.icesoft.msdb.domain;
 
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Store;
+import org.springframework.data.elasticsearch.annotations.Document;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Objects;
 
 /**
  * A Driver.
@@ -29,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Table(name = "driver")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Document(indexName = "driver")
 public class Driver extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,13 +35,11 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
-    @Field
     private String name;
 
     @NotNull
     @Size(max = 60)
     @Column(name = "surname", length = 60, nullable = false)
-    @Field
     private String surname;
 
     @Column(name = "birth_date")
@@ -59,7 +52,6 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 2)
     @Column(name = "nationality", length = 2, nullable = false)
-    @Field(store = Store.NO)
     private String nationality;
 
     @Column(name = "death_date")

@@ -1,21 +1,13 @@
 package com.icesoft.msdb.domain;
 
-import java.io.Serializable;
-import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.search.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.Document;
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A FuelProvider.
@@ -23,6 +15,7 @@ import org.hibernate.search.annotations.Field;
 @Entity
 @Table(name = "fuel_provider")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Document(indexName = "fuelprovider")
 public class FuelProvider extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -34,7 +27,6 @@ public class FuelProvider extends AbstractAuditingEntity implements Serializable
     @NotNull
     @Size(max = 50)
     @Column(name = "name", length = 50, nullable = false)
-    @Field
     private String name;
 
     @Transient

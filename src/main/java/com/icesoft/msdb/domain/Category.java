@@ -2,7 +2,7 @@ package com.icesoft.msdb.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.search.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -15,6 +15,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "category")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Document(indexName = "category")
 public class Category extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -26,13 +27,11 @@ public class Category extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
-    @Field
     private String name;
 
     @NotNull
     @Size(max = 10)
     @Column(name = "shortname", length = 10, nullable = false)
-    @Field
     private String shortname;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
