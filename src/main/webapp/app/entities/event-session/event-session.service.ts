@@ -13,7 +13,7 @@ import * as moment from 'moment-timezone';
 @Injectable()
 export class EventSessionService {
 
-    private resourceUrl = SERVER_API_URL + 'api/event-sessions';
+    private resourceUrl = SERVER_API_URL + 'api/event-editions/event-sessions';
     private resourceSearchUrl = SERVER_API_URL + 'api/_search/event-sessions';
 
     constructor(private http: Http, private dateUtils: JhiDateUtils) { }
