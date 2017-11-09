@@ -14,9 +14,9 @@ import { SeriesEditionService } from '../series-edition';
 })
 export class StandingsComponent implements OnInit {
 
-    private drivers: any;
-    private teams: any;
-    private manufacturers: any;
+    drivers: any;
+    teams: any;
+    manufacturers: any;
     @Input()
     eventEditionId: number;
     @Input()

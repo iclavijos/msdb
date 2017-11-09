@@ -49,13 +49,13 @@ export class Calendar implements OnInit {
         }
     }
     
-    private loadEvents(e) {
+    loadEvents(e) {
         let start = e.view.start;
         let end = e.view.end;
         this.eventEditionService.findCalendarEvents(new Date(start), new Date(end)).subscribe(events => {this.convertEvents(events);});
     }
     
-    private eventClick(e) {
+    eventClick(e) {
         this.event = new MyEvent();
         this.event.title = e.calEvent.eventName;
         this.event.sessionName = e.calEvent.sessionName;

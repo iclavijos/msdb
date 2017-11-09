@@ -29,8 +29,8 @@ export class EventEntryResultDialogComponent implements OnInit {
     timeDifference: string;
     sessionType = SessionType;
     private eventEditionId;
-    private positions: number[];
-    private multidriver = false;
+    positions: number[];
+    multidriver = false;
     private sharedDrive = false;
 
     constructor(

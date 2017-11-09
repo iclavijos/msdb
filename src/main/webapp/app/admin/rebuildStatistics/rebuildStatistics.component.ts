@@ -9,7 +9,7 @@ import { JhiAlertService } from 'ng-jhipster';
 })
 export class JhiRebuildStatisticsComponent implements OnInit {
     
-    private finished: boolean;
+    finished: boolean;
     
     constructor (
         private http: Http,

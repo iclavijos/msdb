@@ -29,8 +29,8 @@ import { SeriesEditionService } from './series-edition.service';
 export class SeriesEditionCalendarDialogComponent implements OnInit {
 
     private seriesEdition: SeriesEdition;
-    private eventEdition: EventEdition;
-    private isSaving: boolean;
+    eventEdition: EventEdition;
+    isSaving: boolean;
     searching = false;
     searchFailed = false;
 
@@ -127,7 +127,7 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
     
     inputFormatter = (result: any) => result.longEventName;
     
-    private onEventSelected(selected: any) {
+    onEventSelected(selected: any) {
         this.myForm = this._fb.group({
             eventSearch : new FormControl(),
             races: this._fb.array([])

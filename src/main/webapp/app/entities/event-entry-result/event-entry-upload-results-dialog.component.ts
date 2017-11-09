@@ -14,8 +14,9 @@ import { Imports, ImportsService } from '../../imports';
     selector: 'jhi-event-entry-upload-results-dialog',
     templateUrl: './event-entry-upload-results-dialog.component.html'
 })
-export class EventEntryUploadResultsDialogComponent {
+export class EventEntryUploadResultsDialogComponent implements OnInit {
     imports: Imports;
+	isSaving: boolean;
     eventSession: EventSession;
 
     constructor(
@@ -28,22 +29,21 @@ export class EventEntryUploadResultsDialogComponent {
         this.imports = new Imports();
         this.imports.importType = 'SESSION_RESULTS';
     }
+    
+    ngOnInit() {
+    	this.isSaving = false;
+    }
 
     clear () {
         this.activeModal.dismiss('cancel');
     }
     
-    setFileData($event) {
-        if ($event.target.files && $event.target.files[0]) {
-            let $file = $event.target.files[0];
-
-            this.dataUtils.toBase64($file, (base64Data) => {
-                this.imports.csvContents = base64Data;
-            });
-        }
+    setFileData(event, entity, field, isImage) {
+        this.dataUtils.setFileData(event, entity, field, isImage);
     }
 
     confirmUpload () {
+    	this.isSaving = true;
         this.imports.associatedId = this.eventSession.id;
         this.importsService.importCSV(this.imports)
             .map((res: Response) => res)
@@ -53,6 +53,7 @@ export class EventEntryUploadResultsDialogComponent {
     }
     
     success() {
+    	this.isSaving = false;
         this.eventManager.broadcast({
             name: 'eventEntryResultListModification',
             content: 'Imported session results'
@@ -61,6 +62,7 @@ export class EventEntryUploadResultsDialogComponent {
     }
     
     fail() {
+    	this.isSaving = false;
         this.alertService.error('global.messages.info.imports.fail', null);
     }
 }

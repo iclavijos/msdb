@@ -13,6 +13,7 @@ export class Engine {
         public turbo?: boolean,
         public image?: any,
         public imageUrl?: string,
+        public imageContentType?: any,
         public comments?: string,
         public evolutions?: Engine,
         public derivedFrom?: Engine,

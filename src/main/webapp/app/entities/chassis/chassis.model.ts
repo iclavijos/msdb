@@ -8,6 +8,7 @@ export class Chassis {
         public derivedFrom?: Chassis,
         public rebranded = false,
         public image?: any,
+        public imageContentType?: any,
         public imageUrl?: string,
     ) { }
 }

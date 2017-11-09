@@ -12,7 +12,7 @@ import {switchMap} from 'rxjs/operator/switchMap';
 import {of} from 'rxjs/observable/of';
 
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { Chassis } from './chassis.model';
 import { ChassisPopupService } from './chassis-popup.service';
@@ -35,6 +35,7 @@ export class ChassisDialogComponent implements OnInit {
 
     constructor(
         public activeModal: NgbActiveModal,
+        private dataUtils: JhiDataUtils,
         private jhiAlertService: JhiAlertService,
         private chassisService: ChassisService,
         private eventManager: JhiEventManager
@@ -90,6 +91,10 @@ export class ChassisDialogComponent implements OnInit {
             this.subscribeToSaveResponse(
                 this.chassisService.create(this.chassis));
         }
+    }
+    
+    setFileData(event, entity, field, isImage) {
+        this.dataUtils.setFileData(event, entity, field, isImage);
     }
 
     private subscribeToSaveResponse(result: Observable<Chassis>) {

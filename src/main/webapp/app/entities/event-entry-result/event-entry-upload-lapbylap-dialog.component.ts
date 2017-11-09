@@ -14,8 +14,9 @@ import { Imports, ImportsService } from '../../imports';
     selector: 'jhi-event-entry-upload-lapbylap-dialog',
     templateUrl: './event-entry-upload-lapbylap-dialog.component.html'
 })
-export class EventEntryUploadLapByLapDialogComponent {
+export class EventEntryUploadLapByLapDialogComponent implements OnInit {
     imports: Imports;
+	isSaving: boolean;
     eventSession: EventSession;
 
     constructor(
@@ -28,6 +29,10 @@ export class EventEntryUploadLapByLapDialogComponent {
         this.imports = new Imports();
         this.imports.importType = 'LAP_BY_LAP';
     }
+    
+    ngOnInit() {
+    	this.isSaving = false;
+    }
 
     clear () {
         this.activeModal.dismiss('cancel');
@@ -38,6 +43,7 @@ export class EventEntryUploadLapByLapDialogComponent {
     }
 
     confirmUpload () {
+    	this.isSaving = true;
         this.imports.associatedId = this.eventSession.id;
         this.importsService.importCSV(this.imports)
             .map((res: Response) => res)
@@ -48,10 +54,12 @@ export class EventEntryUploadLapByLapDialogComponent {
     
     success() {
         this.activeModal.dismiss(true);
+        this.isSaving = false;
     }
     
     fail() {
         this.alertService.error('global.messages.info.imports.fail', null);
+        this.isSaving = false;
     }
 }
 

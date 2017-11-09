@@ -19,6 +19,7 @@ export class EventEntryComponent implements OnInit, OnDestroy {
     @Input() eventEdition: EventEdition;
     eventEntries: EventEntry[];
     currentAccount: any;
+    filterCategory: any;
     eventSubscriber: Subscription;
     private selectedRaceEntry: number;
 

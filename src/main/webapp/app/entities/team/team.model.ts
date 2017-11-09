@@ -5,6 +5,7 @@ export class Team {
         public description?: string,
         public hqLocation?: string,
         public logo?: any,
+        public logoContentType?: any,
         public logoUrl?: string,
     ) { }
 }

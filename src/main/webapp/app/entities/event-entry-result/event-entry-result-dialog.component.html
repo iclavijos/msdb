@@ -11,7 +11,7 @@
         <jhi-alert-error></jhi-alert-error>
 
 		<div class="row">
-			<div class="col-lg-2 col-md-2" *ngIf="eventEntryResult.session.sessionType === 'RACE'">
+			<div class="col-lg-2 col-md-2" *ngIf="eventEntryResult.session.sessionType === sessionType.race">
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.startingPosition" for="field_startingPosition">Starting Position</label>
 		            <select class="form-control" id="field_startingPosition" name="startingPosition" [(ngModel)]="eventEntryResult.startingPosition" required 
@@ -47,7 +47,7 @@
 		        </div>
         	</div>
         </div>
-        <div *ngIf="eventEntryResult.session.sessionType !== 'RACE'">
+        <div *ngIf="eventEntryResult.session.sessionType !== sessionType.race">
         	<div class="row">
 				<div class="col-lg-3 col-md-3">
 			        <div class="form-group">
@@ -64,7 +64,7 @@
 	        	</div>
         	</div>
         </div>
-        <div *ngIf="eventEntryResult.session.sessionType === 'RACE'">
+        <div *ngIf="eventEntryResult.session.sessionType === sessionType.race">
         	<div class="row">
 	        	<div class="col-lg-2 col-md-2">
 	        		<div class="form-group">

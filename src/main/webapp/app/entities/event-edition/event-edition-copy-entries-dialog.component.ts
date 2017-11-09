@@ -21,10 +21,11 @@ import { EventEditionService } from './event-edition.service';
     selector: 'jhi-event-edition-copy-entries-dialog',
     templateUrl: './event-edition-copy-entries-dialog.component.html'
 })
-export class EventEditionCopyEntriesDialogComponent {
+export class EventEditionCopyEntriesDialogComponent implements OnInit {
 
     eventEdition: EventEdition;
     selectedEventEdition: EventEdition;
+	isSaving: boolean;
     private eventEditionSearch: string;
     searching = false;
     searchFailed = false;
@@ -35,7 +36,10 @@ export class EventEditionCopyEntriesDialogComponent {
         public activeModal: NgbActiveModal,
         private eventManager: JhiEventManager,
     ) {
-
+    }
+    
+    ngOnInit() {
+        this.isSaving = false;
     }
     
     private innersearch(term: string) {
@@ -72,12 +76,14 @@ export class EventEditionCopyEntriesDialogComponent {
     }
 
     confirmCopy () {
+    	this.isSaving = true;
         this.eventEditionService.copyEntries(this.selectedEventEdition.id, this.eventEdition.id).subscribe(response => {
             this.eventManager.broadcast({
                 name: 'eventEntryListModification'
             });
             this.activeModal.dismiss(true);
         });
+        this.isSaving = false;
     }
 }
 

@@ -11,6 +11,7 @@ export class Driver implements BaseEntity {
         public deathDate?: any,
         public deathPlace?: string,
         public portrait?: any,
+        public portraitContentType?: any,
         public portraitUrl?: string
     ) { }
 

@@ -55,7 +55,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrack.logo" for="field_logo">Logo</label>
             <div>
-                <img [src]="racetrack.logoUrl" style="max-height: 100px;" *ngIf="!racetrack.logo && racetrack.logoUrl" alt="racetrack logo"/>
+                <img [src]="racetrack.logoUrl" style="max-height: 100px;" *ngIf="!racetrack.logo && racetrack.logoUrl != null" alt="racetrack logo"/>
                 <img [src]="'data:' + racetrack.logoContentType + ';base64,' + racetrack.logo" style="max-height: 100px;" *ngIf="racetrack.logo" alt="racetrack logo"/>
                 <div *ngIf="racetrack.logoUrl || racetrack.logo" class="form-text text-danger clearfix">
                     <button type="button" (click)="racetrack.logoUrl=null; racetrack.logo=null;"

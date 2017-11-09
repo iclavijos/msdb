@@ -3,5 +3,6 @@ export class FuelProvider {
         public id?: number,
         public name?: string,
         public logo?: any,
+        public logoContentType?: any,
     ) { }
 }

@@ -25,7 +25,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.tyreProvider.logo" for="field_logo">Logo</label>
             <div>
-                <img [src]="tyreProvider.logoUrl" style="max-height: 100px;" *ngIf="!tyreProvider.logo && tyreProvider.logoUrl" alt="tyre provider logo"/>
+                <img [src]="tyreProvider.logoUrl" style="max-height: 100px;" *ngIf="!tyreProvider.logo && tyreProvider.logoUrl != null" alt="tyre provider logo"/>
                 <img [src]="'data:' + tyreProvider.logoContentType + ';base64,' + tyreProvider.logo" style="max-height: 100px;" *ngIf="tyreProvider.logo" alt="tyre provider logo"/>
                 <div *ngIf="tyreProvider.logoUrl || tyreProvider.logo" class="form-text text-danger clearfix">
                     <button type="button" (click)="tyreProvider.logoUrl=null;clearInputImage('logo', 'logoContentType', 'fileImage');"

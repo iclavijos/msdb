@@ -25,6 +25,7 @@ export class EventEntry {
         public driversName?: string,
         public rookie?: boolean,
         public carImage?: any,
+        public carImageContentType?: any,
         public carImageUrl?: string
     ) { 
     }

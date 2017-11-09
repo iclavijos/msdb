@@ -6,6 +6,7 @@ export class Series {
         public shortname?: string,
         public organizer?: string,
         public logo?: any,
+        public logoContentType?: any,
         public logoUrl?: string,
         public editions?: SeriesEdition,
     ) { }

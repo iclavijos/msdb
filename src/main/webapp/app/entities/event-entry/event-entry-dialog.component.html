@@ -171,7 +171,7 @@
 	        	<div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.carImage" for="field_carImage">Car image</label>
 		            <div>
-		                <img [src]="eventEntry.carImageUrl" style="max-height: 100px;" *ngIf="!eventEntry.carImage && eventEntry.carImageUrl" alt="car image"/>
+		                <img [src]="eventEntry.carImageUrl" style="max-height: 100px;" *ngIf="!eventEntry.carImage && eventEntry.carImageUrl != null" alt="car image"/>
 		                <img [src]="'data:' + eventEntry.carImageContentType + ';base64,' + eventEntry.carImage" style="max-height: 100px;" *ngIf="eventEntry.carImage" alt="car image"/>
 		                <div *ngIf="eventEntry.carImageUrl || eventEntry.carImage" class="form-text text-danger clearfix">
 		                    <button type="button" (click)="eventEntry.carImageUrl=null; eventEntry.carImage=null;"

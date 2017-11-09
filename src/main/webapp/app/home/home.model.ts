@@ -4,5 +4,6 @@ export class HomeData {
         public teams?: number,
         public racetracks?: number,
         public series?: number,
+        public events?: any
     ) { }
 }

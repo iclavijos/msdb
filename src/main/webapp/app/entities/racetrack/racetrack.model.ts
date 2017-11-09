@@ -7,6 +7,7 @@ export class Racetrack {
         public countryCode?: string,
         public timeZone?: string,
         public logo?: any,
+        public logoContentType?: any,
         public logoUrl?: string,
         public layouts?: RacetrackLayout,
     ) { }

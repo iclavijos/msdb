@@ -57,12 +57,12 @@ export class EventSessionDialogComponent implements OnInit {
         this.activeModal.dismiss('cancel');
     }
 
-    private onChangeType(event) {
+    onChangeType(event) {
       this.selectedType = parseInt(event.target.value);
       this.isRaceAndLaps = (this.selectedType === 2 && this.selectedDuration === 5);
     }
 
-    private onChangeDuration(event) {
+    onChangeDuration(event) {
       this.selectedDuration = parseInt(event.target.value);
       this.isRaceAndLaps = (this.selectedType === 2 && this.selectedDuration === 5);
     }

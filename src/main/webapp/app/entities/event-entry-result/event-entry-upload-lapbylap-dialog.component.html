@@ -1,4 +1,4 @@
-<form name="uploadLapbylapForm" (ngSubmit)="confirmUpload(eventSession.id)" #uploadLapbylapForm="ngForm">
+<form name="uploadLapbylapForm" (ngSubmit)="confirmUpload()" #uploadLapbylapForm="ngForm">
     <div class="modal-header">
         <h4 class="modal-title" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.lapbylapTitle">Upload session lap by lap data</h4>
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
@@ -9,14 +9,14 @@
         <p jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.lapbylapDesc">Upload CSV file with session lap by lap data</p>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.file" for="field_file">File</label>
-        	<input type="file" (change)="setFileData($event)" accept="text/csv" required jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.selectFile"/>
+        	<input type="file" (change)="setFileData($event, imports, 'csvContents', false)" accept="text/csv" required jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.selectFile"/>
         </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
             <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
-        <button type="submit" [disabled]="uploadResultsForm.form.invalid || isSaving" class="btn btn-primary">
+        <button type="submit" [disabled]="uploadLapbylapForm.form.invalid || isSaving" class="btn btn-primary">
             <span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
         </button>
     </div>
