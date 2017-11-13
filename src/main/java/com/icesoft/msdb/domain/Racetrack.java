@@ -1,28 +1,16 @@
 package com.icesoft.msdb.domain;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
+import org.springframework.data.elasticsearch.annotations.Document;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Objects;
 
 /**
  * A Racetrack.
@@ -30,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "racetrack")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Indexed
+@Document(indexName = "racetrack")
 public class Racetrack extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,19 +30,16 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 100)
     @Column(name = "name", length = 100, nullable = false)
-    @Field(store = Store.NO)
     private String name;
 
     @NotNull
     @Size(max = 100)
     @Column(name = "location", length = 100, nullable = false)
-    @Field(store = Store.NO)
     private String location;
     
     @NotNull
     @Size(max = 2)
     @Column(name = "country_code", length = 2, nullable = false)
-    @Field(store = Store.NO)
     private String countryCode;
     
     @Column(name= "time_zone")

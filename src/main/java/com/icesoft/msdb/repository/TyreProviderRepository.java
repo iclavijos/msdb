@@ -14,6 +14,6 @@ import com.icesoft.msdb.domain.TyreProvider;
 @Repository
 public interface TyreProviderRepository extends JpaRepository<TyreProvider,Long> {
 
-	@Query("select t from TyreProvider t where t.name like lower(concat('%', ?1,'%'))")
-	Page<TyreProvider> search(String searchValue, Pageable pageable);
+//	@Query("select t from TyreProvider t where t.name like lower(concat('%', ?1,'%'))")
+//	Page<TyreProvider> search(String searchValue, Pageable pageable);
 }

@@ -1,37 +1,20 @@
 package com.icesoft.msdb.domain;
 
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Store;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A EventEdition.
@@ -39,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Table(name = "event_edition")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Indexed
+@Document(indexName = "eventedition")
 public class EventEdition extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,19 +33,16 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
     @NotNull
     @Column(name = "edition_year", nullable = false)
-    @Field(store = Store.NO)
     private Integer editionYear;
 
     @NotNull
     @Size(max = 40)
     @Column(name = "short_event_name", length = 40, nullable = false)
-    @Field(store = Store.NO)
     private String shortEventName;
 
     @NotNull
     @Size(max = 100)
     @Column(name = "long_event_name", length = 100, nullable = false)
-    @Field(store = Store.NO)
     private String longEventName;
 
     @NotNull
@@ -87,7 +67,6 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     private List<Category> allowedCategories;
 
     @ManyToOne
-    @IndexedEmbedded
     private RacetrackLayout trackLayout;
 
     @ManyToOne

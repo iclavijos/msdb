@@ -1,25 +1,13 @@
 package com.icesoft.msdb.domain;
 
-import java.io.Serializable;
-import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Store;
+import org.springframework.data.elasticsearch.annotations.Document;
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A RacetrackLayout.
@@ -27,7 +15,7 @@ import org.hibernate.search.annotations.Store;
 @Entity
 @Table(name = "racetrack_layout")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Indexed
+@Document(indexName = "racetracklayout")
 public class RacetrackLayout extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -39,7 +27,6 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
     @NotNull
     @Size(max = 100)
     @Column(name = "name", length = 100, nullable = false)
-    @Field(store = Store.NO)
     private String name;
 
     @NotNull
@@ -59,7 +46,6 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
     private Boolean active;
 
     @ManyToOne
-    @IndexedEmbedded
     private Racetrack racetrack;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

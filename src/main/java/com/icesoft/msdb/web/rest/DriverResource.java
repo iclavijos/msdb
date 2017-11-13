@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -34,6 +36,7 @@ import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.stats.ElementStatistics;
 import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
+import com.icesoft.msdb.repository.search.DriverSearchRepository;
 import com.icesoft.msdb.repository.stats.DriverStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
@@ -47,6 +50,8 @@ import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 
+import static org.elasticsearch.index.query.QueryBuilders.*;
+
 /**
  * REST controller for managing Driver.
  */
@@ -59,15 +64,17 @@ public class DriverResource {
     private static final String ENTITY_NAME = "driver";
         
     private final DriverRepository driverRepository;
+    private final DriverSearchRepository driverSearchRepository;
     private final EventEntryRepository entryRepository;
     
     private final DriverStatisticsRepository statsRepo;
 
     private final CDNService cdnService;
 
-    public DriverResource(DriverRepository driverRepository, EventEntryRepository entryRepository, 
+    public DriverResource(DriverRepository driverRepository, DriverSearchRepository driverSearchRepository, EventEntryRepository entryRepository, 
     		DriverStatisticsRepository statsRepo, CDNService cdnService) {
         this.driverRepository = driverRepository;
+        this.driverSearchRepository = driverSearchRepository;
         this.entryRepository = entryRepository;
         this.statsRepo = statsRepo;
         this.cdnService = cdnService;
@@ -91,11 +98,13 @@ public class DriverResource {
         }
         
         Driver result = driverRepository.save(driver);
+        driverSearchRepository.save(result);
         if (driver.getPortrait() != null) {
 	        String cdnUrl = cdnService.uploadImage(driver.getId().toString(), driver.getPortrait(), ENTITY_NAME);
 			driver.portraitUrl(cdnUrl);
 			
 			result = driverRepository.save(driver);
+			driverSearchRepository.save(result);
         }
         
         return ResponseEntity.created(new URI("/api/drivers/" + result.getId()))
@@ -128,6 +137,7 @@ public class DriverResource {
         	cdnService.deleteImage(driver.getId().toString(), ENTITY_NAME);
         }
         Driver result = driverRepository.save(driver);
+        driverSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, driver.getId().toString()))
             .body(result);
@@ -143,7 +153,6 @@ public class DriverResource {
     @Timed
     public ResponseEntity<List<Driver>> getAllDrivers(@ApiParam Pageable pageable) {
         log.debug("REST request to get a page of Drivers");
-       
         Page<Driver> page = driverRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/drivers");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
@@ -236,6 +245,7 @@ public class DriverResource {
     public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
         log.debug("REST request to delete Driver : {}", id);
         driverRepository.delete(id);
+        driverSearchRepository.delete(id);
         cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
@@ -251,15 +261,15 @@ public class DriverResource {
     @GetMapping("/_search/drivers")
     @Timed
     public ResponseEntity<List<Driver>> searchDrivers(@RequestParam String query, @ApiParam Pageable pageable) {
-        log.debug("REST request to search for a page of Drivers for query '{}'", query);
-        Page<Driver> page = driverRepository.search(query, pageable);
+        log.debug("REST request to search for a page of Drivers for query {}", query);
+        QueryBuilder qb = QueryBuilders.boolQuery().must(termQuery("surname", query));
+        Page<Driver> page = driverSearchRepository.search(qb, pageable); //driverSearchRepository.findBySurnameContains(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/drivers");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     @GetMapping("/_typeahead/drivers")
     @Timed
-    //@JsonView(View.Summary.class)
     public ResponseEntity<List<DriverFullNameDTO>> typeahead(@RequestParam String query)
         throws URISyntaxException {
         log.debug("REST request to search for a page of Drivers for query '{}'", query);

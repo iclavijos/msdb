@@ -12,9 +12,9 @@ import com.icesoft.msdb.domain.EventEditionEntry;
 @Repository
 public interface SearchRepository {
 
-	public Page<EventEdition> searchEventEditions(String searchTems, Pageable pageable);
-	
-	public Page<EventEditionEntry> searchEntries(String searchTems, Pageable pageable);
-	
-	public List<EventEdition> searchRelated(Long eventEditionId);
+//	public Page<EventEdition> searchEventEditions(String searchTems, Pageable pageable);
+//	
+//	public Page<EventEditionEntry> searchEntries(String searchTems, Pageable pageable);
+//	
+//	public List<EventEdition> searchRelated(Long eventEditionId);
 }

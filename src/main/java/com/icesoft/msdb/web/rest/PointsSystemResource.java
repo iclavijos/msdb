@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.repository.PointsSystemRepository;
+import com.icesoft.msdb.repository.search.PointsSystemSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
@@ -35,6 +36,8 @@ import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
+
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing PointsSystem.
@@ -48,10 +51,11 @@ public class PointsSystemResource {
     private static final String ENTITY_NAME = "pointsSystem";
         
     private final PointsSystemRepository pointsSystemRepository;
+    private final PointsSystemSearchRepository pointsSystemSearchRepository;
 
-
-    public PointsSystemResource(PointsSystemRepository pointsSystemRepository) {
+    public PointsSystemResource(PointsSystemRepository pointsSystemRepository, PointsSystemSearchRepository pointsSystemSearchRepository) {
         this.pointsSystemRepository = pointsSystemRepository;
+        this.pointsSystemSearchRepository = pointsSystemSearchRepository;
     }
 
     /**
@@ -70,6 +74,7 @@ public class PointsSystemResource {
             throw new BadRequestAlertException("A new pointsSystem cannot already have an ID", ENTITY_NAME, "idexists");
         }
         PointsSystem result = pointsSystemRepository.save(pointsSystem);
+        pointsSystemSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/points-systems/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -93,6 +98,7 @@ public class PointsSystemResource {
             return createPointsSystem(pointsSystem);
         }
         PointsSystem result = pointsSystemRepository.save(pointsSystem);
+        pointsSystemSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, pointsSystem.getId().toString()))
             .body(result);
@@ -139,6 +145,7 @@ public class PointsSystemResource {
     public ResponseEntity<Void> deletePointsSystem(@PathVariable Long id) {
         log.debug("REST request to delete PointsSystem : {}", id);
         pointsSystemRepository.delete(id);
+        pointsSystemSearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -154,10 +161,9 @@ public class PointsSystemResource {
     @Timed
     public ResponseEntity<List<PointsSystem>> searchPointsSystems(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of PointsSystems for query {}", query);
-        Page<PointsSystem> page = pointsSystemRepository.findByNameContainsIgnoreCase(query, pageable);
+        Page<PointsSystem> page = pointsSystemSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/points-systems");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
-
 
 }

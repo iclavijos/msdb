@@ -154,7 +154,6 @@ dependencies {
     compile "org.hibernate:hibernate-entitymanager:${hibernate_version}"
     compile "org.hibernate:hibernate-validator"
     compile "org.hibernate:hibernate-entitymanager:${hibernate_version}"
-    compile "org.hibernate:hibernate-search-orm:5.7.0.Final"
     compile "org.flywaydb:flyway-core:4.2.0"
     compile "org.springframework.boot:spring-boot-actuator"
     compile "org.springframework.boot:spring-boot-autoconfigure"
@@ -163,6 +162,10 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-logging"
     compile "org.springframework.boot:spring-boot-starter-aop"
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
+    compile "org.springframework.boot:spring-boot-starter-data-elasticsearch"
+    // needed to get around elasticsearch stacktrace about jna not found
+    // https://github.com/elastic/elasticsearch/issues/13245
+    compile "net.java.dev.jna:jna"
     compile "org.springframework.boot:spring-boot-starter-data-mongodb"
     compile "org.springframework.boot:spring-boot-starter-security"
     compile ("org.springframework.boot:spring-boot-starter-web") {

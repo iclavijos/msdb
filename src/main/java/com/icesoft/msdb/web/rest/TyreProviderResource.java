@@ -1,5 +1,7 @@
 package com.icesoft.msdb.web.rest;
 
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.TyreProvider;
 import com.icesoft.msdb.repository.TyreProviderRepository;
+import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
@@ -50,10 +53,14 @@ public class TyreProviderResource {
 
     private final TyreProviderRepository tyreProviderRepository;
     
+    private final TyreProviderSearchRepository tyreProviderSearchRepository;
+    
     private final CDNService cdnService;
 
-    public TyreProviderResource(TyreProviderRepository tyreProviderRepository, CDNService cdnService) {
+    public TyreProviderResource(TyreProviderRepository tyreProviderRepository, TyreProviderSearchRepository tyreProviderSearchRepository, 
+    		CDNService cdnService) {
         this.tyreProviderRepository = tyreProviderRepository;
+        this.tyreProviderSearchRepository = tyreProviderSearchRepository;
         this.cdnService = cdnService;
     }
 
@@ -73,7 +80,7 @@ public class TyreProviderResource {
             throw new BadRequestAlertException("A new tyreProvider cannot already have an ID", ENTITY_NAME, "idexists");
         }
         TyreProvider result = tyreProviderRepository.save(tyreProvider);
-        
+        tyreProviderSearchRepository.save(result);
         if (tyreProvider.getLogo() != null) {
 	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), tyreProvider.getLogo(), ENTITY_NAME);
 	        tyreProvider.logoUrl(cdnUrl);
@@ -110,6 +117,7 @@ public class TyreProviderResource {
         	cdnService.deleteImage(tyreProvider.getId().toString(), ENTITY_NAME);
         }
         TyreProvider result = tyreProviderRepository.save(tyreProvider);
+        tyreProviderSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, tyreProvider.getId().toString()))
             .body(result);
@@ -156,6 +164,7 @@ public class TyreProviderResource {
     public ResponseEntity<Void> deleteTyreProvider(@PathVariable Long id) {
         log.debug("REST request to delete TyreProvider : {}", id);
         tyreProviderRepository.delete(id);
+        tyreProviderSearchRepository.delete(id);
         cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
@@ -172,7 +181,7 @@ public class TyreProviderResource {
     @Timed
     public ResponseEntity<List<TyreProvider>> searchTyreProviders(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of TyreProviders for query {}", query);
-        Page<TyreProvider> page = tyreProviderRepository.search(query, pageable);
+        Page<TyreProvider> page = tyreProviderSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/tyre-providers");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -181,7 +190,7 @@ public class TyreProviderResource {
     @Timed
     public List<TyreProvider> typeahead(@RequestParam String query) {
         log.debug("REST request to search for a page of TyreProvider for query {}", query);
-        Page<TyreProvider> page = tyreProviderRepository.search(query, null);
+        Page<TyreProvider> page = tyreProviderSearchRepository.search(queryStringQuery(query), null);
         return page.getContent();
     }
 }
