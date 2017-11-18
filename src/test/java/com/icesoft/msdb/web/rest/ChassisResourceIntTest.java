@@ -33,6 +33,7 @@ import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Chassis;
 import com.icesoft.msdb.repository.ChassisRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
+import com.icesoft.msdb.repository.search.ChassisSearchRepository;
 import com.icesoft.msdb.repository.stats.ChassisStatisticsRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
@@ -62,6 +63,8 @@ public class ChassisResourceIntTest {
     private EventEntryRepository eventEntryRepo;
     @Autowired
     private ChassisStatisticsRepository chassisStatsRepo;
+    @Autowired
+    private ChassisSearchRepository chassisSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -85,7 +88,7 @@ public class ChassisResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            ChassisResource chassisResource = new ChassisResource(chassisRepository, eventEntryRepo, chassisStatsRepo, cdnService);
+            ChassisResource chassisResource = new ChassisResource(chassisRepository, chassisSearchRepository, eventEntryRepo, chassisStatsRepo, cdnService);
         this.restChassisMockMvc = MockMvcBuilders.standaloneSetup(chassisResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -109,6 +112,7 @@ public class ChassisResourceIntTest {
 
     @Before
     public void initTest() {
+        chassisSearchRepository.deleteAll();
         chassis = createEntity(em);
     }
 
@@ -131,6 +135,9 @@ public class ChassisResourceIntTest {
         assertThat(testChassis.getManufacturer()).isEqualTo(DEFAULT_MANUFACTURER);
         assertThat(testChassis.getDebutYear()).isEqualTo(DEFAULT_DEBUT_YEAR);
 
+        // Validate the Chassis in Elasticsearch
+        Chassis chassisEs = chassisSearchRepository.findOne(testChassis.getId());
+        assertThat(chassisEs).isEqualToComparingFieldByField(testChassis);
     }
 
     @Test
@@ -251,6 +258,7 @@ public class ChassisResourceIntTest {
     public void updateChassis() throws Exception {
         // Initialize the database
         chassisRepository.saveAndFlush(chassis);
+        chassisSearchRepository.save(chassis);
         int databaseSizeBeforeUpdate = chassisRepository.findAll().size();
 
         // Update the chassis
@@ -273,6 +281,9 @@ public class ChassisResourceIntTest {
         assertThat(testChassis.getManufacturer()).isEqualTo(UPDATED_MANUFACTURER);
         assertThat(testChassis.getDebutYear()).isEqualTo(UPDATED_DEBUT_YEAR);
 
+        // Validate the Chassis in Elasticsearch
+        Chassis chassisEs = chassisSearchRepository.findOne(testChassis.getId());
+        assertThat(chassisEs).isEqualToComparingFieldByField(testChassis);
     }
 
     @Test
@@ -298,12 +309,17 @@ public class ChassisResourceIntTest {
     public void deleteChassis() throws Exception {
         // Initialize the database
         chassisRepository.saveAndFlush(chassis);
+        chassisSearchRepository.save(chassis);
         int databaseSizeBeforeDelete = chassisRepository.findAll().size();
 
         // Get the chassis
         restChassisMockMvc.perform(delete("/api/chassis/{id}", chassis.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
+
+        // Validate Elasticsearch is empty
+        boolean chassisExistsInEs = chassisSearchRepository.exists(chassis.getId());
+        assertThat(chassisExistsInEs).isFalse();
 
         // Validate the database is empty
         List<Chassis> chassisList = chassisRepository.findAll();
@@ -315,6 +331,7 @@ public class ChassisResourceIntTest {
     public void searchChassis() throws Exception {
         // Initialize the database
         chassisRepository.saveAndFlush(chassis);
+        chassisSearchRepository.save(chassis);
 
         // Search the chassis
         restChassisMockMvc.perform(get("/api/_search/chassis?query=id:" + chassis.getId()))

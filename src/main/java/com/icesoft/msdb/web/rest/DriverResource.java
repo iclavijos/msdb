@@ -1,5 +1,7 @@
 package com.icesoft.msdb.web.rest;
 
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -9,14 +11,16 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,15 +46,12 @@ import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.dto.DriverFullNameDTO;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
-import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Driver.
@@ -261,22 +262,23 @@ public class DriverResource {
     @GetMapping("/_search/drivers")
     @Timed
     public ResponseEntity<List<Driver>> searchDrivers(@RequestParam String query, @ApiParam Pageable pageable) {
-        log.debug("REST request to search for a page of Drivers for query {}", query);
-        QueryBuilder qb = QueryBuilders.boolQuery().must(termQuery("surname", query));
-        Page<Driver> page = driverSearchRepository.search(qb, pageable); //driverSearchRepository.findBySurnameContains(query, pageable);
+    	String searchValue = '*'  + query + '*';
+        Page<Driver> page = driverSearchRepository.search(queryStringQuery(searchValue), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/drivers");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     @GetMapping("/_typeahead/drivers")
     @Timed
-    public ResponseEntity<List<DriverFullNameDTO>> typeahead(@RequestParam String query)
-        throws URISyntaxException {
+    public ResponseEntity<List<DriverFullNameDTO>> typeahead(@RequestParam String query) throws URISyntaxException {
+    	String searchValue = '*'  + query + '*';
         log.debug("REST request to search for a page of Drivers for query '{}'", query);
-        List<Driver> page = driverRepository.searchNonPageable(query);
-        if (page.size() > 10) {
-        	page = page.subList(0, 10);
-        }
+        NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
+        		.withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
+        		.withSort(SortBuilders.fieldSort("surname")).withSort(SortBuilders.fieldSort("name"))
+        		.withPageable(new PageRequest(0, 5));
+        Page<Driver> page = driverSearchRepository.search(nqb.build());
+
         List<DriverFullNameDTO> result = new ArrayList<>();
         for (Driver driver : page) {
 			result.add(new DriverFullNameDTO(driver));

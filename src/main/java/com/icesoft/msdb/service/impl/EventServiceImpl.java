@@ -1,20 +1,26 @@
 package com.icesoft.msdb.service.impl;
 
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.Event;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.repository.EventEditionRepository;
-import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventRepository;
+import com.icesoft.msdb.repository.search.EventSearchRepository;
 import com.icesoft.msdb.service.EventService;
 import com.icesoft.msdb.service.dto.EventEditionIdYearDTO;
 
@@ -29,14 +35,14 @@ public class EventServiceImpl implements EventService {
     
     private final EventRepository eventRepository;
     private final EventEditionRepository eventEditionRepository;
-    private final EventEntryRepository eventEntryRepository;
+    private final EventSearchRepository eventSearchRepo;
     
     public EventServiceImpl(EventRepository eventRepository, 
     			EventEditionRepository eventEditionRepository,
-    			EventEntryRepository eventEntryRepository) {
+    			EventSearchRepository eventSearchRepo) {
     	this.eventRepository = eventRepository;
     	this.eventEditionRepository = eventEditionRepository;
-    	this.eventEntryRepository = eventEntryRepository;
+    	this.eventSearchRepo = eventSearchRepo;
     }
 
     /**
@@ -49,6 +55,7 @@ public class EventServiceImpl implements EventService {
     public Event save(Event event) {
         log.debug("Request to save Event : {}", event);
         Event result = eventRepository.save(event);
+        eventSearchRepo.save(result);
         return result;
     }
 
@@ -89,17 +96,22 @@ public class EventServiceImpl implements EventService {
     public void delete(Long id) {
         log.debug("Request to delete Event : {}", id);
         eventRepository.delete(id);
+        eventSearchRepo.delete(id);
     }
     
     @Override
     public Page<Event> search(String query, Pageable pageable) {
-    	return eventRepository.search(query, pageable);
+    	String searchValue = "name:*" + query + '*';
+    	NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
+        		.withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
+        		.withSort(SortBuilders.fieldSort("name"))
+        		.withPageable(pageable);
+    	return eventSearchRepo.search(nqb.build());
     }
     
     @Override
     public Page<EventEdition> findEventEditions(Long idEvent, Pageable pageable) {
     	Page<EventEdition> result = eventEditionRepository.findByEventIdOrderByEditionYearDesc(idEvent, pageable);
-
     	return result;
     }
 

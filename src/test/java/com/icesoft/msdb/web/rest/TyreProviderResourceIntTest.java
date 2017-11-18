@@ -32,8 +32,11 @@ import org.springframework.util.Base64Utils;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.TyreProvider;
 import com.icesoft.msdb.repository.TyreProviderRepository;
+import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
+
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 /**
  * Test class for the TyreProviderResource REST controller.
  *
@@ -53,6 +56,9 @@ public class TyreProviderResourceIntTest {
     @Autowired
     private TyreProviderRepository tyreProviderRepository;
     
+    @Autowired
+    private TyreProviderSearchRepository tyreProviderSearchRepository;
+
     @Autowired
     private CDNService cdnService;
 
@@ -75,10 +81,11 @@ public class TyreProviderResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        TyreProviderResource tyreProviderResource = new TyreProviderResource(tyreProviderRepository, cdnService);
+        TyreProviderResource tyreProviderResource = new TyreProviderResource(tyreProviderRepository, tyreProviderSearchRepository, cdnService);
         this.restTyreProviderMockMvc = MockMvcBuilders.standaloneSetup(tyreProviderResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -97,6 +104,7 @@ public class TyreProviderResourceIntTest {
 
     @Before
     public void initTest() {
+        tyreProviderSearchRepository.deleteAll();
         tyreProvider = createEntity(em);
     }
 
@@ -117,6 +125,10 @@ public class TyreProviderResourceIntTest {
         TyreProvider testTyreProvider = tyreProviderList.get(tyreProviderList.size() - 1);
         assertThat(testTyreProvider.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testTyreProvider.getLogo()).isEqualTo(DEFAULT_LOGO);
+        
+        // Validate the TyreProvider in Elasticsearch
+        TyreProvider tyreProviderEs = tyreProviderSearchRepository.findOne(testTyreProvider.getId());
+        assertThat(tyreProviderEs).isEqualToComparingFieldByField(testTyreProvider);
     }
 
     @Test
@@ -133,7 +145,7 @@ public class TyreProviderResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(tyreProvider)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the TyreProvider in the database
         List<TyreProvider> tyreProviderList = tyreProviderRepository.findAll();
         assertThat(tyreProviderList).hasSize(databaseSizeBeforeCreate);
     }
@@ -201,6 +213,7 @@ public class TyreProviderResourceIntTest {
     public void updateTyreProvider() throws Exception {
         // Initialize the database
         tyreProviderRepository.saveAndFlush(tyreProvider);
+        tyreProviderSearchRepository.save(tyreProvider);
         int databaseSizeBeforeUpdate = tyreProviderRepository.findAll().size();
 
         // Update the tyreProvider
@@ -220,6 +233,10 @@ public class TyreProviderResourceIntTest {
         TyreProvider testTyreProvider = tyreProviderList.get(tyreProviderList.size() - 1);
         assertThat(testTyreProvider.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testTyreProvider.getLogo()).isEqualTo(UPDATED_LOGO);
+        
+        // Validate the TyreProvider in Elasticsearch
+        TyreProvider tyreProviderEs = tyreProviderSearchRepository.findOne(testTyreProvider.getId());
+        assertThat(tyreProviderEs).isEqualToComparingFieldByField(testTyreProvider);
     }
 
     @Test
@@ -245,12 +262,17 @@ public class TyreProviderResourceIntTest {
     public void deleteTyreProvider() throws Exception {
         // Initialize the database
         tyreProviderRepository.saveAndFlush(tyreProvider);
+        tyreProviderSearchRepository.save(tyreProvider);
         int databaseSizeBeforeDelete = tyreProviderRepository.findAll().size();
 
         // Get the tyreProvider
         restTyreProviderMockMvc.perform(delete("/api/tyre-providers/{id}", tyreProvider.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
+
+        // Validate Elasticsearch is empty
+        boolean tyreProviderExistsInEs = tyreProviderSearchRepository.exists(tyreProvider.getId());
+        assertThat(tyreProviderExistsInEs).isFalse();
 
         // Validate the database is empty
         List<TyreProvider> tyreProviderList = tyreProviderRepository.findAll();
@@ -262,6 +284,7 @@ public class TyreProviderResourceIntTest {
     public void searchTyreProvider() throws Exception {
         // Initialize the database
         tyreProviderRepository.saveAndFlush(tyreProvider);
+        tyreProviderSearchRepository.save(tyreProvider);
 
         // Search the tyreProvider
         restTyreProviderMockMvc.perform(get("/api/_search/tyre-providers?query=id:" + tyreProvider.getId()))

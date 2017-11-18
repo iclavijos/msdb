@@ -34,6 +34,7 @@ import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Series;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.SeriesRepository;
+import com.icesoft.msdb.repository.search.SeriesSearchRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
@@ -62,6 +63,9 @@ public class SeriesResourceIntTest {
 
     @Autowired
     private SeriesRepository seriesRepository;
+
+    @Autowired
+    private SeriesSearchRepository seriesSearchRepository;
     
     @Autowired
     private SeriesEditionRepository seriesEditionRepository;
@@ -88,7 +92,7 @@ public class SeriesResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            SeriesResource seriesResource = new SeriesResource(seriesRepository, seriesEditionRepository, cdnService);
+            SeriesResource seriesResource = new SeriesResource(seriesRepository, seriesSearchRepository, seriesEditionRepository, cdnService);
         this.restSeriesMockMvc = MockMvcBuilders.standaloneSetup(seriesResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -113,6 +117,7 @@ public class SeriesResourceIntTest {
 
     @Before
     public void initTest() {
+        seriesSearchRepository.deleteAll();
         series = createEntity(em);
     }
 
@@ -122,7 +127,6 @@ public class SeriesResourceIntTest {
         int databaseSizeBeforeCreate = seriesRepository.findAll().size();
 
         // Create the Series
-
         restSeriesMockMvc.perform(post("/api/series")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(series)))
@@ -137,6 +141,9 @@ public class SeriesResourceIntTest {
         assertThat(testSeries.getOrganizer()).isEqualTo(DEFAULT_ORGANIZER);
         assertThat(testSeries.getLogo()).isEqualTo(DEFAULT_LOGO);
 
+        // Validate the Series in Elasticsearch
+        Series seriesEs = seriesSearchRepository.findOne(testSeries.getId());
+        assertThat(seriesEs).isEqualToComparingFieldByField(testSeries);
     }
 
     @Test
@@ -145,13 +152,12 @@ public class SeriesResourceIntTest {
         int databaseSizeBeforeCreate = seriesRepository.findAll().size();
 
         // Create the Series with an existing ID
-        Series existingSeries = new Series();
-        existingSeries.setId(1L);
+        series.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restSeriesMockMvc.perform(post("/api/series")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(existingSeries)))
+            .content(TestUtil.convertObjectToJsonBytes(series)))
             .andExpect(status().isBadRequest());
 
         // Validate the Series in the database
@@ -242,15 +248,16 @@ public class SeriesResourceIntTest {
     public void updateSeries() throws Exception {
         // Initialize the database
         seriesRepository.saveAndFlush(series);
+        seriesSearchRepository.save(series);
         int databaseSizeBeforeUpdate = seriesRepository.findAll().size();
 
         // Update the series
         Series updatedSeries = seriesRepository.findOne(series.getId());
         updatedSeries
-                .name(UPDATED_NAME)
-                .shortname(UPDATED_SHORTNAME)
-                .organizer(UPDATED_ORGANIZER)
-                .logo(UPDATED_LOGO);
+            .name(UPDATED_NAME)
+            .shortname(UPDATED_SHORTNAME)
+            .organizer(UPDATED_ORGANIZER)
+            .logo(UPDATED_LOGO);
 
         restSeriesMockMvc.perform(put("/api/series")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -266,6 +273,9 @@ public class SeriesResourceIntTest {
         assertThat(testSeries.getOrganizer()).isEqualTo(UPDATED_ORGANIZER);
         assertThat(testSeries.getLogo()).isEqualTo(UPDATED_LOGO);
 
+        // Validate the Series in Elasticsearch
+        Series seriesEs = seriesSearchRepository.findOne(testSeries.getId());
+        assertThat(seriesEs).isEqualToComparingFieldByField(testSeries);
     }
 
     @Test
@@ -291,12 +301,17 @@ public class SeriesResourceIntTest {
     public void deleteSeries() throws Exception {
         // Initialize the database
         seriesRepository.saveAndFlush(series);
+        seriesSearchRepository.save(series);
         int databaseSizeBeforeDelete = seriesRepository.findAll().size();
 
         // Get the series
         restSeriesMockMvc.perform(delete("/api/series/{id}", series.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
+
+        // Validate Elasticsearch is empty
+        boolean seriesExistsInEs = seriesSearchRepository.exists(series.getId());
+        assertThat(seriesExistsInEs).isFalse();
 
         // Validate the database is empty
         List<Series> seriesList = seriesRepository.findAll();
@@ -308,6 +323,7 @@ public class SeriesResourceIntTest {
     public void searchSeries() throws Exception {
         // Initialize the database
         seriesRepository.saveAndFlush(series);
+        seriesSearchRepository.save(series);
 
         // Search the series
         restSeriesMockMvc.perform(get("/api/_search/series?query=id:" + series.getId()))

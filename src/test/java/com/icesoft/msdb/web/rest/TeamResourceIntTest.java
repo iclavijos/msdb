@@ -34,6 +34,7 @@ import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.TeamRepository;
+import com.icesoft.msdb.repository.search.TeamSearchRepository;
 import com.icesoft.msdb.repository.stats.TeamStatisticsRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
@@ -62,6 +63,10 @@ public class TeamResourceIntTest {
 
     @Autowired
     private TeamRepository teamRepository;
+    
+    @Autowired
+    private TeamSearchRepository teamSearchRepository;
+    
     @Autowired
     private EventEntryRepository entryRepository;
     @Autowired
@@ -89,7 +94,7 @@ public class TeamResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            TeamResource teamResource = new TeamResource(teamRepository, entryRepository, statsRepo, cdnService);
+            TeamResource teamResource = new TeamResource(teamRepository, teamSearchRepository, entryRepository, statsRepo, cdnService);
         this.restTeamMockMvc = MockMvcBuilders.standaloneSetup(teamResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -114,6 +119,7 @@ public class TeamResourceIntTest {
 
     @Before
     public void initTest() {
+        teamSearchRepository.deleteAll();
         team = createEntity(em);
     }
 
@@ -123,7 +129,6 @@ public class TeamResourceIntTest {
         int databaseSizeBeforeCreate = teamRepository.findAll().size();
 
         // Create the Team
-
         restTeamMockMvc.perform(post("/api/teams")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(team)))
@@ -137,6 +142,10 @@ public class TeamResourceIntTest {
         assertThat(testTeam.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testTeam.getHqLocation()).isEqualTo(DEFAULT_HQ_LOCATION);
         assertThat(testTeam.getLogo()).isEqualTo(DEFAULT_LOGO);
+
+        // Validate the Team in Elasticsearch
+        Team teamEs = teamSearchRepository.findOne(testTeam.getId());
+        assertThat(teamEs).isEqualToComparingFieldByField(testTeam);
     }
 
     @Test
@@ -145,13 +154,12 @@ public class TeamResourceIntTest {
         int databaseSizeBeforeCreate = teamRepository.findAll().size();
 
         // Create the Team with an existing ID
-        Team existingTeam = new Team();
-        existingTeam.setId(1L);
+        team.setId(1L);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restTeamMockMvc.perform(post("/api/teams")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(existingTeam)))
+            .content(TestUtil.convertObjectToJsonBytes(team)))
             .andExpect(status().isBadRequest());
 
         // Validate the Team in the database
@@ -224,15 +232,16 @@ public class TeamResourceIntTest {
     public void updateTeam() throws Exception {
         // Initialize the database
         teamRepository.saveAndFlush(team);
+        teamSearchRepository.save(team);
         int databaseSizeBeforeUpdate = teamRepository.findAll().size();
 
         // Update the team
         Team updatedTeam = teamRepository.findOne(team.getId());
         updatedTeam
-                .name(UPDATED_NAME)
-                .description(UPDATED_DESCRIPTION)
-                .hqLocation(UPDATED_HQ_LOCATION)
-                .logo(UPDATED_LOGO);
+            .name(UPDATED_NAME)
+            .description(UPDATED_DESCRIPTION)
+            .hqLocation(UPDATED_HQ_LOCATION)
+            .logo(UPDATED_LOGO);
 
         restTeamMockMvc.perform(put("/api/teams")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -247,6 +256,10 @@ public class TeamResourceIntTest {
         assertThat(testTeam.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testTeam.getHqLocation()).isEqualTo(UPDATED_HQ_LOCATION);
         assertThat(testTeam.getLogo()).isEqualTo(UPDATED_LOGO);
+
+        // Validate the Team in Elasticsearch
+        Team teamEs = teamSearchRepository.findOne(testTeam.getId());
+        assertThat(teamEs).isEqualToComparingFieldByField(testTeam);
     }
 
     @Test
@@ -272,12 +285,17 @@ public class TeamResourceIntTest {
     public void deleteTeam() throws Exception {
         // Initialize the database
         teamRepository.saveAndFlush(team);
+        teamSearchRepository.save(team);
         int databaseSizeBeforeDelete = teamRepository.findAll().size();
 
         // Get the team
         restTeamMockMvc.perform(delete("/api/teams/{id}", team.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
+
+        // Validate Elasticsearch is empty
+        boolean teamExistsInEs = teamSearchRepository.exists(team.getId());
+        assertThat(teamExistsInEs).isFalse();
 
         // Validate the database is empty
         List<Team> teamList = teamRepository.findAll();
@@ -289,6 +307,7 @@ public class TeamResourceIntTest {
     public void searchTeam() throws Exception {
         // Initialize the database
         teamRepository.saveAndFlush(team);
+        teamSearchRepository.save(team);
 
         // Search the team
         restTeamMockMvc.perform(get("/api/_search/teams?query=id:" + team.getId()))

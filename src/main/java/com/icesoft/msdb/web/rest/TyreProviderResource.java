@@ -9,10 +9,14 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -181,7 +185,8 @@ public class TyreProviderResource {
     @Timed
     public ResponseEntity<List<TyreProvider>> searchTyreProviders(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of TyreProviders for query {}", query);
-        Page<TyreProvider> page = tyreProviderSearchRepository.search(queryStringQuery(query), pageable);
+        String searchValue = '*' + query + '*';
+        Page<TyreProvider> page = tyreProviderSearchRepository.search(queryStringQuery(searchValue), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/tyre-providers");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -190,7 +195,12 @@ public class TyreProviderResource {
     @Timed
     public List<TyreProvider> typeahead(@RequestParam String query) {
         log.debug("REST request to search for a page of TyreProvider for query {}", query);
-        Page<TyreProvider> page = tyreProviderSearchRepository.search(queryStringQuery(query), null);
+        String searchValue = '*' + query + '*';
+        NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
+        		.withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
+        		.withSort(SortBuilders.fieldSort("name"))
+        		.withPageable(new PageRequest(0, 5));
+        Page<TyreProvider> page = tyreProviderSearchRepository.search(nqb.build());
         return page.getContent();
     }
 }

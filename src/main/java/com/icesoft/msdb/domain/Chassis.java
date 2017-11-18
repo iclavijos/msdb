@@ -19,6 +19,12 @@ import java.util.Objects;
 @Table(name = "chassis")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "chassis")
+@NamedEntityGraph(name="ChassisWithoutRelations", attributeNodes= {
+		@NamedAttributeNode(value="id"),
+		@NamedAttributeNode(value="name"),
+		@NamedAttributeNode(value="manufacturer"),
+		@NamedAttributeNode(value="debutYear")
+})
 public class Chassis extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

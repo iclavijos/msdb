@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -168,7 +169,7 @@ public class EventResource {
     @Timed
     public List<Event> typeahead(@RequestParam String query) {
         log.debug("REST request to search for a page of events for query {}", query);
-        Page<Event> page = eventService.search(query, null);
+        Page<Event> page = eventService.search(query, new PageRequest(0, 5));
         return page.getContent();
     }
 

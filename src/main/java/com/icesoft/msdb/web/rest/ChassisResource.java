@@ -8,11 +8,15 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -252,7 +256,8 @@ public class ChassisResource {
     @Timed
     public ResponseEntity<List<Chassis>> searchChassis(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Chassis for query {}", query);
-        Page<Chassis> page = chassisSearchRepository.search(queryStringQuery(query), pageable);
+        String searchValue = '*' + query + '*';
+        Page<Chassis> page = chassisSearchRepository.search(queryStringQuery(searchValue), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/chassis");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -261,7 +266,12 @@ public class ChassisResource {
     @Timed
     public List<Chassis> typeahead(@RequestParam String query) {
         log.debug("REST request to search for a page of Chassis for query {}", query);
-        Page<Chassis> page = chassisSearchRepository.search(queryStringQuery(query), null);
+        String searchValue = '*' + query + '*';
+        NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
+        		.withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
+        		.withSort(SortBuilders.fieldSort("manufacturer")).withSort(SortBuilders.fieldSort("name"))
+        		.withPageable(new PageRequest(0, 5));
+        Page<Chassis> page = chassisSearchRepository.search(nqb.build());
         return page.getContent();
     }
 }

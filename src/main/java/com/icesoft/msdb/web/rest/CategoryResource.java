@@ -157,7 +157,8 @@ public class CategoryResource {
     @Timed
     public ResponseEntity<List<Category>> searchCategories(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Categories for query {}", query);
-        Page<Category> page = categorySearchRepository.search(queryStringQuery(query), pageable);
+        String searchValue = '*' + query + '*';
+        Page<Category> page = categorySearchRepository.search(queryStringQuery(searchValue), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/categories");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

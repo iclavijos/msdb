@@ -1,9 +1,18 @@
 package com.icesoft.msdb.repository;
 
+import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
+
+import java.util.stream.Stream;
+
+import javax.persistence.QueryHint;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.PointsSystem;
 
@@ -12,6 +21,11 @@ import com.icesoft.msdb.domain.PointsSystem;
  */
 @Repository
 public interface PointsSystemRepository extends JpaRepository<PointsSystem,Long> {
+	
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@Query(value = "select ps from PointsSystem ps")
+	@Transactional(readOnly=true)
+	Stream<PointsSystem> streamAll();
 	
 	Page<PointsSystem> findByOrderByNameAsc(Pageable pageable);
 

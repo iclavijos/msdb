@@ -1,10 +1,12 @@
 package com.icesoft.msdb.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.stream.Stream;
+
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.Chassis;
 
@@ -14,6 +16,7 @@ import com.icesoft.msdb.domain.Chassis;
 @Repository
 public interface ChassisRepository extends JpaRepository<Chassis,Long> {
 
-	@Query("select c from Chassis c where c.name like lower(concat('%', ?1,'%')) or c.manufacturer like lower(concat('%', ?1,'%'))")
-	Page<Chassis> search(String searchValue, Pageable page);
+	@EntityGraph(value="ChassisWithoutRelations", type=EntityGraphType.LOAD)
+	@Transactional(readOnly=true)
+	Stream<Chassis> streamAllByIdNotNull();
 }

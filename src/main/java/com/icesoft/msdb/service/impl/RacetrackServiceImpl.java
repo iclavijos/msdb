@@ -1,5 +1,7 @@
 package com.icesoft.msdb.service.impl;
 
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.TimeZone;
@@ -21,6 +23,8 @@ import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.RacetrackRepository;
+import com.icesoft.msdb.repository.search.RacetrackLayoutSearchRepository;
+import com.icesoft.msdb.repository.search.RacetrackSearchRepository;
 import com.icesoft.msdb.service.RacetrackService;
 
 /**
@@ -33,13 +37,20 @@ public class RacetrackServiceImpl implements RacetrackService{
     private final Logger log = LoggerFactory.getLogger(RacetrackServiceImpl.class);
     
     private final RacetrackRepository racetrackRepository;
+    private final RacetrackSearchRepository racetrackSearchRepo;
     
     private final RacetrackLayoutRepository racetrackLayoutRepository;
+    private final RacetrackLayoutSearchRepository racetrackLayoutSearchRepo;
 
 
-    public RacetrackServiceImpl(RacetrackRepository racetrackRepository, RacetrackLayoutRepository racetrackLayoutRepository) {
+    public RacetrackServiceImpl(RacetrackRepository racetrackRepository, 
+    		RacetrackSearchRepository racetrackSearchRepo,
+    		RacetrackLayoutRepository racetrackLayoutRepository,
+    		RacetrackLayoutSearchRepository racetrackLayoutSearchRepo) {
         this.racetrackRepository = racetrackRepository;
+        this.racetrackSearchRepo = racetrackSearchRepo;
         this.racetrackLayoutRepository = racetrackLayoutRepository;
+        this.racetrackLayoutSearchRepo = racetrackLayoutSearchRepo;
     }
 
     /**
@@ -62,11 +73,21 @@ public class RacetrackServiceImpl implements RacetrackService{
 			TimeZone timeZone = TimeZoneApi.getTimeZone(context, results[0].geometry.location).await();
 			racetrack.setTimeZone(timeZone.getID());
 			Racetrack result = racetrackRepository.save(racetrack);
+			racetrackSearchRepo.save(result);
 			return result;
 		} catch (ApiException | InterruptedException | IOException e) {
 			log.error("Error accessing Google Geolocation API", e);
 			throw new MSDBException("Problems trying to retrieve geolocation information");
 		}
+    }
+    
+    @Override
+    public RacetrackLayout save(RacetrackLayout layout) {
+        log.debug("Request to save RacetrackLayout : {}", layout);
+        
+        RacetrackLayout result = racetrackLayoutRepository.save(layout);
+        racetrackLayoutSearchRepo.save(result);
+        return result;
     }
 
     /**
@@ -96,6 +117,14 @@ public class RacetrackServiceImpl implements RacetrackService{
         Racetrack racetrack = racetrackRepository.findOne(id);
         return racetrack;
     }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public RacetrackLayout findLayout(Long id) {
+        log.debug("Request to get RacetrackLayout : {}", id);
+        RacetrackLayout layout = racetrackLayoutRepository.findOne(id);
+        return layout;
+    }
 
     /**
      *  Delete the  racetrack by id.
@@ -106,14 +135,23 @@ public class RacetrackServiceImpl implements RacetrackService{
     public void delete(Long id) {
         log.debug("Request to delete Racetrack : {}", id);
         Racetrack racetrack = racetrackRepository.findOne(id);
+        racetrackLayoutSearchRepo.delete(racetrack.getLayouts());
         racetrackLayoutRepository.deleteInBatch(racetrack.getLayouts());
         racetrackRepository.delete(id);
-        //racetrackSearchRepository.delete(id);
+        racetrackSearchRepo.delete(id);
+    }
+    
+    @Override
+    public void deleteLayout(Long id) {
+        log.debug("Request to delete RacetrackLayout : {}", id);
+        racetrackLayoutRepository.delete(id);
+        racetrackLayoutSearchRepo.delete(id);
     }
     
     @Override
     public Page<Racetrack> search(String query, Pageable pageable) {
-    	return racetrackRepository.search(query, pageable);
+    	String searchValue = "*" + query + '*';
+    	return racetrackSearchRepo.search(queryStringQuery(searchValue), pageable);
     }
     
     @Override

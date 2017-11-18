@@ -36,6 +36,7 @@ import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
+import com.icesoft.msdb.repository.search.DriverSearchRepository;
 import com.icesoft.msdb.repository.stats.DriverStatisticsRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
@@ -79,6 +80,9 @@ public class DriverResourceIntTest {
     
     @Autowired
     private DriverStatisticsRepository statsRepo;
+    
+    @Autowired
+    private DriverSearchRepository driverSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -102,7 +106,7 @@ public class DriverResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final DriverResource driverResource = new DriverResource(driverRepository, eventEntryRepo, statsRepo, cdnService);
+        final DriverResource driverResource = new DriverResource(driverRepository, driverSearchRepository, eventEntryRepo, statsRepo, cdnService);
         this.restDriverMockMvc = MockMvcBuilders.standaloneSetup(driverResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -130,6 +134,7 @@ public class DriverResourceIntTest {
 
     @Before
     public void initTest() {
+        driverSearchRepository.deleteAll();
         driver = createEntity(em);
     }
 
@@ -156,6 +161,9 @@ public class DriverResourceIntTest {
         assertThat(testDriver.getDeathPlace()).isEqualTo(DEFAULT_DEATH_PLACE);
         assertThat(testDriver.getPortrait()).isEqualTo(DEFAULT_PORTRAIT);
 
+        // Validate the Driver in Elasticsearch
+        Driver driverEs = driverSearchRepository.findOne(testDriver.getId());
+        assertThat(driverEs).isEqualToComparingFieldByField(testDriver);
     }
 
     @Test
@@ -284,6 +292,7 @@ public class DriverResourceIntTest {
     public void updateDriver() throws Exception {
         // Initialize the database
         driverRepository.saveAndFlush(driver);
+        driverSearchRepository.save(driver);
         int databaseSizeBeforeUpdate = driverRepository.findAll().size();
 
         // Update the driver
@@ -314,6 +323,9 @@ public class DriverResourceIntTest {
         assertThat(testDriver.getDeathPlace()).isEqualTo(UPDATED_DEATH_PLACE);
         assertThat(testDriver.getPortrait()).isEqualTo(UPDATED_PORTRAIT);
 
+        // Validate the Driver in Elasticsearch
+        Driver driverEs = driverSearchRepository.findOne(testDriver.getId());
+        assertThat(driverEs).isEqualToComparingFieldByField(testDriver);
     }
 
     @Test
@@ -339,12 +351,17 @@ public class DriverResourceIntTest {
     public void deleteDriver() throws Exception {
         // Initialize the database
         driverRepository.saveAndFlush(driver);
+        driverSearchRepository.save(driver);
         int databaseSizeBeforeDelete = driverRepository.findAll().size();
 
         // Get the driver
         restDriverMockMvc.perform(delete("/api/drivers/{id}", driver.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
+
+        // Validate Elasticsearch is empty
+        boolean driverExistsInEs = driverSearchRepository.exists(driver.getId());
+        assertThat(driverExistsInEs).isFalse();
 
         // Validate the database is empty
         List<Driver> driverList = driverRepository.findAll();
@@ -356,6 +373,7 @@ public class DriverResourceIntTest {
     public void searchDriver() throws Exception {
         // Initialize the database
         driverRepository.saveAndFlush(driver);
+        driverSearchRepository.save(driver);
 
         // Search the driver
         restDriverMockMvc.perform(get("/api/_search/drivers?query=id:" + driver.getId()))

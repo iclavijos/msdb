@@ -1,28 +1,54 @@
 package com.icesoft.msdb.service.impl;
 
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.Search;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.enums.SessionType;
+import com.icesoft.msdb.repository.CategoryRepository;
+import com.icesoft.msdb.repository.ChassisRepository;
+import com.icesoft.msdb.repository.DriverRepository;
+import com.icesoft.msdb.repository.EngineRepository;
+import com.icesoft.msdb.repository.EventEditionRepository;
+import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
-import com.icesoft.msdb.repository.SearchRepository;
+import com.icesoft.msdb.repository.EventRepository;
+import com.icesoft.msdb.repository.FuelProviderRepository;
+import com.icesoft.msdb.repository.PointsSystemRepository;
+import com.icesoft.msdb.repository.RacetrackLayoutRepository;
+import com.icesoft.msdb.repository.RacetrackRepository;
+import com.icesoft.msdb.repository.SeriesRepository;
+import com.icesoft.msdb.repository.TeamRepository;
+import com.icesoft.msdb.repository.TyreProviderRepository;
+import com.icesoft.msdb.repository.search.CategorySearchRepository;
+import com.icesoft.msdb.repository.search.ChassisSearchRepository;
+import com.icesoft.msdb.repository.search.DriverSearchRepository;
+import com.icesoft.msdb.repository.search.EngineSearchRepository;
+import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
+import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
+import com.icesoft.msdb.repository.search.EventSearchRepository;
+import com.icesoft.msdb.repository.search.FuelProviderSearchRepository;
+import com.icesoft.msdb.repository.search.PointsSystemSearchRepository;
+import com.icesoft.msdb.repository.search.RacetrackLayoutSearchRepository;
+import com.icesoft.msdb.repository.search.RacetrackSearchRepository;
+import com.icesoft.msdb.repository.search.SeriesSearchRepository;
+import com.icesoft.msdb.repository.search.TeamSearchRepository;
+import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 
@@ -32,47 +58,70 @@ public class SearchServiceImpl implements SearchService {
 	
 	private final Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);
 	
-	private final SearchRepository searchRepository;
-	private final EventEntryResultRepository resultsRepo;
-	
-	@PersistenceContext
-	private EntityManager entityManager;
-	
-	public SearchServiceImpl(SearchRepository searchRepository, EventEntryResultRepository resultsRepo) {
-		this.searchRepository = searchRepository;
-		this.resultsRepo = resultsRepo;
-	}
-
+	@Autowired private DriverRepository driverRepo;
+	@Autowired private DriverSearchRepository driverSearchRepo;
+	@Autowired private TeamRepository teamRepo;
+	@Autowired private TeamSearchRepository teamSearchRepo;
+	@Autowired private EngineRepository engineRepo;
+	@Autowired private EngineSearchRepository engineSearchRepo;
+	@Autowired private ChassisRepository chassisRepo;
+	@Autowired private ChassisSearchRepository chassisSearchRepo;
+	@Autowired private EventEntryResultRepository resultsRepo;
+	@Autowired private CategoryRepository categoryRepo;
+	@Autowired private CategorySearchRepository categorySearchRepo;
+	@Autowired private FuelProviderRepository fuelRepo;
+	@Autowired private FuelProviderSearchRepository fuelSearchRepo;
+	@Autowired private TyreProviderRepository tyreRepo;
+	@Autowired private TyreProviderSearchRepository tyreSearchRepo;
+	@Autowired private PointsSystemRepository pointsRepo;
+	@Autowired private PointsSystemSearchRepository pointsSearchRepo;
+	@Autowired private SeriesRepository seriesRepo;
+	@Autowired private SeriesSearchRepository seriesSearchRepo;
+	@Autowired private EventRepository eventRepo;
+	@Autowired private EventSearchRepository eventSearchRepo;
+	@Autowired private EventEditionRepository eventEditionRepo;
+	@Autowired private EventEditionSearchRepository eventEditionSearchRepo;
+	@Autowired private EventEntryRepository eventEntryRepo;
+	@Autowired private EventEntrySearchRepository eventEntrySearchRepo;
+	@Autowired private RacetrackRepository racetrackRepo;
+	@Autowired private RacetrackSearchRepository racetrackSearchRepo;
+	@Autowired private RacetrackLayoutRepository racetrackLayoutRepo;
+	@Autowired private RacetrackLayoutSearchRepository racetrackLayoutSearchRepo;
+		
 	@Override
+	@Transactional(readOnly=false)
 	public void rebuildIndexes() {
 		log.debug("REST request to rebuild search indexes");
-    	try {
-    		FullTextEntityManager fullTextEntityManager =
-    				Search.getFullTextEntityManager(entityManager);
-    		fullTextEntityManager.createIndexer().startAndWait();
-    		log.info("Search indexes rebuilt");
-    	} catch (InterruptedException e) {
-    		log.error("An error occurred trying to build the search index: ", e);
-    	}
+		updateSearchIndex(engineRepo.readAllByIdNotNull(), engineSearchRepo);
+		updateSearchIndex(driverRepo.streamAll(), driverSearchRepo);
+		updateSearchIndex(teamRepo.streamAll(), teamSearchRepo);
+		updateSearchIndex(chassisRepo.streamAllByIdNotNull(), chassisSearchRepo);
+		updateSearchIndex(categoryRepo.streamAll(), categorySearchRepo);
+		updateSearchIndex(fuelRepo.streamAll(), fuelSearchRepo);
+		updateSearchIndex(tyreRepo.streamAll(), tyreSearchRepo);
+		updateSearchIndex(pointsRepo.streamAll(), pointsSearchRepo);
+		updateSearchIndex(eventRepo.readAllByIdNotNull(), eventSearchRepo);
+		updateSearchIndex(seriesRepo.streamAll(), seriesSearchRepo);
+		updateSearchIndex(eventEditionRepo.streamAllByIdNotNull(), eventEditionSearchRepo);
+		updateSearchIndex(eventEntryRepo.streamAllByIdNotNull(), eventEntrySearchRepo);
+		updateSearchIndex(racetrackRepo.streamAll(), racetrackSearchRepo);
+		updateSearchIndex(racetrackLayoutRepo.streamAll(), racetrackLayoutSearchRepo);
+		log.debug("REST request to rebuild search indexes completed");
+	}
+	
+	private <T> void updateSearchIndex(final Stream<T> stream, final ElasticsearchRepository<T, Long> searchRepo) {
+		stream.parallel().forEach(elem -> searchRepo.save(elem));
+		stream.close();
 	}
 	
 	@Override
-	public Page<EventEntrySearchResultDTO> searchEntries(String searchTems, Pageable pageable) {
-		Page<EventEditionEntry> tmp = searchRepository.searchEntries(searchTems, pageable);
+	public Page<EventEntrySearchResultDTO> searchEntries(String searchTerms, Pageable pageable) {
+		String searchValue = '*' + searchTerms + '*';
+		Page<EventEditionEntry> tmp = eventEntrySearchRepo.search(queryStringQuery(searchValue), pageable);
 		List<EventEntrySearchResultDTO> aux = tmp.getContent().parallelStream()
 				.map(this::createDTO)
 				.collect(Collectors.<EventEntrySearchResultDTO> toList());
 		return new PageImpl<>(aux, pageable, tmp.getTotalElements());
-	}
-	
-	@Override
-	public Page<EventEdition> searchEventEditions(String searchTems, Pageable pageable) {
-		return searchRepository.searchEventEditions(searchTems, pageable);
-	}
-	
-	@Override
-	public List<EventEdition> searchRelated(Long eventEditionId) {
-		return searchRepository.searchRelated(eventEditionId);
 	}
 	
 	private EventEntrySearchResultDTO createDTO(EventEditionEntry entry) {

@@ -1,13 +1,18 @@
 package com.icesoft.msdb.repository;
 
+import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
+
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import javax.persistence.QueryHint;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.Driver;
 
@@ -17,17 +22,12 @@ import com.icesoft.msdb.domain.Driver;
 @Repository
 public interface DriverRepository extends JpaRepository<Driver,Long> {
 	
-	@Query("select d from Driver d where "
-			+ "lower(d.name) like concat('%', lower(?1),'%') or "
-			+ "lower(d.surname) like concat('%', lower(?1),'%')")
-	Page<Driver> search(String searchValue, Pageable page);
-	
-	@Query("select d from Driver d where "
-			+ "lower(d.name) like concat('%', lower(?1),'%') or "
-			+ "lower(d.surname) like concat('%', lower(?1),'%')")
-	List<Driver> searchNonPageable(String name);
-	
 	List<Driver> findByNameAndSurnameAndBirthDateAllIgnoreCase(String name, String surname, LocalDate date);
 	
 	List<Driver> findByIdIn(List<Long> ids);
+	
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@Query(value = "select d from Driver d")
+	@Transactional(readOnly=true)
+	Stream<Driver> streamAll();
 }

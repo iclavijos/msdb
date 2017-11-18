@@ -1,12 +1,13 @@
 package com.icesoft.msdb.repository;
 
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.Engine;
 
@@ -16,10 +17,9 @@ import com.icesoft.msdb.domain.Engine;
 @Repository
 public interface EngineRepository extends JpaRepository<Engine,Long> {
 
-	@Query("select e from Engine e where e.name like lower(concat('%', ?1,'%')) or "
-			+ "e.manufacturer like lower(concat('%', ?1,'%')) or "
-			+ "e.architecture like lower(concat('%', ?1,'%'))")
-	Page<Engine> search(String searchValue, Pageable page);
+	@EntityGraph(value="EngineWithoutRelations", type=EntityGraphType.LOAD)
+	@Transactional(readOnly=true)
+	Stream<Engine> readAllByIdNotNull();
 	
 	List<Engine> findByName(String name);
 	

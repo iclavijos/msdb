@@ -34,6 +34,7 @@ import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.repository.EngineRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
+import com.icesoft.msdb.repository.search.EngineSearchRepository;
 import com.icesoft.msdb.repository.stats.EngineStatisticsRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
@@ -84,6 +85,9 @@ public class EngineResourceIntTest {
     private EventEntryRepository eventEntryRepo;
     @Autowired
     private EngineStatisticsRepository engineStatsRepo;
+    
+    @Autowired
+    private EngineSearchRepository engineSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -107,7 +111,7 @@ public class EngineResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final EngineResource engineResource = new EngineResource(engineRepository, eventEntryRepo, engineStatsRepo, cdnService);
+        final EngineResource engineResource = new EngineResource(engineRepository, engineSearchRepository, eventEntryRepo, engineStatsRepo, cdnService);
         this.restEngineMockMvc = MockMvcBuilders.standaloneSetup(engineResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -138,6 +142,7 @@ public class EngineResourceIntTest {
 
     @Before
     public void initTest() {
+        engineSearchRepository.deleteAll();
         engine = createEntity(em);
     }
 
@@ -167,6 +172,9 @@ public class EngineResourceIntTest {
         assertThat(testEngine.isTurbo()).isEqualTo(DEFAULT_TURBO);
         assertThat(testEngine.getImage()).isEqualTo(DEFAULT_IMAGE);
 
+        // Validate the Engine in Elasticsearch
+        Engine engineEs = engineSearchRepository.findOne(testEngine.getId());
+        assertThat(engineEs).isEqualToComparingFieldByField(testEngine);
     }
 
     @Test
@@ -337,6 +345,7 @@ public class EngineResourceIntTest {
     public void updateEngine() throws Exception {
         // Initialize the database
         engineRepository.saveAndFlush(engine);
+        engineSearchRepository.save(engine);
         int databaseSizeBeforeUpdate = engineRepository.findAll().size();
 
         // Update the engine
@@ -373,6 +382,9 @@ public class EngineResourceIntTest {
         assertThat(testEngine.isTurbo()).isEqualTo(UPDATED_TURBO);
         assertThat(testEngine.getImage()).isEqualTo(UPDATED_IMAGE);
 
+        // Validate the Engine in Elasticsearch
+        Engine engineEs = engineSearchRepository.findOne(testEngine.getId());
+        assertThat(engineEs).isEqualToComparingFieldByField(testEngine);
     }
 
     @Test
@@ -398,12 +410,17 @@ public class EngineResourceIntTest {
     public void deleteEngine() throws Exception {
         // Initialize the database
         engineRepository.saveAndFlush(engine);
+        engineSearchRepository.save(engine);
         int databaseSizeBeforeDelete = engineRepository.findAll().size();
 
         // Get the engine
         restEngineMockMvc.perform(delete("/api/engines/{id}", engine.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
+
+        // Validate Elasticsearch is empty
+        boolean engineExistsInEs = engineSearchRepository.exists(engine.getId());
+        assertThat(engineExistsInEs).isFalse();
 
         // Validate the database is empty
         List<Engine> engineList = engineRepository.findAll();
@@ -415,6 +432,7 @@ public class EngineResourceIntTest {
     public void searchEngine() throws Exception {
         // Initialize the database
         engineRepository.saveAndFlush(engine);
+        engineSearchRepository.save(engine);
 
         // Search the engine
         restEngineMockMvc.perform(get("/api/_search/engines?query=id:" + engine.getId()))

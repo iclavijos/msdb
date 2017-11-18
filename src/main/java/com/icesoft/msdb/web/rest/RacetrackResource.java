@@ -9,7 +9,6 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
-import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.RacetrackService;
@@ -54,9 +52,6 @@ public class RacetrackResource {
     private static final String ENTITY_NAME_LAYOUT = "racetrackLayout";
 
     private final RacetrackService racetrackService;
-    
-    //TODO: move code inside service and change presentation layer to adapt to new URL's
-    @Autowired private RacetrackLayoutRepository racetrackLayoutRepository;
     
     private final CDNService cdnService;
 
@@ -213,13 +208,13 @@ public class RacetrackResource {
         if (racetrackLayout.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new racetrackLayout cannot already have an ID")).body(null);
         }
-        RacetrackLayout result = racetrackLayoutRepository.save(racetrackLayout);
+        RacetrackLayout result = racetrackService.save(racetrackLayout);
       
         if (result.getLayoutImageUrl() != null) {
 	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), racetrackLayout.getLayoutImage(), ENTITY_NAME_LAYOUT);
 			result.setLayoutImageUrl(cdnUrl);
 			
-			result = racetrackLayoutRepository.save(result);
+			result = racetrackService.save(result);
         }
         
         return ResponseEntity.created(new URI("/api/racetrack-layouts/" + result.getId()))
@@ -250,7 +245,7 @@ public class RacetrackResource {
         } else if (racetrackLayout.getLayoutImageUrl() == null) {
         	cdnService.deleteImage(racetrackLayout.getId().toString(), ENTITY_NAME_LAYOUT);
         }
-        RacetrackLayout result = racetrackLayoutRepository.save(racetrackLayout);
+        RacetrackLayout result = racetrackService.save(racetrackLayout);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME_LAYOUT, racetrackLayout.getId().toString()))
             .body(result);
@@ -263,9 +258,9 @@ public class RacetrackResource {
      */
     @GetMapping("/racetracks/{id}/racetrack-layouts")
     @Timed
-    public List<RacetrackLayout> getAllRacetrackLayouts() {
+    public List<RacetrackLayout> getAllRacetrackLayouts(@PathVariable Long id) {
         log.debug("REST request to get all RacetrackLayouts");
-        List<RacetrackLayout> racetrackLayouts = racetrackLayoutRepository.findAll();
+        List<RacetrackLayout> racetrackLayouts = racetrackService.findRacetrackLayouts(id);
         return racetrackLayouts;
     }
 

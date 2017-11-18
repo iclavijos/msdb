@@ -1,5 +1,7 @@
 package com.icesoft.msdb.web.rest;
 
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -50,9 +52,10 @@ import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
+import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
+import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
-import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
@@ -81,24 +84,27 @@ public class EventEditionResource {
     private static final String ENTITY_NAME_RESULT = "eventEntryResult";
         
     private final EventEditionRepository eventEditionRepository;
+    private final EventEditionSearchRepository eventEditionSearchRepo;
     private final EventSessionRepository eventSessionRepository;
     private final EventEntryRepository eventEntryRepository;
+    private final EventEntrySearchRepository eventEntrySearchRepo;
     private final EventEntryResultRepository eventResultRepository;
     private final ResultsService resultsService;
     private final StatisticsService statsService;
-    private final SearchService searchService;
     private final CDNService cdnService;
     private final JDBCRepositoryImpl jdbcRepository;
     
-    public EventEditionResource(EventEditionRepository eventEditionRepository, EventSessionRepository eventSessionRepository, 
-    		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, SearchService searchService,
-    		ResultsService resultsService, CDNService cdnService, JDBCRepositoryImpl jdbcRepository, StatisticsService statsService) {
+    public EventEditionResource(EventEditionRepository eventEditionRepository, EventEditionSearchRepository eventEditionSearchRepo,
+    		EventEntrySearchRepository eventEntrySearchRepo, EventSessionRepository eventSessionRepository, 
+    		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, ResultsService resultsService, 
+    		CDNService cdnService, JDBCRepositoryImpl jdbcRepository, StatisticsService statsService) {
         this.eventEditionRepository = eventEditionRepository;
+        this.eventEditionSearchRepo = eventEditionSearchRepo;
         this.eventSessionRepository = eventSessionRepository;
         this.eventEntryRepository = eventEntryRepository;
+        this.eventEntrySearchRepo = eventEntrySearchRepo;
         this.eventResultRepository = resultRepository;
         this.resultsService = resultsService;
-        this.searchService = searchService;
         this.cdnService = cdnService;
         this.statsService = statsService;
         this.jdbcRepository = jdbcRepository;
@@ -121,6 +127,7 @@ public class EventEditionResource {
             throw new BadRequestAlertException("A new eventEdition cannot already have an ID", ENTITY_NAME, "idexists");
         }
         EventEdition result = eventEditionRepository.save(eventEdition);
+        eventEditionSearchRepo.save(result);
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -149,7 +156,7 @@ public class EventEditionResource {
     		eventEdition.setSeriesEdition(result.getSeriesEdition());
     	}
         result = eventEditionRepository.save(eventEdition);
-
+        eventEditionSearchRepo.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, eventEdition.getId().toString()))
             .body(result);
@@ -209,6 +216,7 @@ public class EventEditionResource {
     public ResponseEntity<Void> deleteEventEdition(@PathVariable Long id) {
         log.debug("REST request to delete EventEdition : {}", id);
         eventEditionRepository.delete(id);
+        eventEditionSearchRepo.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -224,7 +232,8 @@ public class EventEditionResource {
     @Timed
     public ResponseEntity<List<EventEdition>> searchEventEditions(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of EventEditions for query {}", query);
-        Page<EventEdition> page = searchService.searchEventEditions(query, pageable);
+        String searchValue = '*' + query + '*';
+        Page<EventEdition> page = eventEditionSearchRepo.search(queryStringQuery(searchValue), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/event-editions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -430,6 +439,7 @@ public class EventEditionResource {
 			
 			result = eventEntryRepository.save(result);
         }
+        eventEntrySearchRepo.save(result);
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/entries"))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME_ENTRY, result.getId().toString()))
             .body(result);
@@ -448,6 +458,7 @@ public class EventEditionResource {
 	        eventEntry.setCarImageUrl(cdnUrl);
         }
         EventEditionEntry result = eventEntryRepository.save(eventEntry);
+        eventEntrySearchRepo.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME_ENTRY, eventEntry.getId().toString()))
             .body(result);
@@ -471,6 +482,7 @@ public class EventEditionResource {
     public ResponseEntity<Void> deleteEventEntry(@PathVariable Long id) {
         log.debug("REST request to delete EventEntry : {}", id);
         eventEntryRepository.delete(id);
+        eventEntrySearchRepo.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME_ENTRY, id.toString())).build();
     }
     

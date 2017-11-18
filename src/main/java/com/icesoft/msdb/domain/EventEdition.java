@@ -23,6 +23,12 @@ import java.util.Objects;
 @Table(name = "event_edition")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "eventedition")
+@NamedEntityGraph(name="EventEditionWithoutRelations", attributeNodes= {
+		@NamedAttributeNode(value="id"),
+		@NamedAttributeNode(value="editionYear"),
+		@NamedAttributeNode(value="shortEventName"),
+		@NamedAttributeNode(value="longEventName")
+})
 public class EventEdition extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

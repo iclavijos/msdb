@@ -1,10 +1,16 @@
 package com.icesoft.msdb.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
+
+import java.util.stream.Stream;
+
+import javax.persistence.QueryHint;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.Category;
 
@@ -14,6 +20,8 @@ import com.icesoft.msdb.domain.Category;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category,Long> {
 
-	@Query("select c from Category c where c.name like lower(concat('%', ?1,'%')) or c.shortname like lower(concat('%', ?1,'%'))")
-	Page<Category> search(String searchValue, Pageable page);
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@Query(value = "select c from Category c")
+	@Transactional(readOnly=true)
+	Stream<Category> streamAll();
 }

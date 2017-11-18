@@ -20,6 +20,8 @@ public interface RacetrackService {
      * @return the persisted entity
      */
     Racetrack save(Racetrack racetrack);
+    
+    RacetrackLayout save(RacetrackLayout layout);
 
     /**
      *  Get all the racetracks.
@@ -36,6 +38,8 @@ public interface RacetrackService {
      *  @return the entity
      */
     Racetrack findOne(Long id);
+    
+    RacetrackLayout findLayout(Long id);
 
     /**
      *  Delete the "id" racetrack.
@@ -43,6 +47,8 @@ public interface RacetrackService {
      *  @param id the id of the entity
      */
     void delete(Long id);
+    
+    void deleteLayout(Long id);
     
     Page<Racetrack> search(String query, Pageable pageable);
     

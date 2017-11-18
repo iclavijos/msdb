@@ -1,10 +1,16 @@
 package com.icesoft.msdb.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
+
+import java.util.stream.Stream;
+
+import javax.persistence.QueryHint;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.Series;
 
@@ -14,6 +20,8 @@ import com.icesoft.msdb.domain.Series;
 @Repository
 public interface SeriesRepository extends JpaRepository<Series,Long> {
 
-	@Query("select s from Series s where s.name like lower(concat('%', ?1,'%')) or s.shortname like lower(concat('%', ?1,'%')) or s.organizer like lower(concat('%', ?1,'%'))")
-	Page<Series> search(String searchValue, Pageable page);
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@Query(value = "select s from Series s")
+	@Transactional(readOnly=true)
+	Stream<Series> streamAll();
 }

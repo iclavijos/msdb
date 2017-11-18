@@ -1,16 +1,29 @@
 package com.icesoft.msdb.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A Engine.
@@ -19,11 +32,24 @@ import java.util.Objects;
 @Table(name = "engine")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "engine")
+@NamedEntityGraph(name="EngineWithoutRelations", attributeNodes= {
+		@NamedAttributeNode(value="id"),
+		@NamedAttributeNode(value="name"),
+		@NamedAttributeNode(value="manufacturer"),
+		@NamedAttributeNode(value="capacity"),
+		@NamedAttributeNode(value="architecture"),
+		@NamedAttributeNode(value="debutYear"),
+		@NamedAttributeNode(value="petrolEngine"),
+		@NamedAttributeNode(value="dieselEngine"),
+		@NamedAttributeNode(value="electricEngine"),
+		@NamedAttributeNode(value="otherEngine"),
+		@NamedAttributeNode(value="turbo")
+})
 public class Engine extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

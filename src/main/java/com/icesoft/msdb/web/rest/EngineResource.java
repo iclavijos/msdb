@@ -8,11 +8,15 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -252,7 +256,8 @@ public class EngineResource {
     @Timed
     public ResponseEntity<List<Engine>> searchEngines(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Engines for query {}", query);
-        Page<Engine> page = engineSearchRepository.search(queryStringQuery(query), pageable);
+        String searchValue = '*' + query + '*';
+        Page<Engine> page = engineSearchRepository.search(queryStringQuery(searchValue), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/engines");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -260,8 +265,13 @@ public class EngineResource {
     @GetMapping("/_typeahead/engines")
     @Timed
     public List<Engine> typeahead(@RequestParam String query) {
+    	String searchValue = '*' + query + '*';
         log.debug("REST request to search for a page of Engines for query {}", query);
-        Page<Engine> page = engineSearchRepository.search(queryStringQuery(query), null);
+        NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
+        		.withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
+        		.withSort(SortBuilders.fieldSort("manufacturer")).withSort(SortBuilders.fieldSort("name"))
+        		.withPageable(new PageRequest(0, 5));
+        Page<Engine> page = engineSearchRepository.search(nqb.build());
         return page.getContent();
     }
 }

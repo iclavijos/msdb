@@ -1,10 +1,16 @@
 package com.icesoft.msdb.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
+
+import java.util.stream.Stream;
+
+import javax.persistence.QueryHint;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.TyreProvider;
 
@@ -14,6 +20,8 @@ import com.icesoft.msdb.domain.TyreProvider;
 @Repository
 public interface TyreProviderRepository extends JpaRepository<TyreProvider,Long> {
 
-//	@Query("select t from TyreProvider t where t.name like lower(concat('%', ?1,'%'))")
-//	Page<TyreProvider> search(String searchValue, Pageable pageable);
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@Query(value = "select t from TyreProvider t")
+	@Transactional(readOnly=true)
+	Stream<TyreProvider> streamAll();
 }

@@ -1,12 +1,16 @@
 package com.icesoft.msdb.repository;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.EventEdition;
 
@@ -16,11 +20,9 @@ import com.icesoft.msdb.domain.EventEdition;
 @Repository
 public interface EventEditionRepository extends JpaRepository<EventEdition,Long> {
 
-	@Query("select e from EventEdition e where e.editionYear like lower(concat('%', ?1,'%')) or "
-			+ "e.shortEventName like lower(concat('%', ?1,'%')) or "
-			+ "e.longEventName like lower(concat('%', ?1,'%')) "
-			+ "order by e.editionYear desc, e.longEventName asc")
-	Page<EventEdition> search(String searchValue, Pageable page);
+	@EntityGraph(value="EventEditionWithoutRelations", type=EntityGraphType.LOAD)
+	@Transactional(readOnly=true)
+	Stream<EventEdition> streamAllByIdNotNull();
 	
 	List<EventEdition> findAllByOrderByEventDateAsc();
 	

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
@@ -51,15 +50,6 @@ public class SearchIndexResource {
     	log.debug(String.format("REST request to search entries for '%s", query));
     	Page<EventEntrySearchResultDTO> page = searchService.searchEntries(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/search/entries");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-    }
-    
-    @GetMapping("/api/search/events")
-    @Timed
-    public ResponseEntity<List<EventEdition>> searchEvents(@RequestParam String query, Pageable pageable) throws URISyntaxException {
-    	log.debug(String.format("REST request to search events for '%s", query));
-    	Page<EventEdition> page = searchService.searchEventEditions(query, pageable);
-        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/search/events");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 

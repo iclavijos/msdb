@@ -1,5 +1,6 @@
 package com.icesoft.msdb.web.rest;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -37,13 +38,12 @@ import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
+import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
+import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.service.CDNService;
-import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
-
-import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 /**
  * Test class for the EventEditionResource REST controller.
  *
@@ -69,20 +69,23 @@ public class EventEditionResourceIntTest {
     private EventEditionRepository eventEditionRepository;
     
     @Autowired
+    private EventEditionSearchRepository eventEditionSearchRepository;
+    
+    @Autowired
     private EventSessionRepository eventSessionRepository;
     
     @Autowired
     private EventEntryRepository eventEntryRepository;
     
     @Autowired
-    private EventEntryResultRepository eventResultRepository;
+    private EventEntrySearchRepository eventEntrySearchRepository;
+    
+    @Autowired
+    private EventEntryResultRepository resultsRepository;
     
     @Autowired
     private JDBCRepositoryImpl jdbcRepo;
-    
-    @Autowired
-    private SearchService searchService;
-    
+        
     @Autowired
     private ResultsService resultsService;
     
@@ -111,9 +114,10 @@ public class EventEditionResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final EventEditionResource eventEditionResource = new EventEditionResource(
-            		eventEditionRepository, eventSessionRepository, eventEntryRepository, 
-            		eventResultRepository, searchService, resultsService, cdnService, jdbcRepo, statsService);
+        final EventEditionResource eventEditionResource = new EventEditionResource(eventEditionRepository, eventEditionSearchRepository,
+        		eventEntrySearchRepository, eventSessionRepository, 
+        		eventEntryRepository, resultsRepository, resultsService, 
+        		cdnService, jdbcRepo, statsService);
         this.restEventEditionMockMvc = MockMvcBuilders.standaloneSetup(eventEditionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -138,6 +142,7 @@ public class EventEditionResourceIntTest {
 
     @Before
     public void initTest() {
+        eventEditionSearchRepository.deleteAll();
         eventEdition = createEntity(em);
     }
 
@@ -161,6 +166,9 @@ public class EventEditionResourceIntTest {
         assertThat(testEventEdition.getLongEventName()).isEqualTo(DEFAULT_LONG_EVENT_NAME);
         assertThat(testEventEdition.getEventDate()).isEqualTo(DEFAULT_EVENT_DATE);
 
+        // Validate the EventEdition in Elasticsearch
+        EventEdition eventEditionEs = eventEditionSearchRepository.findOne(testEventEdition.getId());
+        assertThat(eventEditionEs).isEqualToComparingFieldByField(testEventEdition);
     }
 
     @Test
@@ -301,6 +309,7 @@ public class EventEditionResourceIntTest {
     public void updateEventEdition() throws Exception {
         // Initialize the database
         eventEditionRepository.saveAndFlush(eventEdition);
+        eventEditionSearchRepository.save(eventEdition);
         int databaseSizeBeforeUpdate = eventEditionRepository.findAll().size();
 
         // Update the eventEdition
@@ -325,6 +334,9 @@ public class EventEditionResourceIntTest {
         assertThat(testEventEdition.getLongEventName()).isEqualTo(UPDATED_LONG_EVENT_NAME);
         assertThat(testEventEdition.getEventDate()).isEqualTo(UPDATED_EVENT_DATE);
 
+        // Validate the EventEdition in Elasticsearch
+        EventEdition eventEditionEs = eventEditionSearchRepository.findOne(testEventEdition.getId());
+        assertThat(eventEditionEs).isEqualToComparingFieldByField(testEventEdition);
     }
 
     @Test
@@ -350,12 +362,17 @@ public class EventEditionResourceIntTest {
     public void deleteEventEdition() throws Exception {
         // Initialize the database
         eventEditionRepository.saveAndFlush(eventEdition);
+        eventEditionSearchRepository.save(eventEdition);
         int databaseSizeBeforeDelete = eventEditionRepository.findAll().size();
 
         // Get the eventEdition
         restEventEditionMockMvc.perform(delete("/api/event-editions/{id}", eventEdition.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
+
+        // Validate Elasticsearch is empty
+        boolean eventEditionExistsInEs = eventEditionSearchRepository.exists(eventEdition.getId());
+        assertThat(eventEditionExistsInEs).isFalse();
 
         // Validate the database is empty
         List<EventEdition> eventEditionList = eventEditionRepository.findAll();
@@ -367,6 +384,7 @@ public class EventEditionResourceIntTest {
     public void searchEventEdition() throws Exception {
         // Initialize the database
         eventEditionRepository.saveAndFlush(eventEdition);
+        eventEditionSearchRepository.save(eventEdition);
 
         // Search the eventEdition
         restEventEditionMockMvc.perform(get("/api/_search/event-editions?query=id:" + eventEdition.getId()))

@@ -1,5 +1,7 @@
 package com.icesoft.msdb.web.rest;
 
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -30,6 +32,7 @@ import com.icesoft.msdb.domain.Series;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.SeriesRepository;
+import com.icesoft.msdb.repository.search.SeriesSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
@@ -51,12 +54,15 @@ public class SeriesResource {
     private static final String ENTITY_NAME = "series";
         
     private final SeriesRepository seriesRepository;
+    private final SeriesSearchRepository seriesSearchRepository;
     private final SeriesEditionRepository seriesEditionRepository;
     
     private final CDNService cdnService;
 
-    public SeriesResource(SeriesRepository seriesRepository, SeriesEditionRepository seriesEditionRepository, CDNService cdnService) {
+    public SeriesResource(SeriesRepository seriesRepository, SeriesSearchRepository seriesSearchRepository, 
+    		SeriesEditionRepository seriesEditionRepository, CDNService cdnService) {
         this.seriesRepository = seriesRepository;
+        this.seriesSearchRepository = seriesSearchRepository;
         this.seriesEditionRepository = seriesEditionRepository;
         this.cdnService = cdnService;
     }
@@ -77,7 +83,7 @@ public class SeriesResource {
             throw new BadRequestAlertException("A new series cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Series result = seriesRepository.save(series);
-        
+        seriesSearchRepository.save(result);
         if (result.getLogo() != null) {
 	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getLogo(), ENTITY_NAME);
 			result.setLogoUrl(cdnUrl);
@@ -113,6 +119,7 @@ public class SeriesResource {
         	cdnService.deleteImage(series.getId().toString(), ENTITY_NAME);
         }
         Series result = seriesRepository.save(series);
+        seriesSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, series.getId().toString()))
             .body(result);
@@ -169,6 +176,7 @@ public class SeriesResource {
         log.debug("REST request to delete Series : {}", id);
         seriesRepository.delete(id);
         cdnService.deleteImage(id.toString(), ENTITY_NAME);
+        seriesSearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -184,7 +192,8 @@ public class SeriesResource {
     @Timed
     public ResponseEntity<List<Series>> searchSeries(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Series for query {}", query);
-        Page<Series> page = seriesRepository.search(query, pageable);
+        String searchValue = "name:*" + query + '*';
+        Page<Series> page = seriesSearchRepository.search(queryStringQuery(searchValue), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/series");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

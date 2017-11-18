@@ -66,12 +66,12 @@
 	                            <span class="fa fa-pencil"></span><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.updateDriversChampions">Update drivers Champions</span>
 	                        </button>
 	                        <button *ngIf="seriesEdition.teamsStandings"
-	                                [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar-edit/' + event.id } }]"
+	                                [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar-edit/' } }]"
 	                                class="btn btn-primary btn-sm">
 	                            <span class="fa fa-pencil"></span><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.updateTeamsChampions">Update teams Champions</span>
 	                        </button>
 	                        <button *ngIf="seriesEdition.manufacturersStandings"
-	                                [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar-edit/' + event.id } }]"
+	                                [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar-edit/' } }]"
 	                                class="btn btn-primary btn-sm">
 	                            <span class="fa fa-pencil"></span><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.updateManufacturersChampions">Update manufacturers Champions</span>
 	                        </button>

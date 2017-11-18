@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -34,6 +36,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Table(name = "event_entry")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "evententry")
+@NamedEntityGraph(name="EventEntryPartial", attributeNodes= {
+		@NamedAttributeNode(value="id"),
+		@NamedAttributeNode(value="entryName"),
+		@NamedAttributeNode(value="drivers"),
+		@NamedAttributeNode(value="team"),
+		@NamedAttributeNode(value="operatedBy"),
+		@NamedAttributeNode(value="chassis"),
+		@NamedAttributeNode(value="engine"),
+		@NamedAttributeNode(value="tyres"),
+		@NamedAttributeNode(value="fuel"),
+		@NamedAttributeNode(value="category"),
+		@NamedAttributeNode(value="eventEdition")
+})
 public class EventEditionEntry extends AbstractAuditingEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;

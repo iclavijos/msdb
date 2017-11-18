@@ -92,7 +92,7 @@ export class HomeEventsComponent implements OnInit {
     
     private query(req?: any): Observable<Response> {
         let options = this.createRequestOption(req);
-        return this.http.get(`api/search/events`, options)
+        return this.http.get(`api/_search/events`, options)
             .map((res: any) => res)
         ;
     }

@@ -1,10 +1,16 @@
 package com.icesoft.msdb.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
+
+import java.util.stream.Stream;
+
+import javax.persistence.QueryHint;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.Racetrack;
 
@@ -14,9 +20,9 @@ import com.icesoft.msdb.domain.Racetrack;
 @Repository
 public interface RacetrackRepository extends JpaRepository<Racetrack,Long> {
 
-	@Query("select r from Racetrack r where "
-			+ "lower(r.name) like lower(concat('%', ?1,'%')) or "
-			+ "lower(r.location) like lower(concat('%', ?1,'%'))")
-	Page<Racetrack> search(String searchValue, Pageable pageable);
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@Query(value = "select r from Racetrack r")
+	@Transactional(readOnly=true)
+	Stream<Racetrack> streamAll();
 	
 }

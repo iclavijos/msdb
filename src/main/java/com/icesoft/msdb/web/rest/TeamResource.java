@@ -1,5 +1,7 @@
 package com.icesoft.msdb.web.rest;
 
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -8,6 +10,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -15,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +39,7 @@ import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.domain.stats.ElementStatistics;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.TeamRepository;
+import com.icesoft.msdb.repository.search.TeamSearchRepository;
 import com.icesoft.msdb.repository.stats.TeamStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
@@ -63,10 +69,13 @@ public class TeamResource {
     
     private final CDNService cdnService;
 
+    private final TeamSearchRepository teamSearchRepository;
 
-    public TeamResource(TeamRepository teamRepository, EventEntryRepository entryRepository, 
+    public TeamResource(TeamRepository teamRepository, TeamSearchRepository teamSearchRepository, 
+    		EventEntryRepository entryRepository, 
     		TeamStatisticsRepository statsRepo, CDNService cdnService) {
         this.teamRepository = teamRepository;
+        this.teamSearchRepository = teamSearchRepository;
         this.entryRepository = entryRepository;
         this.statsRepo = statsRepo;
         this.cdnService = cdnService;
@@ -89,6 +98,7 @@ public class TeamResource {
             throw new BadRequestAlertException("A new team cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Team result = teamRepository.save(team);
+        teamSearchRepository.save(result);
         if (team.getLogo() != null) {
 	        String cdnUrl = cdnService.uploadImage(team.getId().toString(), team.getLogo(), ENTITY_NAME);
 			team.logoUrl(cdnUrl);
@@ -124,6 +134,7 @@ public class TeamResource {
         	cdnService.deleteImage(team.getId().toString(), ENTITY_NAME);
         }
         Team result = teamRepository.save(team);
+        teamSearchRepository.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, team.getId().toString()))
             .body(result);
@@ -220,6 +231,7 @@ public class TeamResource {
     public ResponseEntity<Void> deleteTeam(@PathVariable Long id) {
         log.debug("REST request to delete Team : {}", id);
         teamRepository.delete(id);
+        teamSearchRepository.delete(id);
         cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
@@ -228,7 +240,8 @@ public class TeamResource {
     @Timed
     public ResponseEntity<List<Team>> searchTeams(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Teams for query '{}'", query);
-        Page<Team> page = teamRepository.findByNameContainsIgnoreCaseOrderByNameAsc(query, pageable);
+        String searchValue = '*' + query + '*';
+        Page<Team> page = teamSearchRepository.search(queryStringQuery(searchValue), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/teams");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -245,7 +258,12 @@ public class TeamResource {
     @Timed
     public List<Team> typeahead(@RequestParam String query) {
         log.debug("REST request to search Teams for query {}", query);
-        Page<Team> result = teamRepository.findByNameContainsIgnoreCaseOrderByNameAsc(query, new PageRequest(0, 5));
+        String searchValue = '*' + query + '*';
+        NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
+        		.withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
+        		.withSort(SortBuilders.fieldSort("name"))
+        		.withPageable(new PageRequest(0, 5));
+        Page<Team> result = teamSearchRepository.search(nqb.build());
 
         return result.getContent();
     }
