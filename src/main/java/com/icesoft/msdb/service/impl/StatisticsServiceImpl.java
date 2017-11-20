@@ -151,18 +151,23 @@ public class StatisticsServiceImpl implements StatisticsService {
 				updateStats(categoryName, year, result, driverStatsRepo, dStats);
 			});
 			
-			TeamStatistics tStats = Optional.ofNullable(teamStatsRepo.findOne(entry.getTeam().getId().toString()))
-					.orElse(new TeamStatistics(entry.getTeam().getId().toString()));
-			updateStats(categoryName, year, result, teamStatsRepo, tStats);
+			if (entry.getTeam() != null) {
+				TeamStatistics tStats = Optional.ofNullable(teamStatsRepo.findOne(entry.getTeam().getId().toString()))
+						.orElse(new TeamStatistics(entry.getTeam().getId().toString()));
+				updateStats(categoryName, year, result, teamStatsRepo, tStats);
+			}
 			
 			ChassisStatistics cStats = Optional.ofNullable(chassisStatsRepo.findOne(entry.getChassis().getId().toString()))
 					.orElse(new ChassisStatistics(entry.getChassis().getId().toString()));
 			updateStats(categoryName, year, result, chassisStatsRepo, cStats);
 			
-			EngineStatistics eStats = Optional.ofNullable(engineStatsRepo.findOne(entry.getEngine().getId().toString()))
-					.orElse(new EngineStatistics(entry.getEngine().getId().toString()));
+			if (entry.getEngine() != null) {
+				EngineStatistics eStats = Optional.ofNullable(engineStatsRepo.findOne(entry.getEngine().getId().toString()))
+						.orElse(new EngineStatistics(entry.getEngine().getId().toString()));
+				updateStats(categoryName, year, result, engineStatsRepo, eStats);
+			}
 
-			updateStats(categoryName, year, result, engineStatsRepo, eStats);
+			
 		});
 		
 		log.debug("Statistics for event {} rebuilt", event.getLongEventName());
@@ -197,10 +202,12 @@ public class StatisticsServiceImpl implements StatisticsService {
 				}
 			});
 			
-			TeamStatistics ts = teamStatsRepo.findOne(entry.getTeam().getId().toString());
-			if (ts != null) {
-				ts.removeStatisticsOfEvent(event.getId(), year);
-				teamStatsRepo.save(ts);
+			if (entry.getTeam() != null) {
+				TeamStatistics ts = teamStatsRepo.findOne(entry.getTeam().getId().toString());
+				if (ts != null) {
+					ts.removeStatisticsOfEvent(event.getId(), year);
+					teamStatsRepo.save(ts);
+				}
 			}
 			
 			ChassisStatistics cs = chassisStatsRepo.findOne(entry.getChassis().getId().toString());
@@ -209,10 +216,12 @@ public class StatisticsServiceImpl implements StatisticsService {
 				chassisStatsRepo.save(cs);
 			}
 			
-			EngineStatistics es = engineStatsRepo.findOne(entry.getEngine().getId().toString());
-			if (es != null) {
-				es.removeStatisticsOfEvent(event.getId(), year);
-				engineStatsRepo.save(es);
+			if (entry.getEngine() != null) {
+				EngineStatistics es = engineStatsRepo.findOne(entry.getEngine().getId().toString());
+				if (es != null) {
+					es.removeStatisticsOfEvent(event.getId(), year);
+					engineStatsRepo.save(es);
+				}
 			}
 		});
 	}
