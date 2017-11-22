@@ -54,8 +54,8 @@ export class EventEntryResultDialogComponent implements OnInit {
                 this.positions = Array.from(Array(this.entries.length),(x,i)=>i+1);
             });
         });
-        if (this.eventEntryResult && this.eventEntryResult.sharedDriveWith !== null) {
-          this.sharedDrive = this.eventEntryResult.sharedDriveWith.id !== null;
+        if (this.eventEntryResult !== null && this.eventEntryResult.sharedDriveWith !== undefined) {
+        	this.sharedDrive = this.eventEntryResult.sharedDriveWith.id !== undefined;
         }
         this.isSaving = false;
         this.authorities = ['ROLE_EDITOR', 'ROLE_ADMIN'];
