@@ -1,5 +1,6 @@
 package com.icesoft.msdb.web.rest;
 
+import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -17,7 +18,6 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,11 +33,8 @@ import org.springframework.util.Base64Utils;
 import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.repository.RacetrackRepository;
-import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.RacetrackService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
-
-import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 
 /**
  * Test class for the RacetrackResource REST controller.
@@ -78,14 +75,11 @@ public class RacetrackResourceIntTest {
     private MockMvc restRacetrackMockMvc;
 
     private Racetrack racetrack;
-    
-    @Mock
-    private CDNService cdnService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-            RacetrackResource racetrackResource = new RacetrackResource(racetrackService, cdnService);
+            RacetrackResource racetrackResource = new RacetrackResource(racetrackService);
         this.restRacetrackMockMvc = MockMvcBuilders.standaloneSetup(racetrackResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
