@@ -2,6 +2,7 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,8 +32,8 @@ import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.security.AuthoritiesConstants;
-import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.RacetrackService;
+import com.icesoft.msdb.service.dto.RacetrackLayoutSearchResultDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
@@ -52,12 +54,9 @@ public class RacetrackResource {
     private static final String ENTITY_NAME_LAYOUT = "racetrackLayout";
 
     private final RacetrackService racetrackService;
-    
-    private final CDNService cdnService;
 
-    public RacetrackResource(RacetrackService racetrackService, CDNService cdnService) {
+    public RacetrackResource(RacetrackService racetrackService) {
         this.racetrackService = racetrackService;
-        this.cdnService = cdnService;
     }
 
     /**
@@ -77,12 +76,7 @@ public class RacetrackResource {
             throw new BadRequestAlertException("A new racetrack cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Racetrack result = racetrackService.save(racetrack);
-        if (result.getLogo() != null) {
-	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getLogo(), ENTITY_NAME);
-			result.setLogoUrl(cdnUrl);
-			
-			result = racetrackService.save(result);
-        }
+        
         return ResponseEntity.created(new URI("/api/racetracks/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -105,12 +99,7 @@ public class RacetrackResource {
         if (racetrack.getId() == null) {
             return createRacetrack(racetrack);
         }
-        if (racetrack.getLogo() != null) {
-	        String cdnUrl = cdnService.uploadImage(racetrack.getId().toString(), racetrack.getLogo(), ENTITY_NAME);
-	        racetrack.setLogoUrl(cdnUrl);
-        } else if (racetrack.getLogoUrl() == null) {
-        	cdnService.deleteImage(racetrack.getId().toString(), ENTITY_NAME);
-        }
+        
         Racetrack result = racetrackService.save(racetrack);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, racetrack.getId().toString()))
@@ -142,7 +131,7 @@ public class RacetrackResource {
     @Timed
     public ResponseEntity<Racetrack> getRacetrack(@PathVariable Long id) {
         log.debug("REST request to get Racetrack : {}", id);
-        Racetrack racetrack = racetrackService.findOne(id);
+        Racetrack racetrack = racetrackService.find(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(racetrack));
     }
     
@@ -172,7 +161,7 @@ public class RacetrackResource {
     public ResponseEntity<Void> deleteRacetrack(@PathVariable Long id) {
         log.debug("REST request to delete Racetrack : {}", id);
         racetrackService.delete(id);
-        cdnService.deleteImage(id.toString(), ENTITY_NAME);
+
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -200,7 +189,7 @@ public class RacetrackResource {
      * @return the ResponseEntity with status 201 (Created) and with body the new racetrackLayout, or with status 400 (Bad Request) if the racetrackLayout has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PostMapping("/racetracks/{id}/racetrack-layouts")
+    @PostMapping("/racetrack-layouts")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<RacetrackLayout> createRacetrackLayout(@Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
@@ -210,13 +199,6 @@ public class RacetrackResource {
         }
         RacetrackLayout result = racetrackService.save(racetrackLayout);
       
-        if (result.getLayoutImageUrl() != null) {
-	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), racetrackLayout.getLayoutImage(), ENTITY_NAME_LAYOUT);
-			result.setLayoutImageUrl(cdnUrl);
-			
-			result = racetrackService.save(result);
-        }
-        
         return ResponseEntity.created(new URI("/api/racetrack-layouts/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME_LAYOUT, result.getId().toString()))
             .body(result);
@@ -231,7 +213,7 @@ public class RacetrackResource {
      * or with status 500 (Internal Server Error) if the racetrackLayout couldnt be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PutMapping("/racetracks/{id}/racetrack-layouts")
+    @PutMapping("/racetrack-layouts")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<RacetrackLayout> updateRacetrackLayout(@Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
@@ -239,16 +221,40 @@ public class RacetrackResource {
         if (racetrackLayout.getId() == null) {
             return createRacetrackLayout(racetrackLayout);
         }
-        if (racetrackLayout.getLayoutImage() != null) {
-	        String cdnUrl = cdnService.uploadImage(racetrackLayout.getId().toString(), racetrackLayout.getLayoutImage(), ENTITY_NAME_LAYOUT);
-	        racetrackLayout.setLayoutImageUrl(cdnUrl);
-        } else if (racetrackLayout.getLayoutImageUrl() == null) {
-        	cdnService.deleteImage(racetrackLayout.getId().toString(), ENTITY_NAME_LAYOUT);
-        }
+        
         RacetrackLayout result = racetrackService.save(racetrackLayout);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME_LAYOUT, racetrackLayout.getId().toString()))
             .body(result);
+    }
+    
+    /**
+     * GET  /racetrack-layouts/:id : get the "id" racetrackLayout.
+     *
+     * @param id the id of the racetrackLayout to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the racetrackLayout, or with status 404 (Not Found)
+     */
+    @GetMapping("/racetrack-layouts/{id}")
+    @Timed
+    public ResponseEntity<RacetrackLayout> getRacetrackLayout(@PathVariable Long id) {
+        log.debug("REST request to get RacetrackLayout : {}", id);
+        RacetrackLayout racetrackLayout = racetrackService.findLayout(id);
+        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(racetrackLayout));
+    }
+    
+    /**
+     * DELETE  /racetrack-layouts/:id : delete the "id" racetrackLayout.
+     *
+     * @param id the id of the racetrackLayout to delete
+     * @return the ResponseEntity with status 200 (OK)
+     */
+    @DeleteMapping("/racetrack-layouts/{id}")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
+    public ResponseEntity<Void> deleteRacetrackLayout(@PathVariable Long id) {
+        log.debug("REST request to delete RacetrackLayout : {}", id);
+        racetrackService.deleteLayout(id);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
     /**
@@ -264,5 +270,16 @@ public class RacetrackResource {
         return racetrackLayouts;
     }
 
+    @GetMapping("/_typeahead/layouts")
+    @Timed
+    public List<RacetrackLayoutSearchResultDTO> searchTypeaheadLayouts(@RequestParam String query) {
+    	log.debug("REST request to search RacetracksLayouts for query {}", query);
+        Page<RacetrackLayout> page = racetrackService.searchLayouts(query, new PageRequest(0, 5));
+        List<RacetrackLayoutSearchResultDTO> result = new ArrayList<>();
+        for (RacetrackLayout layout : page.getContent()) {
+			result.add(new RacetrackLayoutSearchResultDTO(layout));
+		}
+        return result;
+    }
 
 }

@@ -37,7 +37,7 @@ public interface RacetrackService {
      *  @param id the id of the entity
      *  @return the entity
      */
-    Racetrack findOne(Long id);
+    Racetrack find(Long id);
     
     RacetrackLayout findLayout(Long id);
 
@@ -51,6 +51,8 @@ public interface RacetrackService {
     void deleteLayout(Long id);
     
     Page<Racetrack> search(String query, Pageable pageable);
+    
+    Page<RacetrackLayout> searchLayouts(String query, Pageable pageable);
     
     List<RacetrackLayout> findRacetrackLayouts(Long id);
 }

@@ -25,6 +25,7 @@ import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.RacetrackRepository;
 import com.icesoft.msdb.repository.search.RacetrackLayoutSearchRepository;
 import com.icesoft.msdb.repository.search.RacetrackSearchRepository;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.RacetrackService;
 
 /**
@@ -32,7 +33,7 @@ import com.icesoft.msdb.service.RacetrackService;
  */
 @Service
 @Transactional
-public class RacetrackServiceImpl implements RacetrackService{
+public class RacetrackServiceImpl implements RacetrackService {
 
     private final Logger log = LoggerFactory.getLogger(RacetrackServiceImpl.class);
     
@@ -41,16 +42,20 @@ public class RacetrackServiceImpl implements RacetrackService{
     
     private final RacetrackLayoutRepository racetrackLayoutRepository;
     private final RacetrackLayoutSearchRepository racetrackLayoutSearchRepo;
+    
+    private final CDNService cdnService;
 
 
     public RacetrackServiceImpl(RacetrackRepository racetrackRepository, 
     		RacetrackSearchRepository racetrackSearchRepo,
     		RacetrackLayoutRepository racetrackLayoutRepository,
-    		RacetrackLayoutSearchRepository racetrackLayoutSearchRepo) {
+    		RacetrackLayoutSearchRepository racetrackLayoutSearchRepo,
+    		CDNService cdnService) {
         this.racetrackRepository = racetrackRepository;
         this.racetrackSearchRepo = racetrackSearchRepo;
         this.racetrackLayoutRepository = racetrackLayoutRepository;
         this.racetrackLayoutSearchRepo = racetrackLayoutSearchRepo;
+        this.cdnService = cdnService;
     }
 
     /**
@@ -72,8 +77,17 @@ public class RacetrackServiceImpl implements RacetrackService{
 			}
 			TimeZone timeZone = TimeZoneApi.getTimeZone(context, results[0].geometry.location).await();
 			racetrack.setTimeZone(timeZone.getID());
+			
 			Racetrack result = racetrackRepository.save(racetrack);
 			racetrackSearchRepo.save(result);
+			if (result.getLogo() != null) {
+		        String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getLogo(), "racetrack");
+				result.setLogoUrl(cdnUrl);
+				
+				result = racetrackRepository.save(result);
+	        } else if (result.getLogoUrl() == null) {
+	        	cdnService.deleteImage(racetrack.getId().toString(), "racetrack");
+	        }
 			return result;
 		} catch (ApiException | InterruptedException | IOException e) {
 			log.error("Error accessing Google Geolocation API", e);
@@ -87,6 +101,14 @@ public class RacetrackServiceImpl implements RacetrackService{
         
         RacetrackLayout result = racetrackLayoutRepository.save(layout);
         racetrackLayoutSearchRepo.save(result);
+        if (result.getLayoutImage() != null) {
+	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), layout.getLayoutImage(), "racetrackLayout");
+			result.setLayoutImageUrl(cdnUrl);
+			
+			result = racetrackLayoutRepository.save(result);
+        } else if (layout.getLayoutImageUrl() == null) {
+        	cdnService.deleteImage(layout.getId().toString(), "racetrackLayout");
+        }
         return result;
     }
 
@@ -112,7 +134,7 @@ public class RacetrackServiceImpl implements RacetrackService{
      */
     @Override
     @Transactional(readOnly = true)
-    public Racetrack findOne(Long id) {
+    public Racetrack find(Long id) {
         log.debug("Request to get Racetrack : {}", id);
         Racetrack racetrack = racetrackRepository.findOne(id);
         return racetrack;
@@ -139,6 +161,7 @@ public class RacetrackServiceImpl implements RacetrackService{
         racetrackLayoutRepository.deleteInBatch(racetrack.getLayouts());
         racetrackRepository.delete(id);
         racetrackSearchRepo.delete(id);
+        cdnService.deleteImage(id.toString(), "racetrack");
     }
     
     @Override
@@ -152,6 +175,12 @@ public class RacetrackServiceImpl implements RacetrackService{
     public Page<Racetrack> search(String query, Pageable pageable) {
     	String searchValue = "*" + query + '*';
     	return racetrackSearchRepo.search(queryStringQuery(searchValue), pageable);
+    }
+    
+    @Override
+    public Page<RacetrackLayout> searchLayouts(String query, Pageable pageable) {
+    	String searchValue = "*" + query + '*';
+    	return racetrackLayoutSearchRepo.search(queryStringQuery(searchValue), pageable);
     }
     
     @Override

@@ -16,7 +16,7 @@ export class RacetrackLayoutService {
 
     create(racetrackLayout: RacetrackLayout): Observable<RacetrackLayout> {
         const copy = this.convert(racetrackLayout);
-        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
+        return this.http.post(`${this.resourceUrl}`, copy).map((res: Response) => {
             const jsonResponse = res.json();
             return this.convertItemFromServer(jsonResponse);
         });
@@ -24,7 +24,7 @@ export class RacetrackLayoutService {
 
     update(racetrackLayout: RacetrackLayout): Observable<RacetrackLayout> {
         const copy = this.convert(racetrackLayout);
-        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
+        return this.http.put(`${this.resourceUrl}`, copy).map((res: Response) => {
             const jsonResponse = res.json();
             return this.convertItemFromServer(jsonResponse);
         });
