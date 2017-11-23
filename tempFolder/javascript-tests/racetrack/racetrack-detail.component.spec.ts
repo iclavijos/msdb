@@ -8,6 +8,7 @@ import { MotorsportsDatabaseTestModule } from '../../../test.module';
 import { MockActivatedRoute } from '../../../helpers/mock-route.service';
 import { RacetrackDetailComponent } from '../../../../../../main/webapp/app/entities/racetrack/racetrack-detail.component';
 import { RacetrackService } from '../../../../../../main/webapp/app/entities/racetrack/racetrack.service';
+import { RacetrackLayoutService } from '../../../../../../main/webapp/app/entities/racetrack-layout/racetrack-layout.service';
 import { Racetrack } from '../../../../../../main/webapp/app/entities/racetrack/racetrack.model';
 
 describe('Component Tests', () => {
@@ -30,6 +31,7 @@ describe('Component Tests', () => {
                         useValue: new MockActivatedRoute({id: 123})
                     },
                     RacetrackService,
+                    RacetrackLayoutService,
                     JhiEventManager
                 ]
             }).overrideTemplate(RacetrackDetailComponent, '')
