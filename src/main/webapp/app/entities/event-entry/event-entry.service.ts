@@ -36,7 +36,7 @@ export class EventEntryService {
             return this.convertItemFromServer(jsonResponse);
         });
     }
-    
+
     findEntries(id: number): Observable<Response> {
         return this.http.get(`api/event-editions/${id}/entries`).map((res: Response) => {
             return res;

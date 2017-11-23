@@ -36,7 +36,7 @@ export class EventEditionService {
             return this.convertItemFromServer(jsonResponse);
         });
     }
-    
+
     copyEntries(idSource: number, idTarget: number): Observable<Response> {
         return this.http.post(`${this.resourceUrl}/${idTarget}/entries/${idSource}`, null);
     }
@@ -47,18 +47,18 @@ export class EventEditionService {
             return this.convertItemFromServer(jsonResponse);
         });
     }
-    
+
     findEventEditions(idEvent: number, req?: any): Observable<ResponseWrapper> {
-        let options = createRequestOption(req);
+        const options = createRequestOption(req);
         return this.http.get(`${this.eventResourceUrl}/${idEvent}/editions`, options).map((res: Response) => this.convertResponse(res));
     }
-    
+
     findSessions(id: number, timeZone: string): Observable<ResponseWrapper> {
         return this.http.get(`${this.resourceUrl}/${id}/sessions`).map((res: Response) => {
             return this.transformDateTime(res, timeZone);
         });
     }
-    
+
     findNonFPSessions(id: number, timeZone: string): Observable<ResponseWrapper> {
         return this.http.get(`${this.resourceUrl}/${id}/sessions/nonfp`).map((res: Response) => {
             if (timeZone) {
@@ -68,24 +68,24 @@ export class EventEditionService {
             }
         });
     }
-    
+
     findWinners(id: number): Observable<Response> {
         return this.http.get(`${this.resourceUrl}/${id}/winners`).map((res: Response) => {
             return res.json();
         })
     }
-    
+
     loadDriversPoints(id: number): Observable<ResponseWrapper> {
         return this.http.get(`${this.resourceUrl}/${id}/points`)
             .map((res: Response) => new ResponseWrapper(res.headers, res.json(), res.status));
     }
-    
+
     findCalendarEvents(startDate: Date, endDate: Date) {
         const dateFormat = 'yyyy-MM-dd';
-        let fromDate = this.datePipe.transform(startDate, dateFormat);
-        let toDate = this.datePipe.transform(endDate, dateFormat);
+        const fromDate = this.datePipe.transform(startDate, dateFormat);
+        const toDate = this.datePipe.transform(endDate, dateFormat);
         return this.http.get(`${this.resourceUrl}/calendar/${fromDate}/${toDate}`)
-            .map((res: Response) => {return res.json();});
+            .map((res: Response) => res.json());
     }
 
     query(req?: any): Observable<ResponseWrapper> {
@@ -104,7 +104,7 @@ export class EventEditionService {
         return this.http.get(this.resourceSearchUrl, options)
             .map((res: any) => this.convertResponse(res));
     }
-    
+
     typeAhead(query?: string): Observable<ResponseWrapper> {
         return this.http.get(`${this.resourceSearchUrl}?query=${query}`)
             .map((res: any) => this.convertResponse(res));
@@ -118,9 +118,9 @@ export class EventEditionService {
         }
         return new ResponseWrapper(res.headers, jsonResponse, res.status);
     }
-    
+
     private transformDateTime(res: any, timeZone: string): any {
-        let jsonResponse = res.json();
+        const jsonResponse = res.json();
         for (let i = 0; i < jsonResponse.length; i++) {
             jsonResponse[i].sessionStartTime = moment(jsonResponse[i].sessionStartTime * 1000).tz(timeZone);
         }

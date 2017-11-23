@@ -11,9 +11,9 @@ export class SeriesEditionService {
 
     private resourceUrl = SERVER_API_URL + 'api/series-editions';
     private resourceSearchUrl = SERVER_API_URL + 'api/_search/series-editions';
-    
+
     private seriesEdCache: SeriesEdition;
-    private cachedId: number = 0;
+    private cachedId = 0;
 
     constructor(private http: Http) { }
 
@@ -44,46 +44,46 @@ export class SeriesEditionService {
             return this.convertItemFromServer(jsonResponse);
         });
     }
-    
+
     findEvents(id: number): Observable<Response> {
         return this.http.get(`${this.resourceUrl}/${id}/events`).map((res: Response) => {
             return res;
         });
     }
-    
+
     findDriversStandings(id: number): Observable<Response> {
         return this.http.get(`${this.resourceUrl}/${id}/standings/drivers`).map((res: Response) => {
             return res;
         });
     }
-    
+
     findTeamsStandings(id: number): Observable<Response> {
         return this.http.get(`${this.resourceUrl}/${id}/standings/teams`).map((res: Response) => {
             return res;
         });
     }
-    
+
     findDriversChampions(id: number): Observable<Response> {
         return this.http.get(`${this.resourceUrl}/${id}/champions/driver`).map((res: Response) => {
             return res;
         });
     }
-    
+
     addEventToSeries(seriesId: number, eventId: number, racesData: any): Observable<Response> {
         return this.http.post(`${this.resourceUrl}/${seriesId}/events/${eventId}`, racesData).map((res: Response) => {
-           return res; 
+           return res;
         });
     }
-    
+
     removeEventFromSeries(seriesId: number, eventId: number): Observable<Response> {
         return this.http.delete(`${this.resourceUrl}/${seriesId}/events/${eventId}`).map((res: Response) => {
-           return res; 
+           return res;
         });
     }
-    
+
     updateStandings(seriesId: number): Observable<Response> {
         return this.http.post(`${this.resourceUrl}/${seriesId}/standings`, null).map((res: Response) => {
-            return res; 
+            return res;
          });
     }
 

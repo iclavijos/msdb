@@ -13,9 +13,9 @@ export class SeriesService {
     private resourceEditionsUrl = SERVER_API_URL + 'api/series/${id}/editions';
     private resourceSearchUrl = 'api/_search/series';
     private resourceSearchEditionsUrl = 'api/_search/series/${id}/editions';
-    
+
     private seriesCache: Series;
-    private cachedId: number = 0;
+    private cachedId = 0;
 
     constructor(private http: Http) { }
 
@@ -50,13 +50,13 @@ export class SeriesService {
     query(req?: any): Observable<ResponseWrapper> {
         const options = createRequestOption(req);
         return this.http.get(this.resourceUrl, options)
-        	.map((res: Response) => this.convertResponse(res));
+            .map((res: Response) => this.convertResponse(res));
     }
 
     queryEditions(id: number, req?: any): Observable<ResponseWrapper> {
         const options = createRequestOption(req);
         return this.http.get(this.resourceEditionsUrl, options)
-        	.map((res: Response) => this.convertResponse(res));
+            .map((res: Response) => this.convertResponse(res));
         ;
     }
 
@@ -96,7 +96,7 @@ export class SeriesService {
     }
 
     searchEditions(id: number, req?: any): Observable<Response> {
-        let options = createRequestOption(req);
+        const options = createRequestOption(req);
         return this.http.get(this.resourceSearchEditionsUrl, options);
     }
 }

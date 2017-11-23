@@ -62,7 +62,7 @@ export class RacetrackDetailComponent implements OnInit, OnDestroy {
         return this.dataUtils.openFile(contentType, field);
     }
     previousState() {
-        //this.router.navigateByUrl('racetrack');
+        // this.router.navigateByUrl('racetrack');
         this.eventManager.destroy(this.eventSubscriber);
         window.history.back();
     }
@@ -78,7 +78,7 @@ export class RacetrackDetailComponent implements OnInit, OnDestroy {
             (response) => this.load(this.racetrack.id)
         );
         this.eventSubscriber.add(this.eventManager.subscribe(
-            'racetrackLayoutListModification', 
+            'racetrackLayoutListModification',
             (response) => this.loadLayouts(this.racetrack.id)));
     }
 }

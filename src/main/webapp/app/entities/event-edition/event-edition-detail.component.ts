@@ -27,12 +27,12 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     durationTypes = DurationType;
     filterCategory: string;
     editions: any[];
-    
+
     keysSession: any[];
     keysDuration: any[];
-    
+
     scoringSessions: EventSession[];
-    
+
     constructor(
         private eventService: EventService,
         private eventEditionService: EventEditionService,
@@ -47,7 +47,7 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
             this.load(params['id']);
         });
         this.registerChangeInEventEditions();
-        
+
         this.keysDuration = Object.keys(this.durationTypes).filter(Number);
         this.keysSession = Object.keys(this.sessionTypes).filter(Number);
     }
@@ -60,20 +60,22 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
                     (res: Response) => this.editions = res.json());
         });
     }
-    
+
     loadSessions(id) {
-        this.eventEditionService.findSessions(id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe(eventSessions => {
+        this.eventEditionService.findSessions(id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe((eventSessions) => {
             this.eventEdition.sessions = eventSessions.json;
         });
     }
-    
+
     jumpToEdition(id) {
-        if (!id) return false;
+        if (!id) {
+            return false;
+        }
         this.router.navigate(['/event-edition', id]);
     }
-    
+
     previousState() {
-        //this.router.navigate(['/event/' + this.eventEdition.event.id]);
+        // this.router.navigate(['/event/' + this.eventEdition.event.id]);
         window.history.back();
     }
 
@@ -88,20 +90,20 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
             (response) => this.load(this.eventEdition.id)
         );
         this.eventSubscriber.add(this.eventManager.subscribe(
-            'eventSessionListModification', 
+            'eventSessionListModification',
             (response) => this.loadSessions(this.eventEdition.id)));
     }
-    
+
     convertToCurrentTZ() {
-        let currentTZ = moment.tz.guess();
-        for(let session of this.eventEdition.sessions) {
+        const currentTZ = moment.tz.guess();
+        for(const session of this.eventEdition.sessions) {
             session.sessionStartTime.tz(currentTZ);
         }
         this.convertedTime = true;
     }
-    
+
     convertToLocalTZ() {
-        for(let session of this.eventEdition.sessions) {
+        for(const session of this.eventEdition.sessions) {
             session.sessionStartTime.tz(this.eventEdition.trackLayout.racetrack.timeZone);
         }
         this.convertedTime = false;

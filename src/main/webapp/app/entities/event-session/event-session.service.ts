@@ -42,7 +42,7 @@ export class EventSessionService {
         copy.sessionStartTime.minutes(copy.sessionStartTime.toDate().getMinutes());
         copy.sessionStartTime.date(moment(eventSession.sessionStartTime).date());
         copy.sessionStartTime.month(moment(eventSession.sessionStartTime).month());
-        
+
         return this.http.put(this.resourceUrl, copy).map((res: Response) => {
             const jsonResponse = res.json();
             return this.convertItemFromServer(jsonResponse);
@@ -77,7 +77,7 @@ export class EventSessionService {
         const jsonResponse = res.json();
         for (let i = 0; i < jsonResponse.length; i++) {
             jsonResponse[i].sessionStartTime = moment(jsonResponse[i].sessionStartTime)
-                .tz(jsonResponse[i].eventEdition.trackLayout.racetrack.timeZone);;
+                .tz(jsonResponse[i].eventEdition.trackLayout.racetrack.timeZone);
         }
         return new ResponseWrapper(res.headers, jsonResponse, res.status);
     }

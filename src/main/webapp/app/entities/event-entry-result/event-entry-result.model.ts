@@ -19,5 +19,5 @@ export class EventEntryResult {
         public session?: EventSession,
         public sharedDriveWith?: EventEntry,
     ) { }
-    
+
 }

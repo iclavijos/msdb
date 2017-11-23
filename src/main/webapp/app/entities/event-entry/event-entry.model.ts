@@ -27,7 +27,7 @@ export class EventEntry {
         public carImage?: any,
         public carImageContentType?: any,
         public carImageUrl?: string
-    ) { 
+    ) {
     }
-    
+
 }

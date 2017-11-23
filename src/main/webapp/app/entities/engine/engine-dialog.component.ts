@@ -104,13 +104,13 @@ export class EngineDialogComponent implements OnInit {
           return of.call([]);
         }
         return map.call(this.engineService.typeahead(term),
-          response => response.json);
+          (response) => response.json);
       }
-    
+
     searchEngine = (text$: Observable<string>) => _do.call(
         switchMap.call(
           _do.call(distinctUntilChanged.call(debounceTime.call(text$, 300)), () => this.searching = true),
-          term => _catch.call(
+          (term) => _catch.call(
               _do.call(this.innerEngineSearch(term), () => this.searchFailed = false),
               () => {
                 this.searchFailed = true;
@@ -119,7 +119,7 @@ export class EngineDialogComponent implements OnInit {
             )
         ),
         () => this.searching = false);
-    
+
     inputEngineFormatter = (result: any) => result.manufacturer + ' ' + result.name;
 }
 

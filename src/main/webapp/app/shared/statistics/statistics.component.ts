@@ -20,8 +20,8 @@ export class StatisticsComponent implements OnInit {
     stats: any[];
     yearsStats: number[];
     year: number;
-    
-    constructor (
+
+    constructor(
         private router: Router,
         private driverService: DriverService,
         private teamService: TeamService,
@@ -30,12 +30,12 @@ export class StatisticsComponent implements OnInit {
         private http: Http
     ) {
     }
-    
+
     ngOnInit() {
         this.loadStats(this.id);
         this.loadYears(this.id);
     }
-    
+
     loadStats(id) {
         if (this.statsType === 'drivers') {
             this.driverService.getStats(id).subscribe((stats) => {
@@ -102,31 +102,46 @@ export class StatisticsComponent implements OnInit {
             });
         }
     }
-    
+
     finishingPosition(position: number): string {
-        if (position === 900) return 'DNF';
-        if (position === 901) return 'DNS';
-        if (position === 902) return 'DSQ';
-        if (position === 800) return 'NC';
+        if (position === 900) {
+            return 'DNF';
+        }
+        if (position === 901) {
+            return 'DNS';
+        }
+        if (position === 902) {
+            return 'DSQ';
+        }
+        if (position === 800) {
+            return 'NC';
+        }
         return '' + position;
     }
-    
+
     jumpToYear(year) {
         if (!year) {
             this.loadStats(this.id);
             this.year = null;
-        }
-        else {
+        } else {
             this.year = year;
             this.loadStatsYear(this.id, year);
         }
     }
-    
+
     getParticipations(category) {
-        this.router.navigate(['/homeEntries', { statsType: this.statsType, id: this.id, category: category, concept: 'participations' }]);
+        this.router.navigate(['/homeEntries', {
+            statsType: this.statsType,
+            id: this.id,
+            category: category,
+            concept: 'participations' }]);
     }
-    
+
     getWins(category) {
-        this.router.navigate(['/homeEntries', { statsType: this.statsType, id: this.id, category: category, concept: 'wins' }]);
+        this.router.navigate(['/homeEntries', {
+            statsType: this.statsType,
+            id: this.id,
+            category: category,
+            concept: 'wins' }]);
     }
 }

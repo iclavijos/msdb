@@ -81,7 +81,7 @@
         ],
         "variable-name": false,
         "whitespace": [
-            true,
+            false,
             "check-branch",
             "check-decl",
             "check-operator",
@@ -93,7 +93,7 @@
         "arrow-return-shorthand": [true],
         "import-spacing": true,
         "no-consecutive-blank-lines": [true],
-        "object-literal-shorthand": true,
+        "object-literal-shorthand": false,
         "space-before-function-paren": [true, "never"],
 
         "directive-selector": [true, "attribute", "jhi", "camelCase"],
@@ -107,7 +107,7 @@
         "use-pipe-transform-interface": false,
         "component-class-suffix": true,
         "directive-class-suffix": true,
-        "no-access-missing-member": true,
+        "no-access-missing-member": false,
         "templates-use-public": true,
         "invoke-injectable": true
     }

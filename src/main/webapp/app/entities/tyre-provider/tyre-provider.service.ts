@@ -43,7 +43,7 @@ export class TyreProviderService {
         return this.http.get(this.resourceUrl, options)
             .map((res: Response) => this.convertResponse(res));
     }
-    
+
     typeahead(req?: string): Observable<ResponseWrapper> {
         return this.http.get(`${this.typeaheadSearchUrl}?query=${req}`)
             .map((res: Response) => this.convertResponse(res));

@@ -53,22 +53,22 @@ export class EngineService {
         return this.http.get(this.resourceSearchUrl, options)
             .map((res: any) => this.convertResponse(res));
     }
-    
+
     typeahead(req?: string): Observable<ResponseWrapper> {
         return this.http.get(`${this.typeAheadSearchUrl}?query=${req}`)
             .map((res: any) => this.convertResponse(res));
     }
-    
+
     getStats(id: number): Observable<ResponseWrapper> {
         return this.http.get(`api/stats/engines/${id}`)
             .map((res: Response) => this.convertResponse(res));
     }
-    
+
     getStatsYear(id: number, year: number): Observable<ResponseWrapper> {
         return this.http.get(`api/stats/engines/${id}/${year}`)
             .map((res: Response) => this.convertResponse(res));
     }
-    
+
     getYears(id: number): Observable<ResponseWrapper> {
         return this.http.get(`api/stats/engines/${id}/years`)
             .map((res: Response) => this.convertResponse(res));

@@ -41,16 +41,16 @@ export class ChassisDialogComponent implements OnInit {
         private eventManager: JhiEventManager
     ) {
     }
-    
+
     private innersearch(term: string) {
         if (term === '') {
           return of.call([]);
         }
 
         return map.call(this.chassisService.searchChassis(term),
-          response => response.json);
+          (response) => response.json);
       }
-    
+
     search = (text$: Observable<string>) =>
     _do.call(
       switchMap.call(
@@ -58,7 +58,7 @@ export class ChassisDialogComponent implements OnInit {
           distinctUntilChanged.call(
             debounceTime.call(text$, 300)),
           () => this.searching = true),
-        term =>
+        (term) =>
           _catch.call(
             _do.call(this.innersearch(term), () => this.searchFailed = false),
             () => {
@@ -68,7 +68,7 @@ export class ChassisDialogComponent implements OnInit {
           )
       ),
       () => this.searching = false);
-    
+
     inputFormatter = (result: any) => result.manufacturer + ' ' + result.name;
 
     ngOnInit() {
@@ -92,7 +92,7 @@ export class ChassisDialogComponent implements OnInit {
                 this.chassisService.create(this.chassis));
         }
     }
-    
+
     setFileData(event, entity, field, isImage) {
         this.dataUtils.setFileData(event, entity, field, isImage);
     }

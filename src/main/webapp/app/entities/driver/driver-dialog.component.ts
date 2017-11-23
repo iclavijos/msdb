@@ -40,20 +40,20 @@ export class DriverDialogComponent implements OnInit {
         private dataUtils: JhiDataUtils,
         private jhiAlertService: JhiAlertService,
         private driverService: DriverService,
-		private elementRef: ElementRef,
+        private elementRef: ElementRef,
         private eventManager: JhiEventManager
     ) {
     }
-    
+
     private innersearch(term: string) {
         if (term === '') {
           return of.call([]);
         }
 
         return map.call(this.driverService.searchCountries(term),
-          response => response.json);
+          (response) => response.json);
       }
-    
+
     search = (text$: Observable<string>) =>
     _do.call(
       switchMap.call(
@@ -61,7 +61,7 @@ export class DriverDialogComponent implements OnInit {
           distinctUntilChanged.call(
             debounceTime.call(text$, 300)),
           () => this.searching = true),
-        term =>
+        (term) =>
           _catch.call(
             _do.call(this.innersearch(term), () => this.searchFailed = false),
             () => {
@@ -71,7 +71,7 @@ export class DriverDialogComponent implements OnInit {
           )
       ),
       () => this.searching = false);
-    
+
     inputFormatter = (result: any) => result.countryName;
 
     ngOnInit() {

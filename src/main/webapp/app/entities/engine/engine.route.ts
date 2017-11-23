@@ -15,8 +15,8 @@ export class EngineResolvePagingParams implements Resolve<any> {
   constructor(private paginationUtil: JhiPaginationUtil) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-      let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
+      const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
+      const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
       return {
           page: this.paginationUtil.parsePage(page),
           predicate: this.paginationUtil.parsePredicate(sort),

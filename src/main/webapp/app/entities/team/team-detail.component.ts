@@ -45,7 +45,7 @@ export class TeamDetailComponent implements OnInit, OnDestroy {
         return this.dataUtils.openFile(contentType, field);
     }
     previousState() {
-        //this.router.navigate(['/team']);
+        // this.router.navigate(['/team']);
         window.history.back();
     }
 

@@ -38,7 +38,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
             this.compositeName = this.driver.surname + ', ' + this.driver.name;
         });
     }
-    
+
     byteSize(field) {
         return this.dataUtils.byteSize(field);
     }

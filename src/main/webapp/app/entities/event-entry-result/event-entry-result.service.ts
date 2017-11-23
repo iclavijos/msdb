@@ -46,7 +46,7 @@ export class EventEntryResultService {
     delete(id: number): Observable<Response> {
         return this.http.delete(`api/event-editions/event-sessions/results/${id}`);
     }
-    
+
     processSessionResults(id: number): Observable<Response> {
         return this.http.put(`api/event-editions/event-sessions/${id}/process-results`, null);
     }
@@ -59,23 +59,23 @@ export class EventEntryResultService {
         }
         return new ResponseWrapper(res.headers, result, res.status);
     }
-    
+
     private convertTime(timeMillis: number, handleHours?: boolean) {
-        let millis = timeMillis % 10000;
+        const millis = timeMillis % 10000;
         let seconds = Math.floor(timeMillis / 10000);
         let minutes = Math.floor(seconds / 60);
         seconds = seconds % 60;
-        
+
         let result = '';
-        
-        let hours = Math.floor(minutes / 60);
-        if (handleHours) {            
+
+        const hours = Math.floor(minutes / 60);
+        if (handleHours) {
             if (hours > 0) {
                 minutes = minutes % 60;
                 result = String(hours) + 'h';
             }
         }
-        
+
         if (minutes > 0) {
             if (hours > 0 && minutes < 10) {
                 result += '0' + String(minutes) + '\'';
@@ -83,7 +83,7 @@ export class EventEntryResultService {
                 result += String(minutes) + '\'';
             }
         }
-        
+
         if (seconds < 10) {
             result += '0' + String(seconds) + '".';
         } else {
@@ -91,7 +91,7 @@ export class EventEntryResultService {
         }
         if (millis < 1000) {
             result += '0';
-        } 
+        }
         result += String(millis);
         return result;
     }

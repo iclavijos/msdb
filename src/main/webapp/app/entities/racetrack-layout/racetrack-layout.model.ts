@@ -1,4 +1,5 @@
 import { Racetrack } from '../racetrack';
+
 export class RacetrackLayout {
     constructor(
         public id?: number,
@@ -10,7 +11,7 @@ export class RacetrackLayout {
         public layoutImageUrl?: string,
         public active?: boolean,
         public racetrack?: Racetrack,
-    ) { 
-    	this.active = true;
+    ) {
+        this.active = true;
     }
 }
