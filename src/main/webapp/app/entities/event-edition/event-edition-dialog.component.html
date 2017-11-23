@@ -114,7 +114,7 @@
 			<div class="col-lg-8 col-md-8">
 				<div class="form-group">
 					<ng-template #layoutTemplate let-r="result">
-					  <img src="{{r.layoutImageUrl}}" style="max-height: 100px; max-width: 200px"/>&nbsp;{{r.racetrack.name}}, {{r.name}} 
+					  <img src="{{r.racetrackLayout.layoutImageUrl}}" style="max-height: 100px; max-width: 200px"/>&nbsp;{{r.fullName}} 
 					</ng-template>
 		            <label jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout" for="field_trackLayout">Track Layout</label>
 		            <input id="field_trackLayout" type="text" name="field_trackLayout" class="form-control" [inputFormatter]="inputFormatterLayout"

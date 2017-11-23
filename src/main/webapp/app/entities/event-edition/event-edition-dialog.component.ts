@@ -87,7 +87,7 @@ export class EventEditionDialogComponent implements OnInit {
           distinctUntilChanged.call(
             debounceTime.call(text$, 300)),
           () => this.searching = true),
-        term =>
+        (term) =>
           _catch.call(
             _do.call(this.innersearch(term, true), () => this.searchFailed = false),
             () => {
