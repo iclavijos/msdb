@@ -3,7 +3,8 @@ import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Rx';
-import { JhiDateUtils, JhiDataUtils, JhiEventManager } from 'ng-jhipster';
+import { JhiDateUtils, JhiDataUtils, JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
+// import { JhiConfigService } from 'ng-jhipster/src/config.service';
 import { MotorsportsDatabaseTestModule } from '../../../test.module';
 import { MockActivatedRoute } from '../../../helpers/mock-route.service';
 import { SeriesDetailComponent } from '../../../../../../main/webapp/app/entities/series/series-detail.component';
@@ -24,6 +25,9 @@ describe('Component Tests', () => {
                 providers: [
                     JhiDateUtils,
                     JhiDataUtils,
+                    JhiParseLinks,
+                    JhiAlertService,
+                    // JhiConfigService,
                     DatePipe,
                     {
                         provide: ActivatedRoute,

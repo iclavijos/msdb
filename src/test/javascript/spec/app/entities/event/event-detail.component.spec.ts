@@ -1,5 +1,6 @@
 /* tslint:disable max-line-length */
 import { ComponentFixture, TestBed, async } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Rx';
@@ -19,7 +20,7 @@ describe('Component Tests', () => {
 
         beforeEach(async(() => {
             TestBed.configureTestingModule({
-                imports: [MotorsportsDatabaseTestModule],
+                imports: [MotorsportsDatabaseTestModule, RouterTestingModule],
                 declarations: [EventDetailComponent],
                 providers: [
                     JhiDateUtils,
