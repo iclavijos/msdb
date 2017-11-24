@@ -27,6 +27,7 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     durationTypes = DurationType;
     filterCategory: string;
     editions: any[];
+    showPoints = false;
 
     keysSession: any[];
     keysDuration: any[];
@@ -64,6 +65,8 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     loadSessions(id) {
         this.eventEditionService.findSessions(id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe((eventSessions) => {
             this.eventEdition.sessions = eventSessions.json;
+            this.eventEdition.sessions.forEach((item, index) =>
+               this.showPoints = this.showPoints || item.pointsSystem !== null);
         });
     }
 
