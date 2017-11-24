@@ -2,9 +2,9 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -275,11 +275,9 @@ public class RacetrackResource {
     public List<RacetrackLayoutSearchResultDTO> searchTypeaheadLayouts(@RequestParam String query) {
     	log.debug("REST request to search RacetracksLayouts for query {}", query);
         Page<RacetrackLayout> page = racetrackService.searchLayouts(query, new PageRequest(0, 5));
-        List<RacetrackLayoutSearchResultDTO> result = new ArrayList<>();
-        for (RacetrackLayout layout : page.getContent()) {
-			result.add(new RacetrackLayoutSearchResultDTO(layout));
-		}
-        return result;
+        return page.getContent().parallelStream()
+        		.map(l -> new RacetrackLayoutSearchResultDTO(l))
+        		.collect(Collectors.toList());
     }
 
 }
