@@ -12,8 +12,8 @@ public class RacetrackLayoutSearchResultDTO {
 		this.layout = layout;
 	}
 	
-	public RacetrackLayout getRacetrackLayout() {
-		return layout;
+	public Long getId() {
+		return layout.getId();
 	}
 	
 	public String getLayoutImg() {

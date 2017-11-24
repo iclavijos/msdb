@@ -51,6 +51,7 @@ import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
+import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
@@ -89,6 +90,7 @@ public class EventEditionResource {
     private final EventEntryRepository eventEntryRepository;
     private final EventEntrySearchRepository eventEntrySearchRepo;
     private final EventEntryResultRepository eventResultRepository;
+    private final RacetrackLayoutRepository racetrackLayoutRepo;
     private final ResultsService resultsService;
     private final StatisticsService statsService;
     private final CDNService cdnService;
@@ -96,13 +98,15 @@ public class EventEditionResource {
     
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventEditionSearchRepository eventEditionSearchRepo,
     		EventEntrySearchRepository eventEntrySearchRepo, EventSessionRepository eventSessionRepository, 
-    		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, ResultsService resultsService, 
+    		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, 
+    		RacetrackLayoutRepository racetrackLayoutRepo, ResultsService resultsService, 
     		CDNService cdnService, JDBCRepositoryImpl jdbcRepository, StatisticsService statsService) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventEditionSearchRepo = eventEditionSearchRepo;
         this.eventSessionRepository = eventSessionRepository;
         this.eventEntryRepository = eventEntryRepository;
         this.eventEntrySearchRepo = eventEntrySearchRepo;
+        this.racetrackLayoutRepo = racetrackLayoutRepo;
         this.eventResultRepository = resultRepository;
         this.resultsService = resultsService;
         this.cdnService = cdnService;
@@ -123,6 +127,7 @@ public class EventEditionResource {
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<EventEdition> createEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to save EventEdition : {}", eventEdition);
+        eventEdition.setTrackLayout(racetrackLayoutRepo.findOne(eventEdition.getTrackLayout().getId()));
         if (eventEdition.getId() != null) {
             throw new BadRequestAlertException("A new eventEdition cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -148,6 +153,7 @@ public class EventEditionResource {
     @Transactional
     public ResponseEntity<EventEdition> updateEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to update EventEdition : {}", eventEdition);
+        eventEdition.setTrackLayout(racetrackLayoutRepo.findOne(eventEdition.getTrackLayout().getId()));
         if (eventEdition.getId() == null) {
             return createEventEdition(eventEdition);
         }

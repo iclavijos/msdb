@@ -37,6 +37,7 @@ import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
+import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
@@ -81,6 +82,9 @@ public class EventEditionResourceIntTest {
     private EventEntrySearchRepository eventEntrySearchRepository;
     
     @Autowired
+    private RacetrackLayoutRepository racetrackLayoutRepository;
+    
+    @Autowired
     private EventEntryResultRepository resultsRepository;
     
     @Autowired
@@ -116,7 +120,7 @@ public class EventEditionResourceIntTest {
         MockitoAnnotations.initMocks(this);
         final EventEditionResource eventEditionResource = new EventEditionResource(eventEditionRepository, eventEditionSearchRepository,
         		eventEntrySearchRepository, eventSessionRepository, 
-        		eventEntryRepository, resultsRepository, resultsService, 
+        		eventEntryRepository, resultsRepository, racetrackLayoutRepository, resultsService, 
         		cdnService, jdbcRepo, statsService);
         this.restEventEditionMockMvc = MockMvcBuilders.standaloneSetup(eventEditionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)

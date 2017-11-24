@@ -116,7 +116,7 @@ export class EventEditionDialogComponent implements OnInit {
       ),
       () => this.searching = false);
     
-    inputFormatterLayout = (result: any) => result.racetrack.name + ' ' + result.name;
+    inputFormatterLayout = (result: any) => result.fullName;
     inputFormatterEvent = (result : any) => result.name;
 
     clear() {
@@ -125,6 +125,9 @@ export class EventEditionDialogComponent implements OnInit {
 
     save() {
         this.isSaving = true;
+        const rl = new RacetrackLayout();
+        rl.id = this.eventEdition.trackLayout.id;
+        this.eventEdition.trackLayout = rl;
         if (this.eventEdition.id !== undefined) {
             this.subscribeToSaveResponse(
                 this.eventEditionService.update(this.eventEdition));
