@@ -79,7 +79,6 @@ public class RacetrackServiceImpl implements RacetrackService {
 			racetrack.setTimeZone(timeZone.getID());
 			
 			Racetrack result = racetrackRepository.save(racetrack);
-			racetrackSearchRepo.save(result);
 			if (result.getLogo() != null) {
 		        String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getLogo(), "racetrack");
 				result.setLogoUrl(cdnUrl);
@@ -88,6 +87,7 @@ public class RacetrackServiceImpl implements RacetrackService {
 	        } else if (result.getLogoUrl() == null) {
 	        	cdnService.deleteImage(racetrack.getId().toString(), "racetrack");
 	        }
+			racetrackSearchRepo.save(result);
 			return result;
 		} catch (ApiException | InterruptedException | IOException e) {
 			log.error("Error accessing Google Geolocation API", e);
@@ -100,7 +100,6 @@ public class RacetrackServiceImpl implements RacetrackService {
         log.debug("Request to save RacetrackLayout : {}", layout);
         
         RacetrackLayout result = racetrackLayoutRepository.save(layout);
-        racetrackLayoutSearchRepo.save(result);
         if (result.getLayoutImage() != null) {
 	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), layout.getLayoutImage(), "racetrackLayout");
 			result.setLayoutImageUrl(cdnUrl);
@@ -109,6 +108,7 @@ public class RacetrackServiceImpl implements RacetrackService {
         } else if (layout.getLayoutImageUrl() == null) {
         	cdnService.deleteImage(layout.getId().toString(), "racetrackLayout");
         }
+        racetrackLayoutSearchRepo.save(result);
         return result;
     }
 
