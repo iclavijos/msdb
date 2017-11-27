@@ -156,7 +156,8 @@
 			    "laps": "Vueltas",
 			    "practice": "Entrenamientos libres",
 			    "qualifying": "Clasificación",
-			    "race": "Carrera"
+			    "race": "Carrera",
+			    "qualifing_race": "Carrera de clasificación"
 			}
 		}
     }

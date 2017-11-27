@@ -157,7 +157,8 @@
 			    "laps": "Laps",
 			    "practice": "Free practice",
 			    "qualifying": "Qualifying",
-			    "race": "Race"
+			    "race": "Race",
+			    "qualifing_race": "Qualifying race"
 			}
         }
     }

@@ -156,7 +156,8 @@
 			    "laps": "Voltes",
 			    "practice": "Entrenaments lliures",
 			    "qualifying": "Classificació",
-			    "race": "Cursa"
+			    "race": "Cursa",
+			    "qualifing_race": "Cursa de classificació"
 			}
         }
     }

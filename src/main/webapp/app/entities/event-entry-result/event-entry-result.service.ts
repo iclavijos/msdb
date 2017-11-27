@@ -25,7 +25,7 @@ export class EventEntryResultService {
 
     update(eventEntryResult: EventEntryResult): Observable<EventEntryResult> {
         const copy = this.convert(eventEntryResult);
-        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
+        return this.http.put(`api/event-editions/event-sessions/results`, copy).map((res: Response) => {
             const jsonResponse = res.json();
             return this.convertItemFromServer(jsonResponse);
         });
