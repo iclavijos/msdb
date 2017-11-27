@@ -6,7 +6,8 @@ import java.util.Map;
 public enum SessionType {
 	PRACTICE(1),
 	QUALIFYING(2),
-	RACE(3);
+	RACE(3),
+	QUALIFYING_RACE(4);
 	
 	private int value;
     private static Map<Integer, SessionType> map = new HashMap<>();
