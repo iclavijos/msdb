@@ -19,12 +19,10 @@ import com.icesoft.msdb.domain.DriverEventPoints;
 import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.PointsSystem;
-import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.TeamEventPoints;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
-import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.TeamEventPointsRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
@@ -39,7 +37,6 @@ public class ResultsService {
 	@Autowired private EventEntryResultRepository resultsRepo;
 	@Autowired private DriverEventPointsRepository driverPointsRepo;
 	@Autowired private TeamEventPointsRepository teamPointsRepo;
-	@Autowired private SeriesEditionRepository seriesEditionRepo;
 	@Autowired private JDBCRepositoryImpl viewsRepo;
 	
 	@Autowired private CacheHandler cacheHandler;
@@ -50,21 +47,20 @@ public class ResultsService {
 		List<DriverEventPoints> drivers = new ArrayList<>();
 		Map<Long, TeamEventPoints> teams = new HashMap<>();
 		PointsSystem ps = session.getPointsSystem();
-		
-		if (ps == null) {
-			log.debug("Skipping session {}-{} as it does not award points", session.getEventEdition().getLongEventName(), session.getName());
-		} else {
-			driverPointsRepo.deleteSessionPoints(sessionId);
-			teamPointsRepo.deleteSessionPoints(sessionId);
+		int[] points = ps != null ? ps.disclosePoints() : null;
 
-			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(
-					session.getId(), session.getEventEdition().getId());
-			int[] points = ps.disclosePoints();
-			for(int i = 0; i < results.size(); i++) {
-				EventEntryResult result = results.get(i);
-				Boolean sharedDrive = result.getSharedDriveWith() != null;
-				
-				float calculatedPoints = 0f;
+		driverPointsRepo.deleteSessionPoints(sessionId);
+		teamPointsRepo.deleteSessionPoints(sessionId);
+
+		List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(
+				session.getId(), session.getEventEdition().getId());
+		
+		for(int i = 0; i < results.size(); i++) {
+			EventEntryResult result = results.get(i);
+			Boolean sharedDrive = result.getSharedDriveWith() != null;
+			
+			float calculatedPoints = 0f;
+			if (points != null) {
 				if (result.getFinalPosition() < 800 && result.getFinalPosition() <= points.length) {
 					calculatedPoints = (float)points[result.getFinalPosition() - 1] * session.getPsMultiplier();
 					if (sharedDrive) {
@@ -118,87 +114,86 @@ public class ResultsService {
 				if (session.getEventEdition().getSeriesEdition().getManufacturersStandings()) {
 					//TODO
 				}
-			}
-			
-			log.debug("Race points calculated... proceeding with extra points");
-			if (ps.getPointsFastLap() != 0) {
-				List<EventEntryResult> fastestLapOrder = results.parallelStream().sorted(
-						(r1, r2)->Long.compare(
-									r1.getBestLapTime() == null ? Long.MAX_VALUE : r1.getBestLapTime(), 
-									r2.getBestLapTime() == null ? Long.MAX_VALUE : r2.getBestLapTime()))
-						.collect(Collectors.toList());
-				
-				EventEntryResult fastestEntry;
-				Stream<EventEntryResult> filtered = fastestLapOrder.parallelStream();
-				if (ps.getMinimumFinishingPosition() != 0) {
-					filtered = filtered.filter(eer -> eer.getFinalPosition() <= ps.getMinimumFinishingPosition());
-				}
-				if (!ps.isPitlaneStartAllowed()) {
-					filtered = filtered.filter(eer -> !eer.isPitlaneStart());
-				}
-				if (ps.getPctCompleted() != 0) {
-					//We assume that duration will always be laps if minimum percentage completion needs to be applied
-					filtered = filtered.filter(eer -> (eer.getLapsCompleted().floatValue() / eer.getSession().getDuration().floatValue()) * 100f >= ps.getPctCompleted());
-				}
-				fastestLapOrder = filtered.collect(Collectors.toList());
-				if (!fastestLapOrder.isEmpty()) {
-					fastestEntry = fastestLapOrder.get(0);
-					if (fastestEntry.getBestLapTime() != null) {
-						for(Driver d : fastestEntry.getEntry().getDrivers()) {
-							DriverEventPoints dep = new DriverEventPoints(d, session, "motorsportsDatabaseApp.pointsSystem.pointsFastLap");
-							dep.addPoints(ps.getPointsFastLap().floatValue());
-							log.debug(String.format("Driver %s: %s points for fastest lap", d.getFullName(), ps.getPointsFastLap()));
-							drivers.add(dep);
+		
+				log.debug("Race points calculated... proceeding with extra points");
+				if (ps.getPointsFastLap() != 0) {
+					List<EventEntryResult> fastestLapOrder = results.parallelStream().sorted(
+							(r1, r2)->Long.compare(
+										r1.getBestLapTime() == null ? Long.MAX_VALUE : r1.getBestLapTime(), 
+										r2.getBestLapTime() == null ? Long.MAX_VALUE : r2.getBestLapTime()))
+							.collect(Collectors.toList());
+					
+					EventEntryResult fastestEntry;
+					Stream<EventEntryResult> filtered = fastestLapOrder.parallelStream();
+					if (ps.getMinimumFinishingPosition() != 0) {
+						filtered = filtered.filter(eer -> eer.getFinalPosition() <= ps.getMinimumFinishingPosition());
+					}
+					if (!ps.isPitlaneStartAllowed()) {
+						filtered = filtered.filter(eer -> !eer.isPitlaneStart());
+					}
+					if (ps.getPctCompleted() != 0) {
+						//We assume that duration will always be laps if minimum percentage completion needs to be applied
+						filtered = filtered.filter(eer -> (eer.getLapsCompleted().floatValue() / eer.getSession().getDuration().floatValue()) * 100f >= ps.getPctCompleted());
+					}
+					fastestLapOrder = filtered.collect(Collectors.toList());
+					if (!fastestLapOrder.isEmpty()) {
+						fastestEntry = fastestLapOrder.get(0);
+						if (fastestEntry.getBestLapTime() != null) {
+							for(Driver d : fastestEntry.getEntry().getDrivers()) {
+								DriverEventPoints dep = new DriverEventPoints(d, session, "motorsportsDatabaseApp.pointsSystem.pointsFastLap");
+								dep.addPoints(ps.getPointsFastLap().floatValue());
+								log.debug(String.format("Driver %s: %s points for fastest lap", d.getFullName(), ps.getPointsFastLap()));
+								drivers.add(dep);
+							}
+						} else {
+							log.warn("No fastest lap recorded... skipping");
 						}
 					} else {
-						log.warn("No fastest lap recorded... skipping");
+						log.warn("No recorded fast lap complied with all the requirements");
 					}
-				} else {
-					log.warn("No recorded fast lap complied with all the requirements");
 				}
-			}
-			if (ps.getPointsLeadLap() != 0 || ps.getPointsMostLeadLaps() != 0) {
-				List<EventEntryResult> ledLaps = results.parallelStream()
-						.filter(r -> r.getLapsLed() > 0)
-						.sorted((r1, r2) -> Integer.compare(r2.getLapsLed(), r1.getLapsLed())).collect(Collectors.toList());
-				
-				Comparator<EventEntryResult> c = (r1, r2) -> {
-					if (r1.getLapsLed().equals(r2.getLapsLed())) {
-						return r1.getFinalPosition().compareTo(r2.getFinalPosition());
-					} else {
-						return r1.getLapsLed().compareTo(r2.getLapsLed()) * -1;
-					}
-				};
-				
-				ledLaps.sort(c);
-				
-				int maxLedLaps = 0;
-				for(EventEntryResult r : ledLaps) {
-					boolean addPointsMostLeadLaps = false;
-					if (r.getLapsLed() > maxLedLaps && maxLedLaps == 0) { //|| r.getLapsLed() == maxLedLaps) {
-						maxLedLaps = r.getLapsLed();
-						addPointsMostLeadLaps = true;
-					}
-					for(Driver d : r.getEntry().getDrivers()) {
-						DriverEventPoints dep = new DriverEventPoints(d, session, "motorsportsDatabaseApp.pointsSystem.pointsLeadLap");
-						dep.addPoints(ps.getPointsLeadLap().floatValue());
-						log.debug(String.format("Driver %s: %s points for leading %s laps", d.getFullName(), ps.getPointsLeadLap(), r.getLapsLed()));
-						drivers.add(dep);
-						if (addPointsMostLeadLaps) {
-							dep = new DriverEventPoints(d, session, "motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps");
-							dep.addPoints(ps.getPointsMostLeadLaps().floatValue());
-							log.debug(String.format("Driver %s: %s points for most led laps", d.getFullName(), ps.getPointsMostLeadLaps()));
+				if (ps.getPointsLeadLap() != 0 || ps.getPointsMostLeadLaps() != 0) {
+					List<EventEntryResult> ledLaps = results.parallelStream()
+							.filter(r -> r.getLapsLed() > 0)
+							.sorted((r1, r2) -> Integer.compare(r2.getLapsLed(), r1.getLapsLed())).collect(Collectors.toList());
+					
+					Comparator<EventEntryResult> c = (r1, r2) -> {
+						if (r1.getLapsLed().equals(r2.getLapsLed())) {
+							return r1.getFinalPosition().compareTo(r2.getFinalPosition());
+						} else {
+							return r1.getLapsLed().compareTo(r2.getLapsLed()) * -1;
+						}
+					};
+					
+					ledLaps.sort(c);
+					
+					int maxLedLaps = 0;
+					for(EventEntryResult r : ledLaps) {
+						boolean addPointsMostLeadLaps = false;
+						if (r.getLapsLed() > maxLedLaps && maxLedLaps == 0) { //|| r.getLapsLed() == maxLedLaps) {
+							maxLedLaps = r.getLapsLed();
+							addPointsMostLeadLaps = true;
+						}
+						for(Driver d : r.getEntry().getDrivers()) {
+							DriverEventPoints dep = new DriverEventPoints(d, session, "motorsportsDatabaseApp.pointsSystem.pointsLeadLap");
+							dep.addPoints(ps.getPointsLeadLap().floatValue());
+							log.debug(String.format("Driver %s: %s points for leading %s laps", d.getFullName(), ps.getPointsLeadLap(), r.getLapsLed()));
 							drivers.add(dep);
+							if (addPointsMostLeadLaps) {
+								dep = new DriverEventPoints(d, session, "motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps");
+								dep.addPoints(ps.getPointsMostLeadLaps().floatValue());
+								log.debug(String.format("Driver %s: %s points for most led laps", d.getFullName(), ps.getPointsMostLeadLaps()));
+								drivers.add(dep);
+							}
 						}
 					}
 				}
+				log.debug("Persisting points...");
+				drivers.stream().forEach(entry -> driverPointsRepo.save(entry));
+				teams.entrySet().stream().forEach(entry -> teamPointsRepo.save(entry.getValue()));
+				
+				cacheHandler.resetDriversStandingsCache(session.getSeriesId());
 			}
-			log.debug("Persisting points...");
-			drivers.stream().forEach(entry -> driverPointsRepo.save(entry));
-			teams.entrySet().stream().forEach(entry -> teamPointsRepo.save(entry.getValue()));
-			
-			cacheHandler.resetDriversStandingsCache(session.getSeriesId());
-			
 		}
 		log.info("Processed result for {}-{}.", session.getEventEdition().getLongEventName(), session.getName());
 	}
