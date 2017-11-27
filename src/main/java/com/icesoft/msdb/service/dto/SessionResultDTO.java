@@ -1,7 +1,11 @@
 package com.icesoft.msdb.service.dto;
 
+import com.icesoft.msdb.domain.EventEditionEntry;
+import com.icesoft.msdb.domain.EventEntryResult;
+
 public class SessionResultDTO {
 
+	private Long id;
 	private String raceNumber;
 	private Integer startingPosition;
 	private String finalPosition;
@@ -14,13 +18,51 @@ public class SessionResultDTO {
     private String difference;
     private Boolean pitlaneStart;
     private String sharedWithNumber;
+    private EventEditionEntry entry;
     
+    public SessionResultDTO() {
+    	super();
+    }
+    
+    public SessionResultDTO(EventEntryResult result) {
+    	this.id = result.getId();
+    	this.raceNumber = result.getEntry().getRaceNumber();
+    	this.startingPosition = result.getStartingPosition();
+    	this.finalPosition = result.getFinalPosition().toString();
+    	this.totalTime = result.getTotalTime() != null ? result.getTotalTime().toString() : "";
+    	this.bestLapTime = result.getBestLapTime() != null ? result.getBestLapTime().toString() : "";
+    	this.lapsCompleted = result.getLapsCompleted();
+    	this.lapsLed = result.getLapsLed();
+    	this.retired = result.isRetired();
+    	this.cause = result.getCause();
+    	this.difference = result.getDifference() != null ? result.getDifference().toString() : "";
+    	this.pitlaneStart = result.isPitlaneStart();
+    	this.sharedWithNumber = result.getSharedDriveWith() != null ? result.getSharedDriveWith().getRaceNumber() : "";
+    	this.entry = result.getEntry();
+    	this.entry.setEventEdition(null);
+    	this.entry.engine(null).chassis(null).tyres(null).fuel(null).team(null);
+    }
+    
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public String getRaceNumber() {
 		return raceNumber;
 	}
 	public void setRaceNumber(String raceNumber) {
 		this.raceNumber = raceNumber;
 	}
+	public EventEditionEntry getEntry() {
+		return entry;
+	}
+
+	public void setEntry(EventEditionEntry entry) {
+		this.entry = entry;
+	}
+
 	public Integer getStartingPosition() {
 		return startingPosition;
 	}

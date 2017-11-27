@@ -61,6 +61,7 @@ import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.dto.SessionCalendarDTO;
+import com.icesoft.msdb.service.dto.SessionResultDTO;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
@@ -494,23 +495,24 @@ public class EventEditionResource {
     
     @GetMapping("/event-editions/{id}/event-sessions/{idSession}/results")
     @Timed
-    public List<EventEntryResult> getEventSessionResults(@PathVariable Long id, @PathVariable Long idSession) {
+    public List<SessionResultDTO> getEventSessionResults(@PathVariable Long id, @PathVariable Long idSession) {
     	log.debug("REST request to get EventEdition {} results for session {}", id, idSession);
     	List<EventEntryResult> result = eventResultRepository.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(idSession, id);
-    	result.parallelStream().forEach(r -> {
-    		r.getEntry().engine(null).chassis(null).tyres(null).fuel(null).team(null);
-    		if (r.getEntry().getEventEdition() != null && r.getEntry().getEventEdition().getSeriesEdition() != null) {
-	    		SeriesEdition tmp = new SeriesEdition();
-	    		tmp.setId(r.getEntry().getEventEdition().getSeriesEdition().getId());
-	    		tmp.setEditionName(r.getEntry().getEventEdition().getSeriesEdition().getEditionName());
-	    		Series tmpSeries = new Series();
-	    		tmpSeries.setId(r.getEntry().getEventEdition().getSeriesEdition().getSeries().getId());
-	    		tmp.setSeries(tmpSeries.name(r.getEntry().getEventEdition().getSeriesEdition().getSeries().getName()));
-	    		tmp.setSeries(tmpSeries);
-	    		r.getEntry().getEventEdition().setSeriesEdition(tmp);
-    		}
-    	});
-    	return result;
+//    	result.parallelStream().forEach(r -> {
+//    		r.getEntry().engine(null).chassis(null).tyres(null).fuel(null).team(null);
+//    		if (r.getEntry().getEventEdition() != null && r.getEntry().getEventEdition().getSeriesEdition() != null) {
+//	    		SeriesEdition tmp = new SeriesEdition();
+//	    		tmp.setId(r.getEntry().getEventEdition().getSeriesEdition().getId());
+//	    		tmp.setEditionName(r.getEntry().getEventEdition().getSeriesEdition().getEditionName());
+//	    		Series tmpSeries = new Series();
+//	    		tmpSeries.setId(r.getEntry().getEventEdition().getSeriesEdition().getSeries().getId());
+//	    		tmp.setSeries(tmpSeries.name(r.getEntry().getEventEdition().getSeriesEdition().getSeries().getName()));
+//	    		tmp.setSeries(tmpSeries);
+//	    		r.getEntry().getEventEdition().setSeriesEdition(tmp);
+//    		}
+//    	});
+//    	return result;
+    	return result.parallelStream().map(r -> new SessionResultDTO(r)).collect(Collectors.toList());
     }
     
     @GetMapping("/event-editions/event-sessions/results/{idResult}")
@@ -569,7 +571,7 @@ public class EventEditionResource {
             .body(result);
     }
     
-    @PutMapping("/event-editions/{id}/event-sessions/{idSession}/results")
+    @PutMapping("/event-editions/event-sessions/results")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict(cacheNames="winnersCache", key="#eventSessionResult.entry.id")
