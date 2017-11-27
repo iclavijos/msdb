@@ -124,8 +124,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 				updateStats(categoryName, year, result, mongoRepo, eStats, retries - 1);
 			}
 		} else {
-			throw new MSDBException(String.format("Could not update statistics document for entry %s @ event '%s'", 
-					result.getEntryId(), result.getEventName()));
+			log.error("Could not update statistics document for entry {} @ event '{}'", 
+				result.getEntryResult().getEntry(), result.getEventName());
 		}
 	}
 
@@ -142,8 +142,13 @@ public class StatisticsServiceImpl implements StatisticsService {
 		
 		results.stream().forEach(result -> {
 			EventEditionEntry entry = result.getEntryResult().getEntry();
-			String categoryName = entry.getCategory().getName();
+			String categoryName;
 			String year = entry.getEventEdition().getEditionYear().toString();
+			if (entry.getEventEdition().getSeriesEdition() != null) {
+				categoryName = entry.getEventEdition().getSeriesEdition().getSeries().getName();
+			} else {
+				categoryName = entry.getEventEdition().getEvent().getName();
+			}
 			
 			entry.getDrivers().stream().forEach(driver -> {
 				DriverStatistics dStats = Optional.ofNullable(driverStatsRepo.findOne(driver.getId().toString()))
