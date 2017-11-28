@@ -31,14 +31,14 @@
                 			eventEntryResult.finalPosition == 902 ? 'DSQ' : 
                 				eventEntryResult.finalPosition == 800 ? 'NC' : '-'
                 	  :	i + 1 }}
-                	<span *ngIf="session.sessionType === sessionTypes.race && eventEntryResult.startingPosition && eventEntryResult.finalPosition < 800">
+                	<span *ngIf="session.sessionTypeValue === 2 && eventEntryResult.startingPosition && eventEntryResult.finalPosition < 800">
                 		<span *ngIf="eventEntryResult.startingPosition < eventEntryResult.finalPosition" style="color: red">
                 			<i class="fa fa-arrow-down" aria-hidden="true"></i> {{eventEntryResult.startingPosition - eventEntryResult.finalPosition }}
                 		</span>
                 		<span *ngIf="eventEntryResult.startingPosition > eventEntryResult.finalPosition" style="color: green">
                 			<i class="fa fa-arrow-up" aria-hidden="true"></i> +{{eventEntryResult.startingPosition - eventEntryResult.finalPosition }}
                 		</span>
-                		<span *ngIf="eventEntryResult.startingPosition === eventEntryResult.finalPosition">
+                		<span *ngIf="eventEntryResult.startingPosition == eventEntryResult.finalPosition">
                 			=
                 		</span>
                 	</span>
