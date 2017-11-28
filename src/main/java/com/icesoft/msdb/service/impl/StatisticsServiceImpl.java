@@ -184,7 +184,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 	
 	private List<Result> processEntry(EventEditionEntry entry) {
 		List<EventEntryResult> results = resultsRepo.findByEntryIdAndSessionSessionType(entry.getId(), SessionType.RACE);
-		return createResultObject(entry, results);
+		Integer lapsCompleted = resultsRepo.countLapsCompletedInEvent(entry.getId());
+		return createResultObject(entry, results, lapsCompleted);
 	}
 	
 	@Override
@@ -231,7 +232,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 		});
 	}
 	
-	private List<Result> createResultObject(EventEditionEntry entry, List<EventEntryResult> results) {
+	private List<Result> createResultObject(EventEditionEntry entry, List<EventEntryResult> results, Integer lapsCompleted) {
 		return results.parallelStream().map((result) -> {			
 			List<EventEntryResult> resultsCategory = resultsRepo.findByEntryEventEditionIdAndSessionIdAndEntryCategoryIdOrderByFinalPositionAscLapsCompletedDesc(
 					entry.getEventEdition().getId(), result.getSession().getId(), entry.getCategory().getId());
@@ -286,7 +287,9 @@ public class StatisticsServiceImpl implements StatisticsService {
 					result.getSession().getId(), 
 					entry.getDrivers().get(0).getId())).orElse(new Float(0));
 
-			return new Result(result, grandChelem, posInClass, startPosInClass, poleLapTime, posFL == 1, points);
+			Result r = new Result(result, grandChelem, posInClass, startPosInClass, poleLapTime, posFL == 1, points);
+			r.setLapsCompleted(lapsCompleted);
+			return r;
 		}).collect(Collectors.toList());
 	}
 
