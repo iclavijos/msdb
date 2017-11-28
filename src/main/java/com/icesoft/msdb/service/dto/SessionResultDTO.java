@@ -16,6 +16,7 @@ public class SessionResultDTO {
     private Boolean retired;
     private String cause;
     private String difference;
+    private Integer differenceType;
     private Boolean pitlaneStart;
     private String sharedWithNumber;
     private EventEditionEntry entry;
@@ -38,6 +39,7 @@ public class SessionResultDTO {
     	this.difference = result.getDifference() != null ? result.getDifference().toString() : "";
     	this.pitlaneStart = result.isPitlaneStart();
     	this.sharedWithNumber = result.getSharedDriveWith() != null ? result.getSharedDriveWith().getRaceNumber() : "";
+    	this.differenceType = result.getDifferenceType();
     	this.entry = result.getEntry();
     	this.entry.setEventEdition(null);
     	this.entry.engine(null).chassis(null).tyres(null).fuel(null).team(null);
@@ -116,6 +118,12 @@ public class SessionResultDTO {
 	}
 	public void setDifference(String difference) {
 		this.difference = difference;
+	}
+	public Integer getDifferenceType() {
+		return differenceType;
+	}
+	public void setDifferenceType(Integer differenceType) {
+		this.differenceType = differenceType;
 	}
 	public Boolean getPitlaneStart() {
 		return pitlaneStart;
