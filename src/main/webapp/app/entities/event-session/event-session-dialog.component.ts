@@ -49,7 +49,7 @@ export class EventSessionDialogComponent implements OnInit {
           this.eventSession.sessionType = SessionType[SessionType[this.eventSession.sessionTypeValue]];
           this.selectedDuration = this.eventSession.durationType;
           this.selectedType = this.eventSession.sessionTypeValue;
-          this.isRaceAndLaps = (this.selectedType === 2 && this.selectedDuration === 5);
+          this.isRaceAndLaps = (this.selectedType >= 2 && this.selectedDuration === 5);
         }
     }
 
@@ -59,12 +59,12 @@ export class EventSessionDialogComponent implements OnInit {
 
     onChangeType(event) {
       this.selectedType = parseInt(event.target.value);
-      this.isRaceAndLaps = (this.selectedType === 2 && this.selectedDuration === 5);
+      this.isRaceAndLaps = (this.selectedType >= 2 && this.selectedDuration === 5);
     }
 
     onChangeDuration(event) {
       this.selectedDuration = parseInt(event.target.value);
-      this.isRaceAndLaps = (this.selectedType === 2 && this.selectedDuration === 5);
+      this.isRaceAndLaps = (this.selectedType >= 2 && this.selectedDuration === 5);
     }
 
     save() {
