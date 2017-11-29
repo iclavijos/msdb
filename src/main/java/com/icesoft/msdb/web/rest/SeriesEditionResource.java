@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
@@ -65,7 +64,7 @@ public class SeriesEditionResource {
     private final ResultsService resultsService;
     private final StatisticsService statsService;
 
-    public SeriesEditionResource(SeriesEditionService seriesEditionService, SeriesEditionRepository seriesEditionRepository, 
+    public SeriesEditionResource(SeriesEditionService seriesEditionService, SeriesEditionRepository seriesEditionRepository,
     		EventSessionRepository eventSessionRepository, ResultsService resultsService, StatisticsService statsService) {
         this.seriesEditionService = seriesEditionService;
     	this.seriesEditionRepository = seriesEditionRepository;
@@ -172,15 +171,19 @@ public class SeriesEditionResource {
      * @param pageable the pagination information
      * @return the result of the search
      */
-    @GetMapping("/_search/series-editions")
-    @Timed
-    public ResponseEntity<List<SeriesEdition>> searchSeriesEditions(@RequestParam String query, @ApiParam Pageable pageable) {
-        log.debug("REST request to search for a page of SeriesEditions for query {}", query);
-        //TODO: Implement proper search
-        Page<SeriesEdition> page = seriesEditionRepository.search(query, pageable);
-        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/series-editions");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-    }
+//    @GetMapping("/_search/series-editions")
+//    @Timed
+//    public ResponseEntity<List<SeriesEdition>> searchSeriesEditions(@RequestParam String query, @ApiParam Pageable pageable) {
+//        log.debug("REST request to search for a page of SeriesEditions for query {}", query);
+//        String searchValue = "*" + query + '*';
+//    	NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
+//        		.withQuery(queryStringQuery(searchValue))
+//        		.withSort(SortBuilders.fieldSort("name"))
+//        		.withPageable(pageable);
+//    	Page<SeriesEdition> page = seriesEditionSearchRepository.search(nqb.build());
+//        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/series-editions");
+//        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+//    }
     
     @GetMapping("/series-editions/{id}/standings/drivers")
     @Timed
