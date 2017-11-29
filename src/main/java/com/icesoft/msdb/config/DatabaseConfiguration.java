@@ -3,8 +3,6 @@ package com.icesoft.msdb.config;
 import java.sql.SQLException;
 
 import org.h2.tools.Server;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,15 +29,15 @@ import io.github.jhipster.config.JHipsterConstants;
 @EnableMongoAuditing
 public class DatabaseConfiguration {
 
-    private final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
+    //private final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
 
     @Autowired
     private MongoMappingContext mongoMappingContext;
     
-    private final Environment env;
+    //private final Environment env;
 
     public DatabaseConfiguration(Environment env) {
-        this.env = env;
+        //this.env = env;
     }
 
     /**

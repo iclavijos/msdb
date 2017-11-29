@@ -8,7 +8,9 @@ import org.zalando.problem.Status;
  */
 public class InternalServerErrorException extends AbstractThrowableProblem {
 
-    public InternalServerErrorException(String message) {
+	private static final long serialVersionUID = 2793659569817456463L;
+
+	public InternalServerErrorException(String message) {
         super(ErrorConstants.DEFAULT_TYPE, message, Status.INTERNAL_SERVER_ERROR);
     }
 }
