@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.TimeZone;
 
+import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -174,13 +176,23 @@ public class RacetrackServiceImpl implements RacetrackService {
     @Override
     public Page<Racetrack> search(String query, Pageable pageable) {
     	String searchValue = "*" + query + '*';
-    	return racetrackSearchRepo.search(queryStringQuery(searchValue), pageable);
+    	NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
+        		.withQuery(queryStringQuery(searchValue))
+        		.withSort(SortBuilders.fieldSort("name"))
+        		.withPageable(pageable);
+        
+    	return racetrackSearchRepo.search(nqb.build());
     }
     
     @Override
     public Page<RacetrackLayout> searchLayouts(String query, Pageable pageable) {
     	String searchValue = "*" + query + '*';
-    	return racetrackLayoutSearchRepo.search(queryStringQuery(searchValue), pageable);
+    	NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
+        		.withQuery(queryStringQuery(searchValue))
+        		.withSort(SortBuilders.fieldSort("name"))
+        		.withPageable(pageable);
+        
+    	return racetrackLayoutSearchRepo.search(nqb.build());
     }
     
     @Override

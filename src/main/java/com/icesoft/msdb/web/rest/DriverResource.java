@@ -1,7 +1,5 @@
 package com.icesoft.msdb.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -262,8 +260,7 @@ public class DriverResource {
     @GetMapping("/_search/drivers")
     @Timed
     public ResponseEntity<List<Driver>> searchDrivers(@RequestParam String query, @ApiParam Pageable pageable) {
-    	String searchValue = '*'  + query + '*';
-        Page<Driver> page = driverSearchRepository.search(queryStringQuery(searchValue), pageable);
+    	Page<Driver> page = performSearch(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/drivers");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -271,19 +268,26 @@ public class DriverResource {
     @GetMapping("/_typeahead/drivers")
     @Timed
     public ResponseEntity<List<DriverFullNameDTO>> typeahead(@RequestParam String query) throws URISyntaxException {
-    	String searchValue = '*'  + query + '*';
         log.debug("REST request to search for a page of Drivers for query '{}'", query);
-        NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
-        		.withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
-        		.withSort(SortBuilders.fieldSort("surname")).withSort(SortBuilders.fieldSort("name"))
-        		.withPageable(new PageRequest(0, 5));
-        Page<Driver> page = driverSearchRepository.search(nqb.build());
 
+        Page<Driver> page = performSearch(query, new PageRequest(0, 5));
         List<DriverFullNameDTO> result = new ArrayList<>();
         for (Driver driver : page) {
 			result.add(new DriverFullNameDTO(driver));
 		}
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    
+    private Page<Driver> performSearch(String query, Pageable pageable) {
+    	String searchValue = '*'  + query + '*';
+    	NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
+        		.withQuery(QueryBuilders.boolQuery()
+        				.should(QueryBuilders.wildcardQuery("surname", searchValue))
+        	    		.should(QueryBuilders.wildcardQuery("name", searchValue)))
+        		.withSort(SortBuilders.fieldSort("surname")).withSort(SortBuilders.fieldSort("name"))
+        		.withPageable(pageable);
+        
+    	return driverSearchRepository.search(nqb.build());
     }
 
 }
