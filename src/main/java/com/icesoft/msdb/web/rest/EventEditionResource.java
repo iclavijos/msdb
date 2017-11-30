@@ -548,7 +548,8 @@ public class EventEditionResource {
     		}
     		return new SessionCalendarDTO(session.getEventEdition().getId(), 
     				session.getEventEdition().getLongEventName(),
-    				session.getName(), 
+    				session.getName(),
+    				session.getSessionTypeValue(),
     				session.getSessionStartTime(), session.getSessionEndTime(),
     				logoUrl);
     	}).collect(Collectors.toList());

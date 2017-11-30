@@ -83,6 +83,14 @@ export class Calendar implements OnInit {
             newEvent.start = moment(session.startTime * 1000).tz(currentTZ);
             newEvent.end = moment(session.endTime * 1000).tz(currentTZ);
             newEvent.seriesLogoUrl = session.seriesLogoUrl;
+            if (session.sessionType === 2) {
+            	newEvent.textColor = 'white';
+            	newEvent.color = 'green';
+            }
+            if (session.sessionType === 1 || session.sessionType === 3) {
+            	newEvent.textColor = 'white';
+            	newEvent.color = 'blue';
+            }
             this.events.push(newEvent);
         }
     }
@@ -93,6 +101,8 @@ export class MyEvent {
     title: string;
     eventName: string;
     sessionName: string;
+	textColor: string;
+	color: string;
     start: any;
     end: any;
     seriesLogoUrl: string;
