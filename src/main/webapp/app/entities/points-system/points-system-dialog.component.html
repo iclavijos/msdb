@@ -1,5 +1,3 @@
-
-
 <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
 
     <div class="modal-header">
@@ -58,15 +56,43 @@
 	        <div class="form-group col-lg-3 col-md-3">
 	            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsPole" for="field_pointsPole">Points Pole</label>
 	            <input type="number" class="form-control" name="pointsPole" id="field_pointsPole"
-	                [(ngModel)]="pointsSystem.pointsPole"
-	             />
+	                [(ngModel)]="pointsSystem.pointsPole"/>
 	        </div>
 	        <div class="form-group col-lg-3 col-md-3">
 	            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsLeadLap" for="field_pointsLeadLap">Points Lead Lap</label>
 	            <input type="number" class="form-control" name="pointsLeadLap" id="field_pointsLeadLap"
-	                [(ngModel)]="pointsSystem.pointsLeadLap"
-	             />
+	                [(ngModel)]="pointsSystem.pointsLeadLap"/>
 	        </div>
+		</div>
+		<div class="row" *ngIf="pointsSystem.pointsFastLap > 0">
+			<div class="form-group col-lg-12 col-md-12">
+				<div class="card">
+					<div class="card-header">
+				    	<span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsFastLapAwardedIf"></span>
+				  	</div>
+				  	<div class="card-body">
+				  		<div class="container-fluid">
+					  		<div class="row">
+					  			<div class="form-group col-lg-6 col-md-6">
+						            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.maxFinishinPositionFL" for="field_maxFinishinPositionFL">Points Most Lead Laps</label>
+						            <input type="number" class="form-control" name="maxFinishinPositionFL" id="field_maxFinishinPositionFL"
+						                [(ngModel)]="pointsSystem.maxPosFastLap"/>
+						        </div>
+						        <div class="form-group col-lg-4 col-md-4">
+						        	<label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.pitlaneStartAllowed" for="field_pitlaneStartAllowed">Award if starting from pitlane?</label>
+            						<i [ngClass]="pointsSystem.pitlaneStartAllowed ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" 
+            							(click)="pointsSystem.pitlaneStartAllowed = !pointsSystem.pitlaneStartAllowed"></i>
+						        </div>
+					  		</div>
+				  		</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group col-lg-12 col-md-12">
+			<div class="card">
+				<span jhiTranslate="motorsportsDatabaseApp.pointsSystem.racePctCompletion"></span>
+			</div>
 		</div>
 		<div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.active" for="field_active">Active</label>

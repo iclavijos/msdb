@@ -23,7 +23,12 @@
             "pointsFastLap": "Points Fast Lap",
             "pointsPole": "Points Pole",
             "pointsLeadLap": "Points Lead Lap",
-            "active": "Active?"
+            "active": "Active?",
+            "pointsFastLapAwardedIf": "Award fast lap points if: ",
+            "maxFinishinPositionFL": "Maximum finishing position",
+            "pitlaneStartAllowed": "Award points if started from pitlane?",
+            "racePctCompletion": "If less than % laps completed",
+            "pointsPct": "% of points awarded"
         }
     }
 }

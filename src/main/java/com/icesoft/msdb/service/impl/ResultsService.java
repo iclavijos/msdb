@@ -54,7 +54,6 @@ public class ResultsService {
 
 		List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(
 				session.getId(), session.getEventEdition().getId());
-		
 		for(int i = 0; i < results.size(); i++) {
 			EventEntryResult result = results.get(i);
 			Boolean sharedDrive = result.getSharedDriveWith() != null;
@@ -82,12 +81,11 @@ public class ResultsService {
 					}
 					
 					if (result.getStartingPosition() != null &&  result.getStartingPosition() == 1) {
-						if (ps.getPointsPole() != 0) { // && session.getPsMultiplier().equals(new Float(1.0f))) {
+						if (ps.getPointsPole() != 0) {
 							DriverEventPoints dep = new DriverEventPoints(d, session, "motorsportsDatabaseApp.pointsSystem.pointsPole");
 							dep.addPoints(ps.getPointsPole().floatValue());
 							log.debug(String.format("Driver %s: %s points for pole", d.getFullName(), ps.getPointsPole()));
 							drivers.add(dep);
-							//calculatedPoints = dep.getPoints();
 						}
 					}
 				}
@@ -114,87 +112,88 @@ public class ResultsService {
 				if (session.getEventEdition().getSeriesEdition().getManufacturersStandings()) {
 					//TODO
 				}
-		
-				log.debug("Race points calculated... proceeding with extra points");
-				if (ps.getPointsFastLap() != 0) {
-					List<EventEntryResult> fastestLapOrder = results.parallelStream().sorted(
-							(r1, r2)->Long.compare(
-										r1.getBestLapTime() == null ? Long.MAX_VALUE : r1.getBestLapTime(), 
-										r2.getBestLapTime() == null ? Long.MAX_VALUE : r2.getBestLapTime()))
-							.collect(Collectors.toList());
-					
-					EventEntryResult fastestEntry;
-					Stream<EventEntryResult> filtered = fastestLapOrder.parallelStream();
-					if (ps.getMinimumFinishingPosition() != 0) {
-						filtered = filtered.filter(eer -> eer.getFinalPosition() <= ps.getMinimumFinishingPosition());
-					}
-					if (!ps.isPitlaneStartAllowed()) {
-						filtered = filtered.filter(eer -> !eer.isPitlaneStart());
-					}
-					if (ps.getPctCompleted() != 0) {
-						//We assume that duration will always be laps if minimum percentage completion needs to be applied
-						filtered = filtered.filter(eer -> (eer.getLapsCompleted().floatValue() / eer.getSession().getDuration().floatValue()) * 100f >= ps.getPctCompleted());
-					}
-					fastestLapOrder = filtered.collect(Collectors.toList());
-					if (!fastestLapOrder.isEmpty()) {
-						fastestEntry = fastestLapOrder.get(0);
-						if (fastestEntry.getBestLapTime() != null) {
-							for(Driver d : fastestEntry.getEntry().getDrivers()) {
-								DriverEventPoints dep = new DriverEventPoints(d, session, "motorsportsDatabaseApp.pointsSystem.pointsFastLap");
-								dep.addPoints(ps.getPointsFastLap().floatValue());
-								log.debug(String.format("Driver %s: %s points for fastest lap", d.getFullName(), ps.getPointsFastLap()));
-								drivers.add(dep);
-							}
-						} else {
-							log.warn("No fastest lap recorded... skipping");
-						}
-					} else {
-						log.warn("No recorded fast lap complied with all the requirements");
-					}
-				}
-				if (ps.getPointsLeadLap() != 0 || ps.getPointsMostLeadLaps() != 0) {
-					List<EventEntryResult> ledLaps = results.parallelStream()
-							.filter(r -> r.getLapsLed() > 0)
-							.sorted((r1, r2) -> Integer.compare(r2.getLapsLed(), r1.getLapsLed())).collect(Collectors.toList());
-					
-					Comparator<EventEntryResult> c = (r1, r2) -> {
-						if (r1.getLapsLed().equals(r2.getLapsLed())) {
-							return r1.getFinalPosition().compareTo(r2.getFinalPosition());
-						} else {
-							return r1.getLapsLed().compareTo(r2.getLapsLed()) * -1;
-						}
-					};
-					
-					ledLaps.sort(c);
-					
-					int maxLedLaps = 0;
-					for(EventEntryResult r : ledLaps) {
-						boolean addPointsMostLeadLaps = false;
-						if (r.getLapsLed() > maxLedLaps && maxLedLaps == 0) { //|| r.getLapsLed() == maxLedLaps) {
-							maxLedLaps = r.getLapsLed();
-							addPointsMostLeadLaps = true;
-						}
-						for(Driver d : r.getEntry().getDrivers()) {
-							DriverEventPoints dep = new DriverEventPoints(d, session, "motorsportsDatabaseApp.pointsSystem.pointsLeadLap");
-							dep.addPoints(ps.getPointsLeadLap().floatValue());
-							log.debug(String.format("Driver %s: %s points for leading %s laps", d.getFullName(), ps.getPointsLeadLap(), r.getLapsLed()));
-							drivers.add(dep);
-							if (addPointsMostLeadLaps) {
-								dep = new DriverEventPoints(d, session, "motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps");
-								dep.addPoints(ps.getPointsMostLeadLaps().floatValue());
-								log.debug(String.format("Driver %s: %s points for most led laps", d.getFullName(), ps.getPointsMostLeadLaps()));
-								drivers.add(dep);
-							}
-						}
-					}
-				}
-				log.debug("Persisting points...");
-				drivers.stream().forEach(entry -> driverPointsRepo.save(entry));
-				teams.entrySet().stream().forEach(entry -> teamPointsRepo.save(entry.getValue()));
-				
-				cacheHandler.resetDriversStandingsCache(session.getSeriesId());
 			}
 		}
+		
+		log.debug("Race points calculated... proceeding with extra points");
+		if (ps.getPointsFastLap() != 0) {
+			List<EventEntryResult> fastestLapOrder = results.parallelStream().sorted(
+					(r1, r2)->Long.compare(
+								r1.getBestLapTime() == null ? Long.MAX_VALUE : r1.getBestLapTime(), 
+								r2.getBestLapTime() == null ? Long.MAX_VALUE : r2.getBestLapTime()))
+					.collect(Collectors.toList());
+			
+			EventEntryResult fastestEntry;
+			Stream<EventEntryResult> filtered = fastestLapOrder.parallelStream();
+			if (ps.getMaxPosFastLap() != 0) {
+				filtered = filtered.filter(eer -> eer.getFinalPosition() <= ps.getMaxPosFastLap());
+			}
+			if (!ps.isPitlaneStartAllowed()) {
+				filtered = filtered.filter(eer -> !eer.isPitlaneStart());
+			}
+			if (ps.getPctCompletedFL() != 0) {
+				//We assume that duration will always be laps if minimum percentage completion needs to be applied
+				filtered = filtered.filter(eer -> (eer.getLapsCompleted().floatValue() / eer.getSession().getDuration().floatValue()) * 100f >= ps.getPctCompletedFL());
+			}
+			fastestLapOrder = filtered.collect(Collectors.toList());
+			if (!fastestLapOrder.isEmpty()) {
+				fastestEntry = fastestLapOrder.get(0);
+				if (fastestEntry.getBestLapTime() != null) {
+					for(Driver d : fastestEntry.getEntry().getDrivers()) {
+						DriverEventPoints dep = new DriverEventPoints(d, session, "motorsportsDatabaseApp.pointsSystem.pointsFastLap");
+						dep.addPoints(ps.getPointsFastLap().floatValue());
+						log.debug(String.format("Driver %s: %s points for fastest lap", d.getFullName(), ps.getPointsFastLap()));
+						drivers.add(dep);
+					}
+				} else {
+					log.warn("No fastest lap recorded... skipping");
+				}
+			} else {
+				log.warn("No recorded fast lap complied with all the requirements");
+			}
+		}
+		if (ps.getPointsLeadLap() != 0 || ps.getPointsMostLeadLaps() != 0) {
+			List<EventEntryResult> ledLaps = results.parallelStream()
+					.filter(r -> r.getLapsLed() > 0)
+					.sorted((r1, r2) -> Integer.compare(r2.getLapsLed(), r1.getLapsLed())).collect(Collectors.toList());
+			
+			Comparator<EventEntryResult> c = (r1, r2) -> {
+				if (r1.getLapsLed().equals(r2.getLapsLed())) {
+					return r1.getFinalPosition().compareTo(r2.getFinalPosition());
+				} else {
+					return r1.getLapsLed().compareTo(r2.getLapsLed()) * -1;
+				}
+			};
+			
+			ledLaps.sort(c);
+			
+			int maxLedLaps = 0;
+			for(EventEntryResult r : ledLaps) {
+				boolean addPointsMostLeadLaps = false;
+				if (r.getLapsLed() > maxLedLaps && maxLedLaps == 0) { //|| r.getLapsLed() == maxLedLaps) {
+					maxLedLaps = r.getLapsLed();
+					addPointsMostLeadLaps = true;
+				}
+				for(Driver d : r.getEntry().getDrivers()) {
+					DriverEventPoints dep = new DriverEventPoints(d, session, "motorsportsDatabaseApp.pointsSystem.pointsLeadLap");
+					dep.addPoints(ps.getPointsLeadLap().floatValue());
+					log.debug(String.format("Driver %s: %s points for leading %s laps", d.getFullName(), ps.getPointsLeadLap(), r.getLapsLed()));
+					drivers.add(dep);
+					if (addPointsMostLeadLaps) {
+						dep = new DriverEventPoints(d, session, "motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps");
+						dep.addPoints(ps.getPointsMostLeadLaps().floatValue());
+						log.debug(String.format("Driver %s: %s points for most led laps", d.getFullName(), ps.getPointsMostLeadLaps()));
+						drivers.add(dep);
+					}
+				}
+			}
+		}
+		
+		log.debug("Persisting points...");
+		drivers.stream().forEach(entry -> driverPointsRepo.save(entry));
+		teams.entrySet().stream().forEach(entry -> teamPointsRepo.save(entry.getValue()));
+		cacheHandler.resetDriversStandingsCache(session.getSeriesId());
+		
 		log.info("Processed result for {}-{}.", session.getEventEdition().getLongEventName(), session.getName());
 	}
 	

@@ -49,17 +49,23 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     @Column(name = "points_fast_lap")
     private Integer pointsFastLap;
     
+    //Maximum finishing position to get points for fast lap
+    @Column(name = "max_pos_fast_lap")
+    private Integer maxPosFastLap = 9999;
+    
     //Minimum percentage of the race to be completed to award points for fast lap
-    @Column(name = "pct_completed")
-    private Integer pctCompleted = 0;
-    
-    //Minimum race finishing position to award points for fast lap
-    @Column(name = "minimum_finishing_pos")
-    private Integer minimumFinishingPosition = 0;
-    
+    @Column(name = "pct_completed_fl")
+    private Integer pctCompletedFL = 0;
+        
     //If started from pitlane, award points for fast lap?
     @Column(name = "pitlane_start_allowed")
     private Boolean pitlaneStartAllowed = false;
+    
+    @Column(name = "race_pct_completed_total_points")
+    private Integer racePctCompletedTotalPoints;
+    
+    @Column(name = "pct_total_points")
+    private Integer pctTotalPoints;
     
     @Column(name="active")
     private Boolean active;
@@ -174,30 +180,30 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     	return this;
     }
 
-	public Integer getPctCompleted() {
-		return pctCompleted;
-	}
-    
-    public PointsSystem pctCompleted(Integer pctCompleted) {
-    	this.pctCompleted = pctCompleted;
-    	return this;
-    }
-
-	public void setPctCompleted(Integer pctCompleted) {
-		this.pctCompleted = pctCompleted;
-	}
-
-	public Integer getMinimumFinishingPosition() {
-		return minimumFinishingPosition;
+	public Integer getMaxPosFastLap() {
+		return maxPosFastLap;
 	}
 	
-	public PointsSystem minimumFinishingPosition(Integer minimumFinishingPosition) {
-		this.minimumFinishingPosition = minimumFinishingPosition;
+	public PointsSystem maxPosFastLap(Integer maxPosFastLap) {
+		this.maxPosFastLap = maxPosFastLap;
 		return this;
 	}
 
-	public void setMinimumFinishingPosition(Integer minimumFinishingPosition) {
-		this.minimumFinishingPosition = minimumFinishingPosition;
+	public void setMaxPosFastLap(Integer maxPosFastLap) {
+		this.maxPosFastLap = maxPosFastLap;
+	}
+
+	public Integer getPctCompletedFL() {
+		return pctCompletedFL;
+	}
+    
+    public PointsSystem pctCompletedFL(Integer pctCompleted) {
+    	this.pctCompletedFL = pctCompleted;
+    	return this;
+    }
+
+	public void setPctCompletedFL(Integer pctCompleted) {
+		this.pctCompletedFL = pctCompleted;
 	}
 
 	public Boolean isPitlaneStartAllowed() {
@@ -227,7 +233,33 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
-    @Override
+    public Integer getRacePctCompletedTotalPoints() {
+		return racePctCompletedTotalPoints;
+	}
+
+    public PointsSystem racePctCompletedTotalPoints(Integer racePctCompletedTotalPoints) {
+		this.racePctCompletedTotalPoints = racePctCompletedTotalPoints;
+		return this;
+	}
+    
+	public void setRacePctCompletedTotalPoints(Integer racePctCompletedTotalPoints) {
+		this.racePctCompletedTotalPoints = racePctCompletedTotalPoints;
+	}
+
+	public Integer getPctTotalPoints() {
+		return pctTotalPoints;
+	}
+	
+	public PointsSystem pctTotalPoints(Integer pctTotalPoints) {
+		this.pctTotalPoints = pctTotalPoints;
+		return this;
+	}
+
+	public void setPctTotalPoints(Integer pctTotalPoints) {
+		this.pctTotalPoints = pctTotalPoints;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

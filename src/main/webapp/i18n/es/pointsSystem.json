@@ -23,7 +23,12 @@
             "pointsFastLap": "Puntos vuelta rápida",
             "pointsPole": "Puntos pole",
             "pointsLeadLap": "Puntos liderar vuelta",
-            "active": "Activo?"
+            "active": "Activo?",
+            "pointsFastLapAwardedIf": "Otorgar puntos por vuelta rápida si: ",
+            "maxFinishinPositionFL": "Posición final máxima",
+            "pitlaneStartAllowed": "Se otorgan si ha empezado desde pitlane?",
+            "racePctCompletion": "Si menos de % de vueltas completadas",
+            "pointsPct": "% de puntos otorgados"
         }
     }
 }
