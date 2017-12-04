@@ -27,6 +27,7 @@ export class HomeComponent implements OnInit {
     searchEntriesStr: string;
     searchEventsStr: string;
     calendar: any;
+	noEvents = false;
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
@@ -58,6 +59,7 @@ export class HomeComponent implements OnInit {
                 }
             }
             this.calendar = data;
+            this.noEvents = data.length === 0;
         });
     }
 

@@ -20,6 +20,7 @@
         "raceLap": "Race Fastest Time",
         "racePosition": "Race Pos.",
         "upcomingEvents": "Upcoming events",
+        "noUpcomingEvents": "No upcoming events scheduled in next two weeks",
         "searchDB": "Search database"
     }
 }

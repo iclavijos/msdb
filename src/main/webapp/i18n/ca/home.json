@@ -21,6 +21,7 @@
         "raceLap": "V ràpida Cursa",
         "racePosition": "Pos. Cursa",
         "upcomingEvents": "Propers events",
+        "noUpcomingEvents": "No hi ha events programats les properes dues setmanes",
         "searchDB": "Cercar la base de dades"
     }
 }
