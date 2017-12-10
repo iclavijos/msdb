@@ -14,7 +14,7 @@ import { CookieModule } from 'ngx-cookie';
             // set below to true to make alerts look like toast
             alertAsToast: false,
             i18nEnabled: true,
-            defaultI18nLang: 'es'
+            defaultI18nLang: 'en'
         }),
         InfiniteScrollModule,
         CookieModule.forRoot()
