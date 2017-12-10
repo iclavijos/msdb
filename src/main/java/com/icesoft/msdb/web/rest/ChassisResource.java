@@ -48,8 +48,6 @@ import com.icesoft.msdb.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
-
 /**
  * REST controller for managing Chassis.
  */
@@ -256,8 +254,7 @@ public class ChassisResource {
     @Timed
     public ResponseEntity<List<Chassis>> searchChassis(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Chassis for query {}", query);
-        String searchValue = '*' + query + '*';
-        Page<Chassis> page = chassisSearchRepository.search(queryStringQuery(searchValue), pageable);
+        Page<Chassis> page = performSearch(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/chassis");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -266,12 +263,19 @@ public class ChassisResource {
     @Timed
     public List<Chassis> typeahead(@RequestParam String query) {
         log.debug("REST request to search for a page of Chassis for query {}", query);
-        String searchValue = '*' + query + '*';
-        NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
-        		.withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
-        		.withSort(SortBuilders.fieldSort("manufacturer")).withSort(SortBuilders.fieldSort("name"))
-        		.withPageable(new PageRequest(0, 5));
-        Page<Chassis> page = chassisSearchRepository.search(nqb.build());
+        Page<Chassis> page = performSearch(query, new PageRequest(0, 5));
         return page.getContent();
+    }
+    
+    private Page<Chassis> performSearch(String query, Pageable pageable) {
+    	String searchValue = '*'  + query + '*';
+    	NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
+        		.withQuery(QueryBuilders.boolQuery()
+        				.should(QueryBuilders.wildcardQuery("manufacturer", searchValue))
+        	    		.should(QueryBuilders.wildcardQuery("name", searchValue)))
+        		.withSort(SortBuilders.fieldSort("manufacturer")).withSort(SortBuilders.fieldSort("name"))
+        		.withPageable(pageable);
+        
+    	return chassisSearchRepository.search(nqb.build());
     }
 }

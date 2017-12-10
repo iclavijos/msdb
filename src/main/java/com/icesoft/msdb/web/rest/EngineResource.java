@@ -41,15 +41,12 @@ import com.icesoft.msdb.repository.stats.EngineStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
-import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Engine.
@@ -256,8 +253,7 @@ public class EngineResource {
     @Timed
     public ResponseEntity<List<Engine>> searchEngines(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Engines for query {}", query);
-        String searchValue = '*' + query + '*';
-        Page<Engine> page = engineSearchRepository.search(queryStringQuery(searchValue), pageable);
+        Page<Engine> page = performSearch(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/engines");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -265,13 +261,22 @@ public class EngineResource {
     @GetMapping("/_typeahead/engines")
     @Timed
     public List<Engine> typeahead(@RequestParam String query) {
-    	String searchValue = '*' + query + '*';
         log.debug("REST request to search for a page of Engines for query {}", query);
-        NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
-        		.withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
-        		.withSort(SortBuilders.fieldSort("manufacturer")).withSort(SortBuilders.fieldSort("name"))
-        		.withPageable(new PageRequest(0, 5));
-        Page<Engine> page = engineSearchRepository.search(nqb.build());
+        Page<Engine> page = performSearch(query, new PageRequest(0, 5));
         return page.getContent();
+    }
+    
+    private Page<Engine> performSearch(String query, Pageable pageable) {
+    	String searchValue = '*'  + query + '*';
+    	NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
+        		.withQuery(QueryBuilders.boolQuery()
+        				.should(QueryBuilders.wildcardQuery("manufacturer", searchValue))
+        	    		.should(QueryBuilders.wildcardQuery("name", searchValue))
+        				.should(QueryBuilders.wildcardQuery("architecture", searchValue)))
+        		.withSort(SortBuilders.fieldSort("manufacturer"))
+        		.withSort(SortBuilders.fieldSort("name"))
+        		.withPageable(pageable);
+        
+    	return engineSearchRepository.search(nqb.build());
     }
 }

@@ -1,7 +1,5 @@
 package com.icesoft.msdb.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -240,8 +238,7 @@ public class TeamResource {
     @Timed
     public ResponseEntity<List<Team>> searchTeams(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Teams for query '{}'", query);
-        String searchValue = '*' + query + '*';
-        Page<Team> page = teamSearchRepository.search(queryStringQuery(searchValue), pageable);
+        Page<Team> page = performSearch(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/teams");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -258,15 +255,19 @@ public class TeamResource {
     @Timed
     public List<Team> typeahead(@RequestParam String query) {
         log.debug("REST request to search Teams for query {}", query);
-        String searchValue = '*' + query + '*';
-        NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
-        		.withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
-        		.withSort(SortBuilders.fieldSort("name"))
-        		.withPageable(new PageRequest(0, 5));
-        Page<Team> result = teamSearchRepository.search(nqb.build());
+        Page<Team> result = performSearch(query, new PageRequest(0, 5));
 
         return result.getContent();
     }
 
-
+    private Page<Team> performSearch(String query, Pageable pageable) {
+    	String searchValue = '*'  + query + '*';
+    	NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
+        		.withQuery(QueryBuilders.boolQuery()
+        	    		.should(QueryBuilders.wildcardQuery("name", searchValue)))
+        		.withSort(SortBuilders.fieldSort("name"))
+        		.withPageable(pageable);
+        
+    	return teamSearchRepository.search(nqb.build());
+    }
 }
