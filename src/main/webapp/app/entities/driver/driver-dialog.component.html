@@ -7,91 +7,109 @@
     </div>
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.name" for="field_name">Name</label>
-            <input type="text" class="form-control" name="name" id="field_name"
-                [(ngModel)]="driver.name" required maxlength="40" />
-            <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.name?.invalid)">
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.name?.errors?.required" jhiTranslate="entity.validation.required">
-                   This field is required.
-                </small>
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.name?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 40 }">
-                   This field cannot be longer than 40 characters.
-                </small>
-            </div>
+        <div class="row">
+			<div class="col-lg-5 col-md-5">
+		        <div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.name" for="field_name">Name</label>
+		            <input type="text" class="form-control" name="name" id="field_name"
+		                [(ngModel)]="driver.name" required maxlength="40" />
+		            <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.name?.invalid)">
+		                <small class="form-text text-danger"
+		                   [hidden]="!editForm.controls.name?.errors?.required" jhiTranslate="entity.validation.required">
+		                   This field is required.
+		                </small>
+		                <small class="form-text text-danger"
+		                   [hidden]="!editForm.controls.name?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 40 }">
+		                   This field cannot be longer than 40 characters.
+		                </small>
+		            </div>
+		        </div>
+		    </div>
+		    <div class="col-lg-7 col-md-7">
+			    <div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.surname" for="field_surname">Surname</label>
+		            <input type="text" class="form-control" name="surname" id="field_surname"
+		                [(ngModel)]="driver.surname" required maxlength="60" />
+		            <div [hidden]="!(editForm.controls.surname?.dirty && editForm.controls.surname?.invalid)">
+		                <small class="form-text text-danger"
+		                   [hidden]="!editForm.controls.surname?.errors?.required" jhiTranslate="entity.validation.required">
+		                   This field is required.
+		                </small>
+		                <small class="form-text text-danger"
+		                   [hidden]="!editForm.controls.surname?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 60 }">
+		                   This field cannot be longer than 60 characters.
+		                </small>
+		            </div>
+		        </div>
+		    </div>
         </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.surname" for="field_surname">Surname</label>
-            <input type="text" class="form-control" name="surname" id="field_surname"
-                [(ngModel)]="driver.surname" required maxlength="60" />
-            <div [hidden]="!(editForm.controls.surname?.dirty && editForm.controls.surname?.invalid)">
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.surname?.errors?.required" jhiTranslate="entity.validation.required">
-                   This field is required.
-                </small>
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.surname?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 60 }">
-                   This field cannot be longer than 60 characters.
-                </small>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.birthDate" for="field_birthDate">Birth Date</label>
-            <div class="input-group">
-                <input id="field_birthDate" type="text" class="form-control" name="birthDate" ngbDatepicker  #birthDateDp="ngbDatepicker" [(ngModel)]="driver.birthDate"
-                placeholder="yyyy-mm-dd" [minDate]="minDate" [maxDate]="startDate"/>
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-secondary" (click)="birthDateDp.toggle()"><i class="fa fa-calendar"></i></button>
-                </span>
-            </div>
-            <div [hidden]="!(editForm.controls.birthDate?.dirty && editForm.controls.birthDate?.invalid)">
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.birthDate?.errors?.required" jhiTranslate="entity.validation.required">
-                   This field is required.
-                </small>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.birthPlace" for="field_birthPlace">Birth Place</label>
-            <input type="text" class="form-control" name="birthPlace" id="field_birthPlace"
-                [(ngModel)]="driver.birthPlace" maxlength="75" />
-            <div [hidden]="!(editForm.controls.birthPlace?.dirty && editForm.controls.birthPlace?.invalid)">
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.birthPlace?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 75 }">
-                   This field cannot be longer than 75 characters.
-                </small>
-            </div>
-        </div>
+        <div class="row">
+			<div class="col-lg-4 col-md-4">
+				<div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.birthDate" for="field_birthDate">Birth Date</label>
+		            <div class="input-group">
+		                <input id="field_birthDate" type="text" class="form-control" name="birthDate" ngbDatepicker  #birthDateDp="ngbDatepicker" [(ngModel)]="driver.birthDate"
+		                placeholder="yyyy-mm-dd" [minDate]="minDate" [maxDate]="startDate"/>
+		                <span class="input-group-btn">
+		                    <button type="button" class="btn btn-secondary" (click)="birthDateDp.toggle()"><i class="fa fa-calendar"></i></button>
+		                </span>
+		            </div>
+		            <div [hidden]="!(editForm.controls.birthDate?.dirty && editForm.controls.birthDate?.invalid)">
+		                <small class="form-text text-danger"
+		                   [hidden]="!editForm.controls.birthDate?.errors?.required" jhiTranslate="entity.validation.required">
+		                   This field is required.
+		                </small>
+		            </div>
+		        </div>
+			</div>
+			<div class="col-lg-8 col-md-8">
+				<div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.birthPlace" for="field_birthPlace">Birth Place</label>
+		            <input type="text" class="form-control" name="birthPlace" id="field_birthPlace"
+		                [(ngModel)]="driver.birthPlace" maxlength="75" />
+		            <div [hidden]="!(editForm.controls.birthPlace?.dirty && editForm.controls.birthPlace?.invalid)">
+		                <small class="form-text text-danger"
+		                   [hidden]="!editForm.controls.birthPlace?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 75 }">
+		                   This field cannot be longer than 75 characters.
+		                </small>
+		            </div>
+		        </div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-4 col-md-4">
+				<div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.deathDate" for="field_deathDate">Death Date</label>
+		            <div class="input-group">
+		                <input id="field_deathDate" type="text" class="form-control" name="deathDate" ngbDatepicker  #deathDateDp="ngbDatepicker" [(ngModel)]="driver.deathDate"
+		                placeholder="yyyy-mm-dd" [minDate]="minDate" [maxDate]="startDate"/>
+		                <span class="input-group-btn">
+		                    <button type="button" class="btn btn-secondary" (click)="deathDateDp.toggle()"><i class="fa fa-calendar"></i></button>
+		                </span>
+		            </div>
+		        </div>
+			</div>
+			<div class="col-lg-8 col-md-8">
+				<div class="form-group">
+		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.deathPlace" for="field_deathPlace">Death Place</label>
+		            <input type="text" class="form-control" name="deathPlace" id="field_deathPlace"
+		                [(ngModel)]="driver.deathPlace" maxlength="75" />
+		            <div [hidden]="!(editForm.controls.deathPlace?.dirty && editForm.controls.deathPlace?.invalid)">
+		                <small class="form-text text-danger"
+		                   [hidden]="!editForm.controls.deathPlace?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 75 }">
+		                   This field cannot be longer than 75 characters.
+		                </small>
+		            </div>
+		        </div>
+			</div>
+		</div>
     	<div class="form-group">
     		<ng-template #countryTemplate let-r="result">
 			  <img src="{{r.flagImg}}"/>&nbsp;{{r.countryName}}
 			</ng-template>
-            <label jhiTranslate="motorsportsDatabaseApp.driver.nationality" for="field_nationality">Natinality</label>
+            <label jhiTranslate="motorsportsDatabaseApp.driver.nationality" for="field_nationality">Nationality</label>
             <input id="field_nationality" type="text" name="field_nationality" class="form-control" [inputFormatter]="inputFormatter"
             	[(ngModel)]="nationality" [ngbTypeahead]="search" [focusFirst]="false" [resultTemplate]="countryTemplate" placeholder="Country search" required/>
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.deathDate" for="field_deathDate">Death Date</label>
-            <div class="input-group">
-                <input id="field_deathDate" type="text" class="form-control" name="deathDate" ngbDatepicker  #deathDateDp="ngbDatepicker" [(ngModel)]="driver.deathDate"
-                placeholder="yyyy-mm-dd" [minDate]="minDate" [maxDate]="startDate"/>
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-secondary" (click)="deathDateDp.toggle()"><i class="fa fa-calendar"></i></button>
-                </span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.deathPlace" for="field_deathPlace">Death Place</label>
-            <input type="text" class="form-control" name="deathPlace" id="field_deathPlace"
-                [(ngModel)]="driver.deathPlace" maxlength="75" />
-            <div [hidden]="!(editForm.controls.deathPlace?.dirty && editForm.controls.deathPlace?.invalid)">
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.deathPlace?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 75 }">
-                   This field cannot be longer than 75 characters.
-                </small>
-            </div>
         </div>
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.portrait" for="field_portrait">Portrait</label>
