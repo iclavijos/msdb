@@ -15,6 +15,8 @@ import com.icesoft.msdb.domain.Event;
  */
 @Repository
 public interface EventRepository extends JpaRepository<Event,Long> {
+	
+	Event findByName(String name);
 
 	@EntityGraph(value="EventWithoutRelations", type=EntityGraphType.LOAD)
 	@Transactional(readOnly=true)

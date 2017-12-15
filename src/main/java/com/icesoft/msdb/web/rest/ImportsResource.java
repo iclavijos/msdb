@@ -3,6 +3,8 @@ package com.icesoft.msdb.web.rest;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,8 +33,11 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.icesoft.msdb.MSDBException;
+import com.icesoft.msdb.domain.Category;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.Engine;
+import com.icesoft.msdb.domain.Event;
+import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.EventSession;
@@ -42,18 +47,25 @@ import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.domain.SessionLapData;
 import com.icesoft.msdb.domain.Team;
+import com.icesoft.msdb.domain.enums.DurationType;
+import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.domain.serializer.ParseDeserializer;
+import com.icesoft.msdb.repository.CategoryRepository;
 import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.EngineRepository;
+import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
+import com.icesoft.msdb.repository.EventRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.RacetrackRepository;
 import com.icesoft.msdb.repository.SessionLapDataRepository;
 import com.icesoft.msdb.repository.TeamRepository;
+import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.dto.EnginesImportDTO;
+import com.icesoft.msdb.service.dto.EventEditionImportDTO;
 import com.icesoft.msdb.service.dto.RacetrackWithLayoutsImportDTO;
 import com.icesoft.msdb.service.dto.SessionResultDTO;
 import com.icesoft.msdb.service.impl.CacheHandler;
@@ -74,7 +86,12 @@ public class ImportsResource {
     @Autowired private EngineRepository engineRepository;
     @Autowired private EventEntryRepository entryRepository;
     @Autowired private EventSessionRepository sessionRepository;
+    @Autowired private EventRepository eventRepository;
+    @Autowired private EventEditionRepository eventEditionRepository;
+    @Autowired private EventEditionSearchRepository eventEditionSearchRepo;
+    @Autowired private EventSessionRepository eventSessionRepository;
     @Autowired private EventEntryResultRepository resultRepository;
+    @Autowired private CategoryRepository categoryRepository;
     
     @Autowired private SessionLapDataRepository sessionLapDataRepo;
     
@@ -96,6 +113,7 @@ public class ImportsResource {
         	case ENGINES: importEngines(data); break;
         	case SESSION_RESULTS: importResults(imports.getAssociatedId(), data); break;
         	case LAP_BY_LAP: importLapByLap(imports.getAssociatedId(), data); break;
+        	case EVENTS: importEvents(data); break;
         	default: log.warn("The uploaded file does not correspond to any known entity");
         }
         
@@ -166,7 +184,6 @@ public class ImportsResource {
 	        		log.warn("Skipping racetrack layout {} - already exists", layout);
 	        	}
         	}
-        	
         }
     }
     
@@ -205,6 +222,62 @@ public class ImportsResource {
         	} else {
         		log.warn("Engine {} already exist in the database. Skipping...", engine);
         	}
+        }
+    }
+    
+    private void importEvents(String data) {
+    	MappingIterator<EventEditionImportDTO> readValues = initializeIterator(EventEditionImportDTO.class, data);
+    	Event event = null;
+    	EventEdition eventEdition = null;
+        Racetrack racetrack = null;
+        RacetrackLayout layout = null;
+        List<Category> categories = null;
+        TimeZone tz = null;
+        while (readValues.hasNext()) {
+        	EventEditionImportDTO tmp = readValues.next();
+        	if (StringUtils.isNotBlank(tmp.getEventName())) {
+        		event = eventRepository.findByName(tmp.getEventName());
+	        	racetrack = racetrackRepository.findByName(tmp.getRacetrackName());
+	        	tz = Optional.ofNullable(racetrack)
+	        			.map(r -> TimeZone.getTimeZone(r.getTimeZone()))
+	        			.orElseThrow(() -> new MSDBException("Couldn't find a racetrack with name " + tmp.getRacetrackName()));
+
+	        	layout = racetrack.getLayouts().parallelStream()
+	        			.filter(l -> l.getName().equals(tmp.getLayoutName()))
+	        			.findFirst().orElseThrow(() -> new MSDBException("Provided racetrack layout name is not valid: " + tmp.getLayoutName()));
+	        	
+	        	final String[] catNames = tmp.getCategories().split(";");
+	        	categories = categoryRepository.findByNameIn(catNames);
+        		
+	        	eventEdition = new EventEdition();
+	        	eventEdition.setEvent(event);
+	        	eventEdition.setAllowedCategories(categories);
+	        	eventEdition.setEventDate(tmp.getEventDate());
+	        	eventEdition.setEditionYear(tmp.getEventDate().getYear());
+	        	eventEdition.setTrackLayout(layout);
+	        	eventEdition.setLongEventName(tmp.getLongEventEditionName());
+	        	eventEdition.setShortEventName(tmp.getShortEventName());
+	        	eventEdition.setMultidriver(tmp.getMultipleDriversEntry());
+	        	eventEdition = eventEditionRepository.save(eventEdition);
+	        	eventEditionSearchRepo.save(eventEdition);
+        	}
+
+        	//We're dealing with event edition' sessions
+    		if (eventEdition == null) {
+    			throw new MSDBException("Provided data could not be associated with an existing event edition");
+    		}
+    		
+    		EventSession session = new EventSession();
+    		session.setEventEdition(eventEdition);
+    		session.setName(tmp.getSessionName());
+    		session.setShortname(tmp.getSessionShortName());
+    		session.setSessionStartTime(tmp.getSessionStartTime().atZone(tz.toZoneId()));
+    		session.setDuration(tmp.getSessionDuration());
+    		session.setSessionType(SessionType.valueOf(tmp.getSessionType()));
+    		session.setDurationType(DurationType.valueOf(tmp.getDurationType()).getValue());
+    		session.setAdditionalLap(tmp.getExtraLap());
+    		session.setMaxDuration(Optional.ofNullable(tmp.getMaxDuration()).orElseGet(() -> new Integer(0)));
+    		eventSessionRepository.save(session);
         }
     }
     

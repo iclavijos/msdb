@@ -7,5 +7,6 @@ public enum ImportType {
 	TEAMS,
 	ENGINES,
 	SESSION_RESULTS,
-	LAP_BY_LAP
+	LAP_BY_LAP,
+	EVENTS
 }

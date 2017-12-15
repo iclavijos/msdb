@@ -55,7 +55,8 @@
             	"drivers": "Drivers",
             	"racetracks": "Racetracks",
             	"teams": "Teams",
-            	"engines": "Engines"
+            	"engines": "Engines",
+            	"events": "Events"
             },
             "language": "Language",
             "calendar": "Calendar",

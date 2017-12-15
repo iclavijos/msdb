@@ -55,7 +55,8 @@
             	"drivers": "Pilotos",
             	"racetracks": "Circuitos",
             	"teams": "Equipos",
-            	"engines": "Motores"
+            	"engines": "Motores",
+            	"events": "Citas"
             },
             "language": "Idioma",
             "calendar": "Calendario",

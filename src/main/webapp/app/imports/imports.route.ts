@@ -48,6 +48,17 @@ export const importEnginesRoute: Route = {
     canActivate: [UserRouteAccessService]
 };
 
+export const importEventsRoute: Route = {
+	    path: 'import/events',
+	    component: ImportsComponent,
+	    data: {
+	        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+	        pageTitle: 'imports.title',
+	        importType: 'EVENTS'
+	    },
+	    canActivate: [UserRouteAccessService]
+	};
+
 export const importPointsSystemRoute: Route = {
     path: 'import/pointsSystem',
     component: ImportsComponent,
@@ -87,6 +98,7 @@ let IMPORTS_ROUTES = [
    importPointsSystemRoute,
    importTeamsRoute,
    importEnginesRoute,
+   importEventsRoute,
    importTyreProvidersRoute,
    importFuelProvidersRoute
 ];
