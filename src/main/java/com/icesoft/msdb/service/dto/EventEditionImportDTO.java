@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class EventEditionImportDTO {
 
+	private String seriesEditionName;
 	private String eventName;
 	private String longEventEditionName;
 	private String shortEventName;
@@ -25,7 +26,14 @@ public class EventEditionImportDTO {
 	private Boolean extraLap;
 	private String sessionType;
 	private Integer maxDuration;
+	private String pointsSystem;
 	
+	public String getSeriesEditionName() {
+		return seriesEditionName;
+	}
+	public void setSeriesEditionName(String seriesEditionName) {
+		this.seriesEditionName = seriesEditionName;
+	}
 	public String getEventName() {
 		return eventName;
 	}
@@ -121,6 +129,12 @@ public class EventEditionImportDTO {
 	}
 	public void setMaxDuration(Integer maxDuration) {
 		this.maxDuration = maxDuration;
+	}	
+	public String getPointsSystem() {
+		return pointsSystem;
+	}
+	public void setPointsSystem(String pointsSystem) {
+		this.pointsSystem = pointsSystem;
 	}
 	
 	@Override

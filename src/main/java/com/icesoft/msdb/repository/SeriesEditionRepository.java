@@ -27,6 +27,8 @@ public interface SeriesEditionRepository extends JpaRepository<SeriesEdition,Lon
 	@Transactional(readOnly=true)
 	Stream<SeriesEdition> streamAll();
 	
+	SeriesEdition findByEditionName(String name);
+	
 	@Query("select ed from SeriesEdition ed where ed.period like lower(concat('%', ?1,'%'))")
 	Page<SeriesEdition> search(String period, Pageable pageable);
 

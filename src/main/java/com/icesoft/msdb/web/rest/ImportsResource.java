@@ -43,8 +43,10 @@ import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.Imports;
 import com.icesoft.msdb.domain.LapInfo;
+import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
+import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.SessionLapData;
 import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.domain.enums.DurationType;
@@ -58,8 +60,10 @@ import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
+import com.icesoft.msdb.repository.PointsSystemRepository;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.RacetrackRepository;
+import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.SessionLapDataRepository;
 import com.icesoft.msdb.repository.TeamRepository;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
@@ -92,6 +96,8 @@ public class ImportsResource {
     @Autowired private EventSessionRepository eventSessionRepository;
     @Autowired private EventEntryResultRepository resultRepository;
     @Autowired private CategoryRepository categoryRepository;
+    @Autowired private SeriesEditionRepository seriesEditionRepository;
+    @Autowired private PointsSystemRepository pointsSystemRepository;
     
     @Autowired private SessionLapDataRepository sessionLapDataRepo;
     
@@ -248,7 +254,7 @@ public class ImportsResource {
 	        	
 	        	final String[] catNames = tmp.getCategories().split(";");
 	        	categories = categoryRepository.findByNameIn(catNames);
-        		
+	        	
 	        	eventEdition = new EventEdition();
 	        	eventEdition.setEvent(event);
 	        	eventEdition.setAllowedCategories(categories);
@@ -258,6 +264,13 @@ public class ImportsResource {
 	        	eventEdition.setLongEventName(tmp.getLongEventEditionName());
 	        	eventEdition.setShortEventName(tmp.getShortEventName());
 	        	eventEdition.setMultidriver(tmp.getMultipleDriversEntry());
+	        	
+	        	if (StringUtils.isNotBlank(tmp.getSeriesEditionName())) {
+	        		SeriesEdition seriesEd = seriesEditionRepository.findByEditionName(tmp.getSeriesEditionName());
+	        		eventEdition.setSeriesEdition(
+	        				Optional.ofNullable(seriesEd).orElseThrow(() -> new MSDBException("Provided series name is not valid: " + tmp.getSeriesEditionName())));
+	        	}
+	        	
 	        	eventEdition = eventEditionRepository.save(eventEdition);
 	        	eventEditionSearchRepo.save(eventEdition);
         	}
@@ -273,10 +286,16 @@ public class ImportsResource {
     		session.setShortname(tmp.getSessionShortName());
     		session.setSessionStartTime(tmp.getSessionStartTime().atZone(tz.toZoneId()));
     		session.setDuration(tmp.getSessionDuration());
-    		session.setSessionType(SessionType.valueOf(tmp.getSessionType()));
-    		session.setDurationType(DurationType.valueOf(tmp.getDurationType()).getValue());
+    		session.setSessionType(SessionType.valueOf(tmp.getSessionType().toUpperCase()));
+    		session.setDurationType(DurationType.valueOf(tmp.getDurationType().toUpperCase()).getValue());
     		session.setAdditionalLap(tmp.getExtraLap());
     		session.setMaxDuration(Optional.ofNullable(tmp.getMaxDuration()).orElseGet(() -> new Integer(0)));
+    		
+    		if (StringUtils.isNotBlank(tmp.getPointsSystem())) {
+    			PointsSystem ps = pointsSystemRepository.findByName(tmp.getPointsSystem());
+    			session.setPointsSystem(
+    					Optional.ofNullable(ps).orElseThrow(() -> new MSDBException("Provided points system name is not valid: " + tmp.getPointsSystem())));
+    		}
     		eventSessionRepository.save(session);
         }
     }
