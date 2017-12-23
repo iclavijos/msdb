@@ -31,6 +31,14 @@
                 <button type="submit" class="btn btn-primary" jhiTranslate="login.form.button">Sign in</button>
             </form>
             <p></p>
+        </div>
+        <div class="col-md-6">
+            <br/>
+            <jhi-social provider="twitter"></jhi-social>
+            <jhi-social provider="facebook"></jhi-social>
+            <!-- jhipster-needle-add-social-button -->
+        </div>
+        <div class="col-12">
             <div class="alert alert-warning">
                 <a class="alert-link" (click)="requestResetPassword()" jhiTranslate="login.password.forgot">Did you forget your password?</a>
             </div>
@@ -38,12 +46,6 @@
                 <span jhiTranslate="global.messages.info.register.noaccount">You don't have an account yet?</span>
                 <a class="alert-link" (click)="register()" jhiTranslate="global.messages.info.register.link">Register a new account</a>
             </div>
-        </div>
-        <div class="col-md-6">
-            <br/>
-            <jhi-social provider="twitter"></jhi-social>
-            <jhi-social provider="facebook"></jhi-social>
-            <!-- jhipster-needle-add-social-button -->
         </div>
     </div>
 </div>
