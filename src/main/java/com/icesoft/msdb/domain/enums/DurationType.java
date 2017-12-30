@@ -6,7 +6,7 @@ import java.util.Map;
 public enum DurationType {
 	MINUTES(1),
 	HOURS(2),
-	KMs(3),
+	KMS(3),
 	MILES(4),
 	LAPS(5);
 	
