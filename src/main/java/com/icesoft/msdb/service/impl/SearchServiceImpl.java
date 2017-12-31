@@ -91,25 +91,39 @@ public class SearchServiceImpl implements SearchService {
 	@Override
 	@Transactional(readOnly=false)
 	public void rebuildIndexes() {
-		log.debug("REST request to rebuild search indexes");
+		log.debug("Rebuilding search indexes");
 		updateSearchIndex(engineRepo.readAllByIdNotNull(), engineSearchRepo);
+		log.debug("Engines index done");
 		updateSearchIndex(driverRepo.streamAll(), driverSearchRepo);
+		log.debug("Drivers index done");
 		updateSearchIndex(teamRepo.streamAll(), teamSearchRepo);
+		log.debug("Teams index done");
 		updateSearchIndex(chassisRepo.streamAllByIdNotNull(), chassisSearchRepo);
+		log.debug("Chassis index done");
 		updateSearchIndex(categoryRepo.streamAll(), categorySearchRepo);
+		log.debug("Categories index done");
 		updateSearchIndex(fuelRepo.streamAll(), fuelSearchRepo);
+		log.debug("Fuel supliers index done");
 		updateSearchIndex(tyreRepo.streamAll(), tyreSearchRepo);
+		log.debug("Tyre suppliers index done");
 		updateSearchIndex(pointsRepo.streamAll(), pointsSearchRepo);
+		log.debug("Points system index done");
 		updateSearchIndex(eventRepo.readAllByIdNotNull(), eventSearchRepo);
+		log.debug("Events index done");
 		updateSearchIndex(seriesRepo.streamAll(), seriesSearchRepo);
+		log.debug("Series index done");
 		updateSearchIndex(eventEditionRepo.streamAllByIdNotNull(), eventEditionSearchRepo);
+		log.debug("Event editions index done");
 		updateSearchIndex(eventEntryRepo.streamAllByIdNotNull(), eventEntrySearchRepo);
+		log.debug("Event entries index done");
 		updateSearchIndex(racetrackRepo.streamAll(), racetrackSearchRepo);
+		log.debug("Racetracks index done");
 		updateSearchIndex(racetrackLayoutRepo.streamAll(), racetrackLayoutSearchRepo);
-		log.debug("REST request to rebuild search indexes completed");
+		log.debug("Rebuilding search indexes completed");
 	}
 	
 	private <T> void updateSearchIndex(final Stream<T> stream, final ElasticsearchRepository<T, Long> searchRepo) {
+		searchRepo.deleteAll();
 		stream.parallel().forEach(elem -> searchRepo.save(elem));
 		stream.close();
 	}
