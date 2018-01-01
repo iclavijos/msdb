@@ -50,9 +50,11 @@ export class Calendar implements OnInit {
     }
     
     loadEvents(e) {
-        let start = e.view.start;
-        let end = e.view.end;
-        this.eventEditionService.findCalendarEvents(new Date(start), new Date(end)).subscribe(events => {this.convertEvents(events);});
+        const start = new Date(e.view.start);
+        const end = new Date(e.view.end);
+        start.setDate(start.getDate() - 1);
+        
+        this.eventEditionService.findCalendarEvents(start,end).subscribe(events => {this.convertEvents(events);});
     }
     
     eventClick(e) {

@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -251,12 +252,22 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 		TemporalUnit temp = durationType.equals(DurationType.MINUTES) ? ChronoUnit.MINUTES :
 				durationType.equals(DurationType.HOURS) ? ChronoUnit.HOURS : null;
 		
-		if (getSessionType().equals(SessionType.RACE) && getMaxDuration() != null) {
-			return getSessionStartTime().plus(getMaxDuration(), ChronoUnit.HOURS);
-		}
-		if (temp == null) return getSessionStartTime().plus(2, ChronoUnit.HOURS);
-		else return getSessionStartTime().plus(getDuration(), temp);
+		int maxDuration = Optional.ofNullable(getMaxDuration()).orElse(new Integer(0));
 		
+		if (maxDuration > 0) {
+			return getSessionStartTime().plus(maxDuration, ChronoUnit.HOURS);
+		}
+		
+		if (!getSessionType().equals(SessionType.RACE)) {
+			return getSessionStartTime().plus(getDuration(), temp);
+		} else {
+			if (temp != null) {
+				return getSessionStartTime().plus(getDuration(), temp);
+			} else {
+				return getSessionStartTime().plus(2, ChronoUnit.HOURS);
+			}
+		}
+				
 	}
 
 	@Override
