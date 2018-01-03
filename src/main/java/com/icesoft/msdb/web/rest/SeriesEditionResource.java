@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.repository.EventSessionRepository;
@@ -38,6 +40,7 @@ import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
+import com.icesoft.msdb.service.dto.SeriesDriverChampionDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
@@ -247,5 +250,24 @@ public class SeriesEditionResource {
     	});
     	
         return CompletableFuture.completedFuture(ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString())).build());
+    }
+    
+    @PostMapping("/series-editions/{seriesEditionId}/champions/drivers")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @Transactional
+    public ResponseEntity<Void> updateSeriesDriversChampions(@PathVariable Long seriesEditionId, @RequestBody List<Long> selectedDriversId) {
+    	seriesEditionService.setSeriesDriversChampions(seriesEditionId, selectedDriversId);
+    	return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, seriesEditionId.toString())).build();
+    }
+    
+    @GetMapping("/series-editions/{id}/champions/drivers")
+    @Timed
+    public ResponseEntity<List<SeriesDriverChampionDTO>> getSeriesEventsChampionsDrivers(@PathVariable Long id) {
+    	log.debug("REST request to retrieve all champions drivers of series edition {}", id);
+    	List<Driver> champs = seriesEditionService.getSeriesDriversChampions(id);
+    	
+    	return new ResponseEntity<>(champs.parallelStream().map(d -> new SeriesDriverChampionDTO(d)).collect(Collectors.toList())
+    			, HttpStatus.OK);
     }
 }

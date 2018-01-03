@@ -12,7 +12,9 @@ import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.stats.DriverStatistics;
+import com.icesoft.msdb.domain.stats.Statistics;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
+import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.PointsSystemRepository;
@@ -30,18 +32,20 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	private final SeriesEditionRepository seriesRepo;
 	private final EventSessionRepository sessionRepo;
 	private final PointsSystemRepository pointsRepo;
+	private final DriverRepository driverRepo;
 	private final DriverEventPointsRepository driverPointsRepo;
 	private final TeamEventPointsRepository teamPointsRepo;
 	private final DriverStatisticsRepository driverStatsRepo;
 	
 	public SeriesEditionServiceImpl(EventEditionRepository eventRepo, SeriesEditionRepository seriesRepo, 
 			EventSessionRepository sessionRepo, PointsSystemRepository pointsRepo, 
-			DriverEventPointsRepository driverPointsRepo, TeamEventPointsRepository teamPointsRepo,
-			DriverStatisticsRepository driverStatsRepo) {
+			DriverRepository driverRepo, DriverEventPointsRepository driverPointsRepo, 
+			TeamEventPointsRepository teamPointsRepo, DriverStatisticsRepository driverStatsRepo) {
 		this.eventRepo = eventRepo;
 		this.seriesRepo = seriesRepo;
 		this.sessionRepo = sessionRepo;
 		this.pointsRepo = pointsRepo;
+		this.driverRepo = driverRepo;
 		this.driverPointsRepo = driverPointsRepo;
 		this.teamPointsRepo = teamPointsRepo;
 		this.driverStatsRepo = driverStatsRepo;
@@ -110,17 +114,43 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	}
 	
 	@Override
-	public void setSeriesDriversChampions(Long seriesEditionId, List<Driver> drivers) {
+	public void setSeriesDriversChampions(Long seriesEditionId, List<Long> driverIds) {
 		SeriesEdition seriesEd = seriesRepo.findOne(seriesEditionId);
 		List<Driver> currentChamps = seriesEd.getDriversChampions();
+		String categoryName = seriesEd.getSeries().getName();
+		String year = seriesEd.getPeriodEnd();
+		
+		//Update statistics to remove championship won
 		for(Driver d: currentChamps) {
 			DriverStatistics ds = driverStatsRepo.findOne(d.getId().toString());
-			
+			Statistics st = ds.getStaticsForCategory(categoryName);
+			st.removeChampionship(seriesEditionId);
+			ds.updateStatistics(categoryName, st);
+			st = ds.getStaticsForCategory(categoryName, year);
+			st.removeChampionship(seriesEditionId);
+			ds.updateStatistics(categoryName, st, year);
+			driverStatsRepo.save(ds);
 		}
-		//Update statistics to remove championship won
-		seriesEd.setDriversChampions(drivers);
+		
 		//Update statistics again for new champs
+		seriesEd.setDriversChampions(driverRepo.findByIdIn(driverIds));
+		for(Driver d: seriesEd.getDriversChampions()) {
+			DriverStatistics ds = driverStatsRepo.findOne(d.getId().toString());
+			Statistics st = ds.getStaticsForCategory(categoryName);
+			st.addChampionship(seriesEd.getEditionName(), year, seriesEditionId);
+			ds.updateStatistics(categoryName, st);
+			st = ds.getStaticsForCategory(categoryName, year);
+			st.addChampionship(seriesEd.getEditionName(), year, seriesEditionId);
+			ds.updateStatistics(categoryName, st, year);
+			driverStatsRepo.save(ds);
+		}
+		
 		seriesRepo.save(seriesEd);
+	}
+	
+	@Override
+	public List<Driver> getSeriesDriversChampions(Long seriesEditionId) {
+		return seriesRepo.findOne(seriesEditionId).getDriversChampions();
 	}
 
 }

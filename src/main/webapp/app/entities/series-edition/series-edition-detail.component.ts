@@ -143,5 +143,8 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
         this.eventSubscriber.add(this.eventManager.subscribe(
             'seriesEditionEventsListModification',
             (response) => this.loadEvents(this.seriesEdition.id)));
+        this.eventSubscriber.add(this.eventManager.subscribe(
+        	'driversChampionsModification',
+        	(response) => this.loadDriversChampions(this.seriesEdition.id)));
     }
 }

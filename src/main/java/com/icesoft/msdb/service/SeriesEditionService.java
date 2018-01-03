@@ -14,5 +14,7 @@ public interface SeriesEditionService {
 	
 	public List<EventEdition> findSeriesEvents(Long seriesId);
 	
-	public void setSeriesDriversChampions(Long seriesEditionId, List<Driver> drivers);
+	public void setSeriesDriversChampions(Long seriesEditionId, List<Long> driverIds);
+	
+	public List<Driver> getSeriesDriversChampions(Long seriesEditionId);
 }

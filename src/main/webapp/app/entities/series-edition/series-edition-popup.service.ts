@@ -70,6 +70,21 @@ export class SeriesEditionPopupService {
 	        });
         });
     }
+    
+    openDriversChamps (component: Component, seriesEditionId: number): Promise<NgbModalRef> {
+    	return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
+
+            this.seriesEditionService.findDriversStandings(seriesEditionId).subscribe(driversStandings => {
+            	this.ngbModalRef = this.seriesDriversChampionsModalRef(component, seriesEditionId, driversStandings.json());
+                resolve(this.ngbModalRef);
+	    	});
+	        
+        });
+    }
 
     seriesEditionModalRef(component: Component, seriesEdition: SeriesEdition, eventEdition?: EventEdition): NgbModalRef {
         const modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
@@ -77,6 +92,21 @@ export class SeriesEditionPopupService {
         if (eventEdition) {
             modalRef.componentInstance.eventEdition = eventEdition;
         }
+        modalRef.result.then((result) => {
+            this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
+            this.ngbModalRef = null;
+        }, (reason) => {
+            this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
+            this.ngbModalRef = null;
+        });
+        return modalRef;
+    }
+    
+    seriesDriversChampionsModalRef(component: Component, seriesEditionId: number, driverStandings: any): NgbModalRef {
+    	const modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
+        modalRef.componentInstance.drivers = driverStandings;
+        modalRef.componentInstance.seriesEditionId = seriesEditionId;
+
         modalRef.result.then((result) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
             this.ngbModalRef = null;

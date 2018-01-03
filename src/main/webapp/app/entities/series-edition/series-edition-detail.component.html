@@ -63,7 +63,7 @@
 				        <dt *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
 				        	<button [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/drivers-champions-edit' } }]"
 	                                class="btn btn-primary btn-sm">
-	                            <span class="fa fa-pencil"></span><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.updateDriversChampions">Update drivers Champions</span>
+	                            <span class="fa fa-pencil"></span><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.driversChampions.edit">Update drivers Champions</span>
 	                        </button>
 	                        <button *ngIf="seriesEdition.teamsStandings"
 	                                [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar-edit/' } }]"

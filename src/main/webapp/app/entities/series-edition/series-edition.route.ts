@@ -9,6 +9,7 @@ import { SeriesEditionDetailComponent } from './series-edition-detail.component'
 import { SeriesEditionPopupComponent } from './series-edition-dialog.component';
 import { SeriesEditionDeletePopupComponent } from './series-edition-delete-dialog.component';
 import { SeriesEditionCalendarPopupComponent } from './series-edition-calendar-dialog.component';
+import { SeriesEditionDriversChampionsPopupComponent } from './series-edition-drivers-champions-dialog.component';
 
 @Injectable()
 export class SeriesEditionResolvePagingParams implements Resolve<any> {
@@ -89,15 +90,15 @@ export const seriesEditionPopupRoute: Routes = [
     canActivate: [UserRouteAccessService],
     outlet: 'popup'
   },
-//  {
-//      path: ':id/drivers-champions-edit',
-//      component: SeriesEditionDriversChampionsPopupComponent,
-//      data: {
-//          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-//          pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
-//      },
-//      canActivate: [UserRouteAccessService],
-//      outlet: 'popup'
-//  }
+  {
+      path: ':id/drivers-champions-edit',
+      component: SeriesEditionDriversChampionsPopupComponent,
+      data: {
+          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+          pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
+      },
+      canActivate: [UserRouteAccessService],
+      outlet: 'popup'
+  }
   
 ];

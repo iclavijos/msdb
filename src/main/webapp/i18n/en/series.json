@@ -70,7 +70,10 @@
 	            "updatingStandings": "Updating standings. Wait a few seconds...",
 	            "standingsNotUpdated": "Standings could not be updated",
 	            "standingsUpdated": "Standings updated",
-	            "updateDriversChampions": "Edit drivers champions",
+	            "driversChampions": {
+	            	"edit": "Edit drivers champions",
+	            	"selectDrivers": "Select which drivers are champions of this edition"
+	            },
 	            "updateTeamsChampions": "Edit teams champions",
 	            "updateManufacturersChampions": "Edit manufacturers champions"
 	        }

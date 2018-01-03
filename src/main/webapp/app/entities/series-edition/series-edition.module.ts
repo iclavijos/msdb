@@ -15,6 +15,8 @@ import {
     SeriesEditionDeleteDialogComponent,
     SeriesEditionCalendarPopupComponent,
     SeriesEditionCalendarDialogComponent,
+    SeriesEditionDriversChampionsPopupComponent,
+    SeriesEditionDriversChampionsDialogComponent,
     seriesEditionRoute,
     seriesEditionPopupRoute,
     SeriesEditionResolvePagingParams,
@@ -43,6 +45,8 @@ const ENTITY_STATES = [
         SeriesEditionDeletePopupComponent,
         SeriesEditionCalendarPopupComponent,
         SeriesEditionCalendarDialogComponent,
+        SeriesEditionDriversChampionsPopupComponent,
+        SeriesEditionDriversChampionsDialogComponent,
     ],
     entryComponents: [
         SeriesEditionComponent,
@@ -52,6 +56,8 @@ const ENTITY_STATES = [
         SeriesEditionDeletePopupComponent,
         SeriesEditionCalendarPopupComponent,
         SeriesEditionCalendarDialogComponent,
+        SeriesEditionDriversChampionsPopupComponent,
+        SeriesEditionDriversChampionsDialogComponent,
     ],
     providers: [
         SeriesEditionService,

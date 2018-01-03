@@ -64,7 +64,7 @@ export class SeriesEditionService {
     }
 
     findDriversChampions(id: number): Observable<Response> {
-        return this.http.get(`${this.resourceUrl}/${id}/champions/driver`).map((res: Response) => {
+        return this.http.get(`${this.resourceUrl}/${id}/champions/drivers`).map((res: Response) => {
             return res;
         });
     }
@@ -85,6 +85,12 @@ export class SeriesEditionService {
         return this.http.post(`${this.resourceUrl}/${seriesId}/standings`, null).map((res: Response) => {
             return res;
          });
+    }
+    
+    setDriversChampions(seriesEditionId: number, selectedDriversId: any) {
+    	return this.http.post(`${this.resourceUrl}/${seriesEditionId}/champions/drivers`, selectedDriversId).map((res: Response) => {
+    		return res;
+    	});
     }
 
     query(seriesId: number, req?: any): Observable<ResponseWrapper> {
