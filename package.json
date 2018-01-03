@@ -40,10 +40,10 @@
   "devDependencies": {
     "@angular/cli": "1.4.2",
     "@angular/compiler-cli": "4.3.2",
-    "@types/jasmine": "2.5.53",
-    "@types/node": "8.0.18",
     "@types/fullcalendar": "^2.7.46",
+    "@types/jasmine": "2.5.53",
     "@types/moment-timezone": "^0.2.34",
+    "@types/node": "8.0.18",
     "add-asset-html-webpack-plugin": "1.0.2",
     "angular2-template-loader": "0.6.2",
     "awesome-typescript-loader": "3.2.2",
@@ -82,12 +82,12 @@
     "tslint-loader": "3.5.3",
     "typescript": "2.5.2",
     "uglifyjs-webpack-plugin": "1.0.0-beta.2",
+    "web-app-manifest-loader": "0.1.1",
     "webpack": "3.6.0",
     "webpack-dev-server": "2.8.2",
     "webpack-merge": "4.1.0",
     "webpack-notifier": "1.5.0",
     "webpack-visualizer-plugin": "0.1.11",
-    "web-app-manifest-loader": "0.1.1",
     "write-file-webpack-plugin": "4.1.0"
   },
   "engines": {
