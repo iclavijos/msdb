@@ -25,7 +25,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.shortname" for="field_shortname">Shortname</label>
             <input type="text" class="form-control" name="shortname" id="field_shortname"
-                [(ngModel)]="series.shortname" required maxlength="30" />
+                [(ngModel)]="series.shortname" required maxlength="10" />
             <div [hidden]="!(editForm.controls.shortname?.dirty && editForm.controls.shortname?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.shortname?.errors?.required" jhiTranslate="entity.validation.required">
