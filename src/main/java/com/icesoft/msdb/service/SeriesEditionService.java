@@ -5,6 +5,7 @@ import java.util.List;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
+import com.icesoft.msdb.service.dto.SeriesEventsAndWinnersDTO;
 
 public interface SeriesEditionService {
 
@@ -17,4 +18,6 @@ public interface SeriesEditionService {
 	public void setSeriesDriversChampions(Long seriesEditionId, List<Long> driverIds);
 	
 	public List<Driver> getSeriesDriversChampions(Long seriesEditionId);
+	
+	public List<SeriesEventsAndWinnersDTO> getSeriesEditionsEventsAndWinners(Long seriesEditionId);
 }

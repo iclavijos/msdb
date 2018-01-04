@@ -19,7 +19,6 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -52,14 +51,12 @@ import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
-import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
-import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.dto.SessionCalendarDTO;
 import com.icesoft.msdb.service.dto.SessionResultDTO;
 import com.icesoft.msdb.service.impl.ResultsService;
@@ -95,13 +92,12 @@ public class EventEditionResource {
     private final ResultsService resultsService;
     private final StatisticsService statsService;
     private final CDNService cdnService;
-    private final JDBCRepositoryImpl jdbcRepository;
     
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventEditionSearchRepository eventEditionSearchRepo,
     		EventEntrySearchRepository eventEntrySearchRepo, EventSessionRepository eventSessionRepository, 
     		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, 
     		RacetrackLayoutRepository racetrackLayoutRepo, ResultsService resultsService, 
-    		CDNService cdnService, JDBCRepositoryImpl jdbcRepository, StatisticsService statsService) {
+    		CDNService cdnService, StatisticsService statsService) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventEditionSearchRepo = eventEditionSearchRepo;
         this.eventSessionRepository = eventSessionRepository;
@@ -112,7 +108,6 @@ public class EventEditionResource {
         this.resultsService = resultsService;
         this.cdnService = cdnService;
         this.statsService = statsService;
-        this.jdbcRepository = jdbcRepository;
     }
 
     /**
@@ -344,38 +339,6 @@ public class EventEditionResource {
     		entry.setEventEdition(tmp);
     	});
     	return result;
-    }
-    
-    @GetMapping("/event-editions/{id}/winners")
-    @Timed
-    @Transactional
-    @Cacheable(cacheNames="winnersCache", key="#id")
-    public List<EventEditionWinnersDTO> getEventEditionWinners(@PathVariable Long id) {
-    	log.debug("REST request to get all EventEdition {} winners", id);
-    	List<EventEditionWinnersDTO> winners = new ArrayList<>();
-    	
-    	List<Object[]> tmpWinners = jdbcRepository.getEventWinners(id);
-    	List<String> sessions = tmpWinners.stream().map(w -> (String)w[2]).distinct().collect(Collectors.toList());
-    	for(String session : sessions) {
-    		EventEditionWinnersDTO catWinners = new EventEditionWinnersDTO(session);
-    		EventEditionEntry overallWinner = null;
-    		for(Object[] winner : tmpWinners) {
-    			if (winner[2].equals(session)) {
-	        		EventEditionEntry entry = eventEntryRepository.findOne((Long)winner[0]);
-	        		catWinners.addWinners((String)winner[1], entry.getDriversName());
-	        		if (winner[3].equals(new Integer(1))) {
-	        			overallWinner = entry;
-	        		}
-    			}
-        	}
-    		if (catWinners.getNumberOfCategories() > 1) {
-    			catWinners.addWinners("Overall", overallWinner.getDriversName());
-    		}
-    		catWinners.getWinners().sort((w1, w2) -> w1.compareTo(w2));
-    		winners.add(catWinners);
-    	}
-    	
-    	return winners;
     }
     
     @GetMapping("/event-editions/{eventId}/points/{driverId}")

@@ -20,9 +20,9 @@ export class SeriesEdition {
         public teamChamp?: Team,
         public manufacturerChamp?: string,
         public pointsSystems?: PointsSystem[],
-        public events?: EventEdition[],
+        public events?: any[],
         public driversStandings?: boolean,
         public teamsStandings?: boolean,
-        public manufacturersStandings?: boolean,
+        public manufacturersStandings?: boolean
     ) { }
 }

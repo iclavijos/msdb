@@ -41,6 +41,7 @@ import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
 import com.icesoft.msdb.service.dto.SeriesDriverChampionDTO;
+import com.icesoft.msdb.service.dto.SeriesEventsAndWinnersDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
@@ -208,10 +209,11 @@ public class SeriesEditionResource {
     
     @GetMapping("/series-editions/{id}/events")
     @Timed
-    public ResponseEntity<List<EventEdition>> getSeriesEvents(@PathVariable Long id) {
+    @Cacheable(cacheNames="winnersCache", key="#id")
+    public ResponseEntity<List<SeriesEventsAndWinnersDTO>> getSeriesEvents(@PathVariable Long id) {
     	log.debug("REST request to retrieve all events of series edition {}", id);
     	return new ResponseEntity<>(
-    			seriesEditionService.findSeriesEvents(id), HttpStatus.OK);
+    			seriesEditionService.getSeriesEditionsEventsAndWinners(id), HttpStatus.OK);
     }
     
     @PostMapping("/series-editions/{id}/events/{idEvent}")

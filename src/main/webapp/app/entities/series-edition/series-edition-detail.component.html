@@ -98,7 +98,7 @@
 				 <div class="col-lg-8 col-md-8">
 				 	<dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.calendar.title">Events</span></dt>
 					<dd>
-			            <div class="table-responsive" *ngIf="seriesEdition.events && displayEvents">
+			            <div class="table-responsive" *ngIf="seriesEdition.events">
 					        <table class="table table-striped">
 					            <thead>
 					            <tr>
@@ -109,20 +109,20 @@
 					            </tr>
 					            </thead>
 					            <tbody>
-					            <tr *ngFor="let event of seriesEdition.events">
-					            	<td>{{event.eventDate | dDate:'shortDate' }}</td>
-					            	<td><a [routerLink]="['/event-edition', event.id]">{{event.longEventName}}</a></td>
-					            	<td *ngIf="!event.winners || event.winners[0]?.length === 0">-</td>
-					            	<td *ngIf="event.winners && event.winners[0]?.length === 1">
-					            		<span *ngIf="event.winners[0][0].winners.length === 1">{{event.winners[0][0].winners[0].drivers}}</span>
-					            		<span *ngIf="event.winners[0][0].winners.length > 1">
-					            			<div *ngFor="let winner of event.winners[0][0].winners">
+					            <tr *ngFor="let eventData of seriesEdition.events">
+					            	<td>{{eventData.eventEditionDate | dDate:'shortDate' }}</td>
+					            	<td><a [routerLink]="['/event-edition', eventData.eventEditionId]">{{eventData.eventEditionName}}</a></td>
+					            	<td *ngIf="!eventData.winners || eventData.winners.length === 0">-</td>
+					            	<td *ngIf="eventData.winners.length === 1">
+					            		<span *ngIf="eventData.winners[0].winners.length === 1">{{eventData.winners[0].winners[0].drivers}}</span>
+					            		<span *ngIf="eventData.winners[0].winners.length > 1">
+					            			<div *ngFor="let winner of eventData.winners[0].winners">
 						                        <span class="tag tag-info">{{winner.category}}: {{ winner.drivers }}</span>
 						                    </div>
 					            		</span>
 					            	</td>
-					            	<td *ngIf="event.winners && event.winners[0]?.length > 1">
-					            		<div *ngFor="let session of event.winners[0]">
+					            	<td *ngIf="eventData.winners && eventData.winners.length > 1">
+					            		<div *ngFor="let session of eventData.winners">
 					            			<strong>{{session.session}}:</strong>
 					                        <span *ngIf="session.winners.length === 1">{{session.winners[0].drivers}}</span>
 						            		<span *ngIf="session.winners.length > 1">
@@ -134,13 +134,13 @@
 					            	</td>
 					            	<td>
 					            		<button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-				                                [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar-edit/' + event.id } }]"
+				                                [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar-edit/' + eventData.eventEditionId } }]"
 				                                class="btn btn-primary btn-sm">
 				                            <span class="fa fa-pencil"></span>
 				                        </button>
 					            		<button type="submit"
 				                        		 *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-				                                (click)="removeEvent(event.id)"
+				                                (click)="removeEvent(eventData.eventEditionId)"
 				                                class="btn btn-danger btn-sm">
 				                            <span class="fa fa-remove"></span>
 				                        </button>

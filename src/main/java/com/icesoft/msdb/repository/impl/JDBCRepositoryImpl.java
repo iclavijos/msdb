@@ -27,7 +27,19 @@ public class JDBCRepositoryImpl {
 		List<Object[]> tmp = jdbcTemplate.query(query, new Object[] {eventEditionId},
 				(rs, rowNum) -> new Object[] {rs.getLong("entryId"), rs.getString("catName"), rs.getString("sessionName"), rs.getInt("finalPos")});
 		
-		return tmp.parallelStream().filter(obj -> ((Integer)obj[3]).intValue() == 1).collect(Collectors.toList());
+		List<String> categories = tmp.parallelStream().map(o -> o[1].toString()).distinct().collect(Collectors.toList());
+		List<String> sessions = tmp.parallelStream().map(o -> o[2].toString()).distinct().collect(Collectors.toList());
+		
+		List<Object[]> result = new ArrayList<>();
+		for(String session: sessions) {
+			for(String category: categories) {
+				result.add(tmp.parallelStream()
+						.filter(o -> o[2].toString().equals(session))
+						.filter(o -> o[1].toString().equals(category)).findFirst().get());
+			}
+		}
+		
+		return result;
 	}
 	
 	public Map<Long, List<Object[]>> getDriversResultsInSeries(Long seriesId) {
