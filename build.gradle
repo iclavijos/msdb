@@ -36,7 +36,7 @@ apply plugin: 'idea'
 defaultTasks 'bootRun'
 
 group = 'com.icesoft.msdb'
-version = '0.23.0'
+version = '0.23.1'
 
 description = ''
 
