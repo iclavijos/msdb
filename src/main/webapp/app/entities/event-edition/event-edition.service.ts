@@ -52,6 +52,10 @@ export class EventEditionService {
         const options = createRequestOption(req);
         return this.http.get(`${this.eventResourceUrl}/${idEvent}/editions`, options).map((res: Response) => this.convertResponse(res));
     }
+    
+    findPrevNextInSeries(id: number): Observable<ResponseWrapper> {
+    	return this.http.get(`${this.resourceUrl}/${id}/prevNextInSeries`, null).map((res: Response) => this.convertResponse(res));
+    }
 
     findSessions(id: number, timeZone: string): Observable<ResponseWrapper> {
         return this.http.get(`${this.resourceUrl}/${id}/sessions`).map((res: Response) => {

@@ -22,6 +22,10 @@
     <hr>
     <jhi-alert-error></jhi-alert-error>
     <a class="deco-none" *ngIf="eventEdition.seriesId" [routerLink]="['/series/series-edition', eventEdition.seriesId]"><i  class="fa fa-fw fa-angle-double-left" aria-hidden="true"></i> {{eventEdition.seriesName}}</a>
+    <div *ngIf="eventEdition.seriesId && navigationIds !== null">
+    <a class="deco-none" *ngIf="navigationIds.prevId !== 0" [routerLink]="['/event-edition', navigationIds.prevId]"><i  class="fa fa-fw fa-angle-double-left" aria-hidden="true"></i> {{navigationIds.prevName}}</a>&nbsp; 
+    <a class="deco-none" *ngIf="navigationIds.nextId !== 0" [routerLink]="['/event-edition', navigationIds.nextId]">{{navigationIds.nextName}} <i  class="fa fa-fw fa-angle-double-right" aria-hidden="true"></i></a>
+    </div>
     <ngb-tabset>
 	  <ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.info' | translate}}">
 	    <ng-template ngbTabContent>

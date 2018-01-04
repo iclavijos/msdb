@@ -38,6 +38,7 @@ import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
+import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.service.CDNService;
@@ -90,6 +91,9 @@ public class EventEditionResourceIntTest {
     private ResultsService resultsService;
     
     @Autowired
+    private JDBCRepositoryImpl jdbcRepo;
+    
+    @Autowired
     private StatisticsService statsService;
     
     @Autowired
@@ -117,7 +121,7 @@ public class EventEditionResourceIntTest {
         final EventEditionResource eventEditionResource = new EventEditionResource(eventEditionRepository, eventEditionSearchRepository,
         		eventEntrySearchRepository, eventSessionRepository, 
         		eventEntryRepository, resultsRepository, racetrackLayoutRepository, resultsService, 
-        		cdnService, statsService);
+        		cdnService, statsService, jdbcRepo);
         this.restEventEditionMockMvc = MockMvcBuilders.standaloneSetup(eventEditionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

@@ -51,12 +51,14 @@ import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
+import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
+import com.icesoft.msdb.service.dto.EventsSeriesNavigationDTO;
 import com.icesoft.msdb.service.dto.SessionCalendarDTO;
 import com.icesoft.msdb.service.dto.SessionResultDTO;
 import com.icesoft.msdb.service.impl.ResultsService;
@@ -92,12 +94,13 @@ public class EventEditionResource {
     private final ResultsService resultsService;
     private final StatisticsService statsService;
     private final CDNService cdnService;
+    private final JDBCRepositoryImpl jdbcRepo;
     
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventEditionSearchRepository eventEditionSearchRepo,
     		EventEntrySearchRepository eventEntrySearchRepo, EventSessionRepository eventSessionRepository, 
     		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, 
     		RacetrackLayoutRepository racetrackLayoutRepo, ResultsService resultsService, 
-    		CDNService cdnService, StatisticsService statsService) {
+    		CDNService cdnService, StatisticsService statsService, JDBCRepositoryImpl jdbcRepo) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventEditionSearchRepo = eventEditionSearchRepo;
         this.eventSessionRepository = eventSessionRepository;
@@ -108,6 +111,7 @@ public class EventEditionResource {
         this.resultsService = resultsService;
         this.cdnService = cdnService;
         this.statsService = statsService;
+        this.jdbcRepo = jdbcRepo;
     }
 
     /**
@@ -220,6 +224,13 @@ public class EventEditionResource {
         eventEditionRepository.delete(id);
         eventEditionSearchRepo.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+    
+    @GetMapping("/event-editions/{id}/prevNextInSeries")
+    @Timed
+    @Transactional(readOnly=true)
+    public EventsSeriesNavigationDTO getPrevNextIdInSeries(@PathVariable Long id) {
+    	return jdbcRepo.getNavigation(id);
     }
 
     /**
@@ -461,20 +472,7 @@ public class EventEditionResource {
     public List<SessionResultDTO> getEventSessionResults(@PathVariable Long id, @PathVariable Long idSession) {
     	log.debug("REST request to get EventEdition {} results for session {}", id, idSession);
     	List<EventEntryResult> result = eventResultRepository.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(idSession, id);
-//    	result.parallelStream().forEach(r -> {
-//    		r.getEntry().engine(null).chassis(null).tyres(null).fuel(null).team(null);
-//    		if (r.getEntry().getEventEdition() != null && r.getEntry().getEventEdition().getSeriesEdition() != null) {
-//	    		SeriesEdition tmp = new SeriesEdition();
-//	    		tmp.setId(r.getEntry().getEventEdition().getSeriesEdition().getId());
-//	    		tmp.setEditionName(r.getEntry().getEventEdition().getSeriesEdition().getEditionName());
-//	    		Series tmpSeries = new Series();
-//	    		tmpSeries.setId(r.getEntry().getEventEdition().getSeriesEdition().getSeries().getId());
-//	    		tmp.setSeries(tmpSeries.name(r.getEntry().getEventEdition().getSeriesEdition().getSeries().getName()));
-//	    		tmp.setSeries(tmpSeries);
-//	    		r.getEntry().getEventEdition().setSeriesEdition(tmp);
-//    		}
-//    	});
-//    	return result;
+
     	return result.parallelStream().map(r -> new SessionResultDTO(r)).collect(Collectors.toList());
     }
     

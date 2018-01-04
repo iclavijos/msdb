@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
+import com.icesoft.msdb.service.dto.EventsSeriesNavigationDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 
 @Repository
@@ -99,5 +100,23 @@ public class JDBCRepositoryImpl {
 				new Object[] {seriesId}, (rs, rowNum) -> new TeamPointsDTO(rs.getLong("teamId"), rs.getString("teamName"), rs.getFloat("points")));
 		
 		return result;
+	}
+	
+	public EventsSeriesNavigationDTO getNavigation(Long eventEditionId) {
+		List<EventsSeriesNavigationDTO> result = jdbcTemplate.query(
+				"SELECT "
+				+ "pe2.id prev_id, pe2.long_event_name prev_name, ne2.id next_id, ne2.long_event_name next_name "
+				+ "FROM event_edition pe1 "
+				+ "LEFT JOIN event_edition pe2 ON pe1.series_edition_id = pe2.series_edition_id AND pe1.event_date > pe2.event_date "
+				+ "LEFT JOIN event_edition pe3 ON pe1.series_edition_id = pe3.series_edition_id AND pe1.event_date > pe3.event_date AND pe3.event_date > pe2.event_date, "
+				+ "event_edition ne1 "
+				+ "LEFT JOIN event_edition ne2 ON ne1.series_edition_id = ne2.series_edition_id AND ne1.event_date < ne2.event_date "
+				+ "LEFT JOIN event_edition ne3 ON ne1.series_edition_id = ne3.series_edition_id AND ne1.event_date < ne3.event_date AND ne3.event_date < ne2.event_date "
+				+ "WHERE pe1.id = ? and pe3.id is null and ne1.id = pe1.id and ne3.id is null",
+				new Object[] { eventEditionId },
+				(rs, rowNum) -> new EventsSeriesNavigationDTO(rs.getInt("prev_id"), rs.getInt("next_id"), rs.getString("prev_name"), rs.getString("next_name")));
+		
+		//We will only retrieve one record
+		return result.get(0);
 	}
 }

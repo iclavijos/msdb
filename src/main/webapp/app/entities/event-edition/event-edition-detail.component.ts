@@ -27,6 +27,7 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     durationTypes = DurationType;
     filterCategory: string;
     editions: any[];
+    navigationIds = null;
     showPoints = false;
 
     keysSession: any[];
@@ -57,6 +58,10 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         this.eventEditionService.find(id).subscribe((eventEdition) => {
             this.eventEdition = eventEdition;
             this.loadSessions(id);
+            if (eventEdition.seriesId) {
+            	this.eventEditionService.findPrevNextInSeries(id).subscribe(
+                        (res: Response) => this.navigationIds = res.json);
+            }
             this.eventService.findEventEditionIds(eventEdition.event.id).subscribe(
                     (res: Response) => this.editions = res.json());
         });
