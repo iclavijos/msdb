@@ -60,7 +60,7 @@
         <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
     </button>
 
-    <button type="button"
+    <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
             [routerLink]="['/', { outlets: { popup: 'driver/'+ driver.id + '/edit'} }]"
             replaceUrl="true"
             class="btn btn-primary">

@@ -34,7 +34,7 @@ export const racetrackLayoutPopupRoute: Routes = [
     path: 'racetrack/:id/racetrack-layout-new',
     component: RacetrackLayoutPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.racetrackLayout.home.title'
     },
     canActivate: [UserRouteAccessService],
@@ -44,7 +44,7 @@ export const racetrackLayoutPopupRoute: Routes = [
     path: 'racetrack-layout/:id/edit',
     component: RacetrackLayoutPopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.racetrackLayout.home.title'
     },
     canActivate: [UserRouteAccessService],
@@ -54,7 +54,7 @@ export const racetrackLayoutPopupRoute: Routes = [
     path: 'racetrack-layout/:id/delete',
     component: RacetrackLayoutDeletePopupComponent,
     data: {
-        authorities: ['ROLE_USER'],
+        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
         pageTitle: 'motorsportsDatabaseApp.racetrackLayout.home.title'
     },
     canActivate: [UserRouteAccessService],

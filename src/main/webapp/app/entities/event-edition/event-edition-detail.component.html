@@ -126,7 +126,7 @@
 			        </dd>
 				</div>
 			</div>
-		    <button type="button"
+		    <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
 		            [routerLink]="['/', { outlets: { popup: 'event-edition/'+ eventEdition.id + '/edit'} }]"
 		            replaceUrl="true"
 		            class="btn btn-primary">

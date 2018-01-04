@@ -168,7 +168,7 @@
 	  </ngb-tab>
 	</ngb-tabset>
 
-    <button type="button"
+    <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
             [routerLink]="['/', { outlets: { popup: 'series-edition/'+ seriesEdition.id + '/edit'} }]"
             replaceUrl="true"
             class="btn btn-primary">

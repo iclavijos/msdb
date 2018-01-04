@@ -24,7 +24,7 @@
 					<img *ngIf="series.logoUrl" [src]="series.logoUrl" class="img-fluid" alt="series logo"/>
 				</dd>
 			
-			    <button type="button"
+			    <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
 			            [routerLink]="['/', { outlets: { popup: 'series/'+ series.id + '/edit'} }]"
 			            replaceUrl="true"
 			            class="btn btn-primary">
