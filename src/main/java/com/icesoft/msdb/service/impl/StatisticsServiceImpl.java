@@ -288,7 +288,11 @@ public class StatisticsServiceImpl implements StatisticsService {
 					entry.getDrivers().get(0).getId())).orElse(new Float(0));
 
 			Result r = new Result(result, grandChelem, posInClass, startPosInClass, poleLapTime, posFL == 1, points);
-			r.setLapsCompleted(lapsCompleted);
+			if (results.size() == 0 || (results.size() > 0 && results.indexOf(result) == 0)) {
+				r.setLapsCompleted(lapsCompleted);
+			} else {
+				r.setLapsCompleted(0);
+			}
 			return r;
 		}).collect(Collectors.toList());
 	}
