@@ -66,7 +66,12 @@ import com.icesoft.msdb.repository.RacetrackRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.SessionLapDataRepository;
 import com.icesoft.msdb.repository.TeamRepository;
+import com.icesoft.msdb.repository.search.DriverSearchRepository;
+import com.icesoft.msdb.repository.search.EngineSearchRepository;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
+import com.icesoft.msdb.repository.search.RacetrackLayoutSearchRepository;
+import com.icesoft.msdb.repository.search.RacetrackSearchRepository;
+import com.icesoft.msdb.repository.search.TeamSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.dto.EnginesImportDTO;
 import com.icesoft.msdb.service.dto.EventEditionImportDTO;
@@ -84,10 +89,15 @@ public class ImportsResource {
     private final Logger log = LoggerFactory.getLogger(ImportsResource.class);
 
     @Autowired private DriverRepository driversRepository;
+    @Autowired private DriverSearchRepository driverSearchRepo;
     @Autowired private RacetrackRepository racetrackRepository;
     @Autowired private RacetrackLayoutRepository racetrackLayoutRepository;
+    @Autowired private RacetrackSearchRepository racetrackSearchRepo;
+    @Autowired private RacetrackLayoutSearchRepository racetrackLayoutSearchRepo;
     @Autowired private TeamRepository teamRepository;
+    @Autowired private TeamSearchRepository teamSearchRepo;
     @Autowired private EngineRepository engineRepository;
+    @Autowired private EngineSearchRepository engineSearchRepo;
     @Autowired private EventEntryRepository entryRepository;
     @Autowired private EventSessionRepository sessionRepository;
     @Autowired private EventRepository eventRepository;
@@ -150,6 +160,7 @@ public class ImportsResource {
         			driver.getName(), driver.getSurname(), driver.getBirthDate()).isEmpty()) {
 	        	log.debug("Importing driver: {}", driver);
 	        	driversRepository.save(driver);
+	        	driverSearchRepo.save(driver);
         	} else {
         		log.warn("Driver {} already exist in the database. Skipping...", driver);
         	}
@@ -172,6 +183,7 @@ public class ImportsResource {
         			racetrack = found;
         		} else {
         			racetrack = racetrackRepository.save(racetrack);
+        			racetrackSearchRepo.save(racetrack);
         		}
         	}
         	if (StringUtils.isNotBlank(tmp.getLayoutName())) {
@@ -185,6 +197,7 @@ public class ImportsResource {
 	        	if (found == null) {
 	        		layout.setRacetrack(racetrack);
 	        		racetrackLayoutRepository.save(layout);
+	        		racetrackLayoutSearchRepo.save(layout);
 	        	} else {
 	        		//Do nothing
 	        		log.warn("Skipping racetrack layout {} - already exists", layout);
@@ -201,6 +214,7 @@ public class ImportsResource {
         			.getContent().isEmpty()) {
         		log.debug("Importing team: {}", team);
 	        	teamRepository.save(team);
+	        	teamSearchRepo.save(team);
         	} else {
         		log.warn("Team {} already exist in the database. Skipping...", team);
         	}
@@ -225,6 +239,7 @@ public class ImportsResource {
         			newEngine.setDerivedFrom(derivedFrom.get(0));
         		}        		
 	        	engineRepository.save(newEngine);
+	        	engineSearchRepo.save(newEngine);
         	} else {
         		log.warn("Engine {} already exist in the database. Skipping...", engine);
         	}
