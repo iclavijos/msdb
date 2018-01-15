@@ -1,7 +1,9 @@
 package com.icesoft.msdb.service.dto;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
+import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.domain.EventEditionEntry;
 
 public class EventEntrySearchResultDTO {
@@ -35,15 +37,18 @@ public class EventEntrySearchResultDTO {
 			this.driverId = entry.getDrivers().get(0).getId();
 		}
 		this.driverName = entry.getDriversName();
-		double capacity = new java.math.BigDecimal(entry.getEngine().getCapacity() / 1000d)
-				.setScale(1, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
-		chassisEngine = String.format("%s %s/%s %s %s %s", 
+		chassisEngine = String.format("%s %s", 
 				entry.getChassis().getManufacturer(),
-				entry.getChassis().getName(),
-				entry.getEngine().getManufacturer(),
-				entry.getEngine().getName(),
-				capacity,
-				entry.getEngine().getArchitecture());
+				entry.getChassis().getName());
+		if (entry.getEngine() != null) {
+			Double capacity = new java.math.BigDecimal(Optional.ofNullable(entry.getEngine()).orElse(new Engine()).getCapacity() / 1000d)
+					.setScale(1, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+			chassisEngine.concat(String.format("/%s %s %s %s", 
+					entry.getEngine().getManufacturer(),
+					entry.getEngine().getName(),
+					capacity,
+					entry.getEngine().getArchitecture()));
+		}
 		
 		this.poleTime = poleTime;
 		this.polePosition = polePosition;

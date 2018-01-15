@@ -350,13 +350,13 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
         return "EventEntry{" +
             "id=" + id +
             ", entryName='" + entryName + "'" +
-            ", team='" + team.getName() + "'" +
+            ", team='" + (team != null ? team.getName() : "") + "'" +
             ", operatedBy='" + (operatedBy != null ? operatedBy.getName() : "") + "'" +
             (eventEdition.isMultidriver() ? 
             	"drivers=[" + driversStr + "]"  : 
             	", driver='" + driversStr  + "'" ) +            
             ", chassis='" + chassis.getName() + "'" +
-            ", engine='" + engine.getName() + "'" +
+            ", engine='" + (engine != null ? engine.getName() : "") + "'" +
             ", tyres='" + (tyres != null ? tyres.getName() : "") + "'" +
             ", fuelProvider='" + (fuel != null ? fuel.getName() : "") + "'" +
             '}';

@@ -146,6 +146,9 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
     }
 
     public Integer getCapacity() {
+    	if (capacity == null) {
+    		capacity = 0;
+    	}
         return capacity;
     }
 
