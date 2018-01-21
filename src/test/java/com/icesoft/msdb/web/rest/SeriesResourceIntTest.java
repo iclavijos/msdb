@@ -143,7 +143,7 @@ public class SeriesResourceIntTest {
 
         // Validate the Series in Elasticsearch
         Series seriesEs = seriesSearchRepository.findOne(testSeries.getId());
-        assertThat(seriesEs).isEqualToComparingFieldByField(testSeries);
+        assertThat(seriesEs).isEqualTo(testSeries);
     }
 
     @Test
@@ -275,7 +275,7 @@ public class SeriesResourceIntTest {
 
         // Validate the Series in Elasticsearch
         Series seriesEs = seriesSearchRepository.findOne(testSeries.getId());
-        assertThat(seriesEs).isEqualToComparingFieldByField(testSeries);
+        assertThat(seriesEs).isEqualTo(testSeries);
     }
 
     @Test
@@ -326,7 +326,7 @@ public class SeriesResourceIntTest {
         seriesSearchRepository.save(series);
 
         // Search the series
-        restSeriesMockMvc.perform(get("/api/_search/series?query=id:" + series.getId()))
+        restSeriesMockMvc.perform(get("/api/_search/series?query=" + series.getName()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(series.getId().intValue())))

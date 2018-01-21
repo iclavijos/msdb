@@ -32,6 +32,7 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 
     @Size(max = 100)
     @Column(name = "description", length = 100, nullable = false)
+    @NotNull
     private String description;
 
     @Column(name = "points")

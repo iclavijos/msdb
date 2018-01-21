@@ -122,7 +122,7 @@ public class CategoryResourceIntTest {
         
         // Validate the Category in Elasticsearch
         Category categoryEs = categorySearchRepository.findOne(testCategory.getId());
-        assertThat(categoryEs).isEqualToComparingFieldByField(testCategory);
+        assertThat(categoryEs).isEqualTo(testCategory);
     }
 
     @Test
@@ -246,7 +246,7 @@ public class CategoryResourceIntTest {
 
         // Validate the Category in Elasticsearch
         Category categoryEs = categorySearchRepository.findOne(testCategory.getId());
-        assertThat(categoryEs).isEqualToComparingFieldByField(testCategory);
+        assertThat(categoryEs).isEqualTo(testCategory);
     }
 
     @Test
@@ -297,7 +297,7 @@ public class CategoryResourceIntTest {
         categorySearchRepository.save(category);
 
         // Search the category
-        restCategoryMockMvc.perform(get("/api/_search/categories?query=id:" + category.getId()))
+        restCategoryMockMvc.perform(get("/api/_search/categories?query=" + category.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(category.getId().intValue())))

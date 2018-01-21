@@ -174,7 +174,7 @@ public class EngineResourceIntTest {
 
         // Validate the Engine in Elasticsearch
         Engine engineEs = engineSearchRepository.findOne(testEngine.getId());
-        assertThat(engineEs).isEqualToComparingFieldByField(testEngine);
+        assertThat(engineEs).isEqualTo(testEngine);
     }
 
     @Test
@@ -384,7 +384,7 @@ public class EngineResourceIntTest {
 
         // Validate the Engine in Elasticsearch
         Engine engineEs = engineSearchRepository.findOne(testEngine.getId());
-        assertThat(engineEs).isEqualToComparingFieldByField(testEngine);
+        assertThat(engineEs).isEqualTo(testEngine);
     }
 
     @Test
@@ -435,7 +435,7 @@ public class EngineResourceIntTest {
         engineSearchRepository.save(engine);
 
         // Search the engine
-        restEngineMockMvc.perform(get("/api/_search/engines?query=id:" + engine.getId()))
+        restEngineMockMvc.perform(get("/api/_search/engines?query=" + engine.getName()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(engine.getId().intValue())))

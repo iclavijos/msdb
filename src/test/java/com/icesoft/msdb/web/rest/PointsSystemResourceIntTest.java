@@ -148,7 +148,7 @@ public class PointsSystemResourceIntTest {
 
         // Validate the PointsSystem in Elasticsearch
         PointsSystem pointsSystemEs = pointsSystemSearchRepository.findOne(testPointsSystem.getId());
-        assertThat(pointsSystemEs).isEqualToComparingFieldByField(testPointsSystem);
+        assertThat(pointsSystemEs).isEqualTo(testPointsSystem);
     }
 
     @Test
@@ -292,7 +292,7 @@ public class PointsSystemResourceIntTest {
 
         // Validate the PointsSystem in Elasticsearch
         PointsSystem pointsSystemEs = pointsSystemSearchRepository.findOne(testPointsSystem.getId());
-        assertThat(pointsSystemEs).isEqualToComparingFieldByField(testPointsSystem);
+        assertThat(pointsSystemEs).isEqualTo(testPointsSystem);
     }
 
     @Test

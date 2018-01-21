@@ -145,7 +145,7 @@ public class TeamResourceIntTest {
 
         // Validate the Team in Elasticsearch
         Team teamEs = teamSearchRepository.findOne(testTeam.getId());
-        assertThat(teamEs).isEqualToComparingFieldByField(testTeam);
+        assertThat(teamEs).isEqualTo(testTeam);
     }
 
     @Test
@@ -259,7 +259,7 @@ public class TeamResourceIntTest {
 
         // Validate the Team in Elasticsearch
         Team teamEs = teamSearchRepository.findOne(testTeam.getId());
-        assertThat(teamEs).isEqualToComparingFieldByField(testTeam);
+        assertThat(teamEs).isEqualTo(testTeam);
     }
 
     @Test
@@ -310,7 +310,7 @@ public class TeamResourceIntTest {
         teamSearchRepository.save(team);
 
         // Search the team
-        restTeamMockMvc.perform(get("/api/_search/teams?query=id:" + team.getId()))
+        restTeamMockMvc.perform(get("/api/_search/teams?query=" + team.getName()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(team.getId().intValue())))

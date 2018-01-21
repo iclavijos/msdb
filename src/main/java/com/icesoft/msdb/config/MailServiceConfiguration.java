@@ -37,7 +37,7 @@ public class MailServiceConfiguration {
 	}
 
     @Bean
-    @Profile("dev")
+    @Profile({"dev", "test"})
     public MailService mailServiceDev() {
         return new SMTPMailService(jHipsterProperties, javaMailSender, messageSource, templateEngine);
     }
