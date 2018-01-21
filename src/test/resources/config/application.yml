@@ -13,8 +13,11 @@
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
 
+flyway:
+  enabled: false
 
 spring:
+    profiles.active: test
     application:
         name: MotorsportsDatabase
     jackson:
@@ -33,7 +36,8 @@ spring:
         open-in-view: false
         show-sql: false
         hibernate:
-            ddl-auto: none
+            generate-ddl: true
+            ddl-auto: create-drop
             naming:
                 physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
                 implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
@@ -42,11 +46,11 @@ spring:
             hibernate.cache.use_second_level_cache: false
             hibernate.cache.use_query_cache: false
             hibernate.generate_statistics: true
-            hibernate.hbm2ddl.auto: validate
+            hibernate.hbm2ddl.auto: create-drop
     data:
         elasticsearch:
             cluster-name:
-            cluster-nodes:
+            cluster-nodes: 
             properties:
                 path:
                     logs: build/elasticsearch/log

@@ -1,0 +1,40 @@
+apply plugin: 'org.asciidoctor.convert'
+apply plugin: 'io.github.swagger2markup'
+
+ext {
+    asciiDocOutputDir = file("${buildDir}/asciidoc/generated")
+    swaggerOutputDir = file("${buildDir}/swagger")
+    snippetsOutputDir = file("${buildDir}/asciidoc/snippets")
+}
+
+convertSwagger2markup {
+    dependsOn test
+    swaggerInput "${swaggerOutputDir}/swagger.json"
+    outputDir asciiDocOutputDir
+
+    config = ['swagger2markup.markupLanguage' : 'ASCIIDOC',
+              'swagger2markup.pathsGroupedBy' : 'TAGS',
+              'swagger2markup.extensions.springRestDocs.snippetBaseUri': snippetsOutputDir.getAbsolutePath()]
+}
+
+asciidoctorj {
+    version = '1.5.5'
+}
+
+asciidoctor {
+    dependsOn convertSwagger2markup
+    sources {
+        include 'index.adoc'
+    }
+    backends = ['html5']
+    attributes = [
+        doctype: 'book',
+        toc: 'left',
+        toclevels: '3',
+        numbered: '',
+        sectlinks: '',
+        sectanchors: '',
+        hardbreaks: '',
+        generated: asciiDocOutputDir
+    ]
+}
