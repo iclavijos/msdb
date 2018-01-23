@@ -322,7 +322,7 @@ public class EventEditionResource {
     
     @PutMapping("/event-editions/event-sessions/{sessionId}/process-results")
     @Timed
-    @CacheEvict({"driversStandingsCache", "teamsStandingsCache", "pointRaceByRace"}) //TODO: Improve to only remove the required key
+    @CacheEvict({"driversStandingsCache", "teamsStandingsCache", "pointRaceByRace", "winnersCache"}) //TODO: Improve to only remove the required key
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
     public ResponseEntity<Void> processSessionResults(@PathVariable Long sessionId) {

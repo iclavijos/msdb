@@ -229,6 +229,7 @@ public class SeriesEditionResource {
     @PostMapping("/series-editions/{id}/events/{idEvent}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @CacheEvict(cacheNames="winnersCache", key="#id")
     public ResponseEntity<Void> addEventToSeries(@PathVariable Long id, @PathVariable Long idEvent, @Valid @RequestBody List<EventRacePointsDTO> racesPointsData) {
     	log.debug("REST request to add an event to series {}", id);
     	seriesEditionService.addEventToSeries(id, idEvent, racesPointsData);
