@@ -13,9 +13,8 @@ convertSwagger2markup {
     outputDir asciiDocOutputDir
 
     config = ['swagger2markup.markupLanguage' : 'ASCIIDOC',
-              'swagger2markup.pathsGroupedBy' : 'TAGS',
-              'swagger2markup.extensions.springRestDocs.snippetBaseUri': snippetsOutputDir.getAbsolutePath()]
-}
+              'swagger2markup.pathsGroupedBy' : 'TAGS']
+    }
 
 asciidoctorj {
     version = '1.5.5'
