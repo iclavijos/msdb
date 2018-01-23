@@ -32,10 +32,12 @@ public interface DriverEventPointsRepository extends JpaRepository<DriverEventPo
 			+ "FROM DriverEventPoints dep "
 			+ "WHERE dep.points <> 0 AND dep.session.eventEdition.id = ?1 AND dep.driver.id = ?2 "
 			+ "ORDER BY dep.session.sessionStartTime desc, dep.points desc")
-	List<Object[]> getListDriverPointsInEvent(Long eventEditionId, Long driverId);
+	List<Object[]> getDriverPointsInEvent(Long eventEditionId, Long driverId);
 	
-	@Query("SELECT COUNT(DISTINCT e) "
-			+ "FROM EventEdition e, EventSession es, DriverEventPoints dep "
-			+ "WHERE e.seriesEdition.id = ?1 AND es.eventEdition = e AND dep.session = es")
-	Integer countPunctuatedEventsInSeries(Long seriesEditionId);
+	@Query("SELECT ee.event.name, es.name, dep.driver.name, dep.driver.surname, SUM(dep.points) as points "
+			+ "FROM DriverEventPoints dep, EventSession es, EventEdition ee "
+			+ "WHERE dep.session.eventEdition.seriesEdition.id = ?1 and dep.session = es and es.eventEdition = ee "
+			+ "GROUP BY ee.longEventName, es.name, dep.driver.name, dep.driver.surname "
+			+ "ORDER BY es.sessionStartTime ASC, points DESC")
+	List<Object[]> getDriversPointsInSeries(Long seriesEditionId);
 }

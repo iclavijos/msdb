@@ -18,6 +18,7 @@ import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.DriverEventPoints;
 import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.EventSession;
+import com.icesoft.msdb.domain.PointsRaceByRace;
 import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.domain.TeamEventPoints;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
@@ -230,51 +231,23 @@ public class ResultsService {
 	}
 	
 	public List<DriverPointsDTO> getDriverPointsEvent(Long eventId, Long driverId) {
-		List<Object[]> pointsEvent = driverPointsRepo.getListDriverPointsInEvent(eventId, driverId);
+		List<Object[]> pointsEvent = driverPointsRepo.getDriverPointsInEvent(eventId, driverId);
 		
 		return pointsEvent.parallelStream().map(dep -> new DriverPointsDTO(
 				(Long)dep[0], (String)dep[1] + " " + (String)dep[2], 
 				(Float)dep[3], (String)dep[4])).collect(Collectors.toList());
 	}
 	
-//	protected List<Long> getChampionsDriverIds(Long seriesId) {
-//		List<Long> result = new ArrayList<>();
-//		List<DriverPointsDTO> standings = viewsRepo.getDriversStandings(seriesId);
-//		Map<Long, List<Object[]>> positions = viewsRepo.getDriversResultsInSeries(seriesId);
-//		SeriesEdition series = seriesEditionRepo.findOne(seriesId);
-//		
-//		Float maxPoints = standings.parallelStream().map(dp -> dp.getPoints()).max((dp1, dp2) -> dp1.compareTo(dp2)).orElse(new Float(-1));
-//		
-//		standings = standings.parallelStream().filter(dp -> dp.getPoints().equals(maxPoints)).collect(Collectors.toList());
-//		if (standings.isEmpty()) {
-//			return result;
-//		} else if (standings.size() == 1) {
-//			result.add(standings.get(0).getDriverId());
-//			return result;
-//		} else {
-//			if (standings.get(0).getPoints().equals(0f)) {
-//				return result;
-//			}
-//			
-//			Comparator<DriverPointsDTO> c = (o1, o2) -> {
-//				List<Object[]> positionsD1 = positions.get(o1.getDriverId());
-//				List<Object[]> positionsD2 = positions.get(o2.getDriverId());
-//				
-//				return sortPositions(positionsD1, positionsD2);
-//			};
-//			standings.sort(c.reversed());
-//			
-//			DriverPointsDTO champ = standings.get(0);
-//			if (series.isMultidriver()) {
-//				return standings.parallelStream()
-//						.map(dp -> dp.getDriverId()).collect(Collectors.toList());
-//			} else {
-//				List<Long> tmp = new ArrayList<>();
-//				tmp.add(champ.getDriverId());
-//				return tmp;
-//			}
-//		}
-//	}
+	public PointsRaceByRace getPointsRaceByRace(Long seriesEditionId) {
+		List<Object[]> pointsSeries = driverPointsRepo.getDriversPointsInSeries(seriesEditionId);
+		PointsRaceByRace result = new PointsRaceByRace();
+		pointsSeries.stream().forEach(ps -> {
+			result.addDriverPoints(
+					(String)ps[0], (String)ps[1], (String)ps[2] + " " + (String)ps[3], ((Double)ps[4]).floatValue());
+		});
+		
+		return result;
+	}
 	
 	public List<TeamPointsDTO> getTeamsStandings(Long seriesId) {
 		List<TeamPointsDTO> standings = viewsRepo.getTeamsStandings(seriesId);

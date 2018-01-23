@@ -43,7 +43,9 @@
 	                "teamsStandings": "Teams Standings",
 	                "driver": "Driver",
 	                "team": "Team",
-	                "points": "Points"
+	                "points": "Points",
+	                "pointsPerRace": "Points per race",
+	                "graphics": "Graphics"
 	            },
 	            "calendar": {
 	            	"title": "Calendar",

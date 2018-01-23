@@ -23,4 +23,10 @@ public class CacheHandler {
 	public void resetSeriesChampions(Long seriesEditionId) {
 		log.debug("Reseting series champions cache for series edition {}", seriesEditionId);
 	}
+	
+	@CacheEvict(cacheNames="pointRaceByRace")
+	public void resetPointsRaceByRace(Long seriesEditionId) {
+		log.debug("Reseting race by race points cache for series edition {}", seriesEditionId);
+	}
+	
 }

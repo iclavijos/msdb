@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
+import com.icesoft.msdb.domain.PointsRaceByRace;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
@@ -205,6 +206,15 @@ public class SeriesEditionResource {
     	List<TeamPointsDTO> result = resultsService.getTeamsStandings(id);
     	
     	return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    
+    @GetMapping("/series-editions/{id}/points")
+    @Timed
+    @Cacheable(cacheNames="pointRaceByRace", key="#id")
+    public ResponseEntity<Object[][]> getSeriesPointsRaceByRace(@PathVariable Long id) {
+    	PointsRaceByRace points = resultsService.getPointsRaceByRace(id);
+    	List<DriverPointsDTO> standings = resultsService.getDriversStandings(id);
+    	return new ResponseEntity<>(points.getResultsMatrix(standings), HttpStatus.OK);
     }
     
     @GetMapping("/series-editions/{id}/events")

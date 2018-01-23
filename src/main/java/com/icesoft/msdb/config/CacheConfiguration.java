@@ -87,6 +87,7 @@ public class CacheConfiguration {
             
             cm.createCache("driversStandingsCache", longLivedCacheConfiguration);
             cm.createCache("teamsStandingsCache", longLivedCacheConfiguration);
+            cm.createCache("pointRaceByRace", longLivedCacheConfiguration);
             
             cm.createCache("winnersCache", alwaysCacheConfiguration);
             // jhipster-needle-ehcache-add-entry

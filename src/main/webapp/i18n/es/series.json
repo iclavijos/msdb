@@ -43,7 +43,9 @@
 	                "teamsStandings": "Clasificación de equipos",
 	                "driver": "Piloto",
 	                "team": "Equipo",
-	                "points": "Puntos"
+	                "points": "Puntos",
+	                "pointsPerRace": "Puntos por carrera",
+	                "graphics": "Gráficas"
 	            },
 	            "calendar": {
 	            	"title": "Calendario",

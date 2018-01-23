@@ -17,12 +17,20 @@ export class StandingsComponent implements OnInit {
     drivers: any;
     teams: any;
     manufacturers: any;
+	headers: any;
+	pointsByRace: any;
+	numRaces: number;
     @Input()
     eventEditionId: number;
     @Input()
     seriesEditionId: number;
+    showExtendedStandings = false;
+    data: any;
+    options: any;
+    selectedDrivers: string[] = [];
     
     driverPointsDetail: any;
+    
     
     constructor(
             private eventEditionService: EventEditionService,
@@ -36,10 +44,81 @@ export class StandingsComponent implements OnInit {
 	            this.drivers = driversPoints.json;
 	        });
 	    } else if (this.seriesEditionId) {
+	    	this.showExtendedStandings = true;
 	    	this.seriesEditionService.findDriversStandings(this.seriesEditionId).subscribe(driversStandings => {
 	    		this.drivers = driversStandings.json();
 	    	});
+	    	this.seriesEditionService.findDriversPointsByRace(this.seriesEditionId).subscribe(pointsByRace => {
+	    		this.pointsByRace = pointsByRace.json();
+	    		this.numRaces = this.pointsByRace[0].length - 2;
+	    		this.data = {
+	    	            labels: this.pointsByRace[0].slice(1, this.numRaces + 1),
+	    	            datasets: [
+	    	            ]
+	    	        };
+	    		this.options = {
+	    				scales: {
+	    					xAxes: [{
+	    						ticks: {
+	    							min: 15,
+	    							max: 25,
+	    							autoSkip: false
+	    						}
+	    					}],
+	    			        yAxes: [{
+	    			            display: true,
+	    			            ticks: {
+	    			            	suggestedMax: 10,
+	    			                beginAtZero: true,
+	    			            }
+	    			        }]
+	    			    },
+	    	            legend: {
+	    	                position: 'bottom'
+	    	            }
+	    	        };
+	    	});
 	    }
+    }
+    
+    refreshGraphic() {
+		let data = {
+			labels: this.pointsByRace[0].slice(1, this.numRaces + 1),
+			datasets: []
+		};
+    	for(let driver of this.selectedDrivers) {
+    		let accPoints = 0;
+    		let driverPoints: any;
+    		for(let points of this.pointsByRace) {
+    			if (points[0] === driver) {
+    				driverPoints = points;
+    			}
+    		}
+    		let pointsData = [];
+    		for(let i = 1; i < driverPoints.length - 1; i++) {
+    			accPoints += parseInt(driverPoints[i]);
+    			pointsData.push(accPoints);
+    		}
+    		const randomColor = this.randomColor();
+    		let dataset = {
+	    		label: driver,
+				data: pointsData,
+				fill: false,
+				lineTension: 0,
+				borderColor: randomColor,
+				backgroundColor: randomColor,
+    		}
+    		data.datasets.push(dataset);
+    	}
+    	this.data = Object.assign({}, data);
+    }
+    
+    randomColor(brightness = 3) {
+    	// Six levels of brightness from 0 to 5, 0 being the darkest
+        var rgb = [Math.random() * 256, Math.random() * 256, Math.random() * 256];
+        var mix = [brightness*51, brightness*51, brightness*51]; //51 => 255/5
+        var mixedrgb = [rgb[0] + mix[0], rgb[1] + mix[1], rgb[2] + mix[2]].map(function(x){ return Math.round(x/2.0)})
+        return "rgb(" + mixedrgb.join(",") + ")";
     }
     
     getPointsDetail(driverId: number) {

@@ -20,4 +20,5 @@ public interface SeriesEditionService {
 	public List<Driver> getSeriesDriversChampions(Long seriesEditionId);
 	
 	public List<SeriesEventsAndWinnersDTO> getSeriesEditionsEventsAndWinners(Long seriesEditionId);
+	
 }
