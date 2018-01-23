@@ -80,15 +80,15 @@ public class RacetrackServiceImpl implements RacetrackService {
 			TimeZone timeZone = TimeZoneApi.getTimeZone(context, results[0].geometry.location).await();
 			racetrack.setTimeZone(timeZone.getID());
 			
-			Racetrack result = racetrackRepository.save(racetrack);
-			if (result.getLogo() != null) {
-		        String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getLogo(), "racetrack");
-				result.setLogoUrl(cdnUrl);
+			if (racetrack.getLogo() != null) {
+		        String cdnUrl = cdnService.uploadImage(racetrack.getId().toString(), racetrack.getLogo(), "racetrack");
+		        racetrack.setLogoUrl(cdnUrl);
 				
-				result = racetrackRepository.save(result);
-	        } else if (result.getLogoUrl() == null) {
+		        racetrack = racetrackRepository.save(racetrack);
+	        } else if (racetrack.getLogoUrl() == null) {
 	        	cdnService.deleteImage(racetrack.getId().toString(), "racetrack");
 	        }
+			Racetrack result = racetrackRepository.save(racetrack);
 			racetrackSearchRepo.save(result);
 			return result;
 		} catch (ApiException | InterruptedException | IOException e) {
@@ -101,15 +101,16 @@ public class RacetrackServiceImpl implements RacetrackService {
     public RacetrackLayout save(RacetrackLayout layout) {
         log.debug("Request to save RacetrackLayout : {}", layout);
         
-        RacetrackLayout result = racetrackLayoutRepository.save(layout);
-        if (result.getLayoutImage() != null) {
-	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), layout.getLayoutImage(), "racetrackLayout");
-			result.setLayoutImageUrl(cdnUrl);
+        
+        if (layout.getLayoutImage() != null) {
+	        String cdnUrl = cdnService.uploadImage(layout.getId().toString(), layout.getLayoutImage(), "racetrackLayout");
+	        layout.setLayoutImageUrl(cdnUrl);
 			
-			result = racetrackLayoutRepository.save(result);
+	        layout = racetrackLayoutRepository.save(layout);
         } else if (layout.getLayoutImageUrl() == null) {
         	cdnService.deleteImage(layout.getId().toString(), "racetrackLayout");
         }
+        RacetrackLayout result = racetrackLayoutRepository.save(layout);
         racetrackLayoutSearchRepo.save(result);
         return result;
     }
