@@ -105,7 +105,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.image" for="field_image">Image</label>
             <div>
-                <img [src]="engine.imageUrl" style="max-height: 100px;" *ngIf="!engine.image && engine.imageUrl != null" alt="engine image"/>
+                <img [src]="engine.imageUrl" class="img-fluid" *ngIf="!engine.image && engine.imageUrl != null" alt="engine image"/>
                 <img [src]="'data:' + engine.imageContentType + ';base64,' + engine.image" style="max-height: 100px;" *ngIf="engine.image" alt="engine image"/>
                 <div *ngIf="engine.imageUrl || engine.image" class="form-text text-danger clearfix">
                     <button type="button" (click)="engine.imageUrl=null; engine.image=null;"

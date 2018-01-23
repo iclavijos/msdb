@@ -6,73 +6,80 @@
     <ngb-tabset>
 	  <ngb-tab title="{{'entity.detail.info' | translate}}">
 	    <ng-template ngbTabContent>
-		    <dl class="row-md jh-entity-details">
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.name">Name</span></dt>
-		        <dd>
-		            <span>{{engine.name}}</span>
-		        </dd>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.manufacturer">Manufacturer</span></dt>
-		        <dd>
-		            <span>{{engine.manufacturer}}</span>
-		        </dd>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.capacity">Capacity</span></dt>
-		        <dd>
-		            <span>{{engine.capacity}}</span>
-		        </dd>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.architecture">Architecture</span></dt>
-		        <dd>
-		            <span>{{engine.architecture}}</span>
-		        </dd>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.debutYear">Debut Year</span></dt>
-		        <dd>
-		            <span>{{engine.debutYear}}</span>
-		        </dd>
-		        <div class="row">
-		        	<div class="col-lg-4 col-md-4">
-			        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.petrolEngine">Petrol Engine</span></dt>
-			        <dd>
-			            <span><i [ngClass]="engine.petrolEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
-			        </dd>
-			        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.dieselEngine">Diesel Engine</span></dt>
-			        <dd>
-			            <span><i [ngClass]="engine.dieselEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
-			        </dd>
-			        </div>
-			        <div class="col-lg-4 col-md-4">
-			        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.electricEngine">Electric Engine</span></dt>
-			        <dd>
-			            <span><i [ngClass]="engine.electricEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
-			        </dd>
-			        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.otherEngine">Other Engine</span></dt>
-			        <dd>
-			            <span><i [ngClass]="engine.otherEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
-			        </dd>
-			        </div>
-			        <div class="col-lg-4 col-md-4">
-			        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.turbo">Turbo</span></dt>
-			        <dd>
-			            <span><i [ngClass]="engine.turbo ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
-			        </dd>
-			        </div>
-		        </div>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.image">Image</span></dt>
-		        <dd>
-		            <div *ngIf="engine.imageUrl">
-		            	<img [src]="engine.imageUrl" style="max-width: 100%;" alt="engine image"/>
-		            </div>
-		        </dd>
-		        <dt *ngIf="engine.derivedFrom"><span jhiTranslate="motorsportsDatabaseApp.engine.derivedFrom">Derived From</span></dt>
-		        <dd>
-		            <div *ngIf="engine.derivedFrom">
-		                <a [routerLink]="['/engine', engine.derivedFrom?.id]">{{engine.derivedFrom?.manufacturer}} {{engine.derivedFrom?.name}}</a>
-		            </div>
-		        </dd>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.rebranded">Rebranded</span> 
-		        	<i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.engine.rebrandedTooltip' | translate }}"></i></dt>
-		        <dd>
-		            <span><i [ngClass]="engine.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
-		        </dd>
-		    </dl>
+	    	<div class="row">
+		    	<div class="col-sm-6">
+				    <dl class="row-md jh-entity-details">
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.name">Name</span></dt>
+				        <dd>
+				            <span>{{engine.name}}</span>
+				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.manufacturer">Manufacturer</span></dt>
+				        <dd>
+				            <span>{{engine.manufacturer}}</span>
+				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.capacity">Capacity</span></dt>
+				        <dd>
+				            <span>{{engine.capacity}}</span>
+				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.architecture">Architecture</span></dt>
+				        <dd>
+				            <span>{{engine.architecture}}</span>
+				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.debutYear">Debut Year</span></dt>
+				        <dd>
+				            <span>{{engine.debutYear}}</span>
+				        </dd>
+				        <div class="row">
+				        	<div class="col-lg-4 col-md-4">
+					        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.petrolEngine">Petrol Engine</span></dt>
+					        <dd>
+					            <span><i [ngClass]="engine.petrolEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+					        </dd>
+					        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.dieselEngine">Diesel Engine</span></dt>
+					        <dd>
+					            <span><i [ngClass]="engine.dieselEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+					        </dd>
+					        </div>
+					        <div class="col-lg-4 col-md-4">
+					        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.electricEngine">Electric Engine</span></dt>
+					        <dd>
+					            <span><i [ngClass]="engine.electricEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+					        </dd>
+					        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.otherEngine">Other Engine</span></dt>
+					        <dd>
+					            <span><i [ngClass]="engine.otherEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+					        </dd>
+					        </div>
+					        <div class="col-lg-4 col-md-4">
+					        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.turbo">Turbo</span></dt>
+					        <dd>
+					            <span><i [ngClass]="engine.turbo ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+					        </dd>
+					        </div>
+				        </div>
+				        <dt *ngIf="engine.derivedFrom"><span jhiTranslate="motorsportsDatabaseApp.engine.derivedFrom">Derived From</span></dt>
+				        <dd>
+				            <div *ngIf="engine.derivedFrom">
+				                <a [routerLink]="['/engine', engine.derivedFrom?.id]">{{engine.derivedFrom?.manufacturer}} {{engine.derivedFrom?.name}}</a>
+				            </div>
+				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.engine.rebranded">Rebranded</span> 
+				        	<i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.engine.rebrandedTooltip' | translate }}"></i></dt>
+				        <dd>
+				            <span><i [ngClass]="engine.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+				        </dd>
+				    </dl>
+				</div>
+			    <div class="col-sm-6">
+			    	<dl class="row-md jh-entity-details">
+			    		<dt><span jhiTranslate="motorsportsDatabaseApp.engine.image">Image</span></dt>
+				        <dd>
+				            <div *ngIf="engine.imageUrl">
+				            	<img [src]="engine.imageUrl" class="img-fluid" alt="engine image"/>
+				            </div>
+				        </dd>
+			    	</dl>
+			    </div>
 		</ng-template>
 	</ngb-tab>
 		<ngb-tab title="{{'entity.detail.statistics' | translate}}">

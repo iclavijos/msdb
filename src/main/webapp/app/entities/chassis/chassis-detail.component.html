@@ -6,36 +6,44 @@
     <ngb-tabset>
 	  <ngb-tab title="{{'entity.detail.info' | translate}}">
 	    <ng-template ngbTabContent>
-		    <dl class="row-md jh-entity-details">
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.name">Name</span></dt>
-		        <dd>
-		            <span>{{chassis.name}}</span>
-		        </dd>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.manufacturer">Manufacturer</span></dt>
-		        <dd>
-		            <span>{{chassis.manufacturer}}</span>
-		        </dd>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.debutYear">Debut Year</span></dt>
-		        <dd>
-		            <span>{{chassis.debutYear}}</span>
-		        </dd>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.derivedFrom">Derived From</span></dt>
-		        <dd>
-		            <div *ngIf="chassis.derivedFrom">
-		                <a [routerLink]="['/chassis', chassis.derivedFrom?.id]">{{chassis.derivedFrom?.manufacturer}} {{chassis.derivedFrom?.name}}</a>
-		            </div>
-		        </dd>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.rebranded">Rebranded</span> 
-		        	<i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.chassis.rebrandedTooltip' | translate }}"></i></dt>
-		        <dd>
-		            <span><i [ngClass]="chassis.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
-		        </dd>
-		        <dd>
-		            <div *ngIf="chassis.imageUrl">
-		            	<img [src]="chassis.imageUrl" style="max-width: 300px;" alt="chassis image"/>
-		            </div>
-		        </dd>
-		    </dl>
+	    	<div class="row">
+		    	<div class="col-sm-6">
+				    <dl class="row-md jh-entity-details">
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.name">Name</span></dt>
+				        <dd>
+				            <span>{{chassis.name}}</span>
+				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.manufacturer">Manufacturer</span></dt>
+				        <dd>
+				            <span>{{chassis.manufacturer}}</span>
+				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.debutYear">Debut Year</span></dt>
+				        <dd>
+				            <span>{{chassis.debutYear}}</span>
+				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.derivedFrom">Derived From</span></dt>
+				        <dd>
+				            <div *ngIf="chassis.derivedFrom">
+				                <a [routerLink]="['/chassis', chassis.derivedFrom?.id]">{{chassis.derivedFrom?.manufacturer}} {{chassis.derivedFrom?.name}}</a>
+				            </div>
+				        </dd>
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.rebranded">Rebranded</span> 
+				        	<i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.chassis.rebrandedTooltip' | translate }}"></i></dt>
+				        <dd>
+				            <span><i [ngClass]="chassis.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+				        </dd>
+				    </dl>
+			    </div>
+			    <div class="col-sm-6">
+			    	<dl class="row-md jh-entity-details">
+			    		<dd>
+				            <div *ngIf="chassis.imageUrl">
+				            	<img [src]="chassis.imageUrl" class="img-fluid" alt="chassis image"/>
+				            </div>
+				        </dd>
+			    	</dl>
+			    </div>
+			
 		</ng-template>
 	</ngb-tab>
 		<ngb-tab title="{{'entity.detail.statistics' | translate}}">
