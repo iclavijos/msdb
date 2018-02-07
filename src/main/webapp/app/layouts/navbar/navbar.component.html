@@ -1,106 +1,88 @@
-<nav class="navbar navbar-dark navbar-expand-md jh-navbar">
-    <div class="jh-logo-container float-left">
-        <a class="jh-navbar-toggler d-lg-none float-right" href="javascript:void(0);" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" (click)="toggleNavbar()">
-            <i class="fa fa-bars"></i>
-        </a>
-        <a class="navbar-brand logo float-left" routerLink="/" (click)="collapseNavbar()">
-            <span class="logo-img"></span>
-            <span jhiTranslate="global.title" class="navbar-title">MotorsportsDatabase</span> <span class="navbar-version">{{version}}</span>
-        </a>
-    </div>
-    <div class="navbar-collapse collapse" id="navbarResponsive" [ngbCollapse]="isNavbarCollapsed" [ngSwitch]="isAuthenticated()">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-                <a class="nav-link" routerLink="/" (click)="collapseNavbar()">
-                    <span>
-                        <i class="fa fa-home" aria-hidden="true"></i>
-                        <span jhiTranslate="global.menu.home">Home</span>
-                    </span>
-                </a>
-            </li>
-            <li ngbDropdown class="nav-item dropdown pointer">
-                <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="elementsnavBarDropdown">
-                    <span>
-                        <i class="fa fa-search" aria-hidden="true"></i>
-                        <span jhiTranslate="global.menu.browseDB">Browse DB</span>
-                    </span>
-                </a>
-                <ul class="dropdown-menu" ngbDropdownMenu>
-                    <li uiSrefActive="active">
-			            <a class="dropdown-item" routerLink="driver">
-			                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-			                <span jhiTranslate="global.menu.entities.driver">Driver</span>
-			            </a>
-			        </li>
-			        <li uiSrefActive="active">
-			            <a class="dropdown-item" routerLink="racetrack">
-			                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-			                <span jhiTranslate="global.menu.entities.racetrack">Racetrack</span>
-			            </a>
-			        </li>
-			        <li uiSrefActive="active">
-			            <a class="dropdown-item" routerLink="team">
-			                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-			                <span jhiTranslate="global.menu.entities.team">Team</span>
-			            </a>
-			        </li>
-			        <li uiSrefActive="active">
-	                    <a class="dropdown-item" routerLink="engine">
-	                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-	                        <span jhiTranslate="global.menu.entities.engine">Engine</span>
-	                    </a>
-	                </li>
-	                <li uiSrefActive="active">
-	                    <a class="dropdown-item" routerLink="chassis">
-	                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-	                        <span jhiTranslate="global.menu.entities.chassis">Chassis</span>
-	                    </a>
-	                </li>
-			        <li uiSrefActive="active">
-			            <a class="dropdown-item" routerLink="tyre-provider">
-			                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-			                <span jhiTranslate="global.menu.entities.tyreProvider">Tyre Provider</span>
-			            </a>
-			        </li>
-			        <li uiSrefActive="active">
-	                    <a class="dropdown-item" routerLink="fuel-provider">
-	                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-	                        <span jhiTranslate="global.menu.entities.fuelProvider">Fuel Provider</span>
-	                    </a>
-	                </li>
-	                <li uiSrefActive="active">
-	                    <a class="dropdown-item" routerLink="event">
-	                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-	                        <span jhiTranslate="global.menu.entities.event">Event</span>
-	                    </a>
-	                </li>
-	                <li uiSrefActive="active">
-	                    <a class="dropdown-item" routerLink="series">
-	                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-	                        <span jhiTranslate="global.menu.entities.series">Series</span>
-	                    </a>
-	                </li>
-	                <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" uiSrefActive="active">
-	                    <a class="dropdown-item" routerLink="category">
-	                        <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-	                        <span jhiTranslate="global.menu.entities.category">Category</span>
-	                    </a>
-	                </li>
-	                <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" uiSrefActive="active">
-			            <a class="dropdown-item" routerLink="points-system">
-			                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
-			                <span jhiTranslate="global.menu.entities.pointsSystem">Points System</span>
-			            </a>
-			        </li>
-                </ul>
-            </li>
-            <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-                <a class="nav-link" routerLink="calendar" routerLinkActive="active" (click)="collapseNavbar()">
-                    <i class="fa fa-calendar" aria-hidden="true"></i>
-                    <span jhiTranslate="global.menu.calendar">Calendar</span>
-                </a>
-            </li>
-            <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
+<!-- Navigation-->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav" [ngSwitch]="isAuthenticated()">
+    <a class="navbar-brand logo" routerLink="/">
+		<span class="logo-img"></span>
+        <span jhiTranslate="global.title" class="navbar-title">MotorsportsDatabase</span> <span class="navbar-version">{{version}}</span>
+	</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
+      	<li class="nav-item" data-toggle="tooltip" data-placement="right">
+            <a class="nav-link" routerLink="driver">
+                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                <span class="nav-link-text" jhiTranslate="global.menu.entities.driver">Driver</span>
+            </a>
+        </li>
+        <li class="nav-item" data-toggle="tooltip" data-placement="right">
+            <a class="nav-link" routerLink="racetrack">
+                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                <span class="nav-link-text" jhiTranslate="global.menu.entities.racetrack">Racetrack</span>
+            </a>
+        </li>
+        <li class="nav-item" data-toggle="tooltip" data-placement="right">
+            <a class="nav-link" routerLink="team">
+                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                <span class="nav-link-text" jhiTranslate="global.menu.entities.team">Team</span>
+            </a>
+        </li>
+        <li class="nav-item" data-toggle="tooltip" data-placement="right">
+            <a class="nav-link" routerLink="engine">
+                      <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                      <span class="nav-link-text" jhiTranslate="global.menu.entities.engine">Engine</span>
+                  </a>
+              </li>
+              <li class="nav-item" data-toggle="tooltip" data-placement="right">
+            <a class="nav-link" routerLink="chassis">
+                      <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                      <span class="nav-link-text" jhiTranslate="global.menu.entities.chassis">Chassis</span>
+                  </a>
+              </li>
+        <li class="nav-item" data-toggle="tooltip" data-placement="right">
+            <a class="nav-link" routerLink="tyre-provider">
+                <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                <span class="nav-link-text" jhiTranslate="global.menu.entities.tyreProvider">Tyre Provider</span>
+            </a>
+        </li>
+        <li class="nav-item" data-toggle="tooltip" data-placement="right">
+            <a class="nav-link" routerLink="fuel-provider">
+                   <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                   <span class="nav-link-text" jhiTranslate="global.menu.entities.fuelProvider">Fuel Provider</span>
+               </a>
+           </li>
+           <li class="nav-item" data-toggle="tooltip" data-placement="right">
+           <a class="nav-link" routerLink="event">
+                   <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                   <span class="nav-link-text" jhiTranslate="global.menu.entities.event">Event</span>
+               </a>
+           </li>
+           <li class="nav-item" data-toggle="tooltip" data-placement="right">
+           <a class="nav-link" routerLink="series">
+                   <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                   <span class="nav-link-text" jhiTranslate="global.menu.entities.series">Series</span>
+               </a>
+           </li>
+           <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" class="nav-item" data-toggle="tooltip" data-placement="right">
+           	<a class="nav-link" routerLink="category">
+                   <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+                   <span class="nav-link-text" jhiTranslate="global.menu.entities.category">Category</span>
+               </a>
+           </li>
+           <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" class="nav-item" data-toggle="tooltip" data-placement="right">
+           	<a class="nav-link" routerLink="points-system">
+	            <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+	        	<span class="nav-link-text" jhiTranslate="global.menu.entities.pointsSystem">Points System</span>
+	        </a>
+       	</li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <a class="nav-link" routerLink="calendar" routerLinkActive="active" (click)="collapseNavbar()">
+                <i class="fa fa-calendar" aria-hidden="true"></i>
+                <span jhiTranslate="global.menu.calendar">Calendar</span>
+            </a>
+        </li>
             <li *jhiHasAnyAuthority="['ROLE_EDITOR','ROLE_ADMIN']" ngbDropdown class="nav-item dropdown pointer" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                 <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="import-menu">
                     <span>
@@ -227,19 +209,19 @@
                     </li>
                 </ul>
             </li>
-            <li ngbDropdown class="nav-item dropdown pointer" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <li ngbDropdown class="nav-item dropdown pointer">
                 <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="account-menu">
-                  <span *ngIf="!getImageUrl()">
-                    <i class="fa fa-user" aria-hidden="true"></i>
-                    <span jhiTranslate="global.menu.account.main">
-                      Account
+                    <span>
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span jhiTranslate="global.menu.account.main">
+	                      Account
+	                    </span>
                     </span>
-                  </span>
-                  <span *ngIf="getImageUrl()">
-                      <img [src]="getImageUrl()" class="profile-image img-circle" alt="Avatar">
-                  </span>
+                    <span *ngIf="getImageUrl()">
+                    	<img [src]="getImageUrl()" class="profile-image img-circle" alt="Avatar">
+                  	</span>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-right ml-auto" ngbDropdownMenu>
+                <ul class="dropdown-menu" ngbDropdownMenu *ngIf="languages.length > 1">
                     <li *ngSwitchCase="true">
                         <a class="dropdown-item" routerLink="settings" routerLinkActive="active" (click)="collapseNavbar()">
                             <i class="fa fa-fw fa-wrench" aria-hidden="true"></i>
@@ -272,6 +254,6 @@
                     </li>
                 </ul>
             </li>
-        </ul>
+      </ul>
     </div>
-</nav>
+  </nav>

@@ -131,8 +131,10 @@
 					<div *ngIf="eventEntry.eventEdition.multidriver">
 						<div class="row">
 		            		<div class="col-md-2" *ngFor="let driver of eventEntry.drivers">
-		            			<figure class="figure" *ngIf="driver.faceUrl">
-								  <img [src]="getSmallFaceUrl(driver.portraitUrl)" alt="{{driver.fullName}}"/>
+		            			<figure class="figure">
+								  <img *ngIf="driver.faceUrl" [src]="getSmallFaceUrl(driver.portraitUrl)" alt="{{driver.fullName}}"/>
+								  <img *ngIf="!driver.faceUrl" 
+								  	[src]="getSmallFaceUrl('https://res.cloudinary.com/msdb-cloud/image/upload/v1518113603/generic.png')" alt="{{driver.fullName}}"/>
 								  <figcaption class="figure-caption text-center">{{driver.surname}}</figcaption>
 								</figure>
 		            		</div>

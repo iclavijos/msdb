@@ -2,6 +2,17 @@
 Main page styles
 ========================================================================== */
 
+.header img {
+  float: left;
+  width: 150px;
+  height: 150px;
+}
+
+.header h1 {
+  position: relative;
+  top: 40px;
+  left: 10px;
+}
 
 /* wait autoprefixer update to allow simple generation of high pixel density media query */
 @media
