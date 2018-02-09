@@ -18,7 +18,7 @@ import { VERSION } from '../../app.constants';
 export class NavbarComponent implements OnInit {
     inProduction: boolean;
     isNavbarCollapsed: boolean;
-    languages: any[];
+    languages: any[] = [];
     swaggerEnabled: boolean;
     modalRef: NgbModalRef;
     version: string;

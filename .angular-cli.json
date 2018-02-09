@@ -22,7 +22,10 @@
             "content/css/vendor.css",
             "content/css/global.css"
         ],
-        "scripts": []
+        "scripts": [
+        	"../node_modules/moment/moment.js",
+        	"../node_modules/fullcalendar/dist/fullcalendar.js"
+        ]
     }],
     "lint": [{
             "project": "../../../tsconfig.json"

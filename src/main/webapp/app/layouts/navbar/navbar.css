@@ -85,3 +85,9 @@ Logo styles
     background-size: contain;
     width: 100%;
 }
+
+.avatar {
+	border-radius: 50%; 
+	width: 25px; 
+	height: 25px;
+}

@@ -5,8 +5,6 @@
 @import '~primeng/resources/primeng.min.css';
 @import '~primeng/resources/themes/bootstrap/theme.css';
 
-@import 'sb-admin.min.css';
-
 .table > tbody > tr:first-child > td {
     border: none;
 }
