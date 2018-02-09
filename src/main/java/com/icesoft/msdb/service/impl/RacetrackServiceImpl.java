@@ -81,12 +81,16 @@ public class RacetrackServiceImpl implements RacetrackService {
 			racetrack.setTimeZone(timeZone.getID());
 			
 			if (racetrack.getLogo() != null) {
-		        String cdnUrl = cdnService.uploadImage(racetrack.getId().toString(), racetrack.getLogo(), "racetrack");
+				byte[] logo = racetrack.getLogo();
+				racetrack = racetrackRepository.save(racetrack);
+		        String cdnUrl = cdnService.uploadImage(racetrack.getId().toString(), logo, "racetrack");
 		        racetrack.setLogoUrl(cdnUrl);
 				
 		        racetrack = racetrackRepository.save(racetrack);
 	        } else if (racetrack.getLogoUrl() == null) {
-	        	cdnService.deleteImage(racetrack.getId().toString(), "racetrack");
+	        	if (racetrack.getId() != null) {
+	        		cdnService.deleteImage(racetrack.getId().toString(), "racetrack");
+	        	}
 	        }
 			Racetrack result = racetrackRepository.save(racetrack);
 			racetrackSearchRepo.save(result);
@@ -103,12 +107,16 @@ public class RacetrackServiceImpl implements RacetrackService {
         
         
         if (layout.getLayoutImage() != null) {
-	        String cdnUrl = cdnService.uploadImage(layout.getId().toString(), layout.getLayoutImage(), "racetrackLayout");
+        	byte[] layoutImg = layout.getLayoutImage();
+        	layout = racetrackLayoutRepository.save(layout);
+	        String cdnUrl = cdnService.uploadImage(layout.getId().toString(), layoutImg, "racetrackLayout");
 	        layout.setLayoutImageUrl(cdnUrl);
 			
 	        layout = racetrackLayoutRepository.save(layout);
         } else if (layout.getLayoutImageUrl() == null) {
-        	cdnService.deleteImage(layout.getId().toString(), "racetrackLayout");
+        	if (layout.getId() != null) {
+        		cdnService.deleteImage(layout.getId().toString(), "racetrackLayout");
+        	}
         }
         RacetrackLayout result = racetrackLayoutRepository.save(layout);
         racetrackLayoutSearchRepo.save(result);
