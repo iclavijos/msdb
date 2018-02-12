@@ -351,7 +351,9 @@ public class ImportsResource {
     	EventSession session = sessionRepository.findOne(sessionId);
     	
     	if (session.isRace()) {
-    		cacheHandler.resetWinnersCache(session.getEventEdition().getId());
+    		if (session.getEventEdition().getSeriesEdition() != null) {
+    			cacheHandler.resetWinnersCache(session.getEventEdition().getSeriesEdition().getId());
+    		}
     	}
     	MappingIterator<SessionResultDTO> readValues = initializeIterator(SessionResultDTO.class, data);
     	EventEntryResult first = null;

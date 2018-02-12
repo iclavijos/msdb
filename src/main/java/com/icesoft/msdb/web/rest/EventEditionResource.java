@@ -61,6 +61,7 @@ import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventsSeriesNavigationDTO;
 import com.icesoft.msdb.service.dto.SessionCalendarDTO;
 import com.icesoft.msdb.service.dto.SessionResultDTO;
+import com.icesoft.msdb.service.impl.CacheHandler;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
@@ -95,12 +96,13 @@ public class EventEditionResource {
     private final StatisticsService statsService;
     private final CDNService cdnService;
     private final JDBCRepositoryImpl jdbcRepo;
+    private final CacheHandler cacheHandler;
     
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventEditionSearchRepository eventEditionSearchRepo,
     		EventEntrySearchRepository eventEntrySearchRepo, EventSessionRepository eventSessionRepository, 
     		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, 
     		RacetrackLayoutRepository racetrackLayoutRepo, ResultsService resultsService, 
-    		CDNService cdnService, StatisticsService statsService, JDBCRepositoryImpl jdbcRepo) {
+    		CDNService cdnService, StatisticsService statsService, JDBCRepositoryImpl jdbcRepo, CacheHandler cacheHandler) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventEditionSearchRepo = eventEditionSearchRepo;
         this.eventSessionRepository = eventSessionRepository;
@@ -112,6 +114,7 @@ public class EventEditionResource {
         this.cdnService = cdnService;
         this.statsService = statsService;
         this.jdbcRepo = jdbcRepo;
+        this.cacheHandler = cacheHandler;
     }
 
     /**
@@ -133,6 +136,9 @@ public class EventEditionResource {
         }
         EventEdition result = eventEditionRepository.save(eventEdition);
         eventEditionSearchRepo.save(result);
+        if (result.getSeriesEdition() != null) {
+        	cacheHandler.resetWinnersCache(result.getSeriesEdition().getId());
+        }
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -163,6 +169,10 @@ public class EventEditionResource {
     	}
         result = eventEditionRepository.save(eventEdition);
         eventEditionSearchRepo.save(result);
+        
+        if (result.getSeriesEdition() != null) {
+        	cacheHandler.resetWinnersCache(result.getSeriesEdition().getId());
+        }
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, eventEdition.getId().toString()))
             .body(result);
@@ -221,6 +231,10 @@ public class EventEditionResource {
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Void> deleteEventEdition(@PathVariable Long id) {
         log.debug("REST request to delete EventEdition : {}", id);
+        EventEdition eventEd = eventEditionRepository.getOne(id);
+        if (eventEd.getSeriesEdition() != null) {
+           	cacheHandler.resetWinnersCache(eventEd.getSeriesEdition().getId());
+        }
         eventEditionRepository.delete(id);
         eventEditionSearchRepo.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

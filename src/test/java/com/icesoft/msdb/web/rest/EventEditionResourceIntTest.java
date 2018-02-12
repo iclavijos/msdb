@@ -43,6 +43,7 @@ import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.StatisticsService;
+import com.icesoft.msdb.service.impl.CacheHandler;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 /**
@@ -97,6 +98,9 @@ public class EventEditionResourceIntTest {
     private StatisticsService statsService;
     
     @Autowired
+    private CacheHandler cacheHandler;
+    
+    @Autowired
     private CDNService cdnService;
     
     @Autowired
@@ -121,7 +125,7 @@ public class EventEditionResourceIntTest {
         final EventEditionResource eventEditionResource = new EventEditionResource(eventEditionRepository, eventEditionSearchRepository,
         		eventEntrySearchRepository, eventSessionRepository, 
         		eventEntryRepository, resultsRepository, racetrackLayoutRepository, resultsService, 
-        		cdnService, statsService, jdbcRepo);
+        		cdnService, statsService, jdbcRepo, cacheHandler);
         this.restEventEditionMockMvc = MockMvcBuilders.standaloneSetup(eventEditionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
