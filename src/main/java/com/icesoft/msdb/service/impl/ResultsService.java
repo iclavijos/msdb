@@ -21,6 +21,7 @@ import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.PointsRaceByRace;
 import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.domain.TeamEventPoints;
+import com.icesoft.msdb.domain.enums.DurationType;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
@@ -49,12 +50,22 @@ public class ResultsService {
 		Map<Long, TeamEventPoints> teams = new HashMap<>();
 		PointsSystem ps = session.getPointsSystem();
 		int[] points = ps != null ? ps.disclosePoints() : null;
+		float pointsPct = 1f;
 
 		driverPointsRepo.deleteSessionPoints(sessionId);
 		teamPointsRepo.deleteSessionPoints(sessionId);
 
 		List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(
 				session.getId(), session.getEventEdition().getId());
+		if (ps.getRacePctCompleted() > 0) {
+			EventEntryResult result = results.get(0);
+			if (session.isRace() && session.getDurationType().equals(DurationType.LAPS.getValue())) {
+				Float completionPct = ((float)result.getLapsCompleted().intValue() / (float)session.getDuration().intValue()) * 100;
+				if (completionPct.intValue() < ps.getRacePctCompleted()) {
+					pointsPct = ps.getPctTotalPoints() / 100f;
+				}
+			}
+		}
 		for(int i = 0; i < results.size(); i++) {
 			EventEntryResult result = results.get(i);
 			Boolean sharedDrive = result.getSharedDriveWith() != null;
@@ -66,6 +77,7 @@ public class ResultsService {
 					if (sharedDrive) {
 						calculatedPoints = calculatedPoints / 2;
 					}
+					calculatedPoints = calculatedPoints * pointsPct;
 				}
 				
 				for(Driver d : result.getEntry().getDrivers()) {

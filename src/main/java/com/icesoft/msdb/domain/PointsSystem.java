@@ -31,8 +31,7 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     private String name;
 
     @Size(max = 100)
-    @Column(name = "description", length = 100, nullable = false)
-    @NotNull
+    @Column(name = "description", length = 100)
     private String description;
 
     @Column(name = "points")
@@ -63,7 +62,7 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     private Boolean pitlaneStartAllowed = false;
     
     @Column(name = "race_pct_completed_total_points")
-    private Integer racePctCompletedTotalPoints;
+    private Integer racePctCompleted;
     
     @Column(name = "pct_total_points")
     private Integer pctTotalPoints;
@@ -234,17 +233,17 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
-    public Integer getRacePctCompletedTotalPoints() {
-		return racePctCompletedTotalPoints;
+    public Integer getRacePctCompleted() {
+		return racePctCompleted;
 	}
 
-    public PointsSystem racePctCompletedTotalPoints(Integer racePctCompletedTotalPoints) {
-		this.racePctCompletedTotalPoints = racePctCompletedTotalPoints;
+    public PointsSystem racePctCompleted(Integer racePctCompleted) {
+		this.racePctCompleted = racePctCompleted;
 		return this;
 	}
     
-	public void setRacePctCompletedTotalPoints(Integer racePctCompletedTotalPoints) {
-		this.racePctCompletedTotalPoints = racePctCompletedTotalPoints;
+	public void setRacePctCompleted(Integer racePctCompleted) {
+		this.racePctCompleted = racePctCompleted;
 	}
 
 	public Integer getPctTotalPoints() {

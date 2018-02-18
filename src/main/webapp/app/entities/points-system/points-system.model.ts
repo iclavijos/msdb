@@ -12,8 +12,8 @@ export class PointsSystem {
         public pctCompletedFastLap = 0,
         public pointsPole = 0,
         public pointsLeadLap = 0,
-        public racePctCompletedTotalPoints = 0,
-        public pctTotalPoints = 0,
+        public racePctCompleted = 0,
+        public pctTotalPoints = 100,
         public active = true
     ) { }
 }

@@ -89,10 +89,11 @@
 				</div>
 			</div>
 		</div>
-		<div class="form-group col-lg-12 col-md-12">
-			<div class="card">
-				<span jhiTranslate="motorsportsDatabaseApp.pointsSystem.racePctCompletion"></span>
-			</div>
+		<div class="form-inline col-lg-12 col-md-12">
+			<!-- label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.racePctCompletion" for="field_racePctCompletion">% race completed for full points</label -->
+			<span>If less than </span><input type="number" class="form-control col-md-1" name="racePctCompletion" id="field_racePctCompletion" [(ngModel)]="pointsSystem.racePctCompleted"/>
+			<span>% of race distance completed, award </span><input type="number" class="form-control col-md-1" name="totalPointsPct" id="field_totalPointsPct" [(ngModel)]="pointsSystem.pctTotalPoints"/>
+			<span>% of total points</span>   
 		</div>
 		<div class="form-group">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.pointsSystem.active" for="field_active">Active</label>
