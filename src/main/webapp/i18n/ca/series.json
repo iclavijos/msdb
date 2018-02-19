@@ -77,7 +77,10 @@
 	            	"selectDrivers": "Selecciona els pilots campions d'aquesta edició"
 	            },
 	            "updateTeamsChampions": "Edita equips campions",
-	            "updateManufacturersChampions": "Edita fabricants campions"
+	            "updateManufacturersChampions": "Edita fabricants campions",
+	            "driversStandings": "Classificació de pilots?",
+	            "teamsStandings": "Classificació d'equips?",
+	            "manufacturersStandings": "Classificació de constructors?"
 	        }
         }
     }

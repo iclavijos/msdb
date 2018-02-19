@@ -48,6 +48,9 @@ export class StandingsComponent implements OnInit {
 	    	this.seriesEditionService.findDriversStandings(this.seriesEditionId).subscribe(driversStandings => {
 	    		this.drivers = driversStandings.json();
 	    	});
+	    	this.seriesEditionService.findTeamsStandings(this.seriesEditionId).subscribe(teamsStandings => {
+	    		this.teams = teamsStandings.json();
+	    	});
 	    	this.seriesEditionService.findDriversPointsByRace(this.seriesEditionId).subscribe(pointsByRace => {
 	    		this.pointsByRace = pointsByRace.json();
 	    		this.numRaces = this.pointsByRace[0].length - 2;

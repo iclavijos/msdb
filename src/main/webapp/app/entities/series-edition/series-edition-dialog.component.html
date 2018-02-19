@@ -8,7 +8,7 @@
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
         <div class="row">
-        	<div class="col-lg-6 col-md-6">
+        	<div class="col-lg-2 col-md-2">
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.period" for="field_period">Period</label>
 		            <input type="text" class="form-control" name="period" id="field_period"
@@ -26,7 +26,7 @@
 		            </div>
 		        </div>
 		   	</div>
-		   	<div class="col-lg-6 col-md-6">
+		   	<div class="col-lg-3 col-md-3">
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.numEvents" for="field_numEvents">Number Events</label>
 		            <input type="number" class="form-control" name="numEvents" id="field_numEvents" [(ngModel)]="seriesEdition.numEvents" required/>
@@ -37,6 +37,29 @@
 		                </small>
 		            </div>
 		        </div>
+		    </div>
+		    <div class="col-lg-7 col-md-7">
+		    	<div class="row"><div>&nbsp;</div></div>
+		    	<div class="row">
+		    		<div class="col-lg-4 col-md-4">
+				    	<div class="form-group">
+				            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.driversStandings" for="field_driversStandings">Drivers standings?</label>
+				            <i [ngClass]="seriesEdition.driversStandings ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="seriesEdition.driversStandings = !seriesEdition.driversStandings;"></i>
+				        </div>
+			        </div>
+			        <div class="col-lg-4 col-md-4">
+				        <div class="form-group">
+				            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.teamsStandings" for="field_teamsStandings">Teams standings?</label>
+				            <i [ngClass]="seriesEdition.teamsStandings ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="seriesEdition.teamsStandings = !seriesEdition.teamsStandings;"></i>
+				        </div>
+			        </div>
+			        <div class="col-lg-4 col-md-4">
+				        <div class="form-group">
+				            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.manufacturersStandings" for="field_manufacturerStandings">Manufacturer standings?</label>
+				            <i [ngClass]="seriesEdition.manufacturersStandings ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="seriesEdition.manufacturersStandings = !seriesEdition.manufacturersStandings;"></i>
+				        </div>
+			        </div>
+		    	</div>
 		    </div>
         </div>
         <div class="form-group">

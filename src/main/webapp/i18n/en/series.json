@@ -77,7 +77,10 @@
 	            	"selectDrivers": "Select which drivers are champions of this edition"
 	            },
 	            "updateTeamsChampions": "Edit teams champions",
-	            "updateManufacturersChampions": "Edit manufacturers champions"
+	            "updateManufacturersChampions": "Edit manufacturers champions",
+	            "driversStandings": "Drivers standings?",
+	            "teamsStandings": "Teams standings?",
+	            "manufacturersStandings": "Constructors standings?"
 	        }
         }
     }
