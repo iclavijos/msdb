@@ -52,6 +52,26 @@
 						</div>
 					</div>
 					<div class="card col-md-4" *ngIf="manufacturers">
+						<div class="card-block">
+							<h4 class="card-title">{{'motorsportsDatabaseApp.series.seriesEdition.detail.manufacturersStandings' | translate}}</h4>
+							<div class="card-text">
+								<table class="table table-sm">
+									<thead>
+										<tr>
+											<th></th>
+											<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.manufacturer'	| translate}}</th>
+											<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr *ngFor="let manufacturer of manufacturers; let i = index">
+											<td>{{i + 1}}</td>
+											<td>{{manufacturer.manufacturerName}}</td>
+											<td>{{manufacturer.points}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 					</div>
 				</div>
 			</div>

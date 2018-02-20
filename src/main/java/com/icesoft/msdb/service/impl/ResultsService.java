@@ -16,18 +16,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.DriverEventPoints;
+import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.EventSession;
+import com.icesoft.msdb.domain.ManufacturerEventPoints;
 import com.icesoft.msdb.domain.PointsRaceByRace;
 import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.domain.TeamEventPoints;
 import com.icesoft.msdb.domain.enums.DurationType;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
+import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
+import com.icesoft.msdb.repository.ManufacturerEventPointsRepository;
 import com.icesoft.msdb.repository.TeamEventPointsRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
+import com.icesoft.msdb.service.dto.ManufacturerPointsDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 
 @Service
@@ -37,23 +42,27 @@ public class ResultsService {
 	
 	@Autowired private EventSessionRepository sessionRepo;
 	@Autowired private EventEntryResultRepository resultsRepo;
+	@Autowired private EventEntryRepository eventEntryRepository;
 	@Autowired private DriverEventPointsRepository driverPointsRepo;
 	@Autowired private TeamEventPointsRepository teamPointsRepo;
+	@Autowired private ManufacturerEventPointsRepository manufacturerPointsRepo;
 	@Autowired private JDBCRepositoryImpl viewsRepo;
 	
 	@Autowired private CacheHandler cacheHandler;
 
 	public void processSessionResults(Long sessionId) {
-		//TODO: Improve points system and series definition to handle other classifications (manufacturers, for instance)
 		EventSession session = sessionRepo.findOne(sessionId);
 		List<DriverEventPoints> drivers = new ArrayList<>();
 		Map<Long, TeamEventPoints> teams = new HashMap<>();
+		Map<String, ManufacturerEventPoints> manufacturers = new HashMap<>();
+		
 		PointsSystem ps = session.getPointsSystem();
 		int[] points = ps != null ? ps.disclosePoints() : null;
 		float pointsPct = 1f;
 
 		driverPointsRepo.deleteSessionPoints(sessionId);
 		teamPointsRepo.deleteSessionPoints(sessionId);
+		manufacturerPointsRepo.deleteSessionPoints(sessionId);
 
 		List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(
 				session.getId(), session.getEventEdition().getId());
@@ -90,7 +99,6 @@ public class ResultsService {
 						log.debug(String.format("Driver %s: %s(x%s) points for position %s", 
 							d.getFullName(), (float)points[result.getFinalPosition() - 1], session.getPsMultiplier(), result.getFinalPosition()));
 						drivers.add(dep);
-						//calculatedPoints += dep.getPoints();
 					}
 					
 					if (result.getStartingPosition() != null &&  result.getStartingPosition() == 1) {
@@ -110,21 +118,6 @@ public class ResultsService {
 					}
 				}
 				
-				if (session.getEventEdition().getSeriesEdition().getTeamsStandings()) {
-					TeamEventPoints tep = teams.get(result.getEntry().getTeam().getId());
-					if (tep == null) {
-						tep = new TeamEventPoints();
-						tep.setSession(session);
-						tep.setTeam(result.getEntry().getTeam());
-					}
-					log.debug(String.format("Team %s: %s points for position %s", result.getEntry().getTeam().getName(), calculatedPoints, result.getFinalPosition()));
-					tep.addPoints(calculatedPoints);
-					teams.put(result.getEntry().getTeam().getId(), tep);
-				}
-				
-				if (session.getEventEdition().getSeriesEdition().getManufacturersStandings()) {
-					//TODO
-				}
 			}
 		}
 		
@@ -204,9 +197,55 @@ public class ResultsService {
 			}
 		}
 		
+		//Points for each driver calculated. Proceeding with teams and manufacturers
+		if (session.getEventEdition().getSeriesEdition().getTeamsStandings()) {
+			List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(session.getEventEdition().getId());
+			for(EventEditionEntry entry: entries) {
+				Driver driver = entry.getDrivers().get(0); //We will only deal with the first one so multidriver entries are handled just once
+				double dPoints = drivers.stream().filter(dp -> dp.getDriver().getId().equals(driver.getId())).mapToDouble(dp -> dp.getPoints()).sum();
+				if (dPoints > 0) {
+					TeamEventPoints tep = teams.get(entry.getTeam().getId());
+					if (tep == null) {
+						tep = new TeamEventPoints();
+						tep.setSession(session);
+						tep.setTeam(entry.getTeam());
+					}
+					tep.addPoints((float)dPoints);
+					teams.put(entry.getTeam().getId(), tep);
+				}
+			}			
+		}
+		
+		if (session.getEventEdition().getSeriesEdition().getManufacturersStandings()) {
+			List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(session.getEventEdition().getId());
+			for(EventEditionEntry entry: entries) {
+				String manufacturer = entry.getManufacturer();
+				if (!manufacturers.containsKey(manufacturer)) {
+					double mPoints = results.parallelStream()
+							.filter(r -> r.getEntry().getManufacturer().equals(manufacturer)).limit(2)
+							.mapToDouble(r -> drivers.stream().filter(
+								dp -> dp.getDriver().getId().equals(r.getEntry().getDrivers().get(0).getId())).mapToDouble(dp -> dp.getPoints()).sum())
+							.sum();
+					
+	
+					if (mPoints > 0) {
+						ManufacturerEventPoints mep = manufacturers.get(entry.getChassis().getManufacturer());
+						if (mep == null) {
+							mep = new ManufacturerEventPoints();
+							mep.setSession(session);
+							mep.setManufacturer(manufacturer);
+						}
+						mep.addPoints((float)mPoints);
+						manufacturers.put(manufacturer, mep);
+					}
+				}
+			}	
+		}
+		
 		log.debug("Persisting points...");
 		drivers.stream().forEach(entry -> driverPointsRepo.save(entry));
 		teams.entrySet().stream().forEach(entry -> teamPointsRepo.save(entry.getValue()));
+		manufacturers.entrySet().stream().forEach(entry -> manufacturerPointsRepo.save(entry.getValue()));
 		cacheHandler.resetDriversStandingsCache(session.getSeriesId());
 		
 		log.info("Processed result for {}-{}.", session.getEventEdition().getLongEventName(), session.getName());
@@ -278,6 +317,10 @@ public class ResultsService {
 		
 		standings.sort(c.reversed());
 		return standings;
+	}
+	
+	public List<ManufacturerPointsDTO> getManufacturersStandings(Long seriesId) {
+		return viewsRepo.getManufacturersStandings(seriesId);
 	}
 
 	private int sortPositions(List<Object[]> positionsD1, List<Object[]> positionsD2) {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventsSeriesNavigationDTO;
+import com.icesoft.msdb.service.dto.ManufacturerPointsDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 
 @Repository
@@ -98,6 +99,19 @@ public class JDBCRepositoryImpl {
 				+ "from teams_series ts left join teams_classification_series tcs on ts.teamId = tcs.teamId and ts.seriesId = tcs.series_edition_id  "
 				+ "where ts.seriesId = ?", 
 				new Object[] {seriesId}, (rs, rowNum) -> new TeamPointsDTO(rs.getLong("teamId"), rs.getString("teamName"), rs.getFloat("points")));
+		
+		return result;
+	}
+	
+	public List<ManufacturerPointsDTO> getManufacturersStandings(Long seriesId) {
+		List<ManufacturerPointsDTO> result = jdbcTemplate.query("select manufacturer, sum(points) points from ("
+				+ "select mep.* "
+				+ "from manufacturer_event_points mep left join event_session es on mep.session_id = es.id "
+				+ "left join event_edition ee on es.event_edition_id = ee.id "
+				+ "where ee.series_edition_id = ?) tmp "
+				+ "group by manufacturer "
+				+ "order by points desc", 
+				new Object[] {seriesId}, (rs, rowNum) -> new ManufacturerPointsDTO(rs.getString("manufacturer"), rs.getFloat("points")));
 		
 		return result;
 	}

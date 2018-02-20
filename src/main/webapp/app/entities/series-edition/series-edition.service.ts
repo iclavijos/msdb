@@ -62,6 +62,12 @@ export class SeriesEditionService {
             return res;
         });
     }
+    
+    findManufacturersStandings(id: number): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${id}/standings/manufacturers`).map((res: Response) => {
+            return res;
+        });
+    }
 
     findDriversChampions(id: number): Observable<Response> {
         return this.http.get(`${this.resourceUrl}/${id}/champions/drivers`).map((res: Response) => {

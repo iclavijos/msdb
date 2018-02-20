@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Rx';
 import { ResponseWrapper } from '../../shared';
 
 import { EventEdition, EventEditionService } from '../event-edition';
-import { SeriesEditionService } from '../series-edition';
+import { SeriesEdition, SeriesEditionService } from '../series-edition';
 
 @Component({
     selector: 'jhi-standings',
@@ -23,7 +23,7 @@ export class StandingsComponent implements OnInit {
     @Input()
     eventEditionId: number;
     @Input()
-    seriesEditionId: number;
+    seriesEdition: SeriesEdition;
     showExtendedStandings = false;
     data: any;
     options: any;
@@ -43,15 +43,22 @@ export class StandingsComponent implements OnInit {
 	        this.eventEditionService.loadDriversPoints(this.eventEditionId).subscribe(driversPoints => {
 	            this.drivers = driversPoints.json;
 	        });
-	    } else if (this.seriesEditionId) {
+	    } else if (this.seriesEdition) {
 	    	this.showExtendedStandings = true;
-	    	this.seriesEditionService.findDriversStandings(this.seriesEditionId).subscribe(driversStandings => {
+	    	this.seriesEditionService.findDriversStandings(this.seriesEdition.id).subscribe(driversStandings => {
 	    		this.drivers = driversStandings.json();
 	    	});
-	    	this.seriesEditionService.findTeamsStandings(this.seriesEditionId).subscribe(teamsStandings => {
-	    		this.teams = teamsStandings.json();
-	    	});
-	    	this.seriesEditionService.findDriversPointsByRace(this.seriesEditionId).subscribe(pointsByRace => {
+	    	if (this.seriesEdition.teamsStandings) {
+		    	this.seriesEditionService.findTeamsStandings(this.seriesEdition.id).subscribe(teamsStandings => {
+		    		this.teams = teamsStandings.json();
+		    	});
+	    	}
+	    	if (this.seriesEdition.manufacturersStandings) {
+		    	this.seriesEditionService.findManufacturersStandings(this.seriesEdition.id).subscribe(manufacturersStandings => {
+		    		this.manufacturers = manufacturersStandings.json();
+		    	});
+	    	}
+	    	this.seriesEditionService.findDriversPointsByRace(this.seriesEdition.id).subscribe(pointsByRace => {
 	    		this.pointsByRace = pointsByRace.json();
 	    		this.numRaces = this.pointsByRace[0].length - 2;
 	    		this.data = {
@@ -129,13 +136,13 @@ export class StandingsComponent implements OnInit {
             this.router.navigate(['/driver-points-details', {
                 eventEditionId: this.eventEditionId,
                 driverId: driverId,
-                seriesEditionId: this.seriesEditionId
+                seriesEditionId: this.seriesEdition.id
             }]);
         } else {
             //Navigate to popup with points in series edition
             this.router.navigate(['/driver-points-series', {
                 driverId: driverId,
-                seriesEditionId: this.seriesEditionId
+                seriesEditionId: this.seriesEdition.id
             }]);
         }
     }

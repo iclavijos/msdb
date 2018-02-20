@@ -3,6 +3,7 @@ package com.icesoft.msdb.domain;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,12 +22,14 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.data.elasticsearch.annotations.Document;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -283,6 +286,18 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
 	
 	public void setEventEdition(EventEdition eventEdition) {
 		this.eventEdition = eventEdition;
+	}
+	
+	@JsonIgnore
+	public String getManufacturer() {
+		String chassisManufac = getChassis().getManufacturer();
+		String engineManufac = Optional.ofNullable(getEngine()).map(e -> e.getManufacturer()).orElse("");
+		
+		if (chassisManufac.equals(engineManufac) || StringUtils.isBlank(engineManufac)) {
+			return chassisManufac;
+		} else {
+			return chassisManufac + "/" + engineManufac;
+		}
 	}
 	
 	@JsonProperty("driversName")

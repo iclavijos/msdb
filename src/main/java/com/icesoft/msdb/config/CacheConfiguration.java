@@ -80,6 +80,7 @@ public class CacheConfiguration {
             cm.createCache(com.icesoft.msdb.domain.SeriesEdition.class.getName(), jcacheConfiguration);
             cm.createCache(com.icesoft.msdb.domain.Team.class.getName(), jcacheConfiguration);
             cm.createCache(com.icesoft.msdb.domain.TeamEventPoints.class.getName(), jcacheConfiguration);
+            cm.createCache(com.icesoft.msdb.domain.ManufacturerEventPoints.class.getName(), jcacheConfiguration);
             cm.createCache(com.icesoft.msdb.domain.TyreProvider.class.getName(), jcacheConfiguration);
             
             cm.createCache("homeInfo", jcacheConfiguration);
@@ -87,6 +88,7 @@ public class CacheConfiguration {
             
             cm.createCache("driversStandingsCache", longLivedCacheConfiguration);
             cm.createCache("teamsStandingsCache", longLivedCacheConfiguration);
+            cm.createCache("manufacturersStandingsCache", longLivedCacheConfiguration);
             cm.createCache("pointRaceByRace", longLivedCacheConfiguration);
             
             cm.createCache("winnersCache", alwaysCacheConfiguration);

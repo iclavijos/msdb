@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class CacheHandler {
 	private final Logger log = LoggerFactory.getLogger(CacheHandler.class);
 
-	@CacheEvict(cacheNames={"driversStandingsCache","teamsStandingsCache"})
+	@CacheEvict(cacheNames={"driversStandingsCache","teamsStandingsCache", "manufacturersStandingsCache"})
 	public void resetDriversStandingsCache(Long seriesEditionId) {
 		log.debug("Reseting drivers standings cache for series edition {}", seriesEditionId);
 	}

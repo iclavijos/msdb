@@ -41,8 +41,10 @@
 	                "standings": "Clasificaciones",
 	                "driversStandings": "Clasificación de pilotos",
 	                "teamsStandings": "Clasificación de equipos",
+	                "manufacturersStandings": "Clasificación de constructores",
 	                "driver": "Piloto",
 	                "team": "Equipo",
+	                "manufacturer": "Constructor",
 	                "points": "Puntos",
 	                "pointsPerRace": "Puntos por carrera",
 	                "graphics": "Gráficas"

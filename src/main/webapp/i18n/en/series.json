@@ -41,8 +41,10 @@
 	                "standings": "Standings",
 	                "driversStandings": "Drivers Standings",
 	                "teamsStandings": "Teams Standings",
+	                "manufacturersStandings": "Constructors Standings",
 	                "driver": "Driver",
 	                "team": "Team",
+	                "manufacturer": "Constructor",
 	                "points": "Points",
 	                "pointsPerRace": "Points per race",
 	                "graphics": "Graphics"

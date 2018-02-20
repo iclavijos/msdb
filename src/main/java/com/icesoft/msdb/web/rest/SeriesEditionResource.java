@@ -41,6 +41,7 @@ import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
+import com.icesoft.msdb.service.dto.ManufacturerPointsDTO;
 import com.icesoft.msdb.service.dto.SeriesDriverChampionDTO;
 import com.icesoft.msdb.service.dto.SeriesEventsAndWinnersDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
@@ -202,8 +203,17 @@ public class SeriesEditionResource {
     @GetMapping("/series-editions/{id}/standings/teams")
     @Timed
     @Cacheable(cacheNames="teamsStandingsCache", key="#id")
-    public ResponseEntity<List<TeamPointsDTO>> getSeriesTeamssStandings(@PathVariable Long id) {
+    public ResponseEntity<List<TeamPointsDTO>> getSeriesTeamsStandings(@PathVariable Long id) {
     	List<TeamPointsDTO> result = resultsService.getTeamsStandings(id);
+    	
+    	return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    
+    @GetMapping("/series-editions/{id}/standings/manufacturers")
+    @Timed
+    @Cacheable(cacheNames="manufacturersStandingsCache", key="#id")
+    public ResponseEntity<List<ManufacturerPointsDTO>> getSeriesManufacturersStandings(@PathVariable Long id) {
+    	List<ManufacturerPointsDTO> result = resultsService.getManufacturersStandings(id);
     	
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
