@@ -12,7 +12,11 @@
 # Full reference is available at:
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
-debug: false
+logging:
+    level:
+        ROOT: INFO
+        com.icesoft.msdb: DEBUG
+        io.github.jhipster: DEBUG
 
 spring:
     profiles:
@@ -21,6 +25,7 @@ spring:
     devtools:
         restart:
             enabled: true
+            exclude: webapp/**
         livereload:
             enabled: false # we use gulp + BrowserSync for livereload
     jackson:

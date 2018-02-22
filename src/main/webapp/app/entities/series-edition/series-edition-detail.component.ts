@@ -21,11 +21,13 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     teamsStandings: any;
     manufacturersStandings: any;
     driversChampions: any[];
+	teamsChampions: any[];
 
     private numEvents = 0;
     private eventsProcessed = 0;
     private displayEvents = false;
-    private colsChamps = 'col-md-3';
+    private colsChampsDriver = 'col-md-3';
+    private colsChampsTeam = 'col-md-3';
 
     constructor(
         private seriesEditionService: SeriesEditionService,
@@ -50,7 +52,7 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
             this.loadEvents(id);
             this.loadDriversChampions(id);
             if (this.seriesEdition.teamsStandings) {
-                //this.loadTeamsStandings(id);
+                this.loadTeamsChampions(id);
             }
             if (this.seriesEdition.manufacturersStandings) {
 
@@ -80,7 +82,16 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
         this.seriesEditionService.findDriversChampions(id).subscribe((champions) => {
             this.driversChampions = champions.json();
             if (this.driversChampions.length > 0) {
-                this.colsChamps = 'col-md-' + Math.floor(12 / this.driversChampions.length);
+                this.colsChampsDriver = 'col-md-' + Math.floor(12 / this.driversChampions.length);
+            }
+        });
+    }
+    
+    loadTeamsChampions(id) {
+        this.seriesEditionService.findTeamsChampions(id).subscribe((champions) => {
+            this.teamsChampions = champions.json();
+            if (this.teamsChampions.length > 0) {
+                this.colsChampsTeam = 'col-md-' + Math.floor(12 / this.teamsChampions.length);
             }
         });
     }
@@ -126,13 +137,15 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     registerChangeInSeriesEditions() {
         this.eventSubscriber = this.eventManager.subscribe(
             'seriesEditionListModification',
-            (response) => this.load(this.seriesEdition.id)
-        );
+            (response) => this.load(this.seriesEdition.id));
         this.eventSubscriber.add(this.eventManager.subscribe(
             'seriesEditionEventsListModification',
             (response) => this.loadEvents(this.seriesEdition.id)));
         this.eventSubscriber.add(this.eventManager.subscribe(
         	'driversChampionsModification',
         	(response) => this.loadDriversChampions(this.seriesEdition.id)));
+        this.eventSubscriber.add(this.eventManager.subscribe(
+        	'teamsChampionsModification',
+        	(response) => this.loadTeamsChampions(this.seriesEdition.id)));
     }
 }

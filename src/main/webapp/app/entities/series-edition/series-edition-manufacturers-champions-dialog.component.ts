@@ -11,10 +11,10 @@ import { SeriesEditionPopupService } from './series-edition-popup.service';
 import { SeriesEditionService } from './series-edition.service';
 
 @Component({
-    selector: 'jhi-series-edition-drivers-champions-dialog',
-    templateUrl: './series-edition-drivers-champions-dialog.component.html'
+    selector: 'jhi-series-edition-manufacturers-champions-dialog',
+    templateUrl: './series-edition-manufacturers-champions-dialog.component.html'
 })
-export class SeriesEditionDriversChampionsDialogComponent implements OnInit {
+export class SeriesEditionManufacturersChampionsDialogComponent implements OnInit {
 	
 	drivers: any;
 	seriesEditionId: number;
@@ -44,7 +44,7 @@ export class SeriesEditionDriversChampionsDialogComponent implements OnInit {
 	      this.selectedIds.push(id);
 	    }
 	    if (event.target.checked === false) {
-	      this.selectedIds = this.selectedIds.filter((item) => item !== id);
+	      this.selectedIds = this.selectedIds.filter((item) => item.id !== id);
 	    }
 	  }
 	
@@ -67,10 +67,10 @@ export class SeriesEditionDriversChampionsDialogComponent implements OnInit {
 }
 
 @Component({
-    selector: 'jhi-series-edition-drivers-champions-popup',
+    selector: 'jhi-series-edition-manufacturers-champions-popup',
     template: ''
 })
-export class SeriesEditionDriversChampionsPopupComponent implements OnInit, OnDestroy {
+export class SeriesEditionManufacturersChampionsPopupComponent implements OnInit, OnDestroy {
 
     routeSub: any;
 
@@ -82,7 +82,7 @@ export class SeriesEditionDriversChampionsPopupComponent implements OnInit, OnDe
     ngOnInit() {
         this.routeSub = this.route.params.subscribe(params => {
         	this.seriesEditionPopupService
-            	.openDriversChamps(SeriesEditionDriversChampionsDialogComponent as Component, params['id']);
+            	.openDriversChamps(SeriesEditionManufacturersChampionsDialogComponent as Component, params['id']);
         });
     }
 

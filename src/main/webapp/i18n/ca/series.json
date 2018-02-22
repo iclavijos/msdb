@@ -78,6 +78,14 @@
 	            	"edit": "Edita pilots campions",
 	            	"selectDrivers": "Selecciona els pilots campions d'aquesta edició"
 	            },
+	            "teamsChampions": {
+	            	"edit": "Edita equips campions",
+	            	"selectDrivers": "Selecciona els equips campions d'aquesta edició"
+	            },
+	            "manufacturersChampions": {
+	            	"edit": "Edita consctructors campions",
+	            	"selectDrivers": "Selecciona els constructors campions d'aquesta edició"
+	            },
 	            "updateTeamsChampions": "Edita equips campions",
 	            "updateManufacturersChampions": "Edita fabricants campions",
 	            "driversStandings": "Classificació de pilots?",

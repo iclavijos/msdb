@@ -2,6 +2,7 @@ package com.icesoft.msdb.repository;
 
 import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import javax.persistence.QueryHint;
@@ -21,6 +22,8 @@ import com.icesoft.msdb.domain.Team;
  */
 @Repository
 public interface TeamRepository extends JpaRepository<Team,Long> {
+	
+	List<Team> findByIdIn(List<Long> ids);
 	
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
 	@Query(value = "select t from Team t")

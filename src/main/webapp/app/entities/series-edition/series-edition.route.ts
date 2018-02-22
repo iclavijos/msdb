@@ -10,6 +10,8 @@ import { SeriesEditionPopupComponent } from './series-edition-dialog.component';
 import { SeriesEditionDeletePopupComponent } from './series-edition-delete-dialog.component';
 import { SeriesEditionCalendarPopupComponent } from './series-edition-calendar-dialog.component';
 import { SeriesEditionDriversChampionsPopupComponent } from './series-edition-drivers-champions-dialog.component';
+import { SeriesEditionTeamsChampionsPopupComponent } from './series-edition-teams-champions-dialog.component';
+import { SeriesEditionManufacturersChampionsPopupComponent } from './series-edition-manufacturers-champions-dialog.component';
 
 @Injectable()
 export class SeriesEditionResolvePagingParams implements Resolve<any> {
@@ -93,6 +95,26 @@ export const seriesEditionPopupRoute: Routes = [
   {
       path: ':id/drivers-champions-edit',
       component: SeriesEditionDriversChampionsPopupComponent,
+      data: {
+          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+          pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
+      },
+      canActivate: [UserRouteAccessService],
+      outlet: 'popup'
+  },
+  {
+      path: ':id/teams-champions-edit',
+      component: SeriesEditionTeamsChampionsPopupComponent,
+      data: {
+          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+          pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
+      },
+      canActivate: [UserRouteAccessService],
+      outlet: 'popup'
+  },
+  {
+      path: ':id/manufacturers-champions-edit',
+      component: SeriesEditionManufacturersChampionsPopupComponent,
       data: {
           authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
           pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'

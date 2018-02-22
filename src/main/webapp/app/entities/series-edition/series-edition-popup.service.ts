@@ -85,6 +85,21 @@ export class SeriesEditionPopupService {
 	        
         });
     }
+    
+    openTeamsChamps(component: Component, seriesEditionId: number): Promise<NgbModalRef> {
+    	return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
+
+            this.seriesEditionService.findTeamsStandings(seriesEditionId).subscribe(teamsStandings => {
+            	this.ngbModalRef = this.seriesTeamsChampionsModalRef(component, seriesEditionId, teamsStandings.json());
+                resolve(this.ngbModalRef);
+	    	});
+	        
+        });
+    }
 
     seriesEditionModalRef(component: Component, seriesEdition: SeriesEdition, eventEdition?: EventEdition): NgbModalRef {
         const modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
@@ -105,6 +120,21 @@ export class SeriesEditionPopupService {
     seriesDriversChampionsModalRef(component: Component, seriesEditionId: number, driverStandings: any): NgbModalRef {
     	const modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
         modalRef.componentInstance.drivers = driverStandings;
+        modalRef.componentInstance.seriesEditionId = seriesEditionId;
+
+        modalRef.result.then((result) => {
+            this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
+            this.ngbModalRef = null;
+        }, (reason) => {
+            this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
+            this.ngbModalRef = null;
+        });
+        return modalRef;
+    }
+    
+    seriesTeamsChampionsModalRef(component: Component, seriesEditionId: number, teamStandings: any): NgbModalRef {
+    	const modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
+        modalRef.componentInstance.teams = teamStandings;
         modalRef.componentInstance.seriesEditionId = seriesEditionId;
 
         modalRef.result.then((result) => {

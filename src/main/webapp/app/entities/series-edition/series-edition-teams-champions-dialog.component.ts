@@ -11,12 +11,12 @@ import { SeriesEditionPopupService } from './series-edition-popup.service';
 import { SeriesEditionService } from './series-edition.service';
 
 @Component({
-    selector: 'jhi-series-edition-drivers-champions-dialog',
-    templateUrl: './series-edition-drivers-champions-dialog.component.html'
+    selector: 'jhi-series-edition-teams-champions-dialog',
+    templateUrl: './series-edition-teams-champions-dialog.component.html'
 })
-export class SeriesEditionDriversChampionsDialogComponent implements OnInit {
+export class SeriesEditionTeamsChampionsDialogComponent implements OnInit {
 	
-	drivers: any;
+	teams: any;
 	seriesEditionId: number;
 	isSaving: boolean;
 	selectedDrivers: any;
@@ -50,12 +50,12 @@ export class SeriesEditionDriversChampionsDialogComponent implements OnInit {
 	
 	save() {
         this.isSaving = true;
-        this.seriesEditionService.setDriversChampions(this.seriesEditionId, this.selectedIds)
+        this.seriesEditionService.setTeamsChampions(this.seriesEditionId, this.selectedIds)
         	.subscribe((res: any) => this.onSaveSuccess(), (res: any) => this.onError(res));
     }
 
     private onSaveSuccess() {
-        this.eventManager.broadcast({ name: 'driversChampionsModification', content: 'OK'});
+        this.eventManager.broadcast({ name: 'teamsChampionsModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss();
     }
@@ -67,10 +67,10 @@ export class SeriesEditionDriversChampionsDialogComponent implements OnInit {
 }
 
 @Component({
-    selector: 'jhi-series-edition-drivers-champions-popup',
+    selector: 'jhi-series-edition-teams-champions-popup',
     template: ''
 })
-export class SeriesEditionDriversChampionsPopupComponent implements OnInit, OnDestroy {
+export class SeriesEditionTeamsChampionsPopupComponent implements OnInit, OnDestroy {
 
     routeSub: any;
 
@@ -82,7 +82,7 @@ export class SeriesEditionDriversChampionsPopupComponent implements OnInit, OnDe
     ngOnInit() {
         this.routeSub = this.route.params.subscribe(params => {
         	this.seriesEditionPopupService
-            	.openDriversChamps(SeriesEditionDriversChampionsDialogComponent as Component, params['id']);
+            	.openTeamsChamps(SeriesEditionTeamsChampionsDialogComponent as Component, params['id']);
         });
     }
 

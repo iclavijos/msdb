@@ -66,12 +66,12 @@
 	                            <span class="fa fa-pencil"></span><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.driversChampions.edit">Update drivers Champions</span>
 	                        </button>
 	                        <button *ngIf="seriesEdition.teamsStandings"
-	                                [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar-edit/' } }]"
+	                                [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/teams-champions-edit' } }]"
 	                                class="btn btn-primary btn-sm">
 	                            <span class="fa fa-pencil"></span><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.updateTeamsChampions">Update teams Champions</span>
 	                        </button>
 	                        <button *ngIf="seriesEdition.manufacturersStandings"
-	                                [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar-edit/' } }]"
+	                                [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/manufacturers-champions-edit' } }]"
 	                                class="btn btn-primary btn-sm">
 	                            <span class="fa fa-pencil"></span><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.updateManufacturersChampions">Update manufacturers Champions</span>
 	                        </button>
@@ -79,7 +79,7 @@
 				        <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.champions">Champions</span></dt>
 						<dd>
 				            <div class="row">
-			            		<div [ngClass]="colsChamps" *ngFor="let driver of driversChampions">
+			            		<div [ngClass]="colsChampsDriver" *ngFor="let driver of driversChampions">
 			            			<figure class="figure">
 									  <img [src]="driver.driverImage" alt="{{driver.driverName}}" class="img-fluid" />
 									  <figcaption class="figure-caption text-center">{{driver.driverName}}</figcaption>
@@ -87,7 +87,12 @@
 			            		</div>
 			            	</div>
 			            	<div class="row" *ngIf="seriesEdition.teamsStandings">
-			            		
+			            		<div [ngClass]="colsChampsTeam" *ngFor="let team of teamsChampions">
+			            			<figure class="figure">
+									  <img [src]="team.teamImage" alt="{{team.teamName}}" class="img-fluid" />
+									  <figcaption class="figure-caption text-center">{{team.teamName}}</figcaption>
+									</figure>
+			            		</div>
 			            	</div>
 			            	<div class="row" *ngIf="seriesEdition.manufacturersStandings">
 			            		

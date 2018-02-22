@@ -34,6 +34,7 @@ import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.PointsRaceByRace;
 import com.icesoft.msdb.domain.SeriesEdition;
+import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
@@ -44,6 +45,7 @@ import com.icesoft.msdb.service.dto.EventRacePointsDTO;
 import com.icesoft.msdb.service.dto.ManufacturerPointsDTO;
 import com.icesoft.msdb.service.dto.SeriesDriverChampionDTO;
 import com.icesoft.msdb.service.dto.SeriesEventsAndWinnersDTO;
+import com.icesoft.msdb.service.dto.SeriesTeamChampionDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
@@ -284,6 +286,15 @@ public class SeriesEditionResource {
     	return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, seriesEditionId.toString())).build();
     }
     
+    @PostMapping("/series-editions/{seriesEditionId}/champions/teams")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @Transactional
+    public ResponseEntity<Void> updateSeriesTeamssChampions(@PathVariable Long seriesEditionId, @RequestBody List<Long> selectedTeamsId) {
+    	seriesEditionService.setSeriesTeamsChampions(seriesEditionId, selectedTeamsId);
+    	return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, seriesEditionId.toString())).build();
+    }
+    
     @GetMapping("/series-editions/{id}/champions/drivers")
     @Timed
     public ResponseEntity<List<SeriesDriverChampionDTO>> getSeriesEventsChampionsDrivers(@PathVariable Long id) {
@@ -291,6 +302,16 @@ public class SeriesEditionResource {
     	List<Driver> champs = seriesEditionService.getSeriesDriversChampions(id);
     	
     	return new ResponseEntity<>(champs.parallelStream().map(d -> new SeriesDriverChampionDTO(d)).collect(Collectors.toList())
+    			, HttpStatus.OK);
+    }
+    
+    @GetMapping("/series-editions/{id}/champions/teams")
+    @Timed
+    public ResponseEntity<List<SeriesTeamChampionDTO>> getSeriesEventsChampionsTeams(@PathVariable Long id) {
+    	log.debug("REST request to retrieve all champions drivers of series edition {}", id);
+    	List<Team> champs = seriesEditionService.getSeriesTeamsChampions(id);
+    	
+    	return new ResponseEntity<>(champs.parallelStream().map(t -> new SeriesTeamChampionDTO(t)).collect(Collectors.toList())
     			, HttpStatus.OK);
     }
 }

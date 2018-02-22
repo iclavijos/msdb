@@ -75,6 +75,12 @@ export class SeriesEditionService {
         });
     }
     
+    findTeamsChampions(id: number): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${id}/champions/teams`).map((res: Response) => {
+            return res;
+        });
+    }
+    
     findDriversPointsByRace(id: number): Observable<Response> {
         return this.http.get(`${this.resourceUrl}/${id}/points`).map((res: Response) => {
             return res;
@@ -101,6 +107,12 @@ export class SeriesEditionService {
     
     setDriversChampions(seriesEditionId: number, selectedDriversId: any) {
     	return this.http.post(`${this.resourceUrl}/${seriesEditionId}/champions/drivers`, selectedDriversId).map((res: Response) => {
+    		return res;
+    	});
+    }
+    
+    setTeamsChampions(seriesEditionId: number, selectedTeamsId: any) {
+    	return this.http.post(`${this.resourceUrl}/${seriesEditionId}/champions/teams`, selectedTeamsId).map((res: Response) => {
     		return res;
     	});
     }

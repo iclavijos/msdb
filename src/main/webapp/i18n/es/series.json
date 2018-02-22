@@ -78,6 +78,14 @@
 	            	"edit": "Edita los pilotos campeones",
 	            	"selectDrivers": "Selecciona los pilotos campeones de esta edición"
 	            },
+	            "teamsChampions": {
+	            	"edit": "Edita los equipos campeones",
+	            	"selectDrivers": "Selecciona los equipos campeones de esta edición"
+	            },
+	            "manufacturersChampions": {
+	            	"edit": "Edita los constructores campeones",
+	            	"selectDrivers": "Selecciona los constructores campeones de esta edición"
+	            },
 	            "updateTeamsChampions": "Edita equipos campeones",
 	            "updateManufacturersChampions": "Edita fabricantes campeones",
 	            "driversStandings": "¿Clasificación de pilotos?",

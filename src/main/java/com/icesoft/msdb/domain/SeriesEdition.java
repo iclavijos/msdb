@@ -77,8 +77,13 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         inverseJoinColumns=@JoinColumn(name="driver_id", referencedColumnName="ID"))
     private List<Driver> driversChampions;
     
-    @ManyToOne
-    private Team teamChampion;
+    @ManyToMany(fetch=FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
+    @JoinTable(
+        name="SERIES_TEAMS_CHAMPIONS",
+        joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
+        inverseJoinColumns=@JoinColumn(name="team_id", referencedColumnName="ID"))
+    private List<Team> teamsChampions;
 
     @ManyToOne
     private Series series;
@@ -252,17 +257,17 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 		this.driversChampions = driversChampions;
 	}
 
-	public Team getTeamChampion() {
-		return teamChampion;
+	public List<Team> getTeamsChampions() {
+		return teamsChampions;
 	}
 	
-	public SeriesEdition teamChampion(Team teamChampion) {
-		this.teamChampion = teamChampion;
+	public SeriesEdition teamsChampions(List<Team> teamsChampions) {
+		this.teamsChampions = teamsChampions;
 		return this;
 	}
 
-	public void setTeamChampion(Team teamChampion) {
-		this.teamChampion = teamChampion;
+	public void setTeamsChampions(List<Team> teamsChampions) {
+		this.teamsChampions = teamsChampions;
 	}
 
 	public SeriesEdition series(Series series) {

@@ -14,8 +14,10 @@ import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.domain.SeriesEdition;
+import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.domain.stats.DriverStatistics;
 import com.icesoft.msdb.domain.stats.Statistics;
+import com.icesoft.msdb.domain.stats.TeamStatistics;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.EventEditionRepository;
@@ -24,8 +26,10 @@ import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.PointsSystemRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.TeamEventPointsRepository;
+import com.icesoft.msdb.repository.TeamRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.repository.stats.DriverStatisticsRepository;
+import com.icesoft.msdb.repository.stats.TeamStatisticsRepository;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
@@ -41,24 +45,28 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	private final PointsSystemRepository pointsRepo;
 	private final DriverRepository driverRepo;
 	private final DriverEventPointsRepository driverPointsRepo;
+	private final TeamRepository teamRepo;
 	private final TeamEventPointsRepository teamPointsRepo;
 	private final DriverStatisticsRepository driverStatsRepo;
+	private final TeamStatisticsRepository teamStatsRepo;
 	private final JDBCRepositoryImpl jdbcRepo;
 	private final EventEntryRepository eventEntryRepo;
 	
 	public SeriesEditionServiceImpl(EventEditionRepository eventRepo, SeriesEditionRepository seriesRepo, 
 			EventSessionRepository sessionRepo, PointsSystemRepository pointsRepo, 
-			DriverRepository driverRepo, DriverEventPointsRepository driverPointsRepo, 
+			DriverRepository driverRepo, DriverEventPointsRepository driverPointsRepo, TeamRepository teamRepo,
 			TeamEventPointsRepository teamPointsRepo, DriverStatisticsRepository driverStatsRepo,
-			JDBCRepositoryImpl jdbcRepo, EventEntryRepository eventEntryRepo) {
+			TeamStatisticsRepository teamStatsRepo, JDBCRepositoryImpl jdbcRepo, EventEntryRepository eventEntryRepo) {
 		this.eventRepo = eventRepo;
 		this.seriesRepo = seriesRepo;
 		this.sessionRepo = sessionRepo;
 		this.pointsRepo = pointsRepo;
 		this.driverRepo = driverRepo;
 		this.driverPointsRepo = driverPointsRepo;
+		this.teamRepo = teamRepo;
 		this.teamPointsRepo = teamPointsRepo;
 		this.driverStatsRepo = driverStatsRepo;
+		this.teamStatsRepo = teamStatsRepo;
 		this.jdbcRepo = jdbcRepo;
 		this.eventEntryRepo = eventEntryRepo;
 	}
@@ -164,6 +172,47 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	@Transactional(readOnly = true)
 	public List<Driver> getSeriesDriversChampions(Long seriesEditionId) {
 		return seriesRepo.findOne(seriesEditionId).getDriversChampions();
+	}
+	
+	@Override
+	public void setSeriesTeamsChampions(Long seriesEditionId, List<Long> teamsIds) {
+		SeriesEdition seriesEd = seriesRepo.findOne(seriesEditionId);
+		List<Team> currentChamps = seriesEd.getTeamsChampions();
+		String categoryName = seriesEd.getSeries().getName();
+		String year = seriesEd.getPeriodEnd();
+		
+		//Update statistics to remove championship won
+		for(Team d: currentChamps) {
+			TeamStatistics ds = teamStatsRepo.findOne(d.getId().toString());
+			Statistics st = ds.getStaticsForCategory(categoryName);
+			st.removeChampionship(seriesEditionId);
+			ds.updateStatistics(categoryName, st);
+			st = ds.getStaticsForCategory(categoryName, year);
+			st.removeChampionship(seriesEditionId);
+			ds.updateStatistics(categoryName, st, year);
+			teamStatsRepo.save(ds);
+		}
+		
+		//Update statistics again for new champs
+		seriesEd.setTeamsChampions(teamRepo.findByIdIn(teamsIds));
+		for(Team d: seriesEd.getTeamsChampions()) {
+			TeamStatistics ds = teamStatsRepo.findOne(d.getId().toString());
+			Statistics st = ds.getStaticsForCategory(categoryName);
+			st.addChampionship(seriesEd.getEditionName(), year, seriesEditionId);
+			ds.updateStatistics(categoryName, st);
+			st = ds.getStaticsForCategory(categoryName, year);
+			st.addChampionship(seriesEd.getEditionName(), year, seriesEditionId);
+			ds.updateStatistics(categoryName, st, year);
+			teamStatsRepo.save(ds);
+		}
+		
+		seriesRepo.save(seriesEd);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Team> getSeriesTeamsChampions(Long seriesEditionId) {
+		return seriesRepo.findOne(seriesEditionId).getTeamsChampions();
 	}
 	
 	@Override

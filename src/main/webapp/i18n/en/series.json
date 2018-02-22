@@ -78,6 +78,14 @@
 	            	"edit": "Edit drivers champions",
 	            	"selectDrivers": "Select which drivers are champions of this edition"
 	            },
+	            "teamsChampions": {
+	            	"edit": "Edit teams champions",
+	            	"selectDrivers": "Select which teams are champions of this edition"
+	            },
+	            "manufacturersChampions": {
+	            	"edit": "Edit constructors champions",
+	            	"selectDrivers": "Select which constructors are champions of this edition"
+	            },
 	            "updateTeamsChampions": "Edit teams champions",
 	            "updateManufacturersChampions": "Edit manufacturers champions",
 	            "driversStandings": "Drivers standings?",
