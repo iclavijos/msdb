@@ -40,7 +40,7 @@ apply plugin: 'idea'
 defaultTasks 'bootRun'
 
 group = 'com.icesoft.msdb'
-version = '1.4.0'
+version = '1.5.0'
 
 description = ''
 
@@ -203,6 +203,8 @@ dependencies {
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.8.7'
     
 	compile 'com.google.maps:google-maps-services:0.1.20'
+	
+	compile 'org.springframework.boot:spring-boot-devtools'
 	
     testCompile "org.awaitility:awaitility:${awaitility_version}"
     testCompile "com.jayway.jsonpath:json-path"
