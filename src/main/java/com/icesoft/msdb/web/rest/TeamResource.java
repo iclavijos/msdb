@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -17,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -261,13 +260,11 @@ public class TeamResource {
     }
 
     private Page<Team> performSearch(String query, Pageable pageable) {
-    	String searchValue = '*'  + query + '*';
-    	NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
-        		.withQuery(QueryBuilders.boolQuery()
-        	    		.should(QueryBuilders.wildcardQuery("name", searchValue)))
-        		.withSort(SortBuilders.fieldSort("name"))
-        		.withPageable(pageable);
-        
-    	return teamSearchRepository.search(nqb.build());
+    	QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
+    			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
+    				.analyzeWildcard(true)
+    				.field("name"));
+    	
+    	return teamSearchRepository.search(queryBuilder, pageable);
     }
 }

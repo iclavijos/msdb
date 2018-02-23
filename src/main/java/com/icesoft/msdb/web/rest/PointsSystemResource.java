@@ -1,5 +1,7 @@
 package com.icesoft.msdb.web.rest;
 
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -36,8 +38,6 @@ import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing PointsSystem.

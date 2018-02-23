@@ -5,6 +5,7 @@ import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
@@ -100,12 +101,12 @@ public class EventServiceImpl implements EventService {
     
     @Override
     public Page<Event> search(String query, Pageable pageable) {
-    	String searchValue = "name:*" + query + '*';
-    	NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
-        		.withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
-        		.withSort(SortBuilders.fieldSort("name"))
-        		.withPageable(pageable);
-    	return eventSearchRepo.search(nqb.build());
+    	QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
+    			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
+    				.analyzeWildcard(true)
+    				.field("name"));
+    	
+    	return eventSearchRepo.search(queryBuilder, pageable);
     }
     
     @Override

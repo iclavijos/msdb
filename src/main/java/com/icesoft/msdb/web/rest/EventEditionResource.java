@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -259,8 +261,14 @@ public class EventEditionResource {
     @Timed
     public ResponseEntity<List<EventEdition>> searchEventEditions(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of EventEditions for query {}", query);
-        String searchValue = '*' + query + '*';
-        Page<EventEdition> page = eventEditionSearchRepo.search(queryStringQuery(searchValue), pageable);
+        
+        QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
+    			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
+    				.analyzeWildcard(true)
+    				.field("longEventName", 2.0f)
+    				.field("shortEventName"));
+    	
+        Page<EventEdition> page = eventEditionSearchRepo.search(queryBuilder, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/event-editions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

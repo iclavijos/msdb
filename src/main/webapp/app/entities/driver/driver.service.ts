@@ -89,7 +89,7 @@ export class DriverService {
     }
 
     typeahead(req): Observable<ResponseWrapper> {
-        return this.http.get(`${this.resourceSearchUrl}?query=${req}`).map((res: any) => this.convertResponse(res));
+        return this.http.get(`${this.resourceTypeAheadUrl}?query=${req}`).map((res: any) => this.convertResponse(res));
     }
 
     private convertResponse(res: Response): ResponseWrapper {

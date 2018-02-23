@@ -1,5 +1,7 @@
 package com.icesoft.msdb.web.rest;
 
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -7,14 +9,13 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +42,6 @@ import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing FuelProvider.
@@ -194,12 +193,12 @@ public class FuelProviderResource {
     @Timed
     public List<FuelProvider> typeahead(@RequestParam String query) {
         log.debug("REST request to search for a page of FuelProviders for query {}", query);
-        String searchValue = '*' + query + '*';
-        NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
-        		.withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
-        		.withSort(SortBuilders.fieldSort("name"))
-        		.withPageable(new PageRequest(0, 5));
-        Page<FuelProvider> page = fuelProviderSearchRepository.search(nqb.build());
+        QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
+    			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
+    				.analyzeWildcard(true)
+    				.field("name"));
+    	
+    	Page<FuelProvider> page = fuelProviderSearchRepository.search(queryBuilder, new PageRequest(0, 5));
         return page.getContent();
     }
 }

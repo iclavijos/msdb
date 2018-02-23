@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -34,8 +36,6 @@ import com.icesoft.msdb.web.rest.util.PaginationUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Category.
@@ -157,8 +157,13 @@ public class CategoryResource {
     @Timed
     public ResponseEntity<List<Category>> searchCategories(@RequestParam String query, @ApiParam Pageable pageable) {
         log.debug("REST request to search for a page of Categories for query {}", query);
-        String searchValue = '*' + query + '*';
-        Page<Category> page = categorySearchRepository.search(queryStringQuery(searchValue), pageable);
+        
+        QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
+    			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
+    				.analyzeWildcard(true)
+    				.field("name"));
+    	
+        Page<Category> page = categorySearchRepository.search(queryBuilder, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/categories");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
