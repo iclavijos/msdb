@@ -23,6 +23,6 @@ export class EventEdition {
         public singleEngine?: boolean,
         public singleTyre?: boolean,
         public winners?: any,
-        public seriesId?: number
+        public seriesId?: number[]
     ) { }
 }

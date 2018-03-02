@@ -31,6 +31,9 @@ public class DriverEventPoints implements Serializable {
 	@ManyToOne
 	private EventSession session;
 	
+	@ManyToOne
+	private SeriesEdition seriesEdition;
+	
 	@Column
 	private Float points = 0f;
 	
@@ -41,9 +44,10 @@ public class DriverEventPoints implements Serializable {
 		super();
 	}
 	
-	public DriverEventPoints(Driver driver, EventSession session, String reason) {
+	public DriverEventPoints(Driver driver, EventSession session, SeriesEdition series, String reason) {
 		this.driver = driver;
 		this.session = session;
+		this.seriesEdition = series;
 		this.reason = reason;
 	}
 	
@@ -65,6 +69,14 @@ public class DriverEventPoints implements Serializable {
 
 	public void setSession(EventSession session) {
 		this.session = session;
+	}
+
+	public SeriesEdition getSeriesEdition() {
+		return seriesEdition;
+	}
+
+	public void setSeriesEdition(SeriesEdition seriesEdition) {
+		this.seriesEdition = seriesEdition;
 	}
 
 	public Float getPoints() {

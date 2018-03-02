@@ -14,10 +14,9 @@ export class EventSession {
         public maxDuration?: number,
         public durationType?: DurationType,
         public additionalLap = false,
-        public pointsSystem?: PointsSystem,
-        public psMultiplier?: number,
         public sessionType?: SessionType,
         public sessionTypeValue?: number,
         public eventEdition?: EventEdition,
+        public pointsSystemsSession?: any,
     ) { }
 }

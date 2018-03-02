@@ -60,12 +60,16 @@ export class SeriesEditionPopupService {
 	        this.seriesEditionService.find(id).subscribe(seriesEdition => {
 	            if (eventId) {
 	                this.eventEditionService.find(eventId).subscribe((eventEdition) => {
-	                     this.ngbModalRef = this.seriesEditionModalRef(component, seriesEdition, eventEdition);
-	                     resolve(this.ngbModalRef);
+	                	setTimeout(() => {
+	                		this.ngbModalRef = this.seriesEditionModalRef(component, seriesEdition, eventEdition);
+		                     resolve(this.ngbModalRef);
+		                }, 0);
 	                });
 	            } else {
-	                 this.ngbModalRef = this.seriesEditionModalRef(component, seriesEdition);
-	                 resolve(this.ngbModalRef);
+	            	setTimeout(() => {
+	            		this.ngbModalRef = this.seriesEditionModalRef(component, seriesEdition);
+		                 resolve(this.ngbModalRef);
+	                }, 0);
 	            }
 	        });
         });

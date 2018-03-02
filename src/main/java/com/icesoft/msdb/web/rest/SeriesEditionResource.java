@@ -2,6 +2,7 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -251,6 +252,7 @@ public class SeriesEditionResource {
     @DeleteMapping("/series-editions/{id}/events/{idEvent}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @CacheEvict(cacheNames="winnersCache", key="#id")
     public ResponseEntity<Void> removeEventFromSeries(@PathVariable Long id, @PathVariable Long idEvent) {
     	log.debug("REST request to remove an event from series {}", id);
     	seriesEditionService.removeEventFromSeries(id, idEvent);
@@ -266,7 +268,7 @@ public class SeriesEditionResource {
     	List<EventEdition> events = seriesEditionService.findSeriesEvents(id);
     	events.stream().forEach(eventEdition -> {
     		eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(eventEdition.getId()).stream()
-    			.filter(es -> es.getPointsSystem() != null)
+    			.filter(es -> !Optional.ofNullable(es.getPointsSystemsSession()).orElse(new ArrayList<>()).isEmpty())
     			.forEach(es -> resultsService.processSessionResults(es.getId()));
     			log.debug("Updating statistics...", eventEdition.getLongEventName());
     			statsService.removeEventStatistics(eventEdition);

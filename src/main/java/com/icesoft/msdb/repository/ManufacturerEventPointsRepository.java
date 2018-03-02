@@ -12,8 +12,8 @@ import com.icesoft.msdb.domain.ManufacturerEventPoints;
 public interface ManufacturerEventPointsRepository extends JpaRepository<ManufacturerEventPoints, Long> {
 
 	@Modifying
-	@Query("DELETE FROM ManufacturerEventPoints mep WHERE mep.session.id = ?1")
+	@Query("DELETE FROM ManufacturerEventPoints mep WHERE mep.session.id = ?1 and mep.seriesEdition.id = ?2")
 	@Transactional
-	void deleteSessionPoints(Long sessionId);
+	void deleteSessionPoints(Long sessionId, Long seriesEditionId);
 
 }

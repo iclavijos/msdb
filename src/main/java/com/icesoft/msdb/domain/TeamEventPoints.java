@@ -31,6 +31,9 @@ public class TeamEventPoints implements Serializable {
 	@ManyToOne
 	private EventSession session;
 	
+	@ManyToOne
+	private SeriesEdition seriesEdition;
+	
 	@Column
 	private Float points = 0f;
 
@@ -48,6 +51,14 @@ public class TeamEventPoints implements Serializable {
 
 	public void setSession(EventSession session) {
 		this.session = session;
+	}
+
+	public SeriesEdition getSeriesEdition() {
+		return seriesEdition;
+	}
+
+	public void setSeriesEdition(SeriesEdition seriesEdition) {
+		this.seriesEdition = seriesEdition;
 	}
 
 	public Float getPoints() {

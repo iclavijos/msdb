@@ -142,34 +142,35 @@ public class StatisticsServiceImpl implements StatisticsService {
 		
 		results.stream().forEach(result -> {
 			EventEditionEntry entry = result.getEntryResult().getEntry();
-			String categoryName;
+			List<String> categoryName;
 			String year = entry.getEventEdition().getEditionYear().toString();
-			if (entry.getEventEdition().getSeriesEdition() != null) {
-				categoryName = entry.getEventEdition().getSeriesEdition().getSeries().getName();
+			if (entry.getEventEdition().getSeriesEditions() != null) {
+				categoryName = entry.getEventEdition().getSeriesName();
 			} else {
-				categoryName = entry.getEventEdition().getEvent().getName();
+				categoryName = new ArrayList<>();
+				categoryName.add(entry.getEventEdition().getEvent().getName());
 			}
 			
 			entry.getDrivers().stream().forEach(driver -> {
 				DriverStatistics dStats = Optional.ofNullable(driverStatsRepo.findOne(driver.getId().toString()))
 						.orElse(new DriverStatistics(driver.getId().toString()));
-				updateStats(categoryName, year, result, driverStatsRepo, dStats);
+				categoryName.stream().forEach(cat -> updateStats(cat, year, result, driverStatsRepo, dStats));
 			});
 			
 			if (entry.getTeam() != null) {
 				TeamStatistics tStats = Optional.ofNullable(teamStatsRepo.findOne(entry.getTeam().getId().toString()))
 						.orElse(new TeamStatistics(entry.getTeam().getId().toString()));
-				updateStats(categoryName, year, result, teamStatsRepo, tStats);
+				categoryName.stream().forEach(cat -> updateStats(cat, year, result, teamStatsRepo, tStats));
 			}
 			
 			ChassisStatistics cStats = Optional.ofNullable(chassisStatsRepo.findOne(entry.getChassis().getId().toString()))
 					.orElse(new ChassisStatistics(entry.getChassis().getId().toString()));
-			updateStats(categoryName, year, result, chassisStatsRepo, cStats);
+			categoryName.stream().forEach(cat -> updateStats(cat, year, result, chassisStatsRepo, cStats));
 			
 			if (entry.getEngine() != null) {
 				EngineStatistics eStats = Optional.ofNullable(engineStatsRepo.findOne(entry.getEngine().getId().toString()))
 						.orElse(new EngineStatistics(entry.getEngine().getId().toString()));
-				updateStats(categoryName, year, result, engineStatsRepo, eStats);
+				categoryName.stream().forEach(cat -> updateStats(cat, year, result, engineStatsRepo, eStats));
 			}
 
 			
@@ -179,7 +180,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 	
 	public void buildSeriesStatistics(SeriesEdition series) {
-		eventEditionRepo.findBySeriesEditionIdOrderByEventDateAsc(series.getId()).parallelStream().forEach(event -> buildEventStatistics(event));
+		eventEditionRepo.findEventsSeriesEdition(series.getId()).parallelStream().forEach(event -> buildEventStatistics(event));
 	}
 	
 	private List<Result> processEntry(EventEditionEntry entry) {

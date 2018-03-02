@@ -58,11 +58,23 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
     }
     
     initSession(session: EventSession) {
+    	let pSystemAss = '';
+    	let psMult = 1;
+    
+    	if (session.pointsSystemsSession !== undefined && session.pointsSystemsSession.length > 0) {
+        	const pSystem = session.pointsSystemsSession.filter(pss => pss.id.seriesEditionId === this.seriesEdition.id);
+        	if (pSystem.length > 0) {
+	        	pSystemAss = pSystem[0].pointsSystem.id;
+	        	psMult = pSystem[0].psMultiplier;
+        	}
+        }
+    	
         return this._fb.group({
             raceId : session.id,
             raceName : session.name,
-            pSystemAssigned : session.pointsSystem ? session.pointsSystem.id : '',
-            psMultiplier: session.psMultiplier ? session.psMultiplier : 1
+            seriesId : this.seriesEdition.id,
+            pSystemAssigned : pSystemAss,
+            psMultiplier : psMult
         });
     }
 

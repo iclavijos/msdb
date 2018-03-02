@@ -25,7 +25,7 @@ spring:
     devtools:
         restart:
             enabled: true
-            exclude: webapp/**
+            exclude: src/main/webapp/**,build/**
         livereload:
             enabled: false # we use gulp + BrowserSync for livereload
     jackson:

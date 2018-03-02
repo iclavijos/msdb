@@ -54,7 +54,7 @@ export class EventEditionService {
     }
     
     findPrevNextInSeries(id: number): Observable<ResponseWrapper> {
-    	return this.http.get(`${this.resourceUrl}/${id}/prevNextInSeries`, null).map((res: Response) => this.convertResponse(res));
+    	return this.http.get(`${this.resourceUrl}/${id}/prevNextInSeries`, null).map((res: Response) => res.json());
     }
 
     findSessions(id: number, timeZone: string): Observable<ResponseWrapper> {
@@ -79,8 +79,14 @@ export class EventEditionService {
         })
     }
 
-    loadDriversPoints(id: number): Observable<ResponseWrapper> {
-        return this.http.get(`${this.resourceUrl}/${id}/points`)
+    loadDriversPoints(id: number, seriesId: number): Observable<ResponseWrapper> {
+    	let endpoint;
+    	if (seriesId !== undefined) {
+    		endpoint = `${this.resourceUrl}/${seriesId}/${id}/points`;
+    	} else {
+    		endpoint = `${this.resourceUrl}/${id}/points`;
+    	}
+        return this.http.get(endpoint)
             .map((res: Response) => new ResponseWrapper(res.headers, res.json(), res.status));
     }
 

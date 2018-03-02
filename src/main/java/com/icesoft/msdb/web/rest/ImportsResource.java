@@ -2,6 +2,7 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -44,6 +45,7 @@ import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.Imports;
 import com.icesoft.msdb.domain.LapInfo;
 import com.icesoft.msdb.domain.PointsSystem;
+import com.icesoft.msdb.domain.PointsSystemSession;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.domain.SeriesEdition;
@@ -252,6 +254,7 @@ public class ImportsResource {
     	EventEdition eventEdition = null;
         Racetrack racetrack = null;
         RacetrackLayout layout = null;
+        SeriesEdition seriesEd = null;
         List<Category> categories = null;
         TimeZone tz = null;
         while (readValues.hasNext()) {
@@ -281,12 +284,18 @@ public class ImportsResource {
 	        	eventEdition.setMultidriver(tmp.getMultipleDriversEntry());
 	        	
 	        	if (StringUtils.isNotBlank(tmp.getSeriesEditionName())) {
-	        		SeriesEdition seriesEd = seriesEditionRepository.findByEditionName(tmp.getSeriesEditionName());
-	        		eventEdition.setSeriesEdition(
-	        				Optional.ofNullable(seriesEd).orElseThrow(() -> new MSDBException("Provided series name is not valid: " + tmp.getSeriesEditionName())));
+	        		seriesEd = seriesEditionRepository.findByEditionName(tmp.getSeriesEditionName());
+	        		if (seriesEd == null) {
+	        			throw new MSDBException("Provided series name is not valid: " + tmp.getSeriesEditionName());
+	        		}
+	        		if (seriesEd.getEvents() == null) {
+	        			seriesEd.setEvents(new ArrayList<>());
+	        		}
 	        	}
 	        	
 	        	eventEdition = eventEditionRepository.save(eventEdition);
+        		seriesEd.getEvents().add(eventEdition);
+        		seriesEditionRepository.save(seriesEd);
 	        	eventEditionSearchRepo.save(eventEdition);
         	}
 
@@ -307,9 +316,10 @@ public class ImportsResource {
     		session.setMaxDuration(Optional.ofNullable(tmp.getMaxDuration()).orElseGet(() -> new Integer(0)));
     		
     		if (StringUtils.isNotBlank(tmp.getPointsSystem())) {
-    			PointsSystem ps = pointsSystemRepository.findByName(tmp.getPointsSystem());
-    			session.setPointsSystem(
-    					Optional.ofNullable(ps).orElseThrow(() -> new MSDBException("Provided points system name is not valid: " + tmp.getPointsSystem())));
+    			PointsSystem ps = Optional.ofNullable(
+    					pointsSystemRepository.findByName(tmp.getPointsSystem())).orElseThrow(() -> new MSDBException("Provided points system name is not valid: " + tmp.getPointsSystem()));
+    			PointsSystemSession pss = new PointsSystemSession(ps, seriesEd, session);
+    			session.addPointsSystemsSession(pss);
     		}
     		eventSessionRepository.save(session);
         }
@@ -351,9 +361,8 @@ public class ImportsResource {
     	EventSession session = sessionRepository.findOne(sessionId);
     	
     	if (session.isRace()) {
-    		if (session.getEventEdition().getSeriesEdition() != null) {
-    			cacheHandler.resetWinnersCache(session.getEventEdition().getSeriesEdition().getId());
-    		}
+    		Optional.ofNullable(session.getEventEdition().getSeriesEditions())
+    			.ifPresent(sEditions -> sEditions.forEach(se -> cacheHandler.resetWinnersCache(se.getId())));
     	}
     	MappingIterator<SessionResultDTO> readValues = initializeIterator(SessionResultDTO.class, data);
     	EventEntryResult first = null;

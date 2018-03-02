@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.icesoft.msdb.MSDBException;
 
 /**
@@ -68,6 +69,16 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="points_id", referencedColumnName="ID"))
     private List<PointsSystem> pointsSystems;
+    
+    @ManyToMany(fetch=FetchType.LAZY)
+    @Fetch(FetchMode.SELECT)
+    @JsonIgnore
+    @JoinTable(
+        name="EVENTS_SERIES",
+        joinColumns=@JoinColumn(name="series_id", referencedColumnName="ID"),
+        inverseJoinColumns=@JoinColumn(name="event_id", referencedColumnName="ID"))
+    @OrderBy("eventDate ASC")
+    private List<EventEdition> events;
     
     @ManyToMany(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
@@ -240,7 +251,15 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     	this.pointsSystems = pointsSystems;
     }
 
-    public Series getSeries() {
+    public List<EventEdition> getEvents() {
+		return events;
+	}
+
+	public void setEvents(List<EventEdition> events) {
+		this.events = events;
+	}
+
+	public Series getSeries() {
         return series;
     }
 

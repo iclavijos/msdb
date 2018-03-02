@@ -1,20 +1,35 @@
 package com.icesoft.msdb.domain;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.data.elasticsearch.annotations.Document;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * A EventEdition.
@@ -90,17 +105,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     @Column(name = "single_fuel")
     private Boolean singleFuel;
     
-    @OneToOne
-    @JoinColumn(name="series_edition_id")
-    @JsonIgnore
-    private SeriesEdition seriesEdition;
-    
-    @ManyToMany(fetch=FetchType.LAZY)
-    @Fetch(FetchMode.SELECT)
-    @JoinTable(
-        name="SERIES_EVENT",
-        joinColumns=@JoinColumn(name="event_id", referencedColumnName="ID"),
-        inverseJoinColumns=@JoinColumn(name="series_id", referencedColumnName="ID"))
+    @ManyToMany(mappedBy = "events", fetch=FetchType.EAGER) 
     private List<SeriesEdition> seriesEditions;
     
     public Long getId() {
@@ -283,6 +288,21 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 	public void setMultidriver(Boolean multidriver) {
 		this.multidriver = multidriver;
 	}
+	
+	public List<SeriesEdition> getSeriesEditions() {
+		return seriesEditions;
+	}
+	
+	public void setSeriesEditions(List<SeriesEdition> seriesEditions) {
+		this.seriesEditions = seriesEditions;
+	}
+	
+//	public void setSeriesEdition(SeriesEdition seriesEdition) {
+//		if (this.seriesEditions == null) {
+//			this.seriesEditions = new ArrayList<>();
+//		}
+//		this.seriesEditions.add(seriesEdition);
+//	}
 
 	public Long getPreviousEditionId() {
 		return previousEditionId;
@@ -309,27 +329,19 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 	public void setNextEditionId(Long nextEditionId) {
 		this.nextEditionId = nextEditionId;
 	}
-
-	public SeriesEdition getSeriesEdition() {
-		return seriesEdition;
-	}
-
-	public void setSeriesEdition(SeriesEdition seriesEdition) {
-		this.seriesEdition = seriesEdition;
-	}
 	
 	@JsonProperty("seriesId")
-	public Long getSeriesId() {
-		if (seriesEdition != null) {
-			return seriesEdition.getId();
+	public List<Long> getSeriesId() {
+		if (seriesEditions != null) {
+			return seriesEditions.stream().map(s -> s.getId()).collect(Collectors.toList());
 		}
 		return null;
 	}
 	
 	@JsonProperty("seriesName")
-	public String getSeriesName() {
-		if (seriesEdition != null) {
-			return seriesEdition.getEditionName();
+	public List<String> getSeriesName() {
+		if (seriesEditions != null) {
+			return seriesEditions.stream().map(s -> s.getEditionName()).collect(Collectors.toList());
 		}
 		return null;
 	}

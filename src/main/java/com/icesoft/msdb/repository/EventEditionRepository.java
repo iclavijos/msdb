@@ -39,7 +39,7 @@ public interface EventEditionRepository extends JpaRepository<EventEdition,Long>
 	@Query("select e.id, e.editionYear from EventEdition e where e.event.id = ?1 order by e.editionYear desc")
 	List<Object[]> findEventEditionsIdYear(Long editionId);
 	
-	List<EventEdition> findBySeriesEditionIdOrderByEventDateAsc(Long seriesEditionId);
+	@Query("select se.events from SeriesEdition se where se.id = ?1")
+	List<EventEdition> findEventsSeriesEdition(Long seriesEditionId);
 	
-	int countBySeriesEditionId(Long seriesEditionId);
 }

@@ -12,8 +12,8 @@ import com.icesoft.msdb.domain.TeamEventPoints;
 public interface TeamEventPointsRepository extends JpaRepository<TeamEventPoints,Long> {
 
 	@Modifying
-	@Query("DELETE FROM TeamEventPoints tep WHERE tep.session.id = ?1")
+	@Query("DELETE FROM TeamEventPoints tep WHERE tep.session.id = ?1 and tep.seriesEdition.id = ?2")
 	@Transactional
-	void deleteSessionPoints(Long sessionId);
+	void deleteSessionPoints(Long sessionId, Long seriesEditionId);
 
 }

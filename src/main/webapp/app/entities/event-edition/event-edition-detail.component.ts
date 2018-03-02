@@ -60,7 +60,7 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
             this.loadSessions(id);
             if (eventEdition.seriesId) {
             	this.eventEditionService.findPrevNextInSeries(id).subscribe(
-                        (res: Response) => this.navigationIds = res.json);
+                        (res: Response) => this.navigationIds = res);
             }
             this.eventService.findEventEditionIds(eventEdition.event.id).subscribe(
                     (res: Response) => this.editions = res.json());
@@ -71,7 +71,7 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
         this.eventEditionService.findSessions(id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe((eventSessions) => {
             this.eventEdition.sessions = eventSessions.json;
             this.eventEdition.sessions.forEach((item, index) =>
-               this.showPoints = this.showPoints || item.pointsSystem !== null);
+               this.showPoints = this.showPoints || (item.pointsSystemsSession !== null && item.pointsSystemsSession.length > 0));
         });
     }
 

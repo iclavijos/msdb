@@ -2,12 +2,12 @@ package com.icesoft.msdb.service.dto;
 
 public class EventsSeriesNavigationDTO {
 
-	private final Integer prevId;
-	private final Integer nextId;
+	private final Long prevId;
+	private final Long nextId;
 	private final String prev_name;
 	private final String next_name;
 	
-	public EventsSeriesNavigationDTO(Integer prevId, Integer nextId, String prev_name, String next_name) {
+	public EventsSeriesNavigationDTO(Long prevId, Long nextId, String prev_name, String next_name) {
 		super();
 		this.prevId = prevId;
 		this.nextId = nextId;
@@ -15,11 +15,11 @@ public class EventsSeriesNavigationDTO {
 		this.next_name = next_name;
 	}
 
-	public Integer getPrevId() {
+	public Long getPrevId() {
 		return prevId;
 	}
 
-	public Integer getNextId() {
+	public Long getNextId() {
 		return nextId;
 	}
 

@@ -1,7 +1,5 @@
 package com.icesoft.msdb.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -53,7 +51,6 @@ import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
-import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
@@ -97,14 +94,13 @@ public class EventEditionResource {
     private final ResultsService resultsService;
     private final StatisticsService statsService;
     private final CDNService cdnService;
-    private final JDBCRepositoryImpl jdbcRepo;
     private final CacheHandler cacheHandler;
     
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventEditionSearchRepository eventEditionSearchRepo,
     		EventEntrySearchRepository eventEntrySearchRepo, EventSessionRepository eventSessionRepository, 
     		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository, 
     		RacetrackLayoutRepository racetrackLayoutRepo, ResultsService resultsService, 
-    		CDNService cdnService, StatisticsService statsService, JDBCRepositoryImpl jdbcRepo, CacheHandler cacheHandler) {
+    		CDNService cdnService, StatisticsService statsService, CacheHandler cacheHandler) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventEditionSearchRepo = eventEditionSearchRepo;
         this.eventSessionRepository = eventSessionRepository;
@@ -115,7 +111,6 @@ public class EventEditionResource {
         this.resultsService = resultsService;
         this.cdnService = cdnService;
         this.statsService = statsService;
-        this.jdbcRepo = jdbcRepo;
         this.cacheHandler = cacheHandler;
     }
 
@@ -138,8 +133,8 @@ public class EventEditionResource {
         }
         EventEdition result = eventEditionRepository.save(eventEdition);
         eventEditionSearchRepo.save(result);
-        if (result.getSeriesEdition() != null) {
-        	cacheHandler.resetWinnersCache(result.getSeriesEdition().getId());
+        if (result.getSeriesEditions() != null) {
+        	result.getSeriesId().forEach(id -> cacheHandler.resetWinnersCache(id));
         }
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -166,14 +161,14 @@ public class EventEditionResource {
             return createEventEdition(eventEdition);
         }
         EventEdition result = eventEditionRepository.getOne(eventEdition.getId());
-        if (result.getSeriesEdition() != null) {
-    		eventEdition.setSeriesEdition(result.getSeriesEdition());
+        if (result.getSeriesEditions() != null) {
+    		eventEdition.setSeriesEditions(result.getSeriesEditions());
     	}
         result = eventEditionRepository.save(eventEdition);
         eventEditionSearchRepo.save(result);
         
-        if (result.getSeriesEdition() != null) {
-        	cacheHandler.resetWinnersCache(result.getSeriesEdition().getId());
+        if (result.getSeriesEditions() != null) {
+        	result.getSeriesId().stream().forEach(cacheHandler::resetWinnersCache);
         }
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, eventEdition.getId().toString()))
@@ -234,8 +229,8 @@ public class EventEditionResource {
     public ResponseEntity<Void> deleteEventEdition(@PathVariable Long id) {
         log.debug("REST request to delete EventEdition : {}", id);
         EventEdition eventEd = eventEditionRepository.getOne(id);
-        if (eventEd.getSeriesEdition() != null) {
-           	cacheHandler.resetWinnersCache(eventEd.getSeriesEdition().getId());
+        if (eventEd.getSeriesEditions() != null) {
+        	eventEd.getSeriesId().forEach(sId -> cacheHandler.resetWinnersCache(sId));
         }
         eventEditionRepository.delete(id);
         eventEditionSearchRepo.delete(id);
@@ -245,8 +240,21 @@ public class EventEditionResource {
     @GetMapping("/event-editions/{id}/prevNextInSeries")
     @Timed
     @Transactional(readOnly=true)
-    public EventsSeriesNavigationDTO getPrevNextIdInSeries(@PathVariable Long id) {
-    	return jdbcRepo.getNavigation(id);
+    public List<EventsSeriesNavigationDTO> getPrevNextIdInSeries(@PathVariable Long id) {
+    	EventEdition event = eventEditionRepository.findOne(id);
+    	List<EventsSeriesNavigationDTO> result = new ArrayList<>();
+    	for(SeriesEdition se: event.getSeriesEditions()) {
+    		int index = se.getEvents().indexOf(event);
+    		EventEdition next = (index < se.getEvents().size() - 1) ? se.getEvents().get(index + 1) : null;
+            EventEdition prev = (index > 0) ? se.getEvents().get(index - 1) : null;
+            result.add(new EventsSeriesNavigationDTO(
+            		Optional.ofNullable(prev).map(ee -> ee.getId()).orElse(null),
+            		Optional.ofNullable(next).map(ee -> ee.getId()).orElse(null),
+            		Optional.ofNullable(prev).map(ee -> ee.getLongEventName()).orElse(null),
+            		Optional.ofNullable(next).map(ee -> ee.getLongEventName()).orElse(null)));
+    	}
+    	
+    	return result;
     }
 
     /**
@@ -393,6 +401,15 @@ public class EventEditionResource {
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
     
+    @GetMapping("/event-editions/{seriesId}/{eventId}/points")
+    @Timed
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<DriverPointsDTO>> getEventPointsInSeries(@PathVariable Long seriesId, @PathVariable Long eventId) {
+    	List<DriverPointsDTO> result = resultsService.getDriversPointsEvent(seriesId, eventId);
+    	
+    	return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    
     @PostMapping("/event-editions/{idTarget}/entries/{idSource}")
     @Timed
     @Transactional
@@ -504,15 +521,18 @@ public class EventEditionResource {
         log.debug("REST request to get eventSessionResult : {}", idResult);
         EventEntryResult eventEntryResult = eventResultRepository.findOne(idResult);
         if (eventEntryResult.getEntry().getEventEdition() != null &&
-        		eventEntryResult.getEntry().getEventEdition().getSeriesEdition() != null) {
-        	SeriesEdition tmp = new SeriesEdition();
-    		tmp.setId(eventEntryResult.getEntry().getEventEdition().getSeriesEdition().getId());
-    		tmp.setEditionName(eventEntryResult.getEntry().getEventEdition().getSeriesEdition().getEditionName());
-    		Series tmpSeries = new Series();
-    		tmpSeries.setId(eventEntryResult.getEntry().getEventEdition().getSeriesEdition().getSeries().getId());
-    		tmp.setSeries(tmpSeries.name(eventEntryResult.getEntry().getEventEdition().getSeriesEdition().getSeries().getName()));
-    		tmp.setSeries(tmpSeries);
-			eventEntryResult.getEntry().getEventEdition().setSeriesEdition(tmp);
+        		eventEntryResult.getEntry().getEventEdition().getSeriesEditions() != null) {
+        	eventEntryResult.getEntry().getEventEdition().getSeriesEditions().stream().forEach(sEd -> {
+        		SeriesEdition tmp = new SeriesEdition();
+        		tmp.setId(sEd.getId());
+        		tmp.setEditionName(sEd.getEditionName());
+        		Series tmpSeries = new Series();
+        		tmpSeries.setId(sEd.getSeries().getId());
+        		tmp.setSeries(tmpSeries.name(sEd.getSeries().getName()));
+        		tmp.setSeries(tmpSeries);
+    			//eventEntryResult.getEntry().getEventEdition().setSeriesEdition(tmp);
+        	});
+        	
         }
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEntryResult));
     }
@@ -525,9 +545,11 @@ public class EventEditionResource {
 		ZonedDateTime end = ZonedDateTime.of(endDate.atTime(23, 59, 59), ZoneId.of("UTC"));
     	List<EventSession> tmp = eventSessionRepository.findUpcomingSessions(start, end);
     	return tmp.parallelStream().map(session -> {
-    		String logoUrl = null;
-    		if (session.getEventEdition().getSeriesEdition() != null) {
-    			logoUrl = session.getEventEdition().getSeriesEdition().getSeries().getLogoUrl();
+    		String[] logoUrl = null;
+    		if (session.getEventEdition().getSeriesEditions() != null) {
+    			logoUrl = session.getEventEdition().getSeriesEditions().stream()
+    					.map(sEd -> sEd.getSeries().getLogoUrl())
+    					.toArray(String[]::new);
     		}
     		return new SessionCalendarDTO(session.getEventEdition().getId(), 
     				session.getEventEdition().getLongEventName(),

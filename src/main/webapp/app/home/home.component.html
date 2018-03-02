@@ -127,11 +127,20 @@
 	                    			<span *ngIf="session.durationType === 3"> ({{ session.duration}}KM)</span>
 	                    			<span *ngIf="session.durationType === 4"> ({{ session.duration}}M)</span>: </strong>
                     				<span *ngIf="isAuthenticated()">
-                    				<span *ngIf="session.seriesId"><a [routerLink]="['/series/series-edition', session.seriesId ]" >{{ session.seriesName }}</a> -</span> 
-                    					<a [routerLink]="['/event-edition', session.eventEdition.id ]" >{{ session.eventEdition.longEventName }}, {{ session.name }}</a>
+	                    				<span *ngIf="session.seriesIds">
+	                    					<ng-template ngFor let-item [ngForOf]="session.seriesIds" let-currentIndex="index">
+										      <a [routerLink]="['/series/series-edition', item ]" >{{session.seriesNames[currentIndex]}} </a>
+										    </ng-template>
+	                    				</span> 
+                    					- <a [routerLink]="['/event-edition', session.eventEditionId ]" >{{ session.eventName }}, {{ session.sessionName }}</a>
                     				</span>
                     				<span *ngIf="!isAuthenticated()">
-                    					<span *ngIf="session.seriesId">{{ session.seriesName }} -</span> {{ session.eventEdition.longEventName }}, {{ session.name }}
+                    					<span *ngIf="session.seriesIds">
+                    						<ng-template ngFor let-item [ngForOf]="session.seriesNames">
+                    							{{item}} -
+                    						</ng-template>
+                    					</span> 
+                    					{{ session.eventName }}, {{ session.sessionName }}
                     				</span>
 		                    	</p>
 							</div>

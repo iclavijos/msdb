@@ -20,10 +20,10 @@ export class StandingsComponent implements OnInit {
 	headers: any;
 	pointsByRace: any;
 	numRaces: number;
-    @Input()
-    eventEditionId: number;
-    @Input()
-    seriesEdition: SeriesEdition;
+    @Input() eventEditionId: number;
+    @Input() seriesEdition: SeriesEdition;
+    @Input() seriesEditionIds: number[];
+    @Input() seriesEditionNames: string[];
     showExtendedStandings = false;
     data: any;
     options: any;
@@ -40,7 +40,11 @@ export class StandingsComponent implements OnInit {
     
     ngOnInit() {
     	if (this.eventEditionId) {
-	        this.eventEditionService.loadDriversPoints(this.eventEditionId).subscribe(driversPoints => {
+    		let seriesId = null;
+    		if (this.seriesEditionIds !== undefined) {
+    			seriesId = this.seriesEditionIds[0];
+    		}
+	        this.eventEditionService.loadDriversPoints(this.eventEditionId, seriesId).subscribe(driversPoints => {
 	            this.drivers = driversPoints.json;
 	        });
 	    } else if (this.seriesEdition) {
@@ -145,5 +149,14 @@ export class StandingsComponent implements OnInit {
                 seriesEditionId: this.seriesEdition.id
             }]);
         }
+    }
+    
+    switchSeries(id) {
+        if (!id) {
+            return false;
+        }
+        this.eventEditionService.loadDriversPoints(this.eventEditionId, id).subscribe(driversPoints => {
+            this.drivers = driversPoints.json;
+        });
     }
 }

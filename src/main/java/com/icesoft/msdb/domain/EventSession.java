@@ -5,9 +5,12 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,12 +19,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import com.icesoft.msdb.domain.enums.DurationType;
 import com.icesoft.msdb.domain.enums.SessionType;
@@ -74,11 +82,10 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @ManyToOne
     private EventEdition eventEdition;
     
-    @ManyToOne
-    private PointsSystem pointsSystem;
-    
-    @Column(name="ps_multiplier")
-    private Float psMultiplier = 1.0f;
+    @OneToMany(mappedBy = "eventSession", cascade=CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @NotFound(action = NotFoundAction.IGNORE)
+    private List<PointsSystemSession> pointsSystemsSession = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -204,7 +211,23 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     	this.eventEdition = eventEdition;
     }
     
-    public EventSession eventEdition(EventEdition eventEdition) {
+	public List<PointsSystemSession> addPointsSystemsSession(PointsSystemSession pss) {
+		if (pointsSystemsSession == null) {
+			pointsSystemsSession = new ArrayList<>();
+		}
+		pointsSystemsSession.add(pss);
+		return pointsSystemsSession;
+	}
+	
+    public List<PointsSystemSession> getPointsSystemsSession() {
+		return pointsSystemsSession;
+	}
+
+	public void setPointsSystemsSession(List<PointsSystemSession> pointsSystemsSession) {
+		this.pointsSystemsSession = pointsSystemsSession;
+	}
+
+	public EventSession eventEdition(EventEdition eventEdition) {
     	this.eventEdition = eventEdition;
     	return this;
     }
@@ -213,32 +236,16 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     	return eventEdition;
     }
 
-	public PointsSystem getPointsSystem() {
-		return pointsSystem;
-	}
-
-	public void setPointsSystem(PointsSystem pointsSystem) {
-		this.pointsSystem = pointsSystem;
-	}
-	
-	public Float getPsMultiplier() {
-		return psMultiplier;
-	}
-
-	public void setPsMultiplier(Float psMultiplier) {
-		this.psMultiplier = psMultiplier;
-	}
-
-	public Long getSeriesId() {
-		if (eventEdition!= null && eventEdition.getSeriesEdition() != null) {
-			return eventEdition.getSeriesEdition().getId();
+	public List<Long> getSeriesIds() {
+		if (eventEdition!= null && eventEdition.getSeriesEditions() != null) {
+			return eventEdition.getSeriesId();
 		}
 		return null;
 	}
 	
-	public String getSeriesName() {
-		if (eventEdition!= null && eventEdition.getSeriesEdition() != null) {
-			return eventEdition.getSeriesEdition().getSeries().getName();
+	public List<String> getSeriesNames() {
+		if (eventEdition!= null && eventEdition.getSeriesEditions() != null) {
+			return eventEdition.getSeriesName();
 		}
 		return null;
 	}

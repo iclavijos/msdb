@@ -1,6 +1,15 @@
 <ngb-tabset>
 	<ngb-tab title="{{'motorsportsDatabaseApp.series.seriesEdition.detail.info' | translate}}">
 		<ng-template ngbTabContent>
+			<div class="row" *ngIf="seriesEditionIds">
+		    	<div class="col-lg-2 col-md-2">
+	   				<select class="form-control" id="field_switchSeries" name="switchSeries" (change)="switchSeries($event.target.value)">
+	   					<ng-template ngFor let-item [ngForOf]="seriesEditionIds" let-currentIndex="index">
+	   						<option [value]="item">{{seriesEditionNames[currentIndex]}}</option>
+					    </ng-template>
+		            </select>
+		    	</div>
+		    </div>
 			<div class="row">
 				<div class="card-deck col-md-12">
 					<div class="card col-md-4">
@@ -73,6 +82,7 @@
 								</table>
 							</div>
 					</div>
+				</div>
 				</div>
 			</div>
 		</ng-template>

@@ -21,11 +21,31 @@
     </div>
     <hr>
     <jhi-alert-error></jhi-alert-error>
-    <a class="deco-none" *ngIf="eventEdition.seriesId" [routerLink]="['/series/series-edition', eventEdition.seriesId]"><i  class="fa fa-fw fa-angle-double-left" aria-hidden="true"></i> {{eventEdition.seriesName}}</a>
-    <div *ngIf="eventEdition.seriesId && navigationIds !== null">
-    <a class="deco-none" *ngIf="navigationIds.prevId !== 0" [routerLink]="['/event-edition', navigationIds.prevId]"><i  class="fa fa-fw fa-angle-double-left" aria-hidden="true"></i> {{navigationIds.prevName}}</a>&nbsp; 
-    <a class="deco-none" *ngIf="navigationIds.nextId !== 0" [routerLink]="['/event-edition', navigationIds.nextId]">{{navigationIds.nextName}} <i  class="fa fa-fw fa-angle-double-right" aria-hidden="true"></i></a>
+    <div class="row">
+    	<div class="col-lg-6 col-md-6">
+    		<ng-template ngFor let-item [ngForOf]="eventEdition.seriesId" let-currentIndex="index">
+		   		<a class="deco-none" *ngIf="eventEdition.seriesId" [routerLink]="['/series/series-edition', item]">
+		   			<i  class="fa fa-fw fa-angle-double-left" aria-hidden="true"></i> {{eventEdition.seriesName[currentIndex]}}
+		   		</a><br/>
+		    </ng-template>
+    	</div>
+    	<div class="col-lg-6 col-md-6">
+    		<div *ngIf="navigationIds !== null">
+    			<ng-template ngFor let-item [ngForOf]="navigationIds" let-currentIndex="index">
+    				<div>
+			   		<a class="deco-none" *ngIf="item.prevId" [routerLink]="['/event-edition', item.prevId]">
+				    	<i  class="fa fa-fw fa-angle-double-left" aria-hidden="true"></i> {{item.prevName}}
+				    </a>
+				    <span *ngIf="item.prevId && item.nextId">&nbsp;|&nbsp;</span>
+				    <a class="deco-none" *ngIf="item.nextId" [routerLink]="['/event-edition', item.nextId]">
+				    	{{item.nextName}} <i  class="fa fa-fw fa-angle-double-right" aria-hidden="true"></i>
+				    </a>
+				    </div>
+			    </ng-template>
+		    </div>
+    	</div>
     </div>
+   	
     <ngb-tabset>
 	  <ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.info' | translate}}">
 	    <ng-template ngbTabContent>
@@ -146,7 +166,7 @@
 	</ngb-tab>
 	<ngb-tab *ngIf="showPoints" title="{{'motorsportsDatabaseApp.eventEdition.points' | translate}}">
 		<ng-template ngbTabContent>
-		    <jhi-standings [eventEditionId]="eventEdition.id" [seriesEditionId]="eventEdition.seriesId">Standings...</jhi-standings>
+		    <jhi-standings [eventEditionId]="eventEdition.id" [seriesEditionIds]="eventEdition.seriesId" [seriesEditionNames]="eventEdition.seriesName">Standings...</jhi-standings>
 	    </ng-template>
 	</ngb-tab>
 	</ngb-tabset>

@@ -2,8 +2,11 @@ package com.icesoft.msdb.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +16,7 @@ import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.PointsSystem;
+import com.icesoft.msdb.domain.PointsSystemSession;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.domain.stats.DriverStatistics;
@@ -23,7 +27,9 @@ import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
+import com.icesoft.msdb.repository.ManufacturerEventPointsRepository;
 import com.icesoft.msdb.repository.PointsSystemRepository;
+import com.icesoft.msdb.repository.PointsSystemSessionRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.TeamEventPointsRepository;
 import com.icesoft.msdb.repository.TeamRepository;
@@ -39,6 +45,8 @@ import com.icesoft.msdb.service.dto.SeriesEventsAndWinnersDTO;
 @Transactional
 public class SeriesEditionServiceImpl implements SeriesEditionService {
 	
+	private final Logger log = LoggerFactory.getLogger(SeriesEditionServiceImpl.class);
+	
 	private final EventEditionRepository eventRepo;
 	private final SeriesEditionRepository seriesRepo;
 	private final EventSessionRepository sessionRepo;
@@ -47,16 +55,19 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	private final DriverEventPointsRepository driverPointsRepo;
 	private final TeamRepository teamRepo;
 	private final TeamEventPointsRepository teamPointsRepo;
+	private final ManufacturerEventPointsRepository manufacturerPointsRepo;
 	private final DriverStatisticsRepository driverStatsRepo;
 	private final TeamStatisticsRepository teamStatsRepo;
 	private final JDBCRepositoryImpl jdbcRepo;
 	private final EventEntryRepository eventEntryRepo;
+	private final PointsSystemSessionRepository pssRepo;
 	
 	public SeriesEditionServiceImpl(EventEditionRepository eventRepo, SeriesEditionRepository seriesRepo, 
 			EventSessionRepository sessionRepo, PointsSystemRepository pointsRepo, 
 			DriverRepository driverRepo, DriverEventPointsRepository driverPointsRepo, TeamRepository teamRepo,
-			TeamEventPointsRepository teamPointsRepo, DriverStatisticsRepository driverStatsRepo,
-			TeamStatisticsRepository teamStatsRepo, JDBCRepositoryImpl jdbcRepo, EventEntryRepository eventEntryRepo) {
+			TeamEventPointsRepository teamPointsRepo, ManufacturerEventPointsRepository manufacturerPointsRepo,
+			DriverStatisticsRepository driverStatsRepo,	TeamStatisticsRepository teamStatsRepo, JDBCRepositoryImpl jdbcRepo, 
+			EventEntryRepository eventEntryRepo, PointsSystemSessionRepository pssRepository) {
 		this.eventRepo = eventRepo;
 		this.seriesRepo = seriesRepo;
 		this.sessionRepo = sessionRepo;
@@ -65,10 +76,12 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		this.driverPointsRepo = driverPointsRepo;
 		this.teamRepo = teamRepo;
 		this.teamPointsRepo = teamPointsRepo;
+		this.manufacturerPointsRepo = manufacturerPointsRepo;
 		this.driverStatsRepo = driverStatsRepo;
 		this.teamStatsRepo = teamStatsRepo;
 		this.jdbcRepo = jdbcRepo;
 		this.eventEntryRepo = eventEntryRepo;
+		this.pssRepo = pssRepository;
 	}
 
 	@Override
@@ -82,8 +95,8 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		racesPointsData.parallelStream().forEach(racePoints -> {
 			EventSession session = sessionRepo.findOne(racePoints.getRaceId());
 			if (!racePoints.isAssigned()) {
-				session.setPointsSystem(null);
-				session.setPsMultiplier(0f);
+				Optional.ofNullable(session.getPointsSystemsSession())
+					.map(pss -> pss.removeIf(item -> item.getEventSession().getId().equals(racePoints.getRaceId())));
 			} else {
 				PointsSystem points = pointsRepo.findOne(racePoints.getpSystemAssigned());
 				if (session == null || points == null) {
@@ -92,15 +105,29 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 									racePoints.getRaceId(), 
 									racePoints.getpSystemAssigned()));
 				}
-				session.setPointsSystem(points);
-				session.setPsMultiplier(racePoints.getPsMultiplier());
+				PointsSystemSession pss = new PointsSystemSession(points, seriesEd, session);
+				pss.setPsMultiplier(racePoints.getPsMultiplier());
+				List<PointsSystemSession> sPss = Optional.ofNullable(session.getPointsSystemsSession()).orElse(new ArrayList<>());
+				session.getPointsSystemsSession().parallelStream()
+					.filter(tmpPss -> tmpPss.getSeriesEdition().getId().equals(seriesId))
+					.findFirst().map(tmp -> sPss.remove(tmp));
+				sPss.add(pss);
+				session.setPointsSystemsSession(sPss);
 			}
 			sessionRepo.save(session);
 		});
 		
 		eventEd = eventRepo.findOne(idEvent);
-		eventEd.setSeriesEdition(seriesEd);
-		eventRepo.save(eventEd);
+		if (seriesEd.getEvents() != null && !seriesEd.getEvents().isEmpty()) {
+			if (!seriesEd.getEvents().contains(eventEd)) {
+				seriesEd.getEvents().add(eventEd);
+			}
+		} else {
+			seriesEd.setEvents(new ArrayList<>());
+			seriesEd.getEvents().add(eventEd);
+		}
+		
+		seriesRepo.save(seriesEd);
 	}
 
 	@Override
@@ -109,28 +136,41 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		if (eventId == null) {
 			throw new MSDBException("No event edition found for id '" + eventId + "'");
 		}
-		if (!eventEd.getSeriesEdition().getId().equals(seriesId)) {
-			throw new MSDBException("Provided series id does not match the already assigned one");
+		
+		if (!eventEd.getSeriesId().contains(seriesId)) {
+			throw new MSDBException("Provided series id does not match an already assigned one");
 		}
-		eventEd.setSeriesEdition(null);
+		SeriesEdition sEdition = seriesRepo.findOne(seriesId);
+		sEdition.getEvents().remove(eventEd);
 		sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventId).parallelStream()
 			.forEach(session -> {
-				session.setPointsSystem(null);
-				sessionRepo.save(session);
+				if (session.getPointsSystemsSession() != null && !session.getPointsSystemsSession().isEmpty()) {
+					List<PointsSystemSession> tmp = new ArrayList<>();
+					for (PointsSystemSession pss : session.getPointsSystemsSession()) {
+						if (pss.getSeriesEdition().getId().equals(seriesId)) {
+							log.debug("Deleting points system association " + pss);
+							pssRepo.delete(pss);
+						} else {
+							tmp.add(pss);
+						}
+					}
+					session.setPointsSystemsSession(tmp);
+					sessionRepo.save(session);
+				}
 			});
-		eventRepo.save(eventEd);
 		
-		//We must remove the assigned points, if there are any
+		//We must remove the assigned points, if there were any
 		sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventId).stream()
 			.forEach(session -> {
-				driverPointsRepo.deleteSessionPoints(session.getId());
-				teamPointsRepo.deleteSessionPoints(session.getId());
+				driverPointsRepo.deleteSessionPoints(session.getId(), seriesId);
+				teamPointsRepo.deleteSessionPoints(session.getId(), seriesId);
+				manufacturerPointsRepo.deleteSessionPoints(session.getId(), seriesId);
 			});
 	}
 
 	@Transactional(readOnly=true)
 	public List<EventEdition> findSeriesEvents(Long seriesId) {
-		return eventRepo.findBySeriesEditionIdOrderByEventDateAsc(seriesId);
+		return eventRepo.findEventsSeriesEdition(seriesId);
 	}
 	
 	@Override
@@ -244,7 +284,8 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	    	}
 	    	
 	    	return new SeriesEventsAndWinnersDTO(e, winners);
-		}).collect(Collectors.toList());
+		}).sorted((sew1, sew2) -> sew1.getEventEditionDate().compareTo(sew2.getEventEditionDate()))
+				.collect(Collectors.toList());
 	}
 
 }

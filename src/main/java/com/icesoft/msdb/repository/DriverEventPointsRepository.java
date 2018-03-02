@@ -12,9 +12,9 @@ import com.icesoft.msdb.domain.DriverEventPoints;
 public interface DriverEventPointsRepository extends JpaRepository<DriverEventPoints,Long> {
 
 	@Modifying
-	@Query("DELETE FROM DriverEventPoints dep WHERE dep.session.id = ?1")
+	@Query("DELETE FROM DriverEventPoints dep WHERE dep.session.id = ?1 and dep.seriesEdition.id = ?2")
 	@Transactional
-	void deleteSessionPoints(Long sessionId);
+	void deleteSessionPoints(Long sessionId, Long seriesId);
 	
 	@Query("SELECT SUM(dep.points) "
 			+ "FROM DriverEventPoints dep, EventSession es "
@@ -28,6 +28,13 @@ public interface DriverEventPointsRepository extends JpaRepository<DriverEventPo
 			+ "ORDER BY points desc")
 	List<Object[]> getDriversPointsInEvent(Long eventEditionId);
 	
+	@Query("SELECT dep.driver.id, dep.driver.name, dep.driver.surname, sum(points) as points, count(*) as num_points "
+			+ "FROM DriverEventPoints dep "
+			+ "WHERE dep.points <> 0 AND dep.seriesEdition.id = ?1 and dep.session.eventEdition.id = ?2 "
+			+ "GROUP BY dep.driver.id "
+			+ "ORDER BY points desc")
+	List<Object[]> getDriversPointsInEvent(Long seriesId, Long eventEditionId);
+	
 	@Query("SELECT dep.id, dep.driver.name, dep.driver.surname, dep.points, dep.reason "
 			+ "FROM DriverEventPoints dep "
 			+ "WHERE dep.points <> 0 AND dep.session.eventEdition.id = ?1 AND dep.driver.id = ?2 "
@@ -35,8 +42,8 @@ public interface DriverEventPointsRepository extends JpaRepository<DriverEventPo
 	List<Object[]> getDriverPointsInEvent(Long eventEditionId, Long driverId);
 	
 	@Query("SELECT ee.event.name, es.name, dep.driver.name, dep.driver.surname, SUM(dep.points) as points "
-			+ "FROM DriverEventPoints dep, EventSession es, EventEdition ee "
-			+ "WHERE dep.session.eventEdition.seriesEdition.id = ?1 and dep.session = es and es.eventEdition = ee "
+			+ "FROM DriverEventPoints dep, EventSession es, EventEdition ee, SeriesEdition se "
+			+ "WHERE se.id = ?1 and dep.seriesEdition.id = ?1 and dep.session = es and es.eventEdition = ee "
 			+ "GROUP BY ee.longEventName, es.name, dep.driver.name, dep.driver.surname "
 			+ "ORDER BY es.sessionStartTime ASC, points DESC")
 	List<Object[]> getDriversPointsInSeries(Long seriesEditionId);

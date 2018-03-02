@@ -99,7 +99,7 @@ export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
     removeEvent(eventId) {
         for(let i = 0; i < this.seriesEdition.events.length; i++) {
             const event = this.seriesEdition.events[i];
-            if (event.id === eventId) {
+            if (event.eventEditionId === eventId) {
                 this.seriesEdition.events.splice(i, 1);
                 this.seriesEditionService.removeEventFromSeries(this.seriesEdition.id, eventId)
                     .subscribe((res: any) => true, (res: any) => this.onRemoveError(res));
