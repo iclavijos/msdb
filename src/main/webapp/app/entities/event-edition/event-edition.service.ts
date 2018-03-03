@@ -23,6 +23,7 @@ export class EventEditionService {
 
     create(eventEdition: EventEdition): Observable<EventEdition> {
         const copy = this.convert(eventEdition);
+        copy.seriesId = null;
         return this.http.post(this.resourceUrl, copy).map((res: Response) => {
             const jsonResponse = res.json();
             return this.convertItemFromServer(jsonResponse);
@@ -31,6 +32,7 @@ export class EventEditionService {
 
     update(eventEdition: EventEdition): Observable<EventEdition> {
         const copy = this.convert(eventEdition);
+        copy.seriesId = null;
         return this.http.put(this.resourceUrl, copy).map((res: Response) => {
             const jsonResponse = res.json();
             return this.convertItemFromServer(jsonResponse);

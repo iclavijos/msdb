@@ -37,7 +37,7 @@ export class EventEntryDialogComponent implements OnInit {
     isSaving: boolean;
     searching = false;
     searchFailed = false;
-    singleDriver: Driver;
+    singleDriver: any;
 
     allowedCategories: Category[];
 
@@ -107,7 +107,7 @@ export class EventEntryDialogComponent implements OnInit {
     save() {
         this.isSaving = true;
         if (!this.eventEntry.eventEdition.multidriver) {
-            this.eventEntry.drivers = [this.singleDriver];
+            this.eventEntry.drivers = [this.singleDriver.driver];
         }
         if (this.eventEntry.id !== undefined) {
             this.subscribeToSaveResponse(
@@ -283,12 +283,12 @@ export class EventEntryDialogComponent implements OnInit {
         evt.preventDefault();
         self.value = evt.item.fullName;
         if (!this.eventEntry.eventEdition.multidriver) {
-            this.eventEntry.drivers = [evt.item];
+            this.eventEntry.drivers = [evt.item.driver];
         } else {
             if (!this.eventEntry.drivers) {
                 this.eventEntry.drivers = new Array();
             }
-            this.eventEntry.drivers.push(evt.item);
+            this.eventEntry.drivers.push(evt.item.driver);
         }    
     }
     

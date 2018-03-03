@@ -59,7 +59,7 @@
 	        		<div class="form-group">
 			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.bestLapTime" for="field_bestLapTime">Best Lap Time</label>
 			            <input class="form-control" name="bestLapTime" id="field_bestLapTime" [ngModel]="eventEntryResult.bestLapTime | timeMaskPipe" pattern="([0-5]?\d[':])?[0-5]\d(\.[0-9]{0,4})?" 
-			            	 title="00'00.0000" required placeholder="00'00.0000" (ngModelChange)="bestLapTime=$event"/>
+			            	 title="00'00.0000" placeholder="00'00.0000" (ngModelChange)="bestLapTime=$event"/>
 			        </div>
 	        	</div>
         	</div>

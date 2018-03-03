@@ -16,6 +16,7 @@ export class EventEntryService {
 
     create(eventEntry: EventEntry): Observable<EventEntry> {
         const copy = this.convert(eventEntry);
+        copy.eventEdition.seriesId = null;
         return this.http.post(`api/event-editions/${eventEntry.eventEdition.id}/entries`, copy).map((res: Response) => {
             const jsonResponse = res.json();
             return this.convertItemFromServer(jsonResponse);

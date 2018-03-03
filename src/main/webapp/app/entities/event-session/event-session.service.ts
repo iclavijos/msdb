@@ -20,7 +20,7 @@ export class EventSessionService {
 
     create(eventSession: EventSession): Observable<EventSession> {
        const copy = this.convert(eventSession);
-
+       copy.eventEdition.seriesId = null;
        copy.sessionStartTime = moment(eventSession.sessionStartTime).tz(eventSession.eventEdition.trackLayout.racetrack.timeZone);
        copy.sessionStartTime.hours(copy.sessionStartTime.toDate().getHours());
        copy.sessionStartTime.minutes(copy.sessionStartTime.toDate().getMinutes());
@@ -36,7 +36,7 @@ export class EventSessionService {
 
     update(eventSession: EventSession): Observable<EventSession> {
         const copy = this.convert(eventSession);
-
+        copy.eventEdition.seriesId = null;
         copy.sessionStartTime = moment(eventSession.sessionStartTime).tz(eventSession.eventEdition.trackLayout.racetrack.timeZone);
         copy.sessionStartTime.hours(copy.sessionStartTime.toDate().getHours());
         copy.sessionStartTime.minutes(copy.sessionStartTime.toDate().getMinutes());
