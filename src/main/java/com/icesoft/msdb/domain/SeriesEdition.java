@@ -9,6 +9,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -252,6 +253,9 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     }
 
     public List<EventEdition> getEvents() {
+    	if (events == null) {
+    		events = new ArrayList<>();
+    	}
 		return events;
 	}
 

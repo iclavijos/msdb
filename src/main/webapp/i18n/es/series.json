@@ -86,6 +86,11 @@
 	            	"edit": "Edita los constructores campeones",
 	            	"selectDrivers": "Selecciona los constructores campeones de esta edición"
 	            },
+	            "clone": {
+	            	"clone": "Copia campeonato",
+	            	"title": "Crea una nueva edición copiaando el campeonato actual",
+	            	"period": "Periodo del nuevo campeonato"
+	            },
 	            "updateTeamsChampions": "Edita equipos campeones",
 	            "updateManufacturersChampions": "Edita fabricantes campeones",
 	            "driversStandings": "¿Clasificación de pilotos?",

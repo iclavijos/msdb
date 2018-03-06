@@ -172,28 +172,6 @@ public class SeriesEditionResource {
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
-    /**
-     * SEARCH  /_search/series-editions?query=:query : search for the seriesEdition corresponding
-     * to the query.
-     *
-     * @param query the query of the seriesEdition search
-     * @param pageable the pagination information
-     * @return the result of the search
-     */
-//    @GetMapping("/_search/series-editions")
-//    @Timed
-//    public ResponseEntity<List<SeriesEdition>> searchSeriesEditions(@RequestParam String query, @ApiParam Pageable pageable) {
-//        log.debug("REST request to search for a page of SeriesEditions for query {}", query);
-//        String searchValue = "*" + query + '*';
-//    	NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
-//        		.withQuery(queryStringQuery(searchValue))
-//        		.withSort(SortBuilders.fieldSort("name"))
-//        		.withPageable(pageable);
-//    	Page<SeriesEdition> page = seriesEditionSearchRepository.search(nqb.build());
-//        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/series-editions");
-//        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-//    }
-    
     @GetMapping("/series-editions/{id}/standings/drivers")
     @Timed
     @Cacheable(cacheNames="driversStandingsCache", key="#id")
@@ -242,7 +220,7 @@ public class SeriesEditionResource {
     @PostMapping("/series-editions/{id}/events/{idEvent}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    @CacheEvict(cacheNames="winnersCache", key="#id")
+    @CacheEvict(cacheNames={"winnersCache", "pointRaceByRace"}, key="#id")
     public ResponseEntity<Void> addEventToSeries(@PathVariable Long id, @PathVariable Long idEvent, @Valid @RequestBody List<EventRacePointsDTO> racesPointsData) {
     	log.debug("REST request to add an event to series {}", id);
     	seriesEditionService.addEventToSeries(id, idEvent, racesPointsData);
@@ -252,7 +230,7 @@ public class SeriesEditionResource {
     @DeleteMapping("/series-editions/{id}/events/{idEvent}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    @CacheEvict(cacheNames="winnersCache", key="#id")
+    @CacheEvict(cacheNames={"winnersCache", "pointRaceByRace"}, key="#id")
     public ResponseEntity<Void> removeEventFromSeries(@PathVariable Long id, @PathVariable Long idEvent) {
     	log.debug("REST request to remove an event from series {}", id);
     	seriesEditionService.removeEventFromSeries(id, idEvent);
@@ -315,5 +293,14 @@ public class SeriesEditionResource {
     	
     	return new ResponseEntity<>(champs.parallelStream().map(t -> new SeriesTeamChampionDTO(t)).collect(Collectors.toList())
     			, HttpStatus.OK);
+    }
+    
+    @PostMapping("/series-editions/{seriesEditionId}/clone")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @Transactional
+    public ResponseEntity<Void> cloneSeriesEdition(@PathVariable Long seriesEditionId, @RequestBody String newPeriod) {
+    	seriesEditionService.cloneSeriesEdition(seriesEditionId, newPeriod);
+    	return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, seriesEditionId.toString())).build();
     }
 }

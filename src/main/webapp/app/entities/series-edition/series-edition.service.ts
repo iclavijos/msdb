@@ -98,6 +98,12 @@ export class SeriesEditionService {
            return res;
         });
     }
+    
+    clone(seriesEditionId: number, newPeriod: string): Observable<Response> {
+    	return this.http.post(`${this.resourceUrl}/${seriesEditionId}/clone`, newPeriod).map((res: Response) => {
+           return res;
+        });
+    }
 
     updateStandings(seriesId: number): Observable<Response> {
         return this.http.post(`${this.resourceUrl}/${seriesId}/standings`, null).map((res: Response) => {

@@ -162,6 +162,10 @@
 				        	class="btn btn-primary float-right" [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/calendar' } }]">
 				            <span class="fa fa-calendar"></span>&nbsp;<span jhiTranslate="entity.action.add"> Add</span>
 				         </button>
+				         <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+				        	class="btn btn-warning float-right" [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/clone' } }]">
+				            <span class="fa fa-copy"></span>&nbsp;<span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.clone.clone"> Clone</span>
+				         </button>
 				 </div>
 			</div>
 	    </ng-template>

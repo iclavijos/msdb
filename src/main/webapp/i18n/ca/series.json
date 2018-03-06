@@ -83,8 +83,13 @@
 	            	"selectDrivers": "Selecciona els equips campions d'aquesta edició"
 	            },
 	            "manufacturersChampions": {
-	            	"edit": "Edita consctructors campions",
+	            	"edit": "Edita constructors campions",
 	            	"selectDrivers": "Selecciona els constructors campions d'aquesta edició"
+	            },
+	            "clone": {
+	            	"clone": "Copia campionat",
+	            	"title": "Crea una nova edició d'aquest campionat copiant l'actual",
+	            	"period": "Periode del nou campionat"
 	            },
 	            "updateTeamsChampions": "Edita equips campions",
 	            "updateManufacturersChampions": "Edita fabricants campions",

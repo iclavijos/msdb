@@ -50,7 +50,7 @@ export class SeriesEditionPopupService {
         });
     }
     
-    openCalendar (component: Component, id: number, eventId?: number): Promise<NgbModalRef> {
+    openCalendar(component: Component, id: number, eventId?: number): Promise<NgbModalRef> {
         return new Promise<NgbModalRef>((resolve, reject) => {
             const isOpen = this.ngbModalRef !== null;
             if (isOpen) {
@@ -75,7 +75,21 @@ export class SeriesEditionPopupService {
         });
     }
     
-    openDriversChamps (component: Component, seriesEditionId: number): Promise<NgbModalRef> {
+    openClone(component: Component, seriesEditionId: number): Promise<NgbModalRef> {
+    	return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
+            // setTimeout used as a workaround for getting ExpressionChangedAfterItHasBeenCheckedError
+            setTimeout(() => {
+                this.ngbModalRef = this.seriesDriversCloneModalRef(component, seriesEditionId);
+                resolve(this.ngbModalRef);
+            }, 0);
+        });
+    }
+    
+    openDriversChamps(component: Component, seriesEditionId: number): Promise<NgbModalRef> {
     	return new Promise<NgbModalRef>((resolve, reject) => {
             const isOpen = this.ngbModalRef !== null;
             if (isOpen) {
@@ -111,6 +125,20 @@ export class SeriesEditionPopupService {
         if (eventEdition) {
             modalRef.componentInstance.eventEdition = eventEdition;
         }
+        modalRef.result.then((result) => {
+            this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
+            this.ngbModalRef = null;
+        }, (reason) => {
+            this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
+            this.ngbModalRef = null;
+        });
+        return modalRef;
+    }
+    
+    seriesDriversCloneModalRef(component: Component, seriesEditionId: number): NgbModalRef {
+    	const modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
+        modalRef.componentInstance.seriesEditionId = seriesEditionId;
+
         modalRef.result.then((result) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
             this.ngbModalRef = null;

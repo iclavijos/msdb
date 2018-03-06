@@ -86,6 +86,11 @@
 	            	"edit": "Edit constructors champions",
 	            	"selectDrivers": "Select which constructors are champions of this edition"
 	            },
+	            "clone": {
+	            	"clone": "Copy series",
+	            	"title": "Create a new edition by copying current series edition",
+	            	"period": "New series edition's period"
+	            },
 	            "updateTeamsChampions": "Edit teams champions",
 	            "updateManufacturersChampions": "Edit manufacturers champions",
 	            "driversStandings": "Drivers standings?",

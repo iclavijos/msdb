@@ -1,5 +1,6 @@
 package com.icesoft.msdb.service.impl;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.MSDBException;
+import com.icesoft.msdb.domain.Category;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventEditionEntry;
@@ -34,6 +36,7 @@ import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.TeamEventPointsRepository;
 import com.icesoft.msdb.repository.TeamRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
+import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.stats.DriverStatisticsRepository;
 import com.icesoft.msdb.repository.stats.TeamStatisticsRepository;
 import com.icesoft.msdb.service.SeriesEditionService;
@@ -61,13 +64,15 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	private final JDBCRepositoryImpl jdbcRepo;
 	private final EventEntryRepository eventEntryRepo;
 	private final PointsSystemSessionRepository pssRepo;
+	private final EventEditionSearchRepository eventEdSearchRepo;
 	
 	public SeriesEditionServiceImpl(EventEditionRepository eventRepo, SeriesEditionRepository seriesRepo, 
 			EventSessionRepository sessionRepo, PointsSystemRepository pointsRepo, 
 			DriverRepository driverRepo, DriverEventPointsRepository driverPointsRepo, TeamRepository teamRepo,
 			TeamEventPointsRepository teamPointsRepo, ManufacturerEventPointsRepository manufacturerPointsRepo,
 			DriverStatisticsRepository driverStatsRepo,	TeamStatisticsRepository teamStatsRepo, JDBCRepositoryImpl jdbcRepo, 
-			EventEntryRepository eventEntryRepo, PointsSystemSessionRepository pssRepository) {
+			EventEntryRepository eventEntryRepo, PointsSystemSessionRepository pssRepository,
+			EventEditionSearchRepository eventEdSearchRepo) {
 		this.eventRepo = eventRepo;
 		this.seriesRepo = seriesRepo;
 		this.sessionRepo = sessionRepo;
@@ -82,6 +87,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		this.jdbcRepo = jdbcRepo;
 		this.eventEntryRepo = eventEntryRepo;
 		this.pssRepo = pssRepository;
+		this.eventEdSearchRepo = eventEdSearchRepo;
 	}
 
 	@Override
@@ -286,6 +292,89 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	    	return new SeriesEventsAndWinnersDTO(e, winners);
 		}).sorted((sew1, sew2) -> sew1.getEventEditionDate().compareTo(sew2.getEventEditionDate()))
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public void cloneSeriesEdition(Long seriesEditionId, String newPeriod) {
+		log.debug("Cloning series edition");
+		SeriesEdition seriesEd = seriesRepo.findOne(seriesEditionId);
+		if (seriesEd == null) {
+			throw new MSDBException("No series edition with id " + seriesEditionId + " exist in DB");
+		}
+		SeriesEdition newSeriesEd = new SeriesEdition();
+		newSeriesEd.setPeriod(newPeriod);
+		newSeriesEd.setNumEvents(seriesEd.getNumEvents());
+		newSeriesEd.setEditionName(newPeriod + " " + seriesEd.getEditionName());
+		List<Category> categories = new ArrayList<>();
+		seriesEd.getAllowedCategories().stream().forEach(cat -> categories.add(cat));
+		newSeriesEd.setAllowedCategories(categories);
+		newSeriesEd.setMultidriver(seriesEd.isMultidriver());
+		List<PointsSystem> pointsSystems = new ArrayList<>();
+		pointsSystems.addAll(seriesEd.getPointsSystems());
+		newSeriesEd.setPointsSystems(pointsSystems);
+		newSeriesEd.setSeries(seriesEd.getSeries());
+		newSeriesEd.setSingleChassis(seriesEd.isSingleChassis());
+		newSeriesEd.setSingleEngine(seriesEd.isSingleEngine());
+		newSeriesEd.setSingleTyre(seriesEd.isSingleTyre());
+		final SeriesEdition seriesEdCopy = seriesRepo.save(newSeriesEd);
+		List<SeriesEdition> series = new ArrayList<>();
+		series.add(seriesEdCopy);
+		
+		seriesEd.getEvents().stream().forEach(ev -> {
+			EventEdition newEvent = new EventEdition();
+			newEvent.setSeriesEditions(series);
+			Integer year;
+			try {
+				year = Integer.valueOf(newPeriod);
+			} catch (NumberFormatException e) {
+				year = Integer.valueOf(newPeriod.substring(0, newPeriod.indexOf("-")));
+			}
+			newEvent.setEditionYear(year);
+			List<Category> categoriesEv = new ArrayList<>();
+			ev.getAllowedCategories().stream().forEach(cat -> categoriesEv.add(cat));
+			newEvent.setAllowedCategories(categoriesEv);
+			newEvent.setEvent(ev.getEvent());
+			newEvent.setEventDate(ev.getEventDate());
+			newEvent.setLongEventName(year + " " + ev.getLongEventName());
+			newEvent.setMultidriver(ev.isMultidriver());
+			newEvent.setShortEventName(year + " " + ev.getShortEventName());
+			newEvent.setSingleChassis(ev.getSingleChassis());
+			newEvent.setSingleEngine(ev.getSingleEngine());
+			newEvent.setSingleEngine(ev.getSingleEngine());
+			newEvent.setSingleTyre(ev.getSingleTyre());
+			newEvent.setTrackLayout(ev.getTrackLayout());
+			final EventEdition evCopy = eventRepo.save(newEvent);
+			eventEdSearchRepo.save(evCopy);
+			seriesEdCopy.getEvents().add(newEvent);
+			seriesRepo.save(seriesEdCopy);
+			final int yearCopy = year;
+			
+			sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(ev.getId()).stream().forEach(es -> {
+				EventSession newSession = new EventSession();
+				newSession.setEventEdition(evCopy);
+				newSession.setAdditionalLap(es.getAdditionalLap());
+				newSession.setDuration(es.getDuration());
+				newSession.setDurationType(es.getDurationType());
+				newSession.setMaxDuration(es.getMaxDuration());
+				newSession.setName(es.getName());
+				newSession.setShortname(es.getShortname());
+				
+				newSession.setSessionType(es.getSessionType());
+				ZonedDateTime zdt = es.getSessionStartTime();
+				newSession.setSessionStartTime(zdt.plusYears(yearCopy - zdt.getYear()));
+				final EventSession copy = sessionRepo.save(newSession);
+				
+				List<PointsSystemSession> pssL = new ArrayList<>();
+				es.getPointsSystemsSession().parallelStream().forEach(pss -> {
+					PointsSystemSession tmp = new PointsSystemSession(pss.getPointsSystem(), seriesEdCopy, copy);
+					tmp.setPsMultiplier(pss.getPsMultiplier());
+					pssL.add(tmp);
+				});
+				newSession.setPointsSystemsSession(pssL);
+				sessionRepo.save(newSession);
+			});
+		});
+		
 	}
 
 }

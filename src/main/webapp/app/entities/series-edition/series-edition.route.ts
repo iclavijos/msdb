@@ -9,6 +9,7 @@ import { SeriesEditionDetailComponent } from './series-edition-detail.component'
 import { SeriesEditionPopupComponent } from './series-edition-dialog.component';
 import { SeriesEditionDeletePopupComponent } from './series-edition-delete-dialog.component';
 import { SeriesEditionCalendarPopupComponent } from './series-edition-calendar-dialog.component';
+import { SeriesEditionClonePopupComponent } from './series-edition-clone-dialog.component';
 import { SeriesEditionDriversChampionsPopupComponent } from './series-edition-drivers-champions-dialog.component';
 import { SeriesEditionTeamsChampionsPopupComponent } from './series-edition-teams-champions-dialog.component';
 import { SeriesEditionManufacturersChampionsPopupComponent } from './series-edition-manufacturers-champions-dialog.component';
@@ -75,6 +76,16 @@ export const seriesEditionPopupRoute: Routes = [
   {
       path: ':id/calendar',
       component: SeriesEditionCalendarPopupComponent,
+      data: {
+          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+          pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
+      },
+      canActivate: [UserRouteAccessService],
+      outlet: 'popup'
+  },
+  {
+      path: ':id/clone',
+      component: SeriesEditionClonePopupComponent,
       data: {
           authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
           pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'

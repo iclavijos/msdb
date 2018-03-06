@@ -14,7 +14,7 @@ public class CacheHandler {
 		log.debug("Reseting drivers standings cache for series edition {}", seriesEditionId);
 	}
 	
-	@CacheEvict(cacheNames="winnersCache", key="#seriesEditionId")
+	@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace"}, key="#seriesEditionId")
 	public void resetWinnersCache(Long seriesEditionId) {
 		log.debug("Reseting winners cache for series edition {}", seriesEditionId);
 	}

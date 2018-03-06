@@ -3,6 +3,7 @@ export * from './series-edition-popup.service';
 export * from './series-edition.service';
 export * from './series-edition-dialog.component';
 export * from './series-edition-calendar-dialog.component';
+export * from './series-edition-clone-dialog.component';
 export * from './series-edition-drivers-champions-dialog.component';
 export * from './series-edition-teams-champions-dialog.component';
 export * from './series-edition-manufacturers-champions-dialog.component';

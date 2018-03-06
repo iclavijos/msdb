@@ -107,7 +107,11 @@ export class EventEntryDialogComponent implements OnInit {
     save() {
         this.isSaving = true;
         if (!this.eventEntry.eventEdition.multidriver) {
-            this.eventEntry.drivers = [this.singleDriver.driver];
+        	if (this.singleDriver.driver !== undefined) {
+        		this.eventEntry.drivers = [this.singleDriver.driver];
+        	} else {
+        		this.eventEntry.drivers = [this.singleDriver];
+        	}
         }
         if (this.eventEntry.id !== undefined) {
             this.subscribeToSaveResponse(

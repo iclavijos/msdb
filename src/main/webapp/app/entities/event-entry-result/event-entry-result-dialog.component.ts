@@ -54,7 +54,7 @@ export class EventEntryResultDialogComponent implements OnInit {
                 this.positions = Array.from(Array(this.entries.length),(x,i)=>i+1);
             });
         });
-        if (this.eventEntryResult !== null && this.eventEntryResult.sharedDriveWith !== null) {
+        if (this.eventEntryResult !== null && this.eventEntryResult.sharedDriveWith) {
         	this.sharedDrive = this.eventEntryResult.sharedDriveWith.id !== undefined;
         }
         this.isSaving = false;

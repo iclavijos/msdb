@@ -26,4 +26,6 @@ public interface SeriesEditionService {
 	
 	public List<SeriesEventsAndWinnersDTO> getSeriesEditionsEventsAndWinners(Long seriesEditionId);
 	
+	public void cloneSeriesEdition(Long seriesEditionId, String newPeriod);
+	
 }

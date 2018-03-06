@@ -162,7 +162,7 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
 }
 
 @Component({
-    selector: 'jhi-series-edition-delete-popup',
+    selector: 'jhi-series-edition-calendar-popup',
     template: ''
 })
 export class SeriesEditionCalendarPopupComponent implements OnInit, OnDestroy {
