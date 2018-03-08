@@ -103,11 +103,9 @@ public class JDBCRepositoryImpl {
 	}
 	
 	public List<ManufacturerPointsDTO> getManufacturersStandings(Long seriesId) {
-		List<ManufacturerPointsDTO> result = jdbcTemplate.query("select manufacturer, sum(points) points from ("
-				+ "select mep.* "
-				+ "from manufacturer_event_points mep left join event_session es on mep.session_id = es.id "
-				+ "left join event_edition ee on es.event_edition_id = ee.id "
-				+ "where ee.series_edition_id = ?) tmp "
+		List<ManufacturerPointsDTO> result = jdbcTemplate.query("select manufacturer, sum(points) points "
+				+ "from manufacturer_event_points "
+				+ "where series_edition_id = ?1 "
 				+ "group by manufacturer "
 				+ "order by points desc", 
 				new Object[] {seriesId}, (rs, rowNum) -> new ManufacturerPointsDTO(rs.getString("manufacturer"), rs.getFloat("points")));

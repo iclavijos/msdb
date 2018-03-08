@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.PointsRaceByRace;
@@ -116,11 +117,13 @@ public class SeriesEditionResource {
     @PutMapping("/series-editions")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @Transactional
     public ResponseEntity<SeriesEdition> updateSeriesEdition(@Valid @RequestBody SeriesEdition seriesEdition) throws URISyntaxException {
         log.debug("REST request to update SeriesEdition : {}", seriesEdition);
         if (seriesEdition.getId() == null) {
             return createSeriesEdition(seriesEdition);
         }
+        seriesEdition.setEvents(seriesEditionRepository.getOne(seriesEdition.getId()).getEvents());
         SeriesEdition result = seriesEditionRepository.save(seriesEdition);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, seriesEdition.getId().toString()))
@@ -243,6 +246,7 @@ public class SeriesEditionResource {
     @Transactional
     public CompletableFuture<ResponseEntity<Void>> updateSeriesStandings(@PathVariable Long id) {
     	log.debug("REST request to update series {} standings", id);
+    	
     	List<EventEdition> events = seriesEditionService.findSeriesEvents(id);
     	events.stream().forEach(eventEdition -> {
     		eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(eventEdition.getId()).stream()
@@ -253,6 +257,10 @@ public class SeriesEditionResource {
     			statsService.buildEventStatistics(eventEdition);
     			log.debug("Statistics updated");
     	});
+    	
+    	SeriesEdition seriesEd = Optional.of(seriesEditionRepository.findOne(id))
+        		.orElseThrow(() -> new MSDBException("Invalid series edition identifier: " + id));
+        statsService.updateSeriesChamps(seriesEd);
     	
         return CompletableFuture.completedFuture(ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString())).build());
     }

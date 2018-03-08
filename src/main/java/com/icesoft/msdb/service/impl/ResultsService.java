@@ -211,6 +211,7 @@ public class ResultsService {
 						if (tep == null) {
 							tep = new TeamEventPoints();
 							tep.setSession(session);
+							tep.setSeriesEdition(pss.getSeriesEdition());
 							tep.setTeam(entry.getTeam());
 						}
 						tep.addPoints((float)dPoints);
@@ -236,6 +237,7 @@ public class ResultsService {
 							if (mep == null) {
 								mep = new ManufacturerEventPoints();
 								mep.setSession(session);
+								mep.setSeriesEdition(pss.getSeriesEdition());
 								mep.setManufacturer(manufacturer);
 							}
 							mep.addPoints((float)mPoints);

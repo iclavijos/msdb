@@ -16,10 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.MSDBException;
+import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.SeriesEdition;
+import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.domain.stats.ChassisStatistics;
 import com.icesoft.msdb.domain.stats.DriverStatistics;
@@ -32,7 +34,6 @@ import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
-import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.stats.ChassisStatisticsRepository;
 import com.icesoft.msdb.repository.stats.DriverStatisticsRepository;
 import com.icesoft.msdb.repository.stats.EngineStatisticsRepository;
@@ -61,8 +62,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 	public StatisticsServiceImpl(
 			EventEditionRepository eventEditionRepo,
 			EventEntryRepository entriesRepo,
-			EventEntryResultRepository resultsRepo, 
-			SeriesEditionRepository seriesEditionRepo,
+			EventEntryResultRepository resultsRepo,
 			DriverEventPointsRepository driverPointsRepo,
 			DriverStatisticsRepository driverStatsRepo,
 			TeamStatisticsRepository teamStatsRepo,
@@ -145,7 +145,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 			List<String> categoryName;
 			String year = entry.getEventEdition().getEditionYear().toString();
 			if (entry.getEventEdition().getSeriesEditions() != null) {
-				categoryName = entry.getEventEdition().getSeriesName();
+				categoryName = entry.getEventEdition().getSeriesEditions().parallelStream()
+						.map(se -> se.getSeries().getName()).collect(Collectors.toList());
 			} else {
 				categoryName = new ArrayList<>();
 				categoryName.add(entry.getEventEdition().getEvent().getName());
@@ -173,14 +174,13 @@ public class StatisticsServiceImpl implements StatisticsService {
 				categoryName.stream().forEach(cat -> updateStats(cat, year, result, engineStatsRepo, eStats));
 			}
 
-			
 		});
 		
 		log.debug("Statistics for event {} rebuilt", event.getLongEventName());
 	}
 	
 	public void buildSeriesStatistics(SeriesEdition series) {
-		eventEditionRepo.findEventsSeriesEdition(series.getId()).parallelStream().forEach(event -> buildEventStatistics(event));
+		series.getEvents().parallelStream().forEach(this::buildEventStatistics);
 	}
 	
 	private List<Result> processEntry(EventEditionEntry entry) {
@@ -396,6 +396,69 @@ public class StatisticsServiceImpl implements StatisticsService {
 				.sorted(reversed)
 				.map(y -> y.toString())
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public void updateSeriesChamps(SeriesEdition seriesEd) {
+		updateSeriesDriversChampions(seriesEd, seriesEd.getDriversChampions(), seriesEd.getDriversChampions(), 
+				seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());
+		updateSeriesTeamsChampions(seriesEd, seriesEd.getTeamsChampions(), seriesEd.getTeamsChampions(), 
+				seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());
+	}
+	
+	@Override
+	public void updateSeriesDriversChampions(SeriesEdition seriesEd, List<Driver> currentChamps, List<Driver> newChamps, String categoryName, String period) {
+		//Update statistics to remove championship won
+		for(Driver d: currentChamps) {
+			DriverStatistics ds = driverStatsRepo.findOne(d.getId().toString());
+			Statistics st = ds.getStaticsForCategory(categoryName);
+			st.removeChampionship(seriesEd.getId());
+			ds.updateStatistics(categoryName, st);
+			st = ds.getStaticsForCategory(categoryName, period);
+			st.removeChampionship(seriesEd.getId());
+			ds.updateStatistics(categoryName, st, period);
+			driverStatsRepo.save(ds);
+		}
+		
+		//Update statistics again for new champs
+		for(Driver d: newChamps) {
+			DriverStatistics ds = driverStatsRepo.findOne(d.getId().toString());
+			Statistics st = ds.getStaticsForCategory(categoryName);
+			st.addChampionship(seriesEd.getEditionName(), period, seriesEd.getId());
+			ds.updateStatistics(categoryName, st);
+			st = ds.getStaticsForCategory(categoryName, period);
+			st.addChampionship(seriesEd.getEditionName(), period, seriesEd.getId());
+			ds.updateStatistics(categoryName, st, period);
+			driverStatsRepo.save(ds);
+		}
+	}
+	
+	@Override
+	public void updateSeriesTeamsChampions(SeriesEdition seriesEd, List<Team> currentChamps, List<Team> newChamps, String category, String period) {
+		//Update statistics to remove championship won
+		for(Team d: currentChamps) {
+			TeamStatistics ds = teamStatsRepo.findOne(d.getId().toString());
+			Statistics st = ds.getStaticsForCategory(category);
+			st.removeChampionship(seriesEd.getId());
+			ds.updateStatistics(category, st);
+			st = ds.getStaticsForCategory(category, period);
+			st.removeChampionship(seriesEd.getId());
+			ds.updateStatistics(category, st, period);
+			teamStatsRepo.save(ds);
+		}
+		
+		//Update statistics again for new champs
+		
+		for(Team d: seriesEd.getTeamsChampions()) {
+			TeamStatistics ds = teamStatsRepo.findOne(d.getId().toString());
+			Statistics st = ds.getStaticsForCategory(category);
+			st.addChampionship(seriesEd.getEditionName(), period, seriesEd.getId());
+			ds.updateStatistics(category, st);
+			st = ds.getStaticsForCategory(category, period);
+			st.addChampionship(seriesEd.getEditionName(), period, seriesEd.getId());
+			ds.updateStatistics(category, st, period);
+			teamStatsRepo.save(ds);
+		}
 	}
 
 }

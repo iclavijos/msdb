@@ -112,7 +112,7 @@ public class Statistics {
 		championshipsData.add(new ChampionshipData(championship, year, id));
 		Collections.sort(championshipsData, (d1, d2) -> d1.getYear().compareTo(d2.getYear()));
 		Collections.reverse(championshipsData);
-		championships++;
+		championships = championshipsData.size();
 	}
 	
 	public void removeChampionship(Long id) {

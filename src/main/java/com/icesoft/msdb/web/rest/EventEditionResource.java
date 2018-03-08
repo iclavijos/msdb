@@ -226,6 +226,7 @@ public class EventEditionResource {
     @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
+    @Transactional
     public ResponseEntity<Void> deleteEventEdition(@PathVariable Long id) {
         log.debug("REST request to delete EventEdition : {}", id);
         EventEdition eventEd = eventEditionRepository.getOne(id);
