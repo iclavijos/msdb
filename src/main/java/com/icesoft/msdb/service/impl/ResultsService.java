@@ -67,7 +67,7 @@ public class ResultsService {
 			teamPointsRepo.deleteSessionPoints(sessionId, pss.getSeriesEdition().getId());
 			manufacturerPointsRepo.deleteSessionPoints(sessionId, pss.getSeriesEdition().getId());
 
-			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(
+			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionId(
 					session.getId(), session.getEventEdition().getId());
 			if (ps.getRacePctCompleted() > 0) {
 				EventEntryResult result = results.get(0);

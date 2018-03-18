@@ -18,13 +18,15 @@ import com.icesoft.msdb.domain.EventEdition;
  * Spring Data JPA repository for the EventEdition entity.
  */
 @Repository
-public interface EventEditionRepository extends JpaRepository<EventEdition,Long> {
+public interface EventEditionRepository extends JpaRepository<EventEdition, Long> {
 
 	@EntityGraph(value="EventEditionWithoutRelations", type=EntityGraphType.LOAD)
 	@Transactional(readOnly=true)
 	Stream<EventEdition> streamAllByIdNotNull();
 	
 	List<EventEdition> findAllByOrderByEventDateAsc();
+	
+	List<EventEdition> findBySeriesEditionsId(Long seriesEditionId);
 	
 	Page<EventEdition> findByEventIdOrderByEditionYearDesc(Long eventId, Pageable page);
 	

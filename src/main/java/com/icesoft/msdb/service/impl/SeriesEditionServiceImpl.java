@@ -325,7 +325,6 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 				sessionRepo.save(newSession);
 			});
 		});
-		
 	}
 
 }
