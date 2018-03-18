@@ -24,7 +24,8 @@ export class StandingsComponent implements OnInit {
     @Input() seriesEdition: SeriesEdition;
     @Input() seriesEditionIds: number[];
     @Input() seriesEditionNames: string[];
-    showExtendedStandings = false;
+	showExtendedStandings = false;
+	selectSeriesEditions = false;
     data: any;
     options: any;
     selectedDrivers: string[] = [];
@@ -42,7 +43,8 @@ export class StandingsComponent implements OnInit {
     	if (this.eventEditionId) {
     		let seriesId = null;
     		if (this.seriesEditionIds !== undefined) {
-    			seriesId = this.seriesEditionIds[0];
+				seriesId = this.seriesEditionIds[0];
+				this.selectSeriesEditions = this.seriesEditionIds.length > 1;
     		}
 	        this.eventEditionService.loadDriversPoints(this.eventEditionId, seriesId).subscribe(driversPoints => {
 	            this.drivers = driversPoints.json;
