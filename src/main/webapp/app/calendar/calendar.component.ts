@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Http, Response } from '@angular/http';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -23,16 +24,24 @@ export class Calendar implements OnInit {
 
     events: any[];
     event: MyEvent;
+    sessions: any;
     dialogVisible: boolean;
     currentLocale: string;
+    timezone: string;
+    timezones: any;
     
     header: any;
     options: any;
     
     constructor(private _translateService: TranslateService,
-                private eventEditionService: EventEditionService) { }
+                private eventEditionService: EventEditionService,
+                private http: Http) { }
 
     ngOnInit() {
+        this.timezone = moment.tz.guess();
+        this.http.get('api/timezones').subscribe((res: Response) => {
+            this.timezones = res.json();
+        });
         this.header = {
             left: 'prev,next today',
             center: 'title',
@@ -54,7 +63,11 @@ export class Calendar implements OnInit {
         const end = new Date(e.view.end);
         start.setDate(start.getDate() - 1);
         
-        this.eventEditionService.findCalendarEvents(start,end).subscribe(events => {this.convertEvents(events);});
+        this.eventEditionService.findCalendarEvents(start,end).subscribe(events => {this.convertEvents(events, this.timezone);});
+    }
+
+    changeTimezone() {
+        this.convertEvents(this.sessions, this.timezone);
     }
     
     eventClick(e) {
@@ -73,8 +86,8 @@ export class Calendar implements OnInit {
         this.dialogVisible = true;
     }
     
-    private convertEvents(sessions) {
-        let currentTZ = moment.tz.guess();
+    private convertEvents(sessions, currentTZ) {
+        this.sessions = sessions;
         this.events = new Array();
         for(let session of sessions) {
             let newEvent = new MyEvent();

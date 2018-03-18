@@ -24,6 +24,7 @@
         "racePosition": "Pos. Carrera",
         "upcomingEvents": "Próximos eventos",
         "noUpcomingEvents": "No hay eventos programados en las próximas dos semanas",
-        "searchDB": "Buscar en la base de datos"
+        "searchDB": "Buscar en la base de datos",
+        "selectTimeZone": "Selecciona la zona horaria"
     }
 }

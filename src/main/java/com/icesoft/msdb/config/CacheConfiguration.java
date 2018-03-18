@@ -24,6 +24,7 @@ public class CacheConfiguration {
     private final javax.cache.configuration.Configuration<Object, Object> jcacheConfiguration;
     private final javax.cache.configuration.Configuration<Object, Object> longLivedCacheConfiguration;
     private final javax.cache.configuration.Configuration<Object, Object> alwaysCacheConfiguration;
+    private final javax.cache.configuration.Configuration<Object, Object> oneDayCacheConfiguration;
 
     public CacheConfiguration(JHipsterProperties jHipsterProperties) {
         JHipsterProperties.Cache.Ehcache ehcache =
@@ -39,6 +40,11 @@ public class CacheConfiguration {
         		CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
                         ResourcePoolsBuilder.heap(100)) 
                         .withExpiry(Expirations.timeToLiveExpiration(Duration.of(172800, TimeUnit.SECONDS))) //TODO: Externalize
+                        .build());
+        oneDayCacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
+        		CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
+                        ResourcePoolsBuilder.heap(100)) 
+                        .withExpiry(Expirations.timeToLiveExpiration(Duration.of(24 * 60 * 60, TimeUnit.SECONDS))) //TODO: Externalize
                         .build());
         
         alwaysCacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
@@ -85,6 +91,7 @@ public class CacheConfiguration {
             
             cm.createCache("homeInfo", jcacheConfiguration);
             cm.createCache("calendar", jcacheConfiguration);
+            cm.createCache("timezones", oneDayCacheConfiguration);
             
             cm.createCache("driversStandingsCache", longLivedCacheConfiguration);
             cm.createCache("teamsStandingsCache", longLivedCacheConfiguration);

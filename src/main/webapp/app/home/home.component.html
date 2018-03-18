@@ -116,11 +116,23 @@
 	        <div class="col-sm-7">
 				<div class="card">
 					<div class="card-header">{{ 'home.upcomingEvents' | translate }}</div>
+					<div class="row">
+						<div class="col-xl-3 col-sm-3 mb-3">
+							{{ 'home.selectTimeZone' | translate }}
+						</div>
+						<div class="col-xl-8 col-sm-8 mb-8">
+							<select class="form-control" [(ngModel)]="timezone" id="field_timezone" name="switchTimezone" (change)="changeTimezone()">
+								<ng-template ngFor let-item [ngForOf]="timezones" let-currentIndex="index">
+									<option [value]="item.zoneName">{{item.countryName}} ({{item.zoneName}} {{item.gmtOffset}})</option>
+								</ng-template>
+							</select>
+						</div>
+					</div>
 					<div class="cardScroll">
-						<div class="card-block" *ngFor="let day of calendar">
-							<h5 class="card-title">{{ day.date | dDate:'longDate' }}</h5>
+						<div class="card-block" *ngFor="let day of dates">
+							<h5 class="card-title">{{ day }}</h5>
 							<div class="card-body">
-								<p *ngFor="let session of day.sessions">
+								<p *ngFor="let session of filteredSessions(day);">
 		                    		<strong>{{ session.sessionStartTime.format("HH:mm") }}
 	                    			<span *ngIf="session.sessionEndTime"> - {{ session.sessionEndTime.format("HH:mm")}}</span>
 	                    			<span *ngIf="session.durationType === 5"> ({{ session.duration}}L)</span>

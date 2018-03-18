@@ -24,6 +24,7 @@
         "racePosition": "Race Pos.",
         "upcomingEvents": "Upcoming events",
         "noUpcomingEvents": "No upcoming events scheduled in next two weeks",
-        "searchDB": "Search database"
+        "searchDB": "Search database",
+        "selectTimeZone": "Choose the time zone"
     }
 }

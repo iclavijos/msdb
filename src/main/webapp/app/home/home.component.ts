@@ -10,6 +10,7 @@ import { Account, LoginModalService, Principal } from '../shared';
 import { HomeData } from './home.model';
 
 import * as moment from 'moment-timezone';
+import { isMoment } from 'moment-timezone';
 
 @Component({
     selector: 'jhi-home',
@@ -27,7 +28,10 @@ export class HomeComponent implements OnInit {
     searchEntriesStr: string;
     searchEventsStr: string;
     calendar: any;
-	noEvents = false;
+    noEvents = false;
+    timezone: any;
+    timezones: any;
+    dates = new Set();
 
     constructor(
         private jhiLanguageService: JhiLanguageService,
@@ -49,18 +53,36 @@ export class HomeComponent implements OnInit {
             this.homeData = res.json();
         });
         this.http.get('api/home/calendar').subscribe((res: Response) => {
-            const currentTZ = moment.tz.guess();
-            const data = res.json();
-            for (let i = 0; i < data.length; i++) {
-                for (let j = 0; j < data[i].sessions.length; j++) {
-                    const session = data[i].sessions[j];
-                    session.sessionStartTime = moment(session.sessionStartTime * 1000).tz(currentTZ);
-                    session.sessionEndTime = moment(session.sessionEndTime * 1000).tz(currentTZ);
-                }
-            }
-            this.calendar = data;
-            this.noEvents = data.length === 0;
+            this.timezone = moment.tz.guess();
+            this.calendar = this.convertData(res.json(), this.timezone);
+            this.noEvents = this.calendar.length === 0;
         });
+        this.http.get('api/timezones').subscribe((res: Response) => {
+            this.timezones = res.json();
+        });
+    }
+
+    private convertData(data, tz) {
+        this.dates = new Set();
+        for (let i = 0; i < data.length; i++) {
+            if (isMoment(data[i].sessionStartTime)) {
+                data[i].sessionStartTime.tz(tz);
+                data[i].sessionEndTime.tz(tz);
+            } else {
+                data[i].sessionStartTime = moment(data[i].sessionStartTime * 1000).tz(tz);
+                data[i].sessionEndTime = moment(data[i].sessionEndTime * 1000).tz(tz);
+            }
+            this.dates.add(data[i].sessionStartTime.tz(tz).format('LL'));
+        }
+        return data;
+    }
+
+    filteredSessions(day) {
+        return this.calendar.filter(item => item.sessionStartTime.format('LL') === day);
+    }
+
+    changeTimezone() {
+        this.calendar = this.convertData(this.calendar,this.timezone);
     }
 
     registerAuthenticationSuccess() {

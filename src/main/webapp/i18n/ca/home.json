@@ -25,6 +25,7 @@
         "racePosition": "Pos. Cursa",
         "upcomingEvents": "Propers events",
         "noUpcomingEvents": "No hi ha events programats les properes dues setmanes",
-        "searchDB": "Cercar la base de dades"
+        "searchDB": "Cercar la base de dades",
+        "selectTimeZone": "Selecciona la zona horària"
     }
 }
