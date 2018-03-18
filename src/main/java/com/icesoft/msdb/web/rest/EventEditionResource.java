@@ -165,6 +165,7 @@ public class EventEditionResource {
     		eventEdition.setSeriesEditions(result.getSeriesEditions());
     	}
         result = eventEditionRepository.save(eventEdition);
+        eventEditionSearchRepo.delete(result.getId()); //TODO: Temporary fix to avoid duplicity after cloning series edition
         eventEditionSearchRepo.save(result);
         
         if (result.getSeriesEditions() != null) {
@@ -511,9 +512,21 @@ public class EventEditionResource {
     @Timed
     public List<SessionResultDTO> getEventSessionResults(@PathVariable Long id, @PathVariable Long idSession) {
     	log.debug("REST request to get EventEdition {} results for session {}", id, idSession);
-    	List<EventEntryResult> result = eventResultRepository.findBySessionIdAndSessionEventEditionIdOrderByFinalPositionAscLapsCompletedDesc(idSession, id);
+    	List<EventEntryResult> result = eventResultRepository.findBySessionIdAndSessionEventEditionId(idSession, id);
 
-    	return result.parallelStream().map(r -> new SessionResultDTO(r)).collect(Collectors.toList());
+    	return result.parallelStream()
+    			.sorted((r1, r2) -> {
+    				if (r1.getFinalPosition() < 800 && r2.getFinalPosition() < 800) {
+    					return r1.getFinalPosition().compareTo(r2.getFinalPosition());
+    				} else if (r1.getFinalPosition() >= 800 && r2.getFinalPosition() >= 800) {
+    					return r2.getLapsCompleted().compareTo(r1.getLapsCompleted());
+    				} else if (r1.getFinalPosition() < 800) {
+    					return -1;
+    				} else {
+    					return 1;
+    				}
+    			})
+    			.map(r -> new SessionResultDTO(r)).collect(Collectors.toList());
     }
     
     @GetMapping("/event-editions/event-sessions/results/{idResult}")
