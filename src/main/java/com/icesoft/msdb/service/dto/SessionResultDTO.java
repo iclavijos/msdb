@@ -19,6 +19,7 @@ public class SessionResultDTO {
     private Integer differenceType;
     private Boolean pitlaneStart;
     private String sharedWithNumber;
+    private EventEditionEntry sharedWith;
     private EventEditionEntry entry;
     
     public SessionResultDTO() {
@@ -38,6 +39,7 @@ public class SessionResultDTO {
     	this.cause = result.getCause();
     	this.difference = result.getDifference() != null ? result.getDifference().toString() : "";
     	this.pitlaneStart = result.isPitlaneStart();
+    	this.sharedWith = result.getSharedDriveWith();
     	this.sharedWithNumber = result.getSharedDriveWith() != null ? result.getSharedDriveWith().getRaceNumber() : "";
     	this.differenceType = result.getDifferenceType();
     	this.entry = result.getEntry();
@@ -136,6 +138,12 @@ public class SessionResultDTO {
 	}
 	public void setSharedWithNumber(String sharedWithNumber) {
 		this.sharedWithNumber = sharedWithNumber;
+	}
+	public EventEditionEntry getSharedWith() {
+		return sharedWith;
+	}
+	public void setSharedWith(EventEditionEntry sharedWith) {
+		this.sharedWith = sharedWith;
 	}
     
 }
