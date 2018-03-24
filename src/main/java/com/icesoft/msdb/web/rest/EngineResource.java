@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Engine;
-import com.icesoft.msdb.domain.stats.ElementStatistics;
+import com.icesoft.msdb.domain.stats.ParticipantStatisticsSnapshot;
 import com.icesoft.msdb.repository.EngineRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.search.EngineSearchRepository;
@@ -185,9 +185,9 @@ public class EngineResource {
     
     @GetMapping("/engines/{id}/statistics")
     @Timed
-    public ResponseEntity<ElementStatistics> getDriverStatistics(@PathVariable Long id) {
+    public ResponseEntity<ParticipantStatisticsSnapshot> getDriverStatistics(@PathVariable Long id) {
     	log.debug("REST request to get statistics for engine : {}", id);
-    	ElementStatistics stats = statsRepo.findOne(id.toString());
+    	ParticipantStatisticsSnapshot stats = statsRepo.findOne(id.toString());
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(stats));
     }
     
@@ -195,7 +195,7 @@ public class EngineResource {
     @Timed
     public ResponseEntity<List<EventEntrySearchResultDTO>> getEngineParticipations(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
     	log.debug("REST request to get participations for engine {} in category {}", id, category);
-    	ElementStatistics stats = statsRepo.findOne(id.toString());
+    	ParticipantStatisticsSnapshot stats = statsRepo.findOne(id.toString());
     	List<Long> ids = stats.getStaticsForCategory(category).getParticipationsList().parallelStream().sorted((p1, p2) -> p1.getOrder().compareTo(p2.getOrder()))
     		.map(p -> p.getEntryId()).collect(Collectors.toList());
     	int start = pageable.getOffset();
@@ -220,7 +220,7 @@ public class EngineResource {
     @Timed
     public ResponseEntity<List<EventEntrySearchResultDTO>> getEngineWins(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
     	log.debug("REST request to get wins for engine {} in category {}", id, category);
-    	ElementStatistics stats = statsRepo.findOne(id.toString());
+    	ParticipantStatisticsSnapshot stats = statsRepo.findOne(id.toString());
     	List<Long> ids = stats.getStaticsForCategory(category).getWinsList().parallelStream().sorted((p1, p2) -> p1.getOrder().compareTo(p2.getOrder()))
     		.map(p -> p.getEntryId()).collect(Collectors.toList());
     	int start = pageable.getOffset();

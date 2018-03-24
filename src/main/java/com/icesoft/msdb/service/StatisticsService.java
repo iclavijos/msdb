@@ -7,7 +7,7 @@ import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.Team;
-import com.icesoft.msdb.domain.stats.Statistics;
+import com.icesoft.msdb.domain.stats.ParticipantStatistics;
 
 public interface StatisticsService {
 	
@@ -23,27 +23,27 @@ public interface StatisticsService {
 	
 	void buildSeriesStatistics(SeriesEdition series);
 	
-	Map<String, Statistics> getDriverStatistics(Long driverId);
+	Map<String, ParticipantStatistics> getDriverStatistics(Long driverId);
 	
-	Map<String, Statistics> getDriverStatistics(Long driverId, String year);
+	Map<String, ParticipantStatistics> getDriverStatistics(Long driverId, String year);
 	
 	List<String> getDriverYearsStatistics(Long driverId);
 	
-	Map<String, Statistics> getTeamStatistics(Long teamId);
+	Map<String, ParticipantStatistics> getTeamStatistics(Long teamId);
 	
-	Map<String, Statistics> getTeamStatistics(Long teamId, String year);
+	Map<String, ParticipantStatistics> getTeamStatistics(Long teamId, String year);
 	
 	List<String> getTeamYearsStatistics(Long teamId);
 	
-	Map<String, Statistics> getChassisStatistics(Long chassisId);
+	Map<String, ParticipantStatistics> getChassisStatistics(Long chassisId);
 	
-	Map<String, Statistics> getChassisStatistics(Long chassisId, String year);
+	Map<String, ParticipantStatistics> getChassisStatistics(Long chassisId, String year);
 	
 	List<String> getChassisYearsStatistics(Long chassisId);
 	
-	Map<String, Statistics> getEngineStatistics(Long engineId);
+	Map<String, ParticipantStatistics> getEngineStatistics(Long engineId);
 	
-	Map<String, Statistics> getEngineStatistics(Long engineId, String year);
+	Map<String, ParticipantStatistics> getEngineStatistics(Long engineId, String year);
 	
 	List<String> getEngineYearsStatistics(Long engineId);
 	

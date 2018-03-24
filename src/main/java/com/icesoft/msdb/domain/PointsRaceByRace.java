@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 
 public class PointsRaceByRace {
@@ -70,7 +71,7 @@ public class PointsRaceByRace {
 	
 	private final List<EventPoints> seriesPoints = new ArrayList<>();
 	
-	public void addDriverPoints(String eventName, String sessionName, String driverName, Float points) {
+	public void addDriverPoints(String eventName, String sessionName, SessionType sessionType, String driverName, Float points) {
 		DriverPoints driverPoints = new DriverPoints(driverName, points);
 		SessionPoints sessionPoints;
 		EventPoints eventPoints;

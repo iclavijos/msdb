@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Chassis;
-import com.icesoft.msdb.domain.stats.ElementStatistics;
+import com.icesoft.msdb.domain.stats.ParticipantStatisticsSnapshot;
 import com.icesoft.msdb.repository.ChassisRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.search.ChassisSearchRepository;
@@ -186,9 +186,9 @@ public class ChassisResource {
     
     
     @GetMapping("/chassis/{chassisId}/statistics")
-	public ResponseEntity<ElementStatistics> getChassisStatistics(@PathVariable Long chassisId) {
+	public ResponseEntity<ParticipantStatisticsSnapshot> getChassisStatistics(@PathVariable Long chassisId) {
     	log.debug("REST request to get statistics for chassis : {}", chassisId);
-    	ElementStatistics stats = statsRepo.findOne(chassisId.toString());
+    	ParticipantStatisticsSnapshot stats = statsRepo.findOne(chassisId.toString());
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(stats));
 	}
 	
@@ -196,7 +196,7 @@ public class ChassisResource {
     @Timed
     public ResponseEntity<List<EventEntrySearchResultDTO>> getChassisParticipations(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
     	log.debug("REST request to get participations for chassis {} in category {}", id, category);
-    	ElementStatistics stats = statsRepo.findOne(id.toString());
+    	ParticipantStatisticsSnapshot stats = statsRepo.findOne(id.toString());
     	List<Long> ids = stats.getStaticsForCategory(category).getParticipationsList().parallelStream().sorted((p1, p2) -> p1.getOrder().compareTo(p2.getOrder()))
     		.map(p -> p.getEntryId()).collect(Collectors.toList());
     	int start = pageable.getOffset();
@@ -221,7 +221,7 @@ public class ChassisResource {
     @Timed
     public ResponseEntity<List<EventEntrySearchResultDTO>> getChassisWins(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
     	log.debug("REST request to get wins for chassis {} in category {}", id, category);
-    	ElementStatistics stats = statsRepo.findOne(id.toString());
+    	ParticipantStatisticsSnapshot stats = statsRepo.findOne(id.toString());
     	List<Long> ids = stats.getStaticsForCategory(category).getWinsList().parallelStream().sorted((p1, p2) -> p1.getOrder().compareTo(p2.getOrder()))
     		.map(p -> p.getEntryId()).collect(Collectors.toList());
     	int start = pageable.getOffset();

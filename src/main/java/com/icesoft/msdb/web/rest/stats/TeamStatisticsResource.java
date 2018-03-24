@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.icesoft.msdb.domain.stats.ParticipantStatistics;
 import com.icesoft.msdb.domain.stats.Result;
-import com.icesoft.msdb.domain.stats.Statistics;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.StatsDTO;
 
@@ -38,7 +38,7 @@ public class TeamStatisticsResource {
 	 */
 	@GetMapping("/{teamId}")
 	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long teamId) {
-		Map<String, Statistics> mapStats = 
+		Map<String, ParticipantStatistics> mapStats = 
 				Optional.ofNullable(statsService.getTeamStatistics(teamId))
 					.orElse(new HashMap<>());
 		
@@ -51,7 +51,7 @@ public class TeamStatisticsResource {
 	
 	@GetMapping("/{teamId}/{year}")
 	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long teamId, @PathVariable String year) {
-		Map<String, Statistics> mapStats = statsService.getTeamStatistics(teamId, year);
+		Map<String, ParticipantStatistics> mapStats = statsService.getTeamStatistics(teamId, year);
 		List<StatsDTO> result = mapStats.entrySet().stream()
 			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
 			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))

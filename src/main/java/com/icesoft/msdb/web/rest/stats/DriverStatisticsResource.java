@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.icesoft.msdb.domain.stats.ParticipantStatistics;
 import com.icesoft.msdb.domain.stats.Result;
-import com.icesoft.msdb.domain.stats.Statistics;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.StatsDTO;
 
@@ -39,7 +39,7 @@ public class DriverStatisticsResource {
 	 */
 	@GetMapping("/{elementId}")
 	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long elementId) {
-		Map<String, Statistics> mapStats = 
+		Map<String, ParticipantStatistics> mapStats = 
 				Optional.ofNullable(statsService.getDriverStatistics(elementId))
 					.orElse(new HashMap<>());
 		
@@ -55,7 +55,7 @@ public class DriverStatisticsResource {
 	 */
 	@GetMapping("/{elementId}/{year}")
 	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long elementId, @PathVariable String year) {
-		Map<String, Statistics> mapStats = statsService.getDriverStatistics(elementId, year);
+		Map<String, ParticipantStatistics> mapStats = statsService.getDriverStatistics(elementId, year);
 		List<StatsDTO> result = mapStats.entrySet().stream()
 			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
 			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))

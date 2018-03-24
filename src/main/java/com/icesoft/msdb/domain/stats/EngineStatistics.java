@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection="engineStatistics")
-public class EngineStatistics extends ElementStatistics {
+public class EngineStatistics extends ParticipantStatisticsSnapshot {
 
 	@Id
 	private String engineId;

@@ -25,10 +25,10 @@ import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.domain.stats.ChassisStatistics;
 import com.icesoft.msdb.domain.stats.DriverStatistics;
-import com.icesoft.msdb.domain.stats.ElementStatistics;
 import com.icesoft.msdb.domain.stats.EngineStatistics;
+import com.icesoft.msdb.domain.stats.ParticipantStatistics;
+import com.icesoft.msdb.domain.stats.ParticipantStatisticsSnapshot;
 import com.icesoft.msdb.domain.stats.Result;
-import com.icesoft.msdb.domain.stats.Statistics;
 import com.icesoft.msdb.domain.stats.TeamStatistics;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.repository.EventEditionRepository;
@@ -102,15 +102,15 @@ public class StatisticsServiceImpl implements StatisticsService {
 	
 	@SuppressWarnings("rawtypes")
 	private void updateStats(String categoryName, String year, Result result, 
-			MongoRepository mongoRepo, ElementStatistics eStats) {
+			MongoRepository mongoRepo, ParticipantStatisticsSnapshot eStats) {
 		updateStats(categoryName, year, result, mongoRepo, eStats, 10);
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void updateStats(String categoryName, String year, Result result, 
-			MongoRepository mongoRepo, ElementStatistics eStats, int retries) {
-		Statistics statsDoc = eStats.getStaticsForCategory(categoryName);
-		Statistics statsDocYear = eStats.getStaticsForCategory(categoryName, year);
+			MongoRepository mongoRepo, ParticipantStatisticsSnapshot eStats, int retries) {
+		ParticipantStatistics statsDoc = eStats.getStaticsForCategory(categoryName);
+		ParticipantStatistics statsDocYear = eStats.getStaticsForCategory(categoryName, year).orElse(new ParticipantStatistics());
 		statsDoc.addResult(result);
 		statsDocYear.addResult(result);
 		
@@ -299,20 +299,20 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 
 	@Override
-	public Map<String, Statistics> getDriverStatistics(Long driverId) {
-		Optional<ElementStatistics> driverStats = Optional.ofNullable(driverStatsRepo.findOne(driverId.toString()));
-		return driverStats.map(ElementStatistics::getStatistics).orElseGet(HashMap<String, Statistics> :: new);
+	public Map<String, ParticipantStatistics> getDriverStatistics(Long driverId) {
+		Optional<ParticipantStatisticsSnapshot> driverStats = Optional.ofNullable(driverStatsRepo.findOne(driverId.toString()));
+		return driverStats.map(ParticipantStatisticsSnapshot::getStatistics).orElseGet(HashMap<String, ParticipantStatistics> :: new);
 	}
 	
 	@Override
-	public Map<String, Statistics> getDriverStatistics(Long driverId, String year) {
-		Optional<ElementStatistics> driverStats = Optional.ofNullable(driverStatsRepo.findOne(driverId.toString()));
-		return driverStats.map(ds -> ds.getStatisticsYear(year).orElseGet(HashMap<String, Statistics> :: new)).get();
+	public Map<String, ParticipantStatistics> getDriverStatistics(Long driverId, String year) {
+		Optional<ParticipantStatisticsSnapshot> driverStats = Optional.ofNullable(driverStatsRepo.findOne(driverId.toString()));
+		return driverStats.map(ds -> ds.getStatisticsYear(year).orElseGet(HashMap<String, ParticipantStatistics> :: new)).get();
 	}
 	
 	@Override
 	public List<String> getDriverYearsStatistics(Long driverId) {
-		Optional<ElementStatistics> driverStats = Optional.ofNullable(driverStatsRepo.findOne(driverId.toString()));
+		Optional<ParticipantStatisticsSnapshot> driverStats = Optional.ofNullable(driverStatsRepo.findOne(driverId.toString()));
 		List<String> result = driverStats.map(ds -> ds.getYearsStatistics()).orElseGet(ArrayList<String>::new);
 		Comparator<Integer> normal = Integer::compare;
 		Comparator<Integer> reversed = normal.reversed(); 
@@ -324,20 +324,20 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 
 	@Override
-	public Map<String, Statistics> getTeamStatistics(Long teamId) {
-		Optional<ElementStatistics> teamStats = Optional.ofNullable(teamStatsRepo.findOne(teamId.toString()));
-		return teamStats.map(ElementStatistics::getStatistics).orElseGet(HashMap<String, Statistics> :: new);
+	public Map<String, ParticipantStatistics> getTeamStatistics(Long teamId) {
+		Optional<ParticipantStatisticsSnapshot> teamStats = Optional.ofNullable(teamStatsRepo.findOne(teamId.toString()));
+		return teamStats.map(ParticipantStatisticsSnapshot::getStatistics).orElseGet(HashMap<String, ParticipantStatistics> :: new);
 	}
 
 	@Override
-	public Map<String, Statistics> getTeamStatistics(Long teamId, String year) {
-		Optional<ElementStatistics> teamStats = Optional.ofNullable(teamStatsRepo.findOne(teamId.toString()));
-		return teamStats.map(ts -> ts.getStatisticsYear(year).orElseGet(HashMap<String, Statistics> :: new)).get();
+	public Map<String, ParticipantStatistics> getTeamStatistics(Long teamId, String year) {
+		Optional<ParticipantStatisticsSnapshot> teamStats = Optional.ofNullable(teamStatsRepo.findOne(teamId.toString()));
+		return teamStats.map(ts -> ts.getStatisticsYear(year).orElseGet(HashMap<String, ParticipantStatistics> :: new)).get();
 	}
 
 	@Override
 	public List<String> getTeamYearsStatistics(Long driverId) {
-		Optional<ElementStatistics> teamStats = Optional.ofNullable(teamStatsRepo.findOne(driverId.toString()));
+		Optional<ParticipantStatisticsSnapshot> teamStats = Optional.ofNullable(teamStatsRepo.findOne(driverId.toString()));
 		List<String> result = teamStats.map(ts -> ts.getYearsStatistics()).orElseGet(ArrayList<String>::new);
 		Comparator<Integer> normal = Integer::compare;
 		Comparator<Integer> reversed = normal.reversed(); 
@@ -349,20 +349,20 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 
 	@Override
-	public Map<String, Statistics> getChassisStatistics(Long chassisId) {
-		Optional<ElementStatistics> chassisStats = Optional.ofNullable(chassisStatsRepo.findOne(chassisId.toString()));
-		return chassisStats.map(ElementStatistics::getStatistics).orElseGet(HashMap<String, Statistics> :: new);
+	public Map<String, ParticipantStatistics> getChassisStatistics(Long chassisId) {
+		Optional<ParticipantStatisticsSnapshot> chassisStats = Optional.ofNullable(chassisStatsRepo.findOne(chassisId.toString()));
+		return chassisStats.map(ParticipantStatisticsSnapshot::getStatistics).orElseGet(HashMap<String, ParticipantStatistics> :: new);
 	}
 
 	@Override
-	public Map<String, Statistics> getChassisStatistics(Long chassisId, String year) {
-		Optional<ElementStatistics> chassisStats = Optional.ofNullable(chassisStatsRepo.findOne(chassisId.toString()));
-		return chassisStats.map(cs -> cs.getStatisticsYear(year).orElseGet(HashMap<String, Statistics> :: new)).get();
+	public Map<String, ParticipantStatistics> getChassisStatistics(Long chassisId, String year) {
+		Optional<ParticipantStatisticsSnapshot> chassisStats = Optional.ofNullable(chassisStatsRepo.findOne(chassisId.toString()));
+		return chassisStats.map(cs -> cs.getStatisticsYear(year).orElseGet(HashMap<String, ParticipantStatistics> :: new)).get();
 	}
 
 	@Override
 	public List<String> getChassisYearsStatistics(Long chassisId) {
-		Optional<ElementStatistics> chassisStats = Optional.ofNullable(chassisStatsRepo.findOne(chassisId.toString()));
+		Optional<ParticipantStatisticsSnapshot> chassisStats = Optional.ofNullable(chassisStatsRepo.findOne(chassisId.toString()));
 		List<String> result = chassisStats.map(ts -> ts.getYearsStatistics()).orElseGet(ArrayList<String>::new);
 		Comparator<Integer> normal = Integer::compare;
 		Comparator<Integer> reversed = normal.reversed(); 
@@ -374,20 +374,20 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 
 	@Override
-	public Map<String, Statistics> getEngineStatistics(Long engineId) {
-		Optional<ElementStatistics> engineStats = Optional.ofNullable(engineStatsRepo.findOne(engineId.toString()));
-		return engineStats.map(ElementStatistics::getStatistics).orElseGet(HashMap<String, Statistics> :: new);
+	public Map<String, ParticipantStatistics> getEngineStatistics(Long engineId) {
+		Optional<ParticipantStatisticsSnapshot> engineStats = Optional.ofNullable(engineStatsRepo.findOne(engineId.toString()));
+		return engineStats.map(ParticipantStatisticsSnapshot::getStatistics).orElseGet(HashMap<String, ParticipantStatistics> :: new);
 	}
 
 	@Override
-	public Map<String, Statistics> getEngineStatistics(Long engineId, String year) {
-		Optional<ElementStatistics> engineStats = Optional.ofNullable(engineStatsRepo.findOne(engineId.toString()));
-		return engineStats.map(cs -> cs.getStatisticsYear(year).orElseGet(HashMap<String, Statistics> :: new)).get();
+	public Map<String, ParticipantStatistics> getEngineStatistics(Long engineId, String year) {
+		Optional<ParticipantStatisticsSnapshot> engineStats = Optional.ofNullable(engineStatsRepo.findOne(engineId.toString()));
+		return engineStats.map(cs -> cs.getStatisticsYear(year).orElseGet(HashMap<String, ParticipantStatistics> :: new)).get();
 	}
 
 	@Override
 	public List<String> getEngineYearsStatistics(Long engineId) {
-		Optional<ElementStatistics> engineStats = Optional.ofNullable(engineStatsRepo.findOne(engineId.toString()));
+		Optional<ParticipantStatisticsSnapshot> engineStats = Optional.ofNullable(engineStatsRepo.findOne(engineId.toString()));
 		List<String> result = engineStats.map(es -> es.getYearsStatistics()).orElseGet(ArrayList<String>::new);
 		Comparator<Integer> normal = Integer::compare;
 		Comparator<Integer> reversed = normal.reversed(); 
@@ -411,10 +411,10 @@ public class StatisticsServiceImpl implements StatisticsService {
 		//Update statistics to remove championship won
 		for(Driver d: currentChamps) {
 			DriverStatistics ds = driverStatsRepo.findOne(d.getId().toString());
-			Statistics st = ds.getStaticsForCategory(categoryName);
+			ParticipantStatistics st = ds.getStaticsForCategory(categoryName);
 			st.removeChampionship(seriesEd.getId());
 			ds.updateStatistics(categoryName, st);
-			st = ds.getStaticsForCategory(categoryName, period);
+			st = ds.getStaticsForCategory(categoryName, period).orElse(new ParticipantStatistics());
 			st.removeChampionship(seriesEd.getId());
 			ds.updateStatistics(categoryName, st, period);
 			driverStatsRepo.save(ds);
@@ -423,10 +423,10 @@ public class StatisticsServiceImpl implements StatisticsService {
 		//Update statistics again for new champs
 		for(Driver d: newChamps) {
 			DriverStatistics ds = driverStatsRepo.findOne(d.getId().toString());
-			Statistics st = ds.getStaticsForCategory(categoryName);
+			ParticipantStatistics st = ds.getStaticsForCategory(categoryName);
 			st.addChampionship(seriesEd.getEditionName(), period, seriesEd.getId());
 			ds.updateStatistics(categoryName, st);
-			st = ds.getStaticsForCategory(categoryName, period);
+			st = ds.getStaticsForCategory(categoryName, period).orElse(new ParticipantStatistics());
 			st.addChampionship(seriesEd.getEditionName(), period, seriesEd.getId());
 			ds.updateStatistics(categoryName, st, period);
 			driverStatsRepo.save(ds);
@@ -436,28 +436,28 @@ public class StatisticsServiceImpl implements StatisticsService {
 	@Override
 	public void updateSeriesTeamsChampions(SeriesEdition seriesEd, List<Team> currentChamps, List<Team> newChamps, String category, String period) {
 		//Update statistics to remove championship won
-		for(Team d: currentChamps) {
-			TeamStatistics ds = teamStatsRepo.findOne(d.getId().toString());
-			Statistics st = ds.getStaticsForCategory(category);
+		for(Team t: currentChamps) {
+			TeamStatistics ts = teamStatsRepo.findOne(t.getId().toString());
+			ParticipantStatistics st = ts.getStaticsForCategory(category);
 			st.removeChampionship(seriesEd.getId());
-			ds.updateStatistics(category, st);
-			st = ds.getStaticsForCategory(category, period);
+			ts.updateStatistics(category, st);
+			st = ts.getStaticsForCategory(category, period).orElse(new ParticipantStatistics());
 			st.removeChampionship(seriesEd.getId());
-			ds.updateStatistics(category, st, period);
-			teamStatsRepo.save(ds);
+			ts.updateStatistics(category, st, period);
+			teamStatsRepo.save(ts);
 		}
 		
 		//Update statistics again for new champs
 		
-		for(Team d: seriesEd.getTeamsChampions()) {
-			TeamStatistics ds = teamStatsRepo.findOne(d.getId().toString());
-			Statistics st = ds.getStaticsForCategory(category);
+		for(Team t: seriesEd.getTeamsChampions()) {
+			TeamStatistics ts = teamStatsRepo.findOne(t.getId().toString());
+			ParticipantStatistics st = ts.getStaticsForCategory(category);
 			st.addChampionship(seriesEd.getEditionName(), period, seriesEd.getId());
-			ds.updateStatistics(category, st);
-			st = ds.getStaticsForCategory(category, period);
+			ts.updateStatistics(category, st);
+			st = ts.getStaticsForCategory(category, period).orElse(new ParticipantStatistics());
 			st.addChampionship(seriesEd.getEditionName(), period, seriesEd.getId());
-			ds.updateStatistics(category, st, period);
-			teamStatsRepo.save(ds);
+			ts.updateStatistics(category, st, period);
+			teamStatsRepo.save(ts);
 		}
 	}
 

@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.icesoft.msdb.domain.stats.ParticipantStatistics;
 import com.icesoft.msdb.domain.stats.Result;
-import com.icesoft.msdb.domain.stats.Statistics;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.StatsDTO;
 
@@ -36,7 +36,7 @@ private final Logger log = LoggerFactory.getLogger(EngineStatisticsResources.cla
 
 	@GetMapping("/{elementId}")
 	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long elementId) {
-		Map<String, Statistics> mapStats = 
+		Map<String, ParticipantStatistics> mapStats = 
 				Optional.ofNullable(statsService.getEngineStatistics(elementId))
 					.orElse(new HashMap<>());
 		
@@ -49,7 +49,7 @@ private final Logger log = LoggerFactory.getLogger(EngineStatisticsResources.cla
 
 	@GetMapping("/{elementId}/{year}")
 	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long elementId, @PathVariable String year) {
-		Map<String, Statistics> mapStats = statsService.getEngineStatistics(elementId, year);
+		Map<String, ParticipantStatistics> mapStats = statsService.getEngineStatistics(elementId, year);
 		List<StatsDTO> result = mapStats.entrySet().stream()
 			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
 			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))

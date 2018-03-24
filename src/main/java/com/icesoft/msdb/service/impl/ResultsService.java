@@ -25,6 +25,7 @@ import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.domain.PointsSystemSession;
 import com.icesoft.msdb.domain.TeamEventPoints;
 import com.icesoft.msdb.domain.enums.DurationType;
+import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
@@ -37,7 +38,7 @@ import com.icesoft.msdb.service.dto.ManufacturerPointsDTO;
 import com.icesoft.msdb.service.dto.TeamPointsDTO;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class ResultsService {
 	private final Logger log = LoggerFactory.getLogger(ResultsService.class);
 	
@@ -51,6 +52,7 @@ public class ResultsService {
 	
 	@Autowired private CacheHandler cacheHandler;
 
+	@Transactional(readOnly = false)
 	public void processSessionResults(Long sessionId) {
 		EventSession session = sessionRepo.findOne(sessionId);
 		
@@ -310,7 +312,7 @@ public class ResultsService {
 		PointsRaceByRace result = new PointsRaceByRace();
 		pointsSeries.stream().forEach(ps -> {
 			result.addDriverPoints(
-					(String)ps[0], (String)ps[1], (String)ps[2] + " " + (String)ps[3], ((Double)ps[4]).floatValue());
+					(String)ps[0], (String)ps[1], (SessionType)ps[2], (String)ps[3] + " " + (String)ps[4], ((Double)ps[5]).floatValue());
 		});
 		
 		return result;

@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection="racetrackLayoutStatistics")
-public class RacetrackLayoutStatistics extends ElementStatistics {
+public class RacetrackLayoutStatistics extends EventStatistics {
 
 	@Id
 	private String racetrackLayoutId;

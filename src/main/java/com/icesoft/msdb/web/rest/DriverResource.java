@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Driver;
-import com.icesoft.msdb.domain.stats.ElementStatistics;
+import com.icesoft.msdb.domain.stats.ParticipantStatisticsSnapshot;
 import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.search.DriverSearchRepository;
@@ -175,9 +175,9 @@ public class DriverResource {
      */
     @GetMapping("/drivers/{id}/statistics")
     @Timed
-    public ResponseEntity<ElementStatistics> getDriverStatistics(@PathVariable Long id) {
+    public ResponseEntity<ParticipantStatisticsSnapshot> getDriverStatistics(@PathVariable Long id) {
     	log.debug("REST request to get statistics for driver : {}", id);
-    	ElementStatistics stats = statsRepo.findOne(id.toString());
+    	ParticipantStatisticsSnapshot stats = statsRepo.findOne(id.toString());
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(stats));
     }
     
@@ -185,7 +185,7 @@ public class DriverResource {
     @Timed
     public ResponseEntity<List<EventEntrySearchResultDTO>> getDriverParticipations(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
     	log.debug("REST request to get participations for driver {} in category {}", id, category);
-    	ElementStatistics stats = statsRepo.findOne(id.toString());
+    	ParticipantStatisticsSnapshot stats = statsRepo.findOne(id.toString());
     	List<Long> ids = stats.getStaticsForCategory(category).getParticipationsList().parallelStream().sorted((p1, p2) -> p1.getOrder().compareTo(p2.getOrder()))
     		.map(p -> p.getEntryId()).collect(Collectors.toList());
     	int start = pageable.getOffset();
@@ -210,7 +210,7 @@ public class DriverResource {
     @Timed
     public ResponseEntity<List<EventEntrySearchResultDTO>> getDriverWins(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
     	log.debug("REST request to get wins for driver {} in category {}", id, category);
-    	ElementStatistics stats = statsRepo.findOne(id.toString());
+    	ParticipantStatisticsSnapshot stats = statsRepo.findOne(id.toString());
     	List<Long> ids = stats.getStaticsForCategory(category).getWinsList().parallelStream().sorted((p1, p2) -> p1.getOrder().compareTo(p2.getOrder()))
     		.map(p -> p.getEntryId()).collect(Collectors.toList());
     	int start = pageable.getOffset();
