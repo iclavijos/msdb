@@ -39,6 +39,9 @@ export class Calendar implements OnInit {
 
     ngOnInit() {
         this.timezone = moment.tz.guess();
+        if (this.timezone === undefined) {
+            this.timezone = 'Europe/London';
+        }
         this.http.get('api/timezones').subscribe((res: Response) => {
             this.timezones = res.json();
         });

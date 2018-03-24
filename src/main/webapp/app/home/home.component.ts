@@ -45,6 +45,10 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.timezone = moment.tz.guess();
+        if (this.timezone === undefined) {
+            this.timezone = 'Europe/London';
+        }
         this.principal.identity().then((account) => {
             this.account = account;
         });
@@ -53,7 +57,6 @@ export class HomeComponent implements OnInit {
             this.homeData = res.json();
         });
         this.http.get('api/home/calendar').subscribe((res: Response) => {
-            this.timezone = moment.tz.guess();
             this.calendar = this.convertData(res.json(), this.timezone);
             this.noEvents = this.calendar.length === 0;
         });
