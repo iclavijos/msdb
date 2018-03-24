@@ -111,6 +111,8 @@ public class HomeResource {
         if (!timezonesResp.getStatus().equals("OK")) {
         	throw new MSDBException("Error retrieving timezones: " + timezonesResp.getMessage());
         }
+        TimeZone nerdTZ = new TimeZone("Hora imperial", "Europe/London", 0L);
+        timezonesResp.getZones().add(nerdTZ);
         return timezonesResp.getZones();
 	}
 }
