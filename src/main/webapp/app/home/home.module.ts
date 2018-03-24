@@ -5,13 +5,10 @@ import { MotorsportsDatabaseSharedModule } from '../shared';
 
 import { HomeComponent, HomeEntriesComponent, HomeEventsComponent, HOME_ROUTE, HomeEntriesResolvePagingParams } from './';
 
-import { TimezonePickerModule } from 'ng2-timezone-selector';
-
 @NgModule({
     imports: [
         MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot( HOME_ROUTE , { useHash: true }),
-        TimezonePickerModule
+        RouterModule.forRoot( HOME_ROUTE , { useHash: true })
     ],
     declarations: [
         HomeComponent,
