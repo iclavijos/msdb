@@ -56,8 +56,8 @@ spring:
             uri: mongodb://localhost:27017
             database: nosqlsample
         elasticsearch:
-            cluster-name: 
-            cluster-nodes: 192.168.99.100:9300
+            cluster-name:
+            cluster-nodes: 127.0.0.1:9300
             properties:
                 path:
                     logs: build/elasticsearch/log

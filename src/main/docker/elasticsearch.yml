@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 services:
     motorsportsdatabase-elasticsearch:
         image: elasticsearch:2.4.1
