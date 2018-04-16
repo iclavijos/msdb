@@ -39,9 +39,9 @@ import com.icesoft.msdb.service.dto.TimeZonesResponse;
 @RequestMapping("/api")
 @Transactional(readOnly=true)
 public class HomeResource {
-	
+
 	private final Logger log = LoggerFactory.getLogger(HomeResource.class);
-	
+
 	private final DriverRepository driversRepository;
 	private final RacetrackLayoutRepository racetrackRepository;
 	private final SeriesEditionRepository seriesEditionRepository;
@@ -49,7 +49,7 @@ public class HomeResource {
 	private final EventEditionRepository eventsEditionsRepository;
 	private final EventSessionRepository eventSessionRepository;
 
-	public HomeResource(DriverRepository driverRepo, RacetrackLayoutRepository racetrackRepo, 
+	public HomeResource(DriverRepository driverRepo, RacetrackLayoutRepository racetrackRepo,
 			SeriesEditionRepository seriesRepo, TeamRepository teamRepo, EventEditionRepository eventsRepo,
 			EventSessionRepository eventSessionRepo, JDBCRepositoryImpl jdbcRepo) {
 		this.driversRepository = driverRepo;
@@ -59,13 +59,13 @@ public class HomeResource {
 		this.eventsEditionsRepository = eventsRepo;
 		this.eventSessionRepository = eventSessionRepo;
 	}
-	
+
 	@GetMapping("/home")
     @Timed
     @Cacheable(cacheNames="homeInfo")
     public Object getHomeInfo() {
         log.debug("REST request to get home information");
-        
+
         JSONObject mainObj = new JSONObject();
         try {
         	mainObj.put("drivers", driversRepository.count());
@@ -78,13 +78,13 @@ public class HomeResource {
         }
         return mainObj.toString();
     }
-	
+
 	@GetMapping("/home/calendar")
 	@Timed
 	@Cacheable(cacheNames="calendar")
 	public List<SessionDataDTO> getCalendar() {
 		log.debug("REST request to get calendar");
-		
+
 		LocalDateTime todayMidnight = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
 		ZonedDateTime today = ZonedDateTime.of(todayMidnight, ZoneId.of("UTC"));
 		ZonedDateTime nextSunday = today.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
@@ -92,7 +92,7 @@ public class HomeResource {
 		List<EventSession> sessions = eventSessionRepository.findUpcomingSessions(today, nextSunday);
 
 		ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
-		List<SessionDataDTO> filtered = 
+		List<SessionDataDTO> filtered =
 				sessions.parallelStream().filter(session -> !session.isFinished(now))
 					.map(SessionDataDTO::new)
 					.sorted((s1,s2) -> s1.getSessionStartTime().compareTo(s2.getSessionStartTime()))
@@ -100,18 +100,18 @@ public class HomeResource {
 
 		return filtered;
 	}
-	
+
 	@GetMapping("/timezones")
 	@Cacheable(cacheNames="timezones")
 	public List<TimeZone> getTimeZones() {
 		RestTemplate restTemplate = new RestTemplate();
         TimeZonesResponse timezonesResp = restTemplate.getForObject(
-        		"http://api.timezonedb.com/v2/list-time-zone?key=4CHM89W4KBP0&format=json&fields=countryName,zoneName,gmtOffset", 
+        		"http://api.timezonedb.com/v2/list-time-zone?key=4CHM89W4KBP0&format=json&fields=countryName,zoneName,gmtOffset",
         		TimeZonesResponse.class);
         if (!timezonesResp.getStatus().equals("OK")) {
         	throw new MSDBException("Error retrieving timezones: " + timezonesResp.getMessage());
         }
-        TimeZone nerdTZ = new TimeZone("Hora imperial", "Europe/London", 0L);
+        TimeZone nerdTZ = new TimeZone("Toledo Hora imperial", "Europe/London", 0L);
         timezonesResp.getZones().add(nerdTZ);
         return timezonesResp.getZones();
 	}
