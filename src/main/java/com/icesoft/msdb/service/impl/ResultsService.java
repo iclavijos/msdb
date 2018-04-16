@@ -41,7 +41,7 @@ import com.icesoft.msdb.service.dto.TeamPointsDTO;
 @Transactional(readOnly = true)
 public class ResultsService {
 	private final Logger log = LoggerFactory.getLogger(ResultsService.class);
-	
+
 	@Autowired private EventSessionRepository sessionRepo;
 	@Autowired private EventEntryResultRepository resultsRepo;
 	@Autowired private EventEntryRepository eventEntryRepository;
@@ -49,28 +49,31 @@ public class ResultsService {
 	@Autowired private TeamEventPointsRepository teamPointsRepo;
 	@Autowired private ManufacturerEventPointsRepository manufacturerPointsRepo;
 	@Autowired private JDBCRepositoryImpl viewsRepo;
-	
+
 	@Autowired private CacheHandler cacheHandler;
 
 	@Transactional(readOnly = false)
 	public void processSessionResults(Long sessionId) {
 		EventSession session = sessionRepo.findOne(sessionId);
-		
+
 		for(PointsSystemSession pss: session.getPointsSystemsSession()) {
 			List<DriverEventPoints> drivers = new ArrayList<>();
 			Map<Long, TeamEventPoints> teams = new HashMap<>();
 			Map<String, ManufacturerEventPoints> manufacturers = new HashMap<>();
-			
+
 			PointsSystem ps = pss.getPointsSystem();
 			int[] points = ps != null ? ps.disclosePoints() : null;
 			float pointsPct = 1f;
-			
+
 			driverPointsRepo.deleteSessionPoints(sessionId, pss.getSeriesEdition().getId());
 			teamPointsRepo.deleteSessionPoints(sessionId, pss.getSeriesEdition().getId());
 			manufacturerPointsRepo.deleteSessionPoints(sessionId, pss.getSeriesEdition().getId());
 
 			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionId(
 					session.getId(), session.getEventEdition().getId());
+			if (results.isEmpty()) {
+			    return;
+            }
 			if (ps.getRacePctCompleted() > 0) {
 				EventEntryResult result = results.get(0);
 				if (session.isRace() && session.getDurationType().equals(DurationType.LAPS.getValue())) {
@@ -83,7 +86,7 @@ public class ResultsService {
 			for(int i = 0; i < results.size(); i++) {
 				EventEntryResult result = results.get(i);
 				Boolean sharedDrive = result.getSharedDriveWith() != null;
-				
+
 				float calculatedPoints = 0f;
 				if (points != null) {
 					if (result.getFinalPosition() < 800 && result.getFinalPosition() <= points.length) {
@@ -93,19 +96,19 @@ public class ResultsService {
 						}
 						calculatedPoints = calculatedPoints * pointsPct;
 					}
-					
+
 					for(Driver d : result.getEntry().getDrivers()) {
-						log.debug(result.getFinalPosition() + "-" + d.getFullName() + ": " + 
+						log.debug(result.getFinalPosition() + "-" + d.getFullName() + ": " +
 								(points.length > result.getFinalPosition() ? points[result.getFinalPosition() - 1] : 0));
-						
+
 						if (result.getFinalPosition() < 800 && points.length > i) {
 							DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), session.getName());
 							dep.addPoints(calculatedPoints);
-							log.debug(String.format("Driver %s: %s(x%s) points for position %s", 
+							log.debug(String.format("Driver %s: %s(x%s) points for position %s",
 								d.getFullName(), (float)points[result.getFinalPosition() - 1], pss.getPsMultiplier(), result.getFinalPosition()));
 							drivers.add(dep);
 						}
-						
+
 						if (result.getStartingPosition() != null &&  result.getStartingPosition() == 1) {
 							if (ps.getPointsPole() != 0) {
 								DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsPole");
@@ -122,19 +125,19 @@ public class ResultsService {
 							drivers.add(dep);
 						}
 					}
-					
+
 				}
 			}
-			
+
 			if (ps != null) {
 				log.debug("Race points calculated... proceeding with extra points");
 				if (ps.getPointsFastLap() != 0) {
 					List<EventEntryResult> fastestLapOrder = results.parallelStream().sorted(
 							(r1, r2)->Long.compare(
-										r1.getBestLapTime() == null ? Long.MAX_VALUE : r1.getBestLapTime(), 
+										r1.getBestLapTime() == null ? Long.MAX_VALUE : r1.getBestLapTime(),
 										r2.getBestLapTime() == null ? Long.MAX_VALUE : r2.getBestLapTime()))
 							.collect(Collectors.toList());
-					
+
 					EventEntryResult fastestEntry;
 					Stream<EventEntryResult> filtered = fastestLapOrder.parallelStream();
 					if (ps.getMaxPosFastLap() != 0) {
@@ -168,7 +171,7 @@ public class ResultsService {
 					List<EventEntryResult> ledLaps = results.parallelStream()
 							.filter(r -> r.getLapsLed() > 0)
 							.sorted((r1, r2) -> Integer.compare(r2.getLapsLed(), r1.getLapsLed())).collect(Collectors.toList());
-					
+
 					Comparator<EventEntryResult> c = (r1, r2) -> {
 						if (r1.getLapsLed().equals(r2.getLapsLed())) {
 							return r1.getFinalPosition().compareTo(r2.getFinalPosition());
@@ -176,9 +179,9 @@ public class ResultsService {
 							return r1.getLapsLed().compareTo(r2.getLapsLed()) * -1;
 						}
 					};
-					
+
 					ledLaps.sort(c);
-					
+
 					int maxLedLaps = 0;
 					for(EventEntryResult r : ledLaps) {
 						boolean addPointsMostLeadLaps = false;
@@ -201,7 +204,7 @@ public class ResultsService {
 					}
 				}
 			}
-			
+
 			//Points for each driver calculated. Proceeding with teams and manufacturers
 			if (pss.getSeriesEdition().getTeamsStandings()) {
 				List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(session.getEventEdition().getId());
@@ -219,9 +222,9 @@ public class ResultsService {
 						tep.addPoints((float)dPoints);
 						teams.put(entry.getTeam().getId(), tep);
 					}
-				}			
+				}
 			}
-			
+
 			if (pss.getSeriesEdition().getManufacturersStandings()) {
 				List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(session.getEventEdition().getId());
 				for(EventEditionEntry entry: entries) {
@@ -232,8 +235,8 @@ public class ResultsService {
 								.mapToDouble(r -> drivers.stream().filter(
 									dp -> dp.getDriver().getId().equals(r.getEntry().getDrivers().get(0).getId())).mapToDouble(dp -> dp.getPoints()).sum())
 								.sum();
-						
-		
+
+
 						if (mPoints > 0) {
 							ManufacturerEventPoints mep = manufacturers.get(entry.getChassis().getManufacturer());
 							if (mep == null) {
@@ -246,43 +249,43 @@ public class ResultsService {
 							manufacturers.put(manufacturer, mep);
 						}
 					}
-				}	
+				}
 			}
-			
+
 			log.debug("Persisting points...");
 			drivers.stream().forEach(entry -> driverPointsRepo.save(entry));
 			teams.entrySet().stream().forEach(entry -> teamPointsRepo.save(entry.getValue()));
 			manufacturers.entrySet().stream().forEach(entry -> manufacturerPointsRepo.save(entry.getValue()));
 			cacheHandler.resetDriversStandingsCache(pss.getSeriesEdition().getId());
 		}
-		
-		
+
+
 		log.info("Processed result for {}-{}.", session.getEventEdition().getLongEventName(), session.getName());
 	}
-	
+
 	public List<DriverPointsDTO> getDriversStandings(Long seriesId) {
 		List<DriverPointsDTO> standings = viewsRepo.getDriversStandings(seriesId);
 		Map<Long, List<Object[]>> positions = viewsRepo.getDriversResultsInSeries(seriesId);
-		
+
 		Comparator<DriverPointsDTO> c = (o1, o2) -> {
 			if (o1.getPoints().floatValue() != o2.getPoints().floatValue()) {
 				return o1.getPoints().compareTo(o2.getPoints());
 			} else {
 				List<Object[]> positionsD1 = positions.get(o1.getDriverId());
 				List<Object[]> positionsD2 = positions.get(o2.getDriverId());
-				
+
 				return sortPositions(positionsD1, positionsD2);
 			}
 		};
-		
+
 		standings.sort(c.reversed());
 		return standings;
 	}
-	
+
 	public List<DriverPointsDTO> getDriversPointsEvent(Long eventId) {
 		return getDriversPointsEvent(null, eventId);
 	}
-	
+
 	public List<DriverPointsDTO> getDriversPointsEvent(Long seriesId, Long eventId) {
 		List<Object[]> pointsEvent;
 		if (seriesId == null) {
@@ -290,7 +293,7 @@ public class ResultsService {
 		} else {
 			pointsEvent = driverPointsRepo.getDriversPointsInEvent(seriesId, eventId);
 		}
-		
+
 		return pointsEvent.parallelStream().map(dep -> new DriverPointsDTO(
 				null,
 				(Long)dep[0],
@@ -298,15 +301,15 @@ public class ResultsService {
 				((Double)dep[3]).floatValue(),
 				((Long)dep[4]).intValue(), "")).collect(Collectors.toList());
 	}
-	
+
 	public List<DriverPointsDTO> getDriverPointsEvent(Long eventId, Long driverId) {
 		List<Object[]> pointsEvent = driverPointsRepo.getDriverPointsInEvent(eventId, driverId);
-		
+
 		return pointsEvent.parallelStream().map(dep -> new DriverPointsDTO(
-				(Long)dep[0], (String)dep[1] + " " + (String)dep[2], 
+				(Long)dep[0], (String)dep[1] + " " + (String)dep[2],
 				(Float)dep[3], (String)dep[4])).collect(Collectors.toList());
 	}
-	
+
 	public PointsRaceByRace getPointsRaceByRace(Long seriesEditionId) {
 		List<Object[]> pointsSeries = driverPointsRepo.getDriversPointsInSeries(seriesEditionId);
 		PointsRaceByRace result = new PointsRaceByRace();
@@ -314,29 +317,29 @@ public class ResultsService {
 			result.addDriverPoints(
 					(String)ps[0], (String)ps[1], (SessionType)ps[2], (String)ps[3] + " " + (String)ps[4], ((Double)ps[5]).floatValue());
 		});
-		
+
 		return result;
 	}
-	
+
 	public List<TeamPointsDTO> getTeamsStandings(Long seriesId) {
 		List<TeamPointsDTO> standings = viewsRepo.getTeamsStandings(seriesId);
 		Map<Long, List<Object[]>> positions = viewsRepo.getTeamsResultsInSeries(seriesId);
-		
+
 		Comparator<TeamPointsDTO> c = (o1, o2) -> {
 			if (o1.getPoints().floatValue() != o2.getPoints().floatValue()) {
 				return o1.getPoints().compareTo(o2.getPoints());
 			} else {
 				List<Object[]> positionsT1 = positions.get(o1.getTeamId());
 				List<Object[]> positionsT2 = positions.get(o2.getTeamId());
-				
+
 				return sortPositions(positionsT1, positionsT2);
 			}
 		};
-		
+
 		standings.sort(c.reversed());
 		return standings;
 	}
-	
+
 	public List<ManufacturerPointsDTO> getManufacturersStandings(Long seriesId) {
 		return viewsRepo.getManufacturersStandings(seriesId);
 	}
@@ -345,7 +348,7 @@ public class ResultsService {
 		Comparator<Object[]> pc = (pc1, pc2) -> ((Integer)pc1[0]).compareTo((Integer)pc2[0]);
 		if (positionsD1 != null) positionsD1.sort(pc);
 		if (positionsD2 != null) positionsD2.sort(pc);
-		
+
 		if (positionsD1 == null || positionsD1.isEmpty()) {
 			if (positionsD2 == null || positionsD2.isEmpty()) {
 				return 0;
