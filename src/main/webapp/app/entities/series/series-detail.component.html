@@ -2,8 +2,8 @@
 <div *ngIf="series">
     <h2>{{series.name}}</h2>
     <hr>
-    <jhi-alert-error></jhi-alert-error>
-    
+    <jhi-alert></jhi-alert>
+
     <div class="row">
        	<div class="col-lg-3 col-md-3">
 	       	<dl class="row-md jh-entity-details">
@@ -12,7 +12,7 @@
 		            <span>{{series.name}}</span>
 		        </dd>
 		        <dt><span jhiTranslate="motorsportsDatabaseApp.series.shortname">Shortname</span></dt>
-		        <dd>	
+		        <dd>
 		            <span>{{series.shortname}}</span>
 		        </dd>
 		        <dt><span jhiTranslate="motorsportsDatabaseApp.series.organizer">Organizer</span></dt>
@@ -23,7 +23,7 @@
 		        <dd>
 					<img *ngIf="series.logoUrl" [src]="series.logoUrl" class="img-fluid" alt="series logo"/>
 				</dd>
-			
+
 			    <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
 			            [routerLink]="['/', { outlets: { popup: 'series/'+ series.id + '/edit'} }]"
 			            replaceUrl="true"

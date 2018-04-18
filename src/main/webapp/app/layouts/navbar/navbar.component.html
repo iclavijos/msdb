@@ -10,66 +10,66 @@
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
       	<li class="nav-item" data-toggle="tooltip" data-placement="right">
-            <a class="nav-link-lat" routerLink="driver">
+            <a class="nav-link-lat" [class.disabled]="!isAuthenticated()" routerLink="driver">
                 <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
                 <span class="nav-link-text" jhiTranslate="global.menu.entities.driver">Driver</span>
             </a>
         </li>
         <li class="nav-item" data-toggle="tooltip" data-placement="right">
-            <a class="nav-link-lat" routerLink="racetrack">
+            <a class="nav-link-lat" [class.disabled]="!isAuthenticated()" routerLink="racetrack">
                 <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
                 <span class="nav-link-text" jhiTranslate="global.menu.entities.racetrack">Racetrack</span>
             </a>
         </li>
         <li class="nav-item" data-toggle="tooltip" data-placement="right">
-            <a class="nav-link-lat" routerLink="team">
+            <a class="nav-link-lat" [class.disabled]="!isAuthenticated()" routerLink="team">
                 <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
                 <span class="nav-link-text" jhiTranslate="global.menu.entities.team">Team</span>
             </a>
         </li>
         <li class="nav-item" data-toggle="tooltip" data-placement="right">
-            <a class="nav-link-lat" routerLink="engine">
+            <a class="nav-link-lat" [class.disabled]="!isAuthenticated()" routerLink="engine">
                       <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
                       <span class="nav-link-text" jhiTranslate="global.menu.entities.engine">Engine</span>
                   </a>
               </li>
-              <li class="nav-item" data-toggle="tooltip" data-placement="right">
-            <a class="nav-link-lat" routerLink="chassis">
+        <li class="nav-item" data-toggle="tooltip" data-placement="right">
+            <a class="nav-link-lat" [class.disabled]="!isAuthenticated()" routerLink="chassis">
                       <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
                       <span class="nav-link-text" jhiTranslate="global.menu.entities.chassis">Chassis</span>
                   </a>
               </li>
         <li class="nav-item" data-toggle="tooltip" data-placement="right">
-            <a class="nav-link-lat" routerLink="tyre-provider">
+            <a class="nav-link-lat" [class.disabled]="!isAuthenticated()" routerLink="tyre-provider">
                 <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
                 <span class="nav-link-text" jhiTranslate="global.menu.entities.tyreProvider">Tyre Provider</span>
             </a>
         </li>
         <li class="nav-item" data-toggle="tooltip" data-placement="right">
-            <a class="nav-link-lat" routerLink="fuel-provider">
+            <a class="nav-link-lat" [class.disabled]="!isAuthenticated()" routerLink="fuel-provider">
                    <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
                    <span class="nav-link-text" jhiTranslate="global.menu.entities.fuelProvider">Fuel Provider</span>
                </a>
            </li>
-           <li class="nav-item" data-toggle="tooltip" data-placement="right">
-           <a class="nav-link-lat" routerLink="event">
+        <li class="nav-item" data-toggle="tooltip" data-placement="right">
+           <a class="nav-link-lat" [class.disabled]="!isAuthenticated()" routerLink="event">
                    <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
                    <span class="nav-link-text" jhiTranslate="global.menu.entities.event">Event</span>
                </a>
-           </li>
-           <li class="nav-item" data-toggle="tooltip" data-placement="right">
+        </li>
+        <li class="nav-item" data-toggle="tooltip" data-placement="right">
            <a class="nav-link-lat" routerLink="series">
                    <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
                    <span class="nav-link-text" jhiTranslate="global.menu.entities.series">Series</span>
                </a>
-           </li>
-           <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" class="nav-item" data-toggle="tooltip" data-placement="right">
+        </li>
+        <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" class="nav-item" data-toggle="tooltip" data-placement="right">
            	<a class="nav-link-lat" routerLink="category">
                    <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
                    <span class="nav-link-text" jhiTranslate="global.menu.entities.category">Category</span>
                </a>
-           </li>
-           <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" class="nav-item" data-toggle="tooltip" data-placement="right">
+        </li>
+        <li *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" class="nav-item" data-toggle="tooltip" data-placement="right">
            	<a class="nav-link-lat" routerLink="points-system">
 	            <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
 	        	<span class="nav-link-text" jhiTranslate="global.menu.entities.pointsSystem">Points System</span>

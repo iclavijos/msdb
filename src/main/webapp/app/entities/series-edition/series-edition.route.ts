@@ -35,7 +35,6 @@ export const seriesEditionRoute: Routes = [
     path: 'series/series-edition/:id',
     component: SeriesEditionDetailComponent,
     data: {
-        authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -133,5 +132,5 @@ export const seriesEditionPopupRoute: Routes = [
       canActivate: [UserRouteAccessService],
       outlet: 'popup'
   }
-  
+
 ];

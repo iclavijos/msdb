@@ -49,7 +49,6 @@ export const seriesRoute: Routes = [
       'pagingParams': SeriesResolvePagingParams
     },
     data: {
-        authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.series.home.title'
     }
   }, {
@@ -59,7 +58,6 @@ export const seriesRoute: Routes = [
         'pagingParams': SeriesEditionResolvePagingParams
     },
     data: {
-        authorities: ['ROLE_USER'],
         pageTitle: 'motorsportsDatabaseApp.series.home.title'
     }
   }

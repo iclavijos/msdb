@@ -31,7 +31,6 @@ export const eventEditionRoute: Routes = [
     path: 'event-edition/:id',
         component: EventEditionDetailComponent,
         data: {
-            authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.eventEdition.home.title'
         },
         canActivate: [UserRouteAccessService]
