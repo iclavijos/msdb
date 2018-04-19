@@ -329,7 +329,7 @@ public class ResultsService {
 	public String[][] getResultsRaceByRace(Long seriesEditionId) {
 		SeriesEdition seriesEdition = seriesEdRepository.findOne(seriesEditionId);
 		List<EventSession> races = sessionRepo.findRacesInSeries(seriesEdition);
-		List<DriverPointsDTO> dpd = getDriversStandings(seriesEditionId);
+		List<DriverPointsDTO> dpd = getDriversStandings(seriesEditionId); //We use this as returned data is ordered by scored points
 		List<String> driverNames = dpd.stream().map(driver -> driver.getDriverName()).collect(Collectors.toList());
 		
 		String[][] data = new String[driverNames.size() + 1][races.size() + 1];
