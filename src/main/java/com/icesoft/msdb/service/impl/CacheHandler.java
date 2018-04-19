@@ -14,7 +14,7 @@ public class CacheHandler {
 		log.debug("Reseting drivers standings cache for series edition {}", seriesEditionId);
 	}
 	
-	@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace"}, key="#seriesEditionId")
+	@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, key="#seriesEditionId")
 	public void resetWinnersCache(Long seriesEditionId) {
 		log.debug("Reseting winners cache for series edition {}", seriesEditionId);
 	}
@@ -24,7 +24,7 @@ public class CacheHandler {
 		log.debug("Reseting series champions cache for series edition {}", seriesEditionId);
 	}
 	
-	@CacheEvict(cacheNames="pointRaceByRace")
+	@CacheEvict(cacheNames= {"pointRaceByRace", "resultsRaceByRace"})
 	public void resetPointsRaceByRace(Long seriesEditionId) {
 		log.debug("Reseting race by race points cache for series edition {}", seriesEditionId);
 	}

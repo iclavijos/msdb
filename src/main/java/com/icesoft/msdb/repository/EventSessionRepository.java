@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.icesoft.msdb.domain.EventSession;
+import com.icesoft.msdb.domain.SeriesEdition;
 
 /**
  * Spring Data JPA repository for the EventSession entity.
@@ -22,4 +23,9 @@ public interface EventSessionRepository extends JpaRepository<EventSession,Long>
 	
 	@Query("SELECT s FROM EventSession s WHERE s.sessionStartTime BETWEEN ?1 AND ?2 ORDER BY s.sessionStartTime ASC")
 	List<EventSession> findUpcomingSessions(ZonedDateTime fromDate, ZonedDateTime toDate);
+	
+	@Query("SELECT es FROM EventSession es WHERE ?1 MEMBER OF es.eventEdition.seriesEditions AND "
+			+ "(es.sessionType = com.icesoft.msdb.domain.enums.SessionType.RACE OR es.sessionType = com.icesoft.msdb.domain.enums.SessionType.QUALIFYING_RACE) "
+			+ "ORDER BY es.sessionStartTime")
+	List<EventSession> findRacesInSeries(SeriesEdition seriesEdition);
 }

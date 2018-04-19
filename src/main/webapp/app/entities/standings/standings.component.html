@@ -103,6 +103,26 @@
 			</table>
 		</ng-template>
 	</ngb-tab>
+	<ngb-tab title="{{'motorsportsDatabaseApp.series.seriesEdition.detail.resultsPerRace' | translate}}" *ngIf="showExtendedStandings">
+		<ng-template ngbTabContent>
+			<table class="table table-sm">
+				<thead>
+					<tr>
+						<th *ngFor="let eventName of resultsByRace[0]">{{eventName}}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let row of resultsByRace | slice:1; let isOdd=odd; let isEven=even" [class.odd]="isOdd">
+				        <td *ngFor="let value of row" style="text-align:center; vertical-align: middle;"
+				        	[class.retired]="value === 'DNF' || value === 'DNS' || value === 'NC'"
+				        	[class.disqualified]="value === 'DSQ'"
+				        	[class.winner]="value === '1'" [class.second]="value === '2'" [class.third]="value === '3'"  
+				        	>{{value}}</td>
+				    </tr>
+				</tbody>
+			</table>
+		</ng-template>
+	</ngb-tab>
 	<ngb-tab title="{{'motorsportsDatabaseApp.series.seriesEdition.detail.graphics' | translate}}" *ngIf="showExtendedStandings">
 		<ng-template ngbTabContent>
 			<div class="row">

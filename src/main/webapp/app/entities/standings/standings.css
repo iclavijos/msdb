@@ -1,0 +1,24 @@
+tr.odd {
+	background-color: rgba(0,0,0,0.05);	
+}
+
+td.retired {
+	background-color: #EFCFFF;
+}
+
+td.disqualified {
+	background-color: #000000;
+	color: #FFFFFF;
+}
+
+td.winner {
+	background-color: #ffffbf;
+}
+
+td.second {
+	background-color: #dfdfdf;
+}
+
+td.third {
+	background-color: #ffdf9f;
+}

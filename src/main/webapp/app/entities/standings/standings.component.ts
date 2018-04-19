@@ -10,7 +10,10 @@ import { SeriesEdition, SeriesEditionService } from '../series-edition';
 
 @Component({
     selector: 'jhi-standings',
-    templateUrl: './standings.component.html'
+    templateUrl: './standings.component.html',
+    styleUrls: [
+        'standings.css'
+    ]
 })
 export class StandingsComponent implements OnInit {
 
@@ -19,6 +22,7 @@ export class StandingsComponent implements OnInit {
     manufacturers: any;
 	headers: any;
 	pointsByRace: any;
+	resultsByRace: any;
 	numRaces: number;
     @Input() eventEditionId: number;
     @Input() seriesEdition: SeriesEdition;
@@ -64,6 +68,10 @@ export class StandingsComponent implements OnInit {
 		    		this.manufacturers = manufacturersStandings.json();
 		    	});
 	    	}
+	    	this.seriesEditionService.findDriversResultsByRace(this.seriesEdition.id).subscribe(resultsByRace => {
+	    		this.resultsByRace = resultsByRace.json();
+	    	});
+	    	
 	    	this.seriesEditionService.findDriversPointsByRace(this.seriesEdition.id).subscribe(pointsByRace => {
 	    		this.pointsByRace = pointsByRace.json();
 	    		this.numRaces = this.pointsByRace[0].length - 2;
@@ -94,6 +102,7 @@ export class StandingsComponent implements OnInit {
 	    	            }
 	    	        };
 	    	});
+	    	
 	    }
     }
     

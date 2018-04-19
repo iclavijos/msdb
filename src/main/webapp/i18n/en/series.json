@@ -47,6 +47,7 @@
 	                "manufacturer": "Constructor",
 	                "points": "Points",
 	                "pointsPerRace": "Points per race",
+	                "resultsPerRace": "Results per race",
 	                "graphics": "Graphics"
 	            },
 	            "calendar": {

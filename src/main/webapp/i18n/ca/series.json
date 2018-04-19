@@ -47,6 +47,7 @@
 	                "manufacturer": "Constructor",
 	                "points": "Punts",
 	                "pointsPerRace": "Punts per cursa",
+	                "resultsPerRace": "Resultats per cursa",
 	                "graphics": "Gràfiques"
 	            },
 	            "calendar": {

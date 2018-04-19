@@ -81,6 +81,12 @@ export class SeriesEditionService {
         });
     }
     
+    findDriversResultsByRace(id: number): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${id}/results`).map((res: Response) => {
+            return res;
+        });
+    }
+    
     findDriversPointsByRace(id: number): Observable<Response> {
         return this.http.get(`${this.resourceUrl}/${id}/points`).map((res: Response) => {
             return res;

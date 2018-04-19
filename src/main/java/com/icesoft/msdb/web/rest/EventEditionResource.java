@@ -354,7 +354,7 @@ public class EventEditionResource {
     
     @PutMapping("/event-editions/event-sessions/{sessionId}/process-results")
     @Timed
-    @CacheEvict({"driversStandingsCache", "teamsStandingsCache", "pointRaceByRace", "winnersCache", "pointRaceByRace"}) //TODO: Improve to only remove the required key
+    @CacheEvict({"driversStandingsCache", "teamsStandingsCache", "pointRaceByRace", "winnersCache", "pointRaceByRace", "resultsRaceByRace"}) //TODO: Improve to only remove the required key
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
     public ResponseEntity<Void> processSessionResults(@PathVariable Long sessionId) {
@@ -577,7 +577,7 @@ public class EventEditionResource {
     @PostMapping("/event-editions/{id}/event-sessions/{idSession}/results")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    @CacheEvict(cacheNames={"winnersCache", "pointRaceByRace"}, key="#eventSessionResult.entry.id")
+    @CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, key="#eventSessionResult.entry.id")
     public ResponseEntity<EventEntryResult> createEventSessionResult(@Valid @RequestBody EventEntryResult eventSessionResult) throws URISyntaxException {
         log.debug("REST request to save EventEntryResult : {}", eventSessionResult);
         if (eventSessionResult.getId() != null) {
@@ -594,7 +594,7 @@ public class EventEditionResource {
     @PutMapping("/event-editions/event-sessions/results")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    @CacheEvict(cacheNames={"winnersCache", "pointRaceByRace"}, key="#eventSessionResult.entry.id")
+    @CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, key="#eventSessionResult.entry.id")
     public ResponseEntity<EventEntryResult> updateEventSessionResult(@Valid @RequestBody EventEntryResult eventSessionResult) throws URISyntaxException {
         log.debug("REST request to update EventEntryResult : {}", eventSessionResult);
         if (eventSessionResult.getId() == null) {

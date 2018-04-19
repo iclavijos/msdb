@@ -211,6 +211,14 @@ public class SeriesEditionResource {
     	return new ResponseEntity<>(points.getResultsMatrix(standings), HttpStatus.OK);
     }
     
+    @GetMapping("/series-editions/{id}/results")
+    @Timed
+    @Cacheable(cacheNames="resultsRaceByRace", key="#id")
+    public ResponseEntity<String[][]> getSeriesResultsRaceByRace(@PathVariable Long id) {
+    	String[][] result = resultsService.getResultsRaceByRace(id);
+    	return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    
     @GetMapping("/series-editions/{id}/events")
     @Timed
     @Cacheable(cacheNames="winnersCache", key="#id")
@@ -223,7 +231,7 @@ public class SeriesEditionResource {
     @PostMapping("/series-editions/{id}/events/{idEvent}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    @CacheEvict(cacheNames={"winnersCache", "pointRaceByRace"}, key="#id")
+    @CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, key="#id")
     public ResponseEntity<Void> addEventToSeries(@PathVariable Long id, @PathVariable Long idEvent, @Valid @RequestBody List<EventRacePointsDTO> racesPointsData) {
     	log.debug("REST request to add an event to series {}", id);
     	seriesEditionService.addEventToSeries(id, idEvent, racesPointsData);
@@ -233,7 +241,7 @@ public class SeriesEditionResource {
     @DeleteMapping("/series-editions/{id}/events/{idEvent}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    @CacheEvict(cacheNames={"winnersCache", "pointRaceByRace"}, key="#id")
+    @CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, key="#id")
     public ResponseEntity<Void> removeEventFromSeries(@PathVariable Long id, @PathVariable Long idEvent) {
     	log.debug("REST request to remove an event from series {}", id);
     	seriesEditionService.removeEventFromSeries(id, idEvent);

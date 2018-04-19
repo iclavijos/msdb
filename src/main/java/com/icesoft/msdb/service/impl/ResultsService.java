@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,14 +24,17 @@ import com.icesoft.msdb.domain.ManufacturerEventPoints;
 import com.icesoft.msdb.domain.PointsRaceByRace;
 import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.domain.PointsSystemSession;
+import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.TeamEventPoints;
 import com.icesoft.msdb.domain.enums.DurationType;
+import com.icesoft.msdb.domain.enums.ResultType;
 import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.ManufacturerEventPointsRepository;
+import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.TeamEventPointsRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
@@ -45,6 +49,7 @@ public class ResultsService {
 	@Autowired private EventSessionRepository sessionRepo;
 	@Autowired private EventEntryResultRepository resultsRepo;
 	@Autowired private EventEntryRepository eventEntryRepository;
+	@Autowired private SeriesEditionRepository seriesEdRepository;
 	@Autowired private DriverEventPointsRepository driverPointsRepo;
 	@Autowired private TeamEventPointsRepository teamPointsRepo;
 	@Autowired private ManufacturerEventPointsRepository manufacturerPointsRepo;
@@ -62,7 +67,7 @@ public class ResultsService {
 			Map<String, ManufacturerEventPoints> manufacturers = new HashMap<>();
 
 			PointsSystem ps = pss.getPointsSystem();
-			int[] points = ps != null ? ps.disclosePoints() : null;
+			int[] points = Optional.ofNullable(ps).map(p -> p.disclosePoints()).get();
 			float pointsPct = 1f;
 
 			driverPointsRepo.deleteSessionPoints(sessionId, pss.getSeriesEdition().getId());
@@ -319,6 +324,41 @@ public class ResultsService {
 		});
 
 		return result;
+	}
+	
+	public String[][] getResultsRaceByRace(Long seriesEditionId) {
+		SeriesEdition seriesEdition = seriesEdRepository.findOne(seriesEditionId);
+		List<EventSession> races = sessionRepo.findRacesInSeries(seriesEdition);
+		List<DriverPointsDTO> dpd = getDriversStandings(seriesEditionId);
+		List<String> driverNames = dpd.stream().map(driver -> driver.getDriverName()).collect(Collectors.toList());
+		
+		String[][] data = new String[driverNames.size() + 1][races.size() + 1];
+		for(int i = 1; i <= driverNames.size(); i++) {
+			data[i][0] = driverNames.get(i - 1);
+			for(int j = 1; j <= races.size(); j++) {
+				data[i][j] = "-";
+			}
+		}
+		for(int i = 1; i <= races.size(); i++) {
+			EventSession session = races.get(i - 1);
+			data[0][i] = session.getShortname().equalsIgnoreCase("R") || session.getShortname().equalsIgnoreCase("Race") ? 
+					session.getEventEdition().getEvent().getName() :
+					session.getEventEdition().getEvent().getName() + "-" + session.getName();
+					
+			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionId(session.getId(), session.getEventEdition().getId());
+			for(EventEntryResult result: results) {
+				String res = Integer.toString(result.getFinalPosition());
+				if (result.getFinalPosition() >= 800) {
+					res = ResultType.valueOf(result.getFinalPosition()).getStringValue();
+				}
+				for(Driver driver: result.getEntry().getDrivers()) {
+					int pos = driverNames.indexOf(driver.getFullName());
+					data[pos + 1][i] = res;
+				}
+			}
+		}
+		
+		return data;
 	}
 
 	public List<TeamPointsDTO> getTeamsStandings(Long seriesId) {
