@@ -52,6 +52,7 @@
             "multidriver": "More than one driver per entry?",
             "yourTime": "Your time",
             "localTime": "Local time",
+            "driversTimes": "Drivers' times",
             "session": {
             	"createOrEditLabel": "Create or edit a Event Session",
             	"name": "Name",

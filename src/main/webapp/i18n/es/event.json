@@ -52,6 +52,7 @@
             "multidriver": "Más de un piloto per participante?",
             "yourTime": "Tu hora",
             "localTime": "Hora local",
+            "driversTimes": "Tiempos de los pilotos",
             "session": {
             	"createOrEditLabel": "Crea o edita una sesión",
             	"name": "Nombre",
