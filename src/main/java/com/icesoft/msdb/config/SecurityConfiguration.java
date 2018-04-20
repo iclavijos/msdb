@@ -107,14 +107,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/api/timezones").permitAll()
             .antMatchers("/api/event-editions/calendar/**").permitAll()
             //Start of "public" access
-            //.antMatchers(HttpMethod.GET, "/api/drivers/**").permitAll()
-            //.antMatchers(HttpMethod.GET, "/api/stats/drivers/**").permitAll()
-            //.antMatchers(HttpMethod.GET, "/api/_search/drivers").permitAll()
-
             .antMatchers(HttpMethod.GET, "/api/series/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/_search/series").permitAll()
             .antMatchers(HttpMethod.GET, "/api/series-editions/**").permitAll()
 
+            .antMatchers(HttpMethod.GET, "/api/events/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/event-editions/**").permitAll()
             //End of "public" access
             .antMatchers("/api/**").authenticated()
