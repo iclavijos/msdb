@@ -6,10 +6,16 @@ export class TimeMaskPipe implements PipeTransform {
   constructor() {
   }
 
-  transform(timeMillis: number, handleHours?: boolean): string {
-      if (!timeMillis) {
+  transform(value: any, handleHours?: boolean): string {
+      if (!value) {
           return;
       }
+            
+      if (isNaN(Number(value))) {
+      	return value;
+      }
+      
+      const timeMillis = Number(value);
 
       const millis = timeMillis % 10000;
       let seconds = Math.floor(timeMillis / 10000);
