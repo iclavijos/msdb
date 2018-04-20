@@ -360,6 +360,32 @@ public class ResultsService {
 		
 		return data;
 	}
+	
+	public String[][] getDriverEventBestTimes(Long eventEditionId) {
+		List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(eventEditionId);
+		List<EventSession> sessions = sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventEditionId);
+		String[][] data = new String[entries.size() + 1][sessions.size() + 1];
+		
+		for(int i = 1; i <= sessions.size(); i++) {
+			data[0][i] = sessions.get(i - 1).getName();
+		}
+		
+		for(int i = 1; i <= entries.size(); i++) {
+			EventEditionEntry entry = entries.get(i - 1);
+			data[i][0] = "#" + entry.getRaceNumber() + " " + entry.getDriversName();
+			List<EventEntryResult> results = resultsRepo.findByEntryId(entry.getId());
+			for(int j = 1; j <= sessions.size(); j++) {
+				Optional<EventEntryResult> optResult = Optional.ofNullable(results.get(j - 1));
+				if (optResult.isPresent()) {
+					data[i][j] = Optional.ofNullable(optResult.get().getBestLapTime()).map(laptime -> laptime.toString()).orElse("");
+				} else {
+					data[i][j] = "-";
+				}
+			}
+		}
+		
+		return data;
+	}
 
 	public List<TeamPointsDTO> getTeamsStandings(Long seriesId) {
 		List<TeamPointsDTO> standings = viewsRepo.getTeamsStandings(seriesId);

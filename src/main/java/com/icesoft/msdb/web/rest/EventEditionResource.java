@@ -615,4 +615,11 @@ public class EventEditionResource {
         eventResultRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME_RESULT, id.toString())).build();
     }
+    
+    @GetMapping("/event-editions/{id}/bestTimes")
+    @Timed
+    public ResponseEntity<String[][]> getDriversBestTimes(@PathVariable Long id) {
+    	log.debug("REST request to retrieve drivers best times on event {}", id);
+    	return ResponseEntity.ok(resultsService.getDriverEventBestTimes(id));
+    }
 }

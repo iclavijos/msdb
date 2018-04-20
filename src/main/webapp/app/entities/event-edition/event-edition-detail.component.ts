@@ -29,6 +29,7 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     editions: any[];
     navigationIds = null;
     showPoints = false;
+    driversBestTimes: any;
 
     keysSession: any[];
     keysDuration: any[];
@@ -64,6 +65,8 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
             }
             this.eventService.findEventEditionIds(eventEdition.event.id).subscribe(
                     (res: Response) => this.editions = res.json());
+            this.eventEditionService.findDriversBestTimes(id).subscribe(
+            	(res: Response) => this.driversBestTimes = res.json);
         });
     }
 

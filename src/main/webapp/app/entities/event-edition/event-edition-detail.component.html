@@ -164,6 +164,22 @@
 	    	<ng-container *ngTemplateOutlet="innerTabsetResults"></ng-container>
 	    </ng-template>
 	</ngb-tab>
+	<ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.driversTimes' | translate}}">
+	    <ng-template ngbTabContent>
+			<table class="table table-sm">
+				<thead>
+					<tr>
+						<th *ngFor="let sessionName of driversBestTimes[0]">{{sessionName}}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let row of driversBestTimes | slice:1; let isOdd=odd; let isEven=even" [class.odd]="isOdd">
+				        <td *ngFor="let value of row">{{value | timeMaskPipe}}</td>
+				    </tr>
+				</tbody>
+			</table>
+	    </ng-template>
+	</ngb-tab>
 	<ngb-tab *ngIf="showPoints" title="{{'motorsportsDatabaseApp.eventEdition.points' | translate}}">
 		<ng-template ngbTabContent>
 		    <jhi-standings [eventEditionId]="eventEdition.id" [seriesEditionIds]="eventEdition.seriesId" [seriesEditionNames]="eventEdition.seriesName">Standings...</jhi-standings>

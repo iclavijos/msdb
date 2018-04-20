@@ -99,6 +99,12 @@ export class EventEditionService {
         return this.http.get(`${this.resourceUrl}/calendar/${fromDate}/${toDate}`)
             .map((res: Response) => res.json());
     }
+    
+    findDriversBestTimes(eventId: number): Observable<ResponseWrapper> {
+    	return this.http.get(`${this.resourceUrl}/${eventId}/bestTimes`).map((res: Response) => {
+            return new ResponseWrapper(res.headers, res.json(), res.status);
+        });
+    }
 
     query(req?: any): Observable<ResponseWrapper> {
         const options = createRequestOption(req);
