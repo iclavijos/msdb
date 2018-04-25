@@ -69,7 +69,7 @@
                 <td *ngIf="session.sessionTypeValue === 2">
                 	{{ classifiedNotRetired(eventEntryResult) ?
                 		(eventEntryResult.differenceType == 1 ? '+' + (eventEntryResult.difference | timeMaskPipe) : eventEntryResult.difference + 'L')
-                		: eventEntryResult.totalTime | timeMaskPipe : true }}
+                		: eventEntryResult.totalTime | timeMaskPipe : true : true}}
                 </td>
                 <td>{{eventEntryResult.bestLapTime | timeMaskPipe }} 
                 	<span *ngIf="session.sessionTypeValue !== 2 && i !== 0 && eventEntryResult.bestLapTime">(+{{gap(eventEntryResult.bestLapTime) | timeMaskPipe}})</span></td>

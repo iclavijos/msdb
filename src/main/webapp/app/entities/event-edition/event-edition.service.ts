@@ -74,6 +74,11 @@ export class EventEditionService {
             }
         });
     }
+    
+    findRaces(id: number): Observable<ResponseWrapper> {
+        return this.http.get(`${this.resourceUrl}/${id}/sessions/races`)
+            .map((res: Response) => new ResponseWrapper(res.headers, res.json(), res.status));
+    }
 
     findWinners(id: number): Observable<Response> {
         return this.http.get(`${this.resourceUrl}/${id}/winners`).map((res: Response) => {
@@ -102,6 +107,18 @@ export class EventEditionService {
     
     findDriversBestTimes(eventId: number): Observable<ResponseWrapper> {
     	return this.http.get(`${this.resourceUrl}/${eventId}/bestTimes`).map((res: Response) => {
+            return new ResponseWrapper(res.headers, res.json(), res.status);
+        });
+    }
+    
+    hasLapsData(eventId: number): Observable<ResponseWrapper> {
+        return this.http.get(`${this.resourceUrl}/${eventId}/laps`).map((res: Response) => {
+            return new ResponseWrapper(res.headers, res.json(), res.status);
+        });
+    }
+
+    loadLapTimes(eventId: number, raceNumber: string): Observable<ResponseWrapper> {
+    	return this.http.get(`${this.resourceUrl}/${eventId}/laps/${raceNumber}`).map((res: Response) => {
             return new ResponseWrapper(res.headers, res.json(), res.status);
         });
     }

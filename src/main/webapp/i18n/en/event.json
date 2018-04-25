@@ -52,7 +52,8 @@
             "multidriver": "More than one driver per entry?",
             "yourTime": "Your time",
             "localTime": "Local time",
-            "driversTimes": "Drivers' times",
+			"driversTimes": "Drivers' times",
+			"lapsAnalysis": "Lap by lap",
             "session": {
             	"createOrEditLabel": "Create or edit a Event Session",
             	"name": "Name",

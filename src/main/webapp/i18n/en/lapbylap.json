@@ -1,0 +1,12 @@
+{
+    "motorsportsDatabaseApp": {
+        "lapbylap" : {
+            "lapCharts": "Lap charts",
+            "lapTimes": "Lap times",
+            "legend": "Legend",
+            "fastestLap": "Fastest race lap",
+            "fastLap": "Fast lap",
+            "personalBest": "Personal best"
+        }
+    }
+}

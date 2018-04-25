@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.enums.SessionType;
 
@@ -28,4 +29,7 @@ public interface EventEntryResultRepository extends JpaRepository<EventEntryResu
 	
 	@Query(value="select sum(laps_completed) as laps from event_entry_result where entry_id = ?1", nativeQuery=true)
 	Integer countLapsCompletedInEvent(Long entryId);
+	
+	@Query(value="SELECT r.entry FROM EventEntryResult r WHERE r.session.id = ?1")
+	List<EventEditionEntry> findSessionEntries(Long sessionId);
 }

@@ -1,0 +1,12 @@
+{
+    "motorsportsDatabaseApp": {
+        "lapbylap" : {
+            "lapCharts": "Gràfics",
+            "lapTimes": "Temps per volta",
+            "legend": "Llegenda",
+            "fastestLap": "Volta ràpida de carrera",
+            "fastLap": "Volta ràpida",
+            "personalBest": "Millor volta personal"
+        }
+    }
+}

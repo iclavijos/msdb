@@ -21,6 +21,12 @@ public interface EventSessionRepository extends JpaRepository<EventSession,Long>
 	@Query("SELECT s FROM EventSession s WHERE s.eventEdition.id = ?1 AND s.sessionType != 0 ORDER BY s.sessionStartTime ASC")
 	List<EventSession> findNonFPSessions(Long eventEditionId);
 	
+	@Query("SELECT s FROM EventSession s WHERE s.eventEdition.id = ?1 AND "
+			+ "(s.sessionType = com.icesoft.msdb.domain.enums.SessionType.RACE OR "
+			+ "s.sessionType = com.icesoft.msdb.domain.enums.SessionType.QUALIFYING_RACE) "
+			+ "ORDER BY s.sessionStartTime ASC")
+	List<EventSession> findRacesSessions(Long eventEditionId);
+	
 	@Query("SELECT s FROM EventSession s WHERE s.sessionStartTime BETWEEN ?1 AND ?2 ORDER BY s.sessionStartTime ASC")
 	List<EventSession> findUpcomingSessions(ZonedDateTime fromDate, ZonedDateTime toDate);
 	

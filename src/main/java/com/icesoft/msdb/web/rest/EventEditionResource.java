@@ -300,6 +300,15 @@ public class EventEditionResource {
     	result.parallelStream().forEach(session -> session.setEventEdition(null));
     	return result;
     }
+    
+    @GetMapping("/event-editions/{id}/sessions/races")
+    @Timed
+    public List<EventSession> getEventEditionRacesSessions(@PathVariable Long id) {
+    	log.debug("REST request to get all EventEditions {} races sessions", id);
+    	List<EventSession> result = eventSessionRepository.findRacesSessions(id);
+    	result.parallelStream().forEach(session -> session.setEventEdition(null));
+    	return result;
+    }
 
     @PostMapping("/event-editions/{id}/sessions")
     @Timed

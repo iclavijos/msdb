@@ -331,15 +331,14 @@ public class ImportsResource {
     		sessionLapDataRepo.delete(sessionId.toString());
     	}
     	
-       	EventSession session = sessionRepository.findOne(sessionId);
        	MappingIterator<LapInfo> readValues = initializeIterator(LapInfo.class, data);
        	SessionLapData sessionLapData = new SessionLapData();
        	sessionLapData.setSessionId(sessionId.toString());
        	
        	while (readValues.hasNext()) {
-       		sessionLapData.addLapData(readValues.next(), session.getEventEdition().isMultidriver());       		
+       		sessionLapData.addLapData(readValues.next());       		
        	}
-       	
+       	sessionLapData.processData();
        	sessionLapDataRepo.save(sessionLapData);
        	
 //       	for(String entryNumber : entriesLapByLap.keySet()) {

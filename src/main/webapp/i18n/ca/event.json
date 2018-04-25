@@ -52,7 +52,8 @@
             "multidriver": "Més d'un pilot per participant?",
             "yourTime": "La teva hora",
             "localTime": "Hora local",
-            "driversTimes": "Temps dels pilots",
+			"driversTimes": "Temps dels pilots",
+			"lapsAnalysis": "Volta a volta",
             "session": {
             	"createOrEditLabel": "Crea o edita una sessió",
             	"name": "Nom",

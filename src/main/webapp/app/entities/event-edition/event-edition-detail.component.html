@@ -185,6 +185,11 @@
 		    <jhi-standings [eventEditionId]="eventEdition.id" [seriesEditionIds]="eventEdition.seriesId" [seriesEditionNames]="eventEdition.seriesName">Standings...</jhi-standings>
 	    </ng-template>
 	</ngb-tab>
+	<ngb-tab *ngIf="hasLapsData" title="{{'motorsportsDatabaseApp.eventEdition.lapsAnalysis' | translate}}">
+	    <ng-template ngbTabContent>
+	    	<jhi-laps-analysis [eventEditionId]="eventEdition.id">Laps analysis..</jhi-laps-analysis>
+	    </ng-template>
+	</ngb-tab>
 	</ngb-tabset>
 	<button type="submit"
             (click)="previousState()"

@@ -19,6 +19,7 @@ import { MotorsportsDatabaseEventEntryResultModule } from './event-entry-result/
 import { MotorsportsDatabasePointsSystemModule } from './points-system/points-system.module';
 import { MotorsportsDatabaseStandingsModule } from './standings/standings.module';
 import { MotorsportsDatabaseDriverPointsDetailsModule } from './driver-points-details/driver-points-details.module';
+import { MotorsportsDatabaseLapsAnalysisModule} from './laps-analysis/laps-analysis.module';
 /* jhipster-needle-add-entity-module-import - JHipster will add entity modules imports here */
 
 @NgModule({
@@ -42,6 +43,7 @@ import { MotorsportsDatabaseDriverPointsDetailsModule } from './driver-points-de
         MotorsportsDatabasePointsSystemModule,
         MotorsportsDatabaseStandingsModule,
         MotorsportsDatabaseDriverPointsDetailsModule,
+        MotorsportsDatabaseLapsAnalysisModule,
         /* jhipster-needle-add-entity-module - JHipster will add entity modules here */
     ],
     declarations: [],

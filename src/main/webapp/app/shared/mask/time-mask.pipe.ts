@@ -6,7 +6,7 @@ export class TimeMaskPipe implements PipeTransform {
   constructor() {
   }
 
-  transform(value: any, handleHours?: boolean): string {
+  transform(value: any, includeMillis: boolean = true, handleHours?: boolean): string {
       if (!value) {
           return;
       }
@@ -48,12 +48,14 @@ export class TimeMaskPipe implements PipeTransform {
           result += String(seconds);
       }
 
-      if (millis > 0) {
-          result += '.';
-          const pad = '0000';
-          result += pad.substring(0, pad.length - String(millis).length) + String(millis);
-      } else {
-          result += '.0000';
+      if (includeMillis) {
+        if (millis > 0) {
+            result += '.';
+            const pad = '0000';
+            result += pad.substring(0, pad.length - millis.toFixed(0).length) + millis.toFixed(0);
+        } else {
+            result += '.0000';
+        }
       }
       return result;
   }

@@ -1,0 +1,59 @@
+<div *ngFor="let t of temp(math.ceil(drivers.length/5)).fill(); let i = index" class="row">
+    <div *ngFor="let item of drivers.slice(5*i,5*i + 5);" class="col-md-2">
+        <p-checkbox  name="groupDrivers" [value]="item.raceNumber" [label]="item.driversNames"
+            [(ngModel)]="selectedDrivers" (onChange)="refreshLapTimesTable(item.raceNumber)">
+        </p-checkbox>
+    </div>
+</div>
+<ngb-tabset>
+    <ngb-tab title="{{'motorsportsDatabaseApp.lapbylap.lapCharts' | translate}}">
+        <ng-template ngbTabContent>
+                <div class="row">
+                    <div class="col-md-4">
+                        <span>Select laps range:</span>&nbsp;
+                        <p-slider [(ngModel)]="lapsRange" [range]="true" [min]="2" [max]="maxLaps + 61" [maxValue]="maxLaps" 
+                            (onSlideEnd)="changeLapsRange($event)"></p-slider>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <p-chart type="line" [data]="data" [options]="options"></p-chart>
+                    </div>
+                </div>
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab title="{{'motorsportsDatabaseApp.lapbylap.lapTimes' | translate}}">
+        <ng-template ngbTabContent>
+            <table *ngIf="lapNumbers" class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Vuelta</th>
+                        <th *ngFor="let piloto of lapTimes">{{piloto.driverName}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let number of lapNumbers; let isOdd=odd; let isEven=even" [class.even]="isEven">
+                        <td>{{number + 1}}</td>
+                        <td *ngFor="let piloto of lapTimes">
+                            <div *ngIf="(number + 1) <= piloto.laps.length">
+                                {{piloto.laps[number].lapTime | timeMaskPipe}} <span *ngIf="piloto.laps[number].pitstop">P</span>&nbsp;
+                                <i class="fa fa-circle" *ngIf="piloto.laps[number].personalBest || piloto.laps[number].fastLap || piloto.laps[number].fastestLap"
+                                    [class.personalBest]="piloto.laps[number].personalBest"
+                                    [class.fastLap]="piloto.laps[number].fastLap"
+                                    [class.fastestLap]="piloto.laps[number].fastestLap"></i>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-md-12">
+                        <span>{{'motorsportsDatabaseApp.lapbylap.legend' | translate}}</span>
+                        <i class="fa fa-circle fastestLap"></i>{{'motorsportsDatabaseApp.lapbylap.fastestLap' | translate}}&nbsp;
+                        <i class="fa fa-circle fastLap"></i>{{'motorsportsDatabaseApp.lapbylap.fastLap' | translate}}&nbsp;
+                        <i class="fa fa-circle personalBest"></i>{{'motorsportsDatabaseApp.lapbylap.personalBest' | translate}}
+                </div>
+            </div>
+        </ng-template>
+    </ngb-tab>
+</ngb-tabset>

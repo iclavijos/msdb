@@ -96,7 +96,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr *ngFor="let row of pointsByRace | slice:1">
+					<tr *ngFor="let row of pointsByRace | slice:1; let isOdd=odd" [class.odd]="isOdd">
 				        <td *ngFor="let value of row">{{value}}</td>
 				    </tr>
 				</tbody>
@@ -112,7 +112,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr *ngFor="let row of resultsByRace | slice:1; let isOdd=odd; let isEven=even" [class.odd]="isOdd">
+					<tr *ngFor="let row of resultsByRace | slice:1; let isOdd=odd" [class.odd]="isOdd">
 				        <td *ngFor="let value of row" style="text-align:center; vertical-align: middle;"
 				        	[class.retired]="value === 'DNF' || value === 'DNS' || value === 'NC'"
 				        	[class.disqualified]="value === 'DSQ'"

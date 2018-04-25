@@ -30,11 +30,13 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     navigationIds = null;
     showPoints = false;
     driversBestTimes: any;
+    hasLapsData: any;
+    lapTimes: any[] = [];
+    maxLaps: number = -1;
+    lapNumbers: number[];
 
     keysSession: any[];
     keysDuration: any[];
-
-    scoringSessions: EventSession[];
 
     constructor(
         private eventService: EventService,
@@ -63,10 +65,14 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
             	this.eventEditionService.findPrevNextInSeries(id).subscribe(
                         (res: Response) => this.navigationIds = res);
             }
+            this.eventEditionService.hasLapsData(id).subscribe(
+            	(res: Response) => this.hasLapsData = res.json);
             this.eventService.findEventEditionIds(eventEdition.event.id).subscribe(
                     (res: Response) => this.editions = res.json());
             this.eventEditionService.findDriversBestTimes(id).subscribe(
             	(res: Response) => this.driversBestTimes = res.json);
+
+			this.lapNumbers = Array.from(Array(58),(x,i)=>i);
         });
     }
 
