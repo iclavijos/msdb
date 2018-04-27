@@ -35,7 +35,9 @@ export class RaceDataComponent implements OnInit {
     math = Math;
     options: any;
     timeMask: TimeMaskPipe;
-    lapsRange: number[] = [2, 50];
+    lapsRangeFrom: number = 2;
+    lapsRangeTo: number = 65;
+    fastestTime: number;
 
     constructor(
         private http: Http,
@@ -45,11 +47,6 @@ export class RaceDataComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.eventSessionService.findSessionDriverNames(this.sessionId).subscribe(
-            (res: Response) => this.drivers = this.convertDriversNames(res.json));
-        this.eventSessionService.findSessionAverages(this.sessionId).subscribe(
-            (res: Response) => this.averages = this.convertDriverAverages(res.json)
-        );
         this.data = {
             labels: [],
             datasets: [
@@ -97,6 +94,22 @@ export class RaceDataComponent implements OnInit {
                 position: 'bottom'
             }
         };
+        this.eventSessionService.findSessionDriverNames(this.sessionId).subscribe(
+            (res: Response) => this.drivers = this.convertDriversNames(res.json));
+        this.eventSessionService.findSessionAverages(this.sessionId).subscribe(
+            (res: Response) => this.averages = this.convertDriverAverages(res.json)
+        );
+        this.eventSessionService.findFastestTime(this.sessionId).subscribe(
+            (res: Response) => {
+                this.fastestTime = Number(res.json);
+                this.options.scales.yAxes[0].ticks.min = Math.floor((this.fastestTime - 10000) / 10000);
+                this.refreshGraphic();
+            });
+        this.eventSessionService.findMaxLaps(this.sessionId).subscribe(
+            (res: Response) => {
+                this.maxLaps = Number(res.json);
+                this.lapsRangeTo = this.maxLaps;
+            });
     }
 
     refreshLapTimesTable(raceNumber: string) {
@@ -106,9 +119,7 @@ export class RaceDataComponent implements OnInit {
             this.eventEditionService.loadLapTimes(this.sessionId, raceNumber).subscribe(
             	(res: Response) => {
                     this.lapTimes.push(this.convertLapTimes(res.json));
-                    this.maxLaps = Math.max(this.maxLaps, res.json.length);
                     this.lapNumbers = Array.from(Array(this.maxLaps),(x,i)=>i);
-                    //this.lapsRange = [2, this.maxLaps];
                     this.refreshGraphic();
                 });
         } else {
@@ -116,15 +127,7 @@ export class RaceDataComponent implements OnInit {
             const driverToRemove = this.lapTimes.find(d => d.raceNumber === raceNumber);
             const pos = this.lapTimes.indexOf(driverToRemove);
             this.lapTimes.splice(pos, 1);
-            this.maxLaps = -1;
-            for (let index = 0; index < this.lapTimes.length; index++) {
-                this.maxLaps = Math.max(this.maxLaps, this.lapTimes[index].laps.length);
-            }
-            if (this.maxLaps === -1) {
-                this.lapNumbers = undefined;
-            } else {
-                this.lapNumbers = Array.from(Array(this.maxLaps),(x,i)=>i);
-            }
+            this.lapNumbers = Array.from(Array(this.maxLaps),(x,i)=>i);
             this.refreshGraphic();
         }
         
@@ -133,14 +136,14 @@ export class RaceDataComponent implements OnInit {
     private refreshGraphic() {
 		let data = {
             labels: this.lapNumbers && this.lapNumbers.length > 0 ? 
-                this.lapNumbers.slice(this.lapsRange[0] - 1, this.lapsRange[1]).map(ln => ln + 1) : [],
+                this.lapNumbers.slice(this.lapsRangeFrom - 1, this.lapsRangeTo).map(ln => ln + 1) : [],
 			datasets: []
 		};
     	for(let driver of this.selectedDrivers) {    		
     		const randomColor = this.randomColor();
     		let dataset = {
 	    		label: this.drivers.find(d => d.raceNumber === driver).driversNames,
-				data: this.lapTimes.find(lt => lt.raceNumber === driver).laps.slice(this.lapsRange[0] - 1, this.lapsRange[1]).map(l => l.lapTime / 10000),
+				data: this.lapTimes.find(lt => lt.raceNumber === driver).laps.slice(this.lapsRangeFrom - 1, this.lapsRangeTo).map(l => l.lapTime / 10000),
 				fill: false,
 				lineTension: 0,
 				borderColor: randomColor,
@@ -187,7 +190,8 @@ export class RaceDataComponent implements OnInit {
     }
 
     changeLapsRange(event) {
-        this.lapsRange = event.values;
+        this.lapsRangeFrom = event.from;
+        this.lapsRangeTo = event.to;
         this.refreshGraphic();
     }
 

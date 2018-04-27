@@ -3,7 +3,8 @@ import { RouterModule } from '@angular/router';
 
 import { MotorsportsDatabaseSharedModule } from '../../shared';
 
-import { ChartModule, CheckboxModule, SliderModule } from 'primeng/primeng';
+import { ChartModule, CheckboxModule } from 'primeng/primeng';
+import { IonRangeSliderModule } from "ng2-ion-range-slider";
 
 import 'chart.js/dist/Chart.min.js';
 
@@ -20,7 +21,7 @@ const ENTITY_STATES = [
         MotorsportsDatabaseSharedModule,
         ChartModule,
         CheckboxModule,
-        SliderModule,
+        IonRangeSliderModule,
         RouterModule.forRoot(ENTITY_STATES, { useHash: true })
     ],
     exports: [

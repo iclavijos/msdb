@@ -255,3 +255,5 @@ Social Buttons
 
 @import 'custom.bootstrap.min.css';
 @import 'sb-admin.min.css';
+@import "~ion-rangeslider/css/ion.rangeSlider.css";
+@import "~ion-rangeslider/css/ion.rangeSlider.skinNice.css";

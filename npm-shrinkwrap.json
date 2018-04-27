@@ -1,6 +1,6 @@
 {
   "name": "motorsports-database",
-  "version": "2.2.2",
+  "version": "3.0.0",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -7292,6 +7292,14 @@
       "integrity": "sha1-EEqOSqym09jNFXqO+L+rLXo//bY=",
       "dev": true
     },
+    "ion-rangeslider": {
+      "version": "2.2.0",
+      "resolved": "https://registry.npmjs.org/ion-rangeslider/-/ion-rangeslider-2.2.0.tgz",
+      "integrity": "sha1-OI8SzXBZOmGzNo+tbE8wpdqLl8k=",
+      "requires": {
+        "jquery": "3.2.1"
+      }
+    },
     "ip": {
       "version": "1.1.5",
       "resolved": "https://registry.npmjs.org/ip/-/ip-1.1.5.tgz",
@@ -9745,6 +9753,22 @@
       "requires": {
         "@ngx-translate/core": "7.0.0",
         "@ngx-translate/http-loader": "0.1.0"
+      }
+    },
+    "ng2-ion-range-slider": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/ng2-ion-range-slider/-/ng2-ion-range-slider-2.0.0.tgz",
+      "integrity": "sha512-1Wi5nKUnok2nOUexoijtRRHzmFhRNwPn+z/K2KiTA45khUHVqExvyPD7eA34G1cUXYjfUU462+e1fL1JRdgjyg==",
+      "requires": {
+        "@types/jquery": "2.0.49",
+        "ion-rangeslider": "2.2.0"
+      },
+      "dependencies": {
+        "@types/jquery": {
+          "version": "2.0.49",
+          "resolved": "https://registry.npmjs.org/@types/jquery/-/jquery-2.0.49.tgz",
+          "integrity": "sha512-/9xLnYmohN/vD2gDnLS4cym8TUmrJu7DvZa/LELKzZjdPsvWVJiedsdu2SXNtb/DA7FGimqL2g0IoyhbNKLl8g=="
+        }
       }
     },
     "ng2-webstorage": {

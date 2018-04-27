@@ -85,6 +85,18 @@ export class EventSessionService {
         })
     }
 
+    findFastestTime(id: number): Observable<ResponseWrapper> {
+        return this.http.get(`${this.resourceUrl}/${id}/fastestLap`).map((res: Response) => {
+            return new ResponseWrapper(res.headers, res.json(), res.status);
+        })
+    }
+
+    findMaxLaps(id: number): Observable<ResponseWrapper> {
+        return this.http.get(`${this.resourceUrl}/${id}/maxLaps`).map((res: Response) => {
+            return new ResponseWrapper(res.headers, res.json(), res.status);
+        })
+    }
+
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();
         for (let i = 0; i < jsonResponse.length; i++) {

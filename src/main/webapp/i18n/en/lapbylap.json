@@ -2,6 +2,7 @@
     "motorsportsDatabaseApp": {
         "lapbylap" : {
             "lapCharts": "Lap charts",
+            "lapsRange": "Select laps range to draw",
             "lapTimes": "Lap times",
             "legend": "Legend",
             "fastestLap": "Fastest race lap",

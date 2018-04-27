@@ -2,6 +2,7 @@
     "motorsportsDatabaseApp": {
         "lapbylap" : {
             "lapCharts": "Gràfics",
+            "lapsRange": "Escull el rang de voltes a mostrar",
             "lapTimes": "Temps per volta",
             "legend": "Llegenda",
             "fastestLap": "Volta ràpida de carrera",
