@@ -79,6 +79,12 @@ export class EventSessionService {
         })
     }
 
+    findSessionAverages(id: number): Observable<ResponseWrapper> {
+        return this.http.get(`${this.resourceUrl}/${id}/laps/averages`).map((res: Response) => {
+            return new ResponseWrapper(res.headers, res.json(), res.status);
+        })
+    }
+
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();
         for (let i = 0; i < jsonResponse.length; i++) {

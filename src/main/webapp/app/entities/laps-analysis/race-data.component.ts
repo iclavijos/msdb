@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Rx';
 
 import { ResponseWrapper } from '../../shared';
 
-import { DriversNames, DriversLaps, DriverLap } from './';
+import { DriversNames, DriversLaps, DriverLap, DriverAverages } from './';
 import { EventEditionService } from '../event-edition';
 import { EventSessionService } from '../event-session';
 
@@ -28,9 +28,11 @@ export class RaceDataComponent implements OnInit {
     lapNumbers: number[];
     drivers: DriversNames[] = [];
     selectedDrivers: string[] = [];
+    selectedDriversAvg: string[] = [];
+    averages: DriverAverages[] = [];
+    data: any;
     temp = Array;
     math = Math;
-    data: any;
     options: any;
     timeMask: TimeMaskPipe;
     lapsRange: number[] = [2, 50];
@@ -45,6 +47,9 @@ export class RaceDataComponent implements OnInit {
     ngOnInit() {
         this.eventSessionService.findSessionDriverNames(this.sessionId).subscribe(
             (res: Response) => this.drivers = this.convertDriversNames(res.json));
+        this.eventSessionService.findSessionAverages(this.sessionId).subscribe(
+            (res: Response) => this.averages = this.convertDriverAverages(res.json)
+        );
         this.data = {
             labels: [],
             datasets: [
@@ -162,6 +167,14 @@ export class RaceDataComponent implements OnInit {
         return result;
     }
 
+    private convertDriverAverages(json: any) {
+        const result = [];
+        for (let i = 0; i < json.length; i++) {
+            result.push(Object.assign(new DriverAverages(), json[i]));
+        }
+        return result;
+    }
+
     private convertLapTimes(json: any): DriversLaps {
         const result = new DriversLaps();
         result.driverName = json[0].driverName;
@@ -176,5 +189,37 @@ export class RaceDataComponent implements OnInit {
     changeLapsRange(event) {
         this.lapsRange = event.values;
         this.refreshGraphic();
+    }
+
+    getTopTen5BestLaps() {
+        return this.averages.sort(
+            function(a,b) {
+                return (a.best5Avg > b.best5Avg) ? 1 : ((b.best5Avg > a.best5Avg) ? -1 : 0);
+            }
+        ).slice(0,10);
+    }
+
+    getTopTen10BestLaps() {
+        return this.averages.sort(
+            function(a,b) {
+                return (a.best10Avg > b.best10Avg) ? 1 : ((b.best10Avg > a.best10Avg) ? -1 : 0);
+            }
+        ).slice(0,10);
+    }
+
+    getTopTen20BestLaps() {
+        return this.averages.sort(
+            function(a,b) {
+                return (a.best20Avg > b.best20Avg) ? 1 : ((b.best20Avg > a.best20Avg) ? -1 : 0);
+            }
+        ).slice(0,10);
+    }
+
+    getDriverDataByDriverName(driverName: string) {
+        const avg: DriverAverages[] = this.averages.filter(avg => avg.driverName === driverName);
+        if (avg.length === 1) {
+            return avg[0];
+        }
+        return [];
     }
 }

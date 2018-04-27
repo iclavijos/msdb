@@ -6,7 +6,16 @@
             "legend": "Leyenda",
             "fastestLap": "Vuelta rápida de carrera",
             "fastLap": "Vuelta rápida",
-            "personalBest": "Mejor vuelta personal"
+            "personalBest": "Mejor vuelta personal",
+            "averages": "Promedios",
+            "average": "Promedio",
+            "avgPerDriver": "Promedios por piloto",
+            "best5": "Mejores 5 vueltas",
+            "best10": "Mejores 10 vueltas",
+            "best20": "Mejores 20 vueltas",
+            "driverName": "Piloto",
+            "stints": "Relevos",
+            "stint": "Relevo"
         }
     }
 }

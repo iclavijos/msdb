@@ -1,10 +1,11 @@
 package com.icesoft.msdb.web.rest;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.icesoft.msdb.domain.LapInfo;
+import com.icesoft.msdb.repository.SessionLapDataRepository;
+import com.icesoft.msdb.service.dto.DriverRaceStatisticsDTO;
 import com.icesoft.msdb.service.dto.LapsInfoDriversDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.icesoft.msdb.domain.SessionLapData;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
-import com.icesoft.msdb.repository.impl.SessionLapDataRepositoryImpl;
 
 @RestController
 @RequestMapping("/api/event-editions")
 public class LapsInfoResource {
 
-	@Autowired SessionLapDataRepositoryImpl repo;
+	@Autowired SessionLapDataRepository repo;
 	@Autowired EventEntryResultRepository resultsRepo;
 
 	@GetMapping("/{sessionId}/laps")
@@ -42,4 +42,11 @@ public class LapsInfoResource {
 				.map(LapsInfoDriversDTO::new).collect(Collectors.toList());
 		return ResponseEntity.ok(result);
 	}
+
+	@GetMapping("/event-sessions/{sessionId}/laps/averages")
+    public ResponseEntity<List<DriverRaceStatisticsDTO>> getBestPerformers(@PathVariable Long sessionId) {
+        SessionLapData sld = repo.findOne(sessionId.toString());
+	    return ResponseEntity.ok(
+	        sld.getLapsPerDriver().parallelStream().map(DriverRaceStatisticsDTO::new).collect(Collectors.toList()));
+    }
 }

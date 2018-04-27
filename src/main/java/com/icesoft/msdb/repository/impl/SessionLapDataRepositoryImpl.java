@@ -16,24 +16,26 @@ import org.springframework.data.mongodb.core.query.Query;
 import com.icesoft.msdb.domain.SessionLapData;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.SessionLapDataCustomRepository;
+import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
+import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
 
 public class SessionLapDataRepositoryImpl implements SessionLapDataCustomRepository {
-	
+
 	@Autowired MongoOperations mongoOps;
 	@Autowired MongoTemplate template;
 	@Autowired EventSessionRepository sessionsRepo;
 
-	@Override
+    @Override
 	public boolean sessionLapDataLoaded(Long sessionId) {
 		List<String> sessions = sessionsRepo.findByEventEditionIdOrderBySessionStartTimeAsc(sessionId).parallelStream()
 				.map(es -> es.getId().toString()).collect(Collectors.toList());
-		
+
 		Query query = new Query(Criteria.where("_id").in(sessions));
 		long count = template.count(query, SessionLapData.class);
-		
+
 		return count > 0;
 	}
-	
+
 	public List<SessionLapData> getDriverLaps(String id, String raceNumber) {
 		List<AggregationOperation> list = new ArrayList<>();
 		list.add(Aggregation.match(Criteria.where("_id").is(id)));
@@ -49,7 +51,7 @@ public class SessionLapDataRepositoryImpl implements SessionLapDataCustomReposit
 	public List<String> getDriverNamesWithData(String sessionId) {
 		List<AggregationOperation> list = new ArrayList<>();
 		list.add(Aggregation.match(Criteria.where("_id").is(sessionId)));
-	    
+
 		return null;
 	}
 

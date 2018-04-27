@@ -1,9 +1,7 @@
 package com.icesoft.msdb.domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,29 +13,30 @@ public class SessionLapData {
 
 	@Id
 	private String sessionId;
-	
+
 	private List<LapInfo> laps = new ArrayList<>();
-	
-	public void addLapData(LapInfo lapData) {   		
+
+	public void addLapData(LapInfo lapData) {
    		laps.add(lapData);
 	}
-	
+
 	public void processData() {
 		Map<Integer, List<LapInfo>> dataPerLap = new HashMap<>();
-		
+
 		LapInfo fastestLap = null;
-		
+
 		laps.parallelStream().forEach(lapData -> {
 	   		if (!dataPerLap.containsKey(lapData.getLapNumber())) {
 				dataPerLap.put(lapData.getLapNumber(), new ArrayList<>());
 			}
 			dataPerLap.get(lapData.getLapNumber()).add(lapData);
 		});
-		
+
 		for(Integer lapNumber : dataPerLap.keySet()) {
 			if (lapNumber > 1) {
 				List<LapInfo> lapTimes = dataPerLap.get(lapNumber);
-				LapInfo fastLap = lapTimes.parallelStream().sorted((l1, l2) -> l1.getLapTime().compareTo(l2.getLapTime())).findFirst().get();
+				LapInfo fastLap = lapTimes.parallelStream()
+                    .sorted((l1, l2) -> l1.getLapTime().compareTo(l2.getLapTime())).findFirst().get();
 				if (fastestLap == null) {
 					fastestLap = fastLap;
 					fastLap.setFastestLap(true);
@@ -50,7 +49,7 @@ public class SessionLapData {
 				}
 			}
 		}
-		
+
 		LapInfo personalBest = null;
 		for(LapInfo lap: laps) {
 			if (lap.getLapNumber() == 1) {
@@ -65,7 +64,18 @@ public class SessionLapData {
 			}
 		}
 	}
-	
+
+	@JsonIgnore
+    public List<List<LapInfo>> getLapsPerDriver() {
+        List<String> drivers = laps.parallelStream().map(li -> li.getDriverName())
+            .distinct().collect(Collectors.toList());
+        return drivers.parallelStream().map(d -> {
+	        return laps.parallelStream().filter(li -> li.getDriverName().equals(d)).sorted(
+                Comparator.comparing(LapInfo::getLapTime)).collect(Collectors.toList());
+        }).collect(Collectors.toList());
+
+    }
+
 	public List<LapInfo> getLaps() {
 		return laps;
 	}
@@ -78,6 +88,6 @@ public class SessionLapData {
 	public void setSessionId(String id) {
 		this.sessionId = id;
 	}
-	
-	
+
+
 }
