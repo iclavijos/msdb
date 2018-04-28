@@ -325,13 +325,13 @@ public class ResultsService {
 
 		return result;
 	}
-	
+
 	public String[][] getResultsRaceByRace(Long seriesEditionId) {
 		SeriesEdition seriesEdition = seriesEdRepository.findOne(seriesEditionId);
 		List<EventSession> races = sessionRepo.findRacesInSeries(seriesEdition);
 		List<DriverPointsDTO> dpd = getDriversStandings(seriesEditionId); //We use this as returned data is ordered by scored points
 		List<String> driverNames = dpd.stream().map(driver -> driver.getDriverName()).collect(Collectors.toList());
-		
+
 		String[][] data = new String[driverNames.size() + 1][races.size() + 1];
 		for(int i = 1; i <= driverNames.size(); i++) {
 			data[i][0] = driverNames.get(i - 1);
@@ -341,10 +341,10 @@ public class ResultsService {
 		}
 		for(int i = 1; i <= races.size(); i++) {
 			EventSession session = races.get(i - 1);
-			data[0][i] = session.getShortname().equalsIgnoreCase("R") || session.getShortname().equalsIgnoreCase("Race") ? 
+			data[0][i] = session.getShortname().equalsIgnoreCase("R") || session.getShortname().equalsIgnoreCase("Race") ?
 					session.getEventEdition().getEvent().getName() :
 					session.getEventEdition().getEvent().getName() + "-" + session.getName();
-					
+
 			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionId(session.getId(), session.getEventEdition().getId());
 			for(EventEntryResult result: results) {
 				String res = Integer.toString(result.getFinalPosition());
@@ -357,24 +357,24 @@ public class ResultsService {
 				}
 			}
 		}
-		
+
 		return data;
 	}
-	
+
 	public String[][] getDriverEventBestTimes(Long eventEditionId) {
 		List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(eventEditionId);
 		List<EventSession> sessions = sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventEditionId);
 		String[][] data = new String[entries.size() + 1][sessions.size() + 1];
-		
+
 		for(int i = 1; i <= sessions.size(); i++) {
 			data[0][i] = sessions.get(i - 1).getName();
 		}
-		
+
 		for(int i = 1; i <= entries.size(); i++) {
 			EventEditionEntry entry = entries.get(i - 1);
 			data[i][0] = "#" + entry.getRaceNumber() + " " + entry.getDriversName();
 			List<EventEntryResult> results = resultsRepo.findByEntryId(entry.getId());
-			for(int j = 1; j <= sessions.size(); j++) {
+			for(int j = 1; j <= sessions.size() && j <= results.size(); j++) {
 				Optional<EventEntryResult> optResult = Optional.ofNullable(results.get(j - 1));
 				if (optResult.isPresent()) {
 					data[i][j] = Optional.ofNullable(optResult.get().getBestLapTime()).map(laptime -> laptime.toString()).orElse("");
@@ -383,7 +383,7 @@ public class ResultsService {
 				}
 			}
 		}
-		
+
 		return data;
 	}
 
