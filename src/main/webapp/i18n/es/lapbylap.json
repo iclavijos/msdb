@@ -14,6 +14,7 @@
             "best5": "Mejores 5 vueltas",
             "best10": "Mejores 10 vueltas",
             "best20": "Mejores 20 vueltas",
+            "perfectLap": "Vuelta rápida ideal",
             "driverName": "Piloto",
             "stints": "Relevos",
             "stint": "Relevo"

@@ -108,7 +108,9 @@
 	            	"title": "Importar resultats de sessió",
 	            	"desc": "Importar fitxer CSV amb els resultats de la sessió",
 	            	"selectFile": "Seleccionar arxiu",
-	            	"file": "Arxiu"
+	            	"file": "Arxiu",
+                    "lapbylapTitle": "Importar fitxer amb volta a volta",
+                    "lapbylapDesc": "Carrega un fitxer amb els temps per volta de cada participant"
 	            },
 	            "processResults": {
 	            	"label": "Processar resultats",

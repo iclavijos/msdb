@@ -108,7 +108,9 @@
 	            	"title": "Importar resultados de sesión",
 	            	"desc": "Importar fichero CSV con los resultados de la sesión",
 	            	"selectFile": "Seleccionar archivo",
-	            	"file": "Archivo"
+	            	"file": "Archivo",
+                    "lapbylapTitle": "Importar archivo con vuelta a vuelta",
+                    "lapbylapDesc": "Cargar archivo con los tiempos por vuelta de cada participante"
 	            },
 	            "processResults": {
 	            	"label": "Procesar resultados",

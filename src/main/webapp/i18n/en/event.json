@@ -109,7 +109,9 @@
 	            	"title": "Upload session results",
 	            	"desc": "Upload CSV file with session results",
 	            	"selectFile": "Select file",
-	            	"file": "File"
+	            	"file": "File",
+                    "lapbylapTitle": "Upload file with lap by lap data",
+                    "lapbylapDesc": "Import file with lap by lap information for each entry"
 	            },
 	            "processResults": {
 	            	"label": "Process results",
