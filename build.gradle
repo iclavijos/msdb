@@ -40,7 +40,7 @@ apply plugin: 'idea'
 defaultTasks 'bootRun'
 
 group = 'com.icesoft.msdb'
-version = '3.0.0'
+version = '3.0.1'
 
 description = ''
 
@@ -197,15 +197,15 @@ dependencies {
     compile "org.springframework.social:spring-social-google:${spring_social_google_version}"
     compile "org.springframework.social:spring-social-facebook"
     compile "org.springframework.social:spring-social-twitter"
-    
+
     compile 'com.sendgrid:sendgrid-java:3.0.9'
     compile 'com.cloudinary:cloudinary-http44:1.8.1'
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.8.7'
-    
+
 	compile 'com.google.maps:google-maps-services:0.1.20'
-	
+
 	compile 'org.springframework.boot:spring-boot-devtools'
-	
+
     testCompile "org.awaitility:awaitility:${awaitility_version}"
     testCompile "com.jayway.jsonpath:json-path"
     testCompile ("org.springframework.boot:spring-boot-starter-test") {
