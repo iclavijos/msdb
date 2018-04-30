@@ -138,19 +138,27 @@ export class RaceDataComponent implements OnInit {
             labels: this.lapNumbers && this.lapNumbers.length > 0 ? 
                 this.lapNumbers.slice(this.lapsRangeFrom - 1, this.lapsRangeTo).map(ln => ln + 1) : [],
 			datasets: []
-		};
+        };
+        let maxLapTime: number = 0;
     	for(let driver of this.selectedDrivers) {    		
-    		const randomColor = this.randomColor();
+            const randomColor = this.randomColor();
+            const driverLaps = this.lapTimes.find(lt => lt.raceNumber === driver).laps.slice(this.lapsRangeFrom - 1, this.lapsRangeTo).map(l => l.lapTime / 10000);
+            driverLaps.forEach(lap => {
+                if (lap > maxLapTime) {
+                    maxLapTime = lap;
+                }
+            });
     		let dataset = {
 	    		label: this.drivers.find(d => d.raceNumber === driver).driversNames,
-				data: this.lapTimes.find(lt => lt.raceNumber === driver).laps.slice(this.lapsRangeFrom - 1, this.lapsRangeTo).map(l => l.lapTime / 10000),
+				data: driverLaps,
 				fill: false,
 				lineTension: 0,
 				borderColor: randomColor,
                 backgroundColor: randomColor,
     		}
     		data.datasets.push(dataset);
-    	}
+        }
+        this.options.scales.yAxes[0].ticks.suggestedMax = Math.floor((maxLapTime + 10000) / 10000);
     	this.data = Object.assign({}, data);
     }
 

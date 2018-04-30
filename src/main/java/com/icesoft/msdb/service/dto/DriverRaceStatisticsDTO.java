@@ -14,6 +14,9 @@ public class DriverRaceStatisticsDTO {
     private Long best10Avg;
     private Long best20Avg;
     private Long average110;
+    private Long bestS1;
+    private Long bestS2;
+    private Long bestS3;
     private Integer numUsedLapsAvg;
     private List<Long> averagePerStint;
     private List<String> lapsStint;
@@ -24,6 +27,7 @@ public class DriverRaceStatisticsDTO {
         this.best5Avg = calculateAverage(5);
         this.best10Avg = calculateAverage(10);
         this.best20Avg = calculateAverage(20);
+        calculateBestSectors();
         calculateAverageStints();
         calculateAverage110();
     }
@@ -58,6 +62,26 @@ public class DriverRaceStatisticsDTO {
 
     public List<String> getLapsStint() {
         return lapsStint;
+    }
+
+    public Long getBestS1() {
+        return bestS1;
+    }
+
+    public Long getBestS2() {
+        return bestS2;
+    }
+
+    public Long getBestS3() {
+        return bestS3;
+    }
+
+    private void calculateBestSectors() {
+        if (laps.get(0).getS1() != null) {
+            bestS1 = laps.parallelStream().map(LapInfo::getS1).min(Long::compareTo).orElse(0l);
+            bestS2 = laps.parallelStream().map(LapInfo::getS2).min(Long::compareTo).orElse(0l);
+            bestS3 = laps.parallelStream().map(LapInfo::getS3).min(Long::compareTo).orElse(0l);
+        }
     }
 
     private Long calculateAverage(int numberOfLaps) {

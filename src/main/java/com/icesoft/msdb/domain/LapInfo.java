@@ -1,7 +1,7 @@
 package com.icesoft.msdb.domain;
 
 public class LapInfo {
-	
+
 	private String raceNumber;
 	private String driverName;
 	private Integer lapNumber;
@@ -10,11 +10,14 @@ public class LapInfo {
 	private Boolean personalBest = false;
 	private Boolean fastLap = false;
 	private Boolean fastestLap = false;
-	
+	private Long s1;
+	private Long s2;
+	private Long s3;
+
 	public LapInfo() {
-		
+
 	}
-	
+
 	public LapInfo(String raceNumber, String driverName, Integer lapNumber, Long lapTime, Boolean pitstop) {
 		this.raceNumber = raceNumber;
 		this.driverName = driverName;
@@ -87,11 +90,45 @@ public class LapInfo {
 		this.fastestLap = fastestLap;
 	}
 
-	@Override
-	public String toString() {
-		return "LapInfo [raceNumber=" + raceNumber + ", driverName=" + driverName + ", lapNumber=" + lapNumber
-				+ ", lapTime=" + lapTime + ", pitstop=" + pitstop + ", personalBest=" + personalBest + ", fastLap="
-				+ fastLap + ", fastestLap=" + fastestLap + "]";
-	}
-	
+    @Override
+    public String toString() {
+        return "LapInfo{" +
+            "raceNumber='" + raceNumber + '\'' +
+            ", driverName='" + driverName + '\'' +
+            ", lapNumber=" + lapNumber +
+            ", lapTime=" + lapTime +
+            ", pitstop=" + pitstop +
+            ", personalBest=" + personalBest +
+            ", fastLap=" + fastLap +
+            ", fastestLap=" + fastestLap +
+            ", s1=" + s1 +
+            ", s2=" + s2 +
+            ", s3=" + s3 +
+            '}';
+    }
+
+    public Long getS1() {
+        return s1;
+    }
+
+    public void setS1(Long s1) {
+        this.s1 = s1;
+    }
+
+    public Long getS2() {
+        return s2;
+    }
+
+    public void setS2(Long s2) {
+        this.s2 = s2;
+    }
+
+    public Long getS3() {
+        return s3;
+    }
+
+    public void setS3(Long s3) {
+        this.s3 = s3;
+    }
+
 }

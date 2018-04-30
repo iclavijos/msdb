@@ -6,4 +6,7 @@ export class DriverAverages {
     average110?: number;
     averagePerStint?: number[];
     lapsStint?: number[];
+    bestS1?: number;
+    bestS2?: number;
+    bestS3?: number;
 }

@@ -185,6 +185,13 @@
                     {{'motorsportsDatabaseApp.lapbylap.stint' | translate}} {{i + 1}}: [{{stint}}]: {{driver.averagePerStint[i] | timeMaskPipe}}<br/>
                 </span>
             </dd>
+            <dt *ngIf="driver.bestS1"><span jhiTranslate="motorsportsDatabaseApp.lapbylap.perfectLap">Perfect Lap</span></dt>
+            <dd *ngIf="driver.bestS1">
+                <span>{{driver.bestS1 + driver.bestS2 + driver.bestS3 | timeMaskPipe }}<br/> 
+                    S1: {{driver.bestS1 | timeMaskPipe }}<br/>
+                    S2: {{driver.bestS2 | timeMaskPipe }}<br/>
+                    S3: {{driver.bestS3 | timeMaskPipe }}</span>
+            </dd>
         </dl>
     </div>
 </div>
