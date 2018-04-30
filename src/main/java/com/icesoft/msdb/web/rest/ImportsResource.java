@@ -110,9 +110,9 @@ public class ImportsResource {
     @Autowired private CategoryRepository categoryRepository;
     @Autowired private SeriesEditionRepository seriesEditionRepository;
     @Autowired private PointsSystemRepository pointsSystemRepository;
-    
+
     @Autowired private SessionLapDataRepository sessionLapDataRepo;
-    
+
     @Autowired private CacheHandler cacheHandler;
 
     @PostMapping("/imports")
@@ -122,7 +122,7 @@ public class ImportsResource {
     @CacheEvict("homeInfo")
     public ResponseEntity<?> importCSV(@Valid @RequestBody Imports imports) throws URISyntaxException {
         log.debug("REST request to import CSV contents : {}", imports.getImportType());
-        
+
         String data = new String(DatatypeConverter.parseBase64Binary(imports.getCsvContents()));
         switch(imports.getImportType()) {
         	case DRIVERS: importDrivers(data); break;
@@ -134,10 +134,10 @@ public class ImportsResource {
         	case EVENTS: importEvents(data); break;
         	default: log.warn("The uploaded file does not correspond to any known entity");
         }
-        
+
         return new ResponseEntity<>("File uploaded", HttpStatus.ACCEPTED);
     }
-    
+
     private <T> MappingIterator<T> initializeIterator(Class<T> type, String data) {
     	CsvSchema bootstrapSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator(';');
         CsvMapper mapper = new CsvMapper();
@@ -146,14 +146,14 @@ public class ImportsResource {
             javaTimeModule.addDeserializer(LocalDate.class, new ParseDeserializer());
             mapper.registerModule(javaTimeModule);
 	        return mapper.readerFor(type).with(bootstrapSchema).readValues(data);
-	        
+
         } catch (Exception e) {
         	log.error("Problem processing uploaded CSV data", e);
         	throw new MSDBException(e);
         }
-        	
+
     }
-    
+
     private void importDrivers(String data) {
     	MappingIterator<Driver> readValues = initializeIterator(Driver.class, data);
         while (readValues.hasNext()) {
@@ -167,9 +167,9 @@ public class ImportsResource {
         		log.warn("Driver {} already exist in the database. Skipping...", driver);
         	}
         }
-        
+
     }
-    
+
     private void importRacetracks(String data) {
     	MappingIterator<RacetrackWithLayoutsImportDTO> readValues = initializeIterator(RacetrackWithLayoutsImportDTO.class, data);
         Racetrack racetrack = null;
@@ -194,7 +194,7 @@ public class ImportsResource {
 	        	layout.setLength(tmp.getLength());
 	        	layout.setYearFirstUse(tmp.getYearFirstUse());
 	        	layout.setActive(tmp.isActive());
-	        	
+
 	        	RacetrackLayout found = racetrackLayoutRepository.findOne(Example.of(layout));
 	        	if (found == null) {
 	        		layout.setRacetrack(racetrack);
@@ -207,7 +207,7 @@ public class ImportsResource {
         	}
         }
     }
-    
+
     private void importTeams(String data) {
     	MappingIterator<Team> readValues = initializeIterator(Team.class, data);
         while (readValues.hasNext()) {
@@ -221,9 +221,9 @@ public class ImportsResource {
         		log.warn("Team {} already exist in the database. Skipping...", team);
         	}
         }
-        
+
     }
-    
+
     private void importEngines(String data) {
     	MappingIterator<EnginesImportDTO> readValues = initializeIterator(EnginesImportDTO.class, data);
         while (readValues.hasNext()) {
@@ -239,7 +239,7 @@ public class ImportsResource {
         			log.warn("Engine {} has a parent found more than once. Skipping...", engine);
         		} else {
         			newEngine.setDerivedFrom(derivedFrom.get(0));
-        		}        		
+        		}
 	        	engineRepository.save(newEngine);
 	        	engineSearchRepo.save(newEngine);
         	} else {
@@ -247,7 +247,7 @@ public class ImportsResource {
         	}
         }
     }
-    
+
     private void importEvents(String data) {
     	MappingIterator<EventEditionImportDTO> readValues = initializeIterator(EventEditionImportDTO.class, data);
     	Event event = null;
@@ -269,10 +269,10 @@ public class ImportsResource {
 	        	layout = racetrack.getLayouts().parallelStream()
 	        			.filter(l -> l.getName().equals(tmp.getLayoutName()))
 	        			.findFirst().orElseThrow(() -> new MSDBException("Provided racetrack layout name is not valid: " + tmp.getLayoutName()));
-	        	
+
 	        	final String[] catNames = tmp.getCategories().split(";");
 	        	categories = categoryRepository.findByNameIn(catNames);
-	        	
+
 	        	eventEdition = new EventEdition();
 	        	eventEdition.setEvent(event);
 	        	eventEdition.setAllowedCategories(categories);
@@ -282,7 +282,7 @@ public class ImportsResource {
 	        	eventEdition.setLongEventName(tmp.getLongEventEditionName());
 	        	eventEdition.setShortEventName(tmp.getShortEventName());
 	        	eventEdition.setMultidriver(tmp.getMultipleDriversEntry());
-	        	
+
 	        	if (StringUtils.isNotBlank(tmp.getSeriesEditionName())) {
 	        		seriesEd = seriesEditionRepository.findByEditionName(tmp.getSeriesEditionName());
 	        		if (seriesEd == null) {
@@ -292,7 +292,7 @@ public class ImportsResource {
 	        			seriesEd.setEvents(new ArrayList<>());
 	        		}
 	        	}
-	        	
+
 	        	eventEdition = eventEditionRepository.save(eventEdition);
         		seriesEd.getEvents().add(eventEdition);
         		seriesEditionRepository.save(seriesEd);
@@ -303,7 +303,7 @@ public class ImportsResource {
     		if (eventEdition == null) {
     			throw new MSDBException("Provided data could not be associated with an existing event edition");
     		}
-    		
+
     		EventSession session = new EventSession();
     		session.setEventEdition(eventEdition);
     		session.setName(tmp.getSessionName());
@@ -314,7 +314,7 @@ public class ImportsResource {
     		session.setDurationType(DurationType.valueOf(tmp.getDurationType().toUpperCase()).getValue());
     		session.setAdditionalLap(tmp.getExtraLap());
     		session.setMaxDuration(Optional.ofNullable(tmp.getMaxDuration()).orElseGet(() -> new Integer(0)));
-    		
+
     		if (StringUtils.isNotBlank(tmp.getPointsSystem())) {
     			PointsSystem ps = Optional.ofNullable(
     					pointsSystemRepository.findByName(tmp.getPointsSystem())).orElseThrow(() -> new MSDBException("Provided points system name is not valid: " + tmp.getPointsSystem()));
@@ -324,41 +324,27 @@ public class ImportsResource {
     		eventSessionRepository.save(session);
         }
     }
-    
+
     private void importLapByLap(Long sessionId, String data) {
-    	
+
     	if (sessionLapDataRepo.exists(sessionId.toString())) {
     		sessionLapDataRepo.delete(sessionId.toString());
     	}
-    	
+
        	MappingIterator<LapInfo> readValues = initializeIterator(LapInfo.class, data);
        	SessionLapData sessionLapData = new SessionLapData();
        	sessionLapData.setSessionId(sessionId.toString());
-       	
+
        	while (readValues.hasNext()) {
-       		sessionLapData.addLapData(readValues.next());       		
+       		sessionLapData.addLapData(readValues.next());
        	}
        	sessionLapData.processData();
        	sessionLapDataRepo.save(sessionLapData);
-       	
-//       	for(String entryNumber : entriesLapByLap.keySet()) {
-//       		entryLapByLap = entriesLapByLap.get(entryNumber);
-//       		List<LapInfo> pitstops = entryLapByLap.parallelStream().filter(li -> li.getPitstop()).collect(Collectors.toList());
-//       		log.debug(String.format("Race number: %s -> Stints: %s", entryNumber, pitstops.size() + 1));
-//       		int currentLap = 1;
-//       		for(int i = 0; i < pitstops.size(); i++) {
-//       			
-//       			int lapsStint = pitstops.get(i).getLapNumber() - currentLap + 1;
-//       			log.debug(String.format("Stint %s -> #laps: %s", i + 1, lapsStint));
-//       		}
-//       		
-//       		
-//       	}
     }
-    
+
     private void importResults(Long sessionId, String data) {
     	EventSession session = sessionRepository.findOne(sessionId);
-    	
+
     	if (session.isRace()) {
     		Optional.ofNullable(session.getEventEdition().getSeriesEditions())
     			.ifPresent(sEditions -> sEditions.forEach(se -> cacheHandler.resetWinnersCache(se.getId())));
@@ -377,7 +363,7 @@ public class ImportsResource {
         		log.warn("Found more than one entry with race number {}. Skipping...", tmp.getRaceNumber());
         	} else {
         		result.setEntry(entries.get(0));
-        	
+
         		result.setStartingPosition(tmp.getStartingPosition());
 	        	try {
 	        		result.setFinalPosition(Integer.parseInt(tmp.getFinalPosition()));
@@ -408,7 +394,7 @@ public class ImportsResource {
 		        	result.setCause(tmp.getCause());
 		        	result.setPitlaneStart(tmp.getPitlaneStart());
 		        	if (StringUtils.isNotBlank(tmp.getDifference())) {
-		        		Long difference = timeToMillis(tmp.getDifference()); 
+		        		Long difference = timeToMillis(tmp.getDifference());
 		        		if (difference != null) {
 		        			result.setDifference(difference);
 			        		result.setDifferenceType(1);
@@ -448,7 +434,7 @@ public class ImportsResource {
         	}
         }
     }
-    
+
     private Long timeToMillis(String time) {
     	if (StringUtils.isEmpty(time)) {
     		return null;
