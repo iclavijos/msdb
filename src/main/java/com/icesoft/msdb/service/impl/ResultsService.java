@@ -106,7 +106,7 @@ public class ResultsService {
 						log.debug(result.getFinalPosition() + "-" + d.getFullName() + ": " +
 								(points.length > result.getFinalPosition() ? points[result.getFinalPosition() - 1] : 0));
 
-						if (result.getFinalPosition() < 800 && points.length > i) {
+						if (result.getFinalPosition() < 800 && points.length > i && (result.getFinalPosition() - 1 < points.length)) {
 							DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), session.getName());
 							dep.addPoints(calculatedPoints);
 							log.debug(String.format("Driver %s: %s(x%s) points for position %s",
