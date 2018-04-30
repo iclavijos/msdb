@@ -36,7 +36,7 @@ public class SessionLapData {
 			if (lapNumber > 1) {
 				List<LapInfo> lapTimes = dataPerLap.get(lapNumber);
 				LapInfo fastLap = lapTimes.parallelStream()
-                    .sorted((l1, l2) -> l1.getLapTime().compareTo(l2.getLapTime())).findFirst().get();
+                    .sorted(Comparator.comparing(LapInfo::getLapTime)).findFirst().get();
 				if (fastestLap == null) {
 					fastestLap = fastLap;
 					fastLap.setFastestLap(true);
