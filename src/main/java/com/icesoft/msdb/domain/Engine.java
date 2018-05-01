@@ -63,8 +63,7 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
     @Column(name = "manufacturer", length = 50, nullable = false)
     private String manufacturer;
 
-    @NotNull
-    @Column(name = "capacity", nullable = false)
+    @Column(name = "capacity")
     private Integer capacity;
 
     @NotNull
@@ -84,13 +83,13 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
 
     @Column(name = "electric_engine")
     private Boolean electricEngine;
-    
+
     @Column(name = "other_engine")
     private Boolean otherEngine;
-    
+
     @Column(name = "turbo")
     private Boolean turbo;
-    
+
     @Size(max = 1024)
     @Column(name = "comments", length = 1024)
     private String comments;
@@ -108,7 +107,7 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
 
     @ManyToOne
     private Engine derivedFrom;
-    
+
     @Column
     private Boolean rebranded;
 
@@ -244,7 +243,7 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
     public Boolean getOtherEngine() {
 		return otherEngine;
 	}
-    
+
     public Engine otherEngine(Boolean otherEngine) {
     	this.otherEngine = otherEngine;
     	return this;
@@ -257,7 +256,7 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
 	public String getComments() {
 		return comments;
 	}
-	
+
 	public Engine comments(String comments) {
 		this.comments = comments;
 		return this;
@@ -283,12 +282,12 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
     public String getImageUrl() {
     	return imageUrl;
     }
-    
+
     public Engine imageUrl(String imageUrl) {
     	this.imageUrl = imageUrl;
     	return this;
     }
-    
+
     public void setImageUrl(String imageUrl) {
     	this.imageUrl = imageUrl;
     }
@@ -330,7 +329,7 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
     public void setDerivedFrom(Engine engine) {
         this.derivedFrom = engine;
     }
-    
+
     public Boolean getRebranded() {
 		return rebranded;
 	}
@@ -339,7 +338,7 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
     	this.rebranded = rebranded;
     	return this;
     }
-    
+
 	public void setRebranded(Boolean rebranded) {
 		this.rebranded = rebranded;
 	}
