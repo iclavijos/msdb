@@ -2,7 +2,9 @@ package com.icesoft.msdb.domain;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.icesoft.msdb.service.dto.RacePositionsDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -69,11 +71,42 @@ public class SessionLapData {
     public List<List<LapInfo>> getLapsPerDriver() {
         List<String> drivers = laps.parallelStream().map(li -> li.getDriverName())
             .distinct().collect(Collectors.toList());
-        return drivers.parallelStream().map(d -> {
-	        return laps.parallelStream().filter(li -> li.getDriverName().equals(d)).sorted(
-                Comparator.comparing(LapInfo::getLapTime)).collect(Collectors.toList());
-        }).collect(Collectors.toList());
+        return drivers.parallelStream().map(d ->
+            laps.parallelStream().filter(li ->
+                li.getDriverName().equals(d)).sorted(
+                    Comparator.comparing(LapInfo::getLapTime))
+                .collect(Collectors.toList()))
+            .collect(Collectors.toList());
+    }
 
+    @JsonIgnore
+    public List<RacePositionsDTO> getPositionsPerLap() {
+	    List<RacePositionsDTO> result = new ArrayList<>();
+	    Map<String, Long> driversTotalTime = new HashMap<>();
+        List<Integer> lapNumber = laps.stream().map(lapInfo -> lapInfo.getLapNumber()).distinct().sorted().collect(Collectors.toList());
+        for(Integer lNumber: lapNumber) {
+            List<LapInfo> completedLaps = laps.stream().filter(li -> li.getLapNumber().equals(lNumber))
+                .collect(Collectors.toList());
+            result.add(new RacePositionsDTO(lNumber, addCompletedLaps(driversTotalTime, completedLaps)));
+        };
+
+        return result;
+    }
+
+    private List<String> addCompletedLaps(Map<String, Long> driversTotalTime, List<LapInfo> completedLaps) {
+        Map<String, Long> totalTimesCurrentLap = Collections.synchronizedMap(new HashMap<>());
+	    completedLaps.stream().forEach(li -> {
+            String raceNumber = li.getRaceNumber();
+            Long totalTime = driversTotalTime.get(raceNumber);
+            if (totalTime == null) {
+                totalTime = 0L;
+            }
+            totalTime += li.getLapTime();
+            driversTotalTime.put(raceNumber, totalTime);
+            totalTimesCurrentLap.put(raceNumber, totalTime);
+        });
+	    return totalTimesCurrentLap.entrySet().stream()
+            .sorted(Map.Entry.comparingByValue()).map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
 	public List<LapInfo> getLaps() {

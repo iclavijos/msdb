@@ -35,18 +35,18 @@ public class CacheConfiguration {
                 ResourcePoolsBuilder.heap(ehcache.getMaxEntries()))
                 .withExpiry(Expirations.timeToLiveExpiration(Duration.of(ehcache.getTimeToLiveSeconds(), TimeUnit.SECONDS)))
                 .build());
-        
+
         longLivedCacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
         		CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
-                        ResourcePoolsBuilder.heap(100)) 
+                        ResourcePoolsBuilder.heap(100))
                         .withExpiry(Expirations.timeToLiveExpiration(Duration.of(172800, TimeUnit.SECONDS))) //TODO: Externalize
                         .build());
         oneDayCacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
         		CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
-                        ResourcePoolsBuilder.heap(100)) 
+                        ResourcePoolsBuilder.heap(100))
                         .withExpiry(Expirations.timeToLiveExpiration(Duration.of(24 * 60 * 60, TimeUnit.SECONDS))) //TODO: Externalize
                         .build());
-        
+
         alwaysCacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
         		CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
                         ResourcePoolsBuilder.heap(2000)) //TODO: Externalize
@@ -88,17 +88,20 @@ public class CacheConfiguration {
             cm.createCache(com.icesoft.msdb.domain.TeamEventPoints.class.getName(), jcacheConfiguration);
             cm.createCache(com.icesoft.msdb.domain.ManufacturerEventPoints.class.getName(), jcacheConfiguration);
             cm.createCache(com.icesoft.msdb.domain.TyreProvider.class.getName(), jcacheConfiguration);
-            
+
             cm.createCache("homeInfo", jcacheConfiguration);
             cm.createCache("calendar", jcacheConfiguration);
             cm.createCache("timezones", oneDayCacheConfiguration);
-            
+
             cm.createCache("driversStandingsCache", longLivedCacheConfiguration);
             cm.createCache("teamsStandingsCache", longLivedCacheConfiguration);
             cm.createCache("manufacturersStandingsCache", longLivedCacheConfiguration);
             cm.createCache("pointRaceByRace", longLivedCacheConfiguration);
             cm.createCache("resultsRaceByRace", longLivedCacheConfiguration);
-            
+            cm.createCache("lapsDriversCache", longLivedCacheConfiguration);
+            cm.createCache("lapsAveragesCache", longLivedCacheConfiguration);
+            cm.createCache("positionsCache", longLivedCacheConfiguration);
+
             cm.createCache("winnersCache", alwaysCacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };

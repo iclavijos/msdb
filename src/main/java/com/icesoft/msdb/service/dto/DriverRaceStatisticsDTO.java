@@ -4,9 +4,27 @@ import com.icesoft.msdb.domain.LapInfo;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class DriverRaceStatisticsDTO {
+
+    public class LapData {
+        private Integer lapNumber;
+        private Long lapTime;
+
+        public Integer getLapNumber() {
+            return lapNumber;
+        }
+
+        public Long getLapTime() {
+            return lapTime;
+        }
+
+        public LapData(LapInfo lapInfo) {
+
+            this.lapNumber = lapInfo.getLapNumber();
+            this.lapTime = lapInfo.getLapTime();
+        }
+    }
 
     private List<LapInfo> laps;
     private String driverName;
@@ -74,6 +92,10 @@ public class DriverRaceStatisticsDTO {
 
     public Long getBestS3() {
         return bestS3;
+    }
+
+    public List<LapData> getBestLaps() {
+        return laps.parallelStream().limit(20).map(LapData::new).collect(Collectors.toList());
     }
 
     private void calculateBestSectors() {

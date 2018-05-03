@@ -4,6 +4,8 @@
             "lapCharts": "Gráficos",
             "lapsRange": "Escoge el rango de vueltas a mostrar",
             "lapTimes": "Tiempos por vuelta",
+            "lapTime": "Tiempo",
+            "lap": "Vuelta",
             "legend": "Leyenda",
             "fastestLap": "Vuelta rápida de carrera",
             "fastLap": "Vuelta rápida",

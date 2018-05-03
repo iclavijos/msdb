@@ -4,6 +4,8 @@
             "lapCharts": "Lap charts",
             "lapsRange": "Select laps range to draw",
             "lapTimes": "Lap times",
+            "lapTime": "Lap time",
+            "lap": "Lap",
             "legend": "Legend",
             "fastestLap": "Fastest race lap",
             "fastLap": "Fast lap",

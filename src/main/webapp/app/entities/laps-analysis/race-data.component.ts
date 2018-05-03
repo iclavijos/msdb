@@ -35,7 +35,7 @@ export class RaceDataComponent implements OnInit {
     math = Math;
     options: any;
     timeMask: TimeMaskPipe;
-    lapsRangeFrom: number = 2;
+    lapsRangeFrom: number = 1;
     lapsRangeTo: number = 65;
     fastestTime: number;
 
@@ -59,8 +59,10 @@ export class RaceDataComponent implements OnInit {
                         if (!this.timeMask) {
                             this.timeMask = new TimeMaskPipe();
                         }
-                        return data.datasets[tooltipItem.datasetIndex].label + ' ' + 
-                            this.timeMask.transform(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] * 10000, true, false);
+                        return data.datasets[tooltipItem.datasetIndex].label + ' ' +
+                            this.timeMask.transform(
+                                data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] * 10000,
+                                true, false);
                     }
                 }
             },
@@ -130,19 +132,20 @@ export class RaceDataComponent implements OnInit {
             this.lapNumbers = Array.from(Array(this.maxLaps),(x,i)=>i);
             this.refreshGraphic();
         }
-        
+
     }
 
     private refreshGraphic() {
 		let data = {
-            labels: this.lapNumbers && this.lapNumbers.length > 0 ? 
+            labels: this.lapNumbers && this.lapNumbers.length > 0 ?
                 this.lapNumbers.slice(this.lapsRangeFrom - 1, this.lapsRangeTo).map(ln => ln + 1) : [],
 			datasets: []
         };
         let maxLapTime: number = 0;
-    	for(let driver of this.selectedDrivers) {    		
+    	for(let driver of this.selectedDrivers) {
             const randomColor = this.randomColor();
-            const driverLaps = this.lapTimes.find(lt => lt.raceNumber === driver).laps.slice(this.lapsRangeFrom - 1, this.lapsRangeTo).map(l => l.lapTime / 10000);
+            const driverLaps = this.lapTimes.find(lt => lt.raceNumber === driver).laps
+                .slice(this.lapsRangeFrom - 1, this.lapsRangeTo).map(l => l.lapTime / 10000);
             driverLaps.forEach(lap => {
                 if (lap > maxLapTime) {
                     maxLapTime = lap;

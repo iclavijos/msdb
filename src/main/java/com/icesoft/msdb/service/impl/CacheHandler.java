@@ -13,20 +13,25 @@ public class CacheHandler {
 	public void resetDriversStandingsCache(Long seriesEditionId) {
 		log.debug("Reseting drivers standings cache for series edition {}", seriesEditionId);
 	}
-	
+
 	@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, key="#seriesEditionId")
 	public void resetWinnersCache(Long seriesEditionId) {
 		log.debug("Reseting winners cache for series edition {}", seriesEditionId);
 	}
-	
+
 	@CacheEvict(cacheNames="driversChampions")
 	public void resetSeriesChampions(Long seriesEditionId) {
 		log.debug("Reseting series champions cache for series edition {}", seriesEditionId);
 	}
-	
+
 	@CacheEvict(cacheNames= {"pointRaceByRace", "resultsRaceByRace"})
 	public void resetPointsRaceByRace(Long seriesEditionId) {
 		log.debug("Reseting race by race points cache for series edition {}", seriesEditionId);
 	}
-	
+
+    @CacheEvict(cacheNames= {"lapsDriversCache", "lapsAveragesCache", "positionsCache"})
+	public void resetLapByLapCaches(Long sessionId) {
+        log.debug("Reseting lap by lap data caches for session id {}", sessionId);
+    }
+
 }

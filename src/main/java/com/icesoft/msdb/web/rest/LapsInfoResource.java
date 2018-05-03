@@ -7,8 +7,11 @@ import com.icesoft.msdb.domain.LapInfo;
 import com.icesoft.msdb.repository.SessionLapDataRepository;
 import com.icesoft.msdb.service.dto.DriverRaceStatisticsDTO;
 import com.icesoft.msdb.service.dto.LapsInfoDriversDTO;
+import com.icesoft.msdb.service.dto.RacePositionsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +22,7 @@ import com.icesoft.msdb.repository.EventEntryResultRepository;
 
 @RestController
 @RequestMapping("/api/event-editions")
+@Transactional(readOnly = true)
 public class LapsInfoResource {
 
 	@Autowired SessionLapDataRepository repo;
@@ -35,6 +39,7 @@ public class LapsInfoResource {
 	}
 
 	@GetMapping("/event-sessions/{sessionId}/laps/drivers")
+    @Cacheable(cacheNames = "lapsDriversCache")
 	public ResponseEntity<List<LapsInfoDriversDTO>> getDriversWithData(@PathVariable Long sessionId) {
 		List<LapsInfoDriversDTO> result;
 		//TODO: Retrieve data from ES repository (do not show entries names that have no data
@@ -44,9 +49,17 @@ public class LapsInfoResource {
 	}
 
 	@GetMapping("/event-sessions/{sessionId}/laps/averages")
+    @Cacheable(cacheNames = "lapsAveragesCache")
     public ResponseEntity<List<DriverRaceStatisticsDTO>> getBestPerformers(@PathVariable Long sessionId) {
         SessionLapData sld = repo.findOne(sessionId.toString());
 	    return ResponseEntity.ok(
 	        sld.getLapsPerDriver().parallelStream().map(DriverRaceStatisticsDTO::new).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/event-sessions/{sessionId}/positions")
+    @Cacheable(cacheNames = "positionsCache")
+    public ResponseEntity<List<RacePositionsDTO>> getPositions(@PathVariable Long sessionId) {
+        SessionLapData sld = repo.findOne(sessionId.toString());
+        return ResponseEntity.ok(sld.getPositionsPerLap());
     }
 }
