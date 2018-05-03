@@ -24,6 +24,7 @@
     "font-awesome": "4.7.0",
     "fullcalendar": "^3.9.0",
     "icofont": "file:./../icofont",
+    "ion-rangeslider": "^2.2.0",
     "jquery": "3.2.1",
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",
