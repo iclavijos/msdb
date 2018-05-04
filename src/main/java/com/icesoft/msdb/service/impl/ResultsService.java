@@ -74,8 +74,7 @@ public class ResultsService {
 			teamPointsRepo.deleteSessionPoints(sessionId, pss.getSeriesEdition().getId());
 			manufacturerPointsRepo.deleteSessionPoints(sessionId, pss.getSeriesEdition().getId());
 
-			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionId(
-					session.getId(), session.getEventEdition().getId());
+			List<EventEntryResult> results = resultsRepo.findBySessionId(session.getId());
 			if (results.isEmpty()) {
 			    return;
             }
@@ -345,7 +344,7 @@ public class ResultsService {
 					session.getEventEdition().getEvent().getName() :
 					session.getEventEdition().getEvent().getName() + "-" + session.getName();
 
-			List<EventEntryResult> results = resultsRepo.findBySessionIdAndSessionEventEditionId(session.getId(), session.getEventEdition().getId());
+			List<EventEntryResult> results = resultsRepo.findBySessionId(session.getId());
 			for(EventEntryResult result: results) {
 				String res = Integer.toString(result.getFinalPosition());
 				if (result.getFinalPosition() >= 800) {
