@@ -196,12 +196,6 @@
             <dd>
                 <span>
                     <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>{{'motorsportsDatabaseApp.lapbylap.lap'	| translate}}</th>
-                                <th>{{'motorsportsDatabaseApp.lapbylap.lapTime' | translate}}</th>
-                            </tr>
-                        </thead>
                         <tbody>
                             <tr *ngFor="let t of temp(math.ceil(driver.bestLaps.length/2)).fill(); let i = index" [class.even]="isEven">
                                 <td>{{driver.bestLaps[i * 2].lapNumber}} - {{driver.bestLaps[i * 2].lapTime | timeMaskPipe }}</td>
