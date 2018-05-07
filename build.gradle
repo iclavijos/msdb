@@ -40,7 +40,7 @@ apply plugin: 'idea'
 defaultTasks 'bootRun'
 
 group = 'com.icesoft.msdb'
-version = '3.1.0'
+version = '3.1.1'
 
 description = ''
 
