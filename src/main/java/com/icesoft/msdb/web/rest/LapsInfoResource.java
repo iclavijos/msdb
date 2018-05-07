@@ -3,7 +3,10 @@ package com.icesoft.msdb.web.rest;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.LapInfo;
+import com.icesoft.msdb.domain.enums.ResultType;
+import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.SessionLapDataRepository;
 import com.icesoft.msdb.service.dto.DriverRaceStatisticsDTO;
 import com.icesoft.msdb.service.dto.LapsInfoDriversDTO;
@@ -60,6 +63,14 @@ public class LapsInfoResource {
     @Cacheable(cacheNames = "positionsCache")
     public ResponseEntity<List<RacePositionsDTO>> getPositions(@PathVariable Long sessionId) {
         SessionLapData sld = repo.findOne(sessionId.toString());
-        return ResponseEntity.ok(sld.getPositionsPerLap());
+        List<RacePositionsDTO> result = new ArrayList<>();
+        List<String> posLap0 = resultsRepo.findBySessionId(sessionId).stream()
+            .sorted(Comparator.comparing(r -> Optional.ofNullable(r.getStartingPosition()).orElse(901)))
+            .map(r -> r.getEntry().getRaceNumber())
+            .collect(Collectors.toList());
+        RacePositionsDTO dataLap0 = new RacePositionsDTO(0, posLap0);
+        result.add(dataLap0);
+        result.addAll(sld.getPositionsPerLap());
+        return ResponseEntity.ok(result);
     }
 }

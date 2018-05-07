@@ -52,6 +52,11 @@ public class SessionLapData {
 			}
 		}
 
+		laps = laps.stream().sorted((l1, l2) -> {
+		    int comp = l1.getRaceNumber().compareTo(l2.getRaceNumber());
+		    if (comp != 0) return comp;
+		    return l1.getLapNumber().compareTo(l2.getLapNumber());
+        }).collect(Collectors.toList());
 		LapInfo personalBest = null;
 		for(LapInfo lap: laps) {
 			if (lap.getLapNumber() == 1) {

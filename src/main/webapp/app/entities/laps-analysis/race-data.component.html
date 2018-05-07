@@ -1,8 +1,8 @@
 <ngb-tabset>
     <ngb-tab title="{{'motorsportsDatabaseApp.lapbylap.lapCharts' | translate}}">
         <ng-template ngbTabContent>
-            <div *ngFor="let t of temp(math.ceil(drivers.length/5)).fill(); let i = index" class="row">
-                <div *ngFor="let item of drivers.slice(5*i,5*i + 5);" class="col-md-2">
+            <div *ngFor="let t of temp(math.ceil(drivers.length/4)).fill(); let i = index" class="row">
+                <div *ngFor="let item of drivers.slice(4*i,4*i + 4);" class="col-md-3">
                     <p-checkbox  name="groupDrivers" [value]="item.raceNumber" [label]="item.driversNames"
                         [(ngModel)]="selectedDrivers" (onChange)="refreshLapTimesTable(item.raceNumber)">
                     </p-checkbox>
@@ -33,7 +33,7 @@
     <ngb-tab title="{{'motorsportsDatabaseApp.lapbylap.lapTimes' | translate}}">
         <ng-template ngbTabContent>
             <div *ngFor="let t of temp(math.ceil(drivers.length/5)).fill(); let i = index" class="row">
-                <div *ngFor="let item of drivers.slice(5*i,5*i + 5);" class="col-md-2">
+                <div *ngFor="let item of drivers.slice(4*i,4*(i + 1));" class="col-md-3">
                     <p-checkbox  name="groupDrivers" [value]="item.raceNumber" [label]="item.driversNames"
                         [(ngModel)]="selectedDrivers" (onChange)="refreshLapTimesTable(item.raceNumber)">
                     </p-checkbox>
@@ -43,7 +43,7 @@
                 <thead>
                     <tr>
                         <th>{{'motorsportsDatabaseApp.lapbylap.lap' | translate}}</th>
-                        <th *ngFor="let piloto of lapTimes">{{piloto.driverName}}</th>
+                        <th *ngFor="let header of headers">{{header}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -156,6 +156,15 @@
                             [(ngModel)]="selectedDriversAvg">
                         </p-checkbox>
                     </div>
+                </div>
+            </div>
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab title="{{'motorsportsDatabaseApp.lapbylap.raceHistory' | translate}}">
+        <ng-template ngbTabContent>
+            <div class="row">
+                <div class="col-md-12">
+                    <p-chart type="line" [data]="dataRaceChart" [options]="optionsRaceChart">Race chart</p-chart>
                 </div>
             </div>
         </ng-template>

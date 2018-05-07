@@ -19,7 +19,8 @@
             "perfectLap": "Perfect fastest lap",
             "driverName": "Driver",
             "stints": "Stints",
-            "stint": "Stint"
+            "stint": "Stint",
+            "raceHistory": "Race history chart"
         }
     }
 }

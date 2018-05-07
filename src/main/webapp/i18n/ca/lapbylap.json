@@ -19,7 +19,8 @@
             "perfectLap": "Volta ràpida ideal",
             "driverName": "Pilot",
             "stints": "Relleus",
-            "stint": "Relleu"
+            "stint": "Relleu",
+            "raceHistory": "Gràfic d'evolució de cursa"
         }
     }
 }

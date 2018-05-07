@@ -19,7 +19,8 @@
             "perfectLap": "Vuelta rápida ideal",
             "driverName": "Piloto",
             "stints": "Relevos",
-            "stint": "Relevo"
+            "stint": "Relevo",
+            "raceHistory": "Gráfico de evolución de carrera"
         }
     }
 }

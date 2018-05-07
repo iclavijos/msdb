@@ -1,15 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
 
-import { ResponseWrapper } from '../../shared';
-
-import { DriversNames, DriversLaps, DriverLap, DriverAverages } from './';
+import { DriversNames, DriversLaps, DriverLap, DriverAverages , LapPositions} from './';
 import { EventEditionService } from '../event-edition';
 import { EventSessionService } from '../event-session';
 
 import { TimeMaskPipe } from '../../shared/mask/time-mask.pipe';
+import {forEach} from "@angular/router/src/utils/collection";
 
 @Component({
     selector: 'jhi-race-data',
@@ -29,11 +27,15 @@ export class RaceDataComponent implements OnInit {
     drivers: DriversNames[] = [];
     selectedDrivers: string[] = [];
     selectedDriversAvg: string[] = [];
+    headers: string[] = [];
     averages: DriverAverages[] = [];
+    raceChart: LapPositions[];
     data: any;
+    dataRaceChart: any;
     temp = Array;
     math = Math;
     options: any;
+    optionsRaceChart: any;
     timeMask: TimeMaskPipe;
     lapsRangeFrom: number = 1;
     lapsRangeTo: number = 65;
@@ -70,8 +72,7 @@ export class RaceDataComponent implements OnInit {
                 xAxes: [{
                     ticks: {
                         min: 1,
-                        max: 60,
-                        autoSkip: false,
+                        autoSkip: true,
                         callback: function(value, index, values) {
                             return "Lap " + value;
                         }
@@ -112,6 +113,58 @@ export class RaceDataComponent implements OnInit {
                 this.maxLaps = Number(res.json);
                 this.lapsRangeTo = this.maxLaps;
             });
+        this.eventSessionService.findRaceChartData(this.sessionId).subscribe(
+            (res: Response) => {
+                this.raceChart = this.convertRaceChartData(res.json);
+                let data = {
+                    labels: this.raceChart.map(lapRaceChart => lapRaceChart.lapNumber),
+                    datasets: []
+                };
+                const labels = this.raceChart[0].racePositions.map(pos => pos.raceNumber);
+                this.optionsRaceChart = {
+                    tooltips: {
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                return '#' + data.datasets[tooltipItem.datasetIndex].label;
+                            }
+                        }
+                    },
+                    scales: {
+                        yAxes: [{
+                            display: true,
+                            ticks: {
+                                min: 1,
+                                reverse: true,
+                                autoSkip: false,
+                                callback: function(value, index, values) {
+                                    return '#' + labels[index];
+                                }
+                            }
+                        }]
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                };
+                labels.forEach(label => {
+                    const randomColor = this.randomColor();
+                    let dataset = {
+                        label: label,
+                        data: this.raceChart.map(lapRaceChart => lapRaceChart.racePositions.filter(rp => rp.raceNumber === label)).map(l => {
+                            if (l[0] != undefined) {
+                                return l[0].position;
+                            }
+                        }),
+                        fill: false,
+                        lineTension: 0,
+                        borderColor: randomColor,
+                        backgroundColor: randomColor,
+                    }
+                    data.datasets.push(dataset);
+                });
+
+                this.dataRaceChart = Object.assign({}, data);
+            });
     }
 
     refreshLapTimesTable(raceNumber: string) {
@@ -122,6 +175,10 @@ export class RaceDataComponent implements OnInit {
             	(res: Response) => {
                     this.lapTimes.push(this.convertLapTimes(res.json));
                     this.lapNumbers = Array.from(Array(this.maxLaps),(x,i)=>i);
+                    this.headers = [];
+                    for(let selectedDriver of this.selectedDrivers) {
+                        this.headers.push(this.drivers.find(d => d.raceNumber === selectedDriver).driversNames);
+                    }
                     this.refreshGraphic();
                 });
         } else {
@@ -130,6 +187,10 @@ export class RaceDataComponent implements OnInit {
             const pos = this.lapTimes.indexOf(driverToRemove);
             this.lapTimes.splice(pos, 1);
             this.lapNumbers = Array.from(Array(this.maxLaps),(x,i)=>i);
+            this.headers = [];
+            for(let selectedDriver of this.selectedDrivers) {
+                this.headers.push(this.drivers.find(d => d.raceNumber === selectedDriver).driversNames);
+            }
             this.refreshGraphic();
         }
 
@@ -197,6 +258,12 @@ export class RaceDataComponent implements OnInit {
         for (let i = 0; i < json.length; i++) {
             result.laps.push(Object.assign(new DriverLap(), json[i]));
         }
+        return result;
+    }
+
+    private convertRaceChartData(json: any) {
+        const result = [];
+        for (let i = 0; i < json.length; i++) result.push(Object.assign(new LapPositions(), json[i]));
         return result;
     }
 

@@ -5,3 +5,4 @@ export * from './driver-averages.model';
 export * from './lap-data.model';
 export * from './laps-analysis.component';
 export * from './race-data.component';
+export * from './lap-positions.model';
