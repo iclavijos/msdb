@@ -95,7 +95,7 @@ public class DriverRaceStatisticsDTO {
     }
 
     public List<LapData> getBestLaps() {
-        return laps.parallelStream().limit(20).map(LapData::new).collect(Collectors.toList());
+        return laps.parallelStream().sorted(Comparator.comparing(LapInfo::getLapTime)).limit(20).map(LapData::new).collect(Collectors.toList());
     }
 
     private void calculateBestSectors() {
@@ -114,31 +114,46 @@ public class DriverRaceStatisticsDTO {
 
     private void calculateAverageStints() {
         this.averagePerStint = new ArrayList<>();
+        laps = laps.parallelStream().sorted(Comparator.comparing(LapInfo::getLapNumber)).collect(Collectors.toList());
         this.lapsStint = new ArrayList<>();
-        List<Integer> lapsPitIn = laps.parallelStream()
-            .filter(LapInfo::getPitstop)
-            .map(LapInfo::getLapNumber)
-            .sorted().collect(Collectors.toList());
-        int startStintLap = laps.parallelStream().sorted(Comparator.comparing(LapInfo::getLapNumber)).findFirst().get().getLapNumber();
-        if (!lapsPitIn.isEmpty()) {
-            if (lapsPitIn.get(lapsPitIn.size() - 1) != laps.get(laps.size() - 1).getLapNumber()) {
-                lapsPitIn.add(laps.size());
-            }
-        } else {
-            lapsPitIn.add(laps.size());
+
+        LapInfo startLap = laps.get(0);
+        LapInfo endLap = null;
+        Long totalStintTime = startLap.getLapTime();
+        Long average;
+        boolean startStint = false;
+        if (laps.size() == 1) {
+            //Only completed first lap
+            averagePerStint.add(startLap.getLapTime());
+            lapsStint.add(startLap.getLapNumber() + "-" + startLap.getLapNumber());
         }
-
-        for(Integer pitstopLap: lapsPitIn) {
-            final int startLap = startStintLap + 1;
-
-            Double avg = laps.parallelStream()
-                .filter(l -> startLap <= l.getLapNumber() && l.getLapNumber() <= (pitstopLap == laps.size() ? pitstopLap : pitstopLap - 1))
-                .mapToLong(LapInfo::getLapTime).average().orElse(0d);
-            if (startStintLap < pitstopLap) {
-                averagePerStint.add(avg.longValue());
-                lapsStint.add(startStintLap + "-" + pitstopLap);
+        for(int i = 1; i < laps.size(); i++) {
+            if (startStint) {
+                startLap = laps.get(i);
+                totalStintTime = startLap.getLapTime();
+                startStint = false;
+            } else {
+                endLap = laps.get(i);
+                totalStintTime += endLap.getLapTime();
+                average = totalStintTime / (endLap.getLapNumber() - startLap.getLapNumber() + 1);
+                if (endLap.getPitstop()) {
+                    averagePerStint.add(average);
+                    lapsStint.add(startLap.getLapNumber() + "-" + endLap.getLapNumber());
+                    //Another stint
+                    startStint = true;
+                    endLap = null;
+                }
             }
-            startStintLap = pitstopLap + 1;
+        }
+        if (!startStint) {
+            //Stint ended outside pitboxes
+            if (endLap == null) {
+                totalStintTime += startLap.getLapTime();
+                endLap = startLap;
+            }
+            average = totalStintTime / (endLap.getLapNumber() - startLap.getLapNumber() + 1);
+            averagePerStint.add(average);
+            lapsStint.add(startLap.getLapNumber() + "-" + endLap.getLapNumber());
         }
     }
 
