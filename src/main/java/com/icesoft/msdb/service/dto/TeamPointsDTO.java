@@ -5,12 +5,14 @@ public class TeamPointsDTO {
 	private final Long teamId;
 	private final String teamName;
 	private final Float points;
-	
-	public TeamPointsDTO(Long teamId, String teamName, Float points) {
+	private final String category;
+
+	public TeamPointsDTO(Long teamId, String teamName, Float points, String category) {
 		super();
 		this.teamId = teamId;
 		this.teamName = teamName;
 		this.points = points;
+		this.category = category;
 	}
 
 	public Long getTeamId() {
@@ -24,5 +26,7 @@ public class TeamPointsDTO {
 	public Float getPoints() {
 		return points;
 	}
-	
+
+	public String getCategory() { return category; }
+
 }

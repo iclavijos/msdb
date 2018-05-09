@@ -1,11 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { Http } from '@angular/http';
 
-import { ResponseWrapper } from '../../shared';
-
-import { EventEdition, EventEditionService } from '../event-edition';
+import { EventEditionService } from '../event-edition';
 import { SeriesEdition, SeriesEditionService } from '../series-edition';
 
 @Component({
@@ -20,6 +17,9 @@ export class StandingsComponent implements OnInit {
     drivers: any;
     teams: any;
     manufacturers: any;
+    driversUnfiltered: any;
+    teamsUnfiltered: any;
+    manufacturersUnfiltered: any;
 	headers: any;
 	pointsByRace: any;
 	resultsByRace: any;
@@ -33,16 +33,14 @@ export class StandingsComponent implements OnInit {
     data: any;
     options: any;
     selectedDrivers: string[] = [];
-    
-    driverPointsDetail: any;
-    
-    
+    filterCategory: string;
+
     constructor(
             private eventEditionService: EventEditionService,
             private seriesEditionService: SeriesEditionService,
             private http: Http,
             private router: Router) { }
-    
+
     ngOnInit() {
     	if (this.eventEditionId) {
     		let seriesId = null;
@@ -55,57 +53,100 @@ export class StandingsComponent implements OnInit {
 	        });
 	    } else if (this.seriesEdition) {
 	    	this.showExtendedStandings = true;
+
+	    	this.filterCategory = this.seriesEdition.allowedCategories[0].shortname;
+
 	    	this.seriesEditionService.findDriversStandings(this.seriesEdition.id).subscribe(driversStandings => {
-	    		this.drivers = driversStandings.json();
+	    		this.driversUnfiltered = driversStandings.json();
+	    		if (this.seriesEdition.standingsPerCategory) {
+                    this.drivers = this.driversUnfiltered.filter(d => d.category === this.filterCategory);
+                } else {
+	    		    this.drivers = driversStandings.json();
+                }
 	    	});
 	    	if (this.seriesEdition.teamsStandings) {
 		    	this.seriesEditionService.findTeamsStandings(this.seriesEdition.id).subscribe(teamsStandings => {
-		    		this.teams = teamsStandings.json();
+		    		this.teamsUnfiltered = teamsStandings.json();
+                    if (this.seriesEdition.standingsPerCategory) {
+                        this.teams = this.teamsUnfiltered.filter(d => d.category === this.filterCategory);
+                    } else {
+                        this.teams = teamsStandings.json();
+                    }
 		    	});
 	    	}
 	    	if (this.seriesEdition.manufacturersStandings) {
 		    	this.seriesEditionService.findManufacturersStandings(this.seriesEdition.id).subscribe(manufacturersStandings => {
-		    		this.manufacturers = manufacturersStandings.json();
+		    		this.manufacturersUnfiltered = manufacturersStandings.json();
+                    if (this.seriesEdition.standingsPerCategory) {
+                        this.manufacturers = this.manufacturersUnfiltered.filter(d => d.category === this.filterCategory);
+                    } else {
+                        this.manufacturers = manufacturersStandings.json();
+                    }
 		    	});
 	    	}
-	    	this.seriesEditionService.findDriversResultsByRace(this.seriesEdition.id).subscribe(resultsByRace => {
-	    		this.resultsByRace = resultsByRace.json();
-	    	});
-	    	
-	    	this.seriesEditionService.findDriversPointsByRace(this.seriesEdition.id).subscribe(pointsByRace => {
-	    		this.pointsByRace = pointsByRace.json();
-	    		this.numRaces = this.pointsByRace[0].length - 2;
-	    		this.data = {
-	    	            labels: this.pointsByRace[0].slice(1, this.numRaces + 1),
-	    	            datasets: [
-	    	            ]
-	    	        };
-	    		this.options = {
-	    				scales: {
-	    					xAxes: [{
-	    						ticks: {
-	    							min: 15,
-	    							max: 25,
-	    							autoSkip: false
-	    						}
-	    					}],
-	    			        yAxes: [{
-	    			            display: true,
-	    			            ticks: {
-	    			            	suggestedMax: 10,
-	    			                beginAtZero: true,
-	    			            }
-	    			        }]
-	    			    },
-	    	            legend: {
-	    	                position: 'bottom'
-	    	            }
-	    	        };
-	    	});
-	    	
+
+	    	this.updateDriversPoints();
+	    	this.updateDriversResults();
+
 	    }
     }
-    
+
+    private updateDriversPoints() {
+        this.seriesEditionService.findDriversPointsByRace(this.seriesEdition.id, this.filterCategory).subscribe(pointsByRace => {
+            this.pointsByRace = pointsByRace.json();
+            this.numRaces = this.pointsByRace[0].length - 2;
+            this.data = {
+                labels: this.pointsByRace[0].slice(1, this.numRaces + 1),
+                datasets: [
+                ]
+            };
+            this.options = {
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            min: 15,
+                            max: 25,
+                            autoSkip: false
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        ticks: {
+                            suggestedMax: 10,
+                            beginAtZero: true,
+                        }
+                    }]
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            };
+        });
+    }
+
+    private updateDriversResults() {
+        this.seriesEditionService.findDriversResultsByRace(this.seriesEdition.id, this.filterCategory).subscribe(resultsByRace => {
+            this.resultsByRace = resultsByRace.json();
+        });
+    }
+
+    changeCategory(event) {
+        this.drivers = this.driversUnfiltered.filter(d => d.category === this.filterCategory);
+        if (this.teamsUnfiltered) {
+            this.teams = this.teamsUnfiltered.filter(d => d.category === this.filterCategory);
+        }
+        if (this.manufacturersUnfiltered) {
+            this.manufacturers = this.manufacturersUnfiltered.filter(d => d.category === this.filterCategory);
+        }
+        let data = {
+            labels: this.pointsByRace[0].slice(1, this.numRaces + 1),
+            datasets: []
+        };
+        this.data = Object.assign({}, data);
+        this.selectedDrivers = [];
+        this.updateDriversPoints();
+    }
+
     refreshGraphic() {
 		let data = {
 			labels: this.pointsByRace[0].slice(1, this.numRaces + 1),
@@ -137,7 +178,7 @@ export class StandingsComponent implements OnInit {
     	}
     	this.data = Object.assign({}, data);
     }
-    
+
     randomColor(brightness = 3) {
     	// Six levels of brightness from 0 to 5, 0 being the darkest
         var rgb = [Math.random() * 256, Math.random() * 256, Math.random() * 256];
@@ -145,7 +186,7 @@ export class StandingsComponent implements OnInit {
         var mixedrgb = [rgb[0] + mix[0], rgb[1] + mix[1], rgb[2] + mix[2]].map(function(x){ return Math.round(x/2.0)})
         return "rgb(" + mixedrgb.join(",") + ")";
     }
-    
+
     getPointsDetail(driverId: number) {
         if (this.eventEditionId != undefined) {
             this.router.navigate(['/driver-points-details', {
@@ -161,7 +202,7 @@ export class StandingsComponent implements OnInit {
             }]);
         }
     }
-    
+
     switchSeries(id) {
         if (!id) {
             return false;

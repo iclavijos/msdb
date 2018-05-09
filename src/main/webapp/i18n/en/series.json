@@ -96,7 +96,8 @@
 	            "updateManufacturersChampions": "Edit manufacturers champions",
 	            "driversStandings": "Drivers standings?",
 	            "teamsStandings": "Teams standings?",
-	            "manufacturersStandings": "Constructors standings?"
+	            "manufacturersStandings": "Constructors standings?",
+	            "standingsPerCategory": "Standings per category?"
 	        }
         }
     }

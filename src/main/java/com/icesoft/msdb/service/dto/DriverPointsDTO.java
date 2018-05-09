@@ -15,22 +15,24 @@ public class DriverPointsDTO {
 	private final Integer numPoints;
 	@JsonView(ResponseViews.DriverPointsDetailView.class)
 	private final String reason;
-	
-	public DriverPointsDTO(Long id, Long driverId, String driverName, Float points) {
-		this(id, driverId, driverName, points, 1, "");
+	private final String category;
+
+	public DriverPointsDTO(Long id, Long driverId, String driverName, Float points, String category) {
+		this(id, driverId, driverName, points, 1, category, "");
 	}
-	
-	public DriverPointsDTO(Long id, String driverName, Float points, String reason) {
-		this(id, null, driverName, points, 0, reason);
+
+	public DriverPointsDTO(Long id, String driverName, Float points, String reason, String category) {
+		this(id, null, driverName, points, 0, category, reason);
 	}
-	
-	public DriverPointsDTO(Long id, Long driverId, String driverName, Float points, Integer numPoints, String reason) {
+
+	public DriverPointsDTO(Long id, Long driverId, String driverName, Float points, Integer numPoints, String category, String reason) {
 		super();
 		this.id = id;
 		this.driverId = driverId;
 		this.driverName = driverName;
 		this.points = points;
 		this.numPoints = numPoints;
+		this.category = category;
 		this.reason = reason;
 	}
 
@@ -49,12 +51,14 @@ public class DriverPointsDTO {
 	public Float getPoints() {
 		return points;
 	}
-	
+
 	public Integer getNumPoints() {
 		return numPoints;
 	}
-	
+
 	public String getReason() {
 		return reason;
 	}
+
+	public String getCategory() { return category; }
 }

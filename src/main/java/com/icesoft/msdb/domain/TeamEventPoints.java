@@ -27,15 +27,18 @@ public class TeamEventPoints implements Serializable {
 
 	@ManyToOne
 	private Team team;
-	
+
 	@ManyToOne
 	private EventSession session;
-	
+
 	@ManyToOne
 	private SeriesEdition seriesEdition;
-	
+
 	@Column
 	private Float points = 0f;
+
+    @ManyToOne
+    private Category category;
 
 	public Team getTeam() {
 		return team;
@@ -68,12 +71,20 @@ public class TeamEventPoints implements Serializable {
 	public void setPoints(Float points) {
 		this.points = points;
 	}
-	
+
 	public void addPoints(Float points) {
 		this.points += points;
 	}
 
-	@Override
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

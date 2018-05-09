@@ -9,23 +9,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.icesoft.msdb.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.icesoft.msdb.domain.Driver;
-import com.icesoft.msdb.domain.DriverEventPoints;
-import com.icesoft.msdb.domain.EventEditionEntry;
-import com.icesoft.msdb.domain.EventEntryResult;
-import com.icesoft.msdb.domain.EventSession;
-import com.icesoft.msdb.domain.ManufacturerEventPoints;
-import com.icesoft.msdb.domain.PointsRaceByRace;
-import com.icesoft.msdb.domain.PointsSystem;
-import com.icesoft.msdb.domain.PointsSystemSession;
-import com.icesoft.msdb.domain.SeriesEdition;
-import com.icesoft.msdb.domain.TeamEventPoints;
 import com.icesoft.msdb.domain.enums.DurationType;
 import com.icesoft.msdb.domain.enums.ResultType;
 import com.icesoft.msdb.domain.enums.SessionType;
@@ -87,174 +77,14 @@ public class ResultsService {
 					}
 				}
 			}
-			for(int i = 0; i < results.size(); i++) {
-				EventEntryResult result = results.get(i);
-				Boolean sharedDrive = result.getSharedDriveWith() != null;
-
-				float calculatedPoints = 0f;
-				if (points != null) {
-					if (result.getFinalPosition() < 800 && result.getFinalPosition() <= points.length) {
-						calculatedPoints = (float)points[result.getFinalPosition() - 1] * pss.getPsMultiplier();
-						if (sharedDrive) {
-							calculatedPoints = calculatedPoints / 2;
-						}
-						calculatedPoints = calculatedPoints * pointsPct;
-					}
-
-					for(Driver d : result.getEntry().getDrivers()) {
-						log.debug(result.getFinalPosition() + "-" + d.getFullName() + ": " +
-								(points.length > result.getFinalPosition() ? points[result.getFinalPosition() - 1] : 0));
-
-						if (result.getFinalPosition() < 800 && points.length > i && (result.getFinalPosition() - 1 < points.length)) {
-							DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), session.getName());
-							dep.addPoints(calculatedPoints);
-							log.debug(String.format("Driver %s: %s(x%s) points for position %s",
-								d.getFullName(), (float)points[result.getFinalPosition() - 1], pss.getPsMultiplier(), result.getFinalPosition()));
-							drivers.add(dep);
-						}
-
-						if (result.getStartingPosition() != null &&  result.getStartingPosition() == 1) {
-							if (ps.getPointsPole() != 0) {
-								DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsPole");
-								dep.addPoints(ps.getPointsPole().floatValue());
-								log.debug(String.format("Driver %s: %s points for pole", d.getFullName(), ps.getPointsPole()));
-								drivers.add(dep);
-							}
-						}
-					}
-					if (sharedDrive) {
-						for(Driver d: result.getSharedDriveWith().getDrivers()) {
-							DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), session.getName());
-							dep.addPoints(calculatedPoints);
-							drivers.add(dep);
-						}
-					}
-
-				}
-			}
-
-			if (ps != null) {
-				log.debug("Race points calculated... proceeding with extra points");
-				if (ps.getPointsFastLap() != 0) {
-					List<EventEntryResult> fastestLapOrder = results.parallelStream().sorted(
-							(r1, r2)->Long.compare(
-										r1.getBestLapTime() == null ? Long.MAX_VALUE : r1.getBestLapTime(),
-										r2.getBestLapTime() == null ? Long.MAX_VALUE : r2.getBestLapTime()))
-							.collect(Collectors.toList());
-
-					EventEntryResult fastestEntry;
-					Stream<EventEntryResult> filtered = fastestLapOrder.parallelStream();
-					if (ps.getMaxPosFastLap() != 0) {
-						filtered = filtered.filter(eer -> eer.getFinalPosition() <= ps.getMaxPosFastLap());
-					}
-					if (!ps.isPitlaneStartAllowed()) {
-						filtered = filtered.filter(eer -> !eer.isPitlaneStart());
-					}
-					if (ps.getPctCompletedFL() != 0) {
-						//We assume that duration will always be laps if minimum percentage completion needs to be applied
-						filtered = filtered.filter(eer -> (eer.getLapsCompleted().floatValue() / eer.getSession().getDuration().floatValue()) * 100f >= ps.getPctCompletedFL());
-					}
-					fastestLapOrder = filtered.collect(Collectors.toList());
-					if (!fastestLapOrder.isEmpty()) {
-						fastestEntry = fastestLapOrder.get(0);
-						if (fastestEntry.getBestLapTime() != null) {
-							for(Driver d : fastestEntry.getEntry().getDrivers()) {
-								DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsFastLap");
-								dep.addPoints(ps.getPointsFastLap().floatValue());
-								log.debug(String.format("Driver %s: %s points for fastest lap", d.getFullName(), ps.getPointsFastLap()));
-								drivers.add(dep);
-							}
-						} else {
-							log.warn("No fastest lap recorded... skipping");
-						}
-					} else {
-						log.warn("No recorded fast lap complied with all the requirements");
-					}
-				}
-				if (ps.getPointsLeadLap() != 0 || ps.getPointsMostLeadLaps() != 0) {
-					List<EventEntryResult> ledLaps = results.parallelStream()
-							.filter(r -> r.getLapsLed() > 0)
-							.sorted((r1, r2) -> Integer.compare(r2.getLapsLed(), r1.getLapsLed())).collect(Collectors.toList());
-
-					Comparator<EventEntryResult> c = (r1, r2) -> {
-						if (r1.getLapsLed().equals(r2.getLapsLed())) {
-							return r1.getFinalPosition().compareTo(r2.getFinalPosition());
-						} else {
-							return r1.getLapsLed().compareTo(r2.getLapsLed()) * -1;
-						}
-					};
-
-					ledLaps.sort(c);
-
-					int maxLedLaps = 0;
-					for(EventEntryResult r : ledLaps) {
-						boolean addPointsMostLeadLaps = false;
-						if (r.getLapsLed() > maxLedLaps && maxLedLaps == 0) { //|| r.getLapsLed() == maxLedLaps) {
-							maxLedLaps = r.getLapsLed();
-							addPointsMostLeadLaps = true;
-						}
-						for(Driver d : r.getEntry().getDrivers()) {
-							DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsLeadLap");
-							dep.addPoints(ps.getPointsLeadLap().floatValue());
-							log.debug(String.format("Driver %s: %s points for leading %s laps", d.getFullName(), ps.getPointsLeadLap(), r.getLapsLed()));
-							drivers.add(dep);
-							if (addPointsMostLeadLaps) {
-								dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps");
-								dep.addPoints(ps.getPointsMostLeadLaps().floatValue());
-								log.debug(String.format("Driver %s: %s points for most led laps", d.getFullName(), ps.getPointsMostLeadLaps()));
-								drivers.add(dep);
-							}
-						}
-					}
-				}
-			}
-
-			//Points for each driver calculated. Proceeding with teams and manufacturers
-			if (pss.getSeriesEdition().getTeamsStandings()) {
-				List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(session.getEventEdition().getId());
-				for(EventEditionEntry entry: entries) {
-					Driver driver = entry.getDrivers().get(0); //We will only deal with the first one so multidriver entries are handled just once
-					double dPoints = drivers.stream().filter(dp -> dp.getDriver().getId().equals(driver.getId())).mapToDouble(dp -> dp.getPoints()).sum();
-					if (dPoints > 0) {
-						TeamEventPoints tep = teams.get(entry.getTeam().getId());
-						if (tep == null) {
-							tep = new TeamEventPoints();
-							tep.setSession(session);
-							tep.setSeriesEdition(pss.getSeriesEdition());
-							tep.setTeam(entry.getTeam());
-						}
-						tep.addPoints((float)dPoints);
-						teams.put(entry.getTeam().getId(), tep);
-					}
-				}
-			}
-
-			if (pss.getSeriesEdition().getManufacturersStandings()) {
-				List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(session.getEventEdition().getId());
-				for(EventEditionEntry entry: entries) {
-					String manufacturer = entry.getManufacturer();
-					if (!manufacturers.containsKey(manufacturer)) {
-						double mPoints = results.parallelStream()
-								.filter(r -> r.getEntry().getManufacturer().equals(manufacturer)).limit(2)
-								.mapToDouble(r -> drivers.stream().filter(
-									dp -> dp.getDriver().getId().equals(r.getEntry().getDrivers().get(0).getId())).mapToDouble(dp -> dp.getPoints()).sum())
-								.sum();
-
-
-						if (mPoints > 0) {
-							ManufacturerEventPoints mep = manufacturers.get(entry.getChassis().getManufacturer());
-							if (mep == null) {
-								mep = new ManufacturerEventPoints();
-								mep.setSession(session);
-								mep.setSeriesEdition(pss.getSeriesEdition());
-								mep.setManufacturer(manufacturer);
-							}
-							mep.addPoints((float)mPoints);
-							manufacturers.put(manufacturer, mep);
-						}
-					}
-				}
-			}
+			if (!pss.getSeriesEdition().getStandingsPerCategory()) {
+                calculatePoints(pss, ps, pss.getSeriesEdition().getAllowedCategories().get(0), results, session, points, pointsPct, drivers, teams, manufacturers);
+            } else {
+                for(Category category: pss.getEventSession().getEventEdition().getAllowedCategories()) {
+                    List<EventEntryResult> resultsCat = results.stream().filter(r -> r.getEntry().getCategory().equals(category)).collect(Collectors.toList());
+                    calculatePoints(pss, ps, category, resultsCat, session, points, pointsPct, drivers, teams, manufacturers);
+                }
+            }
 
 			log.debug("Persisting points...");
 			drivers.stream().forEach(entry -> driverPointsRepo.save(entry));
@@ -263,9 +93,198 @@ public class ResultsService {
 			cacheHandler.resetDriversStandingsCache(pss.getSeriesEdition().getId());
 		}
 
-
 		log.info("Processed result for {}-{}.", session.getEventEdition().getLongEventName(), session.getName());
 	}
+
+	private void calculatePoints(PointsSystemSession pss, PointsSystem ps, Category category, List<EventEntryResult> results,
+                                 EventSession session, int[] points, float pointsPct, List<DriverEventPoints> drivers,
+                                 Map<Long, TeamEventPoints> teams, Map<String, ManufacturerEventPoints> manufacturers) {
+
+	    for(int i = 0; i < results.size(); i++) {
+            EventEntryResult result = results.get(i);
+            Boolean sharedDrive = result.getSharedDriveWith() != null;
+
+            float calculatedPoints = 0f;
+            if (points != null) {
+                if (result.getFinalPosition() < 800 && (i+1) <= points.length) {
+                    calculatedPoints = (float)points[i] * pss.getPsMultiplier();
+                    if (sharedDrive) {
+                        calculatedPoints = calculatedPoints / 2;
+                    }
+                    calculatedPoints = calculatedPoints * pointsPct;
+                }
+
+                for(Driver d : result.getEntry().getDrivers()) {
+                    log.debug(result.getFinalPosition() + "-" + d.getFullName() + ": " +
+                        (points.length > (i+1) ? points[i] : 0));
+
+                    DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), session.getName());
+                    dep.setCategory(category);
+                    if (result.getFinalPosition() < 800 && points.length > i && (i < points.length)) {
+                        dep.addPoints(calculatedPoints);
+                        log.debug(String.format("Driver %s: %s(x%s) points for position %s",
+                            d.getFullName(), (float)points[i], pss.getPsMultiplier(), i+1));
+                    } else {
+                        dep.addPoints(0f);
+                    }
+                    drivers.add(dep);
+
+                    if (result.getStartingPosition() != null &&  result.getStartingPosition() == 1) {
+                        if (ps.getPointsPole() != 0) {
+                            dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsPole");
+                            dep.setCategory(category);
+                            dep.addPoints(ps.getPointsPole().floatValue());
+                            log.debug(String.format("Driver %s: %s points for pole", d.getFullName(), ps.getPointsPole()));
+                            drivers.add(dep);
+                        }
+                    }
+                }
+                if (sharedDrive) {
+                    for(Driver d: result.getSharedDriveWith().getDrivers()) {
+                        DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), session.getName());
+                        dep.setCategory(category);
+                        dep.addPoints(calculatedPoints);
+                        drivers.add(dep);
+                    }
+                }
+
+            }
+        }
+
+        if (ps != null) {
+            log.debug("Race points calculated... proceeding with extra points");
+            if (ps.getPointsFastLap() != 0) {
+                List<EventEntryResult> fastestLapOrder = results.parallelStream().sorted(
+                    Comparator.comparingLong(r -> r.getBestLapTime() == null ? Long.MAX_VALUE : r.getBestLapTime()))
+                    .collect(Collectors.toList());
+
+                EventEntryResult fastestEntry;
+                Stream<EventEntryResult> filtered = fastestLapOrder.parallelStream();
+                if (ps.getMaxPosFastLap() != 0) {
+                    filtered = filtered.filter(eer -> eer.getFinalPosition() <= ps.getMaxPosFastLap());
+                }
+                if (!ps.isPitlaneStartAllowed()) {
+                    filtered = filtered.filter(eer -> !eer.isPitlaneStart());
+                }
+                if (ps.getPctCompletedFL() != 0) {
+                    //We assume that duration will always be laps if minimum percentage completion needs to be applied
+                    filtered = filtered.filter(eer -> (eer.getLapsCompleted().floatValue() / eer.getSession().getDuration().floatValue()) * 100f >= ps.getPctCompletedFL());
+                }
+                fastestLapOrder = filtered.collect(Collectors.toList());
+                if (!fastestLapOrder.isEmpty()) {
+                    fastestEntry = fastestLapOrder.get(0);
+                    if (fastestEntry.getBestLapTime() != null) {
+                        for(Driver d : fastestEntry.getEntry().getDrivers()) {
+                            DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsFastLap");
+                            dep.setCategory(category);
+                            dep.addPoints(ps.getPointsFastLap().floatValue());
+                            log.debug(String.format("Driver %s: %s points for fastest lap", d.getFullName(), ps.getPointsFastLap()));
+                            drivers.add(dep);
+                        }
+                    } else {
+                        log.warn("No fastest lap recorded... skipping");
+                    }
+                } else {
+                    log.warn("No recorded fast lap complied with all the requirements");
+                }
+            }
+            if (ps.getPointsLeadLap() != 0 || ps.getPointsMostLeadLaps() != 0) {
+                List<EventEntryResult> ledLaps = results.parallelStream()
+                    .filter(r -> r.getLapsLed() > 0)
+                    .sorted((r1, r2) -> Integer.compare(r2.getLapsLed(), r1.getLapsLed())).collect(Collectors.toList());
+
+                Comparator<EventEntryResult> c = (r1, r2) -> {
+                    if (r1.getLapsLed().equals(r2.getLapsLed())) {
+                        return r1.getFinalPosition().compareTo(r2.getFinalPosition());
+                    } else {
+                        return r1.getLapsLed().compareTo(r2.getLapsLed()) * -1;
+                    }
+                };
+
+                ledLaps.sort(c);
+
+                int maxLedLaps = 0;
+                for(EventEntryResult r : ledLaps) {
+                    boolean addPointsMostLeadLaps = false;
+                    if (r.getLapsLed() > maxLedLaps && maxLedLaps == 0) { //|| r.getLapsLed() == maxLedLaps) {
+                        maxLedLaps = r.getLapsLed();
+                        addPointsMostLeadLaps = true;
+                    }
+                    for(Driver d : r.getEntry().getDrivers()) {
+                        DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsLeadLap");
+                        if (category != null) {
+                            dep.setCategory(category);
+                        }
+                        dep.addPoints(ps.getPointsLeadLap().floatValue());
+                        log.debug(String.format("Driver %s: %s points for leading %s laps", d.getFullName(), ps.getPointsLeadLap(), r.getLapsLed()));
+                        drivers.add(dep);
+                        if (addPointsMostLeadLaps) {
+                            dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps");
+                            if (category != null) {
+                                dep.setCategory(category);
+                            }
+                            dep.addPoints(ps.getPointsMostLeadLaps().floatValue());
+                            log.debug(String.format("Driver %s: %s points for most led laps", d.getFullName(), ps.getPointsMostLeadLaps()));
+                            drivers.add(dep);
+                        }
+                    }
+                }
+            }
+        }
+
+        //Points for each driver calculated. Proceeding with teams and manufacturers
+        if (pss.getSeriesEdition().getTeamsStandings()) {
+            List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(session.getEventEdition().getId());
+            for(EventEditionEntry entry: entries) {
+                Driver driver = entry.getDrivers().get(0); //We will only deal with the first one so multidriver entries are handled just once
+                double dPoints = drivers.stream().filter(dp -> dp.getDriver().getId().equals(driver.getId())).mapToDouble(dp -> dp.getPoints()).sum();
+                if (dPoints > 0) {
+                    TeamEventPoints tep = teams.get(entry.getTeam().getId());
+                    if (tep == null) {
+                        tep = new TeamEventPoints();
+                        tep.setSession(session);
+                        tep.setSeriesEdition(pss.getSeriesEdition());
+                        tep.setTeam(entry.getTeam());
+                        if (category != null) {
+                            tep.setCategory(category);
+                        }
+                    }
+                    tep.addPoints((float)dPoints);
+                    teams.put(entry.getTeam().getId(), tep);
+                }
+            }
+        }
+
+        if (pss.getSeriesEdition().getManufacturersStandings()) {
+            List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(session.getEventEdition().getId());
+            for(EventEditionEntry entry: entries) {
+                String manufacturer = entry.getManufacturer();
+                if (!manufacturers.containsKey(manufacturer)) {
+                    double mPoints = results.parallelStream()
+                        .filter(r -> r.getEntry().getManufacturer().equals(manufacturer)).limit(2)
+                        .mapToDouble(r -> drivers.stream().filter(
+                            dp -> dp.getDriver().getId().equals(r.getEntry().getDrivers().get(0).getId())).mapToDouble(dp -> dp.getPoints()).sum())
+                        .sum();
+
+
+                    if (mPoints > 0) {
+                        ManufacturerEventPoints mep = manufacturers.get(entry.getChassis().getManufacturer());
+                        if (mep == null) {
+                            mep = new ManufacturerEventPoints();
+                            mep.setSession(session);
+                            mep.setSeriesEdition(pss.getSeriesEdition());
+                            mep.setManufacturer(manufacturer);
+                            if (category != null) {
+                                mep.setCategory(category);
+                            }
+                        }
+                        mep.addPoints((float)mPoints);
+                        manufacturers.put(manufacturer, mep);
+                    }
+                }
+            }
+        }
+    }
 
 	public List<DriverPointsDTO> getDriversStandings(Long seriesId) {
 		List<DriverPointsDTO> standings = viewsRepo.getDriversStandings(seriesId);
@@ -303,7 +322,7 @@ public class ResultsService {
 				(Long)dep[0],
 				(String)dep[1] + " " + (String)dep[2],
 				((Double)dep[3]).floatValue(),
-				((Long)dep[4]).intValue(), "")).collect(Collectors.toList());
+				((Long)dep[4]).intValue(), null, "")).collect(Collectors.toList());
 	}
 
 	public List<DriverPointsDTO> getDriverPointsEvent(Long eventId, Long driverId) {
@@ -311,24 +330,25 @@ public class ResultsService {
 
 		return pointsEvent.parallelStream().map(dep -> new DriverPointsDTO(
 				(Long)dep[0], (String)dep[1] + " " + (String)dep[2],
-				(Float)dep[3], (String)dep[4])).collect(Collectors.toList());
+				(Float)dep[3], (String)dep[4], null)).collect(Collectors.toList());
 	}
 
 	public PointsRaceByRace getPointsRaceByRace(Long seriesEditionId) {
 		List<Object[]> pointsSeries = driverPointsRepo.getDriversPointsInSeries(seriesEditionId);
 		PointsRaceByRace result = new PointsRaceByRace();
 		pointsSeries.stream().forEach(ps -> {
-			result.addDriverPoints(
-					(String)ps[0], (String)ps[1], (SessionType)ps[2], (String)ps[3] + " " + (String)ps[4], ((Double)ps[5]).floatValue());
-		});
+            result.addDriverPoints(
+                (String) ps[0], (String) ps[1], (String) ps[5], (String) ps[2] + " " + (String) ps[3], ((Double) ps[4]).floatValue());
+        });
 
 		return result;
 	}
 
-	public String[][] getResultsRaceByRace(Long seriesEditionId) {
+	public String[][] getResultsRaceByRace(Long seriesEditionId, String category) {
 		SeriesEdition seriesEdition = seriesEdRepository.findOne(seriesEditionId);
 		List<EventSession> races = sessionRepo.findRacesInSeries(seriesEdition);
 		List<DriverPointsDTO> dpd = getDriversStandings(seriesEditionId); //We use this as returned data is ordered by scored points
+        dpd = dpd.stream().filter(d -> d.getCategory() == null ? true : d.getCategory().equals(category)).collect(Collectors.toList());
 		List<String> driverNames = dpd.stream().map(driver -> driver.getDriverName()).collect(Collectors.toList());
 
 		String[][] data = new String[driverNames.size() + 1][races.size() + 1];
@@ -345,15 +365,25 @@ public class ResultsService {
 					session.getEventEdition().getEvent().getName() + "-" + session.getName();
 
 			List<EventEntryResult> results = resultsRepo.findBySessionId(session.getId());
+			int posInCategory = 1;
 			for(EventEntryResult result: results) {
-				String res = Integer.toString(result.getFinalPosition());
-				if (result.getFinalPosition() >= 800) {
-					res = ResultType.valueOf(result.getFinalPosition()).getStringValue();
-				}
-				for(Driver driver: result.getEntry().getDrivers()) {
-					int pos = driverNames.indexOf(driver.getFullName());
-					data[pos + 1][i] = res;
-				}
+			    if (result.getEntry().getCategory().getShortname().equals(category)) {
+                    String res;
+                    if (result.getFinalPosition() >= 800) {
+                        res = ResultType.valueOf(result.getFinalPosition()).getStringValue();
+                    } else {
+                        if (!seriesEdition.getStandingsPerCategory()) {
+                            res = Integer.toString(result.getFinalPosition());
+                        } else {
+                            res = Integer.toString(posInCategory++);
+                        }
+                    }
+
+                    for (Driver driver : result.getEntry().getDrivers()) {
+                        int pos = driverNames.indexOf(driver.getFullName());
+                        data[pos + 1][i] = res;
+                    }
+                }
 			}
 		}
 

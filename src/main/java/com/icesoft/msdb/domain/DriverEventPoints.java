@@ -27,30 +27,33 @@ public class DriverEventPoints implements Serializable {
 
 	@ManyToOne
 	private Driver driver;
-	
+
 	@ManyToOne
 	private EventSession session;
-	
+
 	@ManyToOne
 	private SeriesEdition seriesEdition;
-	
+
 	@Column
 	private Float points = 0f;
-	
+
 	@Column
 	private String reason;
-	
+
+    @ManyToOne
+    private Category category;
+
 	public DriverEventPoints() {
 		super();
 	}
-	
+
 	public DriverEventPoints(Driver driver, EventSession session, SeriesEdition series, String reason) {
 		this.driver = driver;
 		this.session = session;
 		this.seriesEdition = series;
 		this.reason = reason;
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -86,7 +89,7 @@ public class DriverEventPoints implements Serializable {
 	public void setPoints(Float points) {
 		this.points = points;
 	}
-	
+
 	public void addPoints(Float points) {
 		this.points += points;
 	}
@@ -99,7 +102,15 @@ public class DriverEventPoints implements Serializable {
 		this.reason = reason;
 	}
 
-	@Override
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

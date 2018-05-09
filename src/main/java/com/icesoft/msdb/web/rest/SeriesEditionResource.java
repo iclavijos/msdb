@@ -67,7 +67,7 @@ public class SeriesEditionResource {
     private final Logger log = LoggerFactory.getLogger(SeriesEditionResource.class);
 
     private static final String ENTITY_NAME = "seriesEdition";
-        
+
     private final SeriesEditionService seriesEditionService;
     private final SeriesEditionRepository seriesEditionRepository;
     private final EventSessionRepository eventSessionRepository;
@@ -180,45 +180,45 @@ public class SeriesEditionResource {
     @Cacheable(cacheNames="driversStandingsCache", key="#id")
     public ResponseEntity<List<DriverPointsDTO>> getSeriesDriversStandings(@PathVariable Long id) {
     	List<DriverPointsDTO> result = resultsService.getDriversStandings(id);
-    	
+
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
-    
+
     @GetMapping("/series-editions/{id}/standings/teams")
     @Timed
     @Cacheable(cacheNames="teamsStandingsCache", key="#id")
     public ResponseEntity<List<TeamPointsDTO>> getSeriesTeamsStandings(@PathVariable Long id) {
     	List<TeamPointsDTO> result = resultsService.getTeamsStandings(id);
-    	
+
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
-    
+
     @GetMapping("/series-editions/{id}/standings/manufacturers")
     @Timed
     @Cacheable(cacheNames="manufacturersStandingsCache", key="#id")
     public ResponseEntity<List<ManufacturerPointsDTO>> getSeriesManufacturersStandings(@PathVariable Long id) {
     	List<ManufacturerPointsDTO> result = resultsService.getManufacturersStandings(id);
-    	
+
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
-    
-    @GetMapping("/series-editions/{id}/points")
+
+    @GetMapping("/series-editions/{id}/points/{category}")
     @Timed
-    @Cacheable(cacheNames="pointRaceByRace", key="#id")
-    public ResponseEntity<Object[][]> getSeriesPointsRaceByRace(@PathVariable Long id) {
+    @Cacheable(cacheNames="pointRaceByRace")
+    public ResponseEntity<Object[][]> getSeriesPointsRaceByRace(@PathVariable Long id, @PathVariable String category) {
     	PointsRaceByRace points = resultsService.getPointsRaceByRace(id);
     	List<DriverPointsDTO> standings = resultsService.getDriversStandings(id);
-    	return new ResponseEntity<>(points.getResultsMatrix(standings), HttpStatus.OK);
+    	return new ResponseEntity<>(points.getResultsMatrix(standings, category), HttpStatus.OK);
     }
-    
-    @GetMapping("/series-editions/{id}/results")
+
+    @GetMapping("/series-editions/{id}/results/{category}")
     @Timed
-    @Cacheable(cacheNames="resultsRaceByRace", key="#id")
-    public ResponseEntity<String[][]> getSeriesResultsRaceByRace(@PathVariable Long id) {
-    	String[][] result = resultsService.getResultsRaceByRace(id);
+    @Cacheable(cacheNames="resultsRaceByRace")
+    public ResponseEntity<String[][]> getSeriesResultsRaceByRace(@PathVariable Long id, @PathVariable String category) {
+    	String[][] result = resultsService.getResultsRaceByRace(id, category);
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
-    
+
     @GetMapping("/series-editions/{id}/events")
     @Timed
     @Cacheable(cacheNames="winnersCache", key="#id")
@@ -227,7 +227,7 @@ public class SeriesEditionResource {
     	return new ResponseEntity<>(
     			seriesEditionService.getSeriesEditionsEventsAndWinners(id), HttpStatus.OK);
     }
-    
+
     @PostMapping("/series-editions/{id}/events/{idEvent}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
@@ -237,7 +237,7 @@ public class SeriesEditionResource {
     	seriesEditionService.addEventToSeries(id, idEvent, racesPointsData);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString())).build();
     }
-    
+
     @DeleteMapping("/series-editions/{id}/events/{idEvent}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
@@ -247,14 +247,14 @@ public class SeriesEditionResource {
     	seriesEditionService.removeEventFromSeries(id, idEvent);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
-    
+
     @PostMapping("/series-editions/{id}/standings")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
     public CompletableFuture<ResponseEntity<Void>> updateSeriesStandings(@PathVariable Long id) {
     	log.debug("REST request to update series {} standings", id);
-    	
+
     	List<EventEdition> events = seriesEditionService.findSeriesEvents(id);
     	events.stream().forEach(eventEdition -> {
     		eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(eventEdition.getId()).stream()
@@ -265,14 +265,14 @@ public class SeriesEditionResource {
     			statsService.buildEventStatistics(eventEdition);
     			log.debug("Statistics updated");
     	});
-    	
+
     	SeriesEdition seriesEd = Optional.of(seriesEditionRepository.findOne(id))
         		.orElseThrow(() -> new MSDBException("Invalid series edition identifier: " + id));
         statsService.updateSeriesChamps(seriesEd);
-    	
+
         return CompletableFuture.completedFuture(ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString())).build());
     }
-    
+
     @PostMapping("/series-editions/{seriesEditionId}/champions/drivers")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
@@ -281,7 +281,7 @@ public class SeriesEditionResource {
     	seriesEditionService.setSeriesDriversChampions(seriesEditionId, selectedDriversId);
     	return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, seriesEditionId.toString())).build();
     }
-    
+
     @PostMapping("/series-editions/{seriesEditionId}/champions/teams")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
@@ -290,27 +290,27 @@ public class SeriesEditionResource {
     	seriesEditionService.setSeriesTeamsChampions(seriesEditionId, selectedTeamsId);
     	return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, seriesEditionId.toString())).build();
     }
-    
+
     @GetMapping("/series-editions/{id}/champions/drivers")
     @Timed
     public ResponseEntity<List<SeriesDriverChampionDTO>> getSeriesEventsChampionsDrivers(@PathVariable Long id) {
     	log.debug("REST request to retrieve all champions drivers of series edition {}", id);
     	List<Driver> champs = seriesEditionService.getSeriesDriversChampions(id);
-    	
+
     	return new ResponseEntity<>(champs.parallelStream().map(d -> new SeriesDriverChampionDTO(d)).collect(Collectors.toList())
     			, HttpStatus.OK);
     }
-    
+
     @GetMapping("/series-editions/{id}/champions/teams")
     @Timed
     public ResponseEntity<List<SeriesTeamChampionDTO>> getSeriesEventsChampionsTeams(@PathVariable Long id) {
     	log.debug("REST request to retrieve all champions drivers of series edition {}", id);
     	List<Team> champs = seriesEditionService.getSeriesTeamsChampions(id);
-    	
+
     	return new ResponseEntity<>(champs.parallelStream().map(t -> new SeriesTeamChampionDTO(t)).collect(Collectors.toList())
     			, HttpStatus.OK);
     }
-    
+
     @PostMapping("/series-editions/{seriesEditionId}/clone")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})

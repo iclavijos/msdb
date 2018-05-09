@@ -62,7 +62,7 @@ export class SeriesEditionService {
             return res;
         });
     }
-    
+
     findManufacturersStandings(id: number): Observable<Response> {
         return this.http.get(`${this.resourceUrl}/${id}/standings/manufacturers`).map((res: Response) => {
             return res;
@@ -74,21 +74,21 @@ export class SeriesEditionService {
             return res;
         });
     }
-    
+
     findTeamsChampions(id: number): Observable<Response> {
         return this.http.get(`${this.resourceUrl}/${id}/champions/teams`).map((res: Response) => {
             return res;
         });
     }
-    
-    findDriversResultsByRace(id: number): Observable<Response> {
-        return this.http.get(`${this.resourceUrl}/${id}/results`).map((res: Response) => {
+
+    findDriversResultsByRace(id: number, category: string): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${id}/results/${category}`).map((res: Response) => {
             return res;
         });
     }
-    
-    findDriversPointsByRace(id: number): Observable<Response> {
-        return this.http.get(`${this.resourceUrl}/${id}/points`).map((res: Response) => {
+
+    findDriversPointsByRace(id: number, category: string): Observable<Response> {
+        return this.http.get(`${this.resourceUrl}/${id}/points/${category}`).map((res: Response) => {
             return res;
         });
     }
@@ -104,7 +104,7 @@ export class SeriesEditionService {
            return res;
         });
     }
-    
+
     clone(seriesEditionId: number, newPeriod: string): Observable<Response> {
     	return this.http.post(`${this.resourceUrl}/${seriesEditionId}/clone`, newPeriod).map((res: Response) => {
            return res;
@@ -116,13 +116,13 @@ export class SeriesEditionService {
             return res;
          });
     }
-    
+
     setDriversChampions(seriesEditionId: number, selectedDriversId: any) {
     	return this.http.post(`${this.resourceUrl}/${seriesEditionId}/champions/drivers`, selectedDriversId).map((res: Response) => {
     		return res;
     	});
     }
-    
+
     setTeamsChampions(seriesEditionId: number, selectedTeamsId: any) {
     	return this.http.post(`${this.resourceUrl}/${seriesEditionId}/champions/teams`, selectedTeamsId).map((res: Response) => {
     		return res;

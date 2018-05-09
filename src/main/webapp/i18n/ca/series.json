@@ -56,7 +56,7 @@
 	            	"searchEvent": "Cercar l'event",
 	            	"assignPoints": "Assigna sistema de puntuació per cada sessió putuable de l'event"
 	            },
-	            "champions": "Campions",	            
+	            "champions": "Campions",
 	            "period": "Periòde",
 	            "singleChassis": "Xassís únic",
 	            "singleEngine": "Motor únic",
@@ -96,7 +96,8 @@
 	            "updateManufacturersChampions": "Edita fabricants campions",
 	            "driversStandings": "Classificació de pilots?",
 	            "teamsStandings": "Classificació d'equips?",
-	            "manufacturersStandings": "Classificació de constructors?"
+	            "manufacturersStandings": "Classificació de constructors?",
+	            "standingsPerCategory": "Clasificacions per categoria?"
 	        }
         }
     }

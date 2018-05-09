@@ -26,15 +26,18 @@ public class ManufacturerEventPoints implements Serializable {
     private Long id;
 
 	private String manufacturer;
-	
+
 	@ManyToOne
 	private EventSession session;
-	
+
 	@ManyToOne
 	private SeriesEdition seriesEdition;
-	
+
 	@Column
 	private Float points = 0f;
+
+    @ManyToOne
+    private Category category;
 
 	public String getManufacturer() {
 		return manufacturer;
@@ -67,12 +70,20 @@ public class ManufacturerEventPoints implements Serializable {
 	public void setPoints(Float points) {
 		this.points = points;
 	}
-	
+
 	public void addPoints(Float points) {
 		this.points += points;
 	}
 
-	@Override
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

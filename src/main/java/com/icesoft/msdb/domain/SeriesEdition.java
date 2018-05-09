@@ -32,7 +32,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @NotNull
     @Size(max = 150)
     @Column(name = "edition_name", length = 150, nullable = false)
@@ -51,10 +51,10 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 
     @Column(name = "single_tyre")
     private Boolean singleTyre;
-    
+
     @Column(name = "multidriver")
     private Boolean multidriver = false;
-    
+
     @ManyToMany(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @JoinTable(
@@ -62,7 +62,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="ID"))
     private List<Category> allowedCategories;
-    
+
     @ManyToMany(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @JoinTable(
@@ -70,7 +70,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="points_id", referencedColumnName="ID"))
     private List<PointsSystem> pointsSystems;
-    
+
     @ManyToMany(fetch=FetchType.LAZY)
     @Fetch(FetchMode.SELECT)
     @JsonIgnore
@@ -80,7 +80,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         inverseJoinColumns=@JoinColumn(name="event_id", referencedColumnName="ID"))
     @OrderBy("eventDate ASC")
     private List<EventEdition> events;
-    
+
     @ManyToMany(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @JoinTable(
@@ -88,7 +88,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="driver_id", referencedColumnName="ID"))
     private List<Driver> driversChampions;
-    
+
     @ManyToMany(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @JoinTable(
@@ -99,18 +99,21 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 
     @ManyToOne
     private Series series;
-    
+
     @Column(name="drivers_standings")
     private Boolean driversStandings = Boolean.TRUE;
-    
+
     @Column(name="teams_standings")
     private Boolean teamsStandings = Boolean.FALSE;
-    
+
     @Column(name="manufacturers_standings")
     private Boolean manufacturersStandings = Boolean.FALSE;
-    
+
     @Column(name="num_events", nullable=false)
     private Integer numEvents;
+
+    @Column(name="standings_per_category")
+    private Boolean standingsPerCategory = Boolean.FALSE;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -133,7 +136,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     public void setPeriod(String period) {
         this.period = period;
     }
-    
+
     public String getPeriodEnd() {
     	Pattern p = Pattern.compile("[0-9]{4}");
     	Matcher m = p.matcher(this.period);
@@ -149,7 +152,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     		}
     	}
     }
-    
+
     public String getEditionName() {
 		return editionName;
 	}
@@ -196,7 +199,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     public void setSingleTyre(Boolean singleTyre) {
         this.singleTyre = singleTyre;
     }
-    
+
     public Boolean isMultidriver() {
 		return multidriver;
 	}
@@ -231,7 +234,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         	this.allowedCategories.addAll(categories);
         }
     }
-    
+
     public List<PointsSystem> getPointsSystems() {
         return pointsSystems;
     }
@@ -275,7 +278,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     	this.driversChampions = driversChampions;
     	return this;
     }
-    
+
 	public void setDriversChampions(List<Driver> driversChampions) {
 		this.driversChampions = driversChampions;
 	}
@@ -283,7 +286,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 	public List<Team> getTeamsChampions() {
 		return teamsChampions;
 	}
-	
+
 	public SeriesEdition teamsChampions(List<Team> teamsChampions) {
 		this.teamsChampions = teamsChampions;
 		return this;
@@ -330,7 +333,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 	public Integer getNumEvents() {
 		return numEvents;
 	}
-	
+
 	public SeriesEdition numEvents(Integer numEvents) {
 		this.numEvents = numEvents;
 		return this;
@@ -338,6 +341,19 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 
 	public void setNumEvents(Integer numEvents) {
 		this.numEvents = numEvents;
+	}
+
+	public void setStadingsPerCategory(Boolean standingsPerCategory) {
+		this.standingsPerCategory = standingsPerCategory;
+	}
+
+	public SeriesEdition stadingsPerCategory(Boolean standingsPerCategory) {
+		this.standingsPerCategory = standingsPerCategory;
+		return this;
+	}
+
+	public Boolean getStandingsPerCategory() {
+		return this.standingsPerCategory;
 	}
 
 	@Override

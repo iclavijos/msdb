@@ -17,6 +17,7 @@ logging:
         ROOT: INFO
         com.icesoft.msdb: DEBUG
         io.github.jhipster: DEBUG
+        # org.hibernate.SQL: DEBUG
         # org.hibernate.type: TRACE
 
 spring:

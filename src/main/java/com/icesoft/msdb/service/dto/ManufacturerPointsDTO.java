@@ -4,11 +4,13 @@ public class ManufacturerPointsDTO {
 
 	private final String manufacturerName;
 	private final Float points;
-	
-	public ManufacturerPointsDTO(String manufacturerName, Float points) {
+	private final String category;
+
+	public ManufacturerPointsDTO(String manufacturerName, Float points, String category) {
 		super();
 		this.manufacturerName = manufacturerName;
 		this.points = points;
+		this.category = category;
 	}
 
 	public String getManufacturerName() {
@@ -18,5 +20,7 @@ public class ManufacturerPointsDTO {
 	public Float getPoints() {
 		return points;
 	}
-	
+
+	public String getCategory() { return category; }
+
 }

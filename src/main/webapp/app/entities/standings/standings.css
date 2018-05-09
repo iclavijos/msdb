@@ -1,5 +1,5 @@
 tr.odd {
-	background-color: rgba(0,0,0,0.05);	
+	background-color: rgba(0,0,0,0.05);
 }
 
 td.retired {
@@ -21,4 +21,11 @@ td.second {
 
 td.third {
 	background-color: #ffdf9f;
+}
+
+.container-scroll {
+    overflow-x: auto;
+}
+.container-scroll > .row {
+    width: 133.33333333%; /* = 100% * 4/3 */
 }

@@ -96,7 +96,8 @@
 	            "updateManufacturersChampions": "Edita fabricantes campeones",
 	            "driversStandings": "¿Clasificación de pilotos?",
 	            "teamsStandings": "¿Clasificación de equipos?",
-	            "manufacturersStandings": "¿Clasificación de constructores?"
+	            "manufacturersStandings": "¿Clasificación de constructores?",
+	            "standingsPerCategory": "¿Clasificaciones por categoría?"
 	        }
         }
     }
