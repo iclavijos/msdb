@@ -29,10 +29,10 @@ export class Calendar implements OnInit {
     currentLocale: string;
     timezone: string;
     timezones: any;
-    
+
     header: any;
     options: any;
-    
+
     constructor(private _translateService: TranslateService,
                 private eventEditionService: EventEditionService,
                 private http: Http) { }
@@ -48,7 +48,7 @@ export class Calendar implements OnInit {
         this.header = {
             left: 'prev,next today',
             center: 'title',
-            right: 'month,agendaWeek,agendaDay'
+            right: 'month,agendaWeek,agendaDay,listWeek'
         };
         this.options = {
             eventColor: '#CECECE',
@@ -60,24 +60,24 @@ export class Calendar implements OnInit {
             this.currentLocale = 'es';
         }
     }
-    
+
     loadEvents(e) {
         const start = new Date(e.view.start);
         const end = new Date(e.view.end);
         start.setDate(start.getDate() - 1);
-        
+
         this.eventEditionService.findCalendarEvents(start,end).subscribe(events => {this.convertEvents(events, this.timezone);});
     }
 
     changeTimezone() {
         this.convertEvents(this.sessions, this.timezone);
     }
-    
+
     eventClick(e) {
         this.event = new MyEvent();
         this.event.title = e.calEvent.eventName;
         this.event.sessionName = e.calEvent.sessionName;
-        
+
         let start = e.calEvent.start;
         let end = e.calEvent.end;
 
@@ -88,7 +88,7 @@ export class Calendar implements OnInit {
         this.event.seriesLogoUrl = e.calEvent.seriesLogoUrl;
         this.dialogVisible = true;
     }
-    
+
     private convertEvents(sessions, currentTZ) {
         this.sessions = sessions;
         this.events = new Array();
