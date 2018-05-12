@@ -40,7 +40,7 @@
 						</span>
 					</a>
 				</div>
-			</div>             
+			</div>
 			<div class="col-xl-3 col-sm-6 mb-3">
 				<div class="card text-white bg-success o-hidden h-100">
 					<div class="card-body rounded">
@@ -81,7 +81,7 @@
 					<div class="card-block">
 						<form name="searchFormEntries" class="form-inline">
 							<div class="input-group w-100 mt-3">
-								<label class="form-control-label col-md-3" jhiTranslate="home.searchEntries" for="field_name">Search entries</label> 
+								<label class="form-control-label col-md-3" jhiTranslate="home.searchEntries" for="searchEntries">Search entries</label>
 								<input type="text" class="form-control col-md-8" [(ngModel)]="searchEntriesStr" id="searchEntries" name="searchEntries"
 									placeholder="Ex: '1951 Fangio', 'Alonso', 'Mercedes 2016', 'Australia'...">
 								<button class="input-group-addon btn btn-info"
@@ -96,7 +96,7 @@
 						</form>
 						<form name="searchFormEvents" class="form-inline">
 							<div class="input-group w-100 mt-3">
-								<label class="form-control-label col-md-3" jhiTranslate="home.searchEvents" for="field_name">Search events</label>
+								<label class="form-control-label col-md-3" jhiTranslate="home.searchEvents" for="searchEvents">Search events</label>
 								<input type="text" class="form-control col-md-8" [(ngModel)]="searchEventsStr" id="searchEvents" name="searchEvents"
 									placeholder="Ex: 'Belgian GP', 'Suzuka 2010', '1997 Spain'...">
 								<button class="input-group-addon btn btn-info"
@@ -138,21 +138,13 @@
 	                    			<span *ngIf="session.durationType === 5"> ({{ session.duration}}L)</span>
 	                    			<span *ngIf="session.durationType === 3"> ({{ session.duration}}KM)</span>
 	                    			<span *ngIf="session.durationType === 4"> ({{ session.duration}}M)</span>: </strong>
-                    				<span *ngIf="isAuthenticated()">
+                    				<span>
 	                    				<span *ngIf="session.seriesIds">
 	                    					<ng-template ngFor let-item [ngForOf]="session.seriesIds" let-currentIndex="index">
 										      <a [routerLink]="['/series/series-edition', item ]" >{{session.seriesNames[currentIndex]}} </a>
 										    </ng-template>
-	                    				</span> 
+	                    				</span>
                     					- <a [routerLink]="['/event-edition', session.eventEditionId ]" >{{ session.eventName }}, {{ session.sessionName }}</a>
-                    				</span>
-                    				<span *ngIf="!isAuthenticated()">
-                    					<span *ngIf="session.seriesIds">
-                    						<ng-template ngFor let-item [ngForOf]="session.seriesNames">
-                    							{{item}} -
-                    						</ng-template>
-                    					</span> 
-                    					{{ session.eventName }}, {{ session.sessionName }}
                     				</span>
 		                    	</p>
 							</div>
