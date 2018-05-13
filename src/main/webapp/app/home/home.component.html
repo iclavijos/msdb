@@ -75,7 +75,7 @@
 			</div>
          </div>
          <div class="row mb-3">
-         	<div class="col-sm-5 no-padding-right" *ngIf="isAuthenticated()">
+         	<div class="col-sm-12" *ngIf="isAuthenticated()">
 				<div class="card">
 					<div class="card-header">{{ 'home.searchDB' | translate }}</div>
 					<div class="card-block">
@@ -113,7 +113,9 @@
 					</div>
 				</div>
 			</div>
-	        <div class="col-sm-7">
+         </div>
+        <div class="row mb-3">
+	        <div class="col-sm-12">
 				<div class="card">
 					<div class="card-header">{{ 'home.upcomingEvents' | translate }}</div>
 					<div class="row">
