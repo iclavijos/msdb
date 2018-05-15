@@ -10,8 +10,10 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.icesoft.msdb.service.impl.CacheHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -73,6 +75,9 @@ public class SeriesEditionResource {
     private final EventSessionRepository eventSessionRepository;
     private final ResultsService resultsService;
     private final StatisticsService statsService;
+
+    @Autowired
+    private CacheHandler cacheHandler;
 
     public SeriesEditionResource(SeriesEditionService seriesEditionService, SeriesEditionRepository seriesEditionRepository,
     		EventSessionRepository eventSessionRepository, ResultsService resultsService, StatisticsService statsService) {
@@ -231,9 +236,9 @@ public class SeriesEditionResource {
     @PostMapping("/series-editions/{id}/events/{idEvent}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    @CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, key="#id")
     public ResponseEntity<Void> addEventToSeries(@PathVariable Long id, @PathVariable Long idEvent, @Valid @RequestBody List<EventRacePointsDTO> racesPointsData) {
     	log.debug("REST request to add an event to series {}", id);
+    	cacheHandler.resetSeriesEditionCaches(seriesEditionRepository.findOne(id));
     	seriesEditionService.addEventToSeries(id, idEvent, racesPointsData);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString())).build();
     }
@@ -241,9 +246,10 @@ public class SeriesEditionResource {
     @DeleteMapping("/series-editions/{id}/events/{idEvent}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    @CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, key="#id")
+    //@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, allEntries = true)
     public ResponseEntity<Void> removeEventFromSeries(@PathVariable Long id, @PathVariable Long idEvent) {
     	log.debug("REST request to remove an event from series {}", id);
+        cacheHandler.resetSeriesEditionCaches(seriesEditionRepository.findOne(id));
     	seriesEditionService.removeEventFromSeries(id, idEvent);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
@@ -251,10 +257,11 @@ public class SeriesEditionResource {
     @PostMapping("/series-editions/{id}/standings")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    //@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, allEntries = true)
     @Transactional
     public CompletableFuture<ResponseEntity<Void>> updateSeriesStandings(@PathVariable Long id) {
     	log.debug("REST request to update series {} standings", id);
-
+        cacheHandler.resetSeriesEditionCaches(seriesEditionRepository.findOne(id));
     	List<EventEdition> events = seriesEditionService.findSeriesEvents(id);
     	events.stream().forEach(eventEdition -> {
     		eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(eventEdition.getId()).stream()
