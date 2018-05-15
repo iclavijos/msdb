@@ -46,8 +46,8 @@ public interface DriverEventPointsRepository extends JpaRepository<DriverEventPo
         "join event_session es on dep.session_id = es.id " +
         "join event_edition ee on es.event_edition_id = ee.id " +
         "join event e on ee.event_id = e.id " +
-        "join Driver d on dep.driver_id = d.id " +
-        "left join Category c on dep.category_id = c.id " +
+        "join driver d on dep.driver_id = d.id " +
+        "left join category c on dep.category_id = c.id " +
         "WHERE se.id = ?1 " +
         "GROUP BY ee.long_event_name, es.name, d.name, d.surname " +
         "ORDER BY es.session_start_time ASC, points DESC", nativeQuery = true)
