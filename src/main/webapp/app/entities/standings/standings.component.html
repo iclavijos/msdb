@@ -1,6 +1,6 @@
-<div class="row">
+<div class="row" *ngIf="seriesEdition?.standingsPerCategory">
     <div class="col-md-9"></div>
-    <div class="col-md-3 float-right" *ngIf="seriesEdition?.standingsPerCategory">
+    <div class="col-md-3 float-right">
         <select class="form-control" id="field_category" name="category" [(ngModel)]="filterCategory" (change)="changeCategory($event)">
             <option *ngFor="let category of seriesEdition.allowedCategories" [ngValue]="category.shortname">{{category.name}}</option>
         </select>

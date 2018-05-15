@@ -138,6 +138,7 @@ export class StandingsComponent implements OnInit {
         if (this.manufacturersUnfiltered) {
             this.manufacturers = this.manufacturersUnfiltered.filter(d => d.category === this.filterCategory);
         }
+        this.updateDriversResults();
         let data = {
             labels: this.pointsByRace[0].slice(1, this.numRaces + 1),
             datasets: []
