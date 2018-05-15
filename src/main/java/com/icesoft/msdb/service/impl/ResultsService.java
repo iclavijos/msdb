@@ -381,6 +381,9 @@ public class ResultsService {
 
                     for (Driver driver : result.getEntry().getDrivers()) {
                         int pos = driverNames.indexOf(driver.getFullName());
+                        if (pos == -1) {
+                            log.warn("Driver not found: " + driver.getFullName());
+                        }
                         data[pos + 1][i] = res;
                     }
                 }
