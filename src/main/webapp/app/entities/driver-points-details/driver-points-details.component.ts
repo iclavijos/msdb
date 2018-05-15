@@ -16,6 +16,7 @@ export class DriverPointsDetailsComponent implements OnInit, OnDestroy {
     currentAccount: any;
     eventSubscriber: Subscription;
     eventEditionId: number;
+    seriesEditionIds: number[];
     driverId: number;
     driverName: string;
 
@@ -28,6 +29,7 @@ export class DriverPointsDetailsComponent implements OnInit, OnDestroy {
     ) {
         this.eventEditionId = activatedRoute.snapshot.params['eventEditionId'];
         this.driverId = activatedRoute.snapshot.params['driverId'];
+        this.seriesEditionIds = activatedRoute.snapshot.params['seriesEditionIds'];
     }
 
     loadAll() {
@@ -37,7 +39,7 @@ export class DriverPointsDetailsComponent implements OnInit, OnDestroy {
                     this.driverName = res.json[0].driverName;
                 });
     }
-    
+
     translatable(reason: string) {
         return reason.startsWith('motorsportsDatabaseApp');
     }
@@ -64,7 +66,7 @@ export class DriverPointsDetailsComponent implements OnInit, OnDestroy {
     private onError(error) {
         this.jhiAlertService.error(error.message, null, null);
     }
-    
+
     previousState() {
         window.history.back();
     }

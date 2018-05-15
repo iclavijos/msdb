@@ -104,11 +104,16 @@ export class EventEditionDetailComponent implements OnInit, OnDestroy {
     registerChangeInEventEditions() {
         this.eventSubscriber = this.eventManager.subscribe(
             'eventEditionListModification',
-            (response) => this.load(this.eventEdition.id)
+            () => this.load(this.eventEdition.id)
         );
         this.eventSubscriber.add(this.eventManager.subscribe(
             'eventSessionListModification',
-            (response) => this.loadSessions(this.eventEdition.id)));
+            () => this.loadSessions(this.eventEdition.id)));
+        this.eventSubscriber.add(this.eventManager.subscribe(
+            'uploadedResult',
+            () => this.eventEditionService.findDriversBestTimes(this.eventEdition.id).subscribe(
+                (res: Response) => this.driversBestTimes = res.json)));
+        ;
     }
 
     convertToCurrentTZ() {

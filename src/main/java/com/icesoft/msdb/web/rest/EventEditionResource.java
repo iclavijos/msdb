@@ -363,12 +363,13 @@ public class EventEditionResource {
 
     @PutMapping("/event-editions/event-sessions/{sessionId}/process-results")
     @Timed
-    @CacheEvict({"driversStandingsCache", "teamsStandingsCache", "pointRaceByRace", "winnersCache", "pointRaceByRace", "resultsRaceByRace"}) //TODO: Improve to only remove the required key
+    //@CacheEvict(cacheNames = {"driversStandingsCache", "teamsStandingsCache", "pointRaceByRace", "winnersCache", "resultsRaceByRace"}) //TODO: Improve to only remove the required key
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
     public ResponseEntity<Void> processSessionResults(@PathVariable Long sessionId) {
     	log.debug("Processing results of session {}", sessionId);
     	EventSession session = eventSessionRepository.findOne(sessionId);
+    	session.getEventEdition().getSeriesEditions().forEach(seriesEdition -> cacheHandler.resetSeriesEditionCaches(seriesEdition));
     	resultsService.processSessionResults(sessionId);
     	if (session.getSessionType().equals(SessionType.RACE)) {
 			log.info("Updating statistics...", session.getEventEdition().getLongEventName(), session.getName());
@@ -600,9 +601,10 @@ public class EventEditionResource {
     @PostMapping("/event-editions/{id}/event-sessions/{idSession}/results")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    @CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, key="#eventSessionResult.entry.id")
+    //@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, allEntries = true)
     public ResponseEntity<EventEntryResult> createEventSessionResult(@Valid @RequestBody EventEntryResult eventSessionResult) throws URISyntaxException {
         log.debug("REST request to save EventEntryResult : {}", eventSessionResult);
+        eventSessionResult.getSession().getEventEdition().getSeriesEditions().forEach(seriesEdition -> cacheHandler.resetSeriesEditionCaches(seriesEdition));
         if (eventSessionResult.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
             		ENTITY_NAME_ENTRY, "idexists", "A new eventSessionResult cannot already have an ID")).body(null);
@@ -617,9 +619,10 @@ public class EventEditionResource {
     @PutMapping("/event-editions/event-sessions/results")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    @CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, key="#eventSessionResult.entry.id")
+    //@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, allEntries = true)
     public ResponseEntity<EventEntryResult> updateEventSessionResult(@Valid @RequestBody EventEntryResult eventSessionResult) throws URISyntaxException {
         log.debug("REST request to update EventEntryResult : {}", eventSessionResult);
+        eventSessionResult.getSession().getEventEdition().getSeriesEditions().forEach(seriesEdition -> cacheHandler.resetSeriesEditionCaches(seriesEdition));
         if (eventSessionResult.getId() == null) {
             return createEventSessionResult(eventSessionResult);
         }

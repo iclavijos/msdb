@@ -29,7 +29,7 @@ export class EventEntryUploadResultsDialogComponent implements OnInit {
         this.imports = new Imports();
         this.imports.importType = 'SESSION_RESULTS';
     }
-    
+
     ngOnInit() {
     	this.isSaving = false;
     }
@@ -37,7 +37,7 @@ export class EventEntryUploadResultsDialogComponent implements OnInit {
     clear () {
         this.activeModal.dismiss('cancel');
     }
-    
+
     setFileData(event, entity, field, isImage) {
         this.dataUtils.setFileData(event, entity, field, isImage);
     }
@@ -51,16 +51,20 @@ export class EventEntryUploadResultsDialogComponent implements OnInit {
                 (res: Response) => this.success(),
                 (res: Response) => this.fail());
     }
-    
+
     success() {
     	this.isSaving = false;
         this.eventManager.broadcast({
             name: 'eventEntryResultListModification',
             content: 'Imported session results'
         });
+        this.eventManager.broadcast({
+            name: 'uploadedResult',
+            content: 'OK'
+        });
         this.activeModal.dismiss(true);
     }
-    
+
     fail() {
     	this.isSaving = false;
         this.alertService.error('global.messages.info.imports.fail', null);

@@ -192,7 +192,7 @@ export class StandingsComponent implements OnInit {
             this.router.navigate(['/driver-points-details', {
                 eventEditionId: this.eventEditionId,
                 driverId: driverId,
-                seriesEditionId: this.seriesEdition.id
+                seriesEditionIds: this.seriesEditionIds
             }]);
         } else {
             //Navigate to popup with points in series edition

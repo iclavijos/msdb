@@ -15,7 +15,6 @@ export const driverPointsDetailsRoute: Routes = [
         path: 'driver-points-details',
         component: DriverPointsDetailsComponent,
         data: {
-            authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.driverPointsDetails.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -23,7 +22,6 @@ export const driverPointsDetailsRoute: Routes = [
         path: 'driver-points-details/:id',
         component: DriverPointsDetailsDetailComponent,
         data: {
-            authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.driverPointsDetails.home.title'
         },
         canActivate: [UserRouteAccessService]

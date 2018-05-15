@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-md-9"></div>
-    <div class="col-md-3 float-right" *ngIf="seriesEdition.standingsPerCategory">
+    <div class="col-md-3 float-right" *ngIf="seriesEdition?.standingsPerCategory">
         <select class="form-control" id="field_category" name="category" [(ngModel)]="filterCategory" (change)="changeCategory($event)">
             <option *ngFor="let category of seriesEdition.allowedCategories" [ngValue]="category.shortname">{{category.name}}</option>
         </select>
@@ -30,6 +30,7 @@
 											<th></th>
 											<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.driver' | translate}}</th>
 											<th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
+											<th *ngIf="eventEditionId"></th>
 										</tr>
 									</thead>
 									<tbody>
@@ -37,6 +38,7 @@
 											<td>{{i + 1}}</td>
 											<td><a [routerLink]="['/driver', driver.driverId]">{{driver.driverName}}</a></td>
 											<td>{{driver.points}}</td>
+											<td *ngIf="eventEditionId"><div (click)="getPointsDetail(driver.driverId)"><i class="fa fa-search" aria-hidden="true"></i></div></td>
 										</tr>
 									</tbody>
 								</table>
