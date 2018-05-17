@@ -406,10 +406,15 @@ public class ResultsService {
 			EventEditionEntry entry = entries.get(i - 1);
 			data[i][0] = "#" + entry.getRaceNumber() + " " + entry.getDriversName();
 			List<EventEntryResult> results = resultsRepo.findByEntryId(entry.getId());
-			for(int j = 1; j <= sessions.size() && j <= results.size(); j++) {
-				Optional<EventEntryResult> optResult = Optional.ofNullable(results.get(j - 1));
-				if (optResult.isPresent()) {
-					data[i][j] = Optional.ofNullable(optResult.get().getBestLapTime()).map(laptime -> laptime.toString()).orElse("");
+			for(int j = 1; j <= sessions.size(); j++) {
+			    EventEntryResult result = null;
+			    for(EventEntryResult tmp : results) {
+			        if (tmp.getSession().equals(sessions.get(j - 1))) {
+			            result = tmp;
+                    }
+                }
+				if (result != null) {
+					data[i][j] = Optional.ofNullable(result.getBestLapTime()).map(laptime -> laptime.toString()).orElse("");
 				} else {
 					data[i][j] = "-";
 				}
