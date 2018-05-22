@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,12 +23,10 @@ public class CacheHandler {
 
 	public void resetSeriesEditionCaches(SeriesEdition seriesEdition) {
         seriesEdition.getAllowedCategories().forEach(cat -> {
-            List<Object> keys = new ArrayList<>();
-            keys.add(seriesEdition.getId());
-            keys.add(cat.getShortname());
+            SimpleKey key = new SimpleKey(seriesEdition.getId(), cat.getShortname());
             cacheManager.getCache("winnersCache").evict(seriesEdition.getId());
-            cacheManager.getCache("pointRaceByRace").evict(keys);
-            cacheManager.getCache("resultsRaceByRace").evict(keys);
+            cacheManager.getCache("pointRaceByRace").evict(key);
+            cacheManager.getCache("resultsRaceByRace").evict(key);
             cacheManager.getCache("driversStandingsCache").evict(seriesEdition.getId());
             cacheManager.getCache("teamsStandingsCache").evict(seriesEdition.getId());
         });

@@ -344,10 +344,10 @@ public class ImportsResource {
     private void importResults(Long sessionId, String data) {
     	EventSession session = sessionRepository.findOne(sessionId);
 
-    	if (session.isRace()) {
-    		Optional.ofNullable(session.getEventEdition().getSeriesEditions())
-    			.ifPresent(sEditions -> sEditions.forEach(se -> cacheHandler.resetWinnersCache(se.getId())));
-    	}
+//    	if (session.isRace()) {
+//    		Optional.ofNullable(session.getEventEdition().getSeriesEditions())
+//    			.ifPresent(sEditions -> sEditions.forEach(se -> cacheHandler.resetWinnersCache(se.getId())));
+//    	}
     	MappingIterator<SessionResultDTO> readValues = initializeIterator(SessionResultDTO.class, data);
     	EventEntryResult first = null;
         while (readValues.hasNext()) {
