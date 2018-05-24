@@ -16,7 +16,7 @@ import com.icesoft.msdb.domain.enums.SessionType;
 @Repository
 public interface EventEntryResultRepository extends JpaRepository<EventEntryResult,Long> {
 
-	List<EventEntryResult> findBySessionId(Long idSession);
+	List<EventEntryResult> findBySessionIdOrderByFinalPositionAsc(Long idSession);
 
 	List<EventEntryResult> findByEntryId(Long idEntry);
 

@@ -522,7 +522,7 @@ public class EventEditionResource {
     @Timed
     public List<SessionResultDTO> getEventSessionResults(@PathVariable Long id, @PathVariable Long idSession) {
     	log.debug("REST request to get EventEdition {} results for session {}", id, idSession);
-    	List<EventEntryResult> result = eventResultRepository.findBySessionId(idSession);
+    	List<EventEntryResult> result = eventResultRepository.findBySessionIdOrderByFinalPositionAsc(idSession);
 
     	return result.parallelStream()
     			.sorted((r1, r2) -> {

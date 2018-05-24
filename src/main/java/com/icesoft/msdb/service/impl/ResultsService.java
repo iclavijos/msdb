@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.enums.DurationType;
 import com.icesoft.msdb.domain.enums.ResultType;
-import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.EventEntryResultRepository;
@@ -64,7 +63,7 @@ public class ResultsService {
 			teamPointsRepo.deleteSessionPoints(sessionId, pss.getSeriesEdition().getId());
 			manufacturerPointsRepo.deleteSessionPoints(sessionId, pss.getSeriesEdition().getId());
 
-			List<EventEntryResult> results = resultsRepo.findBySessionId(session.getId());
+			List<EventEntryResult> results = resultsRepo.findBySessionIdOrderByFinalPositionAsc(session.getId());
 			if (results.isEmpty()) {
 			    return;
             }
@@ -364,7 +363,7 @@ public class ResultsService {
 					session.getEventEdition().getEvent().getName() :
 					session.getEventEdition().getEvent().getName() + "-" + session.getName();
 
-			List<EventEntryResult> results = resultsRepo.findBySessionId(session.getId());
+			List<EventEntryResult> results = resultsRepo.findBySessionIdOrderByFinalPositionAsc(session.getId());
 			int posInCategory = 1;
 			for(EventEntryResult result: results) {
 			    if (result.getEntry().getCategory().getShortname().equals(category)) {
