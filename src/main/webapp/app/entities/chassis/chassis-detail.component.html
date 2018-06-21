@@ -7,7 +7,7 @@
 	  <ngb-tab title="{{'entity.detail.info' | translate}}">
 	    <ng-template ngbTabContent>
 	    	<div class="row">
-		    	<div class="col-sm-6">
+		    	<div class="col-sm-3">
 				    <dl class="row-md jh-entity-details">
 				        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.name">Name</span></dt>
 				        <dd>
@@ -27,14 +27,14 @@
 				                <a [routerLink]="['/chassis', chassis.derivedFrom?.id]">{{chassis.derivedFrom?.manufacturer}} {{chassis.derivedFrom?.name}}</a>
 				            </div>
 				        </dd>
-				        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.rebranded">Rebranded</span> 
+				        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.rebranded">Rebranded</span>
 				        	<i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.chassis.rebrandedTooltip' | translate }}"></i></dt>
 				        <dd>
 				            <span><i [ngClass]="chassis.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
 				        </dd>
 				    </dl>
 			    </div>
-			    <div class="col-sm-6">
+			    <div class="col-sm-9">
 			    	<dl class="row-md jh-entity-details">
 			    		<dd>
 				            <div *ngIf="chassis.imageUrl">
@@ -43,7 +43,7 @@
 				        </dd>
 			    	</dl>
 			    </div>
-			
+            </div>
 		</ng-template>
 	</ngb-tab>
 		<ngb-tab title="{{'entity.detail.statistics' | translate}}">

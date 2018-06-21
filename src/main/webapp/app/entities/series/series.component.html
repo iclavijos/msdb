@@ -1,7 +1,7 @@
 <div>
     <h2>
         <span jhiTranslate="motorsportsDatabaseApp.series.home.title">Series</span>
-        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
+        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
         	class="btn btn-primary float-right jh-create-entity create-series" [routerLink]="['/', { outlets: { popup: ['series-new'] } }]">
             <span class="fa fa-plus"></span>
             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.series.home.createLabel">
@@ -44,7 +44,7 @@
                 <td>{{series.organizer}}</td>
                 <td>
                 	<div *ngIf="series.logoUrl">
-                		<img [src]="series.logoUrl" style="max-height: 30px;" alt="series image"/>
+                		<img [src]="series.logoUrl" class="img-fluid" alt="series image"/>
                 	</div>
                 </td>
                 <td class="text-right">
