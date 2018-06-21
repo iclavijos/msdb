@@ -1,0 +1,26 @@
+{
+    "motorsportsDatabaseApp": {
+        "eventEntryResult" : {
+            "home": {
+                "title": "Event Entry Results",
+                "createLabel": "Crear nuevo Event Entry Result",
+                "createOrEditLabel": "Crear o editar Event Entry Result",
+                "search": "Search for Event Entry Result"
+            },
+            "created": "Un nuevo Event Entry Result ha sido creado con el identificador {{ param }}",
+            "updated": "Un Event Entry Result ha sido actualizado con el identificador {{ param }}",
+            "deleted": "Un Event Entry Result ha sido eliminado con el identificador {{ param }}",
+            "delete": {
+                "question": "¿Seguro que quiere eliminar Event Entry Result {{ id }}?"
+            },
+            "detail": {
+                "title": "Event Entry Result"
+            },
+            "finalPosition": "Final Position",
+            "totalTime": "Total Time",
+            "bestLapTime": "Best Lap Time",
+            "lapsCompleted": "Laps Completed",
+            "retired": "Retired"
+        }
+    }
+}

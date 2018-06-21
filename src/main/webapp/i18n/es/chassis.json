@@ -1,0 +1,26 @@
+{
+    "motorsportsDatabaseApp": {
+        "chassis" : {
+            "home": {
+                "title": "Chassis",
+                "createLabel": "Crear nuevo Chassis",
+                "createOrEditLabel": "Crear o editar Chassis",
+                "search": "Search for Chassis"
+            },
+            "created": "Un nuevo Chassis ha sido creado con el identificador {{ param }}",
+            "updated": "Un Chassis ha sido actualizado con el identificador {{ param }}",
+            "deleted": "Un Chassis ha sido eliminado con el identificador {{ param }}",
+            "delete": {
+                "question": "¿Seguro que quiere eliminar Chassis {{ id }}?"
+            },
+            "detail": {
+                "title": "Chassis"
+            },
+            "name": "Name",
+            "manufacturer": "Manufacturer",
+            "debutYear": "Debut Year",
+            "evolutions": "Evolutions",
+            "derivedFrom": "Derived From"
+        }
+    }
+}

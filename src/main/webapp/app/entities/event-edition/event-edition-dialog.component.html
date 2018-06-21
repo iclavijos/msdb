@@ -1,0 +1,107 @@
+<form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="myEventEditionLabel" jhiTranslate="motorsportsDatabaseApp.eventEdition.home.createOrEditLabel">Create or edit a Event Edition</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                (click)="clear()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+        <div class="form-group" [hidden]="!eventEdition.id">
+            <label for="id" jhiTranslate="global.field.id">ID</label>
+            <input type="text" class="form-control" id="id" name="id"
+                   [(ngModel)]="eventEdition.id" readonly />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.editionYear" for="field_editionYear">Edition Year</label>
+            <input type="number" class="form-control" name="editionYear" id="field_editionYear"
+                [(ngModel)]="eventEdition.editionYear" required />
+            <div [hidden]="!(editForm.controls.editionYear?.dirty && editForm.controls.editionYear?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.editionYear?.errors?.required" jhiTranslate="entity.validation.required">
+                   This field is required.
+                </small>
+                <small class="form-text text-danger"
+                    [hidden]="!editForm.controls.editionYear?.errors?.number" jhiTranslate="entity.validation.number">
+                    This field should be a number.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.shortEventName" for="field_shortEventName">Short Event Name</label>
+            <input type="text" class="form-control" name="shortEventName" id="field_shortEventName"
+                [(ngModel)]="eventEdition.shortEventName" required maxlength="40" />
+            <div [hidden]="!(editForm.controls.shortEventName?.dirty && editForm.controls.shortEventName?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.shortEventName?.errors?.required" jhiTranslate="entity.validation.required">
+                   This field is required.
+                </small>
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.shortEventName?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 40 }">
+                   This field cannot be longer than 40 characters.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.longEventName" for="field_longEventName">Long Event Name</label>
+            <input type="text" class="form-control" name="longEventName" id="field_longEventName"
+                [(ngModel)]="eventEdition.longEventName" required maxlength="100" />
+            <div [hidden]="!(editForm.controls.longEventName?.dirty && editForm.controls.longEventName?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.longEventName?.errors?.required" jhiTranslate="entity.validation.required">
+                   This field is required.
+                </small>
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.longEventName?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 100 }">
+                   This field cannot be longer than 100 characters.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate" for="field_eventDate">Event Date</label>
+            <div class="input-group">
+                <input id="field_eventDate" type="text" class="form-control" name="eventDate" ngbDatepicker  #eventDateDp="ngbDatepicker" [(ngModel)]="eventEdition.eventDate"
+                required/>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-secondary" (click)="eventDateDp.toggle()"><i class="fa fa-calendar"></i></button>
+                </span>
+            </div>
+            <div [hidden]="!(editForm.controls.eventDate?.dirty && editForm.controls.eventDate?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.eventDate?.errors?.required" jhiTranslate="entity.validation.required">
+                   This field is required.
+                </small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.allowedCategories" for="field_allowedCategories">Allowed Categories</label>
+            <select class="form-control" id="field_allowedCategories" name="allowedCategories" [(ngModel)]="eventEdition.allowedCategories" >
+                <option [ngValue]="null"></option>
+                <option [ngValue]="categoryOption.id === eventEdition.allowedCategories?.id ? eventEdition.allowedCategories : categoryOption" *ngFor="let categoryOption of categories; trackBy: trackCategoryById">{{categoryOption.id}}</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout" for="field_trackLayout">Track Layout</label>
+            <select class="form-control" id="field_trackLayout" name="trackLayout" [(ngModel)]="eventEdition.trackLayout" >
+                <option [ngValue]="null"></option>
+                <option [ngValue]="racetrackLayoutOption.id === eventEdition.trackLayout?.id ? eventEdition.trackLayout : racetrackLayoutOption" *ngFor="let racetrackLayoutOption of racetracklayouts; trackBy: trackRacetrackLayoutById">{{racetrackLayoutOption.id}}</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.event" for="field_event">Event</label>
+            <select class="form-control" id="field_event" name="event" [(ngModel)]="eventEdition.event" >
+                <option [ngValue]="null"></option>
+                <option [ngValue]="eventOption.id === eventEdition.event?.id ? eventEdition.event : eventOption" *ngFor="let eventOption of events; trackBy: trackEventById">{{eventOption.id}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
+            <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+        <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+            <span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+    </div>
+</form>
