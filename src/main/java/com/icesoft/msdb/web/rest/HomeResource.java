@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -95,7 +96,7 @@ public class HomeResource {
 		List<SessionDataDTO> filtered =
 				sessions.parallelStream().filter(session -> !session.isFinished(now))
 					.map(SessionDataDTO::new)
-					.sorted((s1,s2) -> s1.getSessionStartTime().compareTo(s2.getSessionStartTime()))
+					.sorted(Comparator.comparing(SessionDataDTO::getSessionStartTime))
 					.collect(Collectors.toList());
 
 		return filtered;
