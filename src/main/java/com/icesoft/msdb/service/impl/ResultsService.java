@@ -56,7 +56,7 @@ public class ResultsService {
 			Map<String, ManufacturerEventPoints> manufacturers = new HashMap<>();
 
 			PointsSystem ps = pss.getPointsSystem();
-			int[] points = Optional.ofNullable(ps).map(p -> p.disclosePoints()).get();
+			float[] points = Optional.ofNullable(ps).map(p -> p.disclosePoints()).get();
 			float pointsPct = 1f;
 
 			driverPointsRepo.deleteSessionPoints(sessionId, pss.getSeriesEdition().getId());
@@ -96,7 +96,7 @@ public class ResultsService {
 	}
 
 	private void calculatePoints(PointsSystemSession pss, PointsSystem ps, Category category, List<EventEntryResult> results,
-                                 EventSession session, int[] points, float pointsPct, List<DriverEventPoints> drivers,
+                                 EventSession session, float[] points, float pointsPct, List<DriverEventPoints> drivers,
                                  Map<Long, TeamEventPoints> teams, Map<String, ManufacturerEventPoints> manufacturers) {
 
 	    for(int i = 0; i < results.size(); i++) {
@@ -237,7 +237,7 @@ public class ResultsService {
             for(EventEditionEntry entry: entries) {
                 Driver driver = entry.getDrivers().get(0); //We will only deal with the first one so multidriver entries are handled just once
                 double dPoints = drivers.stream().filter(dp -> dp.getDriver().getId().equals(driver.getId())).mapToDouble(dp -> dp.getPoints()).sum();
-                if (dPoints > 0) {
+                if (dPoints > 0 && entry.getTeam() != null) {
                     TeamEventPoints tep = teams.get(entry.getTeam().getId());
                     if (tep == null) {
                         tep = new TeamEventPoints();

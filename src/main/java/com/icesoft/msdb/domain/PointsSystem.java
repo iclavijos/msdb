@@ -123,11 +123,11 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     }
     
     @Transient
-    public int[] disclosePoints() {
+    public float[] disclosePoints() {
     	String[] tmp = StringUtils.remove(points, " ").split(",");
-		int[] result = new int[tmp.length];
+    	float[] result = new float[tmp.length];
 		for(int i = 0; i < result.length; i++) {
-			result[i] = Integer.parseInt(tmp[i]);
+			result[i] = Float.parseFloat(tmp[i]);
 		}
 		return result;
     }
