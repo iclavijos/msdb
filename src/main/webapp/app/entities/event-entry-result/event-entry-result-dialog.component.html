@@ -86,7 +86,7 @@
 	        		<div class="form-group">
 			            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.totalTime" for="field_totalTime">Total Time</label>
 			            <input class="form-control" name="totalTime" id="field_totalTime" [ngModel]="eventEntryResult.totalTime | timeMaskPipe : true" 
-			            	pattern="(\d{1,2}h)?[0-5]\d[':][0-5]?\d(\.[0-9]{0,4})?" required placeholder="00h00'00.0000" (ngModelChange)="totalTime=$event" title="00h00'00.0000"/>
+			            	pattern="(\d{1,2}[h:])?[0-5]\d[':][0-5]?\d(\.[0-9]{0,4})?" placeholder="00h00'00.0000" (ngModelChange)="totalTime=$event" title="00h00'00.0000"/>
 			        </div>
 	        	</div>
 	        	<div class="col-lg-4 col-md-4" *ngIf="eventEntryResult.finalPosition != 1">
