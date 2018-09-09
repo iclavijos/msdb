@@ -1,6 +1,6 @@
 {
   "name": "motorsports-database",
-  "version": "3.1.0",
+  "version": "3.2.5",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -5929,13 +5929,13 @@
       "integrity": "sha512-bbALDK8+SBqluv8SKPDeVNtaSr87NYblte/pRgV5NnDJWCEARpRlQ1qQ/XEakcAXbMZov6rWYIvLOrtKwQo2Bg==",
       "requires": {
         "jquery": "3.2.1",
-        "moment": "2.22.1"
+        "moment": "2.22.2"
       },
       "dependencies": {
         "moment": {
-          "version": "2.22.1",
-          "resolved": "https://registry.npmjs.org/moment/-/moment-2.22.1.tgz",
-          "integrity": "sha512-shJkRTSebXvsVqk56I+lkb2latjBs8I+pc2TzWc545y2iFnSjm7Wg0QMh+ZWcdSLQyGEau5jI8ocnmkyTgr9YQ=="
+          "version": "2.22.2",
+          "resolved": "https://registry.npmjs.org/moment/-/moment-2.22.2.tgz",
+          "integrity": "sha1-PCV/mDn8DpP/UxSWMiOeuQeD/2Y="
         }
       }
     },
