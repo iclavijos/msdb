@@ -529,7 +529,9 @@ public class EventEditionResource {
     				if (r1.getFinalPosition() < 800 && r2.getFinalPosition() < 800) {
     					return r1.getFinalPosition().compareTo(r2.getFinalPosition());
     				} else if (r1.getFinalPosition() >= 800 && r2.getFinalPosition() >= 800) {
-    					return r2.getLapsCompleted().compareTo(r1.getLapsCompleted());
+    					if (r2.getLapsCompleted() == null || r1.getLapsCompleted() == null) {
+    						return r2.getFinalPosition().compareTo(r1.getFinalPosition());
+    					} else return r2.getLapsCompleted().compareTo(r1.getLapsCompleted());
     				} else if (r1.getFinalPosition() < 800) {
     					return -1;
     				} else {
