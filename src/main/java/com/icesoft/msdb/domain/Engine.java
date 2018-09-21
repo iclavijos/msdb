@@ -66,9 +66,8 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
     @Column(name = "capacity")
     private Integer capacity;
 
-    @NotNull
     @Size(max = 10)
-    @Column(name = "architecture", length = 10, nullable = false)
+    @Column(name = "architecture", length = 10)
     private String architecture;
 
     @NotNull
