@@ -68,7 +68,8 @@
                 <td *ngIf="edition.allowedCategories.length > 1">{{eventEntryResult.entry.category.shortname}}</td>
                 <td *ngIf="session.sessionTypeValue === 2">
                 	{{ classifiedNotRetired(eventEntryResult) ?
-                		(eventEntryResult.differenceType == 1 ? '+' + (eventEntryResult.difference | timeMaskPipe) : eventEntryResult.difference + 'L')
+                		(eventEntryResult.differenceType == 1 ? '+' + (eventEntryResult.difference | timeMaskPipe) : 
+                			eventEntryResult.difference ? eventEntryResult.difference + 'L' : '')
                 		: eventEntryResult.totalTime | timeMaskPipe : true : true}}
                 </td>
                 <td>{{eventEntryResult.bestLapTime | timeMaskPipe }} 

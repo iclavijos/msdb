@@ -14,8 +14,7 @@
 			<div class="col-lg-2 col-md-2" *ngIf="eventEntryResult.session.sessionTypeValue === 2">
 		        <div class="form-group">
 		            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.startingPosition" for="field_startingPosition">Starting Position</label>
-		            <select class="form-control" id="field_startingPosition" name="startingPosition" [(ngModel)]="eventEntryResult.startingPosition" required 
-		            	(click)="updateUI()">
+		            <select class="form-control" id="field_startingPosition" name="startingPosition" [(ngModel)]="eventEntryResult.startingPosition" (click)="updateUI()">
 		            	<option *ngFor="let position of positions" [value]="position">{{position}}</option>
 		            </select>
 		        </div>

@@ -296,6 +296,7 @@ public class EventEntryResult implements Serializable {
             ", bestLapTime='" + getBestLapTime() + "'" +
             ", lapsCompleted='" + getLapsCompleted() + "'" +
             ", retired='" + isRetired() + "'" +
+            ", difference='" + getDifference() + "'" +
             "}";
     }
 }

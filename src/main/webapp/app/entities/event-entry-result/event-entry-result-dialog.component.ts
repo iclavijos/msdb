@@ -75,10 +75,13 @@ export class EventEntryResultDialogComponent implements OnInit {
         if (this.totalTime) {
             this.eventEntryResult.totalTime = this.toMillis(this.totalTime);
         }
-        if (this.eventEntryResult.differenceType === 1) {
+        console.log('Difference type: ' + this.eventEntryResult.differenceType);
+        if (this.eventEntryResult.differenceType == 1) {
+        	console.log('Difference: ' + this.timeDifference);
             if (this.timeDifference !== undefined) {
                 this.eventEntryResult.difference = this.toMillis(this.timeDifference);
             }
+            console.log('Converted difference: ' + this.eventEntryResult.difference);
         }
         if (this.eventEntryResult.id !== undefined) {
             this.subscribeToSaveResponse(
