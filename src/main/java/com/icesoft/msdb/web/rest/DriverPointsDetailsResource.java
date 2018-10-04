@@ -4,6 +4,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 
+import com.icesoft.msdb.domain.EventEdition;
+import com.icesoft.msdb.domain.EventSession;
+import com.icesoft.msdb.repository.EventEditionRepository;
+import com.icesoft.msdb.repository.EventSessionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -37,9 +41,11 @@ public class DriverPointsDetailsResource {
     private static final String ENTITY_NAME = "driverPointsDetails";
 
     private final DriverEventPointsRepository driverPointsDetailsRepository;
+    private final EventSessionRepository eventSessionRepository;
 
-    public DriverPointsDetailsResource(DriverEventPointsRepository driverPointsDetailsRepository) {
+    public DriverPointsDetailsResource(DriverEventPointsRepository driverPointsDetailsRepository, EventSessionRepository eventSessionRepository) {
         this.driverPointsDetailsRepository = driverPointsDetailsRepository;
+        this.eventSessionRepository = eventSessionRepository;
     }
 
     /**
@@ -57,6 +63,14 @@ public class DriverPointsDetailsResource {
         if (driverPointsDetails.getId() != null) {
             throw new BadRequestAlertException("A new driverPointsDetails cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        EventSession eventSession = eventSessionRepository.findOne(driverPointsDetails.getSession().getId());
+        if (eventSession.getEventEdition().getSeriesEditions().size() == 1 ) {
+            driverPointsDetails.setSeriesEdition(eventSession.getEventEdition().getSeriesEditions().get(0));
+        }
+        if (eventSession.getEventEdition().getAllowedCategories().size() == 1) {
+            driverPointsDetails.setCategory(eventSession.getEventEdition().getAllowedCategories().get(0));
+        }
+        //TODO: Handle multi categories and multiseries
         driverPointsDetails.setReason(driverPointsDetails.getSession().getName() + " - " + driverPointsDetails.getReason());
         DriverEventPoints result = driverPointsDetailsRepository.save(driverPointsDetails);
         return ResponseEntity.created(new URI("/api/driver-points-details/" + result.getId()))
