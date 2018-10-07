@@ -15,9 +15,23 @@
             "fieldName": "logo",
             "fieldType": "byte[]",
             "fieldTypeBlobContent": "image"
+        },
+        {
+            "fieldName": "letterColor",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "backgroundColor",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
         }
     ],
-    "changelogDate": "20170213140812",
+    "changelogDate": "20181006130000",
     "entityTableName": "tyre_provider",
     "dto": "no",
     "pagination": "pagination",
