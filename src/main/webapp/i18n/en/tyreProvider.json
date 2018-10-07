@@ -17,7 +17,12 @@
                 "title": "Tyre Provider"
             },
             "name": "Name",
-            "logo": "Logo"
+            "logo": "Logo",
+            "symbol": {
+                "symbol": "Symbol",
+                "letterColor": "Letter color",
+                "backgroundColor": "Background color"
+            }
         }
     }
 }

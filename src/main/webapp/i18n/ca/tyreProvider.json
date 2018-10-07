@@ -17,7 +17,12 @@
                 "title": "Proveïdor de neumàtics"
             },
             "name": "Nom",
-            "logo": "Logo"
+            "logo": "Logo",
+            "symbol": {
+                "symbol": "Símbol",
+                "letterColor": "Color de la lletra",
+                "backgroundColor": "Color de fons"
+            }
         }
     }
 }

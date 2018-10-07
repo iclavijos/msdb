@@ -4,6 +4,8 @@ export class TyreProvider {
         public name?: string,
         public logo?: any,
         public logoContentType?: any,
-        public logoUrl?: string
+        public logoUrl?: string,
+        public letterColor = "#000000",
+        public backgroundColor = "#FFFFFF"
     ) { }
 }

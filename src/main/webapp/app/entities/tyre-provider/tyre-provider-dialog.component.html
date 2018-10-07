@@ -22,25 +22,43 @@
                 </small>
             </div>
         </div>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.tyreProvider.logo" for="field_logo">Logo</label>
-            <div>
-                <img [src]="tyreProvider.logoUrl" style="max-height: 100px;" *ngIf="!tyreProvider.logo && tyreProvider.logoUrl != null" alt="tyre provider logo"/>
-                <img [src]="'data:' + tyreProvider.logoContentType + ';base64,' + tyreProvider.logo" style="max-height: 100px;" *ngIf="tyreProvider.logo" alt="tyre provider logo"/>
-                <div *ngIf="tyreProvider.logoUrl || tyreProvider.logo" class="form-text text-danger clearfix">
-                    <button type="button" (click)="tyreProvider.logoUrl=null;clearInputImage('logo', 'logoContentType', 'fileImage');"
-                            class="btn btn-secondary btn-xs pull-right">
-                        <span class="fa fa-times"></span>
-                    </button>
+        <div class="row">
+            <div class="col-5">
+                <div class="form-group">
+                    <div *ngIf="tyreProvider.name">
+                        <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.tyreProvider.symbol.symbol">Symbol</label>
+                        <div [style.background]="tyreProvider.backgroundColor" [style.color]="tyreProvider.letterColor"
+                             style="text-align: center; line-height: 30px; width: 30px; height: 30px;">
+                            <h3>{{tyreProvider.name.substring(0,1)}}</h3>
+                        </div>
+                    </div>
+                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.tyreProvider.symbol.letterColor">Letter color</label>
+                    <p-colorPicker name="letterColor" [(ngModel)]="tyreProvider.letterColor"></p-colorPicker>
+                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.tyreProvider.symbol.backgroundColor">Background color</label>
+                    <p-colorPicker name="backgroundColor" [(ngModel)]="tyreProvider.backgroundColor"></p-colorPicker>
                 </div>
-                <input type="file" id="file_logo" (change)="setFileData($event, tyreProvider, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
             </div>
-            <input type="hidden" class="form-control" name="logo" id="field_logo"
-                [(ngModel)]="tyreProvider.logo"  />
-            <input type="hidden" class="form-control" name="logoContentType" id="field_logoContentType"
-                [(ngModel)]="tyreProvider.logoContentType" />
+            <div class="col-auto">
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.tyreProvider.logo" for="field_logo">Logo</label>
+                    <div>
+                        <img [src]="tyreProvider.logoUrl" style="max-width: 412px;" *ngIf="!tyreProvider.logo && tyreProvider.logoUrl != null" alt="tyre provider logo"/>
+                        <img [src]="'data:' + tyreProvider.logoContentType + ';base64,' + tyreProvider.logo" class="img-fluid" *ngIf="tyreProvider.logo" alt="tyre provider logo"/>
+                        <div *ngIf="tyreProvider.logoUrl || tyreProvider.logo" class="form-text text-danger clearfix">
+                            <button type="button" (click)="tyreProvider.logoUrl=null;clearInputImage('logo', 'logoContentType', 'fileImage');"
+                                    class="btn btn-secondary btn-xs pull-right">
+                                <span class="fa fa-times"></span>
+                            </button>
+                        </div>
+                        <input type="file" id="file_logo" (change)="setFileData($event, tyreProvider, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                    </div>
+                    <input type="hidden" class="form-control" name="logo" id="field_logo"
+                           [(ngModel)]="tyreProvider.logo"  />
+                    <input type="hidden" class="form-control" name="logoContentType" id="field_logoContentType"
+                           [(ngModel)]="tyreProvider.logoContentType" />
+                </div>
+            </div>
         </div>
-
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">

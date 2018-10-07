@@ -17,7 +17,12 @@
                 "title": "Proveedor de neumáticos"
             },
             "name": "Nombre",
-            "logo": "Logo"
+            "logo": "Logo",
+            "symbol": {
+                "symbol": "Símbolo",
+                "letterColor": "Color de la letra",
+                "backgroundColor": "Color de fondo"
+            }
         }
     }
 }

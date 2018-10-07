@@ -34,6 +34,12 @@ public class TyreProvider extends AbstractAuditingEntity implements Serializable
 
     @Column(name = "logo_url")
     private String logoUrl;
+
+    @Column(name="letter_color")
+    private String letterColor;
+
+    @Column(name="background_color")
+    private String backgroundColor;
     
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -81,6 +87,22 @@ public class TyreProvider extends AbstractAuditingEntity implements Serializable
 
     public void setLogoUrl(String logoUrl) {
         this.logoUrl = logoUrl;
+    }
+
+    public String getLetterColor() {
+        return letterColor;
+    }
+
+    public void setLetterColor(String letterColor) {
+        this.letterColor = letterColor;
+    }
+
+    public String getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

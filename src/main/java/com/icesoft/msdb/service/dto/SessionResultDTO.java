@@ -44,7 +44,7 @@ public class SessionResultDTO {
     	this.differenceType = result.getDifferenceType();
     	this.entry = result.getEntry();
     	this.entry.setEventEdition(null);
-    	this.entry.engine(null).chassis(null).tyres(null).fuel(null).team(null);
+    	this.entry.engine(null).chassis(null).fuel(null).team(null);
     }
     
 	public Long getId() {

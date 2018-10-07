@@ -1,6 +1,8 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { ColorPickerModule } from 'primeng/primeng';
+
 import { MotorsportsDatabaseSharedModule } from '../../shared';
 import {
     TyreProviderService,
@@ -24,6 +26,7 @@ const ENTITY_STATES = [
 @NgModule({
     imports: [
         MotorsportsDatabaseSharedModule,
+        ColorPickerModule,
         RouterModule.forRoot(ENTITY_STATES, { useHash: true })
     ],
     declarations: [
