@@ -529,9 +529,14 @@ public class EventEditionResource {
     				if (r1.getFinalPosition() < 800 && r2.getFinalPosition() < 800) {
     					return r1.getFinalPosition().compareTo(r2.getFinalPosition());
     				} else if (r1.getFinalPosition() >= 800 && r2.getFinalPosition() >= 800) {
-    					if (r2.getLapsCompleted() == null || r1.getLapsCompleted() == null) {
-    						return r2.getFinalPosition().compareTo(r1.getFinalPosition());
-    					} else return r2.getLapsCompleted().compareTo(r1.getLapsCompleted());
+    				    //Both cars DNFed
+                        if (r1.getFinalPosition().equals(r2.getFinalPosition())) {
+                            if (r2.getLapsCompleted() == null || r1.getLapsCompleted() == null) {
+                                return r2.getFinalPosition().compareTo(r1.getFinalPosition()) * -1;
+                            } else return r2.getLapsCompleted().compareTo(r1.getLapsCompleted());
+                        } else {
+                            return r1.getFinalPosition().compareTo(r2.getFinalPosition());
+                        }
     				} else if (r1.getFinalPosition() < 800) {
     					return -1;
     				} else {
