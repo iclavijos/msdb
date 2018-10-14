@@ -12,7 +12,7 @@ import { CookieModule } from 'ngx-cookie';
         NgbModule.forRoot(),
         NgJhipsterModule.forRoot({
             // set below to true to make alerts look like toast
-            alertAsToast: false,
+            alertAsToast: true,
             i18nEnabled: true,
             defaultI18nLang: 'en'
         }),
