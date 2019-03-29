@@ -36,6 +36,7 @@ import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
+import com.icesoft.msdb.service.dto.DriverCategoryChampionDTO;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
 import com.icesoft.msdb.service.dto.SeriesEventsAndWinnersDTO;
@@ -174,12 +175,14 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	}
 	
 	@Override
-	public void setSeriesDriversChampions(Long seriesEditionId, List<Long> driverIds) {
+	public void setSeriesDriversChampions(Long seriesEditionId, List<DriverCategoryChampionDTO> driverIds) {
 		SeriesEdition seriesEd = seriesRepo.findOne(seriesEditionId);
-		List<Driver> currChamps = seriesEd.getDriversChampions();
-		List<Driver> newChamps = driverRepo.findByIdIn(driverIds);
+		List<Driver> currChamps = null; //seriesEd.getDriversChampions();
+		List<Driver> newChamps = driverRepo.findByIdIn(
+				driverIds.stream().map(dc -> dc.getDriverId())
+					.collect(Collectors.toList()));
 		
-		seriesEd.setDriversChampions(newChamps);
+		//seriesEd.setDriversChampions(newChamps);
 		seriesRepo.save(seriesEd);
 		
 		statsService.updateSeriesDriversChampions(seriesEd, currChamps, newChamps, 

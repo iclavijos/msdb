@@ -44,6 +44,7 @@ import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
+import com.icesoft.msdb.service.dto.DriverCategoryChampionDTO;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
 import com.icesoft.msdb.service.dto.ManufacturerPointsDTO;
@@ -284,8 +285,8 @@ public class SeriesEditionResource {
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
-    public ResponseEntity<Void> updateSeriesDriversChampions(@PathVariable Long seriesEditionId, @RequestBody List<Long> selectedDriversId) {
-    	seriesEditionService.setSeriesDriversChampions(seriesEditionId, selectedDriversId);
+    public ResponseEntity<Void> updateSeriesDriversChampions(@PathVariable Long seriesEditionId, @RequestBody List<DriverCategoryChampionDTO> selectedDrivers) {
+    	seriesEditionService.setSeriesDriversChampions(seriesEditionId, selectedDrivers);
     	return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, seriesEditionId.toString())).build();
     }
 

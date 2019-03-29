@@ -400,7 +400,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 	@Override
 	public void updateSeriesChamps(SeriesEdition seriesEd) {
-		updateSeriesDriversChampions(seriesEd, seriesEd.getDriversChampions(), seriesEd.getDriversChampions(), 
+		updateSeriesDriversChampions(seriesEd, seriesEd.getDriversChampions(), seriesEd.getDriversChampions(),
 				seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());
 		updateSeriesTeamsChampions(seriesEd, seriesEd.getTeamsChampions(), seriesEd.getTeamsChampions(), 
 				seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());

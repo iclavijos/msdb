@@ -3,7 +3,6 @@ import { Series } from '../series';
 import { Driver } from '../driver';
 import { Team } from '../team';
 import { PointsSystem } from '../points-system';
-import { EventEdition } from '../event-edition';
 
 export class SeriesEdition {
     constructor(
@@ -26,4 +25,11 @@ export class SeriesEdition {
         public manufacturersStandings?: boolean,
         public standingsPerCategory?: boolean
     ) { }
+};
+
+export class SelectedDriverData {
+    constructor(
+        public driverId?: number,
+        public categoryId?: number
+    ) {}
 }
