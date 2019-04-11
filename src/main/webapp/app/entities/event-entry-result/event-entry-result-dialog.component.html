@@ -1,0 +1,50 @@
+<form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="myEventEntryResultLabel" jhiTranslate="motorsportsDatabaseApp.eventEntryResult.home.createOrEditLabel">Create or edit a Event Entry Result</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                (click)="clear()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+        <div class="form-group" [hidden]="!eventEntryResult.id">
+            <label for="id" jhiTranslate="global.field.id">ID</label>
+            <input type="text" class="form-control" id="id" name="id"
+                   [(ngModel)]="eventEntryResult.id" readonly />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEntryResult.finalPosition" for="field_finalPosition">Final Position</label>
+            <input type="number" class="form-control" name="finalPosition" id="field_finalPosition"
+                [(ngModel)]="eventEntryResult.finalPosition"  />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEntryResult.totalTime" for="field_totalTime">Total Time</label>
+            <input type="number" class="form-control" name="totalTime" id="field_totalTime"
+                [(ngModel)]="eventEntryResult.totalTime"  />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEntryResult.bestLapTime" for="field_bestLapTime">Best Lap Time</label>
+            <input type="number" class="form-control" name="bestLapTime" id="field_bestLapTime"
+                [(ngModel)]="eventEntryResult.bestLapTime"  />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEntryResult.lapsCompleted" for="field_lapsCompleted">Laps Completed</label>
+            <input type="number" class="form-control" name="lapsCompleted" id="field_lapsCompleted"
+                [(ngModel)]="eventEntryResult.lapsCompleted"  />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEntryResult.retired" for="field_retired">Retired</label>
+            <input type="checkbox" class="form-control" name="retired" id="field_retired"
+                [(ngModel)]="eventEntryResult.retired"  />
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
+            <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+        <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+            <span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+    </div>
+</form>

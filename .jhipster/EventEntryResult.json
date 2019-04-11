@@ -1,0 +1,31 @@
+{
+    "fluentMethods": true,
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "finalPosition",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "totalTime",
+            "fieldType": "Long"
+        },
+        {
+            "fieldName": "bestLapTime",
+            "fieldType": "Long"
+        },
+        {
+            "fieldName": "lapsCompleted",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "retired",
+            "fieldType": "Boolean"
+        }
+    ],
+    "changelogDate": "20170213140812",
+    "entityTableName": "event_entry_result",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no"
+}

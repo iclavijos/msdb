@@ -1,0 +1,25 @@
+{
+    "motorsportsDatabaseApp": {
+        "racetrack" : {
+            "home": {
+                "title": "Racetracks",
+                "createLabel": "Crear nuevo Racetrack",
+                "createOrEditLabel": "Crear o editar Racetrack",
+                "search": "Search for Racetrack"
+            },
+            "created": "Un nuevo Racetrack ha sido creado con el identificador {{ param }}",
+            "updated": "Un Racetrack ha sido actualizado con el identificador {{ param }}",
+            "deleted": "Un Racetrack ha sido eliminado con el identificador {{ param }}",
+            "delete": {
+                "question": "¿Seguro que quiere eliminar Racetrack {{ id }}?"
+            },
+            "detail": {
+                "title": "Racetrack"
+            },
+            "name": "Name",
+            "location": "Location",
+            "logo": "Logo",
+            "layouts": "Layouts"
+        }
+    }
+}
