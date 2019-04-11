@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "eventEntryResult" : {
+        "eventEntryResult": {
             "home": {
                 "title": "Event Entry Results",
                 "createLabel": "Create a new Event Entry Result",

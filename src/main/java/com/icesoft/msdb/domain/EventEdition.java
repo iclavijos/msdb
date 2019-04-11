@@ -1,11 +1,14 @@
 package com.icesoft.msdb.domain;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -20,7 +23,7 @@ import java.util.Objects;
 public class EventEdition implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,12 +47,15 @@ public class EventEdition implements Serializable {
     private LocalDate eventDate;
 
     @ManyToOne
+    @JsonIgnoreProperties("eventEditions")
     private Category allowedCategories;
 
     @ManyToOne
+    @JsonIgnoreProperties("eventEditions")
     private RacetrackLayout trackLayout;
 
     @ManyToOne
+    @JsonIgnoreProperties("editions")
     private Event event;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -177,7 +183,7 @@ public class EventEdition implements Serializable {
     public String toString() {
         return "EventEdition{" +
             "id=" + getId() +
-            ", editionYear='" + getEditionYear() + "'" +
+            ", editionYear=" + getEditionYear() +
             ", shortEventName='" + getShortEventName() + "'" +
             ", longEventName='" + getLongEventName() + "'" +
             ", eventDate='" + getEventDate() + "'" +

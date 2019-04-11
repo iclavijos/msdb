@@ -7,7 +7,7 @@
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <property name="now" value="now()" dbms="h2"/>
-
+    
     <property name="now" value="now()" dbms="mysql"/>
     <property name="autoIncrement" value="true"/>
 
@@ -26,15 +26,15 @@
                 <constraints nullable="false" />
             </column>
 
-            <column name="single_chassis" type="bit">
+            <column name="single_chassis" type="boolean">
                 <constraints nullable="false" />
             </column>
 
-            <column name="single_engine" type="bit">
+            <column name="single_engine" type="boolean">
                 <constraints nullable="false" />
             </column>
 
-            <column name="single_tyre" type="bit">
+            <column name="single_tyre" type="boolean">
                 <constraints nullable="false" />
             </column>
 

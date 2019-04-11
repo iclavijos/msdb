@@ -1,11 +1,13 @@
 package com.icesoft.msdb.domain;
 
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -20,7 +22,7 @@ import java.util.Objects;
 public class EventSession implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -132,7 +134,7 @@ public class EventSession implements Serializable {
             ", name='" + getName() + "'" +
             ", shortname='" + getShortname() + "'" +
             ", sessionStartTime='" + getSessionStartTime() + "'" +
-            ", duration='" + getDuration() + "'" +
+            ", duration=" + getDuration() +
             "}";
     }
 }

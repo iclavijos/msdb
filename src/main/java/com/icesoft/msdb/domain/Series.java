@@ -1,12 +1,14 @@
 package com.icesoft.msdb.domain;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +24,7 @@ import java.util.Objects;
 public class Series implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,10 +51,8 @@ public class Series implements Serializable {
     private String logoContentType;
 
     @OneToMany(mappedBy = "series")
-    @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<SeriesEdition> editions = new HashSet<>();
-
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -181,7 +181,7 @@ public class Series implements Serializable {
             ", shortname='" + getShortname() + "'" +
             ", organizer='" + getOrganizer() + "'" +
             ", logo='" + getLogo() + "'" +
-            ", logoContentType='" + logoContentType + "'" +
+            ", logoContentType='" + getLogoContentType() + "'" +
             "}";
     }
 }

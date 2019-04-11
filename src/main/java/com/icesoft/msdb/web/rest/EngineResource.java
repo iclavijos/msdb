@@ -1,14 +1,10 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Engine;
-
 import com.icesoft.msdb.repository.EngineRepository;
 import com.icesoft.msdb.repository.search.EngineSearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +54,6 @@ public class EngineResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/engines")
-    @Timed
     public ResponseEntity<Engine> createEngine(@Valid @RequestBody Engine engine) throws URISyntaxException {
         log.debug("REST request to save Engine : {}", engine);
         if (engine.getId() != null) {
@@ -81,11 +76,10 @@ public class EngineResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/engines")
-    @Timed
     public ResponseEntity<Engine> updateEngine(@Valid @RequestBody Engine engine) throws URISyntaxException {
         log.debug("REST request to update Engine : {}", engine);
         if (engine.getId() == null) {
-            return createEngine(engine);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Engine result = engineRepository.save(engine);
         engineSearchRepository.save(result);
@@ -101,12 +95,11 @@ public class EngineResource {
      * @return the ResponseEntity with status 200 (OK) and the list of engines in body
      */
     @GetMapping("/engines")
-    @Timed
-    public ResponseEntity<List<Engine>> getAllEngines(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<Engine>> getAllEngines(Pageable pageable) {
         log.debug("REST request to get a page of Engines");
         Page<Engine> page = engineRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/engines");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -116,11 +109,10 @@ public class EngineResource {
      * @return the ResponseEntity with status 200 (OK) and with body the engine, or with status 404 (Not Found)
      */
     @GetMapping("/engines/{id}")
-    @Timed
     public ResponseEntity<Engine> getEngine(@PathVariable Long id) {
         log.debug("REST request to get Engine : {}", id);
-        Engine engine = engineRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(engine));
+        Optional<Engine> engine = engineRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(engine);
     }
 
     /**
@@ -130,11 +122,10 @@ public class EngineResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/engines/{id}")
-    @Timed
     public ResponseEntity<Void> deleteEngine(@PathVariable Long id) {
         log.debug("REST request to delete Engine : {}", id);
-        engineRepository.delete(id);
-        engineSearchRepository.delete(id);
+        engineRepository.deleteById(id);
+        engineSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -147,12 +138,11 @@ public class EngineResource {
      * @return the result of the search
      */
     @GetMapping("/_search/engines")
-    @Timed
-    public ResponseEntity<List<Engine>> searchEngines(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<Engine>> searchEngines(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Engines for query {}", query);
         Page<Engine> page = engineSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/engines");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
 }

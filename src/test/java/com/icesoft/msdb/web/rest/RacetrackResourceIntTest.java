@@ -13,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -21,13 +23,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
+import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
+
 
 import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -47,15 +54,20 @@ public class RacetrackResourceIntTest {
     private static final String UPDATED_LOCATION = "BBBBBBBBBB";
 
     private static final byte[] DEFAULT_LOGO = TestUtil.createByteArray(1, "0");
-    private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(2, "1");
+    private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(1, "1");
     private static final String DEFAULT_LOGO_CONTENT_TYPE = "image/jpg";
     private static final String UPDATED_LOGO_CONTENT_TYPE = "image/png";
 
     @Autowired
     private RacetrackRepository racetrackRepository;
 
+    /**
+     * This repository is mocked in the com.icesoft.msdb.repository.search test package.
+     *
+     * @see com.icesoft.msdb.repository.search.RacetrackSearchRepositoryMockConfiguration
+     */
     @Autowired
-    private RacetrackSearchRepository racetrackSearchRepository;
+    private RacetrackSearchRepository mockRacetrackSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -69,6 +81,9 @@ public class RacetrackResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private Validator validator;
+
     private MockMvc restRacetrackMockMvc;
 
     private Racetrack racetrack;
@@ -76,12 +91,13 @@ public class RacetrackResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final RacetrackResource racetrackResource = new RacetrackResource(racetrackRepository, racetrackSearchRepository);
+        final RacetrackResource racetrackResource = new RacetrackResource(racetrackRepository, mockRacetrackSearchRepository);
         this.restRacetrackMockMvc = MockMvcBuilders.standaloneSetup(racetrackResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -101,7 +117,6 @@ public class RacetrackResourceIntTest {
 
     @Before
     public void initTest() {
-        racetrackSearchRepository.deleteAll();
         racetrack = createEntity(em);
     }
 
@@ -126,8 +141,7 @@ public class RacetrackResourceIntTest {
         assertThat(testRacetrack.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
 
         // Validate the Racetrack in Elasticsearch
-        Racetrack racetrackEs = racetrackSearchRepository.findOne(testRacetrack.getId());
-        assertThat(racetrackEs).isEqualToComparingFieldByField(testRacetrack);
+        verify(mockRacetrackSearchRepository, times(1)).save(testRacetrack);
     }
 
     @Test
@@ -147,6 +161,9 @@ public class RacetrackResourceIntTest {
         // Validate the Racetrack in the database
         List<Racetrack> racetrackList = racetrackRepository.findAll();
         assertThat(racetrackList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the Racetrack in Elasticsearch
+        verify(mockRacetrackSearchRepository, times(0)).save(racetrack);
     }
 
     @Test
@@ -201,7 +218,7 @@ public class RacetrackResourceIntTest {
             .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
-
+    
     @Test
     @Transactional
     public void getRacetrack() throws Exception {
@@ -232,11 +249,13 @@ public class RacetrackResourceIntTest {
     public void updateRacetrack() throws Exception {
         // Initialize the database
         racetrackRepository.saveAndFlush(racetrack);
-        racetrackSearchRepository.save(racetrack);
+
         int databaseSizeBeforeUpdate = racetrackRepository.findAll().size();
 
         // Update the racetrack
-        Racetrack updatedRacetrack = racetrackRepository.findOne(racetrack.getId());
+        Racetrack updatedRacetrack = racetrackRepository.findById(racetrack.getId()).get();
+        // Disconnect from session so that the updates on updatedRacetrack are not directly saved in db
+        em.detach(updatedRacetrack);
         updatedRacetrack
             .name(UPDATED_NAME)
             .location(UPDATED_LOCATION)
@@ -258,8 +277,7 @@ public class RacetrackResourceIntTest {
         assertThat(testRacetrack.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
 
         // Validate the Racetrack in Elasticsearch
-        Racetrack racetrackEs = racetrackSearchRepository.findOne(testRacetrack.getId());
-        assertThat(racetrackEs).isEqualToComparingFieldByField(testRacetrack);
+        verify(mockRacetrackSearchRepository, times(1)).save(testRacetrack);
     }
 
     @Test
@@ -269,15 +287,18 @@ public class RacetrackResourceIntTest {
 
         // Create the Racetrack
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restRacetrackMockMvc.perform(put("/api/racetracks")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(racetrack)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the Racetrack in the database
         List<Racetrack> racetrackList = racetrackRepository.findAll();
-        assertThat(racetrackList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(racetrackList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the Racetrack in Elasticsearch
+        verify(mockRacetrackSearchRepository, times(0)).save(racetrack);
     }
 
     @Test
@@ -285,21 +306,20 @@ public class RacetrackResourceIntTest {
     public void deleteRacetrack() throws Exception {
         // Initialize the database
         racetrackRepository.saveAndFlush(racetrack);
-        racetrackSearchRepository.save(racetrack);
+
         int databaseSizeBeforeDelete = racetrackRepository.findAll().size();
 
-        // Get the racetrack
+        // Delete the racetrack
         restRacetrackMockMvc.perform(delete("/api/racetracks/{id}", racetrack.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean racetrackExistsInEs = racetrackSearchRepository.exists(racetrack.getId());
-        assertThat(racetrackExistsInEs).isFalse();
-
         // Validate the database is empty
         List<Racetrack> racetrackList = racetrackRepository.findAll();
         assertThat(racetrackList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the Racetrack in Elasticsearch
+        verify(mockRacetrackSearchRepository, times(1)).deleteById(racetrack.getId());
     }
 
     @Test
@@ -307,15 +327,15 @@ public class RacetrackResourceIntTest {
     public void searchRacetrack() throws Exception {
         // Initialize the database
         racetrackRepository.saveAndFlush(racetrack);
-        racetrackSearchRepository.save(racetrack);
-
+        when(mockRacetrackSearchRepository.search(queryStringQuery("id:" + racetrack.getId()), PageRequest.of(0, 20)))
+            .thenReturn(new PageImpl<>(Collections.singletonList(racetrack), PageRequest.of(0, 1), 1));
         // Search the racetrack
         restRacetrackMockMvc.perform(get("/api/_search/racetracks?query=id:" + racetrack.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(racetrack.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].location").value(hasItem(DEFAULT_LOCATION.toString())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].location").value(hasItem(DEFAULT_LOCATION)))
             .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }

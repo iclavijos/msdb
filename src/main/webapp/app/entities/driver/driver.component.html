@@ -1,8 +1,8 @@
 <div>
-    <h2>
+    <h2 id="page-heading">
         <span jhiTranslate="motorsportsDatabaseApp.driver.home.title">Drivers</span>
-        <button class="btn btn-primary float-right jh-create-entity create-driver" [routerLink]="['/', { outlets: { popup: ['driver-new'] } }]">
-            <span class="fa fa-plus"></span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-driver" [routerLink]="['/driver/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.driver.home.createLabel">
             Create new Driver
             </span>
@@ -14,11 +14,11 @@
             <form name="searchForm" class="form-inline">
                 <div class="input-group w-100 mt-3">
                     <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.driver.home.search' | translate }}">
-                    <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
-                        <span class="fa fa-search"></span>
+                    <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                        <fa-icon [icon]="'search'"></fa-icon>
                     </button>
-                    <button class="input-group-addon btn btn-danger" (click)="clear()" *ngIf="currentSearch">
-                        <span class="fa fa-trash-o"></span>
+                    <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                        <fa-icon [icon]="'trash-alt'"></fa-icon>
                     </button>
                 </div>
             </form>
@@ -29,20 +29,20 @@
         <table class="table table-striped">
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.driver.name">Name</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="surname"><span jhiTranslate="motorsportsDatabaseApp.driver.surname">Surname</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="birthDate"><span jhiTranslate="motorsportsDatabaseApp.driver.birthDate">Birth Date</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="birthPlace"><span jhiTranslate="motorsportsDatabaseApp.driver.birthPlace">Birth Place</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="deathDate"><span jhiTranslate="motorsportsDatabaseApp.driver.deathDate">Death Date</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="deathPlace"><span jhiTranslate="motorsportsDatabaseApp.driver.deathPlace">Death Place</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="portrait"><span jhiTranslate="motorsportsDatabaseApp.driver.portrait">Portrait</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.driver.name">Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="surname"><span jhiTranslate="motorsportsDatabaseApp.driver.surname">Surname</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="birthDate"><span jhiTranslate="motorsportsDatabaseApp.driver.birthDate">Birth Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="birthPlace"><span jhiTranslate="motorsportsDatabaseApp.driver.birthPlace">Birth Place</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="deathDate"><span jhiTranslate="motorsportsDatabaseApp.driver.deathDate">Death Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="deathPlace"><span jhiTranslate="motorsportsDatabaseApp.driver.deathPlace">Death Place</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="portrait"><span jhiTranslate="motorsportsDatabaseApp.driver.portrait">Portrait</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let driver of drivers ;trackBy: trackId">
-                <td><a [routerLink]="['../driver', driver.id ]">{{driver.id}}</a></td>
+                <td><a [routerLink]="['/driver', driver.id, 'view' ]">{{driver.id}}</a></td>
                 <td>{{driver.name}}</td>
                 <td>{{driver.surname}}</td>
                 <td>{{driver.birthDate | date:'mediumDate'}}</td>
@@ -58,23 +58,23 @@
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"
-                                [routerLink]="['../driver', driver.id ]"
+                                [routerLink]="['/driver', driver.id, 'view' ]"
                                 class="btn btn-info btn-sm">
-                            <span class="fa fa-eye"></span>
+                            <fa-icon [icon]="'eye'"></fa-icon>
                             <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
                         </button>
                         <button type="submit"
-                                [routerLink]="['/', { outlets: { popup: 'driver/'+ driver.id + '/edit'} }]"
-                                replaceUrl="true"
+                                [routerLink]="['/driver', driver.id, 'edit']"
                                 class="btn btn-primary btn-sm">
-                            <span class="fa fa-pencil"></span>
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
                             <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
                         </button>
                         <button type="submit"
-                                [routerLink]="['/', { outlets: { popup: 'driver/'+ driver.id + '/delete'} }]"
+                                [routerLink]="['/', 'driver', { outlets: { popup: driver.id + '/delete'} }]"
                                 replaceUrl="true"
+                                queryParamsHandling="merge"
                                 class="btn btn-danger btn-sm">
-                            <span class="fa fa-remove"></span>
+                            <fa-icon [icon]="'times'"></fa-icon>
                             <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
                         </button>
                     </div>
@@ -83,12 +83,12 @@
             </tbody>
         </table>
     </div>
-        <div *ngIf="drivers && drivers.length">
-            <div class="row justify-content-center">
-                <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
-            </div>
-            <div class="row justify-content-center">
-                <ngb-pagination [collectionSize]="totalItems" [maxSize]="5" [pageSize]="itemsPerPage" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
-            </div>
+    <div *ngIf="drivers && drivers.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="totalItems" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
         </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
 </div>

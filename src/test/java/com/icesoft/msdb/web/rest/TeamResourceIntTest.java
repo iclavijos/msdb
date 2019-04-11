@@ -10,9 +10,12 @@ import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -21,13 +24,19 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
+import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
 
 import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -50,15 +59,23 @@ public class TeamResourceIntTest {
     private static final String UPDATED_HQ_LOCATION = "BBBBBBBBBB";
 
     private static final byte[] DEFAULT_LOGO = TestUtil.createByteArray(1, "0");
-    private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(2, "1");
+    private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(1, "1");
     private static final String DEFAULT_LOGO_CONTENT_TYPE = "image/jpg";
     private static final String UPDATED_LOGO_CONTENT_TYPE = "image/png";
 
     @Autowired
     private TeamRepository teamRepository;
 
+    @Mock
+    private TeamRepository teamRepositoryMock;
+
+    /**
+     * This repository is mocked in the com.icesoft.msdb.repository.search test package.
+     *
+     * @see com.icesoft.msdb.repository.search.TeamSearchRepositoryMockConfiguration
+     */
     @Autowired
-    private TeamSearchRepository teamSearchRepository;
+    private TeamSearchRepository mockTeamSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -72,6 +89,9 @@ public class TeamResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private Validator validator;
+
     private MockMvc restTeamMockMvc;
 
     private Team team;
@@ -79,12 +99,13 @@ public class TeamResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final TeamResource teamResource = new TeamResource(teamRepository, teamSearchRepository);
+        final TeamResource teamResource = new TeamResource(teamRepository, mockTeamSearchRepository);
         this.restTeamMockMvc = MockMvcBuilders.standaloneSetup(teamResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -105,7 +126,6 @@ public class TeamResourceIntTest {
 
     @Before
     public void initTest() {
-        teamSearchRepository.deleteAll();
         team = createEntity(em);
     }
 
@@ -131,8 +151,7 @@ public class TeamResourceIntTest {
         assertThat(testTeam.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
 
         // Validate the Team in Elasticsearch
-        Team teamEs = teamSearchRepository.findOne(testTeam.getId());
-        assertThat(teamEs).isEqualToComparingFieldByField(testTeam);
+        verify(mockTeamSearchRepository, times(1)).save(testTeam);
     }
 
     @Test
@@ -152,6 +171,9 @@ public class TeamResourceIntTest {
         // Validate the Team in the database
         List<Team> teamList = teamRepository.findAll();
         assertThat(teamList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the Team in Elasticsearch
+        verify(mockTeamSearchRepository, times(0)).save(team);
     }
 
     @Test
@@ -189,6 +211,39 @@ public class TeamResourceIntTest {
             .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
+    
+    @SuppressWarnings({"unchecked"})
+    public void getAllTeamsWithEagerRelationshipsIsEnabled() throws Exception {
+        TeamResource teamResource = new TeamResource(teamRepositoryMock, mockTeamSearchRepository);
+        when(teamRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        MockMvc restTeamMockMvc = MockMvcBuilders.standaloneSetup(teamResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        restTeamMockMvc.perform(get("/api/teams?eagerload=true"))
+        .andExpect(status().isOk());
+
+        verify(teamRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public void getAllTeamsWithEagerRelationshipsIsNotEnabled() throws Exception {
+        TeamResource teamResource = new TeamResource(teamRepositoryMock, mockTeamSearchRepository);
+            when(teamRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+            MockMvc restTeamMockMvc = MockMvcBuilders.standaloneSetup(teamResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        restTeamMockMvc.perform(get("/api/teams?eagerload=true"))
+        .andExpect(status().isOk());
+
+            verify(teamRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+    }
 
     @Test
     @Transactional
@@ -221,11 +276,13 @@ public class TeamResourceIntTest {
     public void updateTeam() throws Exception {
         // Initialize the database
         teamRepository.saveAndFlush(team);
-        teamSearchRepository.save(team);
+
         int databaseSizeBeforeUpdate = teamRepository.findAll().size();
 
         // Update the team
-        Team updatedTeam = teamRepository.findOne(team.getId());
+        Team updatedTeam = teamRepository.findById(team.getId()).get();
+        // Disconnect from session so that the updates on updatedTeam are not directly saved in db
+        em.detach(updatedTeam);
         updatedTeam
             .name(UPDATED_NAME)
             .description(UPDATED_DESCRIPTION)
@@ -249,8 +306,7 @@ public class TeamResourceIntTest {
         assertThat(testTeam.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
 
         // Validate the Team in Elasticsearch
-        Team teamEs = teamSearchRepository.findOne(testTeam.getId());
-        assertThat(teamEs).isEqualToComparingFieldByField(testTeam);
+        verify(mockTeamSearchRepository, times(1)).save(testTeam);
     }
 
     @Test
@@ -260,15 +316,18 @@ public class TeamResourceIntTest {
 
         // Create the Team
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTeamMockMvc.perform(put("/api/teams")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(team)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the Team in the database
         List<Team> teamList = teamRepository.findAll();
-        assertThat(teamList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(teamList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the Team in Elasticsearch
+        verify(mockTeamSearchRepository, times(0)).save(team);
     }
 
     @Test
@@ -276,21 +335,20 @@ public class TeamResourceIntTest {
     public void deleteTeam() throws Exception {
         // Initialize the database
         teamRepository.saveAndFlush(team);
-        teamSearchRepository.save(team);
+
         int databaseSizeBeforeDelete = teamRepository.findAll().size();
 
-        // Get the team
+        // Delete the team
         restTeamMockMvc.perform(delete("/api/teams/{id}", team.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean teamExistsInEs = teamSearchRepository.exists(team.getId());
-        assertThat(teamExistsInEs).isFalse();
-
         // Validate the database is empty
         List<Team> teamList = teamRepository.findAll();
         assertThat(teamList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the Team in Elasticsearch
+        verify(mockTeamSearchRepository, times(1)).deleteById(team.getId());
     }
 
     @Test
@@ -298,16 +356,16 @@ public class TeamResourceIntTest {
     public void searchTeam() throws Exception {
         // Initialize the database
         teamRepository.saveAndFlush(team);
-        teamSearchRepository.save(team);
-
+        when(mockTeamSearchRepository.search(queryStringQuery("id:" + team.getId()), PageRequest.of(0, 20)))
+            .thenReturn(new PageImpl<>(Collections.singletonList(team), PageRequest.of(0, 1), 1));
         // Search the team
         restTeamMockMvc.perform(get("/api/_search/teams?query=id:" + team.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(team.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
-            .andExpect(jsonPath("$.[*].hqLocation").value(hasItem(DEFAULT_HQ_LOCATION.toString())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
+            .andExpect(jsonPath("$.[*].hqLocation").value(hasItem(DEFAULT_HQ_LOCATION)))
             .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }

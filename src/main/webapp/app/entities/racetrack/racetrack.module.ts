@@ -1,51 +1,40 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { JhiLanguageService } from 'ng-jhipster';
+import { JhiLanguageHelper } from 'app/core';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
+import { MotorsportsDatabaseSharedModule } from 'app/shared';
 import {
-    RacetrackService,
-    RacetrackPopupService,
     RacetrackComponent,
     RacetrackDetailComponent,
-    RacetrackDialogComponent,
-    RacetrackPopupComponent,
+    RacetrackUpdateComponent,
     RacetrackDeletePopupComponent,
     RacetrackDeleteDialogComponent,
     racetrackRoute,
-    racetrackPopupRoute,
-    RacetrackResolvePagingParams,
+    racetrackPopupRoute
 } from './';
 
-const ENTITY_STATES = [
-    ...racetrackRoute,
-    ...racetrackPopupRoute,
-];
+const ENTITY_STATES = [...racetrackRoute, ...racetrackPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
+    imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
     declarations: [
         RacetrackComponent,
         RacetrackDetailComponent,
-        RacetrackDialogComponent,
+        RacetrackUpdateComponent,
         RacetrackDeleteDialogComponent,
-        RacetrackPopupComponent,
-        RacetrackDeletePopupComponent,
+        RacetrackDeletePopupComponent
     ],
-    entryComponents: [
-        RacetrackComponent,
-        RacetrackDialogComponent,
-        RacetrackPopupComponent,
-        RacetrackDeleteDialogComponent,
-        RacetrackDeletePopupComponent,
-    ],
-    providers: [
-        RacetrackService,
-        RacetrackPopupService,
-        RacetrackResolvePagingParams,
-    ],
+    entryComponents: [RacetrackComponent, RacetrackUpdateComponent, RacetrackDeleteDialogComponent, RacetrackDeletePopupComponent],
+    providers: [{ provide: JhiLanguageService, useClass: JhiLanguageService }],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class MotorsportsDatabaseRacetrackModule {}
+export class MotorsportsDatabaseRacetrackModule {
+    constructor(private languageService: JhiLanguageService, private languageHelper: JhiLanguageHelper) {
+        this.languageHelper.language.subscribe((languageKey: string) => {
+            if (languageKey !== undefined) {
+                this.languageService.changeLanguage(languageKey);
+            }
+        });
+    }
+}

@@ -1,45 +1,78 @@
 import { Injectable } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
+import { JhiPaginationUtil, JhiResolvePagingParams } from 'ng-jhipster';
+import { UserRouteAccessService } from 'app/core';
+import { Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { Racetrack } from 'app/shared/model/racetrack.model';
+import { RacetrackService } from './racetrack.service';
 import { RacetrackComponent } from './racetrack.component';
 import { RacetrackDetailComponent } from './racetrack-detail.component';
-import { RacetrackPopupComponent } from './racetrack-dialog.component';
+import { RacetrackUpdateComponent } from './racetrack-update.component';
 import { RacetrackDeletePopupComponent } from './racetrack-delete-dialog.component';
+import { IRacetrack } from 'app/shared/model/racetrack.model';
 
-@Injectable()
-export class RacetrackResolvePagingParams implements Resolve<any> {
+@Injectable({ providedIn: 'root' })
+export class RacetrackResolve implements Resolve<IRacetrack> {
+    constructor(private service: RacetrackService) {}
 
-    constructor(private paginationUtil: JhiPaginationUtil) {}
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
-        return {
-            page: this.paginationUtil.parsePage(page),
-            predicate: this.paginationUtil.parsePredicate(sort),
-            ascending: this.paginationUtil.parseAscending(sort)
-      };
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IRacetrack> {
+        const id = route.params['id'] ? route.params['id'] : null;
+        if (id) {
+            return this.service.find(id).pipe(
+                filter((response: HttpResponse<Racetrack>) => response.ok),
+                map((racetrack: HttpResponse<Racetrack>) => racetrack.body)
+            );
+        }
+        return of(new Racetrack());
     }
 }
 
 export const racetrackRoute: Routes = [
     {
-        path: 'racetrack',
+        path: '',
         component: RacetrackComponent,
         resolve: {
-            'pagingParams': RacetrackResolvePagingParams
+            pagingParams: JhiResolvePagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            defaultSort: 'id,asc',
+            pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/view',
+        component: RacetrackDetailComponent,
+        resolve: {
+            racetrack: RacetrackResolve
         },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
         },
         canActivate: [UserRouteAccessService]
-    }, {
-        path: 'racetrack/:id',
-        component: RacetrackDetailComponent,
+    },
+    {
+        path: 'new',
+        component: RacetrackUpdateComponent,
+        resolve: {
+            racetrack: RacetrackResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/edit',
+        component: RacetrackUpdateComponent,
+        resolve: {
+            racetrack: RacetrackResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
@@ -50,28 +83,11 @@ export const racetrackRoute: Routes = [
 
 export const racetrackPopupRoute: Routes = [
     {
-        path: 'racetrack-new',
-        component: RacetrackPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'racetrack/:id/edit',
-        component: RacetrackPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'racetrack/:id/delete',
+        path: ':id/delete',
         component: RacetrackDeletePopupComponent,
+        resolve: {
+            racetrack: RacetrackResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'

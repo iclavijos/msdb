@@ -20,18 +20,23 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.List;
+
 
 import static com.icesoft.msdb.web.rest.TestUtil.sameInstant;
 import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -59,8 +64,13 @@ public class EventSessionResourceIntTest {
     @Autowired
     private EventSessionRepository eventSessionRepository;
 
+    /**
+     * This repository is mocked in the com.icesoft.msdb.repository.search test package.
+     *
+     * @see com.icesoft.msdb.repository.search.EventSessionSearchRepositoryMockConfiguration
+     */
     @Autowired
-    private EventSessionSearchRepository eventSessionSearchRepository;
+    private EventSessionSearchRepository mockEventSessionSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -74,6 +84,9 @@ public class EventSessionResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private Validator validator;
+
     private MockMvc restEventSessionMockMvc;
 
     private EventSession eventSession;
@@ -81,12 +94,13 @@ public class EventSessionResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final EventSessionResource eventSessionResource = new EventSessionResource(eventSessionRepository, eventSessionSearchRepository);
+        final EventSessionResource eventSessionResource = new EventSessionResource(eventSessionRepository, mockEventSessionSearchRepository);
         this.restEventSessionMockMvc = MockMvcBuilders.standaloneSetup(eventSessionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -106,7 +120,6 @@ public class EventSessionResourceIntTest {
 
     @Before
     public void initTest() {
-        eventSessionSearchRepository.deleteAll();
         eventSession = createEntity(em);
     }
 
@@ -131,8 +144,7 @@ public class EventSessionResourceIntTest {
         assertThat(testEventSession.getDuration()).isEqualTo(DEFAULT_DURATION);
 
         // Validate the EventSession in Elasticsearch
-        EventSession eventSessionEs = eventSessionSearchRepository.findOne(testEventSession.getId());
-        assertThat(eventSessionEs).isEqualToComparingFieldByField(testEventSession);
+        verify(mockEventSessionSearchRepository, times(1)).save(testEventSession);
     }
 
     @Test
@@ -152,6 +164,9 @@ public class EventSessionResourceIntTest {
         // Validate the EventSession in the database
         List<EventSession> eventSessionList = eventSessionRepository.findAll();
         assertThat(eventSessionList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the EventSession in Elasticsearch
+        verify(mockEventSessionSearchRepository, times(0)).save(eventSession);
     }
 
     @Test
@@ -242,7 +257,7 @@ public class EventSessionResourceIntTest {
             .andExpect(jsonPath("$.[*].sessionStartTime").value(hasItem(sameInstant(DEFAULT_SESSION_START_TIME))))
             .andExpect(jsonPath("$.[*].duration").value(hasItem(DEFAULT_DURATION)));
     }
-
+    
     @Test
     @Transactional
     public void getEventSession() throws Exception {
@@ -273,11 +288,13 @@ public class EventSessionResourceIntTest {
     public void updateEventSession() throws Exception {
         // Initialize the database
         eventSessionRepository.saveAndFlush(eventSession);
-        eventSessionSearchRepository.save(eventSession);
+
         int databaseSizeBeforeUpdate = eventSessionRepository.findAll().size();
 
         // Update the eventSession
-        EventSession updatedEventSession = eventSessionRepository.findOne(eventSession.getId());
+        EventSession updatedEventSession = eventSessionRepository.findById(eventSession.getId()).get();
+        // Disconnect from session so that the updates on updatedEventSession are not directly saved in db
+        em.detach(updatedEventSession);
         updatedEventSession
             .name(UPDATED_NAME)
             .shortname(UPDATED_SHORTNAME)
@@ -299,8 +316,7 @@ public class EventSessionResourceIntTest {
         assertThat(testEventSession.getDuration()).isEqualTo(UPDATED_DURATION);
 
         // Validate the EventSession in Elasticsearch
-        EventSession eventSessionEs = eventSessionSearchRepository.findOne(testEventSession.getId());
-        assertThat(eventSessionEs).isEqualToComparingFieldByField(testEventSession);
+        verify(mockEventSessionSearchRepository, times(1)).save(testEventSession);
     }
 
     @Test
@@ -310,15 +326,18 @@ public class EventSessionResourceIntTest {
 
         // Create the EventSession
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restEventSessionMockMvc.perform(put("/api/event-sessions")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(eventSession)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the EventSession in the database
         List<EventSession> eventSessionList = eventSessionRepository.findAll();
-        assertThat(eventSessionList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(eventSessionList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the EventSession in Elasticsearch
+        verify(mockEventSessionSearchRepository, times(0)).save(eventSession);
     }
 
     @Test
@@ -326,21 +345,20 @@ public class EventSessionResourceIntTest {
     public void deleteEventSession() throws Exception {
         // Initialize the database
         eventSessionRepository.saveAndFlush(eventSession);
-        eventSessionSearchRepository.save(eventSession);
+
         int databaseSizeBeforeDelete = eventSessionRepository.findAll().size();
 
-        // Get the eventSession
+        // Delete the eventSession
         restEventSessionMockMvc.perform(delete("/api/event-sessions/{id}", eventSession.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean eventSessionExistsInEs = eventSessionSearchRepository.exists(eventSession.getId());
-        assertThat(eventSessionExistsInEs).isFalse();
-
         // Validate the database is empty
         List<EventSession> eventSessionList = eventSessionRepository.findAll();
         assertThat(eventSessionList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the EventSession in Elasticsearch
+        verify(mockEventSessionSearchRepository, times(1)).deleteById(eventSession.getId());
     }
 
     @Test
@@ -348,15 +366,15 @@ public class EventSessionResourceIntTest {
     public void searchEventSession() throws Exception {
         // Initialize the database
         eventSessionRepository.saveAndFlush(eventSession);
-        eventSessionSearchRepository.save(eventSession);
-
+        when(mockEventSessionSearchRepository.search(queryStringQuery("id:" + eventSession.getId())))
+            .thenReturn(Collections.singletonList(eventSession));
         // Search the eventSession
         restEventSessionMockMvc.perform(get("/api/_search/event-sessions?query=id:" + eventSession.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(eventSession.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].shortname").value(hasItem(DEFAULT_SHORTNAME.toString())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].shortname").value(hasItem(DEFAULT_SHORTNAME)))
             .andExpect(jsonPath("$.[*].sessionStartTime").value(hasItem(sameInstant(DEFAULT_SESSION_START_TIME))))
             .andExpect(jsonPath("$.[*].duration").value(hasItem(DEFAULT_DURATION)));
     }

@@ -1,49 +1,63 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
-import { EventSession } from './event-session.model';
+import { IEventSession } from 'app/shared/model/event-session.model';
+import { AccountService } from 'app/core';
 import { EventSessionService } from './event-session.service';
-import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
 
 @Component({
     selector: 'jhi-event-session',
     templateUrl: './event-session.component.html'
 })
 export class EventSessionComponent implements OnInit, OnDestroy {
-eventSessions: EventSession[];
+    eventSessions: IEventSession[];
     currentAccount: any;
     eventSubscriber: Subscription;
     currentSearch: string;
 
     constructor(
-        private eventSessionService: EventSessionService,
-        private jhiAlertService: JhiAlertService,
-        private eventManager: JhiEventManager,
-        private activatedRoute: ActivatedRoute,
-        private principal: Principal
+        protected eventSessionService: EventSessionService,
+        protected jhiAlertService: JhiAlertService,
+        protected eventManager: JhiEventManager,
+        protected activatedRoute: ActivatedRoute,
+        protected accountService: AccountService
     ) {
-        this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
+        this.currentSearch =
+            this.activatedRoute.snapshot && this.activatedRoute.snapshot.params['search']
+                ? this.activatedRoute.snapshot.params['search']
+                : '';
     }
 
     loadAll() {
         if (this.currentSearch) {
-            this.eventSessionService.search({
-                query: this.currentSearch,
-                }).subscribe(
-                    (res: ResponseWrapper) => this.eventSessions = res.json,
-                    (res: ResponseWrapper) => this.onError(res.json)
-                );
+            this.eventSessionService
+                .search({
+                    query: this.currentSearch
+                })
+                .pipe(
+                    filter((res: HttpResponse<IEventSession[]>) => res.ok),
+                    map((res: HttpResponse<IEventSession[]>) => res.body)
+                )
+                .subscribe((res: IEventSession[]) => (this.eventSessions = res), (res: HttpErrorResponse) => this.onError(res.message));
             return;
-       }
-        this.eventSessionService.query().subscribe(
-            (res: ResponseWrapper) => {
-                this.eventSessions = res.json;
-                this.currentSearch = '';
-            },
-            (res: ResponseWrapper) => this.onError(res.json)
-        );
+        }
+        this.eventSessionService
+            .query()
+            .pipe(
+                filter((res: HttpResponse<IEventSession[]>) => res.ok),
+                map((res: HttpResponse<IEventSession[]>) => res.body)
+            )
+            .subscribe(
+                (res: IEventSession[]) => {
+                    this.eventSessions = res;
+                    this.currentSearch = '';
+                },
+                (res: HttpErrorResponse) => this.onError(res.message)
+            );
     }
 
     search(query) {
@@ -58,9 +72,10 @@ eventSessions: EventSession[];
         this.currentSearch = '';
         this.loadAll();
     }
+
     ngOnInit() {
         this.loadAll();
-        this.principal.identity().then((account) => {
+        this.accountService.identity().then(account => {
             this.currentAccount = account;
         });
         this.registerChangeInEventSessions();
@@ -70,14 +85,15 @@ eventSessions: EventSession[];
         this.eventManager.destroy(this.eventSubscriber);
     }
 
-    trackId(index: number, item: EventSession) {
+    trackId(index: number, item: IEventSession) {
         return item.id;
     }
+
     registerChangeInEventSessions() {
-        this.eventSubscriber = this.eventManager.subscribe('eventSessionListModification', (response) => this.loadAll());
+        this.eventSubscriber = this.eventManager.subscribe('eventSessionListModification', response => this.loadAll());
     }
 
-    private onError(error) {
-        this.jhiAlertService.error(error.message, null, null);
+    protected onError(errorMessage: string) {
+        this.jhiAlertService.error(errorMessage, null, null);
     }
 }

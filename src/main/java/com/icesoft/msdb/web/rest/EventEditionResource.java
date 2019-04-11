@@ -1,14 +1,10 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.EventEdition;
-
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +54,6 @@ public class EventEditionResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/event-editions")
-    @Timed
     public ResponseEntity<EventEdition> createEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to save EventEdition : {}", eventEdition);
         if (eventEdition.getId() != null) {
@@ -81,11 +76,10 @@ public class EventEditionResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/event-editions")
-    @Timed
     public ResponseEntity<EventEdition> updateEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to update EventEdition : {}", eventEdition);
         if (eventEdition.getId() == null) {
-            return createEventEdition(eventEdition);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         EventEdition result = eventEditionRepository.save(eventEdition);
         eventEditionSearchRepository.save(result);
@@ -101,12 +95,11 @@ public class EventEditionResource {
      * @return the ResponseEntity with status 200 (OK) and the list of eventEditions in body
      */
     @GetMapping("/event-editions")
-    @Timed
-    public ResponseEntity<List<EventEdition>> getAllEventEditions(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<EventEdition>> getAllEventEditions(Pageable pageable) {
         log.debug("REST request to get a page of EventEditions");
         Page<EventEdition> page = eventEditionRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/event-editions");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -116,11 +109,10 @@ public class EventEditionResource {
      * @return the ResponseEntity with status 200 (OK) and with body the eventEdition, or with status 404 (Not Found)
      */
     @GetMapping("/event-editions/{id}")
-    @Timed
     public ResponseEntity<EventEdition> getEventEdition(@PathVariable Long id) {
         log.debug("REST request to get EventEdition : {}", id);
-        EventEdition eventEdition = eventEditionRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEdition));
+        Optional<EventEdition> eventEdition = eventEditionRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(eventEdition);
     }
 
     /**
@@ -130,11 +122,10 @@ public class EventEditionResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/event-editions/{id}")
-    @Timed
     public ResponseEntity<Void> deleteEventEdition(@PathVariable Long id) {
         log.debug("REST request to delete EventEdition : {}", id);
-        eventEditionRepository.delete(id);
-        eventEditionSearchRepository.delete(id);
+        eventEditionRepository.deleteById(id);
+        eventEditionSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -147,12 +138,11 @@ public class EventEditionResource {
      * @return the result of the search
      */
     @GetMapping("/_search/event-editions")
-    @Timed
-    public ResponseEntity<List<EventEdition>> searchEventEditions(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<EventEdition>> searchEventEditions(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of EventEditions for query {}", query);
         Page<EventEdition> page = eventEditionSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/event-editions");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
 }

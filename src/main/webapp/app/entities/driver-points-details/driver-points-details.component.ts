@@ -1,49 +1,66 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
-import { DriverPointsDetails } from './driver-points-details.model';
+import { IDriverPointsDetails } from 'app/shared/model/driver-points-details.model';
+import { AccountService } from 'app/core';
 import { DriverPointsDetailsService } from './driver-points-details.service';
-import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
 
 @Component({
     selector: 'jhi-driver-points-details',
     templateUrl: './driver-points-details.component.html'
 })
 export class DriverPointsDetailsComponent implements OnInit, OnDestroy {
-driverPointsDetails: DriverPointsDetails[];
+    driverPointsDetails: IDriverPointsDetails[];
     currentAccount: any;
     eventSubscriber: Subscription;
     currentSearch: string;
 
     constructor(
-        private driverPointsDetailsService: DriverPointsDetailsService,
-        private jhiAlertService: JhiAlertService,
-        private eventManager: JhiEventManager,
-        private activatedRoute: ActivatedRoute,
-        private principal: Principal
+        protected driverPointsDetailsService: DriverPointsDetailsService,
+        protected jhiAlertService: JhiAlertService,
+        protected eventManager: JhiEventManager,
+        protected activatedRoute: ActivatedRoute,
+        protected accountService: AccountService
     ) {
-        this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
+        this.currentSearch =
+            this.activatedRoute.snapshot && this.activatedRoute.snapshot.params['search']
+                ? this.activatedRoute.snapshot.params['search']
+                : '';
     }
 
     loadAll() {
         if (this.currentSearch) {
-            this.driverPointsDetailsService.search({
-                query: this.currentSearch,
-                }).subscribe(
-                    (res: ResponseWrapper) => this.driverPointsDetails = res.json,
-                    (res: ResponseWrapper) => this.onError(res.json)
+            this.driverPointsDetailsService
+                .search({
+                    query: this.currentSearch
+                })
+                .pipe(
+                    filter((res: HttpResponse<IDriverPointsDetails[]>) => res.ok),
+                    map((res: HttpResponse<IDriverPointsDetails[]>) => res.body)
+                )
+                .subscribe(
+                    (res: IDriverPointsDetails[]) => (this.driverPointsDetails = res),
+                    (res: HttpErrorResponse) => this.onError(res.message)
                 );
             return;
-       }
-        this.driverPointsDetailsService.query().subscribe(
-            (res: ResponseWrapper) => {
-                this.driverPointsDetails = res.json;
-                this.currentSearch = '';
-            },
-            (res: ResponseWrapper) => this.onError(res.json)
-        );
+        }
+        this.driverPointsDetailsService
+            .query()
+            .pipe(
+                filter((res: HttpResponse<IDriverPointsDetails[]>) => res.ok),
+                map((res: HttpResponse<IDriverPointsDetails[]>) => res.body)
+            )
+            .subscribe(
+                (res: IDriverPointsDetails[]) => {
+                    this.driverPointsDetails = res;
+                    this.currentSearch = '';
+                },
+                (res: HttpErrorResponse) => this.onError(res.message)
+            );
     }
 
     search(query) {
@@ -58,9 +75,10 @@ driverPointsDetails: DriverPointsDetails[];
         this.currentSearch = '';
         this.loadAll();
     }
+
     ngOnInit() {
         this.loadAll();
-        this.principal.identity().then((account) => {
+        this.accountService.identity().then(account => {
             this.currentAccount = account;
         });
         this.registerChangeInDriverPointsDetails();
@@ -70,14 +88,15 @@ driverPointsDetails: DriverPointsDetails[];
         this.eventManager.destroy(this.eventSubscriber);
     }
 
-    trackId(index: number, item: DriverPointsDetails) {
+    trackId(index: number, item: IDriverPointsDetails) {
         return item.id;
     }
+
     registerChangeInDriverPointsDetails() {
-        this.eventSubscriber = this.eventManager.subscribe('driverPointsDetailsListModification', (response) => this.loadAll());
+        this.eventSubscriber = this.eventManager.subscribe('driverPointsDetailsListModification', response => this.loadAll());
     }
 
-    private onError(error) {
-        this.jhiAlertService.error(error.message, null, null);
+    protected onError(errorMessage: string) {
+        this.jhiAlertService.error(errorMessage, null, null);
     }
 }

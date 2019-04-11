@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { Racetrack } from './racetrack.model';
-import { RacetrackPopupService } from './racetrack-popup.service';
+import { IRacetrack } from 'app/shared/model/racetrack.model';
 import { RacetrackService } from './racetrack.service';
 
 @Component({
@@ -13,22 +12,20 @@ import { RacetrackService } from './racetrack.service';
     templateUrl: './racetrack-delete-dialog.component.html'
 })
 export class RacetrackDeleteDialogComponent {
-
-    racetrack: Racetrack;
+    racetrack: IRacetrack;
 
     constructor(
-        private racetrackService: RacetrackService,
+        protected racetrackService: RacetrackService,
         public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+        protected eventManager: JhiEventManager
+    ) {}
 
     clear() {
         this.activeModal.dismiss('cancel');
     }
 
     confirmDelete(id: number) {
-        this.racetrackService.delete(id).subscribe((response) => {
+        this.racetrackService.delete(id).subscribe(response => {
             this.eventManager.broadcast({
                 name: 'racetrackListModification',
                 content: 'Deleted an racetrack'
@@ -43,22 +40,30 @@ export class RacetrackDeleteDialogComponent {
     template: ''
 })
 export class RacetrackDeletePopupComponent implements OnInit, OnDestroy {
+    protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
-
-    constructor(
-        private route: ActivatedRoute,
-        private racetrackPopupService: RacetrackPopupService
-    ) {}
+    constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.racetrackPopupService
-                .open(RacetrackDeleteDialogComponent as Component, params['id']);
+        this.activatedRoute.data.subscribe(({ racetrack }) => {
+            setTimeout(() => {
+                this.ngbModalRef = this.modalService.open(RacetrackDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
+                this.ngbModalRef.componentInstance.racetrack = racetrack;
+                this.ngbModalRef.result.then(
+                    result => {
+                        this.router.navigate(['/racetrack', { outlets: { popup: null } }]);
+                        this.ngbModalRef = null;
+                    },
+                    reason => {
+                        this.router.navigate(['/racetrack', { outlets: { popup: null } }]);
+                        this.ngbModalRef = null;
+                    }
+                );
+            }, 0);
         });
     }
 
     ngOnDestroy() {
-        this.routeSub.unsubscribe();
+        this.ngbModalRef = null;
     }
 }

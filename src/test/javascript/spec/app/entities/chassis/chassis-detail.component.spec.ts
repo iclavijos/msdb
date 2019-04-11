@@ -1,61 +1,40 @@
 /* tslint:disable max-line-length */
-import { ComponentFixture, TestBed, async } from '@angular/core/testing';
-import { DatePipe } from '@angular/common';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
-import { JhiDateUtils, JhiDataUtils, JhiEventManager } from 'ng-jhipster';
+import { of } from 'rxjs';
+
 import { MotorsportsDatabaseTestModule } from '../../../test.module';
-import { MockActivatedRoute } from '../../../helpers/mock-route.service';
-import { ChassisDetailComponent } from '../../../../../../main/webapp/app/entities/chassis/chassis-detail.component';
-import { ChassisService } from '../../../../../../main/webapp/app/entities/chassis/chassis.service';
-import { Chassis } from '../../../../../../main/webapp/app/entities/chassis/chassis.model';
+import { ChassisDetailComponent } from 'app/entities/chassis/chassis-detail.component';
+import { Chassis } from 'app/shared/model/chassis.model';
 
 describe('Component Tests', () => {
-
     describe('Chassis Management Detail Component', () => {
         let comp: ChassisDetailComponent;
         let fixture: ComponentFixture<ChassisDetailComponent>;
-        let service: ChassisService;
+        const route = ({ data: of({ chassis: new Chassis(123) }) } as any) as ActivatedRoute;
 
-        beforeEach(async(() => {
+        beforeEach(() => {
             TestBed.configureTestingModule({
                 imports: [MotorsportsDatabaseTestModule],
                 declarations: [ChassisDetailComponent],
-                providers: [
-                    JhiDateUtils,
-                    JhiDataUtils,
-                    DatePipe,
-                    {
-                        provide: ActivatedRoute,
-                        useValue: new MockActivatedRoute({id: 123})
-                    },
-                    ChassisService,
-                    JhiEventManager
-                ]
-            }).overrideTemplate(ChassisDetailComponent, '')
-            .compileComponents();
-        }));
-
-        beforeEach(() => {
+                providers: [{ provide: ActivatedRoute, useValue: route }]
+            })
+                .overrideTemplate(ChassisDetailComponent, '')
+                .compileComponents();
             fixture = TestBed.createComponent(ChassisDetailComponent);
             comp = fixture.componentInstance;
-            service = fixture.debugElement.injector.get(ChassisService);
         });
 
         describe('OnInit', () => {
             it('Should call load all on init', () => {
-            // GIVEN
+                // GIVEN
 
-            spyOn(service, 'find').and.returnValue(Observable.of(new Chassis(10)));
+                // WHEN
+                comp.ngOnInit();
 
-            // WHEN
-            comp.ngOnInit();
-
-            // THEN
-            expect(service.find).toHaveBeenCalledWith(123);
-            expect(comp.chassis).toEqual(jasmine.objectContaining({id: 10}));
+                // THEN
+                expect(comp.chassis).toEqual(jasmine.objectContaining({ id: 123 }));
             });
         });
     });
-
 });

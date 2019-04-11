@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "series" : {
+        "series": {
             "home": {
                 "title": "Series",
                 "createLabel": "Create a new Series",

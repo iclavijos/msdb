@@ -13,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -20,13 +22,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
+
 
 import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -51,8 +58,13 @@ public class ChassisResourceIntTest {
     @Autowired
     private ChassisRepository chassisRepository;
 
+    /**
+     * This repository is mocked in the com.icesoft.msdb.repository.search test package.
+     *
+     * @see com.icesoft.msdb.repository.search.ChassisSearchRepositoryMockConfiguration
+     */
     @Autowired
-    private ChassisSearchRepository chassisSearchRepository;
+    private ChassisSearchRepository mockChassisSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -66,6 +78,9 @@ public class ChassisResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private Validator validator;
+
     private MockMvc restChassisMockMvc;
 
     private Chassis chassis;
@@ -73,12 +88,13 @@ public class ChassisResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ChassisResource chassisResource = new ChassisResource(chassisRepository, chassisSearchRepository);
+        final ChassisResource chassisResource = new ChassisResource(chassisRepository, mockChassisSearchRepository);
         this.restChassisMockMvc = MockMvcBuilders.standaloneSetup(chassisResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -97,7 +113,6 @@ public class ChassisResourceIntTest {
 
     @Before
     public void initTest() {
-        chassisSearchRepository.deleteAll();
         chassis = createEntity(em);
     }
 
@@ -121,8 +136,7 @@ public class ChassisResourceIntTest {
         assertThat(testChassis.getDebutYear()).isEqualTo(DEFAULT_DEBUT_YEAR);
 
         // Validate the Chassis in Elasticsearch
-        Chassis chassisEs = chassisSearchRepository.findOne(testChassis.getId());
-        assertThat(chassisEs).isEqualToComparingFieldByField(testChassis);
+        verify(mockChassisSearchRepository, times(1)).save(testChassis);
     }
 
     @Test
@@ -142,6 +156,9 @@ public class ChassisResourceIntTest {
         // Validate the Chassis in the database
         List<Chassis> chassisList = chassisRepository.findAll();
         assertThat(chassisList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the Chassis in Elasticsearch
+        verify(mockChassisSearchRepository, times(0)).save(chassis);
     }
 
     @Test
@@ -213,7 +230,7 @@ public class ChassisResourceIntTest {
             .andExpect(jsonPath("$.[*].manufacturer").value(hasItem(DEFAULT_MANUFACTURER.toString())))
             .andExpect(jsonPath("$.[*].debutYear").value(hasItem(DEFAULT_DEBUT_YEAR)));
     }
-
+    
     @Test
     @Transactional
     public void getChassis() throws Exception {
@@ -243,11 +260,13 @@ public class ChassisResourceIntTest {
     public void updateChassis() throws Exception {
         // Initialize the database
         chassisRepository.saveAndFlush(chassis);
-        chassisSearchRepository.save(chassis);
+
         int databaseSizeBeforeUpdate = chassisRepository.findAll().size();
 
         // Update the chassis
-        Chassis updatedChassis = chassisRepository.findOne(chassis.getId());
+        Chassis updatedChassis = chassisRepository.findById(chassis.getId()).get();
+        // Disconnect from session so that the updates on updatedChassis are not directly saved in db
+        em.detach(updatedChassis);
         updatedChassis
             .name(UPDATED_NAME)
             .manufacturer(UPDATED_MANUFACTURER)
@@ -267,8 +286,7 @@ public class ChassisResourceIntTest {
         assertThat(testChassis.getDebutYear()).isEqualTo(UPDATED_DEBUT_YEAR);
 
         // Validate the Chassis in Elasticsearch
-        Chassis chassisEs = chassisSearchRepository.findOne(testChassis.getId());
-        assertThat(chassisEs).isEqualToComparingFieldByField(testChassis);
+        verify(mockChassisSearchRepository, times(1)).save(testChassis);
     }
 
     @Test
@@ -278,15 +296,18 @@ public class ChassisResourceIntTest {
 
         // Create the Chassis
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restChassisMockMvc.perform(put("/api/chassis")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(chassis)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the Chassis in the database
         List<Chassis> chassisList = chassisRepository.findAll();
-        assertThat(chassisList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(chassisList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the Chassis in Elasticsearch
+        verify(mockChassisSearchRepository, times(0)).save(chassis);
     }
 
     @Test
@@ -294,21 +315,20 @@ public class ChassisResourceIntTest {
     public void deleteChassis() throws Exception {
         // Initialize the database
         chassisRepository.saveAndFlush(chassis);
-        chassisSearchRepository.save(chassis);
+
         int databaseSizeBeforeDelete = chassisRepository.findAll().size();
 
-        // Get the chassis
+        // Delete the chassis
         restChassisMockMvc.perform(delete("/api/chassis/{id}", chassis.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean chassisExistsInEs = chassisSearchRepository.exists(chassis.getId());
-        assertThat(chassisExistsInEs).isFalse();
-
         // Validate the database is empty
         List<Chassis> chassisList = chassisRepository.findAll();
         assertThat(chassisList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the Chassis in Elasticsearch
+        verify(mockChassisSearchRepository, times(1)).deleteById(chassis.getId());
     }
 
     @Test
@@ -316,15 +336,15 @@ public class ChassisResourceIntTest {
     public void searchChassis() throws Exception {
         // Initialize the database
         chassisRepository.saveAndFlush(chassis);
-        chassisSearchRepository.save(chassis);
-
+        when(mockChassisSearchRepository.search(queryStringQuery("id:" + chassis.getId()), PageRequest.of(0, 20)))
+            .thenReturn(new PageImpl<>(Collections.singletonList(chassis), PageRequest.of(0, 1), 1));
         // Search the chassis
         restChassisMockMvc.perform(get("/api/_search/chassis?query=id:" + chassis.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(chassis.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].manufacturer").value(hasItem(DEFAULT_MANUFACTURER.toString())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].manufacturer").value(hasItem(DEFAULT_MANUFACTURER)))
             .andExpect(jsonPath("$.[*].debutYear").value(hasItem(DEFAULT_DEBUT_YEAR)));
     }
 

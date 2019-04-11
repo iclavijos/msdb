@@ -1,61 +1,40 @@
 /* tslint:disable max-line-length */
-import { ComponentFixture, TestBed, async } from '@angular/core/testing';
-import { DatePipe } from '@angular/common';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
-import { JhiDateUtils, JhiDataUtils, JhiEventManager } from 'ng-jhipster';
+import { of } from 'rxjs';
+
 import { MotorsportsDatabaseTestModule } from '../../../test.module';
-import { MockActivatedRoute } from '../../../helpers/mock-route.service';
-import { SeriesDetailComponent } from '../../../../../../main/webapp/app/entities/series/series-detail.component';
-import { SeriesService } from '../../../../../../main/webapp/app/entities/series/series.service';
-import { Series } from '../../../../../../main/webapp/app/entities/series/series.model';
+import { SeriesDetailComponent } from 'app/entities/series/series-detail.component';
+import { Series } from 'app/shared/model/series.model';
 
 describe('Component Tests', () => {
-
     describe('Series Management Detail Component', () => {
         let comp: SeriesDetailComponent;
         let fixture: ComponentFixture<SeriesDetailComponent>;
-        let service: SeriesService;
+        const route = ({ data: of({ series: new Series(123) }) } as any) as ActivatedRoute;
 
-        beforeEach(async(() => {
+        beforeEach(() => {
             TestBed.configureTestingModule({
                 imports: [MotorsportsDatabaseTestModule],
                 declarations: [SeriesDetailComponent],
-                providers: [
-                    JhiDateUtils,
-                    JhiDataUtils,
-                    DatePipe,
-                    {
-                        provide: ActivatedRoute,
-                        useValue: new MockActivatedRoute({id: 123})
-                    },
-                    SeriesService,
-                    JhiEventManager
-                ]
-            }).overrideTemplate(SeriesDetailComponent, '')
-            .compileComponents();
-        }));
-
-        beforeEach(() => {
+                providers: [{ provide: ActivatedRoute, useValue: route }]
+            })
+                .overrideTemplate(SeriesDetailComponent, '')
+                .compileComponents();
             fixture = TestBed.createComponent(SeriesDetailComponent);
             comp = fixture.componentInstance;
-            service = fixture.debugElement.injector.get(SeriesService);
         });
 
         describe('OnInit', () => {
             it('Should call load all on init', () => {
-            // GIVEN
+                // GIVEN
 
-            spyOn(service, 'find').and.returnValue(Observable.of(new Series(10)));
+                // WHEN
+                comp.ngOnInit();
 
-            // WHEN
-            comp.ngOnInit();
-
-            // THEN
-            expect(service.find).toHaveBeenCalledWith(123);
-            expect(comp.series).toEqual(jasmine.objectContaining({id: 10}));
+                // THEN
+                expect(comp.series).toEqual(jasmine.objectContaining({ id: 123 }));
             });
         });
     });
-
 });

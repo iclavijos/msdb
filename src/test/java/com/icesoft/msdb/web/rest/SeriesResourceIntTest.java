@@ -13,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -21,13 +23,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
+import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
+
 
 import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -50,15 +57,20 @@ public class SeriesResourceIntTest {
     private static final String UPDATED_ORGANIZER = "BBBBBBBBBB";
 
     private static final byte[] DEFAULT_LOGO = TestUtil.createByteArray(1, "0");
-    private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(2, "1");
+    private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(1, "1");
     private static final String DEFAULT_LOGO_CONTENT_TYPE = "image/jpg";
     private static final String UPDATED_LOGO_CONTENT_TYPE = "image/png";
 
     @Autowired
     private SeriesRepository seriesRepository;
 
+    /**
+     * This repository is mocked in the com.icesoft.msdb.repository.search test package.
+     *
+     * @see com.icesoft.msdb.repository.search.SeriesSearchRepositoryMockConfiguration
+     */
     @Autowired
-    private SeriesSearchRepository seriesSearchRepository;
+    private SeriesSearchRepository mockSeriesSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -72,6 +84,9 @@ public class SeriesResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private Validator validator;
+
     private MockMvc restSeriesMockMvc;
 
     private Series series;
@@ -79,12 +94,13 @@ public class SeriesResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final SeriesResource seriesResource = new SeriesResource(seriesRepository, seriesSearchRepository);
+        final SeriesResource seriesResource = new SeriesResource(seriesRepository, mockSeriesSearchRepository);
         this.restSeriesMockMvc = MockMvcBuilders.standaloneSetup(seriesResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -105,7 +121,6 @@ public class SeriesResourceIntTest {
 
     @Before
     public void initTest() {
-        seriesSearchRepository.deleteAll();
         series = createEntity(em);
     }
 
@@ -131,8 +146,7 @@ public class SeriesResourceIntTest {
         assertThat(testSeries.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
 
         // Validate the Series in Elasticsearch
-        Series seriesEs = seriesSearchRepository.findOne(testSeries.getId());
-        assertThat(seriesEs).isEqualToComparingFieldByField(testSeries);
+        verify(mockSeriesSearchRepository, times(1)).save(testSeries);
     }
 
     @Test
@@ -152,6 +166,9 @@ public class SeriesResourceIntTest {
         // Validate the Series in the database
         List<Series> seriesList = seriesRepository.findAll();
         assertThat(seriesList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the Series in Elasticsearch
+        verify(mockSeriesSearchRepository, times(0)).save(series);
     }
 
     @Test
@@ -207,7 +224,7 @@ public class SeriesResourceIntTest {
             .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
-
+    
     @Test
     @Transactional
     public void getSeries() throws Exception {
@@ -239,11 +256,13 @@ public class SeriesResourceIntTest {
     public void updateSeries() throws Exception {
         // Initialize the database
         seriesRepository.saveAndFlush(series);
-        seriesSearchRepository.save(series);
+
         int databaseSizeBeforeUpdate = seriesRepository.findAll().size();
 
         // Update the series
-        Series updatedSeries = seriesRepository.findOne(series.getId());
+        Series updatedSeries = seriesRepository.findById(series.getId()).get();
+        // Disconnect from session so that the updates on updatedSeries are not directly saved in db
+        em.detach(updatedSeries);
         updatedSeries
             .name(UPDATED_NAME)
             .shortname(UPDATED_SHORTNAME)
@@ -267,8 +286,7 @@ public class SeriesResourceIntTest {
         assertThat(testSeries.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
 
         // Validate the Series in Elasticsearch
-        Series seriesEs = seriesSearchRepository.findOne(testSeries.getId());
-        assertThat(seriesEs).isEqualToComparingFieldByField(testSeries);
+        verify(mockSeriesSearchRepository, times(1)).save(testSeries);
     }
 
     @Test
@@ -278,15 +296,18 @@ public class SeriesResourceIntTest {
 
         // Create the Series
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restSeriesMockMvc.perform(put("/api/series")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(series)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the Series in the database
         List<Series> seriesList = seriesRepository.findAll();
-        assertThat(seriesList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(seriesList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the Series in Elasticsearch
+        verify(mockSeriesSearchRepository, times(0)).save(series);
     }
 
     @Test
@@ -294,21 +315,20 @@ public class SeriesResourceIntTest {
     public void deleteSeries() throws Exception {
         // Initialize the database
         seriesRepository.saveAndFlush(series);
-        seriesSearchRepository.save(series);
+
         int databaseSizeBeforeDelete = seriesRepository.findAll().size();
 
-        // Get the series
+        // Delete the series
         restSeriesMockMvc.perform(delete("/api/series/{id}", series.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean seriesExistsInEs = seriesSearchRepository.exists(series.getId());
-        assertThat(seriesExistsInEs).isFalse();
-
         // Validate the database is empty
         List<Series> seriesList = seriesRepository.findAll();
         assertThat(seriesList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the Series in Elasticsearch
+        verify(mockSeriesSearchRepository, times(1)).deleteById(series.getId());
     }
 
     @Test
@@ -316,16 +336,16 @@ public class SeriesResourceIntTest {
     public void searchSeries() throws Exception {
         // Initialize the database
         seriesRepository.saveAndFlush(series);
-        seriesSearchRepository.save(series);
-
+        when(mockSeriesSearchRepository.search(queryStringQuery("id:" + series.getId()), PageRequest.of(0, 20)))
+            .thenReturn(new PageImpl<>(Collections.singletonList(series), PageRequest.of(0, 1), 1));
         // Search the series
         restSeriesMockMvc.perform(get("/api/_search/series?query=id:" + series.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(series.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].shortname").value(hasItem(DEFAULT_SHORTNAME.toString())))
-            .andExpect(jsonPath("$.[*].organizer").value(hasItem(DEFAULT_ORGANIZER.toString())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].shortname").value(hasItem(DEFAULT_SHORTNAME)))
+            .andExpect(jsonPath("$.[*].organizer").value(hasItem(DEFAULT_ORGANIZER)))
             .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }

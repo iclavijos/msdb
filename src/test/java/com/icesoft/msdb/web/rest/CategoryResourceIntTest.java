@@ -13,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -21,13 +23,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
+import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
+
 
 import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -47,15 +54,20 @@ public class CategoryResourceIntTest {
     private static final String UPDATED_SHORTNAME = "BBBBBBBBBB";
 
     private static final byte[] DEFAULT_LOGO = TestUtil.createByteArray(1, "0");
-    private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(2, "1");
+    private static final byte[] UPDATED_LOGO = TestUtil.createByteArray(1, "1");
     private static final String DEFAULT_LOGO_CONTENT_TYPE = "image/jpg";
     private static final String UPDATED_LOGO_CONTENT_TYPE = "image/png";
 
     @Autowired
     private CategoryRepository categoryRepository;
 
+    /**
+     * This repository is mocked in the com.icesoft.msdb.repository.search test package.
+     *
+     * @see com.icesoft.msdb.repository.search.CategorySearchRepositoryMockConfiguration
+     */
     @Autowired
-    private CategorySearchRepository categorySearchRepository;
+    private CategorySearchRepository mockCategorySearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -69,6 +81,9 @@ public class CategoryResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private Validator validator;
+
     private MockMvc restCategoryMockMvc;
 
     private Category category;
@@ -76,12 +91,13 @@ public class CategoryResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final CategoryResource categoryResource = new CategoryResource(categoryRepository, categorySearchRepository);
+        final CategoryResource categoryResource = new CategoryResource(categoryRepository, mockCategorySearchRepository);
         this.restCategoryMockMvc = MockMvcBuilders.standaloneSetup(categoryResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -101,7 +117,6 @@ public class CategoryResourceIntTest {
 
     @Before
     public void initTest() {
-        categorySearchRepository.deleteAll();
         category = createEntity(em);
     }
 
@@ -126,8 +141,7 @@ public class CategoryResourceIntTest {
         assertThat(testCategory.getLogoContentType()).isEqualTo(DEFAULT_LOGO_CONTENT_TYPE);
 
         // Validate the Category in Elasticsearch
-        Category categoryEs = categorySearchRepository.findOne(testCategory.getId());
-        assertThat(categoryEs).isEqualToComparingFieldByField(testCategory);
+        verify(mockCategorySearchRepository, times(1)).save(testCategory);
     }
 
     @Test
@@ -147,6 +161,9 @@ public class CategoryResourceIntTest {
         // Validate the Category in the database
         List<Category> categoryList = categoryRepository.findAll();
         assertThat(categoryList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the Category in Elasticsearch
+        verify(mockCategorySearchRepository, times(0)).save(category);
     }
 
     @Test
@@ -201,7 +218,7 @@ public class CategoryResourceIntTest {
             .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }
-
+    
     @Test
     @Transactional
     public void getCategory() throws Exception {
@@ -232,11 +249,13 @@ public class CategoryResourceIntTest {
     public void updateCategory() throws Exception {
         // Initialize the database
         categoryRepository.saveAndFlush(category);
-        categorySearchRepository.save(category);
+
         int databaseSizeBeforeUpdate = categoryRepository.findAll().size();
 
         // Update the category
-        Category updatedCategory = categoryRepository.findOne(category.getId());
+        Category updatedCategory = categoryRepository.findById(category.getId()).get();
+        // Disconnect from session so that the updates on updatedCategory are not directly saved in db
+        em.detach(updatedCategory);
         updatedCategory
             .name(UPDATED_NAME)
             .shortname(UPDATED_SHORTNAME)
@@ -258,8 +277,7 @@ public class CategoryResourceIntTest {
         assertThat(testCategory.getLogoContentType()).isEqualTo(UPDATED_LOGO_CONTENT_TYPE);
 
         // Validate the Category in Elasticsearch
-        Category categoryEs = categorySearchRepository.findOne(testCategory.getId());
-        assertThat(categoryEs).isEqualToComparingFieldByField(testCategory);
+        verify(mockCategorySearchRepository, times(1)).save(testCategory);
     }
 
     @Test
@@ -269,15 +287,18 @@ public class CategoryResourceIntTest {
 
         // Create the Category
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCategoryMockMvc.perform(put("/api/categories")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(category)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the Category in the database
         List<Category> categoryList = categoryRepository.findAll();
-        assertThat(categoryList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(categoryList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the Category in Elasticsearch
+        verify(mockCategorySearchRepository, times(0)).save(category);
     }
 
     @Test
@@ -285,21 +306,20 @@ public class CategoryResourceIntTest {
     public void deleteCategory() throws Exception {
         // Initialize the database
         categoryRepository.saveAndFlush(category);
-        categorySearchRepository.save(category);
+
         int databaseSizeBeforeDelete = categoryRepository.findAll().size();
 
-        // Get the category
+        // Delete the category
         restCategoryMockMvc.perform(delete("/api/categories/{id}", category.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean categoryExistsInEs = categorySearchRepository.exists(category.getId());
-        assertThat(categoryExistsInEs).isFalse();
-
         // Validate the database is empty
         List<Category> categoryList = categoryRepository.findAll();
         assertThat(categoryList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the Category in Elasticsearch
+        verify(mockCategorySearchRepository, times(1)).deleteById(category.getId());
     }
 
     @Test
@@ -307,15 +327,15 @@ public class CategoryResourceIntTest {
     public void searchCategory() throws Exception {
         // Initialize the database
         categoryRepository.saveAndFlush(category);
-        categorySearchRepository.save(category);
-
+        when(mockCategorySearchRepository.search(queryStringQuery("id:" + category.getId()), PageRequest.of(0, 20)))
+            .thenReturn(new PageImpl<>(Collections.singletonList(category), PageRequest.of(0, 1), 1));
         // Search the category
         restCategoryMockMvc.perform(get("/api/_search/categories?query=id:" + category.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(category.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].shortname").value(hasItem(DEFAULT_SHORTNAME.toString())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].shortname").value(hasItem(DEFAULT_SHORTNAME)))
             .andExpect(jsonPath("$.[*].logoContentType").value(hasItem(DEFAULT_LOGO_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].logo").value(hasItem(Base64Utils.encodeToString(DEFAULT_LOGO))));
     }

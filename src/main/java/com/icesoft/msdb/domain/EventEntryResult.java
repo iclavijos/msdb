@@ -1,10 +1,12 @@
 package com.icesoft.msdb.domain;
 
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
+
+import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -18,7 +20,7 @@ import java.util.Objects;
 public class EventEntryResult implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -137,10 +139,10 @@ public class EventEntryResult implements Serializable {
     public String toString() {
         return "EventEntryResult{" +
             "id=" + getId() +
-            ", finalPosition='" + getFinalPosition() + "'" +
-            ", totalTime='" + getTotalTime() + "'" +
-            ", bestLapTime='" + getBestLapTime() + "'" +
-            ", lapsCompleted='" + getLapsCompleted() + "'" +
+            ", finalPosition=" + getFinalPosition() +
+            ", totalTime=" + getTotalTime() +
+            ", bestLapTime=" + getBestLapTime() +
+            ", lapsCompleted=" + getLapsCompleted() +
             ", retired='" + isRetired() + "'" +
             "}";
     }

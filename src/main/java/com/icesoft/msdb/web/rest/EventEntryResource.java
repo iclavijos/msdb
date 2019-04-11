@@ -1,8 +1,5 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.EventEntry;
-
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
@@ -52,7 +49,6 @@ public class EventEntryResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/event-entries")
-    @Timed
     public ResponseEntity<EventEntry> createEventEntry(@Valid @RequestBody EventEntry eventEntry) throws URISyntaxException {
         log.debug("REST request to save EventEntry : {}", eventEntry);
         if (eventEntry.getId() != null) {
@@ -75,11 +71,10 @@ public class EventEntryResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/event-entries")
-    @Timed
     public ResponseEntity<EventEntry> updateEventEntry(@Valid @RequestBody EventEntry eventEntry) throws URISyntaxException {
         log.debug("REST request to update EventEntry : {}", eventEntry);
         if (eventEntry.getId() == null) {
-            return createEventEntry(eventEntry);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         EventEntry result = eventEntryRepository.save(eventEntry);
         eventEntrySearchRepository.save(result);
@@ -94,11 +89,10 @@ public class EventEntryResource {
      * @return the ResponseEntity with status 200 (OK) and the list of eventEntries in body
      */
     @GetMapping("/event-entries")
-    @Timed
     public List<EventEntry> getAllEventEntries() {
         log.debug("REST request to get all EventEntries");
         return eventEntryRepository.findAll();
-        }
+    }
 
     /**
      * GET  /event-entries/:id : get the "id" eventEntry.
@@ -107,11 +101,10 @@ public class EventEntryResource {
      * @return the ResponseEntity with status 200 (OK) and with body the eventEntry, or with status 404 (Not Found)
      */
     @GetMapping("/event-entries/{id}")
-    @Timed
     public ResponseEntity<EventEntry> getEventEntry(@PathVariable Long id) {
         log.debug("REST request to get EventEntry : {}", id);
-        EventEntry eventEntry = eventEntryRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEntry));
+        Optional<EventEntry> eventEntry = eventEntryRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(eventEntry);
     }
 
     /**
@@ -121,11 +114,10 @@ public class EventEntryResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/event-entries/{id}")
-    @Timed
     public ResponseEntity<Void> deleteEventEntry(@PathVariable Long id) {
         log.debug("REST request to delete EventEntry : {}", id);
-        eventEntryRepository.delete(id);
-        eventEntrySearchRepository.delete(id);
+        eventEntryRepository.deleteById(id);
+        eventEntrySearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -137,7 +129,6 @@ public class EventEntryResource {
      * @return the result of the search
      */
     @GetMapping("/_search/event-entries")
-    @Timed
     public List<EventEntry> searchEventEntries(@RequestParam String query) {
         log.debug("REST request to search EventEntries for query {}", query);
         return StreamSupport

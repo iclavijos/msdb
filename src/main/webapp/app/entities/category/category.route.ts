@@ -1,45 +1,78 @@
 import { Injectable } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
+import { JhiPaginationUtil, JhiResolvePagingParams } from 'ng-jhipster';
+import { UserRouteAccessService } from 'app/core';
+import { Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { Category } from 'app/shared/model/category.model';
+import { CategoryService } from './category.service';
 import { CategoryComponent } from './category.component';
 import { CategoryDetailComponent } from './category-detail.component';
-import { CategoryPopupComponent } from './category-dialog.component';
+import { CategoryUpdateComponent } from './category-update.component';
 import { CategoryDeletePopupComponent } from './category-delete-dialog.component';
+import { ICategory } from 'app/shared/model/category.model';
 
-@Injectable()
-export class CategoryResolvePagingParams implements Resolve<any> {
+@Injectable({ providedIn: 'root' })
+export class CategoryResolve implements Resolve<ICategory> {
+    constructor(private service: CategoryService) {}
 
-    constructor(private paginationUtil: JhiPaginationUtil) {}
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
-        return {
-            page: this.paginationUtil.parsePage(page),
-            predicate: this.paginationUtil.parsePredicate(sort),
-            ascending: this.paginationUtil.parseAscending(sort)
-      };
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ICategory> {
+        const id = route.params['id'] ? route.params['id'] : null;
+        if (id) {
+            return this.service.find(id).pipe(
+                filter((response: HttpResponse<Category>) => response.ok),
+                map((category: HttpResponse<Category>) => category.body)
+            );
+        }
+        return of(new Category());
     }
 }
 
 export const categoryRoute: Routes = [
     {
-        path: 'category',
+        path: '',
         component: CategoryComponent,
         resolve: {
-            'pagingParams': CategoryResolvePagingParams
+            pagingParams: JhiResolvePagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            defaultSort: 'id,asc',
+            pageTitle: 'motorsportsDatabaseApp.category.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/view',
+        component: CategoryDetailComponent,
+        resolve: {
+            category: CategoryResolve
         },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.category.home.title'
         },
         canActivate: [UserRouteAccessService]
-    }, {
-        path: 'category/:id',
-        component: CategoryDetailComponent,
+    },
+    {
+        path: 'new',
+        component: CategoryUpdateComponent,
+        resolve: {
+            category: CategoryResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.category.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/edit',
+        component: CategoryUpdateComponent,
+        resolve: {
+            category: CategoryResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.category.home.title'
@@ -50,28 +83,11 @@ export const categoryRoute: Routes = [
 
 export const categoryPopupRoute: Routes = [
     {
-        path: 'category-new',
-        component: CategoryPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.category.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'category/:id/edit',
-        component: CategoryPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.category.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'category/:id/delete',
+        path: ':id/delete',
         component: CategoryDeletePopupComponent,
+        resolve: {
+            category: CategoryResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.category.home.title'

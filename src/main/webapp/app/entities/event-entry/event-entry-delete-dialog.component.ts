@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { EventEntry } from './event-entry.model';
-import { EventEntryPopupService } from './event-entry-popup.service';
+import { IEventEntry } from 'app/shared/model/event-entry.model';
 import { EventEntryService } from './event-entry.service';
 
 @Component({
@@ -13,22 +12,20 @@ import { EventEntryService } from './event-entry.service';
     templateUrl: './event-entry-delete-dialog.component.html'
 })
 export class EventEntryDeleteDialogComponent {
-
-    eventEntry: EventEntry;
+    eventEntry: IEventEntry;
 
     constructor(
-        private eventEntryService: EventEntryService,
+        protected eventEntryService: EventEntryService,
         public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+        protected eventManager: JhiEventManager
+    ) {}
 
     clear() {
         this.activeModal.dismiss('cancel');
     }
 
     confirmDelete(id: number) {
-        this.eventEntryService.delete(id).subscribe((response) => {
+        this.eventEntryService.delete(id).subscribe(response => {
             this.eventManager.broadcast({
                 name: 'eventEntryListModification',
                 content: 'Deleted an eventEntry'
@@ -43,22 +40,30 @@ export class EventEntryDeleteDialogComponent {
     template: ''
 })
 export class EventEntryDeletePopupComponent implements OnInit, OnDestroy {
+    protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
-
-    constructor(
-        private route: ActivatedRoute,
-        private eventEntryPopupService: EventEntryPopupService
-    ) {}
+    constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.eventEntryPopupService
-                .open(EventEntryDeleteDialogComponent as Component, params['id']);
+        this.activatedRoute.data.subscribe(({ eventEntry }) => {
+            setTimeout(() => {
+                this.ngbModalRef = this.modalService.open(EventEntryDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
+                this.ngbModalRef.componentInstance.eventEntry = eventEntry;
+                this.ngbModalRef.result.then(
+                    result => {
+                        this.router.navigate(['/event-entry', { outlets: { popup: null } }]);
+                        this.ngbModalRef = null;
+                    },
+                    reason => {
+                        this.router.navigate(['/event-entry', { outlets: { popup: null } }]);
+                        this.ngbModalRef = null;
+                    }
+                );
+            }, 0);
         });
     }
 
     ngOnDestroy() {
-        this.routeSub.unsubscribe();
+        this.ngbModalRef = null;
     }
 }

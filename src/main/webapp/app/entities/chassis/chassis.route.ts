@@ -1,45 +1,78 @@
 import { Injectable } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
+import { JhiPaginationUtil, JhiResolvePagingParams } from 'ng-jhipster';
+import { UserRouteAccessService } from 'app/core';
+import { Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { Chassis } from 'app/shared/model/chassis.model';
+import { ChassisService } from './chassis.service';
 import { ChassisComponent } from './chassis.component';
 import { ChassisDetailComponent } from './chassis-detail.component';
-import { ChassisPopupComponent } from './chassis-dialog.component';
+import { ChassisUpdateComponent } from './chassis-update.component';
 import { ChassisDeletePopupComponent } from './chassis-delete-dialog.component';
+import { IChassis } from 'app/shared/model/chassis.model';
 
-@Injectable()
-export class ChassisResolvePagingParams implements Resolve<any> {
+@Injectable({ providedIn: 'root' })
+export class ChassisResolve implements Resolve<IChassis> {
+    constructor(private service: ChassisService) {}
 
-    constructor(private paginationUtil: JhiPaginationUtil) {}
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
-        return {
-            page: this.paginationUtil.parsePage(page),
-            predicate: this.paginationUtil.parsePredicate(sort),
-            ascending: this.paginationUtil.parseAscending(sort)
-      };
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IChassis> {
+        const id = route.params['id'] ? route.params['id'] : null;
+        if (id) {
+            return this.service.find(id).pipe(
+                filter((response: HttpResponse<Chassis>) => response.ok),
+                map((chassis: HttpResponse<Chassis>) => chassis.body)
+            );
+        }
+        return of(new Chassis());
     }
 }
 
 export const chassisRoute: Routes = [
     {
-        path: 'chassis',
+        path: '',
         component: ChassisComponent,
         resolve: {
-            'pagingParams': ChassisResolvePagingParams
+            pagingParams: JhiResolvePagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            defaultSort: 'id,asc',
+            pageTitle: 'motorsportsDatabaseApp.chassis.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/view',
+        component: ChassisDetailComponent,
+        resolve: {
+            chassis: ChassisResolve
         },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.chassis.home.title'
         },
         canActivate: [UserRouteAccessService]
-    }, {
-        path: 'chassis/:id',
-        component: ChassisDetailComponent,
+    },
+    {
+        path: 'new',
+        component: ChassisUpdateComponent,
+        resolve: {
+            chassis: ChassisResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.chassis.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/edit',
+        component: ChassisUpdateComponent,
+        resolve: {
+            chassis: ChassisResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.chassis.home.title'
@@ -50,28 +83,11 @@ export const chassisRoute: Routes = [
 
 export const chassisPopupRoute: Routes = [
     {
-        path: 'chassis-new',
-        component: ChassisPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.chassis.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'chassis/:id/edit',
-        component: ChassisPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.chassis.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'chassis/:id/delete',
+        path: ':id/delete',
         component: ChassisDeletePopupComponent,
+        resolve: {
+            chassis: ChassisResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.chassis.home.title'

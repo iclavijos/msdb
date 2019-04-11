@@ -1,14 +1,10 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Team;
-
 import com.icesoft.msdb.repository.TeamRepository;
 import com.icesoft.msdb.repository.search.TeamSearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +54,6 @@ public class TeamResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/teams")
-    @Timed
     public ResponseEntity<Team> createTeam(@Valid @RequestBody Team team) throws URISyntaxException {
         log.debug("REST request to save Team : {}", team);
         if (team.getId() != null) {
@@ -81,11 +76,10 @@ public class TeamResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/teams")
-    @Timed
     public ResponseEntity<Team> updateTeam(@Valid @RequestBody Team team) throws URISyntaxException {
         log.debug("REST request to update Team : {}", team);
         if (team.getId() == null) {
-            return createTeam(team);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Team result = teamRepository.save(team);
         teamSearchRepository.save(result);
@@ -98,15 +92,20 @@ public class TeamResource {
      * GET  /teams : get all the teams.
      *
      * @param pageable the pagination information
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many)
      * @return the ResponseEntity with status 200 (OK) and the list of teams in body
      */
     @GetMapping("/teams")
-    @Timed
-    public ResponseEntity<List<Team>> getAllTeams(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<Team>> getAllTeams(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get a page of Teams");
-        Page<Team> page = teamRepository.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/teams");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        Page<Team> page;
+        if (eagerload) {
+            page = teamRepository.findAllWithEagerRelationships(pageable);
+        } else {
+            page = teamRepository.findAll(pageable);
+        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, String.format("/api/teams?eagerload=%b", eagerload));
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -116,11 +115,10 @@ public class TeamResource {
      * @return the ResponseEntity with status 200 (OK) and with body the team, or with status 404 (Not Found)
      */
     @GetMapping("/teams/{id}")
-    @Timed
     public ResponseEntity<Team> getTeam(@PathVariable Long id) {
         log.debug("REST request to get Team : {}", id);
-        Team team = teamRepository.findOneWithEagerRelationships(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(team));
+        Optional<Team> team = teamRepository.findOneWithEagerRelationships(id);
+        return ResponseUtil.wrapOrNotFound(team);
     }
 
     /**
@@ -130,11 +128,10 @@ public class TeamResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/teams/{id}")
-    @Timed
     public ResponseEntity<Void> deleteTeam(@PathVariable Long id) {
         log.debug("REST request to delete Team : {}", id);
-        teamRepository.delete(id);
-        teamSearchRepository.delete(id);
+        teamRepository.deleteById(id);
+        teamSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -147,12 +144,11 @@ public class TeamResource {
      * @return the result of the search
      */
     @GetMapping("/_search/teams")
-    @Timed
-    public ResponseEntity<List<Team>> searchTeams(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<Team>> searchTeams(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Teams for query {}", query);
         Page<Team> page = teamSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/teams");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
 }

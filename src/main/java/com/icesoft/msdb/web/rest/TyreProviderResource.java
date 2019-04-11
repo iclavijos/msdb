@@ -1,14 +1,10 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.TyreProvider;
-
 import com.icesoft.msdb.repository.TyreProviderRepository;
 import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +54,6 @@ public class TyreProviderResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/tyre-providers")
-    @Timed
     public ResponseEntity<TyreProvider> createTyreProvider(@Valid @RequestBody TyreProvider tyreProvider) throws URISyntaxException {
         log.debug("REST request to save TyreProvider : {}", tyreProvider);
         if (tyreProvider.getId() != null) {
@@ -81,11 +76,10 @@ public class TyreProviderResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/tyre-providers")
-    @Timed
     public ResponseEntity<TyreProvider> updateTyreProvider(@Valid @RequestBody TyreProvider tyreProvider) throws URISyntaxException {
         log.debug("REST request to update TyreProvider : {}", tyreProvider);
         if (tyreProvider.getId() == null) {
-            return createTyreProvider(tyreProvider);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         TyreProvider result = tyreProviderRepository.save(tyreProvider);
         tyreProviderSearchRepository.save(result);
@@ -101,12 +95,11 @@ public class TyreProviderResource {
      * @return the ResponseEntity with status 200 (OK) and the list of tyreProviders in body
      */
     @GetMapping("/tyre-providers")
-    @Timed
-    public ResponseEntity<List<TyreProvider>> getAllTyreProviders(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<TyreProvider>> getAllTyreProviders(Pageable pageable) {
         log.debug("REST request to get a page of TyreProviders");
         Page<TyreProvider> page = tyreProviderRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/tyre-providers");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -116,11 +109,10 @@ public class TyreProviderResource {
      * @return the ResponseEntity with status 200 (OK) and with body the tyreProvider, or with status 404 (Not Found)
      */
     @GetMapping("/tyre-providers/{id}")
-    @Timed
     public ResponseEntity<TyreProvider> getTyreProvider(@PathVariable Long id) {
         log.debug("REST request to get TyreProvider : {}", id);
-        TyreProvider tyreProvider = tyreProviderRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(tyreProvider));
+        Optional<TyreProvider> tyreProvider = tyreProviderRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(tyreProvider);
     }
 
     /**
@@ -130,11 +122,10 @@ public class TyreProviderResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/tyre-providers/{id}")
-    @Timed
     public ResponseEntity<Void> deleteTyreProvider(@PathVariable Long id) {
         log.debug("REST request to delete TyreProvider : {}", id);
-        tyreProviderRepository.delete(id);
-        tyreProviderSearchRepository.delete(id);
+        tyreProviderRepository.deleteById(id);
+        tyreProviderSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -147,12 +138,11 @@ public class TyreProviderResource {
      * @return the result of the search
      */
     @GetMapping("/_search/tyre-providers")
-    @Timed
-    public ResponseEntity<List<TyreProvider>> searchTyreProviders(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<TyreProvider>> searchTyreProviders(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of TyreProviders for query {}", query);
         Page<TyreProvider> page = tyreProviderSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/tyre-providers");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
 }

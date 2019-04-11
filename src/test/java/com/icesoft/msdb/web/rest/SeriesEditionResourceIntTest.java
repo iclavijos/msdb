@@ -13,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -20,13 +22,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
+
 
 import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -54,8 +61,13 @@ public class SeriesEditionResourceIntTest {
     @Autowired
     private SeriesEditionRepository seriesEditionRepository;
 
+    /**
+     * This repository is mocked in the com.icesoft.msdb.repository.search test package.
+     *
+     * @see com.icesoft.msdb.repository.search.SeriesEditionSearchRepositoryMockConfiguration
+     */
     @Autowired
-    private SeriesEditionSearchRepository seriesEditionSearchRepository;
+    private SeriesEditionSearchRepository mockSeriesEditionSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -69,6 +81,9 @@ public class SeriesEditionResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private Validator validator;
+
     private MockMvc restSeriesEditionMockMvc;
 
     private SeriesEdition seriesEdition;
@@ -76,12 +91,13 @@ public class SeriesEditionResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final SeriesEditionResource seriesEditionResource = new SeriesEditionResource(seriesEditionRepository, seriesEditionSearchRepository);
+        final SeriesEditionResource seriesEditionResource = new SeriesEditionResource(seriesEditionRepository, mockSeriesEditionSearchRepository);
         this.restSeriesEditionMockMvc = MockMvcBuilders.standaloneSetup(seriesEditionResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -101,7 +117,6 @@ public class SeriesEditionResourceIntTest {
 
     @Before
     public void initTest() {
-        seriesEditionSearchRepository.deleteAll();
         seriesEdition = createEntity(em);
     }
 
@@ -126,8 +141,7 @@ public class SeriesEditionResourceIntTest {
         assertThat(testSeriesEdition.isSingleTyre()).isEqualTo(DEFAULT_SINGLE_TYRE);
 
         // Validate the SeriesEdition in Elasticsearch
-        SeriesEdition seriesEditionEs = seriesEditionSearchRepository.findOne(testSeriesEdition.getId());
-        assertThat(seriesEditionEs).isEqualToComparingFieldByField(testSeriesEdition);
+        verify(mockSeriesEditionSearchRepository, times(1)).save(testSeriesEdition);
     }
 
     @Test
@@ -147,6 +161,9 @@ public class SeriesEditionResourceIntTest {
         // Validate the SeriesEdition in the database
         List<SeriesEdition> seriesEditionList = seriesEditionRepository.findAll();
         assertThat(seriesEditionList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the SeriesEdition in Elasticsearch
+        verify(mockSeriesEditionSearchRepository, times(0)).save(seriesEdition);
     }
 
     @Test
@@ -237,7 +254,7 @@ public class SeriesEditionResourceIntTest {
             .andExpect(jsonPath("$.[*].singleEngine").value(hasItem(DEFAULT_SINGLE_ENGINE.booleanValue())))
             .andExpect(jsonPath("$.[*].singleTyre").value(hasItem(DEFAULT_SINGLE_TYRE.booleanValue())));
     }
-
+    
     @Test
     @Transactional
     public void getSeriesEdition() throws Exception {
@@ -268,11 +285,13 @@ public class SeriesEditionResourceIntTest {
     public void updateSeriesEdition() throws Exception {
         // Initialize the database
         seriesEditionRepository.saveAndFlush(seriesEdition);
-        seriesEditionSearchRepository.save(seriesEdition);
+
         int databaseSizeBeforeUpdate = seriesEditionRepository.findAll().size();
 
         // Update the seriesEdition
-        SeriesEdition updatedSeriesEdition = seriesEditionRepository.findOne(seriesEdition.getId());
+        SeriesEdition updatedSeriesEdition = seriesEditionRepository.findById(seriesEdition.getId()).get();
+        // Disconnect from session so that the updates on updatedSeriesEdition are not directly saved in db
+        em.detach(updatedSeriesEdition);
         updatedSeriesEdition
             .period(UPDATED_PERIOD)
             .singleChassis(UPDATED_SINGLE_CHASSIS)
@@ -294,8 +313,7 @@ public class SeriesEditionResourceIntTest {
         assertThat(testSeriesEdition.isSingleTyre()).isEqualTo(UPDATED_SINGLE_TYRE);
 
         // Validate the SeriesEdition in Elasticsearch
-        SeriesEdition seriesEditionEs = seriesEditionSearchRepository.findOne(testSeriesEdition.getId());
-        assertThat(seriesEditionEs).isEqualToComparingFieldByField(testSeriesEdition);
+        verify(mockSeriesEditionSearchRepository, times(1)).save(testSeriesEdition);
     }
 
     @Test
@@ -305,15 +323,18 @@ public class SeriesEditionResourceIntTest {
 
         // Create the SeriesEdition
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restSeriesEditionMockMvc.perform(put("/api/series-editions")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(seriesEdition)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the SeriesEdition in the database
         List<SeriesEdition> seriesEditionList = seriesEditionRepository.findAll();
-        assertThat(seriesEditionList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(seriesEditionList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the SeriesEdition in Elasticsearch
+        verify(mockSeriesEditionSearchRepository, times(0)).save(seriesEdition);
     }
 
     @Test
@@ -321,21 +342,20 @@ public class SeriesEditionResourceIntTest {
     public void deleteSeriesEdition() throws Exception {
         // Initialize the database
         seriesEditionRepository.saveAndFlush(seriesEdition);
-        seriesEditionSearchRepository.save(seriesEdition);
+
         int databaseSizeBeforeDelete = seriesEditionRepository.findAll().size();
 
-        // Get the seriesEdition
+        // Delete the seriesEdition
         restSeriesEditionMockMvc.perform(delete("/api/series-editions/{id}", seriesEdition.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean seriesEditionExistsInEs = seriesEditionSearchRepository.exists(seriesEdition.getId());
-        assertThat(seriesEditionExistsInEs).isFalse();
-
         // Validate the database is empty
         List<SeriesEdition> seriesEditionList = seriesEditionRepository.findAll();
         assertThat(seriesEditionList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the SeriesEdition in Elasticsearch
+        verify(mockSeriesEditionSearchRepository, times(1)).deleteById(seriesEdition.getId());
     }
 
     @Test
@@ -343,14 +363,14 @@ public class SeriesEditionResourceIntTest {
     public void searchSeriesEdition() throws Exception {
         // Initialize the database
         seriesEditionRepository.saveAndFlush(seriesEdition);
-        seriesEditionSearchRepository.save(seriesEdition);
-
+        when(mockSeriesEditionSearchRepository.search(queryStringQuery("id:" + seriesEdition.getId()), PageRequest.of(0, 20)))
+            .thenReturn(new PageImpl<>(Collections.singletonList(seriesEdition), PageRequest.of(0, 1), 1));
         // Search the seriesEdition
         restSeriesEditionMockMvc.perform(get("/api/_search/series-editions?query=id:" + seriesEdition.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(seriesEdition.getId().intValue())))
-            .andExpect(jsonPath("$.[*].period").value(hasItem(DEFAULT_PERIOD.toString())))
+            .andExpect(jsonPath("$.[*].period").value(hasItem(DEFAULT_PERIOD)))
             .andExpect(jsonPath("$.[*].singleChassis").value(hasItem(DEFAULT_SINGLE_CHASSIS.booleanValue())))
             .andExpect(jsonPath("$.[*].singleEngine").value(hasItem(DEFAULT_SINGLE_ENGINE.booleanValue())))
             .andExpect(jsonPath("$.[*].singleTyre").value(hasItem(DEFAULT_SINGLE_TYRE.booleanValue())));

@@ -1,8 +1,8 @@
 <div>
-    <h2>
+    <h2 id="page-heading">
         <span jhiTranslate="motorsportsDatabaseApp.pointsSystem.home.title">Points Systems</span>
-        <button class="btn btn-primary float-right jh-create-entity create-points-system" [routerLink]="['/', { outlets: { popup: ['points-system-new'] } }]">
-            <span class="fa fa-plus"></span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-points-system" [routerLink]="['/points-system/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.pointsSystem.home.createLabel">
             Create new Points System
             </span>
@@ -14,11 +14,11 @@
             <form name="searchForm" class="form-inline">
                 <div class="input-group w-100 mt-3">
                     <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.pointsSystem.home.search' | translate }}">
-                    <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
-                        <span class="fa fa-search"></span>
+                    <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                        <fa-icon [icon]="'search'"></fa-icon>
                     </button>
-                    <button class="input-group-addon btn btn-danger" (click)="clear()" *ngIf="currentSearch">
-                        <span class="fa fa-trash-o"></span>
+                    <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                        <fa-icon [icon]="'trash-alt'"></fa-icon>
                     </button>
                 </div>
             </form>
@@ -29,20 +29,20 @@
         <table class="table table-striped">
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.name">Name</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="description"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.description">Description</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="points"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.points">Points</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="pointsMostLeadLaps"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps">Points Most Lead Laps</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="pointsFastLap"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsFastLap">Points Fast Lap</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="pointsPole"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsPole">Points Pole</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="pointsLeadLap"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsLeadLap">Points Lead Lap</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.name">Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="description"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.description">Description</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="points"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.points">Points</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="pointsMostLeadLaps"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps">Points Most Lead Laps</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="pointsFastLap"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsFastLap">Points Fast Lap</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="pointsPole"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsPole">Points Pole</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="pointsLeadLap"><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsLeadLap">Points Lead Lap</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let pointsSystem of pointsSystems ;trackBy: trackId">
-                <td><a [routerLink]="['../points-system', pointsSystem.id ]">{{pointsSystem.id}}</a></td>
+                <td><a [routerLink]="['/points-system', pointsSystem.id, 'view' ]">{{pointsSystem.id}}</a></td>
                 <td>{{pointsSystem.name}}</td>
                 <td>{{pointsSystem.description}}</td>
                 <td>{{pointsSystem.points}}</td>
@@ -53,23 +53,23 @@
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"
-                                [routerLink]="['../points-system', pointsSystem.id ]"
+                                [routerLink]="['/points-system', pointsSystem.id, 'view' ]"
                                 class="btn btn-info btn-sm">
-                            <span class="fa fa-eye"></span>
+                            <fa-icon [icon]="'eye'"></fa-icon>
                             <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
                         </button>
                         <button type="submit"
-                                [routerLink]="['/', { outlets: { popup: 'points-system/'+ pointsSystem.id + '/edit'} }]"
-                                replaceUrl="true"
+                                [routerLink]="['/points-system', pointsSystem.id, 'edit']"
                                 class="btn btn-primary btn-sm">
-                            <span class="fa fa-pencil"></span>
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
                             <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
                         </button>
                         <button type="submit"
-                                [routerLink]="['/', { outlets: { popup: 'points-system/'+ pointsSystem.id + '/delete'} }]"
+                                [routerLink]="['/', 'points-system', { outlets: { popup: pointsSystem.id + '/delete'} }]"
                                 replaceUrl="true"
+                                queryParamsHandling="merge"
                                 class="btn btn-danger btn-sm">
-                            <span class="fa fa-remove"></span>
+                            <fa-icon [icon]="'times'"></fa-icon>
                             <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
                         </button>
                     </div>
@@ -78,12 +78,12 @@
             </tbody>
         </table>
     </div>
-        <div *ngIf="pointsSystems && pointsSystems.length">
-            <div class="row justify-content-center">
-                <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
-            </div>
-            <div class="row justify-content-center">
-                <ngb-pagination [collectionSize]="totalItems" [maxSize]="5" [pageSize]="itemsPerPage" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
-            </div>
+    <div *ngIf="pointsSystems && pointsSystems.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="totalItems" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
         </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
 </div>

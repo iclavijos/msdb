@@ -1,61 +1,40 @@
 /* tslint:disable max-line-length */
-import { ComponentFixture, TestBed, async } from '@angular/core/testing';
-import { DatePipe } from '@angular/common';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
-import { JhiDateUtils, JhiDataUtils, JhiEventManager } from 'ng-jhipster';
+import { of } from 'rxjs';
+
 import { MotorsportsDatabaseTestModule } from '../../../test.module';
-import { MockActivatedRoute } from '../../../helpers/mock-route.service';
-import { EventSessionDetailComponent } from '../../../../../../main/webapp/app/entities/event-session/event-session-detail.component';
-import { EventSessionService } from '../../../../../../main/webapp/app/entities/event-session/event-session.service';
-import { EventSession } from '../../../../../../main/webapp/app/entities/event-session/event-session.model';
+import { EventSessionDetailComponent } from 'app/entities/event-session/event-session-detail.component';
+import { EventSession } from 'app/shared/model/event-session.model';
 
 describe('Component Tests', () => {
-
     describe('EventSession Management Detail Component', () => {
         let comp: EventSessionDetailComponent;
         let fixture: ComponentFixture<EventSessionDetailComponent>;
-        let service: EventSessionService;
+        const route = ({ data: of({ eventSession: new EventSession(123) }) } as any) as ActivatedRoute;
 
-        beforeEach(async(() => {
+        beforeEach(() => {
             TestBed.configureTestingModule({
                 imports: [MotorsportsDatabaseTestModule],
                 declarations: [EventSessionDetailComponent],
-                providers: [
-                    JhiDateUtils,
-                    JhiDataUtils,
-                    DatePipe,
-                    {
-                        provide: ActivatedRoute,
-                        useValue: new MockActivatedRoute({id: 123})
-                    },
-                    EventSessionService,
-                    JhiEventManager
-                ]
-            }).overrideTemplate(EventSessionDetailComponent, '')
-            .compileComponents();
-        }));
-
-        beforeEach(() => {
+                providers: [{ provide: ActivatedRoute, useValue: route }]
+            })
+                .overrideTemplate(EventSessionDetailComponent, '')
+                .compileComponents();
             fixture = TestBed.createComponent(EventSessionDetailComponent);
             comp = fixture.componentInstance;
-            service = fixture.debugElement.injector.get(EventSessionService);
         });
 
         describe('OnInit', () => {
             it('Should call load all on init', () => {
-            // GIVEN
+                // GIVEN
 
-            spyOn(service, 'find').and.returnValue(Observable.of(new EventSession(10)));
+                // WHEN
+                comp.ngOnInit();
 
-            // WHEN
-            comp.ngOnInit();
-
-            // THEN
-            expect(service.find).toHaveBeenCalledWith(123);
-            expect(comp.eventSession).toEqual(jasmine.objectContaining({id: 10}));
+                // THEN
+                expect(comp.eventSession).toEqual(jasmine.objectContaining({ id: 123 }));
             });
         });
     });
-
 });

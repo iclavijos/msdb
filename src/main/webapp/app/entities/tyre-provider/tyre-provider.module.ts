@@ -1,51 +1,45 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { JhiLanguageService } from 'ng-jhipster';
+import { JhiLanguageHelper } from 'app/core';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
+import { MotorsportsDatabaseSharedModule } from 'app/shared';
 import {
-    TyreProviderService,
-    TyreProviderPopupService,
     TyreProviderComponent,
     TyreProviderDetailComponent,
-    TyreProviderDialogComponent,
-    TyreProviderPopupComponent,
+    TyreProviderUpdateComponent,
     TyreProviderDeletePopupComponent,
     TyreProviderDeleteDialogComponent,
     tyreProviderRoute,
-    tyreProviderPopupRoute,
-    TyreProviderResolvePagingParams,
+    tyreProviderPopupRoute
 } from './';
 
-const ENTITY_STATES = [
-    ...tyreProviderRoute,
-    ...tyreProviderPopupRoute,
-];
+const ENTITY_STATES = [...tyreProviderRoute, ...tyreProviderPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
+    imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
     declarations: [
         TyreProviderComponent,
         TyreProviderDetailComponent,
-        TyreProviderDialogComponent,
+        TyreProviderUpdateComponent,
         TyreProviderDeleteDialogComponent,
-        TyreProviderPopupComponent,
-        TyreProviderDeletePopupComponent,
+        TyreProviderDeletePopupComponent
     ],
     entryComponents: [
         TyreProviderComponent,
-        TyreProviderDialogComponent,
-        TyreProviderPopupComponent,
+        TyreProviderUpdateComponent,
         TyreProviderDeleteDialogComponent,
-        TyreProviderDeletePopupComponent,
+        TyreProviderDeletePopupComponent
     ],
-    providers: [
-        TyreProviderService,
-        TyreProviderPopupService,
-        TyreProviderResolvePagingParams,
-    ],
+    providers: [{ provide: JhiLanguageService, useClass: JhiLanguageService }],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class MotorsportsDatabaseTyreProviderModule {}
+export class MotorsportsDatabaseTyreProviderModule {
+    constructor(private languageService: JhiLanguageService, private languageHelper: JhiLanguageHelper) {
+        this.languageHelper.language.subscribe((languageKey: string) => {
+            if (languageKey !== undefined) {
+                this.languageService.changeLanguage(languageKey);
+            }
+        });
+    }
+}

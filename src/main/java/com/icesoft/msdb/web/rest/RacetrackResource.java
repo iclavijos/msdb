@@ -1,14 +1,10 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Racetrack;
-
 import com.icesoft.msdb.repository.RacetrackRepository;
 import com.icesoft.msdb.repository.search.RacetrackSearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +54,6 @@ public class RacetrackResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/racetracks")
-    @Timed
     public ResponseEntity<Racetrack> createRacetrack(@Valid @RequestBody Racetrack racetrack) throws URISyntaxException {
         log.debug("REST request to save Racetrack : {}", racetrack);
         if (racetrack.getId() != null) {
@@ -81,11 +76,10 @@ public class RacetrackResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/racetracks")
-    @Timed
     public ResponseEntity<Racetrack> updateRacetrack(@Valid @RequestBody Racetrack racetrack) throws URISyntaxException {
         log.debug("REST request to update Racetrack : {}", racetrack);
         if (racetrack.getId() == null) {
-            return createRacetrack(racetrack);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Racetrack result = racetrackRepository.save(racetrack);
         racetrackSearchRepository.save(result);
@@ -101,12 +95,11 @@ public class RacetrackResource {
      * @return the ResponseEntity with status 200 (OK) and the list of racetracks in body
      */
     @GetMapping("/racetracks")
-    @Timed
-    public ResponseEntity<List<Racetrack>> getAllRacetracks(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<Racetrack>> getAllRacetracks(Pageable pageable) {
         log.debug("REST request to get a page of Racetracks");
         Page<Racetrack> page = racetrackRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/racetracks");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -116,11 +109,10 @@ public class RacetrackResource {
      * @return the ResponseEntity with status 200 (OK) and with body the racetrack, or with status 404 (Not Found)
      */
     @GetMapping("/racetracks/{id}")
-    @Timed
     public ResponseEntity<Racetrack> getRacetrack(@PathVariable Long id) {
         log.debug("REST request to get Racetrack : {}", id);
-        Racetrack racetrack = racetrackRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(racetrack));
+        Optional<Racetrack> racetrack = racetrackRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(racetrack);
     }
 
     /**
@@ -130,11 +122,10 @@ public class RacetrackResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/racetracks/{id}")
-    @Timed
     public ResponseEntity<Void> deleteRacetrack(@PathVariable Long id) {
         log.debug("REST request to delete Racetrack : {}", id);
-        racetrackRepository.delete(id);
-        racetrackSearchRepository.delete(id);
+        racetrackRepository.deleteById(id);
+        racetrackSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -147,12 +138,11 @@ public class RacetrackResource {
      * @return the result of the search
      */
     @GetMapping("/_search/racetracks")
-    @Timed
-    public ResponseEntity<List<Racetrack>> searchRacetracks(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<Racetrack>> searchRacetracks(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Racetracks for query {}", query);
         Page<Racetrack> page = racetrackSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/racetracks");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
 }

@@ -21,13 +21,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
+import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
+
 
 import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -50,7 +55,7 @@ public class RacetrackLayoutResourceIntTest {
     private static final Integer UPDATED_YEAR_FIRST_USE = 2;
 
     private static final byte[] DEFAULT_LAYOUT_IMAGE = TestUtil.createByteArray(1, "0");
-    private static final byte[] UPDATED_LAYOUT_IMAGE = TestUtil.createByteArray(2, "1");
+    private static final byte[] UPDATED_LAYOUT_IMAGE = TestUtil.createByteArray(1, "1");
     private static final String DEFAULT_LAYOUT_IMAGE_CONTENT_TYPE = "image/jpg";
     private static final String UPDATED_LAYOUT_IMAGE_CONTENT_TYPE = "image/png";
 
@@ -60,8 +65,13 @@ public class RacetrackLayoutResourceIntTest {
     @Autowired
     private RacetrackLayoutRepository racetrackLayoutRepository;
 
+    /**
+     * This repository is mocked in the com.icesoft.msdb.repository.search test package.
+     *
+     * @see com.icesoft.msdb.repository.search.RacetrackLayoutSearchRepositoryMockConfiguration
+     */
     @Autowired
-    private RacetrackLayoutSearchRepository racetrackLayoutSearchRepository;
+    private RacetrackLayoutSearchRepository mockRacetrackLayoutSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -75,6 +85,9 @@ public class RacetrackLayoutResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private Validator validator;
+
     private MockMvc restRacetrackLayoutMockMvc;
 
     private RacetrackLayout racetrackLayout;
@@ -82,12 +95,13 @@ public class RacetrackLayoutResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final RacetrackLayoutResource racetrackLayoutResource = new RacetrackLayoutResource(racetrackLayoutRepository, racetrackLayoutSearchRepository);
+        final RacetrackLayoutResource racetrackLayoutResource = new RacetrackLayoutResource(racetrackLayoutRepository, mockRacetrackLayoutSearchRepository);
         this.restRacetrackLayoutMockMvc = MockMvcBuilders.standaloneSetup(racetrackLayoutResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -109,7 +123,6 @@ public class RacetrackLayoutResourceIntTest {
 
     @Before
     public void initTest() {
-        racetrackLayoutSearchRepository.deleteAll();
         racetrackLayout = createEntity(em);
     }
 
@@ -136,8 +149,7 @@ public class RacetrackLayoutResourceIntTest {
         assertThat(testRacetrackLayout.isActive()).isEqualTo(DEFAULT_ACTIVE);
 
         // Validate the RacetrackLayout in Elasticsearch
-        RacetrackLayout racetrackLayoutEs = racetrackLayoutSearchRepository.findOne(testRacetrackLayout.getId());
-        assertThat(racetrackLayoutEs).isEqualToComparingFieldByField(testRacetrackLayout);
+        verify(mockRacetrackLayoutSearchRepository, times(1)).save(testRacetrackLayout);
     }
 
     @Test
@@ -157,6 +169,9 @@ public class RacetrackLayoutResourceIntTest {
         // Validate the RacetrackLayout in the database
         List<RacetrackLayout> racetrackLayoutList = racetrackLayoutRepository.findAll();
         assertThat(racetrackLayoutList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the RacetrackLayout in Elasticsearch
+        verify(mockRacetrackLayoutSearchRepository, times(0)).save(racetrackLayout);
     }
 
     @Test
@@ -231,7 +246,7 @@ public class RacetrackLayoutResourceIntTest {
             .andExpect(jsonPath("$.[*].layoutImage").value(hasItem(Base64Utils.encodeToString(DEFAULT_LAYOUT_IMAGE))))
             .andExpect(jsonPath("$.[*].active").value(hasItem(DEFAULT_ACTIVE.booleanValue())));
     }
-
+    
     @Test
     @Transactional
     public void getRacetrackLayout() throws Exception {
@@ -264,11 +279,13 @@ public class RacetrackLayoutResourceIntTest {
     public void updateRacetrackLayout() throws Exception {
         // Initialize the database
         racetrackLayoutRepository.saveAndFlush(racetrackLayout);
-        racetrackLayoutSearchRepository.save(racetrackLayout);
+
         int databaseSizeBeforeUpdate = racetrackLayoutRepository.findAll().size();
 
         // Update the racetrackLayout
-        RacetrackLayout updatedRacetrackLayout = racetrackLayoutRepository.findOne(racetrackLayout.getId());
+        RacetrackLayout updatedRacetrackLayout = racetrackLayoutRepository.findById(racetrackLayout.getId()).get();
+        // Disconnect from session so that the updates on updatedRacetrackLayout are not directly saved in db
+        em.detach(updatedRacetrackLayout);
         updatedRacetrackLayout
             .name(UPDATED_NAME)
             .length(UPDATED_LENGTH)
@@ -294,8 +311,7 @@ public class RacetrackLayoutResourceIntTest {
         assertThat(testRacetrackLayout.isActive()).isEqualTo(UPDATED_ACTIVE);
 
         // Validate the RacetrackLayout in Elasticsearch
-        RacetrackLayout racetrackLayoutEs = racetrackLayoutSearchRepository.findOne(testRacetrackLayout.getId());
-        assertThat(racetrackLayoutEs).isEqualToComparingFieldByField(testRacetrackLayout);
+        verify(mockRacetrackLayoutSearchRepository, times(1)).save(testRacetrackLayout);
     }
 
     @Test
@@ -305,15 +321,18 @@ public class RacetrackLayoutResourceIntTest {
 
         // Create the RacetrackLayout
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restRacetrackLayoutMockMvc.perform(put("/api/racetrack-layouts")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(racetrackLayout)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the RacetrackLayout in the database
         List<RacetrackLayout> racetrackLayoutList = racetrackLayoutRepository.findAll();
-        assertThat(racetrackLayoutList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(racetrackLayoutList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the RacetrackLayout in Elasticsearch
+        verify(mockRacetrackLayoutSearchRepository, times(0)).save(racetrackLayout);
     }
 
     @Test
@@ -321,21 +340,20 @@ public class RacetrackLayoutResourceIntTest {
     public void deleteRacetrackLayout() throws Exception {
         // Initialize the database
         racetrackLayoutRepository.saveAndFlush(racetrackLayout);
-        racetrackLayoutSearchRepository.save(racetrackLayout);
+
         int databaseSizeBeforeDelete = racetrackLayoutRepository.findAll().size();
 
-        // Get the racetrackLayout
+        // Delete the racetrackLayout
         restRacetrackLayoutMockMvc.perform(delete("/api/racetrack-layouts/{id}", racetrackLayout.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean racetrackLayoutExistsInEs = racetrackLayoutSearchRepository.exists(racetrackLayout.getId());
-        assertThat(racetrackLayoutExistsInEs).isFalse();
-
         // Validate the database is empty
         List<RacetrackLayout> racetrackLayoutList = racetrackLayoutRepository.findAll();
         assertThat(racetrackLayoutList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the RacetrackLayout in Elasticsearch
+        verify(mockRacetrackLayoutSearchRepository, times(1)).deleteById(racetrackLayout.getId());
     }
 
     @Test
@@ -343,14 +361,14 @@ public class RacetrackLayoutResourceIntTest {
     public void searchRacetrackLayout() throws Exception {
         // Initialize the database
         racetrackLayoutRepository.saveAndFlush(racetrackLayout);
-        racetrackLayoutSearchRepository.save(racetrackLayout);
-
+        when(mockRacetrackLayoutSearchRepository.search(queryStringQuery("id:" + racetrackLayout.getId())))
+            .thenReturn(Collections.singletonList(racetrackLayout));
         // Search the racetrackLayout
         restRacetrackLayoutMockMvc.perform(get("/api/_search/racetrack-layouts?query=id:" + racetrackLayout.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(racetrackLayout.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].length").value(hasItem(DEFAULT_LENGTH)))
             .andExpect(jsonPath("$.[*].yearFirstUse").value(hasItem(DEFAULT_YEAR_FIRST_USE)))
             .andExpect(jsonPath("$.[*].layoutImageContentType").value(hasItem(DEFAULT_LAYOUT_IMAGE_CONTENT_TYPE)))

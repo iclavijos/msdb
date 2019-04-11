@@ -1,7 +1,8 @@
 {
     "global": {
         "title": "MotorsportsDatabase",
-        "browsehappy": "Està usant un navegador <strong>des-actualitzat</strong>. Si us plau <a href=\"http://browsehappy.com/?locale=en\">actualitzi el seu navegador</a> per millorar l'experiencia.",
+        "browsehappy":
+            "Està usant un navegador <strong>des-actualitzat</strong>. Si us plau <a href=\"http://browsehappy.com/?locale=en\">actualitzi el seu navegador</a> per millorar l'experiencia.",
         "menu": {
             "home": "Inici",
             "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
@@ -54,6 +55,8 @@
         "form": {
             "username": "Iniciar sessió",
             "username.placeholder": "Nom d'usuari",
+            "currentpassword": "Current password",
+            "currentpassword.placeholder": "Current password",
             "newpassword": "Nova Contrassenya",
             "newpassword.placeholder": "Nova Contrassenya",
             "confirmpassword": "Confirmació de la nova contrasenya",
@@ -66,7 +69,8 @@
                 "authenticated": {
                     "prefix": "Si vol ",
                     "link": "autenticar-se",
-                    "suffix": ", pot usar els comptes per defect:<br/>- Administrador (nom d'usuari=\"admin\" i contrasenya=\"admin\") <br/>- Usuari (nom d'usuari=\"user\" i contrasenya=\"user\")."
+                    "suffix":
+                        ", pot usar els comptes per defect:<br/>- Administrador (nom d'usuari=\"admin\" i contrasenya=\"admin\") <br/>- Usuari (nom d'usuari=\"user\" i contrasenya=\"user\")."
                 },
                 "register": {
                     "noaccount": "No disposa d'un compte encara?",
@@ -74,7 +78,7 @@
                 }
             },
             "error": {
-                "dontmatch" : "La contrasenya i la confirmació no coincideixen!"
+                "dontmatch": "La contrasenya i la confirmació no coincideixen!"
             },
             "validate": {
                 "newpassword": {
@@ -97,10 +101,10 @@
             }
         },
         "field": {
-            "id" : "ID"
+            "id": "ID"
         },
         "ribbon": {
-            "dev":"Development"
+            "dev": "Development"
         },
         "item-count": "Visualització {{first}} - {{second}} de {{total}} articles."
     },
@@ -144,7 +148,8 @@
         "Size": "El camp {{fieldName}} no compleix els requeriments de tamany mínim/màxim!",
         "userexists": "Nom d'usuari ja en ús!",
         "emailexists": "Email ja en ús!",
-        "idexists": "Una nova {{entityName}} no pot ja tenir un ID"
+        "idexists": "Una nova {{entityName}} no pot ja tenir un ID",
+        "idnull": "Invalid ID"
     },
     "footer": "Aquest és el teu peu de pàgina"
 }

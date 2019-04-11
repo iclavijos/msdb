@@ -1,80 +1,44 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-import { SERVER_API_URL } from '../../app.constants';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { Chassis } from './chassis.model';
-import { ResponseWrapper, createRequestOption } from '../../shared';
+import { SERVER_API_URL } from 'app/app.constants';
+import { createRequestOption } from 'app/shared';
+import { IChassis } from 'app/shared/model/chassis.model';
 
-@Injectable()
+type EntityResponseType = HttpResponse<IChassis>;
+type EntityArrayResponseType = HttpResponse<IChassis[]>;
+
+@Injectable({ providedIn: 'root' })
 export class ChassisService {
+    public resourceUrl = SERVER_API_URL + 'api/chassis';
+    public resourceSearchUrl = SERVER_API_URL + 'api/_search/chassis';
 
-    private resourceUrl = SERVER_API_URL + 'api/chassis';
-    private resourceSearchUrl = SERVER_API_URL + 'api/_search/chassis';
+    constructor(protected http: HttpClient) {}
 
-    constructor(private http: Http) { }
-
-    create(chassis: Chassis): Observable<Chassis> {
-        const copy = this.convert(chassis);
-        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
+    create(chassis: IChassis): Observable<EntityResponseType> {
+        return this.http.post<IChassis>(this.resourceUrl, chassis, { observe: 'response' });
     }
 
-    update(chassis: Chassis): Observable<Chassis> {
-        const copy = this.convert(chassis);
-        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
+    update(chassis: IChassis): Observable<EntityResponseType> {
+        return this.http.put<IChassis>(this.resourceUrl, chassis, { observe: 'response' });
     }
 
-    find(id: number): Observable<Chassis> {
-        return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
+    find(id: number): Observable<EntityResponseType> {
+        return this.http.get<IChassis>(`${this.resourceUrl}/${id}`, { observe: 'response' });
     }
 
-    query(req?: any): Observable<ResponseWrapper> {
+    query(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
-        return this.http.get(this.resourceUrl, options)
-            .map((res: Response) => this.convertResponse(res));
+        return this.http.get<IChassis[]>(this.resourceUrl, { params: options, observe: 'response' });
     }
 
-    delete(id: number): Observable<Response> {
-        return this.http.delete(`${this.resourceUrl}/${id}`);
+    delete(id: number): Observable<HttpResponse<any>> {
+        return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
     }
 
-    search(req?: any): Observable<ResponseWrapper> {
+    search(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
-        return this.http.get(this.resourceSearchUrl, options)
-            .map((res: any) => this.convertResponse(res));
-    }
-
-    private convertResponse(res: Response): ResponseWrapper {
-        const jsonResponse = res.json();
-        const result = [];
-        for (let i = 0; i < jsonResponse.length; i++) {
-            result.push(this.convertItemFromServer(jsonResponse[i]));
-        }
-        return new ResponseWrapper(res.headers, result, res.status);
-    }
-
-    /**
-     * Convert a returned JSON object to Chassis.
-     */
-    private convertItemFromServer(json: any): Chassis {
-        const entity: Chassis = Object.assign(new Chassis(), json);
-        return entity;
-    }
-
-    /**
-     * Convert a Chassis to a JSON which can be sent to the server.
-     */
-    private convert(chassis: Chassis): Chassis {
-        const copy: Chassis = Object.assign({}, chassis);
-        return copy;
+        return this.http.get<IChassis[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
     }
 }

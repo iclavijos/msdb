@@ -11,7 +11,7 @@
                 "notfound": "<strong>L'adreca de correu no existeix!</strong> Si us plau, corregeixi i torni-ho a intentar"
             }
         },
-        "finish" : {
+        "finish": {
             "title": "Reinicialitzar la seva contrasenya",
             "form": {
                 "button": "Validi la seva contrasenya"
@@ -20,7 +20,8 @@
                 "info": "Trii la seva nova contrasenya",
                 "success": "<strong>La contrasenya ha estat canviada.</strong> Si us plau, ",
                 "keymissing": "Falta especificar la clau de reinicialització.",
-                "error": "La seva contrasenya no ha pogut ser reinicialitzada. Recordi que les peticions de canvi de contrasenya només son valides durant 24 hores."
+                "error":
+                    "La seva contrasenya no ha pogut ser reinicialitzada. Recordi que les peticions de canvi de contrasenya només son valides durant 24 hores."
             }
         }
     }

@@ -1,41 +1,24 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiDataUtils } from 'ng-jhipster';
+import { JhiDataUtils } from 'ng-jhipster';
 
-import { Team } from './team.model';
-import { TeamService } from './team.service';
+import { ITeam } from 'app/shared/model/team.model';
 
 @Component({
     selector: 'jhi-team-detail',
     templateUrl: './team-detail.component.html'
 })
-export class TeamDetailComponent implements OnInit, OnDestroy {
+export class TeamDetailComponent implements OnInit {
+    team: ITeam;
 
-    team: Team;
-    private subscription: Subscription;
-    private eventSubscriber: Subscription;
-
-    constructor(
-        private eventManager: JhiEventManager,
-        private dataUtils: JhiDataUtils,
-        private teamService: TeamService,
-        private route: ActivatedRoute
-    ) {
-    }
+    constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute) {}
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe((params) => {
-            this.load(params['id']);
-        });
-        this.registerChangeInTeams();
-    }
-
-    load(id) {
-        this.teamService.find(id).subscribe((team) => {
+        this.activatedRoute.data.subscribe(({ team }) => {
             this.team = team;
         });
     }
+
     byteSize(field) {
         return this.dataUtils.byteSize(field);
     }
@@ -45,17 +28,5 @@ export class TeamDetailComponent implements OnInit, OnDestroy {
     }
     previousState() {
         window.history.back();
-    }
-
-    ngOnDestroy() {
-        this.subscription.unsubscribe();
-        this.eventManager.destroy(this.eventSubscriber);
-    }
-
-    registerChangeInTeams() {
-        this.eventSubscriber = this.eventManager.subscribe(
-            'teamListModification',
-            (response) => this.load(this.team.id)
-        );
     }
 }

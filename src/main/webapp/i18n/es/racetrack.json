@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "racetrack" : {
+        "racetrack": {
             "home": {
                 "title": "Racetracks",
                 "createLabel": "Crear nuevo Racetrack",

@@ -1,14 +1,10 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.FuelProvider;
-
 import com.icesoft.msdb.repository.FuelProviderRepository;
 import com.icesoft.msdb.repository.search.FuelProviderSearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +54,6 @@ public class FuelProviderResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/fuel-providers")
-    @Timed
     public ResponseEntity<FuelProvider> createFuelProvider(@Valid @RequestBody FuelProvider fuelProvider) throws URISyntaxException {
         log.debug("REST request to save FuelProvider : {}", fuelProvider);
         if (fuelProvider.getId() != null) {
@@ -81,11 +76,10 @@ public class FuelProviderResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/fuel-providers")
-    @Timed
     public ResponseEntity<FuelProvider> updateFuelProvider(@Valid @RequestBody FuelProvider fuelProvider) throws URISyntaxException {
         log.debug("REST request to update FuelProvider : {}", fuelProvider);
         if (fuelProvider.getId() == null) {
-            return createFuelProvider(fuelProvider);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         FuelProvider result = fuelProviderRepository.save(fuelProvider);
         fuelProviderSearchRepository.save(result);
@@ -101,12 +95,11 @@ public class FuelProviderResource {
      * @return the ResponseEntity with status 200 (OK) and the list of fuelProviders in body
      */
     @GetMapping("/fuel-providers")
-    @Timed
-    public ResponseEntity<List<FuelProvider>> getAllFuelProviders(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<FuelProvider>> getAllFuelProviders(Pageable pageable) {
         log.debug("REST request to get a page of FuelProviders");
         Page<FuelProvider> page = fuelProviderRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/fuel-providers");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -116,11 +109,10 @@ public class FuelProviderResource {
      * @return the ResponseEntity with status 200 (OK) and with body the fuelProvider, or with status 404 (Not Found)
      */
     @GetMapping("/fuel-providers/{id}")
-    @Timed
     public ResponseEntity<FuelProvider> getFuelProvider(@PathVariable Long id) {
         log.debug("REST request to get FuelProvider : {}", id);
-        FuelProvider fuelProvider = fuelProviderRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(fuelProvider));
+        Optional<FuelProvider> fuelProvider = fuelProviderRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(fuelProvider);
     }
 
     /**
@@ -130,11 +122,10 @@ public class FuelProviderResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/fuel-providers/{id}")
-    @Timed
     public ResponseEntity<Void> deleteFuelProvider(@PathVariable Long id) {
         log.debug("REST request to delete FuelProvider : {}", id);
-        fuelProviderRepository.delete(id);
-        fuelProviderSearchRepository.delete(id);
+        fuelProviderRepository.deleteById(id);
+        fuelProviderSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -147,12 +138,11 @@ public class FuelProviderResource {
      * @return the result of the search
      */
     @GetMapping("/_search/fuel-providers")
-    @Timed
-    public ResponseEntity<List<FuelProvider>> searchFuelProviders(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<FuelProvider>> searchFuelProviders(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of FuelProviders for query {}", query);
         Page<FuelProvider> page = fuelProviderSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/fuel-providers");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
 }

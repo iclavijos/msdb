@@ -1,26 +1,73 @@
 import { Injectable } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
+import { UserRouteAccessService } from 'app/core';
+import { Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { EventEntry } from 'app/shared/model/event-entry.model';
+import { EventEntryService } from './event-entry.service';
 import { EventEntryComponent } from './event-entry.component';
 import { EventEntryDetailComponent } from './event-entry-detail.component';
-import { EventEntryPopupComponent } from './event-entry-dialog.component';
+import { EventEntryUpdateComponent } from './event-entry-update.component';
 import { EventEntryDeletePopupComponent } from './event-entry-delete-dialog.component';
+import { IEventEntry } from 'app/shared/model/event-entry.model';
+
+@Injectable({ providedIn: 'root' })
+export class EventEntryResolve implements Resolve<IEventEntry> {
+    constructor(private service: EventEntryService) {}
+
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IEventEntry> {
+        const id = route.params['id'] ? route.params['id'] : null;
+        if (id) {
+            return this.service.find(id).pipe(
+                filter((response: HttpResponse<EventEntry>) => response.ok),
+                map((eventEntry: HttpResponse<EventEntry>) => eventEntry.body)
+            );
+        }
+        return of(new EventEntry());
+    }
+}
 
 export const eventEntryRoute: Routes = [
     {
-        path: 'event-entry',
+        path: '',
         component: EventEntryComponent,
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
         },
         canActivate: [UserRouteAccessService]
-    }, {
-        path: 'event-entry/:id',
+    },
+    {
+        path: ':id/view',
         component: EventEntryDetailComponent,
+        resolve: {
+            eventEntry: EventEntryResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: 'new',
+        component: EventEntryUpdateComponent,
+        resolve: {
+            eventEntry: EventEntryResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/edit',
+        component: EventEntryUpdateComponent,
+        resolve: {
+            eventEntry: EventEntryResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
@@ -31,28 +78,11 @@ export const eventEntryRoute: Routes = [
 
 export const eventEntryPopupRoute: Routes = [
     {
-        path: 'event-entry-new',
-        component: EventEntryPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'event-entry/:id/edit',
-        component: EventEntryPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'event-entry/:id/delete',
+        path: ':id/delete',
         component: EventEntryDeletePopupComponent,
+        resolve: {
+            eventEntry: EventEntryResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'

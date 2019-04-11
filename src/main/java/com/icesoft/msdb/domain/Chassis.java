@@ -1,12 +1,15 @@
 package com.icesoft.msdb.domain;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +25,7 @@ import java.util.Objects;
 public class Chassis implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,11 +45,10 @@ public class Chassis implements Serializable {
     private Integer debutYear;
 
     @OneToMany(mappedBy = "derivedFrom")
-    @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Chassis> evolutions = new HashSet<>();
-
     @ManyToOne
+    @JsonIgnoreProperties("evolutions")
     private Chassis derivedFrom;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -162,7 +164,7 @@ public class Chassis implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", manufacturer='" + getManufacturer() + "'" +
-            ", debutYear='" + getDebutYear() + "'" +
+            ", debutYear=" + getDebutYear() +
             "}";
     }
 }

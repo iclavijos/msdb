@@ -1,11 +1,14 @@
 package com.icesoft.msdb.domain;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -19,7 +22,7 @@ import java.util.Objects;
 public class SeriesEdition implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,9 +45,11 @@ public class SeriesEdition implements Serializable {
     private Boolean singleTyre;
 
     @ManyToOne
+    @JsonIgnoreProperties("seriesEditions")
     private Category allowedCategories;
 
     @ManyToOne
+    @JsonIgnoreProperties("editions")
     private Series series;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

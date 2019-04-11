@@ -1,61 +1,40 @@
 /* tslint:disable max-line-length */
-import { ComponentFixture, TestBed, async } from '@angular/core/testing';
-import { DatePipe } from '@angular/common';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
-import { JhiDateUtils, JhiDataUtils, JhiEventManager } from 'ng-jhipster';
+import { of } from 'rxjs';
+
 import { MotorsportsDatabaseTestModule } from '../../../test.module';
-import { MockActivatedRoute } from '../../../helpers/mock-route.service';
-import { EventEntryDetailComponent } from '../../../../../../main/webapp/app/entities/event-entry/event-entry-detail.component';
-import { EventEntryService } from '../../../../../../main/webapp/app/entities/event-entry/event-entry.service';
-import { EventEntry } from '../../../../../../main/webapp/app/entities/event-entry/event-entry.model';
+import { EventEntryDetailComponent } from 'app/entities/event-entry/event-entry-detail.component';
+import { EventEntry } from 'app/shared/model/event-entry.model';
 
 describe('Component Tests', () => {
-
     describe('EventEntry Management Detail Component', () => {
         let comp: EventEntryDetailComponent;
         let fixture: ComponentFixture<EventEntryDetailComponent>;
-        let service: EventEntryService;
+        const route = ({ data: of({ eventEntry: new EventEntry(123) }) } as any) as ActivatedRoute;
 
-        beforeEach(async(() => {
+        beforeEach(() => {
             TestBed.configureTestingModule({
                 imports: [MotorsportsDatabaseTestModule],
                 declarations: [EventEntryDetailComponent],
-                providers: [
-                    JhiDateUtils,
-                    JhiDataUtils,
-                    DatePipe,
-                    {
-                        provide: ActivatedRoute,
-                        useValue: new MockActivatedRoute({id: 123})
-                    },
-                    EventEntryService,
-                    JhiEventManager
-                ]
-            }).overrideTemplate(EventEntryDetailComponent, '')
-            .compileComponents();
-        }));
-
-        beforeEach(() => {
+                providers: [{ provide: ActivatedRoute, useValue: route }]
+            })
+                .overrideTemplate(EventEntryDetailComponent, '')
+                .compileComponents();
             fixture = TestBed.createComponent(EventEntryDetailComponent);
             comp = fixture.componentInstance;
-            service = fixture.debugElement.injector.get(EventEntryService);
         });
 
         describe('OnInit', () => {
             it('Should call load all on init', () => {
-            // GIVEN
+                // GIVEN
 
-            spyOn(service, 'find').and.returnValue(Observable.of(new EventEntry(10)));
+                // WHEN
+                comp.ngOnInit();
 
-            // WHEN
-            comp.ngOnInit();
-
-            // THEN
-            expect(service.find).toHaveBeenCalledWith(123);
-            expect(comp.eventEntry).toEqual(jasmine.objectContaining({id: 10}));
+                // THEN
+                expect(comp.eventEntry).toEqual(jasmine.objectContaining({ id: 123 }));
             });
         });
     });
-
 });

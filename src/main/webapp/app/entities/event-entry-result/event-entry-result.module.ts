@@ -1,49 +1,45 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { JhiLanguageService } from 'ng-jhipster';
+import { JhiLanguageHelper } from 'app/core';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
+import { MotorsportsDatabaseSharedModule } from 'app/shared';
 import {
-    EventEntryResultService,
-    EventEntryResultPopupService,
     EventEntryResultComponent,
     EventEntryResultDetailComponent,
-    EventEntryResultDialogComponent,
-    EventEntryResultPopupComponent,
+    EventEntryResultUpdateComponent,
     EventEntryResultDeletePopupComponent,
     EventEntryResultDeleteDialogComponent,
     eventEntryResultRoute,
-    eventEntryResultPopupRoute,
+    eventEntryResultPopupRoute
 } from './';
 
-const ENTITY_STATES = [
-    ...eventEntryResultRoute,
-    ...eventEntryResultPopupRoute,
-];
+const ENTITY_STATES = [...eventEntryResultRoute, ...eventEntryResultPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
+    imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
     declarations: [
         EventEntryResultComponent,
         EventEntryResultDetailComponent,
-        EventEntryResultDialogComponent,
+        EventEntryResultUpdateComponent,
         EventEntryResultDeleteDialogComponent,
-        EventEntryResultPopupComponent,
-        EventEntryResultDeletePopupComponent,
+        EventEntryResultDeletePopupComponent
     ],
     entryComponents: [
         EventEntryResultComponent,
-        EventEntryResultDialogComponent,
-        EventEntryResultPopupComponent,
+        EventEntryResultUpdateComponent,
         EventEntryResultDeleteDialogComponent,
-        EventEntryResultDeletePopupComponent,
+        EventEntryResultDeletePopupComponent
     ],
-    providers: [
-        EventEntryResultService,
-        EventEntryResultPopupService,
-    ],
+    providers: [{ provide: JhiLanguageService, useClass: JhiLanguageService }],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class MotorsportsDatabaseEventEntryResultModule {}
+export class MotorsportsDatabaseEventEntryResultModule {
+    constructor(private languageService: JhiLanguageService, private languageHelper: JhiLanguageHelper) {
+        this.languageHelper.language.subscribe((languageKey: string) => {
+            if (languageKey !== undefined) {
+                this.languageService.changeLanguage(languageKey);
+            }
+        });
+    }
+}

@@ -20,13 +20,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
+
 
 import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -42,8 +47,13 @@ public class DriverPointsDetailsResourceIntTest {
     @Autowired
     private DriverPointsDetailsRepository driverPointsDetailsRepository;
 
+    /**
+     * This repository is mocked in the com.icesoft.msdb.repository.search test package.
+     *
+     * @see com.icesoft.msdb.repository.search.DriverPointsDetailsSearchRepositoryMockConfiguration
+     */
     @Autowired
-    private DriverPointsDetailsSearchRepository driverPointsDetailsSearchRepository;
+    private DriverPointsDetailsSearchRepository mockDriverPointsDetailsSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -57,6 +67,9 @@ public class DriverPointsDetailsResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private Validator validator;
+
     private MockMvc restDriverPointsDetailsMockMvc;
 
     private DriverPointsDetails driverPointsDetails;
@@ -64,12 +77,13 @@ public class DriverPointsDetailsResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final DriverPointsDetailsResource driverPointsDetailsResource = new DriverPointsDetailsResource(driverPointsDetailsRepository, driverPointsDetailsSearchRepository);
+        final DriverPointsDetailsResource driverPointsDetailsResource = new DriverPointsDetailsResource(driverPointsDetailsRepository, mockDriverPointsDetailsSearchRepository);
         this.restDriverPointsDetailsMockMvc = MockMvcBuilders.standaloneSetup(driverPointsDetailsResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -85,7 +99,6 @@ public class DriverPointsDetailsResourceIntTest {
 
     @Before
     public void initTest() {
-        driverPointsDetailsSearchRepository.deleteAll();
         driverPointsDetails = createEntity(em);
     }
 
@@ -106,8 +119,7 @@ public class DriverPointsDetailsResourceIntTest {
         DriverPointsDetails testDriverPointsDetails = driverPointsDetailsList.get(driverPointsDetailsList.size() - 1);
 
         // Validate the DriverPointsDetails in Elasticsearch
-        DriverPointsDetails driverPointsDetailsEs = driverPointsDetailsSearchRepository.findOne(testDriverPointsDetails.getId());
-        assertThat(driverPointsDetailsEs).isEqualToComparingFieldByField(testDriverPointsDetails);
+        verify(mockDriverPointsDetailsSearchRepository, times(1)).save(testDriverPointsDetails);
     }
 
     @Test
@@ -127,6 +139,9 @@ public class DriverPointsDetailsResourceIntTest {
         // Validate the DriverPointsDetails in the database
         List<DriverPointsDetails> driverPointsDetailsList = driverPointsDetailsRepository.findAll();
         assertThat(driverPointsDetailsList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the DriverPointsDetails in Elasticsearch
+        verify(mockDriverPointsDetailsSearchRepository, times(0)).save(driverPointsDetails);
     }
 
     @Test
@@ -141,7 +156,7 @@ public class DriverPointsDetailsResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(driverPointsDetails.getId().intValue())));
     }
-
+    
     @Test
     @Transactional
     public void getDriverPointsDetails() throws Exception {
@@ -168,11 +183,13 @@ public class DriverPointsDetailsResourceIntTest {
     public void updateDriverPointsDetails() throws Exception {
         // Initialize the database
         driverPointsDetailsRepository.saveAndFlush(driverPointsDetails);
-        driverPointsDetailsSearchRepository.save(driverPointsDetails);
+
         int databaseSizeBeforeUpdate = driverPointsDetailsRepository.findAll().size();
 
         // Update the driverPointsDetails
-        DriverPointsDetails updatedDriverPointsDetails = driverPointsDetailsRepository.findOne(driverPointsDetails.getId());
+        DriverPointsDetails updatedDriverPointsDetails = driverPointsDetailsRepository.findById(driverPointsDetails.getId()).get();
+        // Disconnect from session so that the updates on updatedDriverPointsDetails are not directly saved in db
+        em.detach(updatedDriverPointsDetails);
 
         restDriverPointsDetailsMockMvc.perform(put("/api/driver-points-details")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -185,8 +202,7 @@ public class DriverPointsDetailsResourceIntTest {
         DriverPointsDetails testDriverPointsDetails = driverPointsDetailsList.get(driverPointsDetailsList.size() - 1);
 
         // Validate the DriverPointsDetails in Elasticsearch
-        DriverPointsDetails driverPointsDetailsEs = driverPointsDetailsSearchRepository.findOne(testDriverPointsDetails.getId());
-        assertThat(driverPointsDetailsEs).isEqualToComparingFieldByField(testDriverPointsDetails);
+        verify(mockDriverPointsDetailsSearchRepository, times(1)).save(testDriverPointsDetails);
     }
 
     @Test
@@ -196,15 +212,18 @@ public class DriverPointsDetailsResourceIntTest {
 
         // Create the DriverPointsDetails
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restDriverPointsDetailsMockMvc.perform(put("/api/driver-points-details")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(driverPointsDetails)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the DriverPointsDetails in the database
         List<DriverPointsDetails> driverPointsDetailsList = driverPointsDetailsRepository.findAll();
-        assertThat(driverPointsDetailsList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(driverPointsDetailsList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the DriverPointsDetails in Elasticsearch
+        verify(mockDriverPointsDetailsSearchRepository, times(0)).save(driverPointsDetails);
     }
 
     @Test
@@ -212,21 +231,20 @@ public class DriverPointsDetailsResourceIntTest {
     public void deleteDriverPointsDetails() throws Exception {
         // Initialize the database
         driverPointsDetailsRepository.saveAndFlush(driverPointsDetails);
-        driverPointsDetailsSearchRepository.save(driverPointsDetails);
+
         int databaseSizeBeforeDelete = driverPointsDetailsRepository.findAll().size();
 
-        // Get the driverPointsDetails
+        // Delete the driverPointsDetails
         restDriverPointsDetailsMockMvc.perform(delete("/api/driver-points-details/{id}", driverPointsDetails.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean driverPointsDetailsExistsInEs = driverPointsDetailsSearchRepository.exists(driverPointsDetails.getId());
-        assertThat(driverPointsDetailsExistsInEs).isFalse();
-
         // Validate the database is empty
         List<DriverPointsDetails> driverPointsDetailsList = driverPointsDetailsRepository.findAll();
         assertThat(driverPointsDetailsList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the DriverPointsDetails in Elasticsearch
+        verify(mockDriverPointsDetailsSearchRepository, times(1)).deleteById(driverPointsDetails.getId());
     }
 
     @Test
@@ -234,8 +252,8 @@ public class DriverPointsDetailsResourceIntTest {
     public void searchDriverPointsDetails() throws Exception {
         // Initialize the database
         driverPointsDetailsRepository.saveAndFlush(driverPointsDetails);
-        driverPointsDetailsSearchRepository.save(driverPointsDetails);
-
+        when(mockDriverPointsDetailsSearchRepository.search(queryStringQuery("id:" + driverPointsDetails.getId())))
+            .thenReturn(Collections.singletonList(driverPointsDetails));
         // Search the driverPointsDetails
         restDriverPointsDetailsMockMvc.perform(get("/api/_search/driver-points-details?query=id:" + driverPointsDetails.getId()))
             .andExpect(status().isOk())

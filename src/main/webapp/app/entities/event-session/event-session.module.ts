@@ -1,49 +1,45 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { JhiLanguageService } from 'ng-jhipster';
+import { JhiLanguageHelper } from 'app/core';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
+import { MotorsportsDatabaseSharedModule } from 'app/shared';
 import {
-    EventSessionService,
-    EventSessionPopupService,
     EventSessionComponent,
     EventSessionDetailComponent,
-    EventSessionDialogComponent,
-    EventSessionPopupComponent,
+    EventSessionUpdateComponent,
     EventSessionDeletePopupComponent,
     EventSessionDeleteDialogComponent,
     eventSessionRoute,
-    eventSessionPopupRoute,
+    eventSessionPopupRoute
 } from './';
 
-const ENTITY_STATES = [
-    ...eventSessionRoute,
-    ...eventSessionPopupRoute,
-];
+const ENTITY_STATES = [...eventSessionRoute, ...eventSessionPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
+    imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
     declarations: [
         EventSessionComponent,
         EventSessionDetailComponent,
-        EventSessionDialogComponent,
+        EventSessionUpdateComponent,
         EventSessionDeleteDialogComponent,
-        EventSessionPopupComponent,
-        EventSessionDeletePopupComponent,
+        EventSessionDeletePopupComponent
     ],
     entryComponents: [
         EventSessionComponent,
-        EventSessionDialogComponent,
-        EventSessionPopupComponent,
+        EventSessionUpdateComponent,
         EventSessionDeleteDialogComponent,
-        EventSessionDeletePopupComponent,
+        EventSessionDeletePopupComponent
     ],
-    providers: [
-        EventSessionService,
-        EventSessionPopupService,
-    ],
+    providers: [{ provide: JhiLanguageService, useClass: JhiLanguageService }],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class MotorsportsDatabaseEventSessionModule {}
+export class MotorsportsDatabaseEventSessionModule {
+    constructor(private languageService: JhiLanguageService, private languageHelper: JhiLanguageHelper) {
+        this.languageHelper.language.subscribe((languageKey: string) => {
+            if (languageKey !== undefined) {
+                this.languageService.changeLanguage(languageKey);
+            }
+        });
+    }
+}

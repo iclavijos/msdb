@@ -1,8 +1,5 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.RacetrackLayout;
-
 import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.search.RacetrackLayoutSearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
@@ -52,7 +49,6 @@ public class RacetrackLayoutResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/racetrack-layouts")
-    @Timed
     public ResponseEntity<RacetrackLayout> createRacetrackLayout(@Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
         log.debug("REST request to save RacetrackLayout : {}", racetrackLayout);
         if (racetrackLayout.getId() != null) {
@@ -75,11 +71,10 @@ public class RacetrackLayoutResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/racetrack-layouts")
-    @Timed
     public ResponseEntity<RacetrackLayout> updateRacetrackLayout(@Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
         log.debug("REST request to update RacetrackLayout : {}", racetrackLayout);
         if (racetrackLayout.getId() == null) {
-            return createRacetrackLayout(racetrackLayout);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         RacetrackLayout result = racetrackLayoutRepository.save(racetrackLayout);
         racetrackLayoutSearchRepository.save(result);
@@ -94,11 +89,10 @@ public class RacetrackLayoutResource {
      * @return the ResponseEntity with status 200 (OK) and the list of racetrackLayouts in body
      */
     @GetMapping("/racetrack-layouts")
-    @Timed
     public List<RacetrackLayout> getAllRacetrackLayouts() {
         log.debug("REST request to get all RacetrackLayouts");
         return racetrackLayoutRepository.findAll();
-        }
+    }
 
     /**
      * GET  /racetrack-layouts/:id : get the "id" racetrackLayout.
@@ -107,11 +101,10 @@ public class RacetrackLayoutResource {
      * @return the ResponseEntity with status 200 (OK) and with body the racetrackLayout, or with status 404 (Not Found)
      */
     @GetMapping("/racetrack-layouts/{id}")
-    @Timed
     public ResponseEntity<RacetrackLayout> getRacetrackLayout(@PathVariable Long id) {
         log.debug("REST request to get RacetrackLayout : {}", id);
-        RacetrackLayout racetrackLayout = racetrackLayoutRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(racetrackLayout));
+        Optional<RacetrackLayout> racetrackLayout = racetrackLayoutRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(racetrackLayout);
     }
 
     /**
@@ -121,11 +114,10 @@ public class RacetrackLayoutResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/racetrack-layouts/{id}")
-    @Timed
     public ResponseEntity<Void> deleteRacetrackLayout(@PathVariable Long id) {
         log.debug("REST request to delete RacetrackLayout : {}", id);
-        racetrackLayoutRepository.delete(id);
-        racetrackLayoutSearchRepository.delete(id);
+        racetrackLayoutRepository.deleteById(id);
+        racetrackLayoutSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -137,7 +129,6 @@ public class RacetrackLayoutResource {
      * @return the result of the search
      */
     @GetMapping("/_search/racetrack-layouts")
-    @Timed
     public List<RacetrackLayout> searchRacetrackLayouts(@RequestParam String query) {
         log.debug("REST request to search RacetrackLayouts for query {}", query);
         return StreamSupport

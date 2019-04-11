@@ -1,14 +1,10 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.SeriesEdition;
-
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.search.SeriesEditionSearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +54,6 @@ public class SeriesEditionResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/series-editions")
-    @Timed
     public ResponseEntity<SeriesEdition> createSeriesEdition(@Valid @RequestBody SeriesEdition seriesEdition) throws URISyntaxException {
         log.debug("REST request to save SeriesEdition : {}", seriesEdition);
         if (seriesEdition.getId() != null) {
@@ -81,11 +76,10 @@ public class SeriesEditionResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/series-editions")
-    @Timed
     public ResponseEntity<SeriesEdition> updateSeriesEdition(@Valid @RequestBody SeriesEdition seriesEdition) throws URISyntaxException {
         log.debug("REST request to update SeriesEdition : {}", seriesEdition);
         if (seriesEdition.getId() == null) {
-            return createSeriesEdition(seriesEdition);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         SeriesEdition result = seriesEditionRepository.save(seriesEdition);
         seriesEditionSearchRepository.save(result);
@@ -101,12 +95,11 @@ public class SeriesEditionResource {
      * @return the ResponseEntity with status 200 (OK) and the list of seriesEditions in body
      */
     @GetMapping("/series-editions")
-    @Timed
-    public ResponseEntity<List<SeriesEdition>> getAllSeriesEditions(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<SeriesEdition>> getAllSeriesEditions(Pageable pageable) {
         log.debug("REST request to get a page of SeriesEditions");
         Page<SeriesEdition> page = seriesEditionRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/series-editions");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -116,11 +109,10 @@ public class SeriesEditionResource {
      * @return the ResponseEntity with status 200 (OK) and with body the seriesEdition, or with status 404 (Not Found)
      */
     @GetMapping("/series-editions/{id}")
-    @Timed
     public ResponseEntity<SeriesEdition> getSeriesEdition(@PathVariable Long id) {
         log.debug("REST request to get SeriesEdition : {}", id);
-        SeriesEdition seriesEdition = seriesEditionRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(seriesEdition));
+        Optional<SeriesEdition> seriesEdition = seriesEditionRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(seriesEdition);
     }
 
     /**
@@ -130,11 +122,10 @@ public class SeriesEditionResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/series-editions/{id}")
-    @Timed
     public ResponseEntity<Void> deleteSeriesEdition(@PathVariable Long id) {
         log.debug("REST request to delete SeriesEdition : {}", id);
-        seriesEditionRepository.delete(id);
-        seriesEditionSearchRepository.delete(id);
+        seriesEditionRepository.deleteById(id);
+        seriesEditionSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -147,12 +138,11 @@ public class SeriesEditionResource {
      * @return the result of the search
      */
     @GetMapping("/_search/series-editions")
-    @Timed
-    public ResponseEntity<List<SeriesEdition>> searchSeriesEditions(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<SeriesEdition>> searchSeriesEditions(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of SeriesEditions for query {}", query);
         Page<SeriesEdition> page = seriesEditionSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/series-editions");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
 }

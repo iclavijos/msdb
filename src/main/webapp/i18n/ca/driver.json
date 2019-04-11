@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "driver" : {
+        "driver": {
             "home": {
                 "title": "Drivers",
                 "createLabel": "Create a new Driver",

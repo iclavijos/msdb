@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "eventEdition" : {
+        "eventEdition": {
             "home": {
                 "title": "Event Editions",
                 "createLabel": "Crear nuevo Event Edition",

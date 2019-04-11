@@ -1,90 +1,85 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-import { SERVER_API_URL } from '../../app.constants';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import * as moment from 'moment';
+import { DATE_FORMAT } from 'app/shared/constants/input.constants';
+import { map } from 'rxjs/operators';
 
-import { JhiDateUtils } from 'ng-jhipster';
+import { SERVER_API_URL } from 'app/app.constants';
+import { createRequestOption } from 'app/shared';
+import { IDriver } from 'app/shared/model/driver.model';
 
-import { Driver } from './driver.model';
-import { ResponseWrapper, createRequestOption } from '../../shared';
+type EntityResponseType = HttpResponse<IDriver>;
+type EntityArrayResponseType = HttpResponse<IDriver[]>;
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DriverService {
+    public resourceUrl = SERVER_API_URL + 'api/drivers';
+    public resourceSearchUrl = SERVER_API_URL + 'api/_search/drivers';
 
-    private resourceUrl = SERVER_API_URL + 'api/drivers';
-    private resourceSearchUrl = SERVER_API_URL + 'api/_search/drivers';
+    constructor(protected http: HttpClient) {}
 
-    constructor(private http: Http, private dateUtils: JhiDateUtils) { }
-
-    create(driver: Driver): Observable<Driver> {
-        const copy = this.convert(driver);
-        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
+    create(driver: IDriver): Observable<EntityResponseType> {
+        const copy = this.convertDateFromClient(driver);
+        return this.http
+            .post<IDriver>(this.resourceUrl, copy, { observe: 'response' })
+            .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
     }
 
-    update(driver: Driver): Observable<Driver> {
-        const copy = this.convert(driver);
-        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
+    update(driver: IDriver): Observable<EntityResponseType> {
+        const copy = this.convertDateFromClient(driver);
+        return this.http
+            .put<IDriver>(this.resourceUrl, copy, { observe: 'response' })
+            .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
     }
 
-    find(id: number): Observable<Driver> {
-        return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
+    find(id: number): Observable<EntityResponseType> {
+        return this.http
+            .get<IDriver>(`${this.resourceUrl}/${id}`, { observe: 'response' })
+            .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
     }
 
-    query(req?: any): Observable<ResponseWrapper> {
+    query(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
-        return this.http.get(this.resourceUrl, options)
-            .map((res: Response) => this.convertResponse(res));
+        return this.http
+            .get<IDriver[]>(this.resourceUrl, { params: options, observe: 'response' })
+            .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
     }
 
-    delete(id: number): Observable<Response> {
-        return this.http.delete(`${this.resourceUrl}/${id}`);
+    delete(id: number): Observable<HttpResponse<any>> {
+        return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
     }
 
-    search(req?: any): Observable<ResponseWrapper> {
+    search(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
-        return this.http.get(this.resourceSearchUrl, options)
-            .map((res: any) => this.convertResponse(res));
+        return this.http
+            .get<IDriver[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
+            .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
     }
 
-    private convertResponse(res: Response): ResponseWrapper {
-        const jsonResponse = res.json();
-        const result = [];
-        for (let i = 0; i < jsonResponse.length; i++) {
-            result.push(this.convertItemFromServer(jsonResponse[i]));
-        }
-        return new ResponseWrapper(res.headers, result, res.status);
-    }
-
-    /**
-     * Convert a returned JSON object to Driver.
-     */
-    private convertItemFromServer(json: any): Driver {
-        const entity: Driver = Object.assign(new Driver(), json);
-        entity.birthDate = this.dateUtils
-            .convertLocalDateFromServer(json.birthDate);
-        entity.deathDate = this.dateUtils
-            .convertLocalDateFromServer(json.deathDate);
-        return entity;
-    }
-
-    /**
-     * Convert a Driver to a JSON which can be sent to the server.
-     */
-    private convert(driver: Driver): Driver {
-        const copy: Driver = Object.assign({}, driver);
-        copy.birthDate = this.dateUtils
-            .convertLocalDateToServer(driver.birthDate);
-        copy.deathDate = this.dateUtils
-            .convertLocalDateToServer(driver.deathDate);
+    protected convertDateFromClient(driver: IDriver): IDriver {
+        const copy: IDriver = Object.assign({}, driver, {
+            birthDate: driver.birthDate != null && driver.birthDate.isValid() ? driver.birthDate.format(DATE_FORMAT) : null,
+            deathDate: driver.deathDate != null && driver.deathDate.isValid() ? driver.deathDate.format(DATE_FORMAT) : null
+        });
         return copy;
+    }
+
+    protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
+        if (res.body) {
+            res.body.birthDate = res.body.birthDate != null ? moment(res.body.birthDate) : null;
+            res.body.deathDate = res.body.deathDate != null ? moment(res.body.deathDate) : null;
+        }
+        return res;
+    }
+
+    protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
+        if (res.body) {
+            res.body.forEach((driver: IDriver) => {
+                driver.birthDate = driver.birthDate != null ? moment(driver.birthDate) : null;
+                driver.deathDate = driver.deathDate != null ? moment(driver.deathDate) : null;
+            });
+        }
+        return res;
     }
 }

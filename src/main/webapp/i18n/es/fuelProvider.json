@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "fuelProvider" : {
+        "fuelProvider": {
             "home": {
                 "title": "Fuel Providers",
                 "createLabel": "Crear nuevo Fuel Provider",

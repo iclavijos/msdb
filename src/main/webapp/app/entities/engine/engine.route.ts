@@ -1,45 +1,78 @@
 import { Injectable } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
+import { JhiPaginationUtil, JhiResolvePagingParams } from 'ng-jhipster';
+import { UserRouteAccessService } from 'app/core';
+import { Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { Engine } from 'app/shared/model/engine.model';
+import { EngineService } from './engine.service';
 import { EngineComponent } from './engine.component';
 import { EngineDetailComponent } from './engine-detail.component';
-import { EnginePopupComponent } from './engine-dialog.component';
+import { EngineUpdateComponent } from './engine-update.component';
 import { EngineDeletePopupComponent } from './engine-delete-dialog.component';
+import { IEngine } from 'app/shared/model/engine.model';
 
-@Injectable()
-export class EngineResolvePagingParams implements Resolve<any> {
+@Injectable({ providedIn: 'root' })
+export class EngineResolve implements Resolve<IEngine> {
+    constructor(private service: EngineService) {}
 
-    constructor(private paginationUtil: JhiPaginationUtil) {}
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
-        return {
-            page: this.paginationUtil.parsePage(page),
-            predicate: this.paginationUtil.parsePredicate(sort),
-            ascending: this.paginationUtil.parseAscending(sort)
-      };
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IEngine> {
+        const id = route.params['id'] ? route.params['id'] : null;
+        if (id) {
+            return this.service.find(id).pipe(
+                filter((response: HttpResponse<Engine>) => response.ok),
+                map((engine: HttpResponse<Engine>) => engine.body)
+            );
+        }
+        return of(new Engine());
     }
 }
 
 export const engineRoute: Routes = [
     {
-        path: 'engine',
+        path: '',
         component: EngineComponent,
         resolve: {
-            'pagingParams': EngineResolvePagingParams
+            pagingParams: JhiResolvePagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            defaultSort: 'id,asc',
+            pageTitle: 'motorsportsDatabaseApp.engine.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/view',
+        component: EngineDetailComponent,
+        resolve: {
+            engine: EngineResolve
         },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.engine.home.title'
         },
         canActivate: [UserRouteAccessService]
-    }, {
-        path: 'engine/:id',
-        component: EngineDetailComponent,
+    },
+    {
+        path: 'new',
+        component: EngineUpdateComponent,
+        resolve: {
+            engine: EngineResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.engine.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/edit',
+        component: EngineUpdateComponent,
+        resolve: {
+            engine: EngineResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.engine.home.title'
@@ -50,28 +83,11 @@ export const engineRoute: Routes = [
 
 export const enginePopupRoute: Routes = [
     {
-        path: 'engine-new',
-        component: EnginePopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.engine.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'engine/:id/edit',
-        component: EnginePopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.engine.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'engine/:id/delete',
+        path: ':id/delete',
         component: EngineDeletePopupComponent,
+        resolve: {
+            engine: EngineResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.engine.home.title'

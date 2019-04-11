@@ -1,8 +1,5 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.DriverPointsDetails;
-
 import com.icesoft.msdb.repository.DriverPointsDetailsRepository;
 import com.icesoft.msdb.repository.search.DriverPointsDetailsSearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
@@ -51,7 +48,6 @@ public class DriverPointsDetailsResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/driver-points-details")
-    @Timed
     public ResponseEntity<DriverPointsDetails> createDriverPointsDetails(@RequestBody DriverPointsDetails driverPointsDetails) throws URISyntaxException {
         log.debug("REST request to save DriverPointsDetails : {}", driverPointsDetails);
         if (driverPointsDetails.getId() != null) {
@@ -74,11 +70,10 @@ public class DriverPointsDetailsResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/driver-points-details")
-    @Timed
     public ResponseEntity<DriverPointsDetails> updateDriverPointsDetails(@RequestBody DriverPointsDetails driverPointsDetails) throws URISyntaxException {
         log.debug("REST request to update DriverPointsDetails : {}", driverPointsDetails);
         if (driverPointsDetails.getId() == null) {
-            return createDriverPointsDetails(driverPointsDetails);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         DriverPointsDetails result = driverPointsDetailsRepository.save(driverPointsDetails);
         driverPointsDetailsSearchRepository.save(result);
@@ -93,11 +88,10 @@ public class DriverPointsDetailsResource {
      * @return the ResponseEntity with status 200 (OK) and the list of driverPointsDetails in body
      */
     @GetMapping("/driver-points-details")
-    @Timed
     public List<DriverPointsDetails> getAllDriverPointsDetails() {
         log.debug("REST request to get all DriverPointsDetails");
         return driverPointsDetailsRepository.findAll();
-        }
+    }
 
     /**
      * GET  /driver-points-details/:id : get the "id" driverPointsDetails.
@@ -106,11 +100,10 @@ public class DriverPointsDetailsResource {
      * @return the ResponseEntity with status 200 (OK) and with body the driverPointsDetails, or with status 404 (Not Found)
      */
     @GetMapping("/driver-points-details/{id}")
-    @Timed
     public ResponseEntity<DriverPointsDetails> getDriverPointsDetails(@PathVariable Long id) {
         log.debug("REST request to get DriverPointsDetails : {}", id);
-        DriverPointsDetails driverPointsDetails = driverPointsDetailsRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(driverPointsDetails));
+        Optional<DriverPointsDetails> driverPointsDetails = driverPointsDetailsRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(driverPointsDetails);
     }
 
     /**
@@ -120,11 +113,10 @@ public class DriverPointsDetailsResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/driver-points-details/{id}")
-    @Timed
     public ResponseEntity<Void> deleteDriverPointsDetails(@PathVariable Long id) {
         log.debug("REST request to delete DriverPointsDetails : {}", id);
-        driverPointsDetailsRepository.delete(id);
-        driverPointsDetailsSearchRepository.delete(id);
+        driverPointsDetailsRepository.deleteById(id);
+        driverPointsDetailsSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -136,7 +128,6 @@ public class DriverPointsDetailsResource {
      * @return the result of the search
      */
     @GetMapping("/_search/driver-points-details")
-    @Timed
     public List<DriverPointsDetails> searchDriverPointsDetails(@RequestParam String query) {
         log.debug("REST request to search DriverPointsDetails for query {}", query);
         return StreamSupport

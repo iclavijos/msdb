@@ -1,12 +1,14 @@
 package com.icesoft.msdb.domain;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -23,7 +25,7 @@ import java.util.Objects;
 public class Driver implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -61,10 +63,8 @@ public class Driver implements Serializable {
     private String portraitContentType;
 
     @OneToMany(mappedBy = "driver")
-    @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<EventEntry> participations = new HashSet<>();
-
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -235,7 +235,7 @@ public class Driver implements Serializable {
             ", deathDate='" + getDeathDate() + "'" +
             ", deathPlace='" + getDeathPlace() + "'" +
             ", portrait='" + getPortrait() + "'" +
-            ", portraitContentType='" + portraitContentType + "'" +
+            ", portraitContentType='" + getPortraitContentType() + "'" +
             "}";
     }
 }

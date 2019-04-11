@@ -1,11 +1,13 @@
 package com.icesoft.msdb.domain;
 
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -19,7 +21,7 @@ import java.util.Objects;
 public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -130,7 +132,7 @@ public class Category implements Serializable {
             ", name='" + getName() + "'" +
             ", shortname='" + getShortname() + "'" +
             ", logo='" + getLogo() + "'" +
-            ", logoContentType='" + logoContentType + "'" +
+            ", logoContentType='" + getLogoContentType() + "'" +
             "}";
     }
 }

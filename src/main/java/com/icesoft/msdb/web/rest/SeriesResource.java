@@ -1,14 +1,10 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Series;
-
 import com.icesoft.msdb.repository.SeriesRepository;
 import com.icesoft.msdb.repository.search.SeriesSearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +54,6 @@ public class SeriesResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/series")
-    @Timed
     public ResponseEntity<Series> createSeries(@Valid @RequestBody Series series) throws URISyntaxException {
         log.debug("REST request to save Series : {}", series);
         if (series.getId() != null) {
@@ -81,11 +76,10 @@ public class SeriesResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/series")
-    @Timed
     public ResponseEntity<Series> updateSeries(@Valid @RequestBody Series series) throws URISyntaxException {
         log.debug("REST request to update Series : {}", series);
         if (series.getId() == null) {
-            return createSeries(series);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Series result = seriesRepository.save(series);
         seriesSearchRepository.save(result);
@@ -101,12 +95,11 @@ public class SeriesResource {
      * @return the ResponseEntity with status 200 (OK) and the list of series in body
      */
     @GetMapping("/series")
-    @Timed
-    public ResponseEntity<List<Series>> getAllSeries(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<Series>> getAllSeries(Pageable pageable) {
         log.debug("REST request to get a page of Series");
         Page<Series> page = seriesRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/series");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -116,11 +109,10 @@ public class SeriesResource {
      * @return the ResponseEntity with status 200 (OK) and with body the series, or with status 404 (Not Found)
      */
     @GetMapping("/series/{id}")
-    @Timed
     public ResponseEntity<Series> getSeries(@PathVariable Long id) {
         log.debug("REST request to get Series : {}", id);
-        Series series = seriesRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(series));
+        Optional<Series> series = seriesRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(series);
     }
 
     /**
@@ -130,11 +122,10 @@ public class SeriesResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/series/{id}")
-    @Timed
     public ResponseEntity<Void> deleteSeries(@PathVariable Long id) {
         log.debug("REST request to delete Series : {}", id);
-        seriesRepository.delete(id);
-        seriesSearchRepository.delete(id);
+        seriesRepository.deleteById(id);
+        seriesSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -147,12 +138,11 @@ public class SeriesResource {
      * @return the result of the search
      */
     @GetMapping("/_search/series")
-    @Timed
-    public ResponseEntity<List<Series>> searchSeries(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<Series>> searchSeries(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Series for query {}", query);
         Page<Series> page = seriesSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/series");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
 }

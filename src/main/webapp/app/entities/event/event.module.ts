@@ -1,51 +1,34 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { JhiLanguageService } from 'ng-jhipster';
+import { JhiLanguageHelper } from 'app/core';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
+import { MotorsportsDatabaseSharedModule } from 'app/shared';
 import {
-    EventService,
-    EventPopupService,
     EventComponent,
     EventDetailComponent,
-    EventDialogComponent,
-    EventPopupComponent,
+    EventUpdateComponent,
     EventDeletePopupComponent,
     EventDeleteDialogComponent,
     eventRoute,
-    eventPopupRoute,
-    EventResolvePagingParams,
+    eventPopupRoute
 } from './';
 
-const ENTITY_STATES = [
-    ...eventRoute,
-    ...eventPopupRoute,
-];
+const ENTITY_STATES = [...eventRoute, ...eventPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
-    declarations: [
-        EventComponent,
-        EventDetailComponent,
-        EventDialogComponent,
-        EventDeleteDialogComponent,
-        EventPopupComponent,
-        EventDeletePopupComponent,
-    ],
-    entryComponents: [
-        EventComponent,
-        EventDialogComponent,
-        EventPopupComponent,
-        EventDeleteDialogComponent,
-        EventDeletePopupComponent,
-    ],
-    providers: [
-        EventService,
-        EventPopupService,
-        EventResolvePagingParams,
-    ],
+    imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
+    declarations: [EventComponent, EventDetailComponent, EventUpdateComponent, EventDeleteDialogComponent, EventDeletePopupComponent],
+    entryComponents: [EventComponent, EventUpdateComponent, EventDeleteDialogComponent, EventDeletePopupComponent],
+    providers: [{ provide: JhiLanguageService, useClass: JhiLanguageService }],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class MotorsportsDatabaseEventModule {}
+export class MotorsportsDatabaseEventModule {
+    constructor(private languageService: JhiLanguageService, private languageHelper: JhiLanguageHelper) {
+        this.languageHelper.language.subscribe((languageKey: string) => {
+            if (languageKey !== undefined) {
+                this.languageService.changeLanguage(languageKey);
+            }
+        });
+    }
+}

@@ -20,13 +20,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
+
 
 import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -45,8 +50,13 @@ public class EventEntryResourceIntTest {
     @Autowired
     private EventEntryRepository eventEntryRepository;
 
+    /**
+     * This repository is mocked in the com.icesoft.msdb.repository.search test package.
+     *
+     * @see com.icesoft.msdb.repository.search.EventEntrySearchRepositoryMockConfiguration
+     */
     @Autowired
-    private EventEntrySearchRepository eventEntrySearchRepository;
+    private EventEntrySearchRepository mockEventEntrySearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -60,6 +70,9 @@ public class EventEntryResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private Validator validator;
+
     private MockMvc restEventEntryMockMvc;
 
     private EventEntry eventEntry;
@@ -67,12 +80,13 @@ public class EventEntryResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final EventEntryResource eventEntryResource = new EventEntryResource(eventEntryRepository, eventEntrySearchRepository);
+        final EventEntryResource eventEntryResource = new EventEntryResource(eventEntryRepository, mockEventEntrySearchRepository);
         this.restEventEntryMockMvc = MockMvcBuilders.standaloneSetup(eventEntryResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -89,7 +103,6 @@ public class EventEntryResourceIntTest {
 
     @Before
     public void initTest() {
-        eventEntrySearchRepository.deleteAll();
         eventEntry = createEntity(em);
     }
 
@@ -111,8 +124,7 @@ public class EventEntryResourceIntTest {
         assertThat(testEventEntry.getTeamName()).isEqualTo(DEFAULT_TEAM_NAME);
 
         // Validate the EventEntry in Elasticsearch
-        EventEntry eventEntryEs = eventEntrySearchRepository.findOne(testEventEntry.getId());
-        assertThat(eventEntryEs).isEqualToComparingFieldByField(testEventEntry);
+        verify(mockEventEntrySearchRepository, times(1)).save(testEventEntry);
     }
 
     @Test
@@ -132,6 +144,9 @@ public class EventEntryResourceIntTest {
         // Validate the EventEntry in the database
         List<EventEntry> eventEntryList = eventEntryRepository.findAll();
         assertThat(eventEntryList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the EventEntry in Elasticsearch
+        verify(mockEventEntrySearchRepository, times(0)).save(eventEntry);
     }
 
     @Test
@@ -165,7 +180,7 @@ public class EventEntryResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(eventEntry.getId().intValue())))
             .andExpect(jsonPath("$.[*].teamName").value(hasItem(DEFAULT_TEAM_NAME.toString())));
     }
-
+    
     @Test
     @Transactional
     public void getEventEntry() throws Exception {
@@ -193,11 +208,13 @@ public class EventEntryResourceIntTest {
     public void updateEventEntry() throws Exception {
         // Initialize the database
         eventEntryRepository.saveAndFlush(eventEntry);
-        eventEntrySearchRepository.save(eventEntry);
+
         int databaseSizeBeforeUpdate = eventEntryRepository.findAll().size();
 
         // Update the eventEntry
-        EventEntry updatedEventEntry = eventEntryRepository.findOne(eventEntry.getId());
+        EventEntry updatedEventEntry = eventEntryRepository.findById(eventEntry.getId()).get();
+        // Disconnect from session so that the updates on updatedEventEntry are not directly saved in db
+        em.detach(updatedEventEntry);
         updatedEventEntry
             .teamName(UPDATED_TEAM_NAME);
 
@@ -213,8 +230,7 @@ public class EventEntryResourceIntTest {
         assertThat(testEventEntry.getTeamName()).isEqualTo(UPDATED_TEAM_NAME);
 
         // Validate the EventEntry in Elasticsearch
-        EventEntry eventEntryEs = eventEntrySearchRepository.findOne(testEventEntry.getId());
-        assertThat(eventEntryEs).isEqualToComparingFieldByField(testEventEntry);
+        verify(mockEventEntrySearchRepository, times(1)).save(testEventEntry);
     }
 
     @Test
@@ -224,15 +240,18 @@ public class EventEntryResourceIntTest {
 
         // Create the EventEntry
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restEventEntryMockMvc.perform(put("/api/event-entries")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(eventEntry)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the EventEntry in the database
         List<EventEntry> eventEntryList = eventEntryRepository.findAll();
-        assertThat(eventEntryList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(eventEntryList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the EventEntry in Elasticsearch
+        verify(mockEventEntrySearchRepository, times(0)).save(eventEntry);
     }
 
     @Test
@@ -240,21 +259,20 @@ public class EventEntryResourceIntTest {
     public void deleteEventEntry() throws Exception {
         // Initialize the database
         eventEntryRepository.saveAndFlush(eventEntry);
-        eventEntrySearchRepository.save(eventEntry);
+
         int databaseSizeBeforeDelete = eventEntryRepository.findAll().size();
 
-        // Get the eventEntry
+        // Delete the eventEntry
         restEventEntryMockMvc.perform(delete("/api/event-entries/{id}", eventEntry.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean eventEntryExistsInEs = eventEntrySearchRepository.exists(eventEntry.getId());
-        assertThat(eventEntryExistsInEs).isFalse();
-
         // Validate the database is empty
         List<EventEntry> eventEntryList = eventEntryRepository.findAll();
         assertThat(eventEntryList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the EventEntry in Elasticsearch
+        verify(mockEventEntrySearchRepository, times(1)).deleteById(eventEntry.getId());
     }
 
     @Test
@@ -262,14 +280,14 @@ public class EventEntryResourceIntTest {
     public void searchEventEntry() throws Exception {
         // Initialize the database
         eventEntryRepository.saveAndFlush(eventEntry);
-        eventEntrySearchRepository.save(eventEntry);
-
+        when(mockEventEntrySearchRepository.search(queryStringQuery("id:" + eventEntry.getId())))
+            .thenReturn(Collections.singletonList(eventEntry));
         // Search the eventEntry
         restEventEntryMockMvc.perform(get("/api/_search/event-entries?query=id:" + eventEntry.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(eventEntry.getId().intValue())))
-            .andExpect(jsonPath("$.[*].teamName").value(hasItem(DEFAULT_TEAM_NAME.toString())));
+            .andExpect(jsonPath("$.[*].teamName").value(hasItem(DEFAULT_TEAM_NAME)));
     }
 
     @Test

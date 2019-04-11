@@ -1,11 +1,14 @@
 package com.icesoft.msdb.domain;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -19,7 +22,7 @@ import java.util.Objects;
 public class RacetrackLayout implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,6 +51,7 @@ public class RacetrackLayout implements Serializable {
     private Boolean active;
 
     @ManyToOne
+    @JsonIgnoreProperties("layouts")
     private Racetrack racetrack;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -176,10 +180,10 @@ public class RacetrackLayout implements Serializable {
         return "RacetrackLayout{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", length='" + getLength() + "'" +
-            ", yearFirstUse='" + getYearFirstUse() + "'" +
+            ", length=" + getLength() +
+            ", yearFirstUse=" + getYearFirstUse() +
             ", layoutImage='" + getLayoutImage() + "'" +
-            ", layoutImageContentType='" + layoutImageContentType + "'" +
+            ", layoutImageContentType='" + getLayoutImageContentType() + "'" +
             ", active='" + isActive() + "'" +
             "}";
     }

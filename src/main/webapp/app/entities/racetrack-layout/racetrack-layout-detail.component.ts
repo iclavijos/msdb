@@ -1,41 +1,24 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiDataUtils } from 'ng-jhipster';
+import { JhiDataUtils } from 'ng-jhipster';
 
-import { RacetrackLayout } from './racetrack-layout.model';
-import { RacetrackLayoutService } from './racetrack-layout.service';
+import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
 
 @Component({
     selector: 'jhi-racetrack-layout-detail',
     templateUrl: './racetrack-layout-detail.component.html'
 })
-export class RacetrackLayoutDetailComponent implements OnInit, OnDestroy {
+export class RacetrackLayoutDetailComponent implements OnInit {
+    racetrackLayout: IRacetrackLayout;
 
-    racetrackLayout: RacetrackLayout;
-    private subscription: Subscription;
-    private eventSubscriber: Subscription;
-
-    constructor(
-        private eventManager: JhiEventManager,
-        private dataUtils: JhiDataUtils,
-        private racetrackLayoutService: RacetrackLayoutService,
-        private route: ActivatedRoute
-    ) {
-    }
+    constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute) {}
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe((params) => {
-            this.load(params['id']);
-        });
-        this.registerChangeInRacetrackLayouts();
-    }
-
-    load(id) {
-        this.racetrackLayoutService.find(id).subscribe((racetrackLayout) => {
+        this.activatedRoute.data.subscribe(({ racetrackLayout }) => {
             this.racetrackLayout = racetrackLayout;
         });
     }
+
     byteSize(field) {
         return this.dataUtils.byteSize(field);
     }
@@ -45,17 +28,5 @@ export class RacetrackLayoutDetailComponent implements OnInit, OnDestroy {
     }
     previousState() {
         window.history.back();
-    }
-
-    ngOnDestroy() {
-        this.subscription.unsubscribe();
-        this.eventManager.destroy(this.eventSubscriber);
-    }
-
-    registerChangeInRacetrackLayouts() {
-        this.eventSubscriber = this.eventManager.subscribe(
-            'racetrackLayoutListModification',
-            (response) => this.load(this.racetrackLayout.id)
-        );
     }
 }

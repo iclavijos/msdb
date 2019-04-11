@@ -1,45 +1,78 @@
 import { Injectable } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
+import { JhiPaginationUtil, JhiResolvePagingParams } from 'ng-jhipster';
+import { UserRouteAccessService } from 'app/core';
+import { Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { PointsSystem } from 'app/shared/model/points-system.model';
+import { PointsSystemService } from './points-system.service';
 import { PointsSystemComponent } from './points-system.component';
 import { PointsSystemDetailComponent } from './points-system-detail.component';
-import { PointsSystemPopupComponent } from './points-system-dialog.component';
+import { PointsSystemUpdateComponent } from './points-system-update.component';
 import { PointsSystemDeletePopupComponent } from './points-system-delete-dialog.component';
+import { IPointsSystem } from 'app/shared/model/points-system.model';
 
-@Injectable()
-export class PointsSystemResolvePagingParams implements Resolve<any> {
+@Injectable({ providedIn: 'root' })
+export class PointsSystemResolve implements Resolve<IPointsSystem> {
+    constructor(private service: PointsSystemService) {}
 
-    constructor(private paginationUtil: JhiPaginationUtil) {}
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
-        return {
-            page: this.paginationUtil.parsePage(page),
-            predicate: this.paginationUtil.parsePredicate(sort),
-            ascending: this.paginationUtil.parseAscending(sort)
-      };
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IPointsSystem> {
+        const id = route.params['id'] ? route.params['id'] : null;
+        if (id) {
+            return this.service.find(id).pipe(
+                filter((response: HttpResponse<PointsSystem>) => response.ok),
+                map((pointsSystem: HttpResponse<PointsSystem>) => pointsSystem.body)
+            );
+        }
+        return of(new PointsSystem());
     }
 }
 
 export const pointsSystemRoute: Routes = [
     {
-        path: 'points-system',
+        path: '',
         component: PointsSystemComponent,
         resolve: {
-            'pagingParams': PointsSystemResolvePagingParams
+            pagingParams: JhiResolvePagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            defaultSort: 'id,asc',
+            pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/view',
+        component: PointsSystemDetailComponent,
+        resolve: {
+            pointsSystem: PointsSystemResolve
         },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
         },
         canActivate: [UserRouteAccessService]
-    }, {
-        path: 'points-system/:id',
-        component: PointsSystemDetailComponent,
+    },
+    {
+        path: 'new',
+        component: PointsSystemUpdateComponent,
+        resolve: {
+            pointsSystem: PointsSystemResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/edit',
+        component: PointsSystemUpdateComponent,
+        resolve: {
+            pointsSystem: PointsSystemResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
@@ -50,28 +83,11 @@ export const pointsSystemRoute: Routes = [
 
 export const pointsSystemPopupRoute: Routes = [
     {
-        path: 'points-system-new',
-        component: PointsSystemPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'points-system/:id/edit',
-        component: PointsSystemPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'points-system/:id/delete',
+        path: ':id/delete',
         component: PointsSystemDeletePopupComponent,
+        resolve: {
+            pointsSystem: PointsSystemResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'

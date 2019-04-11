@@ -1,45 +1,78 @@
 import { Injectable } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
+import { JhiPaginationUtil, JhiResolvePagingParams } from 'ng-jhipster';
+import { UserRouteAccessService } from 'app/core';
+import { Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { FuelProvider } from 'app/shared/model/fuel-provider.model';
+import { FuelProviderService } from './fuel-provider.service';
 import { FuelProviderComponent } from './fuel-provider.component';
 import { FuelProviderDetailComponent } from './fuel-provider-detail.component';
-import { FuelProviderPopupComponent } from './fuel-provider-dialog.component';
+import { FuelProviderUpdateComponent } from './fuel-provider-update.component';
 import { FuelProviderDeletePopupComponent } from './fuel-provider-delete-dialog.component';
+import { IFuelProvider } from 'app/shared/model/fuel-provider.model';
 
-@Injectable()
-export class FuelProviderResolvePagingParams implements Resolve<any> {
+@Injectable({ providedIn: 'root' })
+export class FuelProviderResolve implements Resolve<IFuelProvider> {
+    constructor(private service: FuelProviderService) {}
 
-    constructor(private paginationUtil: JhiPaginationUtil) {}
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
-        return {
-            page: this.paginationUtil.parsePage(page),
-            predicate: this.paginationUtil.parsePredicate(sort),
-            ascending: this.paginationUtil.parseAscending(sort)
-      };
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IFuelProvider> {
+        const id = route.params['id'] ? route.params['id'] : null;
+        if (id) {
+            return this.service.find(id).pipe(
+                filter((response: HttpResponse<FuelProvider>) => response.ok),
+                map((fuelProvider: HttpResponse<FuelProvider>) => fuelProvider.body)
+            );
+        }
+        return of(new FuelProvider());
     }
 }
 
 export const fuelProviderRoute: Routes = [
     {
-        path: 'fuel-provider',
+        path: '',
         component: FuelProviderComponent,
         resolve: {
-            'pagingParams': FuelProviderResolvePagingParams
+            pagingParams: JhiResolvePagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            defaultSort: 'id,asc',
+            pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/view',
+        component: FuelProviderDetailComponent,
+        resolve: {
+            fuelProvider: FuelProviderResolve
         },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
         },
         canActivate: [UserRouteAccessService]
-    }, {
-        path: 'fuel-provider/:id',
-        component: FuelProviderDetailComponent,
+    },
+    {
+        path: 'new',
+        component: FuelProviderUpdateComponent,
+        resolve: {
+            fuelProvider: FuelProviderResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/edit',
+        component: FuelProviderUpdateComponent,
+        resolve: {
+            fuelProvider: FuelProviderResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
@@ -50,28 +83,11 @@ export const fuelProviderRoute: Routes = [
 
 export const fuelProviderPopupRoute: Routes = [
     {
-        path: 'fuel-provider-new',
-        component: FuelProviderPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'fuel-provider/:id/edit',
-        component: FuelProviderPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'fuel-provider/:id/delete',
+        path: ':id/delete',
         component: FuelProviderDeletePopupComponent,
+        resolve: {
+            fuelProvider: FuelProviderResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'

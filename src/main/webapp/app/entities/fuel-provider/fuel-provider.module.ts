@@ -1,51 +1,45 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { JhiLanguageService } from 'ng-jhipster';
+import { JhiLanguageHelper } from 'app/core';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
+import { MotorsportsDatabaseSharedModule } from 'app/shared';
 import {
-    FuelProviderService,
-    FuelProviderPopupService,
     FuelProviderComponent,
     FuelProviderDetailComponent,
-    FuelProviderDialogComponent,
-    FuelProviderPopupComponent,
+    FuelProviderUpdateComponent,
     FuelProviderDeletePopupComponent,
     FuelProviderDeleteDialogComponent,
     fuelProviderRoute,
-    fuelProviderPopupRoute,
-    FuelProviderResolvePagingParams,
+    fuelProviderPopupRoute
 } from './';
 
-const ENTITY_STATES = [
-    ...fuelProviderRoute,
-    ...fuelProviderPopupRoute,
-];
+const ENTITY_STATES = [...fuelProviderRoute, ...fuelProviderPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
+    imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
     declarations: [
         FuelProviderComponent,
         FuelProviderDetailComponent,
-        FuelProviderDialogComponent,
+        FuelProviderUpdateComponent,
         FuelProviderDeleteDialogComponent,
-        FuelProviderPopupComponent,
-        FuelProviderDeletePopupComponent,
+        FuelProviderDeletePopupComponent
     ],
     entryComponents: [
         FuelProviderComponent,
-        FuelProviderDialogComponent,
-        FuelProviderPopupComponent,
+        FuelProviderUpdateComponent,
         FuelProviderDeleteDialogComponent,
-        FuelProviderDeletePopupComponent,
+        FuelProviderDeletePopupComponent
     ],
-    providers: [
-        FuelProviderService,
-        FuelProviderPopupService,
-        FuelProviderResolvePagingParams,
-    ],
+    providers: [{ provide: JhiLanguageService, useClass: JhiLanguageService }],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class MotorsportsDatabaseFuelProviderModule {}
+export class MotorsportsDatabaseFuelProviderModule {
+    constructor(private languageService: JhiLanguageService, private languageHelper: JhiLanguageHelper) {
+        this.languageHelper.language.subscribe((languageKey: string) => {
+            if (languageKey !== undefined) {
+                this.languageService.changeLanguage(languageKey);
+            }
+        });
+    }
+}

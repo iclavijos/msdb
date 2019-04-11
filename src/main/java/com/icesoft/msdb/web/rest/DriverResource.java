@@ -1,14 +1,10 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Driver;
-
 import com.icesoft.msdb.repository.DriverRepository;
 import com.icesoft.msdb.repository.search.DriverSearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +54,6 @@ public class DriverResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/drivers")
-    @Timed
     public ResponseEntity<Driver> createDriver(@Valid @RequestBody Driver driver) throws URISyntaxException {
         log.debug("REST request to save Driver : {}", driver);
         if (driver.getId() != null) {
@@ -81,11 +76,10 @@ public class DriverResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/drivers")
-    @Timed
     public ResponseEntity<Driver> updateDriver(@Valid @RequestBody Driver driver) throws URISyntaxException {
         log.debug("REST request to update Driver : {}", driver);
         if (driver.getId() == null) {
-            return createDriver(driver);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Driver result = driverRepository.save(driver);
         driverSearchRepository.save(result);
@@ -101,12 +95,11 @@ public class DriverResource {
      * @return the ResponseEntity with status 200 (OK) and the list of drivers in body
      */
     @GetMapping("/drivers")
-    @Timed
-    public ResponseEntity<List<Driver>> getAllDrivers(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<Driver>> getAllDrivers(Pageable pageable) {
         log.debug("REST request to get a page of Drivers");
         Page<Driver> page = driverRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/drivers");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -116,11 +109,10 @@ public class DriverResource {
      * @return the ResponseEntity with status 200 (OK) and with body the driver, or with status 404 (Not Found)
      */
     @GetMapping("/drivers/{id}")
-    @Timed
     public ResponseEntity<Driver> getDriver(@PathVariable Long id) {
         log.debug("REST request to get Driver : {}", id);
-        Driver driver = driverRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(driver));
+        Optional<Driver> driver = driverRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(driver);
     }
 
     /**
@@ -130,11 +122,10 @@ public class DriverResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/drivers/{id}")
-    @Timed
     public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
         log.debug("REST request to delete Driver : {}", id);
-        driverRepository.delete(id);
-        driverSearchRepository.delete(id);
+        driverRepository.deleteById(id);
+        driverSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -147,12 +138,11 @@ public class DriverResource {
      * @return the result of the search
      */
     @GetMapping("/_search/drivers")
-    @Timed
-    public ResponseEntity<List<Driver>> searchDrivers(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<Driver>> searchDrivers(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Drivers for query {}", query);
         Page<Driver> page = driverSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/drivers");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
 }

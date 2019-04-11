@@ -1,41 +1,24 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiDataUtils } from 'ng-jhipster';
+import { JhiDataUtils } from 'ng-jhipster';
 
-import { Series } from './series.model';
-import { SeriesService } from './series.service';
+import { ISeries } from 'app/shared/model/series.model';
 
 @Component({
     selector: 'jhi-series-detail',
     templateUrl: './series-detail.component.html'
 })
-export class SeriesDetailComponent implements OnInit, OnDestroy {
+export class SeriesDetailComponent implements OnInit {
+    series: ISeries;
 
-    series: Series;
-    private subscription: Subscription;
-    private eventSubscriber: Subscription;
-
-    constructor(
-        private eventManager: JhiEventManager,
-        private dataUtils: JhiDataUtils,
-        private seriesService: SeriesService,
-        private route: ActivatedRoute
-    ) {
-    }
+    constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute) {}
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe((params) => {
-            this.load(params['id']);
-        });
-        this.registerChangeInSeries();
-    }
-
-    load(id) {
-        this.seriesService.find(id).subscribe((series) => {
+        this.activatedRoute.data.subscribe(({ series }) => {
             this.series = series;
         });
     }
+
     byteSize(field) {
         return this.dataUtils.byteSize(field);
     }
@@ -45,17 +28,5 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
     }
     previousState() {
         window.history.back();
-    }
-
-    ngOnDestroy() {
-        this.subscription.unsubscribe();
-        this.eventManager.destroy(this.eventSubscriber);
-    }
-
-    registerChangeInSeries() {
-        this.eventSubscriber = this.eventManager.subscribe(
-            'seriesListModification',
-            (response) => this.load(this.series.id)
-        );
     }
 }

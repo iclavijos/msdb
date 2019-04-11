@@ -1,11 +1,13 @@
 package com.icesoft.msdb.domain;
 
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +23,7 @@ import java.util.Objects;
 public class Team implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,8 +51,8 @@ public class Team implements Serializable {
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JoinTable(name = "team_participations",
-               joinColumns = @JoinColumn(name="teams_id", referencedColumnName="id"),
-               inverseJoinColumns = @JoinColumn(name="participations_id", referencedColumnName="id"))
+               joinColumns = @JoinColumn(name = "team_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "participations_id", referencedColumnName = "id"))
     private Set<EventEntry> participations = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -181,7 +183,7 @@ public class Team implements Serializable {
             ", description='" + getDescription() + "'" +
             ", hqLocation='" + getHqLocation() + "'" +
             ", logo='" + getLogo() + "'" +
-            ", logoContentType='" + logoContentType + "'" +
+            ", logoContentType='" + getLogoContentType() + "'" +
             "}";
     }
 }

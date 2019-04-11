@@ -1,14 +1,10 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Chassis;
-
 import com.icesoft.msdb.repository.ChassisRepository;
 import com.icesoft.msdb.repository.search.ChassisSearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +54,6 @@ public class ChassisResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/chassis")
-    @Timed
     public ResponseEntity<Chassis> createChassis(@Valid @RequestBody Chassis chassis) throws URISyntaxException {
         log.debug("REST request to save Chassis : {}", chassis);
         if (chassis.getId() != null) {
@@ -81,11 +76,10 @@ public class ChassisResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/chassis")
-    @Timed
     public ResponseEntity<Chassis> updateChassis(@Valid @RequestBody Chassis chassis) throws URISyntaxException {
         log.debug("REST request to update Chassis : {}", chassis);
         if (chassis.getId() == null) {
-            return createChassis(chassis);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Chassis result = chassisRepository.save(chassis);
         chassisSearchRepository.save(result);
@@ -101,12 +95,11 @@ public class ChassisResource {
      * @return the ResponseEntity with status 200 (OK) and the list of chassis in body
      */
     @GetMapping("/chassis")
-    @Timed
-    public ResponseEntity<List<Chassis>> getAllChassis(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<Chassis>> getAllChassis(Pageable pageable) {
         log.debug("REST request to get a page of Chassis");
         Page<Chassis> page = chassisRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/chassis");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -116,11 +109,10 @@ public class ChassisResource {
      * @return the ResponseEntity with status 200 (OK) and with body the chassis, or with status 404 (Not Found)
      */
     @GetMapping("/chassis/{id}")
-    @Timed
     public ResponseEntity<Chassis> getChassis(@PathVariable Long id) {
         log.debug("REST request to get Chassis : {}", id);
-        Chassis chassis = chassisRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(chassis));
+        Optional<Chassis> chassis = chassisRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(chassis);
     }
 
     /**
@@ -130,11 +122,10 @@ public class ChassisResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/chassis/{id}")
-    @Timed
     public ResponseEntity<Void> deleteChassis(@PathVariable Long id) {
         log.debug("REST request to delete Chassis : {}", id);
-        chassisRepository.delete(id);
-        chassisSearchRepository.delete(id);
+        chassisRepository.deleteById(id);
+        chassisSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -147,12 +138,11 @@ public class ChassisResource {
      * @return the result of the search
      */
     @GetMapping("/_search/chassis")
-    @Timed
-    public ResponseEntity<List<Chassis>> searchChassis(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<Chassis>> searchChassis(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Chassis for query {}", query);
         Page<Chassis> page = chassisSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/chassis");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
 }

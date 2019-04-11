@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "chassis" : {
+        "chassis": {
             "home": {
                 "title": "Chassis",
                 "createLabel": "Create a new Chassis",

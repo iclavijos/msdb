@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { SeriesEdition } from './series-edition.model';
-import { SeriesEditionPopupService } from './series-edition-popup.service';
+import { ISeriesEdition } from 'app/shared/model/series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
 
 @Component({
@@ -13,22 +12,20 @@ import { SeriesEditionService } from './series-edition.service';
     templateUrl: './series-edition-delete-dialog.component.html'
 })
 export class SeriesEditionDeleteDialogComponent {
-
-    seriesEdition: SeriesEdition;
+    seriesEdition: ISeriesEdition;
 
     constructor(
-        private seriesEditionService: SeriesEditionService,
+        protected seriesEditionService: SeriesEditionService,
         public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+        protected eventManager: JhiEventManager
+    ) {}
 
     clear() {
         this.activeModal.dismiss('cancel');
     }
 
     confirmDelete(id: number) {
-        this.seriesEditionService.delete(id).subscribe((response) => {
+        this.seriesEditionService.delete(id).subscribe(response => {
             this.eventManager.broadcast({
                 name: 'seriesEditionListModification',
                 content: 'Deleted an seriesEdition'
@@ -43,22 +40,33 @@ export class SeriesEditionDeleteDialogComponent {
     template: ''
 })
 export class SeriesEditionDeletePopupComponent implements OnInit, OnDestroy {
+    protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
-
-    constructor(
-        private route: ActivatedRoute,
-        private seriesEditionPopupService: SeriesEditionPopupService
-    ) {}
+    constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.seriesEditionPopupService
-                .open(SeriesEditionDeleteDialogComponent as Component, params['id']);
+        this.activatedRoute.data.subscribe(({ seriesEdition }) => {
+            setTimeout(() => {
+                this.ngbModalRef = this.modalService.open(SeriesEditionDeleteDialogComponent as Component, {
+                    size: 'lg',
+                    backdrop: 'static'
+                });
+                this.ngbModalRef.componentInstance.seriesEdition = seriesEdition;
+                this.ngbModalRef.result.then(
+                    result => {
+                        this.router.navigate(['/series-edition', { outlets: { popup: null } }]);
+                        this.ngbModalRef = null;
+                    },
+                    reason => {
+                        this.router.navigate(['/series-edition', { outlets: { popup: null } }]);
+                        this.ngbModalRef = null;
+                    }
+                );
+            }, 0);
         });
     }
 
     ngOnDestroy() {
-        this.routeSub.unsubscribe();
+        this.ngbModalRef = null;
     }
 }

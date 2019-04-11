@@ -1,51 +1,40 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { JhiLanguageService } from 'ng-jhipster';
+import { JhiLanguageHelper } from 'app/core';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
+import { MotorsportsDatabaseSharedModule } from 'app/shared';
 import {
-    CategoryService,
-    CategoryPopupService,
     CategoryComponent,
     CategoryDetailComponent,
-    CategoryDialogComponent,
-    CategoryPopupComponent,
+    CategoryUpdateComponent,
     CategoryDeletePopupComponent,
     CategoryDeleteDialogComponent,
     categoryRoute,
-    categoryPopupRoute,
-    CategoryResolvePagingParams,
+    categoryPopupRoute
 } from './';
 
-const ENTITY_STATES = [
-    ...categoryRoute,
-    ...categoryPopupRoute,
-];
+const ENTITY_STATES = [...categoryRoute, ...categoryPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
+    imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
     declarations: [
         CategoryComponent,
         CategoryDetailComponent,
-        CategoryDialogComponent,
+        CategoryUpdateComponent,
         CategoryDeleteDialogComponent,
-        CategoryPopupComponent,
-        CategoryDeletePopupComponent,
+        CategoryDeletePopupComponent
     ],
-    entryComponents: [
-        CategoryComponent,
-        CategoryDialogComponent,
-        CategoryPopupComponent,
-        CategoryDeleteDialogComponent,
-        CategoryDeletePopupComponent,
-    ],
-    providers: [
-        CategoryService,
-        CategoryPopupService,
-        CategoryResolvePagingParams,
-    ],
+    entryComponents: [CategoryComponent, CategoryUpdateComponent, CategoryDeleteDialogComponent, CategoryDeletePopupComponent],
+    providers: [{ provide: JhiLanguageService, useClass: JhiLanguageService }],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class MotorsportsDatabaseCategoryModule {}
+export class MotorsportsDatabaseCategoryModule {
+    constructor(private languageService: JhiLanguageService, private languageHelper: JhiLanguageHelper) {
+        this.languageHelper.language.subscribe((languageKey: string) => {
+            if (languageKey !== undefined) {
+                this.languageService.changeLanguage(languageKey);
+            }
+        });
+    }
+}

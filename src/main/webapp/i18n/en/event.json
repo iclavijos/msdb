@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "event" : {
+        "event": {
             "home": {
                 "title": "Events",
                 "createLabel": "Create a new Event",

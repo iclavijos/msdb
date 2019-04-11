@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { Series } from './series.model';
-import { SeriesPopupService } from './series-popup.service';
+import { ISeries } from 'app/shared/model/series.model';
 import { SeriesService } from './series.service';
 
 @Component({
@@ -13,22 +12,16 @@ import { SeriesService } from './series.service';
     templateUrl: './series-delete-dialog.component.html'
 })
 export class SeriesDeleteDialogComponent {
+    series: ISeries;
 
-    series: Series;
-
-    constructor(
-        private seriesService: SeriesService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+    constructor(protected seriesService: SeriesService, public activeModal: NgbActiveModal, protected eventManager: JhiEventManager) {}
 
     clear() {
         this.activeModal.dismiss('cancel');
     }
 
     confirmDelete(id: number) {
-        this.seriesService.delete(id).subscribe((response) => {
+        this.seriesService.delete(id).subscribe(response => {
             this.eventManager.broadcast({
                 name: 'seriesListModification',
                 content: 'Deleted an series'
@@ -43,22 +36,30 @@ export class SeriesDeleteDialogComponent {
     template: ''
 })
 export class SeriesDeletePopupComponent implements OnInit, OnDestroy {
+    protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
-
-    constructor(
-        private route: ActivatedRoute,
-        private seriesPopupService: SeriesPopupService
-    ) {}
+    constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.seriesPopupService
-                .open(SeriesDeleteDialogComponent as Component, params['id']);
+        this.activatedRoute.data.subscribe(({ series }) => {
+            setTimeout(() => {
+                this.ngbModalRef = this.modalService.open(SeriesDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
+                this.ngbModalRef.componentInstance.series = series;
+                this.ngbModalRef.result.then(
+                    result => {
+                        this.router.navigate(['/series', { outlets: { popup: null } }]);
+                        this.ngbModalRef = null;
+                    },
+                    reason => {
+                        this.router.navigate(['/series', { outlets: { popup: null } }]);
+                        this.ngbModalRef = null;
+                    }
+                );
+            }, 0);
         });
     }
 
     ngOnDestroy() {
-        this.routeSub.unsubscribe();
+        this.ngbModalRef = null;
     }
 }

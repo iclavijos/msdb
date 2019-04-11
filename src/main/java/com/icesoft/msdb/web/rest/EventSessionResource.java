@@ -1,8 +1,5 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.EventSession;
-
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.search.EventSessionSearchRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
@@ -52,7 +49,6 @@ public class EventSessionResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/event-sessions")
-    @Timed
     public ResponseEntity<EventSession> createEventSession(@Valid @RequestBody EventSession eventSession) throws URISyntaxException {
         log.debug("REST request to save EventSession : {}", eventSession);
         if (eventSession.getId() != null) {
@@ -75,11 +71,10 @@ public class EventSessionResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/event-sessions")
-    @Timed
     public ResponseEntity<EventSession> updateEventSession(@Valid @RequestBody EventSession eventSession) throws URISyntaxException {
         log.debug("REST request to update EventSession : {}", eventSession);
         if (eventSession.getId() == null) {
-            return createEventSession(eventSession);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         EventSession result = eventSessionRepository.save(eventSession);
         eventSessionSearchRepository.save(result);
@@ -94,11 +89,10 @@ public class EventSessionResource {
      * @return the ResponseEntity with status 200 (OK) and the list of eventSessions in body
      */
     @GetMapping("/event-sessions")
-    @Timed
     public List<EventSession> getAllEventSessions() {
         log.debug("REST request to get all EventSessions");
         return eventSessionRepository.findAll();
-        }
+    }
 
     /**
      * GET  /event-sessions/:id : get the "id" eventSession.
@@ -107,11 +101,10 @@ public class EventSessionResource {
      * @return the ResponseEntity with status 200 (OK) and with body the eventSession, or with status 404 (Not Found)
      */
     @GetMapping("/event-sessions/{id}")
-    @Timed
     public ResponseEntity<EventSession> getEventSession(@PathVariable Long id) {
         log.debug("REST request to get EventSession : {}", id);
-        EventSession eventSession = eventSessionRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventSession));
+        Optional<EventSession> eventSession = eventSessionRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(eventSession);
     }
 
     /**
@@ -121,11 +114,10 @@ public class EventSessionResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/event-sessions/{id}")
-    @Timed
     public ResponseEntity<Void> deleteEventSession(@PathVariable Long id) {
         log.debug("REST request to delete EventSession : {}", id);
-        eventSessionRepository.delete(id);
-        eventSessionSearchRepository.delete(id);
+        eventSessionRepository.deleteById(id);
+        eventSessionSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -137,7 +129,6 @@ public class EventSessionResource {
      * @return the result of the search
      */
     @GetMapping("/_search/event-sessions")
-    @Timed
     public List<EventSession> searchEventSessions(@RequestParam String query) {
         log.debug("REST request to search EventSessions for query {}", query);
         return StreamSupport

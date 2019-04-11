@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "eventSession" : {
+        "eventSession": {
             "home": {
                 "title": "Event Sessions",
                 "createLabel": "Crear nuevo Event Session",

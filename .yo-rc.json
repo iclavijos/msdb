@@ -1,6 +1,6 @@
 {
   "generator-jhipster": {
-    "jhipsterVersion": "4.10.2",
+    "jhipsterVersion": "5.8.2",
     "baseName": "MotorsportsDatabase",
     "packageName": "com.icesoft.msdb",
     "packageFolder": "com/icesoft/msdb",
@@ -30,6 +30,11 @@
       "ca",
       "es"
     ],
-    "clientFramework": "angularX"
+    "clientFramework": "angularX",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": []
   }
 }

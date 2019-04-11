@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { PointsSystem } from './points-system.model';
-import { PointsSystemPopupService } from './points-system-popup.service';
+import { IPointsSystem } from 'app/shared/model/points-system.model';
 import { PointsSystemService } from './points-system.service';
 
 @Component({
@@ -13,22 +12,20 @@ import { PointsSystemService } from './points-system.service';
     templateUrl: './points-system-delete-dialog.component.html'
 })
 export class PointsSystemDeleteDialogComponent {
-
-    pointsSystem: PointsSystem;
+    pointsSystem: IPointsSystem;
 
     constructor(
-        private pointsSystemService: PointsSystemService,
+        protected pointsSystemService: PointsSystemService,
         public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+        protected eventManager: JhiEventManager
+    ) {}
 
     clear() {
         this.activeModal.dismiss('cancel');
     }
 
     confirmDelete(id: number) {
-        this.pointsSystemService.delete(id).subscribe((response) => {
+        this.pointsSystemService.delete(id).subscribe(response => {
             this.eventManager.broadcast({
                 name: 'pointsSystemListModification',
                 content: 'Deleted an pointsSystem'
@@ -43,22 +40,33 @@ export class PointsSystemDeleteDialogComponent {
     template: ''
 })
 export class PointsSystemDeletePopupComponent implements OnInit, OnDestroy {
+    protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
-
-    constructor(
-        private route: ActivatedRoute,
-        private pointsSystemPopupService: PointsSystemPopupService
-    ) {}
+    constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.pointsSystemPopupService
-                .open(PointsSystemDeleteDialogComponent as Component, params['id']);
+        this.activatedRoute.data.subscribe(({ pointsSystem }) => {
+            setTimeout(() => {
+                this.ngbModalRef = this.modalService.open(PointsSystemDeleteDialogComponent as Component, {
+                    size: 'lg',
+                    backdrop: 'static'
+                });
+                this.ngbModalRef.componentInstance.pointsSystem = pointsSystem;
+                this.ngbModalRef.result.then(
+                    result => {
+                        this.router.navigate(['/points-system', { outlets: { popup: null } }]);
+                        this.ngbModalRef = null;
+                    },
+                    reason => {
+                        this.router.navigate(['/points-system', { outlets: { popup: null } }]);
+                        this.ngbModalRef = null;
+                    }
+                );
+            }, 0);
         });
     }
 
     ngOnDestroy() {
-        this.routeSub.unsubscribe();
+        this.ngbModalRef = null;
     }
 }

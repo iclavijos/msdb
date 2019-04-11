@@ -20,13 +20,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
+
 
 import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -57,8 +62,13 @@ public class EventEntryResultResourceIntTest {
     @Autowired
     private EventEntryResultRepository eventEntryResultRepository;
 
+    /**
+     * This repository is mocked in the com.icesoft.msdb.repository.search test package.
+     *
+     * @see com.icesoft.msdb.repository.search.EventEntryResultSearchRepositoryMockConfiguration
+     */
     @Autowired
-    private EventEntryResultSearchRepository eventEntryResultSearchRepository;
+    private EventEntryResultSearchRepository mockEventEntryResultSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -72,6 +82,9 @@ public class EventEntryResultResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private Validator validator;
+
     private MockMvc restEventEntryResultMockMvc;
 
     private EventEntryResult eventEntryResult;
@@ -79,12 +92,13 @@ public class EventEntryResultResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final EventEntryResultResource eventEntryResultResource = new EventEntryResultResource(eventEntryResultRepository, eventEntryResultSearchRepository);
+        final EventEntryResultResource eventEntryResultResource = new EventEntryResultResource(eventEntryResultRepository, mockEventEntryResultSearchRepository);
         this.restEventEntryResultMockMvc = MockMvcBuilders.standaloneSetup(eventEntryResultResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -105,7 +119,6 @@ public class EventEntryResultResourceIntTest {
 
     @Before
     public void initTest() {
-        eventEntryResultSearchRepository.deleteAll();
         eventEntryResult = createEntity(em);
     }
 
@@ -131,8 +144,7 @@ public class EventEntryResultResourceIntTest {
         assertThat(testEventEntryResult.isRetired()).isEqualTo(DEFAULT_RETIRED);
 
         // Validate the EventEntryResult in Elasticsearch
-        EventEntryResult eventEntryResultEs = eventEntryResultSearchRepository.findOne(testEventEntryResult.getId());
-        assertThat(eventEntryResultEs).isEqualToComparingFieldByField(testEventEntryResult);
+        verify(mockEventEntryResultSearchRepository, times(1)).save(testEventEntryResult);
     }
 
     @Test
@@ -152,6 +164,9 @@ public class EventEntryResultResourceIntTest {
         // Validate the EventEntryResult in the database
         List<EventEntryResult> eventEntryResultList = eventEntryResultRepository.findAll();
         assertThat(eventEntryResultList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the EventEntryResult in Elasticsearch
+        verify(mockEventEntryResultSearchRepository, times(0)).save(eventEntryResult);
     }
 
     @Test
@@ -171,7 +186,7 @@ public class EventEntryResultResourceIntTest {
             .andExpect(jsonPath("$.[*].lapsCompleted").value(hasItem(DEFAULT_LAPS_COMPLETED)))
             .andExpect(jsonPath("$.[*].retired").value(hasItem(DEFAULT_RETIRED.booleanValue())));
     }
-
+    
     @Test
     @Transactional
     public void getEventEntryResult() throws Exception {
@@ -203,11 +218,13 @@ public class EventEntryResultResourceIntTest {
     public void updateEventEntryResult() throws Exception {
         // Initialize the database
         eventEntryResultRepository.saveAndFlush(eventEntryResult);
-        eventEntryResultSearchRepository.save(eventEntryResult);
+
         int databaseSizeBeforeUpdate = eventEntryResultRepository.findAll().size();
 
         // Update the eventEntryResult
-        EventEntryResult updatedEventEntryResult = eventEntryResultRepository.findOne(eventEntryResult.getId());
+        EventEntryResult updatedEventEntryResult = eventEntryResultRepository.findById(eventEntryResult.getId()).get();
+        // Disconnect from session so that the updates on updatedEventEntryResult are not directly saved in db
+        em.detach(updatedEventEntryResult);
         updatedEventEntryResult
             .finalPosition(UPDATED_FINAL_POSITION)
             .totalTime(UPDATED_TOTAL_TIME)
@@ -231,8 +248,7 @@ public class EventEntryResultResourceIntTest {
         assertThat(testEventEntryResult.isRetired()).isEqualTo(UPDATED_RETIRED);
 
         // Validate the EventEntryResult in Elasticsearch
-        EventEntryResult eventEntryResultEs = eventEntryResultSearchRepository.findOne(testEventEntryResult.getId());
-        assertThat(eventEntryResultEs).isEqualToComparingFieldByField(testEventEntryResult);
+        verify(mockEventEntryResultSearchRepository, times(1)).save(testEventEntryResult);
     }
 
     @Test
@@ -242,15 +258,18 @@ public class EventEntryResultResourceIntTest {
 
         // Create the EventEntryResult
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restEventEntryResultMockMvc.perform(put("/api/event-entry-results")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(eventEntryResult)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the EventEntryResult in the database
         List<EventEntryResult> eventEntryResultList = eventEntryResultRepository.findAll();
-        assertThat(eventEntryResultList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(eventEntryResultList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the EventEntryResult in Elasticsearch
+        verify(mockEventEntryResultSearchRepository, times(0)).save(eventEntryResult);
     }
 
     @Test
@@ -258,21 +277,20 @@ public class EventEntryResultResourceIntTest {
     public void deleteEventEntryResult() throws Exception {
         // Initialize the database
         eventEntryResultRepository.saveAndFlush(eventEntryResult);
-        eventEntryResultSearchRepository.save(eventEntryResult);
+
         int databaseSizeBeforeDelete = eventEntryResultRepository.findAll().size();
 
-        // Get the eventEntryResult
+        // Delete the eventEntryResult
         restEventEntryResultMockMvc.perform(delete("/api/event-entry-results/{id}", eventEntryResult.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean eventEntryResultExistsInEs = eventEntryResultSearchRepository.exists(eventEntryResult.getId());
-        assertThat(eventEntryResultExistsInEs).isFalse();
-
         // Validate the database is empty
         List<EventEntryResult> eventEntryResultList = eventEntryResultRepository.findAll();
         assertThat(eventEntryResultList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the EventEntryResult in Elasticsearch
+        verify(mockEventEntryResultSearchRepository, times(1)).deleteById(eventEntryResult.getId());
     }
 
     @Test
@@ -280,8 +298,8 @@ public class EventEntryResultResourceIntTest {
     public void searchEventEntryResult() throws Exception {
         // Initialize the database
         eventEntryResultRepository.saveAndFlush(eventEntryResult);
-        eventEntryResultSearchRepository.save(eventEntryResult);
-
+        when(mockEventEntryResultSearchRepository.search(queryStringQuery("id:" + eventEntryResult.getId())))
+            .thenReturn(Collections.singletonList(eventEntryResult));
         // Search the eventEntryResult
         restEventEntryResultMockMvc.perform(get("/api/_search/event-entry-results?query=id:" + eventEntryResult.getId()))
             .andExpect(status().isOk())

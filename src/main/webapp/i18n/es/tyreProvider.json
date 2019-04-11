@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "tyreProvider" : {
+        "tyreProvider": {
             "home": {
                 "title": "Tyre Providers",
                 "createLabel": "Crear nuevo Tyre Provider",

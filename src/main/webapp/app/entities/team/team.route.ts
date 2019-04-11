@@ -1,45 +1,78 @@
 import { Injectable } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
+import { JhiPaginationUtil, JhiResolvePagingParams } from 'ng-jhipster';
+import { UserRouteAccessService } from 'app/core';
+import { Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { Team } from 'app/shared/model/team.model';
+import { TeamService } from './team.service';
 import { TeamComponent } from './team.component';
 import { TeamDetailComponent } from './team-detail.component';
-import { TeamPopupComponent } from './team-dialog.component';
+import { TeamUpdateComponent } from './team-update.component';
 import { TeamDeletePopupComponent } from './team-delete-dialog.component';
+import { ITeam } from 'app/shared/model/team.model';
 
-@Injectable()
-export class TeamResolvePagingParams implements Resolve<any> {
+@Injectable({ providedIn: 'root' })
+export class TeamResolve implements Resolve<ITeam> {
+    constructor(private service: TeamService) {}
 
-    constructor(private paginationUtil: JhiPaginationUtil) {}
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
-        return {
-            page: this.paginationUtil.parsePage(page),
-            predicate: this.paginationUtil.parsePredicate(sort),
-            ascending: this.paginationUtil.parseAscending(sort)
-      };
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ITeam> {
+        const id = route.params['id'] ? route.params['id'] : null;
+        if (id) {
+            return this.service.find(id).pipe(
+                filter((response: HttpResponse<Team>) => response.ok),
+                map((team: HttpResponse<Team>) => team.body)
+            );
+        }
+        return of(new Team());
     }
 }
 
 export const teamRoute: Routes = [
     {
-        path: 'team',
+        path: '',
         component: TeamComponent,
         resolve: {
-            'pagingParams': TeamResolvePagingParams
+            pagingParams: JhiResolvePagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            defaultSort: 'id,asc',
+            pageTitle: 'motorsportsDatabaseApp.team.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/view',
+        component: TeamDetailComponent,
+        resolve: {
+            team: TeamResolve
         },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.team.home.title'
         },
         canActivate: [UserRouteAccessService]
-    }, {
-        path: 'team/:id',
-        component: TeamDetailComponent,
+    },
+    {
+        path: 'new',
+        component: TeamUpdateComponent,
+        resolve: {
+            team: TeamResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'motorsportsDatabaseApp.team.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    },
+    {
+        path: ':id/edit',
+        component: TeamUpdateComponent,
+        resolve: {
+            team: TeamResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.team.home.title'
@@ -50,28 +83,11 @@ export const teamRoute: Routes = [
 
 export const teamPopupRoute: Routes = [
     {
-        path: 'team-new',
-        component: TeamPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.team.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'team/:id/edit',
-        component: TeamPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.team.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    },
-    {
-        path: 'team/:id/delete',
+        path: ':id/delete',
         component: TeamDeletePopupComponent,
+        resolve: {
+            team: TeamResolve
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'motorsportsDatabaseApp.team.home.title'

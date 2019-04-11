@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { Chassis } from './chassis.model';
-import { ChassisPopupService } from './chassis-popup.service';
+import { IChassis } from 'app/shared/model/chassis.model';
 import { ChassisService } from './chassis.service';
 
 @Component({
@@ -13,22 +12,16 @@ import { ChassisService } from './chassis.service';
     templateUrl: './chassis-delete-dialog.component.html'
 })
 export class ChassisDeleteDialogComponent {
+    chassis: IChassis;
 
-    chassis: Chassis;
-
-    constructor(
-        private chassisService: ChassisService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+    constructor(protected chassisService: ChassisService, public activeModal: NgbActiveModal, protected eventManager: JhiEventManager) {}
 
     clear() {
         this.activeModal.dismiss('cancel');
     }
 
     confirmDelete(id: number) {
-        this.chassisService.delete(id).subscribe((response) => {
+        this.chassisService.delete(id).subscribe(response => {
             this.eventManager.broadcast({
                 name: 'chassisListModification',
                 content: 'Deleted an chassis'
@@ -43,22 +36,30 @@ export class ChassisDeleteDialogComponent {
     template: ''
 })
 export class ChassisDeletePopupComponent implements OnInit, OnDestroy {
+    protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
-
-    constructor(
-        private route: ActivatedRoute,
-        private chassisPopupService: ChassisPopupService
-    ) {}
+    constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.chassisPopupService
-                .open(ChassisDeleteDialogComponent as Component, params['id']);
+        this.activatedRoute.data.subscribe(({ chassis }) => {
+            setTimeout(() => {
+                this.ngbModalRef = this.modalService.open(ChassisDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
+                this.ngbModalRef.componentInstance.chassis = chassis;
+                this.ngbModalRef.result.then(
+                    result => {
+                        this.router.navigate(['/chassis', { outlets: { popup: null } }]);
+                        this.ngbModalRef = null;
+                    },
+                    reason => {
+                        this.router.navigate(['/chassis', { outlets: { popup: null } }]);
+                        this.ngbModalRef = null;
+                    }
+                );
+            }, 0);
         });
     }
 
     ngOnDestroy() {
-        this.routeSub.unsubscribe();
+        this.ngbModalRef = null;
     }
 }

@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { FuelProvider } from './fuel-provider.model';
-import { FuelProviderPopupService } from './fuel-provider-popup.service';
+import { IFuelProvider } from 'app/shared/model/fuel-provider.model';
 import { FuelProviderService } from './fuel-provider.service';
 
 @Component({
@@ -13,22 +12,20 @@ import { FuelProviderService } from './fuel-provider.service';
     templateUrl: './fuel-provider-delete-dialog.component.html'
 })
 export class FuelProviderDeleteDialogComponent {
-
-    fuelProvider: FuelProvider;
+    fuelProvider: IFuelProvider;
 
     constructor(
-        private fuelProviderService: FuelProviderService,
+        protected fuelProviderService: FuelProviderService,
         public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+        protected eventManager: JhiEventManager
+    ) {}
 
     clear() {
         this.activeModal.dismiss('cancel');
     }
 
     confirmDelete(id: number) {
-        this.fuelProviderService.delete(id).subscribe((response) => {
+        this.fuelProviderService.delete(id).subscribe(response => {
             this.eventManager.broadcast({
                 name: 'fuelProviderListModification',
                 content: 'Deleted an fuelProvider'
@@ -43,22 +40,33 @@ export class FuelProviderDeleteDialogComponent {
     template: ''
 })
 export class FuelProviderDeletePopupComponent implements OnInit, OnDestroy {
+    protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
-
-    constructor(
-        private route: ActivatedRoute,
-        private fuelProviderPopupService: FuelProviderPopupService
-    ) {}
+    constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.fuelProviderPopupService
-                .open(FuelProviderDeleteDialogComponent as Component, params['id']);
+        this.activatedRoute.data.subscribe(({ fuelProvider }) => {
+            setTimeout(() => {
+                this.ngbModalRef = this.modalService.open(FuelProviderDeleteDialogComponent as Component, {
+                    size: 'lg',
+                    backdrop: 'static'
+                });
+                this.ngbModalRef.componentInstance.fuelProvider = fuelProvider;
+                this.ngbModalRef.result.then(
+                    result => {
+                        this.router.navigate(['/fuel-provider', { outlets: { popup: null } }]);
+                        this.ngbModalRef = null;
+                    },
+                    reason => {
+                        this.router.navigate(['/fuel-provider', { outlets: { popup: null } }]);
+                        this.ngbModalRef = null;
+                    }
+                );
+            }, 0);
         });
     }
 
     ngOnDestroy() {
-        this.routeSub.unsubscribe();
+        this.ngbModalRef = null;
     }
 }

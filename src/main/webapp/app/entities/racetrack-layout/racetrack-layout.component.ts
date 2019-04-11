@@ -1,50 +1,67 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiParseLinks, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
-import { RacetrackLayout } from './racetrack-layout.model';
+import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
+import { AccountService } from 'app/core';
 import { RacetrackLayoutService } from './racetrack-layout.service';
-import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
 
 @Component({
     selector: 'jhi-racetrack-layout',
     templateUrl: './racetrack-layout.component.html'
 })
 export class RacetrackLayoutComponent implements OnInit, OnDestroy {
-racetrackLayouts: RacetrackLayout[];
+    racetrackLayouts: IRacetrackLayout[];
     currentAccount: any;
     eventSubscriber: Subscription;
     currentSearch: string;
 
     constructor(
-        private racetrackLayoutService: RacetrackLayoutService,
-        private jhiAlertService: JhiAlertService,
-        private dataUtils: JhiDataUtils,
-        private eventManager: JhiEventManager,
-        private activatedRoute: ActivatedRoute,
-        private principal: Principal
+        protected racetrackLayoutService: RacetrackLayoutService,
+        protected jhiAlertService: JhiAlertService,
+        protected dataUtils: JhiDataUtils,
+        protected eventManager: JhiEventManager,
+        protected activatedRoute: ActivatedRoute,
+        protected accountService: AccountService
     ) {
-        this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
+        this.currentSearch =
+            this.activatedRoute.snapshot && this.activatedRoute.snapshot.params['search']
+                ? this.activatedRoute.snapshot.params['search']
+                : '';
     }
 
     loadAll() {
         if (this.currentSearch) {
-            this.racetrackLayoutService.search({
-                query: this.currentSearch,
-                }).subscribe(
-                    (res: ResponseWrapper) => this.racetrackLayouts = res.json,
-                    (res: ResponseWrapper) => this.onError(res.json)
+            this.racetrackLayoutService
+                .search({
+                    query: this.currentSearch
+                })
+                .pipe(
+                    filter((res: HttpResponse<IRacetrackLayout[]>) => res.ok),
+                    map((res: HttpResponse<IRacetrackLayout[]>) => res.body)
+                )
+                .subscribe(
+                    (res: IRacetrackLayout[]) => (this.racetrackLayouts = res),
+                    (res: HttpErrorResponse) => this.onError(res.message)
                 );
             return;
-       }
-        this.racetrackLayoutService.query().subscribe(
-            (res: ResponseWrapper) => {
-                this.racetrackLayouts = res.json;
-                this.currentSearch = '';
-            },
-            (res: ResponseWrapper) => this.onError(res.json)
-        );
+        }
+        this.racetrackLayoutService
+            .query()
+            .pipe(
+                filter((res: HttpResponse<IRacetrackLayout[]>) => res.ok),
+                map((res: HttpResponse<IRacetrackLayout[]>) => res.body)
+            )
+            .subscribe(
+                (res: IRacetrackLayout[]) => {
+                    this.racetrackLayouts = res;
+                    this.currentSearch = '';
+                },
+                (res: HttpErrorResponse) => this.onError(res.message)
+            );
     }
 
     search(query) {
@@ -59,9 +76,10 @@ racetrackLayouts: RacetrackLayout[];
         this.currentSearch = '';
         this.loadAll();
     }
+
     ngOnInit() {
         this.loadAll();
-        this.principal.identity().then((account) => {
+        this.accountService.identity().then(account => {
             this.currentAccount = account;
         });
         this.registerChangeInRacetrackLayouts();
@@ -71,7 +89,7 @@ racetrackLayouts: RacetrackLayout[];
         this.eventManager.destroy(this.eventSubscriber);
     }
 
-    trackId(index: number, item: RacetrackLayout) {
+    trackId(index: number, item: IRacetrackLayout) {
         return item.id;
     }
 
@@ -82,11 +100,12 @@ racetrackLayouts: RacetrackLayout[];
     openFile(contentType, field) {
         return this.dataUtils.openFile(contentType, field);
     }
+
     registerChangeInRacetrackLayouts() {
-        this.eventSubscriber = this.eventManager.subscribe('racetrackLayoutListModification', (response) => this.loadAll());
+        this.eventSubscriber = this.eventManager.subscribe('racetrackLayoutListModification', response => this.loadAll());
     }
 
-    private onError(error) {
-        this.jhiAlertService.error(error.message, null, null);
+    protected onError(errorMessage: string) {
+        this.jhiAlertService.error(errorMessage, null, null);
     }
 }

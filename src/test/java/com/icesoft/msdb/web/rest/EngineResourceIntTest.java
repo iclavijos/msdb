@@ -13,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -21,13 +23,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
+import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
+
 
 import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -68,15 +75,20 @@ public class EngineResourceIntTest {
     private static final Boolean UPDATED_TURBO = true;
 
     private static final byte[] DEFAULT_IMAGE = TestUtil.createByteArray(1, "0");
-    private static final byte[] UPDATED_IMAGE = TestUtil.createByteArray(2, "1");
+    private static final byte[] UPDATED_IMAGE = TestUtil.createByteArray(1, "1");
     private static final String DEFAULT_IMAGE_CONTENT_TYPE = "image/jpg";
     private static final String UPDATED_IMAGE_CONTENT_TYPE = "image/png";
 
     @Autowired
     private EngineRepository engineRepository;
 
+    /**
+     * This repository is mocked in the com.icesoft.msdb.repository.search test package.
+     *
+     * @see com.icesoft.msdb.repository.search.EngineSearchRepositoryMockConfiguration
+     */
     @Autowired
-    private EngineSearchRepository engineSearchRepository;
+    private EngineSearchRepository mockEngineSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -90,6 +102,9 @@ public class EngineResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private Validator validator;
+
     private MockMvc restEngineMockMvc;
 
     private Engine engine;
@@ -97,12 +112,13 @@ public class EngineResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final EngineResource engineResource = new EngineResource(engineRepository, engineSearchRepository);
+        final EngineResource engineResource = new EngineResource(engineRepository, mockEngineSearchRepository);
         this.restEngineMockMvc = MockMvcBuilders.standaloneSetup(engineResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -129,7 +145,6 @@ public class EngineResourceIntTest {
 
     @Before
     public void initTest() {
-        engineSearchRepository.deleteAll();
         engine = createEntity(em);
     }
 
@@ -161,8 +176,7 @@ public class EngineResourceIntTest {
         assertThat(testEngine.getImageContentType()).isEqualTo(DEFAULT_IMAGE_CONTENT_TYPE);
 
         // Validate the Engine in Elasticsearch
-        Engine engineEs = engineSearchRepository.findOne(testEngine.getId());
-        assertThat(engineEs).isEqualToComparingFieldByField(testEngine);
+        verify(mockEngineSearchRepository, times(1)).save(testEngine);
     }
 
     @Test
@@ -182,6 +196,9 @@ public class EngineResourceIntTest {
         // Validate the Engine in the database
         List<Engine> engineList = engineRepository.findAll();
         assertThat(engineList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the Engine in Elasticsearch
+        verify(mockEngineSearchRepository, times(0)).save(engine);
     }
 
     @Test
@@ -297,7 +314,7 @@ public class EngineResourceIntTest {
             .andExpect(jsonPath("$.[*].imageContentType").value(hasItem(DEFAULT_IMAGE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].image").value(hasItem(Base64Utils.encodeToString(DEFAULT_IMAGE))));
     }
-
+    
     @Test
     @Transactional
     public void getEngine() throws Exception {
@@ -335,11 +352,13 @@ public class EngineResourceIntTest {
     public void updateEngine() throws Exception {
         // Initialize the database
         engineRepository.saveAndFlush(engine);
-        engineSearchRepository.save(engine);
+
         int databaseSizeBeforeUpdate = engineRepository.findAll().size();
 
         // Update the engine
-        Engine updatedEngine = engineRepository.findOne(engine.getId());
+        Engine updatedEngine = engineRepository.findById(engine.getId()).get();
+        // Disconnect from session so that the updates on updatedEngine are not directly saved in db
+        em.detach(updatedEngine);
         updatedEngine
             .name(UPDATED_NAME)
             .manufacturer(UPDATED_MANUFACTURER)
@@ -375,8 +394,7 @@ public class EngineResourceIntTest {
         assertThat(testEngine.getImageContentType()).isEqualTo(UPDATED_IMAGE_CONTENT_TYPE);
 
         // Validate the Engine in Elasticsearch
-        Engine engineEs = engineSearchRepository.findOne(testEngine.getId());
-        assertThat(engineEs).isEqualToComparingFieldByField(testEngine);
+        verify(mockEngineSearchRepository, times(1)).save(testEngine);
     }
 
     @Test
@@ -386,15 +404,18 @@ public class EngineResourceIntTest {
 
         // Create the Engine
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restEngineMockMvc.perform(put("/api/engines")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(engine)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the Engine in the database
         List<Engine> engineList = engineRepository.findAll();
-        assertThat(engineList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(engineList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the Engine in Elasticsearch
+        verify(mockEngineSearchRepository, times(0)).save(engine);
     }
 
     @Test
@@ -402,21 +423,20 @@ public class EngineResourceIntTest {
     public void deleteEngine() throws Exception {
         // Initialize the database
         engineRepository.saveAndFlush(engine);
-        engineSearchRepository.save(engine);
+
         int databaseSizeBeforeDelete = engineRepository.findAll().size();
 
-        // Get the engine
+        // Delete the engine
         restEngineMockMvc.perform(delete("/api/engines/{id}", engine.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean engineExistsInEs = engineSearchRepository.exists(engine.getId());
-        assertThat(engineExistsInEs).isFalse();
-
         // Validate the database is empty
         List<Engine> engineList = engineRepository.findAll();
         assertThat(engineList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the Engine in Elasticsearch
+        verify(mockEngineSearchRepository, times(1)).deleteById(engine.getId());
     }
 
     @Test
@@ -424,17 +444,17 @@ public class EngineResourceIntTest {
     public void searchEngine() throws Exception {
         // Initialize the database
         engineRepository.saveAndFlush(engine);
-        engineSearchRepository.save(engine);
-
+        when(mockEngineSearchRepository.search(queryStringQuery("id:" + engine.getId()), PageRequest.of(0, 20)))
+            .thenReturn(new PageImpl<>(Collections.singletonList(engine), PageRequest.of(0, 1), 1));
         // Search the engine
         restEngineMockMvc.perform(get("/api/_search/engines?query=id:" + engine.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(engine.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].manufacturer").value(hasItem(DEFAULT_MANUFACTURER.toString())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].manufacturer").value(hasItem(DEFAULT_MANUFACTURER)))
             .andExpect(jsonPath("$.[*].capacity").value(hasItem(DEFAULT_CAPACITY)))
-            .andExpect(jsonPath("$.[*].architecture").value(hasItem(DEFAULT_ARCHITECTURE.toString())))
+            .andExpect(jsonPath("$.[*].architecture").value(hasItem(DEFAULT_ARCHITECTURE)))
             .andExpect(jsonPath("$.[*].debutYear").value(hasItem(DEFAULT_DEBUT_YEAR)))
             .andExpect(jsonPath("$.[*].petrolEngine").value(hasItem(DEFAULT_PETROL_ENGINE.booleanValue())))
             .andExpect(jsonPath("$.[*].dieselEngine").value(hasItem(DEFAULT_DIESEL_ENGINE.booleanValue())))

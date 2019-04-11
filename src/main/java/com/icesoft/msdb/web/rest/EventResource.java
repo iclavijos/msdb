@@ -1,12 +1,9 @@
 package com.icesoft.msdb.web.rest;
-
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Event;
 import com.icesoft.msdb.service.EventService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import com.icesoft.msdb.web.rest.util.HeaderUtil;
 import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +49,6 @@ public class EventResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/events")
-    @Timed
     public ResponseEntity<Event> createEvent(@Valid @RequestBody Event event) throws URISyntaxException {
         log.debug("REST request to save Event : {}", event);
         if (event.getId() != null) {
@@ -74,11 +70,10 @@ public class EventResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/events")
-    @Timed
     public ResponseEntity<Event> updateEvent(@Valid @RequestBody Event event) throws URISyntaxException {
         log.debug("REST request to update Event : {}", event);
         if (event.getId() == null) {
-            return createEvent(event);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Event result = eventService.save(event);
         return ResponseEntity.ok()
@@ -93,12 +88,11 @@ public class EventResource {
      * @return the ResponseEntity with status 200 (OK) and the list of events in body
      */
     @GetMapping("/events")
-    @Timed
-    public ResponseEntity<List<Event>> getAllEvents(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<Event>> getAllEvents(Pageable pageable) {
         log.debug("REST request to get a page of Events");
         Page<Event> page = eventService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/events");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -108,11 +102,10 @@ public class EventResource {
      * @return the ResponseEntity with status 200 (OK) and with body the event, or with status 404 (Not Found)
      */
     @GetMapping("/events/{id}")
-    @Timed
     public ResponseEntity<Event> getEvent(@PathVariable Long id) {
         log.debug("REST request to get Event : {}", id);
-        Event event = eventService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(event));
+        Optional<Event> event = eventService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(event);
     }
 
     /**
@@ -122,7 +115,6 @@ public class EventResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/events/{id}")
-    @Timed
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         log.debug("REST request to delete Event : {}", id);
         eventService.delete(id);
@@ -138,12 +130,11 @@ public class EventResource {
      * @return the result of the search
      */
     @GetMapping("/_search/events")
-    @Timed
-    public ResponseEntity<List<Event>> searchEvents(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<Event>> searchEvents(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Events for query {}", query);
         Page<Event> page = eventService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/events");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
 }

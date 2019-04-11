@@ -1,49 +1,45 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { JhiLanguageService } from 'ng-jhipster';
+import { JhiLanguageHelper } from 'app/core';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
+import { MotorsportsDatabaseSharedModule } from 'app/shared';
 import {
-    DriverPointsDetailsService,
-    DriverPointsDetailsPopupService,
     DriverPointsDetailsComponent,
     DriverPointsDetailsDetailComponent,
-    DriverPointsDetailsDialogComponent,
-    DriverPointsDetailsPopupComponent,
+    DriverPointsDetailsUpdateComponent,
     DriverPointsDetailsDeletePopupComponent,
     DriverPointsDetailsDeleteDialogComponent,
     driverPointsDetailsRoute,
-    driverPointsDetailsPopupRoute,
+    driverPointsDetailsPopupRoute
 } from './';
 
-const ENTITY_STATES = [
-    ...driverPointsDetailsRoute,
-    ...driverPointsDetailsPopupRoute,
-];
+const ENTITY_STATES = [...driverPointsDetailsRoute, ...driverPointsDetailsPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
+    imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
     declarations: [
         DriverPointsDetailsComponent,
         DriverPointsDetailsDetailComponent,
-        DriverPointsDetailsDialogComponent,
+        DriverPointsDetailsUpdateComponent,
         DriverPointsDetailsDeleteDialogComponent,
-        DriverPointsDetailsPopupComponent,
-        DriverPointsDetailsDeletePopupComponent,
+        DriverPointsDetailsDeletePopupComponent
     ],
     entryComponents: [
         DriverPointsDetailsComponent,
-        DriverPointsDetailsDialogComponent,
-        DriverPointsDetailsPopupComponent,
+        DriverPointsDetailsUpdateComponent,
         DriverPointsDetailsDeleteDialogComponent,
-        DriverPointsDetailsDeletePopupComponent,
+        DriverPointsDetailsDeletePopupComponent
     ],
-    providers: [
-        DriverPointsDetailsService,
-        DriverPointsDetailsPopupService,
-    ],
+    providers: [{ provide: JhiLanguageService, useClass: JhiLanguageService }],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class MotorsportsDatabaseDriverPointsDetailsModule {}
+export class MotorsportsDatabaseDriverPointsDetailsModule {
+    constructor(private languageService: JhiLanguageService, private languageHelper: JhiLanguageHelper) {
+        this.languageHelper.language.subscribe((languageKey: string) => {
+            if (languageKey !== undefined) {
+                this.languageService.changeLanguage(languageKey);
+            }
+        });
+    }
+}

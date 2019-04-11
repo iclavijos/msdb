@@ -1,11 +1,13 @@
 package com.icesoft.msdb.domain;
 
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -19,7 +21,7 @@ import java.util.Objects;
 public class PointsSystem implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -177,10 +179,10 @@ public class PointsSystem implements Serializable {
             ", name='" + getName() + "'" +
             ", description='" + getDescription() + "'" +
             ", points='" + getPoints() + "'" +
-            ", pointsMostLeadLaps='" + getPointsMostLeadLaps() + "'" +
-            ", pointsFastLap='" + getPointsFastLap() + "'" +
-            ", pointsPole='" + getPointsPole() + "'" +
-            ", pointsLeadLap='" + getPointsLeadLap() + "'" +
+            ", pointsMostLeadLaps=" + getPointsMostLeadLaps() +
+            ", pointsFastLap=" + getPointsFastLap() +
+            ", pointsPole=" + getPointsPole() +
+            ", pointsLeadLap=" + getPointsLeadLap() +
             "}";
     }
 }

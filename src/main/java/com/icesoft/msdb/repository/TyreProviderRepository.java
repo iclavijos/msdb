@@ -1,13 +1,12 @@
 package com.icesoft.msdb.repository;
 
 import com.icesoft.msdb.domain.TyreProvider;
-import org.springframework.stereotype.Repository;
-
 import org.springframework.data.jpa.repository.*;
+import org.springframework.stereotype.Repository;
 
 
 /**
- * Spring Data JPA repository for the TyreProvider entity.
+ * Spring Data  repository for the TyreProvider entity.
  */
 @SuppressWarnings("unused")
 @Repository
