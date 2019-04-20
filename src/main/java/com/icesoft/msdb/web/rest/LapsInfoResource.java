@@ -51,7 +51,7 @@ public class LapsInfoResource {
 	@GetMapping("/event-sessions/{sessionId}/laps/averages")
     @Cacheable(cacheNames = "lapsAveragesCache")
     public ResponseEntity<List<DriverRaceStatisticsDTO>> getBestPerformers(@PathVariable Long sessionId) {
-        SessionLapData sld = repo.findOne(sessionId.toString());
+        SessionLapData sld = repo.findById(sessionId.toString()).get();
 	    return ResponseEntity.ok(
 	        sld.getLapsPerDriver().parallelStream().map(DriverRaceStatisticsDTO::new).collect(Collectors.toList()));
     }
@@ -59,7 +59,7 @@ public class LapsInfoResource {
     @GetMapping("/event-sessions/{sessionId}/positions")
     @Cacheable(cacheNames = "positionsCache")
     public ResponseEntity<List<RacePositionsDTO>> getPositions(@PathVariable Long sessionId) {
-        SessionLapData sld = repo.findOne(sessionId.toString());
+        SessionLapData sld = repo.findById(sessionId.toString()).get();
         List<RacePositionsDTO> result = new ArrayList<>();
         List<String> posLap0 = resultsRepo.findBySessionIdOrderByFinalPositionAsc(sessionId).stream()
             .sorted(Comparator.comparing(r -> Optional.ofNullable(r.getStartingPosition()).orElse(901)))

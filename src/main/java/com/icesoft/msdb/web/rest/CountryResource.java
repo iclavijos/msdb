@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.Country;
 import com.icesoft.msdb.repository.CountryRepository;
 
@@ -29,7 +28,6 @@ public class CountryResource {
     }
 
     @GetMapping("/_typeahead/countries")
-    @Timed
     public List<Country> typeahead(@RequestParam String query) {
         log.debug("REST request to search for countries for query {}", query);
         List<Country> results = countryRepository.findByCountryNameContaining(query);

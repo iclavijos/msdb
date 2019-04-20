@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "tyreProvider" : {
+        "tyreProvider": {
             "home": {
                 "title": "Proveedores neumáticos",
                 "createLabel": "Crear nuevo proveedor",

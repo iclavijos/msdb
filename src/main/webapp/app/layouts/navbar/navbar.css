@@ -7,12 +7,12 @@ a.disabled {
 
 .navbar-version {
     font-size: 10px;
-    color: #ccc
+    color: #ccc;
 }
 
 .jh-navbar {
     background-color: #353d47;
-    padding: .2em 1em;
+    padding: 0.2em 1em;
 }
 
 .jh-navbar .profile-image {
@@ -22,7 +22,9 @@ a.disabled {
     border-radius: 50%;
 }
 
-.jh-navbar .dropdown-item.active, .jh-navbar .dropdown-item.active:focus, .jh-navbar .dropdown-item.active:hover {
+.jh-navbar .dropdown-item.active,
+.jh-navbar .dropdown-item.active:focus,
+.jh-navbar .dropdown-item.active:hover {
     background-color: #353d47;
 }
 
@@ -76,22 +78,16 @@ Logo styles
     padding: 5px 15px;
 }
 
+.logo-img {
+    height: 100%;
+    background: url('../../../content/images/logo.png') no-repeat center center;
+    background-size: contain;
+    width: 100%;
+}
+
 .logo .logo-img {
     height: 48px;
     display: inline-block;
     vertical-align: middle;
     width: 70px;
-}
-
-.logo-img {
-    height: 100%;
-    background: url("../../../content/images/logo.png") no-repeat center center;
-    background-size: contain;
-    width: 100%;
-}
-
-.avatar {
-	border-radius: 50%; 
-	width: 48px; 
-	height: 48px;
 }

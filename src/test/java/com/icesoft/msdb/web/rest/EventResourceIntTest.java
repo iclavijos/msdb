@@ -1,18 +1,12 @@
 package com.icesoft.msdb.web.rest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.icesoft.msdb.MotorsportsDatabaseApp;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
+import com.icesoft.msdb.domain.Event;
+import com.icesoft.msdb.repository.EventRepository;
+import com.icesoft.msdb.repository.search.EventSearchRepository;
+import com.icesoft.msdb.service.EventService;
+import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +14,8 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -27,14 +23,21 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
-import com.icesoft.msdb.MotorsportsDatabaseApp;
-import com.icesoft.msdb.domain.Event;
-import com.icesoft.msdb.repository.EventRepository;
-import com.icesoft.msdb.service.EventService;
-import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
+import javax.persistence.EntityManager;
+import java.util.Collections;
+import java.util.List;
+
 
 import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 /**
  * Test class for the EventResource REST controller.
  *
@@ -56,6 +59,14 @@ public class EventResourceIntTest {
     @Autowired
     private EventService eventService;
 
+    /**
+     * This repository is mocked in the com.icesoft.msdb.repository.search test package.
+     *
+     * @see com.icesoft.msdb.repository.search.EventSearchRepositoryMockConfiguration
+     */
+    @Autowired
+    private EventSearchRepository mockEventSearchRepository;
+
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
@@ -67,6 +78,9 @@ public class EventResourceIntTest {
 
     @Autowired
     private EntityManager em;
+
+    @Autowired
+    private Validator validator;
 
     private MockMvc restEventMockMvc;
 
@@ -80,7 +94,8 @@ public class EventResourceIntTest {
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -119,6 +134,8 @@ public class EventResourceIntTest {
         assertThat(testEvent.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testEvent.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
 
+        // Validate the Event in Elasticsearch
+        verify(mockEventSearchRepository, times(1)).save(testEvent);
     }
 
     @Test
@@ -138,6 +155,9 @@ public class EventResourceIntTest {
         // Validate the Event in the database
         List<Event> eventList = eventRepository.findAll();
         assertThat(eventList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the Event in Elasticsearch
+        verify(mockEventSearchRepository, times(0)).save(event);
     }
 
     @Test
@@ -190,7 +210,7 @@ public class EventResourceIntTest {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
     }
-
+    
     @Test
     @Transactional
     public void getEvent() throws Exception {
@@ -219,11 +239,15 @@ public class EventResourceIntTest {
     public void updateEvent() throws Exception {
         // Initialize the database
         eventService.save(event);
+        // As the test used the service layer, reset the Elasticsearch mock repository
+        reset(mockEventSearchRepository);
 
         int databaseSizeBeforeUpdate = eventRepository.findAll().size();
 
         // Update the event
-        Event updatedEvent = eventRepository.findOne(event.getId());
+        Event updatedEvent = eventRepository.findById(event.getId()).get();
+        // Disconnect from session so that the updates on updatedEvent are not directly saved in db
+        em.detach(updatedEvent);
         updatedEvent
             .name(UPDATED_NAME)
             .description(UPDATED_DESCRIPTION);
@@ -240,6 +264,8 @@ public class EventResourceIntTest {
         assertThat(testEvent.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testEvent.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
 
+        // Validate the Event in Elasticsearch
+        verify(mockEventSearchRepository, times(1)).save(testEvent);
     }
 
     @Test
@@ -249,15 +275,18 @@ public class EventResourceIntTest {
 
         // Create the Event
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restEventMockMvc.perform(put("/api/events")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(event)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the Event in the database
         List<Event> eventList = eventRepository.findAll();
-        assertThat(eventList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(eventList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the Event in Elasticsearch
+        verify(mockEventSearchRepository, times(0)).save(event);
     }
 
     @Test
@@ -268,7 +297,7 @@ public class EventResourceIntTest {
 
         int databaseSizeBeforeDelete = eventRepository.findAll().size();
 
-        // Get the event
+        // Delete the event
         restEventMockMvc.perform(delete("/api/events/{id}", event.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
@@ -276,6 +305,9 @@ public class EventResourceIntTest {
         // Validate the database is empty
         List<Event> eventList = eventRepository.findAll();
         assertThat(eventList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the Event in Elasticsearch
+        verify(mockEventSearchRepository, times(1)).deleteById(event.getId());
     }
 
     @Test
@@ -283,14 +315,15 @@ public class EventResourceIntTest {
     public void searchEvent() throws Exception {
         // Initialize the database
         eventService.save(event);
-
+        when(mockEventSearchRepository.search(queryStringQuery("id:" + event.getId()), PageRequest.of(0, 20)))
+            .thenReturn(new PageImpl<>(Collections.singletonList(event), PageRequest.of(0, 1), 1));
         // Search the event
         restEventMockMvc.perform(get("/api/_search/events?query=id:" + event.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(event.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)));
     }
 
     @Test

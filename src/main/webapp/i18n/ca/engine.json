@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "engine" : {
+        "engine": {
             "home": {
                 "title": "Motors",
                 "createLabel": "Crear nou motor",

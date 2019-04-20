@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "driver" : {
+        "driver": {
             "home": {
                 "title": "Pilots",
                 "createLabel": "Afegir un nou pilot",

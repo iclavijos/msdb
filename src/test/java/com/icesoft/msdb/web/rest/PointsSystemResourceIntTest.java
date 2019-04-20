@@ -1,18 +1,11 @@
 package com.icesoft.msdb.web.rest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.icesoft.msdb.MotorsportsDatabaseApp;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
+import com.icesoft.msdb.domain.PointsSystem;
+import com.icesoft.msdb.repository.PointsSystemRepository;
+import com.icesoft.msdb.repository.search.PointsSystemSearchRepository;
+import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -27,14 +22,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 
-import com.icesoft.msdb.MotorsportsDatabaseApp;
-import com.icesoft.msdb.domain.PointsSystem;
-import com.icesoft.msdb.repository.PointsSystemRepository;
-import com.icesoft.msdb.repository.search.PointsSystemSearchRepository;
-import com.icesoft.msdb.web.rest.errors.ExceptionTranslator;
+import javax.persistence.EntityManager;
+import java.util.Collections;
+import java.util.List;
+
 
 import static com.icesoft.msdb.web.rest.TestUtil.createFormattingConversionService;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Test class for the PointsSystemResource REST controller.
@@ -69,8 +70,13 @@ public class PointsSystemResourceIntTest {
     @Autowired
     private PointsSystemRepository pointsSystemRepository;
 
+    /**
+     * This repository is mocked in the com.icesoft.msdb.repository.search test package.
+     *
+     * @see com.icesoft.msdb.repository.search.PointsSystemSearchRepositoryMockConfiguration
+     */
     @Autowired
-    private PointsSystemSearchRepository pointsSystemSearchRepository;
+    private PointsSystemSearchRepository mockPointsSystemSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -84,6 +90,9 @@ public class PointsSystemResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private Validator validator;
+
     private MockMvc restPointsSystemMockMvc;
 
     private PointsSystem pointsSystem;
@@ -91,12 +100,13 @@ public class PointsSystemResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PointsSystemResource pointsSystemResource = new PointsSystemResource(pointsSystemRepository, pointsSystemSearchRepository);
+        final PointsSystemResource pointsSystemResource = new PointsSystemResource(pointsSystemRepository, mockPointsSystemSearchRepository);
         this.restPointsSystemMockMvc = MockMvcBuilders.standaloneSetup(pointsSystemResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -119,7 +129,6 @@ public class PointsSystemResourceIntTest {
 
     @Before
     public void initTest() {
-        pointsSystemSearchRepository.deleteAll();
         pointsSystem = createEntity(em);
     }
 
@@ -147,8 +156,7 @@ public class PointsSystemResourceIntTest {
         assertThat(testPointsSystem.getPointsLeadLap()).isEqualTo(DEFAULT_POINTS_LEAD_LAP);
 
         // Validate the PointsSystem in Elasticsearch
-        PointsSystem pointsSystemEs = pointsSystemSearchRepository.findOne(testPointsSystem.getId());
-        assertThat(pointsSystemEs).isEqualTo(testPointsSystem);
+        verify(mockPointsSystemSearchRepository, times(1)).save(testPointsSystem);
     }
 
     @Test
@@ -168,6 +176,9 @@ public class PointsSystemResourceIntTest {
         // Validate the PointsSystem in the database
         List<PointsSystem> pointsSystemList = pointsSystemRepository.findAll();
         assertThat(pointsSystemList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the PointsSystem in Elasticsearch
+        verify(mockPointsSystemSearchRepository, times(0)).save(pointsSystem);
     }
 
     @Test
@@ -225,7 +236,7 @@ public class PointsSystemResourceIntTest {
             .andExpect(jsonPath("$.[*].pointsPole").value(hasItem(DEFAULT_POINTS_POLE)))
             .andExpect(jsonPath("$.[*].pointsLeadLap").value(hasItem(DEFAULT_POINTS_LEAD_LAP)));
     }
-
+    
     @Test
     @Transactional
     public void getPointsSystem() throws Exception {
@@ -259,11 +270,13 @@ public class PointsSystemResourceIntTest {
     public void updatePointsSystem() throws Exception {
         // Initialize the database
         pointsSystemRepository.saveAndFlush(pointsSystem);
-        pointsSystemSearchRepository.save(pointsSystem);
+
         int databaseSizeBeforeUpdate = pointsSystemRepository.findAll().size();
 
         // Update the pointsSystem
-        PointsSystem updatedPointsSystem = pointsSystemRepository.findOne(pointsSystem.getId());
+        PointsSystem updatedPointsSystem = pointsSystemRepository.findById(pointsSystem.getId()).get();
+        // Disconnect from session so that the updates on updatedPointsSystem are not directly saved in db
+        em.detach(updatedPointsSystem);
         updatedPointsSystem
             .name(UPDATED_NAME)
             .description(UPDATED_DESCRIPTION)
@@ -291,8 +304,7 @@ public class PointsSystemResourceIntTest {
         assertThat(testPointsSystem.getPointsLeadLap()).isEqualTo(UPDATED_POINTS_LEAD_LAP);
 
         // Validate the PointsSystem in Elasticsearch
-        PointsSystem pointsSystemEs = pointsSystemSearchRepository.findOne(testPointsSystem.getId());
-        assertThat(pointsSystemEs).isEqualTo(testPointsSystem);
+        verify(mockPointsSystemSearchRepository, times(1)).save(testPointsSystem);
     }
 
     @Test
@@ -302,15 +314,18 @@ public class PointsSystemResourceIntTest {
 
         // Create the PointsSystem
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPointsSystemMockMvc.perform(put("/api/points-systems")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(pointsSystem)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the PointsSystem in the database
         List<PointsSystem> pointsSystemList = pointsSystemRepository.findAll();
-        assertThat(pointsSystemList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(pointsSystemList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the PointsSystem in Elasticsearch
+        verify(mockPointsSystemSearchRepository, times(0)).save(pointsSystem);
     }
 
     @Test
@@ -318,21 +333,20 @@ public class PointsSystemResourceIntTest {
     public void deletePointsSystem() throws Exception {
         // Initialize the database
         pointsSystemRepository.saveAndFlush(pointsSystem);
-        pointsSystemSearchRepository.save(pointsSystem);
+
         int databaseSizeBeforeDelete = pointsSystemRepository.findAll().size();
 
-        // Get the pointsSystem
+        // Delete the pointsSystem
         restPointsSystemMockMvc.perform(delete("/api/points-systems/{id}", pointsSystem.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean pointsSystemExistsInEs = pointsSystemSearchRepository.exists(pointsSystem.getId());
-        assertThat(pointsSystemExistsInEs).isFalse();
-
         // Validate the database is empty
         List<PointsSystem> pointsSystemList = pointsSystemRepository.findAll();
         assertThat(pointsSystemList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the PointsSystem in Elasticsearch
+        verify(mockPointsSystemSearchRepository, times(1)).deleteById(pointsSystem.getId());
     }
 
     @Test
@@ -340,16 +354,16 @@ public class PointsSystemResourceIntTest {
     public void searchPointsSystem() throws Exception {
         // Initialize the database
         pointsSystemRepository.saveAndFlush(pointsSystem);
-        pointsSystemSearchRepository.save(pointsSystem);
-
+        when(mockPointsSystemSearchRepository.search(queryStringQuery("id:" + pointsSystem.getId()), PageRequest.of(0, 20)))
+            .thenReturn(new PageImpl<>(Collections.singletonList(pointsSystem), PageRequest.of(0, 1), 1));
         // Search the pointsSystem
         restPointsSystemMockMvc.perform(get("/api/_search/points-systems?query=id:" + pointsSystem.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(pointsSystem.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
-            .andExpect(jsonPath("$.[*].points").value(hasItem(DEFAULT_POINTS.toString())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
+            .andExpect(jsonPath("$.[*].points").value(hasItem(DEFAULT_POINTS)))
             .andExpect(jsonPath("$.[*].pointsMostLeadLaps").value(hasItem(DEFAULT_POINTS_MOST_LEAD_LAPS)))
             .andExpect(jsonPath("$.[*].pointsFastLap").value(hasItem(DEFAULT_POINTS_FAST_LAP)))
             .andExpect(jsonPath("$.[*].pointsPole").value(hasItem(DEFAULT_POINTS_POLE)))

@@ -1,14 +1,15 @@
 package com.icesoft.msdb.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+import com.icesoft.msdb.domain.PointsSystem;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
-
-import javax.validation.Valid;
-
+import com.icesoft.msdb.repository.PointsSystemRepository;
+import com.icesoft.msdb.repository.search.PointsSystemSearchRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
+import com.icesoft.msdb.web.rest.util.HeaderUtil;
+import com.icesoft.msdb.web.rest.util.PaginationUtil;
+import io.swagger.annotations.ApiParam;
+import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -17,27 +18,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.PointsSystem;
-import com.icesoft.msdb.repository.PointsSystemRepository;
-import com.icesoft.msdb.repository.search.PointsSystemSearchRepository;
-import com.icesoft.msdb.security.AuthoritiesConstants;
-import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-import com.icesoft.msdb.web.rest.util.HeaderUtil;
-import com.icesoft.msdb.web.rest.util.PaginationUtil;
+import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-import io.github.jhipster.web.util.ResponseUtil;
-import io.swagger.annotations.ApiParam;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing PointsSystem.
@@ -49,7 +41,7 @@ public class PointsSystemResource {
     private final Logger log = LoggerFactory.getLogger(PointsSystemResource.class);
 
     private static final String ENTITY_NAME = "pointsSystem";
-        
+
     private final PointsSystemRepository pointsSystemRepository;
     private final PointsSystemSearchRepository pointsSystemSearchRepository;
 
@@ -66,7 +58,6 @@ public class PointsSystemResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/points-systems")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<PointsSystem> createPointsSystem(@Valid @RequestBody PointsSystem pointsSystem) throws URISyntaxException {
         log.debug("REST request to save PointsSystem : {}", pointsSystem);
@@ -90,12 +81,11 @@ public class PointsSystemResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/points-systems")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<PointsSystem> updatePointsSystem(@Valid @RequestBody PointsSystem pointsSystem) throws URISyntaxException {
         log.debug("REST request to update PointsSystem : {}", pointsSystem);
         if (pointsSystem.getId() == null) {
-            return createPointsSystem(pointsSystem);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         PointsSystem result = pointsSystemRepository.save(pointsSystem);
         pointsSystemSearchRepository.save(result);
@@ -111,12 +101,11 @@ public class PointsSystemResource {
      * @return the ResponseEntity with status 200 (OK) and the list of pointsSystems in body
      */
     @GetMapping("/points-systems")
-    @Timed
-    public ResponseEntity<List<PointsSystem>> getAllPointsSystems(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<PointsSystem>> getAllPointsSystems(Pageable pageable) {
         log.debug("REST request to get a page of PointsSystems");
         Page<PointsSystem> page = pointsSystemRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/points-systems");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -126,11 +115,10 @@ public class PointsSystemResource {
      * @return the ResponseEntity with status 200 (OK) and with body the pointsSystem, or with status 404 (Not Found)
      */
     @GetMapping("/points-systems/{id}")
-    @Timed
     public ResponseEntity<PointsSystem> getPointsSystem(@PathVariable Long id) {
         log.debug("REST request to get PointsSystem : {}", id);
-        PointsSystem pointsSystem = pointsSystemRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(pointsSystem));
+        Optional<PointsSystem> pointsSystem = pointsSystemRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(pointsSystem);
     }
 
     /**
@@ -140,12 +128,11 @@ public class PointsSystemResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/points-systems/{id}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deletePointsSystem(@PathVariable Long id) {
         log.debug("REST request to delete PointsSystem : {}", id);
-        pointsSystemRepository.delete(id);
-        pointsSystemSearchRepository.delete(id);
+        pointsSystemRepository.deleteById(id);
+        pointsSystemSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -158,12 +145,11 @@ public class PointsSystemResource {
      * @return the result of the search
      */
     @GetMapping("/_search/points-systems")
-    @Timed
-    public ResponseEntity<List<PointsSystem>> searchPointsSystems(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<PointsSystem>> searchPointsSystems(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of PointsSystems for query {}", query);
         Page<PointsSystem> page = pointsSystemSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/points-systems");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
 }

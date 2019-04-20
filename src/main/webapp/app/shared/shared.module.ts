@@ -1,57 +1,26 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 
+import { NgbDateMomentAdapter } from './util/datepicker-adapter';
 import {
     MotorsportsDatabaseSharedLibsModule,
     MotorsportsDatabaseSharedCommonModule,
-    CSRFService,
-    AuthServerProvider,
-    AccountService,
-    UserService,
-    StateStorageService,
-    LoginService,
-    LoginModalService,
     JhiLoginModalComponent,
-    Principal,
-    HasAnyAuthorityDirective,
-    JhiSocialComponent,
-    SocialService,
-    StatisticsComponent
+    HasAnyAuthorityDirective
 } from './';
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedLibsModule,
-        MotorsportsDatabaseSharedCommonModule
-    ],
-    declarations: [
-        JhiSocialComponent,
-        JhiLoginModalComponent,
-        HasAnyAuthorityDirective,
-        StatisticsComponent
-    ],
-    providers: [
-        LoginService,
-        LoginModalService,
-        AccountService,
-        StateStorageService,
-        Principal,
-        CSRFService,
-        AuthServerProvider,
-        SocialService,
-        UserService,
-        DatePipe
-    ],
+    imports: [MotorsportsDatabaseSharedLibsModule, MotorsportsDatabaseSharedCommonModule],
+    declarations: [JhiLoginModalComponent, HasAnyAuthorityDirective],
+    providers: [{ provide: NgbDateAdapter, useClass: NgbDateMomentAdapter }],
     entryComponents: [JhiLoginModalComponent],
-    exports: [
-        MotorsportsDatabaseSharedCommonModule,
-        JhiSocialComponent,
-        JhiLoginModalComponent,
-        HasAnyAuthorityDirective,
-        DatePipe,
-        StatisticsComponent
-    ],
+    exports: [MotorsportsDatabaseSharedCommonModule, JhiLoginModalComponent, HasAnyAuthorityDirective],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
-
 })
-export class MotorsportsDatabaseSharedModule {}
+export class MotorsportsDatabaseSharedModule {
+    static forRoot() {
+        return {
+            ngModule: MotorsportsDatabaseSharedModule
+        };
+    }
+}

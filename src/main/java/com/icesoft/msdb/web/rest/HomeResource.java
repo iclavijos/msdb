@@ -11,8 +11,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.cloudinary.json.JSONException;
+import org.cloudinary.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.TimeZone;
@@ -62,7 +61,6 @@ public class HomeResource {
 	}
 
 	@GetMapping("/home")
-    @Timed
     @Cacheable(cacheNames="homeInfo")
     public Object getHomeInfo() {
         log.debug("REST request to get home information");
@@ -81,7 +79,6 @@ public class HomeResource {
     }
 
 	@GetMapping("/home/calendar")
-	@Timed
 	@Cacheable(cacheNames="calendar")
 	public List<SessionDataDTO> getCalendar() {
 		log.debug("REST request to get calendar");

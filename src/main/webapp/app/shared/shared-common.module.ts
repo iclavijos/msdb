@@ -1,51 +1,36 @@
-import { NgModule, LOCALE_ID } from '@angular/core';
-import { Title } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
 
 import {
     MotorsportsDatabaseSharedLibsModule,
-    JhiLanguageHelper,
+    FindLanguageFromKeyPipe,
+    JhiAlertComponent,
+    JhiAlertErrorComponent,
     TimeMaskPipe,
     RacetrackLengthPipe,
     DynamicDatePipe,
-    EventEntryCategoryFilter,
-    FindLanguageFromKeyPipe,
-    JhiAlertComponent,
-    JhiAlertErrorComponent
+    EventEntryCategoryFilter
 } from './';
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedLibsModule,
-        RouterModule
-    ],
+    imports: [MotorsportsDatabaseSharedLibsModule],
     declarations: [
-        TimeMaskPipe,
-        RacetrackLengthPipe,
-        DynamicDatePipe,
-        EventEntryCategoryFilter,
-        FindLanguageFromKeyPipe,
-        JhiAlertComponent,
-        JhiAlertErrorComponent
-    ],
-    providers: [
-        JhiLanguageHelper,
-        Title,
-        {
-            provide: LOCALE_ID,
-            useValue: 'en'
-        },
-    ],
-    exports: [
-        MotorsportsDatabaseSharedLibsModule,
-        TimeMaskPipe,
-        RacetrackLengthPipe,
-        DynamicDatePipe,
-        EventEntryCategoryFilter,
         FindLanguageFromKeyPipe,
         JhiAlertComponent,
         JhiAlertErrorComponent,
-        RouterModule
+        TimeMaskPipe,
+        RacetrackLengthPipe,
+        DynamicDatePipe,
+        EventEntryCategoryFilter
+    ],
+    exports: [
+        MotorsportsDatabaseSharedLibsModule,
+        FindLanguageFromKeyPipe,
+        JhiAlertComponent,
+        JhiAlertErrorComponent,
+        TimeMaskPipe,
+        RacetrackLengthPipe,
+        DynamicDatePipe,
+        EventEntryCategoryFilter
     ]
 })
 export class MotorsportsDatabaseSharedCommonModule {}

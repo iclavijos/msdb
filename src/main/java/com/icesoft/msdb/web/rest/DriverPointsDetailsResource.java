@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.domain.DriverEventPoints;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
@@ -50,7 +49,6 @@ public class DriverPointsDetailsResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/driver-points-details")
-    @Timed
     @CacheEvict(cacheNames="driversStandingsCache", key="#driverPointsDetails.session.id")
     public ResponseEntity<DriverEventPoints> createDriverPointsDetails(@RequestBody DriverEventPoints driverPointsDetails) throws URISyntaxException {
         log.debug("REST request to save DriverPointsDetails : {}", driverPointsDetails);
@@ -74,11 +72,10 @@ public class DriverPointsDetailsResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/driver-points-details")
-    @Timed
     public ResponseEntity<DriverEventPoints> updateDriverPointsDetails(@RequestBody DriverEventPoints driverPointsDetails) throws URISyntaxException {
         log.debug("REST request to update DriverPointsDetails : {}", driverPointsDetails);
         if (driverPointsDetails.getId() == null) {
-            return createDriverPointsDetails(driverPointsDetails);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         DriverEventPoints result = driverPointsDetailsRepository.save(driverPointsDetails);
         return ResponseEntity.ok()
@@ -93,11 +90,10 @@ public class DriverPointsDetailsResource {
      * @return the ResponseEntity with status 200 (OK) and with body the driverPointsDetails, or with status 404 (Not Found)
      */
     @GetMapping("/driver-points-details/{id}")
-    @Timed
     public ResponseEntity<DriverEventPoints> getDriverPointsDetails(@PathVariable Long id) {
         log.debug("REST request to get DriverPointsDetails : {}", id);
-        DriverEventPoints driverPointsDetails = driverPointsDetailsRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(driverPointsDetails));
+        Optional<DriverEventPoints> driverPointsDetails = driverPointsDetailsRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(driverPointsDetails);
     }
 
     /**
@@ -107,10 +103,9 @@ public class DriverPointsDetailsResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/driver-points-details/{id}")
-    @Timed
     public ResponseEntity<Void> deleteDriverPointsDetails(@PathVariable Long id) {
         log.debug("REST request to delete DriverPointsDetails : {}", id);
-        driverPointsDetailsRepository.delete(id);
+        driverPointsDetailsRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

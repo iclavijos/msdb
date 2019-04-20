@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "pointsSystem" : {
+        "pointsSystem": {
             "home": {
                 "title": "Sistemes de puntuació",
                 "createLabel": "Crea nou sistema de puntuació",

@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
-import { ActivatedRoute, Router } from '@angular/router';
+import { JhiEventManager } from 'ng-jhipster';
 
-import { Http, Response } from '@angular/http';
-
-import { Account, LoginModalService, Principal } from '../shared';
+import { LoginModalService, AccountService, Account } from 'app/core';
 
 import { HomeData } from './home.model';
 
@@ -15,41 +12,24 @@ import { isMoment } from 'moment-timezone';
 @Component({
     selector: 'jhi-home',
     templateUrl: './home.component.html',
-    styleUrls: [
-        'home.css'
-    ]
-
+    styleUrls: ['home.css']
 })
 export class HomeComponent implements OnInit {
-
     account: Account;
     modalRef: NgbModalRef;
-    homeData: HomeData = new HomeData(); //Not a nice solution. Should find out what to use (Promise? Observable? ???)
-    searchEntriesStr: string;
-    searchEventsStr: string;
-    calendar: any;
-    noEvents = false;
-    timezone: any;
-    timezones: any;
-    dates = new Set();
 
     constructor(
-        private jhiLanguageService: JhiLanguageService,
-        private principal: Principal,
-        private http: Http,
+        private accountService: AccountService,
         private loginModalService: LoginModalService,
-        private eventManager: JhiEventManager,
-        private activatedRoute: ActivatedRoute,
-        private router: Router,
-    ) {
-    }
+        private eventManager: JhiEventManager
+    ) {}
 
     ngOnInit() {
         this.timezone = moment.tz.guess();
         if (this.timezone === undefined) {
             this.timezone = 'Europe/London';
         }
-        this.principal.identity().then((account) => {
+        this.accountService.identity().then((account: Account) => {
             this.account = account;
         });
         this.registerAuthenticationSuccess();
@@ -85,43 +65,43 @@ export class HomeComponent implements OnInit {
     }
 
     changeTimezone() {
-        this.calendar = this.convertData(this.calendar,this.timezone);
+        this.calendar = this.convertData(this.calendar, this.timezone);
     }
 
     registerAuthenticationSuccess() {
-        this.eventManager.subscribe('authenticationSuccess', (message) => {
-            this.principal.identity().then((account) => {
+        this.eventManager.subscribe('authenticationSuccess', message => {
+            this.accountService.identity().then(account => {
                 this.account = account;
             });
         });
     }
 
     isAuthenticated() {
-        return this.principal.isAuthenticated();
+        return this.accountService.isAuthenticated();
     }
 
     login() {
         this.modalRef = this.loginModalService.open();
     }
-    
+
     searchEntries(query) {
         if (!query) {
             return this.clearEntries();
         }
         this.router.navigate(['/homeEntries', { search: this.searchEntriesStr }]);
     }
-    
+
     searchEvents(query) {
         if (!query) {
             return this.clearEvents();
         }
         this.router.navigate(['/homeEvents', { search: this.searchEventsStr }]);
     }
-    
+
     clearEntries() {
         this.searchEntriesStr = '';
     }
-    
+
     clearEvents() {
         this.searchEventsStr = '';
     }

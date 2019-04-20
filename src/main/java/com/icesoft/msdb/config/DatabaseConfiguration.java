@@ -1,14 +1,16 @@
 package com.icesoft.msdb.config;
 
-import java.sql.SQLException;
-
-import org.h2.tools.Server;
+import io.github.jhipster.config.JHipsterConstants;
+import io.github.jhipster.config.h2.H2ConfigurationHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
+
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.MongoDbFactory;
@@ -19,7 +21,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import io.github.jhipster.config.JHipsterConstants;
+import java.sql.SQLException;
 
 @Configuration
 @EnableJpaRepositories("com.icesoft.msdb.repository")
@@ -29,15 +31,15 @@ import io.github.jhipster.config.JHipsterConstants;
 @EnableMongoAuditing
 public class DatabaseConfiguration {
 
-    //private final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
+    private final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
+
+    private final Environment env;
 
     @Autowired
     private MongoMappingContext mongoMappingContext;
-    
-    //private final Environment env;
 
     public DatabaseConfiguration(Environment env) {
-        //this.env = env;
+        this.env = env;
     }
 
     /**
@@ -48,8 +50,24 @@ public class DatabaseConfiguration {
      */
     @Bean(initMethod = "start", destroyMethod = "stop")
     @Profile(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT)
-    public Server h2TCPServer() throws SQLException {
-        return Server.createTcpServer("-tcp","-tcpAllowOthers");
+    public Object h2TCPServer() throws SQLException {
+        String port = getValidPortForH2();
+        log.debug("H2 database is available on port {}", port);
+        return H2ConfigurationHelper.createServer(port);
+    }
+
+    private String getValidPortForH2() {
+        int port = Integer.parseInt(env.getProperty("server.port"));
+        if (port < 10000) {
+            port = 10000 + port;
+        } else {
+            if (port < 63536) {
+                port = port + 2000;
+            } else {
+                port = port - 2000;
+            }
+        }
+        return String.valueOf(port);
     }
 
     @Bean

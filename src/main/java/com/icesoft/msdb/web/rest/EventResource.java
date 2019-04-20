@@ -1,12 +1,15 @@
 package com.icesoft.msdb.web.rest;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
-
-import javax.validation.Valid;
-
+import com.icesoft.msdb.domain.Event;
+import com.icesoft.msdb.domain.EventEdition;
+import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.EventService;
+import com.icesoft.msdb.service.dto.EventEditionIdYearDTO;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
+import com.icesoft.msdb.web.rest.util.HeaderUtil;
+import com.icesoft.msdb.web.rest.util.PaginationUtil;
+import io.swagger.annotations.ApiParam;
+import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -17,28 +20,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.Event;
-import com.icesoft.msdb.domain.EventEdition;
-import com.icesoft.msdb.security.AuthoritiesConstants;
-import com.icesoft.msdb.service.EventService;
-import com.icesoft.msdb.service.dto.EventEditionIdYearDTO;
-import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-import com.icesoft.msdb.web.rest.util.HeaderUtil;
-import com.icesoft.msdb.web.rest.util.PaginationUtil;
+import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-import io.github.jhipster.web.util.ResponseUtil;
-import io.swagger.annotations.ApiParam;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.StreamSupport;
+
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Event.
@@ -50,7 +42,7 @@ public class EventResource {
     private final Logger log = LoggerFactory.getLogger(EventResource.class);
 
     private static final String ENTITY_NAME = "event";
-        
+
     private final EventService eventService;
 
     public EventResource(EventService eventService) {
@@ -65,7 +57,6 @@ public class EventResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/events")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Event> createEvent(@Valid @RequestBody Event event) throws URISyntaxException {
@@ -89,13 +80,12 @@ public class EventResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/events")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Event> updateEvent(@Valid @RequestBody Event event) throws URISyntaxException {
         log.debug("REST request to update Event : {}", event);
         if (event.getId() == null) {
-            return createEvent(event);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Event result = eventService.save(event);
         return ResponseEntity.ok()
@@ -110,12 +100,11 @@ public class EventResource {
      * @return the ResponseEntity with status 200 (OK) and the list of events in body
      */
     @GetMapping("/events")
-    @Timed
-    public ResponseEntity<List<Event>> getAllEvents(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<Event>> getAllEvents(Pageable pageable) {
         log.debug("REST request to get a page of Events");
         Page<Event> page = eventService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/events");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -125,7 +114,6 @@ public class EventResource {
      * @return the ResponseEntity with status 200 (OK) and with body the event, or with status 404 (Not Found)
      */
     @GetMapping("/events/{id}")
-    @Timed
     public ResponseEntity<Event> getEvent(@PathVariable Long id) {
         log.debug("REST request to get Event : {}", id);
         Event event = eventService.findOne(id);
@@ -139,7 +127,6 @@ public class EventResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/events/{id}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
@@ -157,24 +144,21 @@ public class EventResource {
      * @return the result of the search
      */
     @GetMapping("/_search/events")
-    @Timed
-    public ResponseEntity<List<Event>> searchEvents(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<Event>> searchEvents(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Events for query {}", query);
         Page<Event> page = eventService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/events");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
-    
+
     @GetMapping("/_typeahead/events")
-    @Timed
     public List<Event> typeahead(@RequestParam String query) {
         log.debug("REST request to search for a page of events for query {}", query);
-        Page<Event> page = eventService.search(query, new PageRequest(0, 5));
+        Page<Event> page = eventService.search(query, PageRequest.of(0, 5));
         return page.getContent();
     }
 
     @GetMapping("/events/{id}/editions")
-    @Timed
     public ResponseEntity<List<EventEdition>> findEventEditions(@PathVariable Long id, @ApiParam Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to find for a page of editions of event {}", id);
@@ -183,9 +167,8 @@ public class EventResource {
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(id.toString(), page, "/events/" + id + "/editions");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
-    
+
     @GetMapping("/events/{id}/editionIds")
-    @Timed
     public ResponseEntity<List<EventEditionIdYearDTO>> findEventEditionsIds(@PathVariable Long id) {
     	return new ResponseEntity<>(eventService.findEventEditionsIdYear(id), HttpStatus.OK);
     }

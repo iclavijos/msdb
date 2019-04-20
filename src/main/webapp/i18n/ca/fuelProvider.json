@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "fuelProvider" : {
+        "fuelProvider": {
             "home": {
                 "title": "Proveïdors de combustible",
                 "createLabel": "Afegir un nou proveïdor",

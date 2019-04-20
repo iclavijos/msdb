@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "racetrack" : {
+        "racetrack": {
             "home": {
                 "title": "Circuitos",
                 "createLabel": "Crear nuevo circuito",
@@ -22,7 +22,7 @@
             "logo": "Logo",
             "layouts": "Trazados"
         },
-        "racetrackLayout" : {
+        "racetrackLayout": {
             "home": {
                 "title": "Trazado",
                 "createLabel": "Crear nuevo trazado",

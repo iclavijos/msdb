@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "pointsSystem" : {
+        "pointsSystem": {
             "home": {
                 "title": "Points Systems",
                 "createLabel": "Create a new Points System",

@@ -50,13 +50,13 @@
                 "rebuildStatistics": "Rebuild statistics",
                 "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
             },
-            "imports" : {
-            	"main": "Import",
-            	"drivers": "Drivers",
-            	"racetracks": "Racetracks",
-            	"teams": "Teams",
-            	"engines": "Engines",
-            	"events": "Events"
+            "imports": {
+                "main": "Import",
+                "drivers": "Drivers",
+                "racetracks": "Racetracks",
+                "teams": "Teams",
+                "engines": "Engines",
+                "events": "Events"
             },
             "language": "Language",
             "calendar": "Calendar",
@@ -65,6 +65,8 @@
         "form": {
             "username": "Username",
             "username.placeholder": "Your username",
+            "currentpassword": "Current password",
+            "currentpassword.placeholder": "Current password",
             "newpassword": "New password",
             "newpassword.placeholder": "New password",
             "confirmpassword": "New password confirmation",
@@ -84,9 +86,9 @@
                     "link": "Register a new account"
                 },
                 "imports": {
-            		"success": "The file was properly uploaded and is being processed",
-            		"fail": "There was an issue and the file could not be processed"
-            	}
+                    "success": "The file was properly uploaded and is being processed",
+                    "fail": "There was an issue and the file could not be processed"
+                }
             },
             "error": {
                 "dontmatch": "The password and its confirmation do not match!"
@@ -115,7 +117,7 @@
             "id": "ID"
         },
         "ribbon": {
-            "dev":"Development"
+            "dev": "Development"
         },
         "item-count": "Showing {{first}} - {{second}} of {{total}} items"
     },
@@ -152,7 +154,8 @@
             "maxbytes": "This field cannot be more than {{ max }} bytes.",
             "pattern": "This field should follow pattern {{ pattern }}.",
             "number": "This field should be a number.",
-            "datetimelocal": "This field should be a date and time."
+            "datetimelocal": "This field should be a date and time.",
+            "patternLogin": "This field can only contain letters, digits and e-mail addresses."
         }
     },
     "error": {
@@ -163,9 +166,10 @@
         "Size": "Field {{ fieldName }} does not meet min/max size requirements!",
         "userexists": "Login name already used!",
         "emailexists": "E-mail is already in use!",
-        "idexists": "A new {{ entityName }} cannot already have an ID"
+        "idexists": "A new {{ entityName }} cannot already have an ID",
+        "idnull": "Invalid ID"
     },
     "footer": {
-    	"license": "This work is licensed under a <a rel='license' href='http://creativecommons.org/licenses/by-nc/4.0/'>Creative Commons Attribution-NonCommercial 4.0 International License</a>."
+        "license": "This work is licensed under a <a rel='license' href='http://creativecommons.org/licenses/by-nc/4.0/'>Creative Commons Attribution-NonCommercial 4.0 International License</a>."
     }
 }

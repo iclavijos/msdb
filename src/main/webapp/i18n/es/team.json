@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "team" : {
+        "team": {
             "home": {
                 "title": "Equipos",
                 "createLabel": "Crear nuevo equipo",

@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "category" : {
+        "category": {
             "home": {
                 "title": "Categories",
                 "createLabel": "Afegir nova categoria",

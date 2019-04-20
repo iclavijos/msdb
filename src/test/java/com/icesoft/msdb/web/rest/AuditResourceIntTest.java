@@ -1,14 +1,10 @@
 package com.icesoft.msdb.web.rest;
 
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.time.Instant;
-
+import com.icesoft.msdb.MotorsportsDatabaseApp;
+import com.icesoft.msdb.config.audit.AuditEventConverter;
+import com.icesoft.msdb.domain.PersistentAuditEvent;
+import com.icesoft.msdb.repository.PersistenceAuditEventRepository;
+import com.icesoft.msdb.service.AuditEventService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +20,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.icesoft.msdb.MotorsportsDatabaseApp;
-import com.icesoft.msdb.config.audit.AuditEventConverter;
-import com.icesoft.msdb.domain.PersistentAuditEvent;
-import com.icesoft.msdb.repository.PersistenceAuditEventRepository;
-import com.icesoft.msdb.service.AuditEventService;
+import java.time.Instant;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Test class for the AuditResource REST controller.
@@ -43,7 +40,7 @@ public class AuditResourceIntTest {
     private static final String SAMPLE_PRINCIPAL = "SAMPLE_PRINCIPAL";
     private static final String SAMPLE_TYPE = "SAMPLE_TYPE";
     private static final Instant SAMPLE_TIMESTAMP = Instant.parse("2015-08-04T10:11:30Z");
-    private static final long SECONDS_PER_DAY = 60*60*24;
+    private static final long SECONDS_PER_DAY = 60 * 60 * 24;
 
     @Autowired
     private PersistenceAuditEventRepository auditEventRepository;
@@ -115,8 +112,8 @@ public class AuditResourceIntTest {
         auditEventRepository.save(auditEvent);
 
         // Generate dates for selecting audits by date, making sure the period will contain the audit
-        String fromDate  = SAMPLE_TIMESTAMP.minusSeconds(SECONDS_PER_DAY).toString().substring(0,10);
-        String toDate = SAMPLE_TIMESTAMP.plusSeconds(SECONDS_PER_DAY).toString().substring(0,10);
+        String fromDate  = SAMPLE_TIMESTAMP.minusSeconds(SECONDS_PER_DAY).toString().substring(0, 10);
+        String toDate = SAMPLE_TIMESTAMP.plusSeconds(SECONDS_PER_DAY).toString().substring(0, 10);
 
         // Get the audit
         restAuditMockMvc.perform(get("/management/audits?fromDate="+fromDate+"&toDate="+toDate))
@@ -131,8 +128,8 @@ public class AuditResourceIntTest {
         auditEventRepository.save(auditEvent);
 
         // Generate dates for selecting audits by date, making sure the period will not contain the sample audit
-        String fromDate  = SAMPLE_TIMESTAMP.minusSeconds(2*SECONDS_PER_DAY).toString().substring(0,10);
-        String toDate = SAMPLE_TIMESTAMP.minusSeconds(SECONDS_PER_DAY).toString().substring(0,10);
+        String fromDate  = SAMPLE_TIMESTAMP.minusSeconds(2*SECONDS_PER_DAY).toString().substring(0, 10);
+        String toDate = SAMPLE_TIMESTAMP.minusSeconds(SECONDS_PER_DAY).toString().substring(0, 10);
 
         // Query audits but expect no results
         restAuditMockMvc.perform(get("/management/audits?fromDate=" + fromDate + "&toDate=" + toDate))
@@ -146,5 +143,20 @@ public class AuditResourceIntTest {
         // Get the audit
         restAuditMockMvc.perform(get("/management/audits/{id}", Long.MAX_VALUE))
             .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Transactional
+    public void testPersistentAuditEventEquals() throws Exception {
+        TestUtil.equalsVerifier(PersistentAuditEvent.class);
+        PersistentAuditEvent auditEvent1 = new PersistentAuditEvent();
+        auditEvent1.setId(1L);
+        PersistentAuditEvent auditEvent2 = new PersistentAuditEvent();
+        auditEvent2.setId(auditEvent1.getId());
+        assertThat(auditEvent1).isEqualTo(auditEvent2);
+        auditEvent2.setId(2L);
+        assertThat(auditEvent1).isNotEqualTo(auditEvent2);
+        auditEvent1.setId(null);
+        assertThat(auditEvent1).isNotEqualTo(auditEvent2);
     }
 }

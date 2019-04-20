@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
@@ -116,7 +115,6 @@ public class ImportsResource {
     @Autowired private CacheHandler cacheHandler;
 
     @PostMapping("/imports")
-    @Timed
     @Transactional
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict("homeInfo")
@@ -180,9 +178,9 @@ public class ImportsResource {
         		racetrack = new Racetrack();
 	        	racetrack.setName(tmp.getRacetrackName());
 	        	racetrack.setLocation(tmp.getLocation());
-        		Racetrack found = racetrackRepository.findOne(Example.of(racetrack));
-        		if (found != null) {
-        			racetrack = found;
+        		Optional<Racetrack> found = racetrackRepository.findOne(Example.of(racetrack));
+        		if (found.isPresent()) {
+        			racetrack = found.get();
         		} else {
         			racetrack = racetrackRepository.save(racetrack);
         			racetrackSearchRepo.save(racetrack);
@@ -195,8 +193,8 @@ public class ImportsResource {
 	        	layout.setYearFirstUse(tmp.getYearFirstUse());
 	        	layout.setActive(tmp.isActive());
 
-	        	RacetrackLayout found = racetrackLayoutRepository.findOne(Example.of(layout));
-	        	if (found == null) {
+	        	Optional<RacetrackLayout> found = racetrackLayoutRepository.findOne(Example.of(layout));
+	        	if (found.isPresent()) {
 	        		layout.setRacetrack(racetrack);
 	        		racetrackLayoutRepository.save(layout);
 	        		racetrackLayoutSearchRepo.save(layout);
@@ -212,7 +210,7 @@ public class ImportsResource {
     	MappingIterator<Team> readValues = initializeIterator(Team.class, data);
         while (readValues.hasNext()) {
         	Team team = readValues.next();
-        	if (teamRepository.findByNameContainsIgnoreCaseOrderByNameAsc(team.getName(), new PageRequest(0, 15))
+        	if (teamRepository.findByNameContainsIgnoreCaseOrderByNameAsc(team.getName(), PageRequest.of(0, 15))
         			.getContent().isEmpty()) {
         		log.debug("Importing team: {}", team);
 	        	teamRepository.save(team);
@@ -326,8 +324,8 @@ public class ImportsResource {
     }
 
     private void importLapByLap(Long sessionId, String data) {
-    	if (sessionLapDataRepo.exists(sessionId.toString())) {
-    		sessionLapDataRepo.delete(sessionId.toString());
+    	if (sessionLapDataRepo.existsById(sessionId.toString())) {
+    		sessionLapDataRepo.deleteById(sessionId.toString());
     	}
         cacheHandler.resetLapByLapCaches(sessionId);
        	MappingIterator<LapInfo> readValues = initializeIterator(LapInfo.class, data);
@@ -342,7 +340,7 @@ public class ImportsResource {
     }
 
     private void importResults(Long sessionId, String data) {
-    	EventSession session = sessionRepository.findOne(sessionId);
+    	Optional<EventSession> session = sessionRepository.findById(sessionId);
 
 //    	if (session.isRace()) {
 //    		Optional.ofNullable(session.getEventEdition().getSeriesEditions())
@@ -353,9 +351,9 @@ public class ImportsResource {
         while (readValues.hasNext()) {
         	SessionResultDTO tmp = readValues.next();
         	EventEntryResult result = new EventEntryResult();
-        	result.setSession(session);
+        	result.setSession(session.get());
         	boolean ignore = false;
-        	List<EventEditionEntry> entries = entryRepository.findByEventEditionIdAndRaceNumber(session.getEventEdition().getId(), tmp.getRaceNumber());
+        	List<EventEditionEntry> entries = entryRepository.findByEventEditionIdAndRaceNumber(session.get().getEventEdition().getId(), tmp.getRaceNumber());
         	if (entries == null || entries.isEmpty()) {
         		log.warn("No entry found with race number {}. Skipping...", tmp.getRaceNumber());
         	} else if (entries.size() > 1) {
@@ -419,7 +417,7 @@ public class ImportsResource {
 		        		first = result;
 		        	}
 		        	if (StringUtils.isNotBlank(tmp.getSharedWithNumber())) {
-		        		List<EventEditionEntry> shareds = entryRepository.findByEventEditionIdAndRaceNumber(session.getEventEdition().getId(), tmp.getSharedWithNumber());
+		        		List<EventEditionEntry> shareds = entryRepository.findByEventEditionIdAndRaceNumber(session.get().getEventEdition().getId(), tmp.getSharedWithNumber());
 		            	if (shareds == null || shareds.isEmpty()) {
 		            		log.warn("No entry found with shared race number {}. Ignoring...", tmp.getRaceNumber());
 		            	} else if (entries.size() > 1) {

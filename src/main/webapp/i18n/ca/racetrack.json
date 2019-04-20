@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "racetrack" : {
+        "racetrack": {
             "home": {
                 "title": "Circuits",
                 "createLabel": "Afegir un nou circuit",
@@ -22,7 +22,7 @@
             "logo": "Logo",
             "layouts": "Traçats"
         },
-        "racetrackLayout" : {
+        "racetrackLayout": {
             "home": {
                 "title": "Traçats",
                 "createLabel": "Afegir un nou traçat",

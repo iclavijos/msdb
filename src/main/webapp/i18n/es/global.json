@@ -50,13 +50,13 @@
                 "rebuildStatistics": "Recalcular estadísticas",
                 "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
             },
-            "imports" : {
-            	"main": "Importar",
-            	"drivers": "Pilotos",
-            	"racetracks": "Circuitos",
-            	"teams": "Equipos",
-            	"engines": "Motores",
-            	"events": "Citas"
+            "imports": {
+                "main": "Importar",
+                "drivers": "Pilotos",
+                "racetracks": "Circuitos",
+                "teams": "Equipos",
+                "engines": "Motores",
+                "events": "Citas"
             },
             "language": "Idioma",
             "calendar": "Calendario",
@@ -65,6 +65,8 @@
         "form": {
             "username": "Usuario",
             "username.placeholder": "Nombre de usuario",
+            "currentpassword": "Contraseña actual",
+            "currentpassword.placeholder": "Contraseña actual",
             "newpassword": "Nueva contraseña",
             "newpassword.placeholder": "Nueva contraseña",
             "confirmpassword": "Confirmación de la nueva contraseña",
@@ -83,13 +85,13 @@
                     "noaccount": "¿No tienes una cuenta todavía?",
                     "link": "Crea una cuenta"
                 },
-            	"imports": {
-            		"success": "El fichero se ha subido correctamente y está siendo procesado",
-            		"fail": "Ha habido algún problema y el fichero no se ha podido procesar"
-            	}
+                "imports": {
+                    "success": "El fichero se ha subido correctamente y está siendo procesado",
+                    "fail": "Ha habido algún problema y el fichero no se ha podido procesar"
+                }
             },
             "error": {
-                "dontmatch" : "¡La contraseña y la confirmación de contraseña no coinciden!"
+                "dontmatch": "¡La contraseña y la confirmación de contraseña no coinciden!"
             },
             "validate": {
                 "newpassword": {
@@ -112,10 +114,10 @@
             }
         },
         "field": {
-            "id" : "ID"
+            "id": "ID"
         },
         "ribbon": {
-            "dev":"Development"
+            "dev": "Development"
         },
         "item-count": "Mostrando {{first}} - {{second}} de {{total}} elementos"
     },
@@ -161,11 +163,11 @@
         "url.not.found": "Not found",
         "NotNull": "¡El campo {{fieldName}} no puede estar vacío!",
         "Size": "¡El campo {{fieldName}} no cumple con los requisitos de tamaño mínimo/máximo!",
-        "userexists": "Login name already used!",
-        "emailexists": "E-mail is already in use!",
-        "idexists": "A new {{entityName}} cannot already have an ID"
+        "userexists": "¡Login ya en uso!",
+        "emailexists": "¡E-mail ya en uso!",
+        "idexists": "Un nuevo {{entityName}} no puede tener ya un ID"
     },
     "footer": {
-    	"license": "Este obra está bajo una <a rel='license' href='http://creativecommons.org/licenses/by-nc/4.0/'>licencia de Creative Commons Reconocimiento-NoComercial 4.0 Internacional</a>."
+        "license": "Esta obra está bajo una <a rel='license' href='http://creativecommons.org/licenses/by-nc/4.0/'>licencia de Creative Commons Reconocimiento-NoComercial 4.0 Internacional</a>."
     }
 }

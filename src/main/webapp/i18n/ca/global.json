@@ -50,13 +50,13 @@
                 "rebuildStatistics": "Recalcular estadístiques",
                 "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
             },
-            "imports" : {
-            	"main": "Importar",
-            	"drivers": "Pilots",
-            	"racetracks": "Circuits",
-            	"teams": "Equips",
-            	"engines": "Motors",
-            	"events": "Cites"
+            "imports": {
+                "main": "Importar",
+                "drivers": "Pilots",
+                "racetracks": "Circuits",
+                "teams": "Equips",
+                "engines": "Motors",
+                "events": "Cites"
             },
             "language": "Idioma",
             "calendar": "Calendari",
@@ -65,8 +65,10 @@
         "form": {
             "username": "Iniciar sessió",
             "username.placeholder": "Nom d'usuari",
-            "newpassword": "Nova Contrassenya",
-            "newpassword.placeholder": "Nova Contrassenya",
+            "currentpassword": "Contrasenya actual",
+            "currentpassword.placeholder": "Contrasenya actual",
+            "newpassword": "Nova Contrasenya",
+            "newpassword.placeholder": "Nova Contrasenya",
             "confirmpassword": "Confirmació de la nova contrasenya",
             "confirmpassword.placeholder": "Confirmació de la nova contrasenya",
             "email": "Correu electrònic",
@@ -83,13 +85,13 @@
                     "noaccount": "No disposa d'un compte encara?",
                     "link": "Registri un nou compte"
                 },
-            	"imports": {
-            		"success": "El fitxer ha estat pujat correctament i està essent processat.",
-            		"fail": "Hi ha hagut algun problema i el fitxer no s'ha progut processar."
-            	}
+                "imports": {
+                    "success": "El fitxer ha estat pujat correctament i està essent processat.",
+                    "fail": "Hi ha hagut algun problema i el fitxer no s'ha progut processar."
+                }
             },
             "error": {
-                "dontmatch" : "La contrasenya i la confirmació no coincideixen!"
+                "dontmatch": "La contrasenya i la confirmació no coincideixen!"
             },
             "validate": {
                 "newpassword": {
@@ -112,10 +114,10 @@
             }
         },
         "field": {
-            "id" : "ID"
+            "id": "ID"
         },
         "ribbon": {
-            "dev":"Development"
+            "dev": "Development"
         },
         "item-count": "Visualitzant {{first}} - {{second}} de {{total}} elements"
     },
@@ -163,9 +165,10 @@
         "Size": "El camp {{fieldName}} no compleix els requeriments de tamany mínim/màxim!",
         "userexists": "Nom d'usuari ja en ús!",
         "emailexists": "E-mail ja en ús!",
-        "idexists": "Una nova {{entityName}} no pot ja tenir un ID"
+        "idexists": "Una nova {{entityName}} no pot ja tenir un ID",
+        "idnull": "Invalid ID"
     },
     "footer": {
-    	"license": "Aquesta obra està sota una <a rel='license' href='http://creativecommons.org/licenses/by-nc/4.0/'>llicència de Creative Commons Reconeixement-NoComercial 4.0 Internacional</a>."
+        "license": "Aquesta obra està sota una <a rel='license' href='http://creativecommons.org/licenses/by-nc/4.0/'>llicència de Creative Commons Reconeixement-NoComercial 4.0 Internacional</a>."
     }
 }

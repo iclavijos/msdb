@@ -3,17 +3,25 @@ import org.gradle.internal.os.OperatingSystem
 apply plugin: 'org.springframework.boot'
 apply plugin: 'com.moowork.node'
 
-ext {
-    logbackLoglevel = "DEBUG"
-}
-
 dependencies {
     compile "org.springframework.boot:spring-boot-devtools"
+    compile "com.h2database:h2"
 }
 
 def profiles = 'dev'
 if (project.hasProperty('no-liquibase')) {
     profiles += ',no-liquibase'
+}
+if (project.hasProperty('tls')) {
+    profiles += ',tls'
+}
+
+springBoot {
+    buildInfo {
+		properties {
+			time = null
+		}
+	}
 }
 
 bootRun {
@@ -21,19 +29,25 @@ bootRun {
 }
 
 task webpackBuildDev(type: YarnTask) {
+    inputs.files(fileTree('src/main/webapp/'))
+
+    def webpackDevFiles = fileTree('webpack//')
+    webpackDevFiles.exclude('webpack.prod.js')
+    inputs.files(webpackDevFiles)
+
+    outputs.files(fileTree("build/www/"))
+
+    dependsOn yarn_install
+
     args = ["run", "webpack:build"]
 }
 
-war {
-    webAppDirName = 'build/www/'
+task copyIntoStatic (type: Copy) {
+    from 'build/www/'
+    into 'build/resources/main/static'
 }
 
 processResources {
-    filesMatching('**/logback-spring.xml') {
-        filter {
-            it.replace('#logback.loglevel#', logbackLoglevel)
-        }
-    }
     filesMatching('**/application.yml') {
         filter {
             it.replace('#project.version#', version)
@@ -45,4 +59,5 @@ processResources {
 }
 
 processResources.dependsOn webpackBuildDev
-webpackBuildDev.onlyIf { project.hasProperty('webpack') }
+copyIntoStatic.dependsOn processResources
+bootJar.dependsOn copyIntoStatic

@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "driverPointsDetails" : {
+        "driverPointsDetails": {
             "home": {
                 "title": "Driver Points Details",
                 "createLabel": "Create a new driver points entry",

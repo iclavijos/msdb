@@ -147,7 +147,7 @@ public class RacetrackServiceImpl implements RacetrackService {
     @Transactional(readOnly = true)
     public Racetrack find(Long id) {
         log.debug("Request to get Racetrack : {}", id);
-        Racetrack racetrack = racetrackRepository.findOne(id);
+        Racetrack racetrack = racetrackRepository.findById(id).get();
         return racetrack;
     }
     
@@ -155,7 +155,7 @@ public class RacetrackServiceImpl implements RacetrackService {
     @Transactional(readOnly = true)
     public RacetrackLayout findLayout(Long id) {
         log.debug("Request to get RacetrackLayout : {}", id);
-        RacetrackLayout layout = racetrackLayoutRepository.findOne(id);
+        RacetrackLayout layout = racetrackLayoutRepository.findById(id).get();
         return layout;
     }
 
@@ -167,19 +167,19 @@ public class RacetrackServiceImpl implements RacetrackService {
     @Override
     public void delete(Long id) {
         log.debug("Request to delete Racetrack : {}", id);
-        Racetrack racetrack = racetrackRepository.findOne(id);
-        racetrackLayoutSearchRepo.delete(racetrack.getLayouts());
+        Racetrack racetrack = racetrackRepository.findById(id).get();
+        racetrackLayoutSearchRepo.deleteAll(racetrack.getLayouts());
         racetrackLayoutRepository.deleteInBatch(racetrack.getLayouts());
-        racetrackRepository.delete(id);
-        racetrackSearchRepo.delete(id);
+        racetrackRepository.deleteById(id);
+        racetrackSearchRepo.deleteById(id);
         cdnService.deleteImage(id.toString(), "racetrack");
     }
     
     @Override
     public void deleteLayout(Long id) {
         log.debug("Request to delete RacetrackLayout : {}", id);
-        racetrackLayoutRepository.delete(id);
-        racetrackLayoutSearchRepo.delete(id);
+        racetrackLayoutRepository.deleteById(id);
+        racetrackLayoutSearchRepo.deleteById(id);
     }
     
     @Override

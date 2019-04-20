@@ -22,6 +22,7 @@
             "status": "Estat"
         },
         "status": {
+            "UNKNOWN": "UNKNOWN",
             "UP": "ACTIU",
             "DOWN": "INACTIU"
         }

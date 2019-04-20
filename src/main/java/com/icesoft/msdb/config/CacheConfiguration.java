@@ -1,24 +1,20 @@
 package com.icesoft.msdb.config;
 
-import io.github.jhipster.config.JHipsterProperties;
-import org.ehcache.config.builders.CacheConfigurationBuilder;
-import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.expiry.Duration;
-import org.ehcache.expiry.Expirations;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+
+import org.ehcache.config.builders.*;
 import org.ehcache.jsr107.Eh107Configuration;
 
-import java.util.concurrent.TimeUnit;
+import io.github.jhipster.config.jcache.BeanClassLoaderAwareJCacheRegionFactory;
+import io.github.jhipster.config.JHipsterProperties;
 
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.*;
 
 @Configuration
 @EnableCaching
-@AutoConfigureAfter(value = { MetricsConfiguration.class })
-@AutoConfigureBefore(value = { WebConfigurer.class, DatabaseConfiguration.class })
 public class CacheConfiguration {
 
     private final javax.cache.configuration.Configuration<Object, Object> jcacheConfiguration;
@@ -27,41 +23,42 @@ public class CacheConfiguration {
     private final javax.cache.configuration.Configuration<Object, Object> oneDayCacheConfiguration;
 
     public CacheConfiguration(JHipsterProperties jHipsterProperties) {
+        BeanClassLoaderAwareJCacheRegionFactory.setBeanClassLoader(this.getClass().getClassLoader());
         JHipsterProperties.Cache.Ehcache ehcache =
             jHipsterProperties.getCache().getEhcache();
 
         jcacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
             CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
                 ResourcePoolsBuilder.heap(ehcache.getMaxEntries()))
-                .withExpiry(Expirations.timeToLiveExpiration(Duration.of(ehcache.getTimeToLiveSeconds(), TimeUnit.SECONDS)))
+                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(ehcache.getTimeToLiveSeconds())))
                 .build());
 
         longLivedCacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
         		CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
                         ResourcePoolsBuilder.heap(100))
-                        .withExpiry(Expirations.timeToLiveExpiration(Duration.of(172800, TimeUnit.SECONDS))) //TODO: Externalize
+                        .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(172800, ChronoUnit.SECONDS)))
                         .build());
         oneDayCacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
         		CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
                         ResourcePoolsBuilder.heap(100))
-                        .withExpiry(Expirations.timeToLiveExpiration(Duration.of(24 * 60 * 60, TimeUnit.SECONDS))) //TODO: Externalize
+                    .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(24 * 60 * 60, ChronoUnit.SECONDS))) //TODO: Externalize
                         .build());
 
         alwaysCacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
         		CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
                         ResourcePoolsBuilder.heap(2000)) //TODO: Externalize
-        				.withExpiry(Expirations.noExpiration())
+                        .withExpiry(ExpiryPolicyBuilder.noExpiration())
                         .build());
     }
 
     @Bean
     public JCacheManagerCustomizer cacheManagerCustomizer() {
         return cm -> {
-            cm.createCache("users", jcacheConfiguration);
+            cm.createCache(com.icesoft.msdb.repository.UserRepository.USERS_BY_LOGIN_CACHE, jcacheConfiguration);
+            cm.createCache(com.icesoft.msdb.repository.UserRepository.USERS_BY_EMAIL_CACHE, jcacheConfiguration);
             cm.createCache(com.icesoft.msdb.domain.User.class.getName(), jcacheConfiguration);
             cm.createCache(com.icesoft.msdb.domain.Authority.class.getName(), jcacheConfiguration);
             cm.createCache(com.icesoft.msdb.domain.User.class.getName() + ".authorities", jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.SocialUserConnection.class.getName(), jcacheConfiguration);
             cm.createCache(com.icesoft.msdb.domain.EventSession.class.getName(), jcacheConfiguration);
             cm.createCache(com.icesoft.msdb.domain.Category.class.getName(), jcacheConfiguration);
             cm.createCache(com.icesoft.msdb.domain.Country.class.getName(), jcacheConfiguration);

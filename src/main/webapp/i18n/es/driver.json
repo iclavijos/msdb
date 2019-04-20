@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "driver" : {
+        "driver": {
             "home": {
                 "title": "Pilotos",
                 "createLabel": "Crear nuevo piloto",

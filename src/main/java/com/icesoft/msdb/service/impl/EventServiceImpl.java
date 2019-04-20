@@ -48,7 +48,7 @@ public class EventServiceImpl implements EventService {
     /**
      * Save a racetrack.
      *
-     * @param racetrack the entity to save
+     * @param event the entity to save
      * @return the persisted entity
      */
     @Override
@@ -83,7 +83,7 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     public Event findOne(Long id) {
         log.debug("Request to get Event : {}", id);
-        Event event = eventRepository.findOne(id);
+        Event event = eventRepository.findById(id).get();
         return event;
     }
 
@@ -95,8 +95,8 @@ public class EventServiceImpl implements EventService {
     @Override
     public void delete(Long id) {
         log.debug("Request to delete Event : {}", id);
-        eventRepository.delete(id);
-        eventSearchRepo.delete(id);
+        eventRepository.deleteById(id);
+        eventSearchRepo.deleteById(id);
     }
     
     @Override

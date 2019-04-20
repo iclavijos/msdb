@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.codahale.metrics.annotation.Timed;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
@@ -37,7 +36,6 @@ public class SearchIndexResource {
 
     @GetMapping("/management/indexes/rebuild")
     @Secured({AuthoritiesConstants.ADMIN})
-    @Timed
     public ResponseEntity<Void> rebuildSearchIndexes() {
     	log.debug("REST request to rebuild search indexes");
     	searchService.rebuildIndexes();
@@ -45,7 +43,6 @@ public class SearchIndexResource {
     }
     
     @GetMapping("/api/search/entries")
-    @Timed
     public ResponseEntity<List<EventEntrySearchResultDTO>> searchEntries(@RequestParam String query, Pageable pageable) throws URISyntaxException {
     	log.debug(String.format("REST request to search entries for '%s", query));
     	Page<EventEntrySearchResultDTO> page = searchService.searchEntries(query, pageable);

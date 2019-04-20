@@ -1,14 +1,15 @@
 package com.icesoft.msdb.web.rest;
+import com.icesoft.msdb.domain.TyreProvider;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
-
-import javax.validation.Valid;
-
+import com.icesoft.msdb.repository.TyreProviderRepository;
+import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
+import com.icesoft.msdb.web.rest.util.HeaderUtil;
+import com.icesoft.msdb.web.rest.util.PaginationUtil;
+import io.swagger.annotations.ApiParam;
+import io.github.jhipster.web.util.ResponseUtil;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
@@ -21,28 +22,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.TyreProvider;
-import com.icesoft.msdb.repository.TyreProviderRepository;
-import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
-import com.icesoft.msdb.security.AuthoritiesConstants;
-import com.icesoft.msdb.service.CDNService;
-import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-import com.icesoft.msdb.web.rest.util.HeaderUtil;
-import com.icesoft.msdb.web.rest.util.PaginationUtil;
+import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-import io.github.jhipster.web.util.ResponseUtil;
-import io.swagger.annotations.ApiParam;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing TyreProvider.
@@ -56,12 +47,12 @@ public class TyreProviderResource {
     private static final String ENTITY_NAME = "tyreProvider";
 
     private final TyreProviderRepository tyreProviderRepository;
-    
+
     private final TyreProviderSearchRepository tyreProviderSearchRepository;
-    
+
     private final CDNService cdnService;
 
-    public TyreProviderResource(TyreProviderRepository tyreProviderRepository, TyreProviderSearchRepository tyreProviderSearchRepository, 
+    public TyreProviderResource(TyreProviderRepository tyreProviderRepository, TyreProviderSearchRepository tyreProviderSearchRepository,
     		CDNService cdnService) {
         this.tyreProviderRepository = tyreProviderRepository;
         this.tyreProviderSearchRepository = tyreProviderSearchRepository;
@@ -76,7 +67,6 @@ public class TyreProviderResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/tyre-providers")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<TyreProvider> createTyreProvider(@Valid @RequestBody TyreProvider tyreProvider) throws URISyntaxException {
         log.debug("REST request to save TyreProvider : {}", tyreProvider);
@@ -88,10 +78,10 @@ public class TyreProviderResource {
         if (tyreProvider.getLogo() != null) {
 	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), tyreProvider.getLogo(), ENTITY_NAME);
 	        tyreProvider.logoUrl(cdnUrl);
-			
+
 			result = tyreProviderRepository.save(result);
         }
-        
+
         return ResponseEntity.created(new URI("/api/tyre-providers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -107,12 +97,11 @@ public class TyreProviderResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/tyre-providers")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<TyreProvider> updateTyreProvider(@Valid @RequestBody TyreProvider tyreProvider) throws URISyntaxException {
         log.debug("REST request to update TyreProvider : {}", tyreProvider);
         if (tyreProvider.getId() == null) {
-            return createTyreProvider(tyreProvider);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         if (tyreProvider.getLogo() != null) {
         	String cdnUrl = cdnService.uploadImage(tyreProvider.getId().toString(), tyreProvider.getLogo(), ENTITY_NAME);
@@ -134,12 +123,11 @@ public class TyreProviderResource {
      * @return the ResponseEntity with status 200 (OK) and the list of tyreProviders in body
      */
     @GetMapping("/tyre-providers")
-    @Timed
-    public ResponseEntity<List<TyreProvider>> getAllTyreProviders(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<TyreProvider>> getAllTyreProviders(Pageable pageable) {
         log.debug("REST request to get a page of TyreProviders");
         Page<TyreProvider> page = tyreProviderRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/tyre-providers");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -149,11 +137,10 @@ public class TyreProviderResource {
      * @return the ResponseEntity with status 200 (OK) and with body the tyreProvider, or with status 404 (Not Found)
      */
     @GetMapping("/tyre-providers/{id}")
-    @Timed
     public ResponseEntity<TyreProvider> getTyreProvider(@PathVariable Long id) {
         log.debug("REST request to get TyreProvider : {}", id);
-        TyreProvider tyreProvider = tyreProviderRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(tyreProvider));
+        Optional<TyreProvider> tyreProvider = tyreProviderRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(tyreProvider);
     }
 
     /**
@@ -163,12 +150,11 @@ public class TyreProviderResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/tyre-providers/{id}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteTyreProvider(@PathVariable Long id) {
         log.debug("REST request to delete TyreProvider : {}", id);
-        tyreProviderRepository.delete(id);
-        tyreProviderSearchRepository.delete(id);
+        tyreProviderRepository.deleteById(id);
+        tyreProviderSearchRepository.deleteById(id);
         cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
@@ -182,24 +168,22 @@ public class TyreProviderResource {
      * @return the result of the search
      */
     @GetMapping("/_search/tyre-providers")
-    @Timed
-    public ResponseEntity<List<TyreProvider>> searchTyreProviders(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<TyreProvider>> searchTyreProviders(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of TyreProviders for query {}", query);
         String searchValue = '*' + query + '*';
         Page<TyreProvider> page = tyreProviderSearchRepository.search(queryStringQuery(searchValue), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/tyre-providers");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     @GetMapping("/_typeahead/tyres")
-    @Timed
     public List<TyreProvider> typeahead(@RequestParam String query) {
         log.debug("REST request to search for a page of TyreProvider for query {}", query);
         String searchValue = '*' + query + '*';
         NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
         		.withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
         		.withSort(SortBuilders.fieldSort("name"))
-        		.withPageable(new PageRequest(0, 5));
+        		.withPageable(PageRequest.of(0, 5));
         Page<TyreProvider> page = tyreProviderSearchRepository.search(nqb.build());
         return page.getContent();
     }

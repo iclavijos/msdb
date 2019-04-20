@@ -1,6 +1,6 @@
 {
     "motorsportsDatabaseApp": {
-        "driverPointsDetails" : {
+        "driverPointsDetails": {
             "home": {
                 "title": "Detalle de puntos del piloto",
                 "createLabel": "Añadir puntos por otro concepto",

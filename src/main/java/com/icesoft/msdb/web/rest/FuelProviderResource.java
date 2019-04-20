@@ -1,14 +1,16 @@
 package com.icesoft.msdb.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+import com.icesoft.msdb.domain.FuelProvider;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
-
-import javax.validation.Valid;
-
+import com.icesoft.msdb.repository.FuelProviderRepository;
+import com.icesoft.msdb.repository.search.FuelProviderSearchRepository;
+import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
+import com.icesoft.msdb.web.rest.util.HeaderUtil;
+import com.icesoft.msdb.web.rest.util.PaginationUtil;
+import io.swagger.annotations.ApiParam;
+import io.github.jhipster.web.util.ResponseUtil;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
@@ -20,28 +22,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.domain.FuelProvider;
-import com.icesoft.msdb.repository.FuelProviderRepository;
-import com.icesoft.msdb.repository.search.FuelProviderSearchRepository;
-import com.icesoft.msdb.security.AuthoritiesConstants;
-import com.icesoft.msdb.service.CDNService;
-import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-import com.icesoft.msdb.web.rest.util.HeaderUtil;
-import com.icesoft.msdb.web.rest.util.PaginationUtil;
+import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-import io.github.jhipster.web.util.ResponseUtil;
-import io.swagger.annotations.ApiParam;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing FuelProvider.
@@ -55,11 +47,12 @@ public class FuelProviderResource {
     private static final String ENTITY_NAME = "fuelProvider";
 
     private final FuelProviderRepository fuelProviderRepository;
+
     private final FuelProviderSearchRepository fuelProviderSearchRepository;
-    
+
     private final CDNService cdnService;
 
-    public FuelProviderResource(FuelProviderRepository fuelProviderRepository, FuelProviderSearchRepository fuelProviderSearchRepository, 
+    public FuelProviderResource(FuelProviderRepository fuelProviderRepository, FuelProviderSearchRepository fuelProviderSearchRepository,
     		CDNService cdnService) {
         this.fuelProviderRepository = fuelProviderRepository;
         this.fuelProviderSearchRepository = fuelProviderSearchRepository;
@@ -74,7 +67,6 @@ public class FuelProviderResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/fuel-providers")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<FuelProvider> createFuelProvider(@Valid @RequestBody FuelProvider fuelProvider) throws URISyntaxException {
         log.debug("REST request to save FuelProvider : {}", fuelProvider);
@@ -83,11 +75,11 @@ public class FuelProviderResource {
         }
         FuelProvider result = fuelProviderRepository.save(fuelProvider);
         fuelProviderSearchRepository.save(result);
-        
+
         if (fuelProvider.getLogo() != null) {
 	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), fuelProvider.getLogo(), ENTITY_NAME);
 	        result.logoUrl(cdnUrl);
-			
+
 			result = fuelProviderRepository.save(result);
         }
         return ResponseEntity.created(new URI("/api/fuel-providers/" + result.getId()))
@@ -105,12 +97,11 @@ public class FuelProviderResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/fuel-providers")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<FuelProvider> updateFuelProvider(@Valid @RequestBody FuelProvider fuelProvider) throws URISyntaxException {
         log.debug("REST request to update FuelProvider : {}", fuelProvider);
         if (fuelProvider.getId() == null) {
-            return createFuelProvider(fuelProvider);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         if (fuelProvider.getLogo() != null) {
         	String cdnUrl = cdnService.uploadImage(fuelProvider.getId().toString(), fuelProvider.getLogo(), ENTITY_NAME);
@@ -132,12 +123,11 @@ public class FuelProviderResource {
      * @return the ResponseEntity with status 200 (OK) and the list of fuelProviders in body
      */
     @GetMapping("/fuel-providers")
-    @Timed
-    public ResponseEntity<List<FuelProvider>> getAllFuelProviders(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<FuelProvider>> getAllFuelProviders(Pageable pageable) {
         log.debug("REST request to get a page of FuelProviders");
         Page<FuelProvider> page = fuelProviderRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/fuel-providers");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -147,11 +137,10 @@ public class FuelProviderResource {
      * @return the ResponseEntity with status 200 (OK) and with body the fuelProvider, or with status 404 (Not Found)
      */
     @GetMapping("/fuel-providers/{id}")
-    @Timed
     public ResponseEntity<FuelProvider> getFuelProvider(@PathVariable Long id) {
         log.debug("REST request to get FuelProvider : {}", id);
-        FuelProvider fuelProvider = fuelProviderRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(fuelProvider));
+        Optional<FuelProvider> fuelProvider = fuelProviderRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(fuelProvider);
     }
 
     /**
@@ -161,12 +150,11 @@ public class FuelProviderResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/fuel-providers/{id}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteFuelProvider(@PathVariable Long id) {
         log.debug("REST request to delete FuelProvider : {}", id);
-        fuelProviderRepository.delete(id);
-        fuelProviderSearchRepository.delete(id);
+        fuelProviderRepository.deleteById(id);
+        fuelProviderSearchRepository.deleteById(id);
         cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
@@ -180,25 +168,23 @@ public class FuelProviderResource {
      * @return the result of the search
      */
     @GetMapping("/_search/fuel-providers")
-    @Timed
-    public ResponseEntity<List<FuelProvider>> searchFuelProviders(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<FuelProvider>> searchFuelProviders(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of FuelProviders for query {}", query);
         String searchValue = '*' + query + '*';
         Page<FuelProvider> page = fuelProviderSearchRepository.search(queryStringQuery(searchValue), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/fuel-providers");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     @GetMapping("/_typeahead/fuel")
-    @Timed
     public List<FuelProvider> typeahead(@RequestParam String query) {
         log.debug("REST request to search for a page of FuelProviders for query {}", query);
         QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
     			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
     				.analyzeWildcard(true)
     				.field("name"));
-    	
-    	Page<FuelProvider> page = fuelProviderSearchRepository.search(queryBuilder, new PageRequest(0, 5));
+
+    	Page<FuelProvider> page = fuelProviderSearchRepository.search(queryBuilder, PageRequest.of(0, 5));
         return page.getContent();
     }
 }

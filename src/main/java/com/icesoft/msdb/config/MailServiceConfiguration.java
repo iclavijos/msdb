@@ -5,13 +5,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import com.icesoft.msdb.service.MailService;
-import com.icesoft.msdb.service.SMTPMailService;
-import com.icesoft.msdb.service.SendGridMailService;
+import com.icesoft.msdb.service.impl.SMTPMailService;
+import com.icesoft.msdb.service.impl.SendGridMailService;
 
 import io.github.jhipster.config.JHipsterProperties;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 @Configuration
 public class MailServiceConfiguration {

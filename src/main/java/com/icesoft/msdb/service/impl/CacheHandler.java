@@ -35,13 +35,13 @@ public class CacheHandler {
 	//@CacheEvict(cacheNames={"driversStandingsCache","teamsStandingsCache", "manufacturersStandingsCache"})
 	public void resetDriversStandingsCache(Long seriesEditionId) {
 		log.debug("Reseting drivers standings cache for series edition {}", seriesEditionId);
-        resetSeriesEditionCaches(seriesEditionRepo.findOne(seriesEditionId));
+        resetSeriesEditionCaches(seriesEditionRepo.findById(seriesEditionId).get());
 	}
 
 	//@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, allEntries = true)
 	public void resetWinnersCache(Long seriesEditionId) {
 		log.debug("Reseting winners cache for series edition {}", seriesEditionId);
-        resetSeriesEditionCaches(seriesEditionRepo.findOne(seriesEditionId));
+        resetSeriesEditionCaches(seriesEditionRepo.findById(seriesEditionId).get());
 	}
 
 	@CacheEvict(cacheNames="driversChampions")

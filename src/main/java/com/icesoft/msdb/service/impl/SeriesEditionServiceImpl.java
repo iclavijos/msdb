@@ -86,19 +86,19 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 
 	@Override
 	public void addEventToSeries(Long seriesId, Long idEvent, List<EventRacePointsDTO> racesPointsData) {
-		SeriesEdition seriesEd = seriesRepo.findOne(seriesId);
+		SeriesEdition seriesEd = seriesRepo.findById(seriesId).get();
 		if (seriesEd == null) {
 			throw new MSDBException("No series edition found for id '" + seriesId + "'");
 		}
 		EventEdition eventEd = null;
 
 		racesPointsData.parallelStream().forEach(racePoints -> {
-			EventSession session = sessionRepo.findOne(racePoints.getRaceId());
+			EventSession session = sessionRepo.findById(racePoints.getRaceId()).get();
 			if (!racePoints.isAssigned()) {
 				Optional.ofNullable(session.getPointsSystemsSession())
 					.map(pss -> pss.removeIf(item -> item.getEventSession().getId().equals(racePoints.getRaceId())));
 			} else {
-				PointsSystem points = pointsRepo.findOne(racePoints.getpSystemAssigned());
+				PointsSystem points = pointsRepo.findById(racePoints.getpSystemAssigned()).get();
 				if (session == null || points == null) {
 					throw new MSDBException(
 							String.format("Provided points for race data invalid [%s, %s]", 
@@ -117,7 +117,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 			sessionRepo.save(session);
 		});
 		
-		eventEd = eventRepo.findOne(idEvent);
+		eventEd = eventRepo.findById(idEvent).get();
 		if (seriesEd.getEvents() != null && !seriesEd.getEvents().isEmpty()) {
 			if (!seriesEd.getEvents().contains(eventEd)) {
 				seriesEd.getEvents().add(eventEd);
@@ -132,7 +132,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 
 	@Override
 	public void removeEventFromSeries(Long seriesId, Long eventId) {
-		EventEdition eventEd = eventRepo.findOne(eventId);
+		EventEdition eventEd = eventRepo.findById(eventId).get();
 		if (eventId == null) {
 			throw new MSDBException("No event edition found for id '" + eventId + "'");
 		}
@@ -140,7 +140,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		if (!eventEd.getSeriesId().contains(seriesId)) {
 			throw new MSDBException("Provided series id does not match an already assigned one");
 		}
-		SeriesEdition sEdition = seriesRepo.findOne(seriesId);
+		SeriesEdition sEdition = seriesRepo.findById(seriesId).get();
 		sEdition.getEvents().remove(eventEd);
 		sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventId).parallelStream()
 			.forEach(session -> {
@@ -170,12 +170,12 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 
 	@Transactional(readOnly=true)
 	public List<EventEdition> findSeriesEvents(Long seriesId) {
-		return seriesRepo.findOne(seriesId).getEvents();
+		return seriesRepo.findById(seriesId).get().getEvents();
 	}
 	
 	@Override
 	public void setSeriesDriversChampions(Long seriesEditionId, List<Long> driverIds) {
-		SeriesEdition seriesEd = seriesRepo.findOne(seriesEditionId);
+		SeriesEdition seriesEd = seriesRepo.findById(seriesEditionId).get();
 		List<Driver> currChamps = seriesEd.getDriversChampions();
 		List<Driver> newChamps = driverRepo.findByIdIn(driverIds);
 		
@@ -190,12 +190,12 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Driver> getSeriesDriversChampions(Long seriesEditionId) {
-		return seriesRepo.findOne(seriesEditionId).getDriversChampions();
+		return seriesRepo.findById(seriesEditionId).get().getDriversChampions();
 	}
 	
 	@Override
 	public void setSeriesTeamsChampions(Long seriesEditionId, List<Long> teamsIds) {
-		SeriesEdition seriesEd = seriesRepo.findOne(seriesEditionId);
+		SeriesEdition seriesEd = seriesRepo.findById(seriesEditionId).get();
 		List<Team> currentChamps = seriesEd.getTeamsChampions();
 		List<Team> newChamps = teamRepo.findByIdIn(teamsIds);
 		
@@ -209,7 +209,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Team> getSeriesTeamsChampions(Long seriesEditionId) {
-		return seriesRepo.findOne(seriesEditionId).getTeamsChampions();
+		return seriesRepo.findById(seriesEditionId).get().getTeamsChampions();
 	}
 	
 	@Override
@@ -226,7 +226,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	    		EventEditionEntry overallWinner = null;
 	    		for(Object[] winner : tmpWinners) {
 	    			if (winner[2].equals(session)) {
-		        		EventEditionEntry entry = eventEntryRepo.findOne((Long)winner[0]);
+		        		EventEditionEntry entry = eventEntryRepo.findById((Long)winner[0]).get();
 		        		catWinners.addWinners((String)winner[1], entry.getDriversName());
 		        		if (winner[3].equals(new Integer(1))) {
 		        			overallWinner = entry;
@@ -248,7 +248,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	@Override
 	public void cloneSeriesEdition(Long seriesEditionId, String newPeriod) {
 		log.debug("Cloning series edition");
-		SeriesEdition seriesEd = seriesRepo.findOne(seriesEditionId);
+		SeriesEdition seriesEd = seriesRepo.findById(seriesEditionId).get();
 		if (seriesEd == null) {
 			throw new MSDBException("No series edition with id " + seriesEditionId + " exist in DB");
 		}
