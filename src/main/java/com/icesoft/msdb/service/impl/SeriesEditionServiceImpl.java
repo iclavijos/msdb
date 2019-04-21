@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.icesoft.msdb.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,21 +22,11 @@ import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.domain.PointsSystemSession;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.Team;
-import com.icesoft.msdb.repository.DriverEventPointsRepository;
-import com.icesoft.msdb.repository.DriverRepository;
-import com.icesoft.msdb.repository.EventEditionRepository;
-import com.icesoft.msdb.repository.EventEntryRepository;
-import com.icesoft.msdb.repository.EventSessionRepository;
-import com.icesoft.msdb.repository.ManufacturerEventPointsRepository;
-import com.icesoft.msdb.repository.PointsSystemRepository;
-import com.icesoft.msdb.repository.PointsSystemSessionRepository;
-import com.icesoft.msdb.repository.SeriesEditionRepository;
-import com.icesoft.msdb.repository.TeamEventPointsRepository;
-import com.icesoft.msdb.repository.TeamRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
+import com.icesoft.msdb.service.dto.DriverCategoryChampionDTO;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
 import com.icesoft.msdb.service.dto.SeriesEventsAndWinnersDTO;
@@ -60,14 +51,16 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	private final EventEntryRepository eventEntryRepo;
 	private final PointsSystemSessionRepository pssRepo;
 	private final EventEditionSearchRepository eventEdSearchRepo;
+	private final SeriesCategoryDriverChampionRepository seriesCategoryDriverChampionRepository;
 	
-	public SeriesEditionServiceImpl(EventEditionRepository eventRepo, SeriesEditionRepository seriesRepo, 
-			EventSessionRepository sessionRepo, PointsSystemRepository pointsRepo, 
-			DriverRepository driverRepo, DriverEventPointsRepository driverPointsRepo, TeamRepository teamRepo,
-			TeamEventPointsRepository teamPointsRepo, ManufacturerEventPointsRepository manufacturerPointsRepo,
-			StatisticsService statsService, JDBCRepositoryImpl jdbcRepo, 
-			EventEntryRepository eventEntryRepo, PointsSystemSessionRepository pssRepository,
-			EventEditionSearchRepository eventEdSearchRepo) {
+	public SeriesEditionServiceImpl(EventEditionRepository eventRepo, SeriesEditionRepository seriesRepo,
+                                    EventSessionRepository sessionRepo, PointsSystemRepository pointsRepo,
+                                    DriverRepository driverRepo, DriverEventPointsRepository driverPointsRepo, TeamRepository teamRepo,
+                                    TeamEventPointsRepository teamPointsRepo, ManufacturerEventPointsRepository manufacturerPointsRepo,
+                                    StatisticsService statsService, JDBCRepositoryImpl jdbcRepo,
+                                    EventEntryRepository eventEntryRepo, PointsSystemSessionRepository pssRepository,
+                                    EventEditionSearchRepository eventEdSearchRepo,
+                                    SeriesCategoryDriverChampionRepository seriesCategoryDriverChampionRepository) {
 		this.eventRepo = eventRepo;
 		this.seriesRepo = seriesRepo;
 		this.sessionRepo = sessionRepo;
@@ -82,6 +75,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		this.eventEntryRepo = eventEntryRepo;
 		this.pssRepo = pssRepository;
 		this.eventEdSearchRepo = eventEdSearchRepo;
+		this.seriesCategoryDriverChampionRepository = seriesCategoryDriverChampionRepository;
 	}
 
 	@Override
@@ -174,12 +168,14 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	}
 	
 	@Override
-	public void setSeriesDriversChampions(Long seriesEditionId, List<Long> driverIds) {
+	public void setSeriesDriversChampions(Long seriesEditionId, List<DriverCategoryChampionDTO> driverIds) {
 		SeriesEdition seriesEd = seriesRepo.findOne(seriesEditionId);
-		List<Driver> currChamps = seriesEd.getDriversChampions();
-		List<Driver> newChamps = driverRepo.findByIdIn(driverIds);
+		List<Driver> currChamps = null; //seriesEd.getDriversChampions();
+		List<Driver> newChamps = driverRepo.findByIdIn(
+				driverIds.stream().map(dc -> dc.getDriverId())
+					.collect(Collectors.toList()));
 		
-		seriesEd.setDriversChampions(newChamps);
+		//seriesEd.setDriversChampions(newChamps);
 		seriesRepo.save(seriesEd);
 		
 		statsService.updateSeriesDriversChampions(seriesEd, currChamps, newChamps, 
@@ -190,8 +186,14 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Driver> getSeriesDriversChampions(Long seriesEditionId) {
-		return seriesRepo.findOne(seriesEditionId).getDriversChampions();
+		return seriesCategoryDriverChampionRepository.getDriversChampions(seriesEditionId);
 	}
+
+	@Override
+    @Transactional(readOnly = true)
+    public List<Driver> getSeriesCategoryDriversChampions(Long seriesEditionId, Long categoryId) {
+        return seriesCategoryDriverChampionRepository.getDriversChampionsInCategory(seriesEditionId, categoryId);
+    }
 	
 	@Override
 	public void setSeriesTeamsChampions(Long seriesEditionId, List<Long> teamsIds) {

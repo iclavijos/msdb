@@ -6,7 +6,8 @@ import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
 
-import { SeriesEdition } from './series-edition.model';
+import { Category } from '../category';
+import { SeriesEdition, SelectedDriverData } from './series-edition.model';
 import { SeriesEditionPopupService } from './series-edition-popup.service';
 import { SeriesEditionService } from './series-edition.service';
 
@@ -18,8 +19,15 @@ export class SeriesEditionDriversChampionsDialogComponent implements OnInit {
 	
 	drivers: any;
 	seriesEditionId: number;
+	seriesEdition: SeriesEdition;
 	isSaving: boolean;
+	driversUnfiltered: any;
 	selectedDrivers: any;
+    filteredDrivers: string[] = [];
+    filterCategory: Category;
+    filterCategoryId: number = null;
+    math = Math;
+    temp = Array;
 
 	@ViewChildren('myItem') item;
 	selectedIds = [];
@@ -32,7 +40,33 @@ export class SeriesEditionDriversChampionsDialogComponent implements OnInit {
 	) {
 	}
 
-	ngOnInit() {			
+	ngOnInit() {
+		this.seriesEditionService.find(this.seriesEditionId).subscribe((seriesEdition) => {
+            this.seriesEdition = seriesEdition;
+            this.seriesEdition.allowedCategories = seriesEdition.allowedCategories.sort((c1, c2) => {
+            	if (c1.shortname > c2.shortname) return 1;
+            	if (c1.shortname < c2.shortname) return -1;
+            	return 0;
+            });
+        });
+        this.seriesEditionService.findDriversStandings(this.seriesEdition.id).subscribe(driversStandings => {
+    		this.driversUnfiltered = driversStandings.json();
+    		this.driversUnfiltered.map(driver => {
+			    const items = driver.driverName.split(' '); 
+			    let res = '';
+			    for(let i = 0; i < items.length -1; i++) {
+			        if (items[i].length == 2) res += items[i] + ' ';
+			        else res += items[i].charAt(0) + '. ';
+			    }
+			    res += items[items.length - 1];
+			    driver.driverName = res;
+    		});
+    		if (this.seriesEdition.standingsPerCategory) {
+                this.drivers = this.driversUnfiltered.filter(d => d.category === this.filterCategory);
+            } else {
+    		    this.drivers = driversStandings.json();
+            }
+    	});
 	}
 	
 	clear () {
@@ -41,12 +75,18 @@ export class SeriesEditionDriversChampionsDialogComponent implements OnInit {
 	
 	onCheckboxSelect(id, event) {
 	    if (event.target.checked === true) {
-	      this.selectedIds.push(id);
+	    	const selectedDriver = new SelectedDriverData(id, this.filterCategoryId);
+	      this.selectedIds.push(selectedDriver);
 	    }
 	    if (event.target.checked === false) {
 	      this.selectedIds = this.selectedIds.filter((item) => item !== id);
 	    }
 	  }
+	  
+	changeCategory(event) {
+		this.filterCategoryId = this.filterCategory.id;
+        this.filteredDrivers = this.driversUnfiltered.filter(d => d.category === this.filterCategory.shortname);
+    }
 	
 	save() {
         this.isSaving = true;

@@ -51,8 +51,8 @@ public class StatisticsResource {
 		
 		seriesEditionRepo.findAll().stream()
 			.forEach(s -> {
-				List<Long> ids = s.getDriversChampions().stream().map(d -> d.getId()).collect(Collectors.toList());
-				seriesEditionService.setSeriesDriversChampions(s.getId(), ids);
+				List<Long> ids = seriesEditionService.getSeriesDriversChampions(s.getId()).stream().map(d -> d.getId()).collect(Collectors.toList());
+				//seriesEditionService.setSeriesDriversChampions(s.getId(), ids);
 			});
 		return CompletableFuture.completedFuture(ResponseEntity.ok().headers(HeaderUtil.createAlert("Statistics rebuilt", null)).build());
 	}

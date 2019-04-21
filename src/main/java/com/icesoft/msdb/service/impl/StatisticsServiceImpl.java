@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.icesoft.msdb.repository.*;
+import com.icesoft.msdb.service.SeriesEditionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.OptimisticLockingFailureException;
@@ -30,10 +32,6 @@ import com.icesoft.msdb.domain.stats.ParticipantStatistics;
 import com.icesoft.msdb.domain.stats.ParticipantStatisticsSnapshot;
 import com.icesoft.msdb.domain.stats.Result;
 import com.icesoft.msdb.domain.stats.TeamStatistics;
-import com.icesoft.msdb.repository.DriverEventPointsRepository;
-import com.icesoft.msdb.repository.EventEditionRepository;
-import com.icesoft.msdb.repository.EventEntryRepository;
-import com.icesoft.msdb.repository.EventEntryResultRepository;
 import com.icesoft.msdb.repository.stats.ChassisStatisticsRepository;
 import com.icesoft.msdb.repository.stats.DriverStatisticsRepository;
 import com.icesoft.msdb.repository.stats.EngineStatisticsRepository;
@@ -58,6 +56,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 	private final EngineStatisticsRepository engineStatsRepo;
 	private final TyreProviderStatisticsRepository tyreProvStatsRepo;
 	private final RacetrackLayoutStatisticsRepository racetrackLayoutStatsRepo;
+	private final SeriesCategoryDriverChampionRepository seriesCategoryDriverChampionRepo;
 
 	public StatisticsServiceImpl(
 			EventEditionRepository eventEditionRepo,
@@ -69,7 +68,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 			ChassisStatisticsRepository chassisStatsRepo,
 			EngineStatisticsRepository engineStatsRepo,
 			TyreProviderStatisticsRepository tyreProvStatsRepo,
-			RacetrackLayoutStatisticsRepository racetrackLayoutStatsRepo) {
+			RacetrackLayoutStatisticsRepository racetrackLayoutStatsRepo,
+            SeriesCategoryDriverChampionRepository seriesCategoryDriverChampionRepo) {
 		this.eventEditionRepo = eventEditionRepo;
 		this.entriesRepo = entriesRepo;
 		this.resultsRepo = resultsRepo;
@@ -80,6 +80,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 		this.engineStatsRepo = engineStatsRepo;
 		this.tyreProvStatsRepo = tyreProvStatsRepo;
 		this.racetrackLayoutStatsRepo = racetrackLayoutStatsRepo;
+		this.seriesCategoryDriverChampionRepo = seriesCategoryDriverChampionRepo;
 	}
 	
 	@Override
@@ -400,10 +401,12 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 	@Override
 	public void updateSeriesChamps(SeriesEdition seriesEd) {
-		updateSeriesDriversChampions(seriesEd, seriesEd.getDriversChampions(), seriesEd.getDriversChampions(), 
-				seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());
-		updateSeriesTeamsChampions(seriesEd, seriesEd.getTeamsChampions(), seriesEd.getTeamsChampions(), 
-				seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());
+        updateSeriesDriversChampions(seriesEd,
+            seriesCategoryDriverChampionRepo.getDriversChampions(seriesEd.getId()),
+            seriesCategoryDriverChampionRepo.getDriversChampions(seriesEd.getId()),
+            seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());
+        updateSeriesTeamsChampions(seriesEd, seriesEd.getTeamsChampions(), seriesEd.getTeamsChampions(),
+            seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());
 	}
 	
 	@Override

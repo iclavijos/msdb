@@ -62,7 +62,7 @@ public class SessionLapData {
 			if (lap.getLapNumber() == 1) {
 				personalBest = lap;
 			} else {
-				if (lap.getLapTime() < personalBest.getLapTime()) {
+				if (personalBest == null || lap.getLapTime() < personalBest.getLapTime()) {
 					personalBest = lap;
 					if (!personalBest.getFastestLap() && !personalBest.getFastLap()) {
 						personalBest.setPersonalBest(true);

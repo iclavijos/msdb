@@ -81,13 +81,13 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     @OrderBy("eventDate ASC")
     private List<EventEdition> events;
 
-    @ManyToMany(fetch=FetchType.EAGER)
-    @Fetch(FetchMode.SELECT)
-    @JoinTable(
-        name="SERIES_DRIVERS_CHAMPIONS",
-        joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
-        inverseJoinColumns=@JoinColumn(name="driver_id", referencedColumnName="ID"))
-    private List<Driver> driversChampions;
+//    @ManyToMany(fetch=FetchType.EAGER)
+//    @Fetch(FetchMode.SELECT)
+//    @JoinTable(
+//        name="SERIES_DRIVERS_CHAMPIONS",
+//        joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
+//        inverseJoinColumns=@JoinColumn(name="driver_id", referencedColumnName="ID"))
+//    private List<Driver> driversChampions;
 
     @ManyToMany(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
@@ -270,18 +270,18 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         return series;
     }
 
-    public List<Driver> getDriversChampions() {
-		return driversChampions;
-	}
-
-    public SeriesEdition driversChampions(List<Driver> driversChampions) {
-    	this.driversChampions = driversChampions;
-    	return this;
-    }
-
-	public void setDriversChampions(List<Driver> driversChampions) {
-		this.driversChampions = driversChampions;
-	}
+//    public List<Driver> getDriversChampions() {
+//		return driversChampions;
+//	}
+//
+//    public SeriesEdition driversChampions(List<Driver> driversChampions) {
+//    	this.driversChampions = driversChampions;
+//    	return this;
+//    }
+//
+//	public void setDriversChampions(List<Driver> driversChampions) {
+//		this.driversChampions = driversChampions;
+//	}
 
 	public List<Team> getTeamsChampions() {
 		return teamsChampions;

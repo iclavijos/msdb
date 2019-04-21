@@ -115,7 +115,7 @@
 					            </thead>
 					            <tbody>
 					            <tr *ngFor="let eventData of seriesEdition.events">
-					            	<td>{{eventData.eventEditionDate | dDate:'shortDate' }}</td>
+					            	<td>{{eventData.eventEditionDate | dDate: 'longDate' }}</td>
 					            	<td><a [routerLink]="['/event-edition', eventData.eventEditionId]">{{eventData.eventEditionName}}</a></td>
 					            	<td *ngIf="!eventData.winners || eventData.winners.length === 0">-</td>
 					            	<td *ngIf="eventData.winners.length === 1">

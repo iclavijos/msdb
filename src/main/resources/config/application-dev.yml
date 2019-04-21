@@ -54,8 +54,9 @@ spring:
             hibernate.search.default.indexBase: C:/Users/a581339/tmp/lucene/indexes
     data:
         mongodb:
-            uri: mongodb://localhost:27017
-            database: nosqlsample
+            host: localhost
+            port: 27017
+            database: msdb
         elasticsearch:
             cluster-name:
             cluster-nodes: 127.0.0.1:9300

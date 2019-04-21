@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.TimeZone;
 
+import com.icesoft.msdb.service.TimeZoneService;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,18 +47,19 @@ public class RacetrackServiceImpl implements RacetrackService {
     private final RacetrackLayoutSearchRepository racetrackLayoutSearchRepo;
     
     private final CDNService cdnService;
-
+    private final TimeZoneService timeZoneService;
 
     public RacetrackServiceImpl(RacetrackRepository racetrackRepository, 
     		RacetrackSearchRepository racetrackSearchRepo,
     		RacetrackLayoutRepository racetrackLayoutRepository,
     		RacetrackLayoutSearchRepository racetrackLayoutSearchRepo,
-    		CDNService cdnService) {
+    		CDNService cdnService, TimeZoneService timeZoneService) {
         this.racetrackRepository = racetrackRepository;
         this.racetrackSearchRepo = racetrackSearchRepo;
         this.racetrackLayoutRepository = racetrackLayoutRepository;
         this.racetrackLayoutSearchRepo = racetrackLayoutSearchRepo;
         this.cdnService = cdnService;
+        this.timeZoneService = timeZoneService;
     }
 
     /**
@@ -69,36 +71,24 @@ public class RacetrackServiceImpl implements RacetrackService {
     @Override
     public Racetrack save(Racetrack racetrack) {
         log.debug("Request to save Racetrack : {}", racetrack);
-        
-        GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyBrTxr6pxxOtRuZHTZ_AGt0xTPUp8u-3y0");
-        GeocodingResult[] results;
-		try {
-			results = GeocodingApi.geocode(context, racetrack.getLocation() + ", " + racetrack.getCountryCode()).await();
-			if (results == null || results.length == 0) {
-				throw new MSDBException("No geolocation could be found for the provided information");
-			}
-			TimeZone timeZone = TimeZoneApi.getTimeZone(context, results[0].geometry.location).await();
-			racetrack.setTimeZone(timeZone.getID());
-			
-			if (racetrack.getLogo() != null) {
-				byte[] logo = racetrack.getLogo();
-				racetrack = racetrackRepository.save(racetrack);
-		        String cdnUrl = cdnService.uploadImage(racetrack.getId().toString(), logo, "racetrack");
-		        racetrack.setLogoUrl(cdnUrl);
-				
-		        racetrack = racetrackRepository.save(racetrack);
-	        } else if (racetrack.getLogoUrl() == null) {
-	        	if (racetrack.getId() != null) {
-	        		cdnService.deleteImage(racetrack.getId().toString(), "racetrack");
-	        	}
-	        }
-			Racetrack result = racetrackRepository.save(racetrack);
-			racetrackSearchRepo.save(result);
-			return result;
-		} catch (ApiException | InterruptedException | IOException e) {
-			log.error("Error accessing Google Geolocation API", e);
-			throw new MSDBException("Problems trying to retrieve geolocation information");
-		}
+
+        racetrack.setTimeZone(timeZoneService.getTimeZone(racetrack.getLocation(), racetrack.getCountryCode()));
+
+        if (racetrack.getLogo() != null) {
+            byte[] logo = racetrack.getLogo();
+            racetrack = racetrackRepository.save(racetrack);
+            String cdnUrl = cdnService.uploadImage(racetrack.getId().toString(), logo, "racetrack");
+            racetrack.setLogoUrl(cdnUrl);
+
+            racetrack = racetrackRepository.save(racetrack);
+        } else if (racetrack.getLogoUrl() == null) {
+            if (racetrack.getId() != null) {
+                cdnService.deleteImage(racetrack.getId().toString(), "racetrack");
+            }
+        }
+        Racetrack result = racetrackRepository.save(racetrack);
+        racetrackSearchRepo.save(result);
+        return result;
     }
     
     @Override
