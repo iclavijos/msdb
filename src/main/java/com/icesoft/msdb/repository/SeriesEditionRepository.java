@@ -1,11 +1,6 @@
 package com.icesoft.msdb.repository;
 
-import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
-
-import java.util.stream.Stream;
-
-import javax.persistence.QueryHint;
-
+import com.icesoft.msdb.domain.SeriesEdition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +9,10 @@ import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.icesoft.msdb.domain.SeriesEdition;
+import javax.persistence.QueryHint;
+import java.util.stream.Stream;
+
+import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 
 /**
  * Spring Data JPA repository for the SeriesEdition entity.
@@ -36,4 +34,5 @@ public interface SeriesEditionRepository extends JpaRepository<SeriesEdition,Lon
 	Page<SeriesEdition> search(Long id, String period, Pageable pageable);
 	
 	Page<SeriesEdition> findBySeriesIdOrderByPeriodDesc(Long seriesId, Pageable pageable);
+
 }

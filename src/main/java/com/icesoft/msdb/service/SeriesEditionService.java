@@ -20,6 +20,8 @@ public interface SeriesEditionService {
 	public void setSeriesDriversChampions(Long seriesEditionId, List<DriverCategoryChampionDTO> driverIds);
 	
 	public List<Driver> getSeriesDriversChampions(Long seriesEditionId);
+
+	public List<Driver> getSeriesCategoryDriversChampions(Long seriesEditionId, Long categoryId);
 	
 	public void setSeriesTeamsChampions(Long seriesEditionId, List<Long> teamsIds);
 	
