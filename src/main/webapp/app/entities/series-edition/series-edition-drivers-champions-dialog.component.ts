@@ -16,7 +16,7 @@ import { SeriesEditionService } from './series-edition.service';
     templateUrl: './series-edition-drivers-champions-dialog.component.html'
 })
 export class SeriesEditionDriversChampionsDialogComponent implements OnInit {
-	
+
 	drivers: any;
 	seriesEditionId: number;
 	seriesEdition: SeriesEdition;
@@ -52,7 +52,7 @@ export class SeriesEditionDriversChampionsDialogComponent implements OnInit {
         this.seriesEditionService.findDriversStandings(this.seriesEdition.id).subscribe(driversStandings => {
     		this.driversUnfiltered = driversStandings.json();
     		this.driversUnfiltered.map(driver => {
-			    const items = driver.driverName.split(' '); 
+			    const items = driver.driverName.split(' ');
 			    let res = '';
 			    for(let i = 0; i < items.length -1; i++) {
 			        if (items[i].length == 2) res += items[i] + ' ';
@@ -68,11 +68,11 @@ export class SeriesEditionDriversChampionsDialogComponent implements OnInit {
             }
     	});
 	}
-	
+
 	clear () {
         this.activeModal.dismiss('cancel');
     }
-	
+
 	onCheckboxSelect(id, event) {
 	    if (event.target.checked === true) {
 	    	const selectedDriver = new SelectedDriverData(id, this.filterCategoryId);
@@ -81,13 +81,13 @@ export class SeriesEditionDriversChampionsDialogComponent implements OnInit {
 	    if (event.target.checked === false) {
 	      this.selectedIds = this.selectedIds.filter((item) => item !== id);
 	    }
-	  }
-	  
+    }
+
 	changeCategory(event) {
 		this.filterCategoryId = this.filterCategory.id;
         this.filteredDrivers = this.driversUnfiltered.filter(d => d.category === this.filterCategory.shortname);
     }
-	
+
 	save() {
         this.isSaving = true;
         this.seriesEditionService.setDriversChampions(this.seriesEditionId, this.selectedIds)
@@ -99,7 +99,7 @@ export class SeriesEditionDriversChampionsDialogComponent implements OnInit {
         this.isSaving = false;
         this.activeModal.dismiss();
     }
-    
+
     private onError(error: any) {
     	this.isSaving = false;
         this.jhiAlertService.error(error.message, null, null);

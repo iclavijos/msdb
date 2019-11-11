@@ -15,7 +15,7 @@
 		    </div>
 		</div>
 
-		<div *ngFor="let t of temp(math.ceil(filteredDrivers.length/4)).fill(); let i = index" class="row">
+		<div *ngFor="let t of temp(math.ceil(filteredDrivers.length/4)).fill(0); let i = index" class="row">
 			<div *ngFor="let driver of filteredDrivers.slice(4*i,4*i + 4);" class="col-md-3">
 				<input type="checkbox" name="item-{{driver.driverId}}" #myItem
 					(change)="onCheckboxSelect(driver.driverId, $event)">{{driver.driverName}} - {{driver.points}}
