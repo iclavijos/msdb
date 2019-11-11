@@ -1,0 +1,88 @@
+<div>
+    <h2>
+        <span jhiTranslate="motorsportsDatabaseApp.tyreProvider.home.title">Tyre Providers</span>
+        <button class="btn btn-primary float-right jh-create-entity create-tyre-provider" [routerLink]="['/', { outlets: { popup: ['tyre-provider-new'] } }]">
+            <span class="fa fa-plus"></span>
+            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.tyreProvider.home.createLabel">
+            Create new Tyre Provider
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <div class="row">
+        <div class="col-sm-12">
+            <form name="searchForm" class="form-inline">
+                <div class="input-group w-100 mt-3">
+                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.tyreProvider.home.search' | translate }}">
+                    <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
+                        <span class="fa fa-search"></span>
+                    </button>
+                    <button class="input-group-addon btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                        <span class="fa fa-trash-o"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br/>
+    <div class="table-responsive" *ngIf="tyreProviders">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.name">Name</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="logo"><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.logo">Logo</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="letterColor"><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.letterColor">Letter Color</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="backgroundColor"><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.backgroundColor">Background Color</span> <span class="fa fa-sort"></span></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let tyreProvider of tyreProviders ;trackBy: trackId">
+                <td><a [routerLink]="['../tyre-provider', tyreProvider.id ]">{{tyreProvider.id}}</a></td>
+                <td>{{tyreProvider.name}}</td>
+                <td>
+                    <a *ngIf="tyreProvider.logo" (click)="openFile(tyreProvider.logoContentType, tyreProvider.logo)">
+                        <img [src]="'data:' + tyreProvider.logoContentType + ';base64,' + tyreProvider.logo" style="max-height: 30px;" alt="tyreProvider image"/>
+                    </a>
+                    <span *ngIf="tyreProvider.logo">{{tyreProvider.logoContentType}}, {{byteSize(tyreProvider.logo)}}</span>
+                </td>
+                <td>{{tyreProvider.letterColor}}</td>
+                <td>{{tyreProvider.backgroundColor}}</td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['../tyre-provider', tyreProvider.id ]"
+                                class="btn btn-info btn-sm">
+                            <span class="fa fa-eye"></span>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'tyre-provider/'+ tyreProvider.id + '/edit'} }]"
+                                replaceUrl="true"
+                                class="btn btn-primary btn-sm">
+                            <span class="fa fa-pencil"></span>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'tyre-provider/'+ tyreProvider.id + '/delete'} }]"
+                                replaceUrl="true"
+                                class="btn btn-danger btn-sm">
+                            <span class="fa fa-remove"></span>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+        <div *ngIf="tyreProviders && tyreProviders.length">
+            <div class="row justify-content-center">
+                <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+            </div>
+            <div class="row justify-content-center">
+                <ngb-pagination [collectionSize]="totalItems" [maxSize]="5" [pageSize]="itemsPerPage" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
+            </div>
+        </div>
+</div>

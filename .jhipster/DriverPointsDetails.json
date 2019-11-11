@@ -1,0 +1,10 @@
+{
+    "fluentMethods": true,
+    "relationships": [],
+    "fields": [],
+    "changelogDate": "20170818190643",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "driver_points_details",
+    "pagination": "no"
+}

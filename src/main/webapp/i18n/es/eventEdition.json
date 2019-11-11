@@ -1,0 +1,28 @@
+{
+    "motorsportsDatabaseApp": {
+        "eventEdition" : {
+            "home": {
+                "title": "Event Editions",
+                "createLabel": "Crear nuevo Event Edition",
+                "createOrEditLabel": "Crear o editar Event Edition",
+                "search": "Search for Event Edition"
+            },
+            "created": "Un nuevo Event Edition ha sido creado con el identificador {{ param }}",
+            "updated": "Un Event Edition ha sido actualizado con el identificador {{ param }}",
+            "deleted": "Un Event Edition ha sido eliminado con el identificador {{ param }}",
+            "delete": {
+                "question": "¿Seguro que quiere eliminar Event Edition {{ id }}?"
+            },
+            "detail": {
+                "title": "Event Edition"
+            },
+            "editionYear": "Edition Year",
+            "shortEventName": "Short Event Name",
+            "longEventName": "Long Event Name",
+            "eventDate": "Event Date",
+            "allowedCategories": "Allowed Categories",
+            "trackLayout": "Track Layout",
+            "event": "Event"
+        }
+    }
+}
