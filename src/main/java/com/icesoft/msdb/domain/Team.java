@@ -1,29 +1,26 @@
 package com.icesoft.msdb.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
-
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Objects;
 
 /**
  * A Team.
  */
 @Entity
 @Table(name = "team")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "team")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "team")
 public class Team implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -47,10 +44,9 @@ public class Team implements Serializable {
     private String logoContentType;
 
     @ManyToMany
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JoinTable(name = "team_participations",
-               joinColumns = @JoinColumn(name="teams_id", referencedColumnName="id"),
-               inverseJoinColumns = @JoinColumn(name="participations_id", referencedColumnName="id"))
+               joinColumns = @JoinColumn(name = "team_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "participations_id", referencedColumnName = "id"))
     private Set<EventEntry> participations = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -158,19 +154,15 @@ public class Team implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Team)) {
             return false;
         }
-        Team team = (Team) o;
-        if (team.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), team.getId());
+        return id != null && id.equals(((Team) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return 31;
     }
 
     @Override
@@ -181,7 +173,7 @@ public class Team implements Serializable {
             ", description='" + getDescription() + "'" +
             ", hqLocation='" + getHqLocation() + "'" +
             ", logo='" + getLogo() + "'" +
-            ", logoContentType='" + logoContentType + "'" +
+            ", logoContentType='" + getLogoContentType() + "'" +
             "}";
     }
 }

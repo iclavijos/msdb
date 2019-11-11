@@ -1,80 +1,44 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-import { SERVER_API_URL } from '../../app.constants';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { DriverPointsDetails } from './driver-points-details.model';
-import { ResponseWrapper, createRequestOption } from '../../shared';
+import { SERVER_API_URL } from 'app/app.constants';
+import { createRequestOption } from 'app/shared/util/request-util';
+import { IDriverPointsDetails } from 'app/shared/model/driver-points-details.model';
 
-@Injectable()
+type EntityResponseType = HttpResponse<IDriverPointsDetails>;
+type EntityArrayResponseType = HttpResponse<IDriverPointsDetails[]>;
+
+@Injectable({ providedIn: 'root' })
 export class DriverPointsDetailsService {
+  public resourceUrl = SERVER_API_URL + 'api/driver-points-details';
+  public resourceSearchUrl = SERVER_API_URL + 'api/_search/driver-points-details';
 
-    private resourceUrl = SERVER_API_URL + 'api/driver-points-details';
-    private resourceSearchUrl = SERVER_API_URL + 'api/_search/driver-points-details';
+  constructor(protected http: HttpClient) {}
 
-    constructor(private http: Http) { }
+  create(driverPointsDetails: IDriverPointsDetails): Observable<EntityResponseType> {
+    return this.http.post<IDriverPointsDetails>(this.resourceUrl, driverPointsDetails, { observe: 'response' });
+  }
 
-    create(driverPointsDetails: DriverPointsDetails): Observable<DriverPointsDetails> {
-        const copy = this.convert(driverPointsDetails);
-        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
-    }
+  update(driverPointsDetails: IDriverPointsDetails): Observable<EntityResponseType> {
+    return this.http.put<IDriverPointsDetails>(this.resourceUrl, driverPointsDetails, { observe: 'response' });
+  }
 
-    update(driverPointsDetails: DriverPointsDetails): Observable<DriverPointsDetails> {
-        const copy = this.convert(driverPointsDetails);
-        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
-    }
+  find(id: number): Observable<EntityResponseType> {
+    return this.http.get<IDriverPointsDetails>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
 
-    find(id: number): Observable<DriverPointsDetails> {
-        return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
-    }
+  query(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<IDriverPointsDetails[]>(this.resourceUrl, { params: options, observe: 'response' });
+  }
 
-    query(req?: any): Observable<ResponseWrapper> {
-        const options = createRequestOption(req);
-        return this.http.get(this.resourceUrl, options)
-            .map((res: Response) => this.convertResponse(res));
-    }
+  delete(id: number): Observable<HttpResponse<any>> {
+    return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
 
-    delete(id: number): Observable<Response> {
-        return this.http.delete(`${this.resourceUrl}/${id}`);
-    }
-
-    search(req?: any): Observable<ResponseWrapper> {
-        const options = createRequestOption(req);
-        return this.http.get(this.resourceSearchUrl, options)
-            .map((res: any) => this.convertResponse(res));
-    }
-
-    private convertResponse(res: Response): ResponseWrapper {
-        const jsonResponse = res.json();
-        const result = [];
-        for (let i = 0; i < jsonResponse.length; i++) {
-            result.push(this.convertItemFromServer(jsonResponse[i]));
-        }
-        return new ResponseWrapper(res.headers, result, res.status);
-    }
-
-    /**
-     * Convert a returned JSON object to DriverPointsDetails.
-     */
-    private convertItemFromServer(json: any): DriverPointsDetails {
-        const entity: DriverPointsDetails = Object.assign(new DriverPointsDetails(), json);
-        return entity;
-    }
-
-    /**
-     * Convert a DriverPointsDetails to a JSON which can be sent to the server.
-     */
-    private convert(driverPointsDetails: DriverPointsDetails): DriverPointsDetails {
-        const copy: DriverPointsDetails = Object.assign({}, driverPointsDetails);
-        return copy;
-    }
+  search(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<IDriverPointsDetails[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
+  }
 }

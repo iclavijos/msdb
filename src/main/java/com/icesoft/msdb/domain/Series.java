@@ -1,30 +1,26 @@
 package com.icesoft.msdb.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
-
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Objects;
 
 /**
  * A Series.
  */
 @Entity
 @Table(name = "series")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "series")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "series")
 public class Series implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -49,8 +45,6 @@ public class Series implements Serializable {
     private String logoContentType;
 
     @OneToMany(mappedBy = "series")
-    @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<SeriesEdition> editions = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -158,19 +152,15 @@ public class Series implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Series)) {
             return false;
         }
-        Series series = (Series) o;
-        if (series.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), series.getId());
+        return id != null && id.equals(((Series) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return 31;
     }
 
     @Override
@@ -181,7 +171,7 @@ public class Series implements Serializable {
             ", shortname='" + getShortname() + "'" +
             ", organizer='" + getOrganizer() + "'" +
             ", logo='" + getLogo() + "'" +
-            ", logoContentType='" + logoContentType + "'" +
+            ", logoContentType='" + getLogoContentType() + "'" +
             "}";
     }
 }

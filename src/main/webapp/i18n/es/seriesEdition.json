@@ -1,27 +1,28 @@
 {
-    "motorsportsDatabaseApp": {
-        "seriesEdition" : {
-            "home": {
-                "title": "Series Editions",
-                "createLabel": "Crear nuevo Series Edition",
-                "createOrEditLabel": "Crear o editar Series Edition",
-                "search": "Search for Series Edition"
-            },
-            "created": "Un nuevo Series Edition ha sido creado con el identificador {{ param }}",
-            "updated": "Un Series Edition ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un Series Edition ha sido eliminado con el identificador {{ param }}",
-            "delete": {
-                "question": "¿Seguro que quiere eliminar Series Edition {{ id }}?"
-            },
-            "detail": {
-                "title": "Series Edition"
-            },
-            "period": "Period",
-            "singleChassis": "Single Chassis",
-            "singleEngine": "Single Engine",
-            "singleTyre": "Single Tyre",
-            "allowedCategories": "Allowed Categories",
-            "series": "Series"
-        }
+  "motorsportsDatabaseApp": {
+    "seriesEdition": {
+      "home": {
+        "title": "Series Editions",
+        "createLabel": "Crear nuevo Series Edition",
+        "createOrEditLabel": "Crear o editar Series Edition",
+        "search": "Buscar Series Edition",
+        "notFound": "Ningún Series Editions encontrado"
+      },
+      "created": "Un nuevo Series Edition ha sido creado con el identificador {{ param }}",
+      "updated": "Un Series Edition ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un Series Edition ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Series Edition {{ id }}?"
+      },
+      "detail": {
+        "title": "Series Edition"
+      },
+      "period": "Period",
+      "singleChassis": "Single Chassis",
+      "singleEngine": "Single Engine",
+      "singleTyre": "Single Tyre",
+      "allowedCategories": "Allowed Categories",
+      "series": "Series"
     }
+  }
 }

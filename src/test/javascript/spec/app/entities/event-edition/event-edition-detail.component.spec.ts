@@ -1,61 +1,39 @@
-/* tslint:disable max-line-length */
-import { ComponentFixture, TestBed, async } from '@angular/core/testing';
-import { DatePipe } from '@angular/common';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
-import { JhiDateUtils, JhiDataUtils, JhiEventManager } from 'ng-jhipster';
+import { of } from 'rxjs';
+
 import { MotorsportsDatabaseTestModule } from '../../../test.module';
-import { MockActivatedRoute } from '../../../helpers/mock-route.service';
-import { EventEditionDetailComponent } from '../../../../../../main/webapp/app/entities/event-edition/event-edition-detail.component';
-import { EventEditionService } from '../../../../../../main/webapp/app/entities/event-edition/event-edition.service';
-import { EventEdition } from '../../../../../../main/webapp/app/entities/event-edition/event-edition.model';
+import { EventEditionDetailComponent } from 'app/entities/event-edition/event-edition-detail.component';
+import { EventEdition } from 'app/shared/model/event-edition.model';
 
 describe('Component Tests', () => {
+  describe('EventEdition Management Detail Component', () => {
+    let comp: EventEditionDetailComponent;
+    let fixture: ComponentFixture<EventEditionDetailComponent>;
+    const route = ({ data: of({ eventEdition: new EventEdition(123) }) } as any) as ActivatedRoute;
 
-    describe('EventEdition Management Detail Component', () => {
-        let comp: EventEditionDetailComponent;
-        let fixture: ComponentFixture<EventEditionDetailComponent>;
-        let service: EventEditionService;
-
-        beforeEach(async(() => {
-            TestBed.configureTestingModule({
-                imports: [MotorsportsDatabaseTestModule],
-                declarations: [EventEditionDetailComponent],
-                providers: [
-                    JhiDateUtils,
-                    JhiDataUtils,
-                    DatePipe,
-                    {
-                        provide: ActivatedRoute,
-                        useValue: new MockActivatedRoute({id: 123})
-                    },
-                    EventEditionService,
-                    JhiEventManager
-                ]
-            }).overrideTemplate(EventEditionDetailComponent, '')
-            .compileComponents();
-        }));
-
-        beforeEach(() => {
-            fixture = TestBed.createComponent(EventEditionDetailComponent);
-            comp = fixture.componentInstance;
-            service = fixture.debugElement.injector.get(EventEditionService);
-        });
-
-        describe('OnInit', () => {
-            it('Should call load all on init', () => {
-            // GIVEN
-
-            spyOn(service, 'find').and.returnValue(Observable.of(new EventEdition(10)));
-
-            // WHEN
-            comp.ngOnInit();
-
-            // THEN
-            expect(service.find).toHaveBeenCalledWith(123);
-            expect(comp.eventEdition).toEqual(jasmine.objectContaining({id: 10}));
-            });
-        });
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [MotorsportsDatabaseTestModule],
+        declarations: [EventEditionDetailComponent],
+        providers: [{ provide: ActivatedRoute, useValue: route }]
+      })
+        .overrideTemplate(EventEditionDetailComponent, '')
+        .compileComponents();
+      fixture = TestBed.createComponent(EventEditionDetailComponent);
+      comp = fixture.componentInstance;
     });
 
+    describe('OnInit', () => {
+      it('Should call load all on init', () => {
+        // GIVEN
+
+        // WHEN
+        comp.ngOnInit();
+
+        // THEN
+        expect(comp.eventEdition).toEqual(jasmine.objectContaining({ id: 123 }));
+      });
+    });
+  });
 });

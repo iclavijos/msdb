@@ -1,31 +1,27 @@
 package com.icesoft.msdb.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
-
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Objects;
 
 /**
  * A Driver.
  */
 @Entity
 @Table(name = "driver")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "driver")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "driver")
 public class Driver implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -61,8 +57,6 @@ public class Driver implements Serializable {
     private String portraitContentType;
 
     @OneToMany(mappedBy = "driver")
-    @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<EventEntry> participations = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -209,19 +203,15 @@ public class Driver implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Driver)) {
             return false;
         }
-        Driver driver = (Driver) o;
-        if (driver.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), driver.getId());
+        return id != null && id.equals(((Driver) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return 31;
     }
 
     @Override
@@ -235,7 +225,7 @@ public class Driver implements Serializable {
             ", deathDate='" + getDeathDate() + "'" +
             ", deathPlace='" + getDeathPlace() + "'" +
             ", portrait='" + getPortrait() + "'" +
-            ", portraitContentType='" + portraitContentType + "'" +
+            ", portraitContentType='" + getPortraitContentType() + "'" +
             "}";
     }
 }

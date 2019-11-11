@@ -1,25 +1,26 @@
 {
-    "motorsportsDatabaseApp": {
-        "racetrack" : {
-            "home": {
-                "title": "Racetracks",
-                "createLabel": "Create a new Racetrack",
-                "createOrEditLabel": "Create or edit a Racetrack",
-                "search": "Search for Racetrack"
-            },
-            "created": "A new Racetrack is created with identifier {{ param }}",
-            "updated": "A Racetrack is updated with identifier {{ param }}",
-            "deleted": "A Racetrack is deleted with identifier {{ param }}",
-            "delete": {
-                "question": "Are you sure you want to delete Racetrack {{ id }}?"
-            },
-            "detail": {
-                "title": "Racetrack"
-            },
-            "name": "Name",
-            "location": "Location",
-            "logo": "Logo",
-            "layouts": "Layouts"
-        }
+  "motorsportsDatabaseApp": {
+    "racetrack": {
+      "home": {
+        "title": "Racetracks",
+        "createLabel": "Create a new Racetrack",
+        "createOrEditLabel": "Create or edit a Racetrack",
+        "search": "Search for Racetrack",
+        "notFound": "No Racetracks found"
+      },
+      "created": "A new Racetrack is created with identifier {{ param }}",
+      "updated": "A Racetrack is updated with identifier {{ param }}",
+      "deleted": "A Racetrack is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Racetrack {{ id }}?"
+      },
+      "detail": {
+        "title": "Racetrack"
+      },
+      "name": "Name",
+      "location": "Location",
+      "logo": "Logo",
+      "layouts": "Layouts"
     }
+  }
 }

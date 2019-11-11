@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
 
 <configuration scan="true">
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
@@ -20,24 +21,27 @@
         <queueSize>512</queueSize>
         <appender-ref ref="FILE"/>
     </appender>
+
+    <root level="${logging.level.root}">
+        <appender-ref ref="ASYNC"/>
+    </root>
 -->
-
-    <logger name="com.icesoft.msdb" level="#logback.loglevel#"/>
-
-    <logger name="io.github.jhipster" level="#logback.loglevel#"/>
 
     <logger name="javax.activation" level="WARN"/>
     <logger name="javax.mail" level="WARN"/>
+    <logger name="javax.management.remote" level="WARN"/>
     <logger name="javax.xml.bind" level="WARN"/>
     <logger name="ch.qos.logback" level="WARN"/>
-    <logger name="com.codahale.metrics" level="WARN"/>
+    
     <logger name="com.ryantenney" level="WARN"/>
     <logger name="com.sun" level="WARN"/>
     <logger name="com.zaxxer" level="WARN"/>
+    <logger name="io.searchbox" level="WARN"/>
     <logger name="io.undertow" level="WARN"/>
     <logger name="io.undertow.websockets.jsr" level="ERROR"/>
     <logger name="org.ehcache" level="WARN"/>
     <logger name="org.apache" level="WARN"/>
+    <logger name="org.apache.kafka" level="INFO"/>
     <logger name="org.apache.catalina.startup.DigesterFactory" level="OFF"/>
     <logger name="org.bson" level="WARN"/>
     <logger name="org.elasticsearch" level="WARN"/>
@@ -54,6 +58,7 @@
     <logger name="sun.rmi" level="WARN"/>
     <logger name="liquibase" level="WARN"/>
     <logger name="LiquibaseSchemaResolver" level="INFO"/>
+    <logger name="springfox.documentation.schema.property" level="ERROR"/>
     <logger name="sun.rmi.transport" level="WARN"/>
 
     <!-- https://logback.qos.ch/manual/configuration.html#shutdownHook and https://jira.qos.ch/browse/LOGBACK-1090 -->
@@ -62,12 +67,5 @@
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
         <resetJUL>true</resetJUL>
     </contextListener>
-
-    <root level="#logback.loglevel#">
-        <appender-ref ref="CONSOLE"/>
-<!--
-        <appender-ref ref="FILE"/>
--->
-    </root>
 
 </configuration>

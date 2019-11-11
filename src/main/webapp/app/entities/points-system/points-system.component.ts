@@ -1,148 +1,151 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
+import { Subscription } from 'rxjs';
+import { JhiEventManager, JhiParseLinks } from 'ng-jhipster';
 
-import { PointsSystem } from './points-system.model';
+import { IPointsSystem } from 'app/shared/model/points-system.model';
+
+import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { PointsSystemService } from './points-system.service';
-import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
 
 @Component({
-    selector: 'jhi-points-system',
-    templateUrl: './points-system.component.html'
+  selector: 'jhi-points-system',
+  templateUrl: './points-system.component.html'
 })
 export class PointsSystemComponent implements OnInit, OnDestroy {
+  pointsSystems: IPointsSystem[];
+  error: any;
+  success: any;
+  eventSubscriber: Subscription;
+  currentSearch: string;
+  routeData: any;
+  links: any;
+  totalItems: any;
+  itemsPerPage: any;
+  page: any;
+  predicate: any;
+  previousPage: any;
+  reverse: any;
 
-currentAccount: any;
-    pointsSystems: PointsSystem[];
-    error: any;
-    success: any;
-    eventSubscriber: Subscription;
-    currentSearch: string;
-    routeData: any;
-    links: any;
-    totalItems: any;
-    queryCount: any;
-    itemsPerPage: any;
-    page: any;
-    predicate: any;
-    previousPage: any;
-    reverse: any;
+  constructor(
+    protected pointsSystemService: PointsSystemService,
+    protected parseLinks: JhiParseLinks,
+    protected activatedRoute: ActivatedRoute,
+    protected router: Router,
+    protected eventManager: JhiEventManager
+  ) {
+    this.itemsPerPage = ITEMS_PER_PAGE;
+    this.routeData = this.activatedRoute.data.subscribe(data => {
+      this.page = data.pagingParams.page;
+      this.previousPage = data.pagingParams.page;
+      this.reverse = data.pagingParams.ascending;
+      this.predicate = data.pagingParams.predicate;
+    });
+    this.currentSearch =
+      this.activatedRoute.snapshot && this.activatedRoute.snapshot.queryParams['search']
+        ? this.activatedRoute.snapshot.queryParams['search']
+        : '';
+  }
 
-    constructor(
-        private pointsSystemService: PointsSystemService,
-        private parseLinks: JhiParseLinks,
-        private jhiAlertService: JhiAlertService,
-        private principal: Principal,
-        private activatedRoute: ActivatedRoute,
-        private router: Router,
-        private eventManager: JhiEventManager
-    ) {
-        this.itemsPerPage = ITEMS_PER_PAGE;
-        this.routeData = this.activatedRoute.data.subscribe((data) => {
-            this.page = data['pagingParams'].page;
-            this.previousPage = data['pagingParams'].page;
-            this.reverse = data['pagingParams'].ascending;
-            this.predicate = data['pagingParams'].predicate;
-        });
-        this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
+  loadAll() {
+    if (this.currentSearch) {
+      this.pointsSystemService
+        .search({
+          page: this.page - 1,
+          query: this.currentSearch,
+          size: this.itemsPerPage,
+          sort: this.sort()
+        })
+        .subscribe((res: HttpResponse<IPointsSystem[]>) => this.paginatePointsSystems(res.body, res.headers));
+      return;
     }
+    this.pointsSystemService
+      .query({
+        page: this.page - 1,
+        size: this.itemsPerPage,
+        sort: this.sort()
+      })
+      .subscribe((res: HttpResponse<IPointsSystem[]>) => this.paginatePointsSystems(res.body, res.headers));
+  }
 
-    loadAll() {
-        if (this.currentSearch) {
-            this.pointsSystemService.search({
-                page: this.page - 1,
-                query: this.currentSearch,
-                size: this.itemsPerPage,
-                sort: this.sort()}).subscribe(
-                    (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
-                    (res: ResponseWrapper) => this.onError(res.json)
-                );
-            return;
-        }
-        this.pointsSystemService.query({
-            page: this.page - 1,
-            size: this.itemsPerPage,
-            sort: this.sort()}).subscribe(
-            (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
-            (res: ResponseWrapper) => this.onError(res.json)
-        );
+  loadPage(page: number) {
+    if (page !== this.previousPage) {
+      this.previousPage = page;
+      this.transition();
     }
-    loadPage(page: number) {
-        if (page !== this.previousPage) {
-            this.previousPage = page;
-            this.transition();
-        }
-    }
-    transition() {
-        this.router.navigate(['/points-system'], {queryParams:
-            {
-                page: this.page,
-                size: this.itemsPerPage,
-                search: this.currentSearch,
-                sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-            }
-        });
-        this.loadAll();
-    }
+  }
 
-    clear() {
-        this.page = 0;
-        this.currentSearch = '';
-        this.router.navigate(['/points-system', {
-            page: this.page,
-            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-        }]);
-        this.loadAll();
-    }
-    search(query) {
-        if (!query) {
-            return this.clear();
-        }
-        this.page = 0;
-        this.currentSearch = query;
-        this.router.navigate(['/points-system', {
-            search: this.currentSearch,
-            page: this.page,
-            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-        }]);
-        this.loadAll();
-    }
-    ngOnInit() {
-        this.loadAll();
-        this.principal.identity().then((account) => {
-            this.currentAccount = account;
-        });
-        this.registerChangeInPointsSystems();
-    }
+  transition() {
+    this.router.navigate(['/points-system'], {
+      queryParams: {
+        page: this.page,
+        size: this.itemsPerPage,
+        search: this.currentSearch,
+        sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+      }
+    });
+    this.loadAll();
+  }
 
-    ngOnDestroy() {
-        this.eventManager.destroy(this.eventSubscriber);
-    }
+  clear() {
+    this.page = 0;
+    this.currentSearch = '';
+    this.router.navigate([
+      '/points-system',
+      {
+        page: this.page,
+        sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+      }
+    ]);
+    this.loadAll();
+  }
 
-    trackId(index: number, item: PointsSystem) {
-        return item.id;
+  search(query) {
+    if (!query) {
+      return this.clear();
     }
-    registerChangeInPointsSystems() {
-        this.eventSubscriber = this.eventManager.subscribe('pointsSystemListModification', (response) => this.loadAll());
-    }
+    this.page = 0;
+    this.currentSearch = query;
+    this.router.navigate([
+      '/points-system',
+      {
+        search: this.currentSearch,
+        page: this.page,
+        sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+      }
+    ]);
+    this.loadAll();
+  }
 
-    sort() {
-        const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
-        if (this.predicate !== 'id') {
-            result.push('id');
-        }
-        return result;
-    }
+  ngOnInit() {
+    this.loadAll();
+    this.registerChangeInPointsSystems();
+  }
 
-    private onSuccess(data, headers) {
-        this.links = this.parseLinks.parse(headers.get('link'));
-        this.totalItems = headers.get('X-Total-Count');
-        this.queryCount = this.totalItems;
-        // this.page = pagingParams.page;
-        this.pointsSystems = data;
+  ngOnDestroy() {
+    this.eventManager.destroy(this.eventSubscriber);
+  }
+
+  trackId(index: number, item: IPointsSystem) {
+    return item.id;
+  }
+
+  registerChangeInPointsSystems() {
+    this.eventSubscriber = this.eventManager.subscribe('pointsSystemListModification', () => this.loadAll());
+  }
+
+  sort() {
+    const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
+    if (this.predicate !== 'id') {
+      result.push('id');
     }
-    private onError(error) {
-        this.jhiAlertService.error(error.message, null, null);
-    }
+    return result;
+  }
+
+  protected paginatePointsSystems(data: IPointsSystem[], headers: HttpHeaders) {
+    this.links = this.parseLinks.parse(headers.get('link'));
+    this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
+    this.pointsSystems = data;
+  }
 }

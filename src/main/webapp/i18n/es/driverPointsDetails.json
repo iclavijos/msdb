@@ -1,21 +1,22 @@
 {
-    "motorsportsDatabaseApp": {
-        "driverPointsDetails" : {
-            "home": {
-                "title": "Driver Points Details",
-                "createLabel": "Crear nuevo Driver Points Details",
-                "createOrEditLabel": "Crear o editar Driver Points Details",
-                "search": "Search for Driver Points Details"
-            },
-            "created": "Un nuevo Driver Points Details ha sido creado con el identificador {{ param }}",
-            "updated": "Un Driver Points Details ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un Driver Points Details ha sido eliminado con el identificador {{ param }}",
-            "delete": {
-                "question": "¿Seguro que quiere eliminar Driver Points Details {{ id }}?"
-            },
-            "detail": {
-                "title": "Driver Points Details"
-            }
-        }
+  "motorsportsDatabaseApp": {
+    "driverPointsDetails": {
+      "home": {
+        "title": "Driver Points Details",
+        "createLabel": "Crear nuevo Driver Points Details",
+        "createOrEditLabel": "Crear o editar Driver Points Details",
+        "search": "Buscar Driver Points Details",
+        "notFound": "Ningún Driver Points Details encontrado"
+      },
+      "created": "Un nuevo Driver Points Details ha sido creado con el identificador {{ param }}",
+      "updated": "Un Driver Points Details ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un Driver Points Details ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Driver Points Details {{ id }}?"
+      },
+      "detail": {
+        "title": "Driver Points Details"
+      }
     }
+  }
 }

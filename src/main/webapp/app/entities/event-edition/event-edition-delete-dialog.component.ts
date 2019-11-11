@@ -1,64 +1,69 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { EventEdition } from './event-edition.model';
-import { EventEditionPopupService } from './event-edition-popup.service';
+import { IEventEdition } from 'app/shared/model/event-edition.model';
 import { EventEditionService } from './event-edition.service';
 
 @Component({
-    selector: 'jhi-event-edition-delete-dialog',
-    templateUrl: './event-edition-delete-dialog.component.html'
+  selector: 'jhi-event-edition-delete-dialog',
+  templateUrl: './event-edition-delete-dialog.component.html'
 })
 export class EventEditionDeleteDialogComponent {
+  eventEdition: IEventEdition;
 
-    eventEdition: EventEdition;
+  constructor(
+    protected eventEditionService: EventEditionService,
+    public activeModal: NgbActiveModal,
+    protected eventManager: JhiEventManager
+  ) {}
 
-    constructor(
-        private eventEditionService: EventEditionService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+  clear() {
+    this.activeModal.dismiss('cancel');
+  }
 
-    clear() {
-        this.activeModal.dismiss('cancel');
-    }
-
-    confirmDelete(id: number) {
-        this.eventEditionService.delete(id).subscribe((response) => {
-            this.eventManager.broadcast({
-                name: 'eventEditionListModification',
-                content: 'Deleted an eventEdition'
-            });
-            this.activeModal.dismiss(true);
-        });
-    }
+  confirmDelete(id: number) {
+    this.eventEditionService.delete(id).subscribe(() => {
+      this.eventManager.broadcast({
+        name: 'eventEditionListModification',
+        content: 'Deleted an eventEdition'
+      });
+      this.activeModal.dismiss(true);
+    });
+  }
 }
 
 @Component({
-    selector: 'jhi-event-edition-delete-popup',
-    template: ''
+  selector: 'jhi-event-edition-delete-popup',
+  template: ''
 })
 export class EventEditionDeletePopupComponent implements OnInit, OnDestroy {
+  protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
+  constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
-    constructor(
-        private route: ActivatedRoute,
-        private eventEditionPopupService: EventEditionPopupService
-    ) {}
+  ngOnInit() {
+    this.activatedRoute.data.subscribe(({ eventEdition }) => {
+      setTimeout(() => {
+        this.ngbModalRef = this.modalService.open(EventEditionDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
+        this.ngbModalRef.componentInstance.eventEdition = eventEdition;
+        this.ngbModalRef.result.then(
+          () => {
+            this.router.navigate(['/event-edition', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          },
+          () => {
+            this.router.navigate(['/event-edition', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          }
+        );
+      }, 0);
+    });
+  }
 
-    ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.eventEditionPopupService
-                .open(EventEditionDeleteDialogComponent as Component, params['id']);
-        });
-    }
-
-    ngOnDestroy() {
-        this.routeSub.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.ngbModalRef = null;
+  }
 }

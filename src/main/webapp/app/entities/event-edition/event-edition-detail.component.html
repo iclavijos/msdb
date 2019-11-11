@@ -1,55 +1,57 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="eventEdition">
+            <h2><span jhiTranslate="motorsportsDatabaseApp.eventEdition.detail.title">Event Edition</span> {{eventEdition.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.editionYear">Edition Year</span></dt>
+                <dd>
+                    <span>{{eventEdition.editionYear}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.shortEventName">Short Event Name</span></dt>
+                <dd>
+                    <span>{{eventEdition.shortEventName}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.longEventName">Long Event Name</span></dt>
+                <dd>
+                    <span>{{eventEdition.longEventName}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate">Event Date</span></dt>
+                <dd>
+                    <span>{{eventEdition.eventDate}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.allowedCategories">Allowed Categories</span></dt>
+                <dd>
+                    <div *ngIf="eventEdition.allowedCategories">
+                        <a [routerLink]="['/category', eventEdition.allowedCategories?.id, 'view']">{{eventEdition.allowedCategories?.id}}</a>
+                    </div>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout">Track Layout</span></dt>
+                <dd>
+                    <div *ngIf="eventEdition.trackLayout">
+                        <a [routerLink]="['/racetrack-layout', eventEdition.trackLayout?.id, 'view']">{{eventEdition.trackLayout?.id}}</a>
+                    </div>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.event">Event</span></dt>
+                <dd>
+                    <div *ngIf="eventEdition.event">
+                        <a [routerLink]="['/event', eventEdition.event?.id, 'view']">{{eventEdition.event?.id}}</a>
+                    </div>
+                </dd>
+            </dl>
 
-<div *ngIf="eventEdition">
-    <h2><span jhiTranslate="motorsportsDatabaseApp.eventEdition.detail.title">Event Edition</span> {{eventEdition.id}}</h2>
-    <hr>
-    <jhi-alert-error></jhi-alert-error>
-    <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.editionYear">Edition Year</span></dt>
-        <dd>
-            <span>{{eventEdition.editionYear}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.shortEventName">Short Event Name</span></dt>
-        <dd>
-            <span>{{eventEdition.shortEventName}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.longEventName">Long Event Name</span></dt>
-        <dd>
-            <span>{{eventEdition.longEventName}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate">Event Date</span></dt>
-        <dd>
-            <span>{{eventEdition.eventDate | date:'mediumDate'}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.allowedCategories">Allowed Categories</span></dt>
-        <dd>
-            <div *ngIf="eventEdition.allowedCategories">
-                <a [routerLink]="['/category', eventEdition.allowedCategories?.id]">{{eventEdition.allowedCategories?.id}}</a>
-            </div>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout">Track Layout</span></dt>
-        <dd>
-            <div *ngIf="eventEdition.trackLayout">
-                <a [routerLink]="['/racetrack-layout', eventEdition.trackLayout?.id]">{{eventEdition.trackLayout?.id}}</a>
-            </div>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.event">Event</span></dt>
-        <dd>
-            <div *ngIf="eventEdition.event">
-                <a [routerLink]="['/event', eventEdition.event?.id]">{{eventEdition.event?.id}}</a>
-            </div>
-        </dd>
-    </dl>
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
 
-    <button type="submit"
-            (click)="previousState()"
-            class="btn btn-info">
-        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-    </button>
-
-    <button type="button"
-            [routerLink]="['/', { outlets: { popup: 'event-edition/'+ eventEdition.id + '/edit'} }]"
-            replaceUrl="true"
-            class="btn btn-primary">
-        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-    </button>
+            <button type="button"
+                    [routerLink]="['/event-edition', eventEdition.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
 </div>

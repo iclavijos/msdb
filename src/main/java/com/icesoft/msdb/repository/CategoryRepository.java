@@ -1,13 +1,11 @@
 package com.icesoft.msdb.repository;
-
 import com.icesoft.msdb.domain.Category;
-import org.springframework.stereotype.Repository;
-
 import org.springframework.data.jpa.repository.*;
+import org.springframework.stereotype.Repository;
 
 
 /**
- * Spring Data JPA repository for the Category entity.
+ * Spring Data  repository for the Category entity.
  */
 @SuppressWarnings("unused")
 @Repository

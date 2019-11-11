@@ -1,26 +1,27 @@
 {
-    "motorsportsDatabaseApp": {
-        "team" : {
-            "home": {
-                "title": "Teams",
-                "createLabel": "Create a new Team",
-                "createOrEditLabel": "Create or edit a Team",
-                "search": "Search for Team"
-            },
-            "created": "A new Team is created with identifier {{ param }}",
-            "updated": "A Team is updated with identifier {{ param }}",
-            "deleted": "A Team is deleted with identifier {{ param }}",
-            "delete": {
-                "question": "Are you sure you want to delete Team {{ id }}?"
-            },
-            "detail": {
-                "title": "Team"
-            },
-            "name": "Name",
-            "description": "Description",
-            "hqLocation": "Hq Location",
-            "logo": "Logo",
-            "participations": "Participations"
-        }
+  "motorsportsDatabaseApp": {
+    "team": {
+      "home": {
+        "title": "Teams",
+        "createLabel": "Create a new Team",
+        "createOrEditLabel": "Create or edit a Team",
+        "search": "Search for Team",
+        "notFound": "No Teams found"
+      },
+      "created": "A new Team is created with identifier {{ param }}",
+      "updated": "A Team is updated with identifier {{ param }}",
+      "deleted": "A Team is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Team {{ id }}?"
+      },
+      "detail": {
+        "title": "Team"
+      },
+      "name": "Name",
+      "description": "Description",
+      "hqLocation": "Hq Location",
+      "logo": "Logo",
+      "participations": "Participations"
     }
+  }
 }

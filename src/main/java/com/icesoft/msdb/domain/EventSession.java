@@ -1,28 +1,25 @@
 package com.icesoft.msdb.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
-
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.Objects;
 
 /**
  * A EventSession.
  */
 @Entity
 @Table(name = "event_session")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "eventsession")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "eventsession")
 public class EventSession implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -110,19 +107,15 @@ public class EventSession implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof EventSession)) {
             return false;
         }
-        EventSession eventSession = (EventSession) o;
-        if (eventSession.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), eventSession.getId());
+        return id != null && id.equals(((EventSession) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return 31;
     }
 
     @Override
@@ -132,7 +125,7 @@ public class EventSession implements Serializable {
             ", name='" + getName() + "'" +
             ", shortname='" + getShortname() + "'" +
             ", sessionStartTime='" + getSessionStartTime() + "'" +
-            ", duration='" + getDuration() + "'" +
+            ", duration=" + getDuration() +
             "}";
     }
 }

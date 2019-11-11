@@ -1,74 +1,57 @@
 package com.icesoft.msdb.config;
 
-import io.github.jhipster.config.JHipsterProperties;
-import org.ehcache.config.builders.CacheConfigurationBuilder;
-import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.expiry.Duration;
-import org.ehcache.expiry.Expirations;
+import java.time.Duration;
+
+import org.ehcache.config.builders.*;
 import org.ehcache.jsr107.Eh107Configuration;
 
-import java.util.concurrent.TimeUnit;
+import org.hibernate.cache.jcache.ConfigSettings;
+import io.github.jhipster.config.JHipsterProperties;
 
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.*;
 
 @Configuration
 @EnableCaching
-@AutoConfigureAfter(value = { MetricsConfiguration.class })
-@AutoConfigureBefore(value = { WebConfigurer.class, DatabaseConfiguration.class })
 public class CacheConfiguration {
 
     private final javax.cache.configuration.Configuration<Object, Object> jcacheConfiguration;
 
     public CacheConfiguration(JHipsterProperties jHipsterProperties) {
-        JHipsterProperties.Cache.Ehcache ehcache =
-            jHipsterProperties.getCache().getEhcache();
+        JHipsterProperties.Cache.Ehcache ehcache = jHipsterProperties.getCache().getEhcache();
 
         jcacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
             CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
                 ResourcePoolsBuilder.heap(ehcache.getMaxEntries()))
-                .withExpiry(Expirations.timeToLiveExpiration(Duration.of(ehcache.getTimeToLiveSeconds(), TimeUnit.SECONDS)))
+                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(ehcache.getTimeToLiveSeconds())))
                 .build());
+    }
+
+    @Bean
+    public HibernatePropertiesCustomizer hibernatePropertiesCustomizer(javax.cache.CacheManager cacheManager) {
+        return hibernateProperties -> hibernateProperties.put(ConfigSettings.CACHE_MANAGER, cacheManager);
     }
 
     @Bean
     public JCacheManagerCustomizer cacheManagerCustomizer() {
         return cm -> {
-            cm.createCache("users", jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.User.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Authority.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.User.class.getName() + ".authorities", jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.SocialUserConnection.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Category.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Chassis.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Chassis.class.getName() + ".evolutions", jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Driver.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Driver.class.getName() + ".participations", jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Engine.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Engine.class.getName() + ".evolutions", jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Event.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Event.class.getName() + ".editions", jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.EventEdition.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.EventEntry.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.EventEntry.class.getName() + ".participants", jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.EventEntryResult.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.EventSession.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.FuelProvider.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.PointsSystem.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Racetrack.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Racetrack.class.getName() + ".layouts", jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.RacetrackLayout.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Series.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Series.class.getName() + ".editions", jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.SeriesEdition.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Team.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.Team.class.getName() + ".participations", jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.DriverPointsDetails.class.getName(), jcacheConfiguration);
-            cm.createCache(com.icesoft.msdb.domain.TyreProvider.class.getName(), jcacheConfiguration);
+            createCache(cm, com.icesoft.msdb.repository.UserRepository.USERS_BY_LOGIN_CACHE);
+            createCache(cm, com.icesoft.msdb.repository.UserRepository.USERS_BY_EMAIL_CACHE);
+            createCache(cm, com.icesoft.msdb.domain.User.class.getName());
+            createCache(cm, com.icesoft.msdb.domain.Authority.class.getName());
+            createCache(cm, com.icesoft.msdb.domain.User.class.getName() + ".authorities");
             // jhipster-needle-ehcache-add-entry
         };
     }
+
+    private void createCache(javax.cache.CacheManager cm, String cacheName) {
+        javax.cache.Cache<Object, Object> cache = cm.getCache(cacheName);
+        if (cache != null) {
+            cm.destroyCache(cacheName);
+        }
+        cm.createCache(cacheName, jcacheConfiguration);
+    }
+
 }

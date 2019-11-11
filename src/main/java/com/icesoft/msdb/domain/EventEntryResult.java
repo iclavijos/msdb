@@ -1,26 +1,23 @@
 package com.icesoft.msdb.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
-
 import javax.persistence.*;
+
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * A EventEntryResult.
  */
 @Entity
 @Table(name = "event_entry_result")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "evententryresult")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "evententryresult")
 public class EventEntryResult implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @Column(name = "final_position")
@@ -118,29 +115,25 @@ public class EventEntryResult implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof EventEntryResult)) {
             return false;
         }
-        EventEntryResult eventEntryResult = (EventEntryResult) o;
-        if (eventEntryResult.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), eventEntryResult.getId());
+        return id != null && id.equals(((EventEntryResult) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return 31;
     }
 
     @Override
     public String toString() {
         return "EventEntryResult{" +
             "id=" + getId() +
-            ", finalPosition='" + getFinalPosition() + "'" +
-            ", totalTime='" + getTotalTime() + "'" +
-            ", bestLapTime='" + getBestLapTime() + "'" +
-            ", lapsCompleted='" + getLapsCompleted() + "'" +
+            ", finalPosition=" + getFinalPosition() +
+            ", totalTime=" + getTotalTime() +
+            ", bestLapTime=" + getBestLapTime() +
+            ", lapsCompleted=" + getLapsCompleted() +
             ", retired='" + isRetired() + "'" +
             "}";
     }

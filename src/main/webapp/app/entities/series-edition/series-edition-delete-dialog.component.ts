@@ -1,64 +1,69 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { SeriesEdition } from './series-edition.model';
-import { SeriesEditionPopupService } from './series-edition-popup.service';
+import { ISeriesEdition } from 'app/shared/model/series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
 
 @Component({
-    selector: 'jhi-series-edition-delete-dialog',
-    templateUrl: './series-edition-delete-dialog.component.html'
+  selector: 'jhi-series-edition-delete-dialog',
+  templateUrl: './series-edition-delete-dialog.component.html'
 })
 export class SeriesEditionDeleteDialogComponent {
+  seriesEdition: ISeriesEdition;
 
-    seriesEdition: SeriesEdition;
+  constructor(
+    protected seriesEditionService: SeriesEditionService,
+    public activeModal: NgbActiveModal,
+    protected eventManager: JhiEventManager
+  ) {}
 
-    constructor(
-        private seriesEditionService: SeriesEditionService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+  clear() {
+    this.activeModal.dismiss('cancel');
+  }
 
-    clear() {
-        this.activeModal.dismiss('cancel');
-    }
-
-    confirmDelete(id: number) {
-        this.seriesEditionService.delete(id).subscribe((response) => {
-            this.eventManager.broadcast({
-                name: 'seriesEditionListModification',
-                content: 'Deleted an seriesEdition'
-            });
-            this.activeModal.dismiss(true);
-        });
-    }
+  confirmDelete(id: number) {
+    this.seriesEditionService.delete(id).subscribe(() => {
+      this.eventManager.broadcast({
+        name: 'seriesEditionListModification',
+        content: 'Deleted an seriesEdition'
+      });
+      this.activeModal.dismiss(true);
+    });
+  }
 }
 
 @Component({
-    selector: 'jhi-series-edition-delete-popup',
-    template: ''
+  selector: 'jhi-series-edition-delete-popup',
+  template: ''
 })
 export class SeriesEditionDeletePopupComponent implements OnInit, OnDestroy {
+  protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
+  constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
-    constructor(
-        private route: ActivatedRoute,
-        private seriesEditionPopupService: SeriesEditionPopupService
-    ) {}
+  ngOnInit() {
+    this.activatedRoute.data.subscribe(({ seriesEdition }) => {
+      setTimeout(() => {
+        this.ngbModalRef = this.modalService.open(SeriesEditionDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
+        this.ngbModalRef.componentInstance.seriesEdition = seriesEdition;
+        this.ngbModalRef.result.then(
+          () => {
+            this.router.navigate(['/series-edition', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          },
+          () => {
+            this.router.navigate(['/series-edition', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          }
+        );
+      }, 0);
+    });
+  }
 
-    ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.seriesEditionPopupService
-                .open(SeriesEditionDeleteDialogComponent as Component, params['id']);
-        });
-    }
-
-    ngOnDestroy() {
-        this.routeSub.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.ngbModalRef = null;
+  }
 }

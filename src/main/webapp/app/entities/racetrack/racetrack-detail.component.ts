@@ -1,61 +1,32 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiDataUtils } from 'ng-jhipster';
+import { JhiDataUtils } from 'ng-jhipster';
 
-import { Racetrack } from './racetrack.model';
-import { RacetrackService } from './racetrack.service';
+import { IRacetrack } from 'app/shared/model/racetrack.model';
 
 @Component({
-    selector: 'jhi-racetrack-detail',
-    templateUrl: './racetrack-detail.component.html'
+  selector: 'jhi-racetrack-detail',
+  templateUrl: './racetrack-detail.component.html'
 })
-export class RacetrackDetailComponent implements OnInit, OnDestroy {
+export class RacetrackDetailComponent implements OnInit {
+  racetrack: IRacetrack;
 
-    racetrack: Racetrack;
-    private subscription: Subscription;
-    private eventSubscriber: Subscription;
+  constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute) {}
 
-    constructor(
-        private eventManager: JhiEventManager,
-        private dataUtils: JhiDataUtils,
-        private racetrackService: RacetrackService,
-        private route: ActivatedRoute
-    ) {
-    }
+  ngOnInit() {
+    this.activatedRoute.data.subscribe(({ racetrack }) => {
+      this.racetrack = racetrack;
+    });
+  }
 
-    ngOnInit() {
-        this.subscription = this.route.params.subscribe((params) => {
-            this.load(params['id']);
-        });
-        this.registerChangeInRacetracks();
-    }
+  byteSize(field) {
+    return this.dataUtils.byteSize(field);
+  }
 
-    load(id) {
-        this.racetrackService.find(id).subscribe((racetrack) => {
-            this.racetrack = racetrack;
-        });
-    }
-    byteSize(field) {
-        return this.dataUtils.byteSize(field);
-    }
-
-    openFile(contentType, field) {
-        return this.dataUtils.openFile(contentType, field);
-    }
-    previousState() {
-        window.history.back();
-    }
-
-    ngOnDestroy() {
-        this.subscription.unsubscribe();
-        this.eventManager.destroy(this.eventSubscriber);
-    }
-
-    registerChangeInRacetracks() {
-        this.eventSubscriber = this.eventManager.subscribe(
-            'racetrackListModification',
-            (response) => this.load(this.racetrack.id)
-        );
-    }
+  openFile(contentType, field) {
+    return this.dataUtils.openFile(contentType, field);
+  }
+  previousState() {
+    window.history.back();
+  }
 }

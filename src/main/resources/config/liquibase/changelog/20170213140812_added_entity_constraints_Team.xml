@@ -2,17 +2,18 @@
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
     <!--
         Added the constraints for entity Team.
     -->
     <changeSet id="20170213140812-2" author="jhipster">
         
-        <addForeignKeyConstraint baseColumnNames="teams_id"
+        <addForeignKeyConstraint baseColumnNames="team_id"
                                  baseTableName="team_participations"
-                                 constraintName="fk_team_participations_teams_id"
+                                 constraintName="fk_team_participations_team_id"
                                  referencedColumnNames="id"
                                  referencedTableName="team"/>
+
         <addForeignKeyConstraint baseColumnNames="participations_id"
                                  baseTableName="team_participations"
                                  constraintName="fk_team_participations_participations_id"

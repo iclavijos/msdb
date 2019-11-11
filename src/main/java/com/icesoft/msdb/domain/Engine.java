@@ -1,30 +1,27 @@
 package com.icesoft.msdb.domain;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Objects;
 
 /**
  * A Engine.
  */
 @Entity
 @Table(name = "engine")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "engine")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "engine")
 public class Engine implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -70,11 +67,10 @@ public class Engine implements Serializable {
     private String imageContentType;
 
     @OneToMany(mappedBy = "derivedFrom")
-    @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Engine> evolutions = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("engines")
     private Engine derivedFrom;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -273,19 +269,15 @@ public class Engine implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Engine)) {
             return false;
         }
-        Engine engine = (Engine) o;
-        if (engine.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), engine.getId());
+        return id != null && id.equals(((Engine) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return 31;
     }
 
     @Override
@@ -294,15 +286,15 @@ public class Engine implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", manufacturer='" + getManufacturer() + "'" +
-            ", capacity='" + getCapacity() + "'" +
+            ", capacity=" + getCapacity() +
             ", architecture='" + getArchitecture() + "'" +
-            ", debutYear='" + getDebutYear() + "'" +
+            ", debutYear=" + getDebutYear() +
             ", petrolEngine='" + isPetrolEngine() + "'" +
             ", dieselEngine='" + isDieselEngine() + "'" +
             ", electricEngine='" + isElectricEngine() + "'" +
             ", turbo='" + isTurbo() + "'" +
             ", image='" + getImage() + "'" +
-            ", imageContentType='" + imageContentType + "'" +
+            ", imageContentType='" + getImageContentType() + "'" +
             "}";
     }
 }

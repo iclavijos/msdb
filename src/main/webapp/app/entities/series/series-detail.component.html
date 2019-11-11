@@ -1,42 +1,44 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="series">
+            <h2><span jhiTranslate="motorsportsDatabaseApp.series.detail.title">Series</span> {{series.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="motorsportsDatabaseApp.series.name">Name</span></dt>
+                <dd>
+                    <span>{{series.name}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.series.shortname">Shortname</span></dt>
+                <dd>
+                    <span>{{series.shortname}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.series.organizer">Organizer</span></dt>
+                <dd>
+                    <span>{{series.organizer}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.series.logo">Logo</span></dt>
+                <dd>
+                    <div *ngIf="series.logo">
+                        <a (click)="openFile(series.logoContentType, series.logo)">
+                            <img [src]="'data:' + series.logoContentType + ';base64,' + series.logo" style="max-width: 100%;" alt="series image"/>
+                        </a>
+                        {{series.logoContentType}}, {{byteSize(series.logo)}}
+                    </div>
+                </dd>
+            </dl>
 
-<div *ngIf="series">
-    <h2><span jhiTranslate="motorsportsDatabaseApp.series.detail.title">Series</span> {{series.id}}</h2>
-    <hr>
-    <jhi-alert-error></jhi-alert-error>
-    <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="motorsportsDatabaseApp.series.name">Name</span></dt>
-        <dd>
-            <span>{{series.name}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.series.shortname">Shortname</span></dt>
-        <dd>
-            <span>{{series.shortname}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.series.organizer">Organizer</span></dt>
-        <dd>
-            <span>{{series.organizer}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.series.logo">Logo</span></dt>
-        <dd>
-            <div *ngIf="series.logo">
-                <a (click)="openFile(series.logoContentType, series.logo)">
-                    <img [src]="'data:' + series.logoContentType + ';base64,' + series.logo" style="max-width: 100%;" alt="series image"/>
-                </a>
-                {{series.logoContentType}}, {{byteSize(series.logo)}}
-            </div>
-        </dd>
-    </dl>
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
 
-    <button type="submit"
-            (click)="previousState()"
-            class="btn btn-info">
-        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-    </button>
-
-    <button type="button"
-            [routerLink]="['/', { outlets: { popup: 'series/'+ series.id + '/edit'} }]"
-            replaceUrl="true"
-            class="btn btn-primary">
-        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-    </button>
+            <button type="button"
+                    [routerLink]="['/series', series.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
 </div>

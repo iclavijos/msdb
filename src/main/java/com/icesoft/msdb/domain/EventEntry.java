@@ -1,30 +1,28 @@
 package com.icesoft.msdb.domain;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Objects;
 
 /**
  * A EventEntry.
  */
 @Entity
 @Table(name = "event_entry")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "evententry")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "evententry")
 public class EventEntry implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -32,15 +30,16 @@ public class EventEntry implements Serializable {
     @Column(name = "team_name", length = 100, nullable = false)
     private String teamName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("eventEntries")
     private Car car;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("eventEntries")
     private Driver driver;
 
     @ManyToMany(mappedBy = "participations")
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Team> participants = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -122,19 +121,15 @@ public class EventEntry implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof EventEntry)) {
             return false;
         }
-        EventEntry eventEntry = (EventEntry) o;
-        if (eventEntry.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), eventEntry.getId());
+        return id != null && id.equals(((EventEntry) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return 31;
     }
 
     @Override

@@ -1,86 +1,84 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-import { SERVER_API_URL } from '../../app.constants';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import * as moment from 'moment';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { DATE_FORMAT } from 'app/shared/constants/input.constants';
+import { map } from 'rxjs/operators';
 
-import { JhiDateUtils } from 'ng-jhipster';
+import { SERVER_API_URL } from 'app/app.constants';
+import { createRequestOption } from 'app/shared/util/request-util';
+import { IEventSession } from 'app/shared/model/event-session.model';
 
-import { EventSession } from './event-session.model';
-import { ResponseWrapper, createRequestOption } from '../../shared';
+type EntityResponseType = HttpResponse<IEventSession>;
+type EntityArrayResponseType = HttpResponse<IEventSession[]>;
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class EventSessionService {
+  public resourceUrl = SERVER_API_URL + 'api/event-sessions';
+  public resourceSearchUrl = SERVER_API_URL + 'api/_search/event-sessions';
 
-    private resourceUrl = SERVER_API_URL + 'api/event-sessions';
-    private resourceSearchUrl = SERVER_API_URL + 'api/_search/event-sessions';
+  constructor(protected http: HttpClient) {}
 
-    constructor(private http: Http, private dateUtils: JhiDateUtils) { }
+  create(eventSession: IEventSession): Observable<EntityResponseType> {
+    const copy = this.convertDateFromClient(eventSession);
+    return this.http
+      .post<IEventSession>(this.resourceUrl, copy, { observe: 'response' })
+      .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
+  }
 
-    create(eventSession: EventSession): Observable<EventSession> {
-        const copy = this.convert(eventSession);
-        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
+  update(eventSession: IEventSession): Observable<EntityResponseType> {
+    const copy = this.convertDateFromClient(eventSession);
+    return this.http
+      .put<IEventSession>(this.resourceUrl, copy, { observe: 'response' })
+      .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
+  }
+
+  find(id: number): Observable<EntityResponseType> {
+    return this.http
+      .get<IEventSession>(`${this.resourceUrl}/${id}`, { observe: 'response' })
+      .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
+  }
+
+  query(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http
+      .get<IEventSession[]>(this.resourceUrl, { params: options, observe: 'response' })
+      .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
+  }
+
+  delete(id: number): Observable<HttpResponse<any>> {
+    return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  search(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http
+      .get<IEventSession[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
+      .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
+  }
+
+  protected convertDateFromClient(eventSession: IEventSession): IEventSession {
+    const copy: IEventSession = Object.assign({}, eventSession, {
+      sessionStartTime:
+        eventSession.sessionStartTime != null && eventSession.sessionStartTime.isValid() ? eventSession.sessionStartTime.toJSON() : null
+    });
+    return copy;
+  }
+
+  protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
+    if (res.body) {
+      res.body.sessionStartTime = res.body.sessionStartTime != null ? moment(res.body.sessionStartTime) : null;
     }
+    return res;
+  }
 
-    update(eventSession: EventSession): Observable<EventSession> {
-        const copy = this.convert(eventSession);
-        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
+  protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
+    if (res.body) {
+      res.body.forEach((eventSession: IEventSession) => {
+        eventSession.sessionStartTime = eventSession.sessionStartTime != null ? moment(eventSession.sessionStartTime) : null;
+      });
     }
-
-    find(id: number): Observable<EventSession> {
-        return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
-    }
-
-    query(req?: any): Observable<ResponseWrapper> {
-        const options = createRequestOption(req);
-        return this.http.get(this.resourceUrl, options)
-            .map((res: Response) => this.convertResponse(res));
-    }
-
-    delete(id: number): Observable<Response> {
-        return this.http.delete(`${this.resourceUrl}/${id}`);
-    }
-
-    search(req?: any): Observable<ResponseWrapper> {
-        const options = createRequestOption(req);
-        return this.http.get(this.resourceSearchUrl, options)
-            .map((res: any) => this.convertResponse(res));
-    }
-
-    private convertResponse(res: Response): ResponseWrapper {
-        const jsonResponse = res.json();
-        const result = [];
-        for (let i = 0; i < jsonResponse.length; i++) {
-            result.push(this.convertItemFromServer(jsonResponse[i]));
-        }
-        return new ResponseWrapper(res.headers, result, res.status);
-    }
-
-    /**
-     * Convert a returned JSON object to EventSession.
-     */
-    private convertItemFromServer(json: any): EventSession {
-        const entity: EventSession = Object.assign(new EventSession(), json);
-        entity.sessionStartTime = this.dateUtils
-            .convertDateTimeFromServer(json.sessionStartTime);
-        return entity;
-    }
-
-    /**
-     * Convert a EventSession to a JSON which can be sent to the server.
-     */
-    private convert(eventSession: EventSession): EventSession {
-        const copy: EventSession = Object.assign({}, eventSession);
-
-        copy.sessionStartTime = this.dateUtils.toDate(eventSession.sessionStartTime);
-        return copy;
-    }
+    return res;
+  }
 }

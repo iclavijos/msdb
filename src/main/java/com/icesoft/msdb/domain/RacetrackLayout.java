@@ -1,27 +1,25 @@
 package com.icesoft.msdb.domain;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * A RacetrackLayout.
  */
 @Entity
 @Table(name = "racetrack_layout")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "racetracklayout")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "racetracklayout")
 public class RacetrackLayout implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -47,7 +45,8 @@ public class RacetrackLayout implements Serializable {
     @Column(name = "active")
     private Boolean active;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("racetrackLayouts")
     private Racetrack racetrack;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -156,19 +155,15 @@ public class RacetrackLayout implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof RacetrackLayout)) {
             return false;
         }
-        RacetrackLayout racetrackLayout = (RacetrackLayout) o;
-        if (racetrackLayout.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), racetrackLayout.getId());
+        return id != null && id.equals(((RacetrackLayout) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return 31;
     }
 
     @Override
@@ -176,10 +171,10 @@ public class RacetrackLayout implements Serializable {
         return "RacetrackLayout{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", length='" + getLength() + "'" +
-            ", yearFirstUse='" + getYearFirstUse() + "'" +
+            ", length=" + getLength() +
+            ", yearFirstUse=" + getYearFirstUse() +
             ", layoutImage='" + getLayoutImage() + "'" +
-            ", layoutImageContentType='" + layoutImageContentType + "'" +
+            ", layoutImageContentType='" + getLayoutImageContentType() + "'" +
             ", active='" + isActive() + "'" +
             "}";
     }

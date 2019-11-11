@@ -1,83 +1,74 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
+import { HttpResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { JhiEventManager } from 'ng-jhipster';
 
-import { EventEntry } from './event-entry.model';
+import { IEventEntry } from 'app/shared/model/event-entry.model';
 import { EventEntryService } from './event-entry.service';
-import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
 
 @Component({
-    selector: 'jhi-event-entry',
-    templateUrl: './event-entry.component.html'
+  selector: 'jhi-event-entry',
+  templateUrl: './event-entry.component.html'
 })
 export class EventEntryComponent implements OnInit, OnDestroy {
-eventEntries: EventEntry[];
-    currentAccount: any;
-    eventSubscriber: Subscription;
-    currentSearch: string;
+  eventEntries: IEventEntry[];
+  eventSubscriber: Subscription;
+  currentSearch: string;
 
-    constructor(
-        private eventEntryService: EventEntryService,
-        private jhiAlertService: JhiAlertService,
-        private eventManager: JhiEventManager,
-        private activatedRoute: ActivatedRoute,
-        private principal: Principal
-    ) {
-        this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
-    }
+  constructor(
+    protected eventEntryService: EventEntryService,
+    protected eventManager: JhiEventManager,
+    protected activatedRoute: ActivatedRoute
+  ) {
+    this.currentSearch =
+      this.activatedRoute.snapshot && this.activatedRoute.snapshot.queryParams['search']
+        ? this.activatedRoute.snapshot.queryParams['search']
+        : '';
+  }
 
-    loadAll() {
-        if (this.currentSearch) {
-            this.eventEntryService.search({
-                query: this.currentSearch,
-                }).subscribe(
-                    (res: ResponseWrapper) => this.eventEntries = res.json,
-                    (res: ResponseWrapper) => this.onError(res.json)
-                );
-            return;
-       }
-        this.eventEntryService.query().subscribe(
-            (res: ResponseWrapper) => {
-                this.eventEntries = res.json;
-                this.currentSearch = '';
-            },
-            (res: ResponseWrapper) => this.onError(res.json)
-        );
+  loadAll() {
+    if (this.currentSearch) {
+      this.eventEntryService
+        .search({
+          query: this.currentSearch
+        })
+        .subscribe((res: HttpResponse<IEventEntry[]>) => (this.eventEntries = res.body));
+      return;
     }
+    this.eventEntryService.query().subscribe((res: HttpResponse<IEventEntry[]>) => {
+      this.eventEntries = res.body;
+      this.currentSearch = '';
+    });
+  }
 
-    search(query) {
-        if (!query) {
-            return this.clear();
-        }
-        this.currentSearch = query;
-        this.loadAll();
+  search(query) {
+    if (!query) {
+      return this.clear();
     }
+    this.currentSearch = query;
+    this.loadAll();
+  }
 
-    clear() {
-        this.currentSearch = '';
-        this.loadAll();
-    }
-    ngOnInit() {
-        this.loadAll();
-        this.principal.identity().then((account) => {
-            this.currentAccount = account;
-        });
-        this.registerChangeInEventEntries();
-    }
+  clear() {
+    this.currentSearch = '';
+    this.loadAll();
+  }
 
-    ngOnDestroy() {
-        this.eventManager.destroy(this.eventSubscriber);
-    }
+  ngOnInit() {
+    this.loadAll();
+    this.registerChangeInEventEntries();
+  }
 
-    trackId(index: number, item: EventEntry) {
-        return item.id;
-    }
-    registerChangeInEventEntries() {
-        this.eventSubscriber = this.eventManager.subscribe('eventEntryListModification', (response) => this.loadAll());
-    }
+  ngOnDestroy() {
+    this.eventManager.destroy(this.eventSubscriber);
+  }
 
-    private onError(error) {
-        this.jhiAlertService.error(error.message, null, null);
-    }
+  trackId(index: number, item: IEventEntry) {
+    return item.id;
+  }
+
+  registerChangeInEventEntries() {
+    this.eventSubscriber = this.eventManager.subscribe('eventEntryListModification', () => this.loadAll());
+  }
 }

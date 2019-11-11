@@ -1,42 +1,44 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="tyreProvider">
+            <h2><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.detail.title">Tyre Provider</span> {{tyreProvider.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.name">Name</span></dt>
+                <dd>
+                    <span>{{tyreProvider.name}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.logo">Logo</span></dt>
+                <dd>
+                    <div *ngIf="tyreProvider.logo">
+                        <a (click)="openFile(tyreProvider.logoContentType, tyreProvider.logo)">
+                            <img [src]="'data:' + tyreProvider.logoContentType + ';base64,' + tyreProvider.logo" style="max-width: 100%;" alt="tyreProvider image"/>
+                        </a>
+                        {{tyreProvider.logoContentType}}, {{byteSize(tyreProvider.logo)}}
+                    </div>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.letterColor">Letter Color</span></dt>
+                <dd>
+                    <span>{{tyreProvider.letterColor}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.backgroundColor">Background Color</span></dt>
+                <dd>
+                    <span>{{tyreProvider.backgroundColor}}</span>
+                </dd>
+            </dl>
 
-<div *ngIf="tyreProvider">
-    <h2><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.detail.title">Tyre Provider</span> {{tyreProvider.id}}</h2>
-    <hr>
-    <jhi-alert-error></jhi-alert-error>
-    <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.name">Name</span></dt>
-        <dd>
-            <span>{{tyreProvider.name}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.logo">Logo</span></dt>
-        <dd>
-            <div *ngIf="tyreProvider.logo">
-                <a (click)="openFile(tyreProvider.logoContentType, tyreProvider.logo)">
-                    <img [src]="'data:' + tyreProvider.logoContentType + ';base64,' + tyreProvider.logo" style="max-width: 100%;" alt="tyreProvider image"/>
-                </a>
-                {{tyreProvider.logoContentType}}, {{byteSize(tyreProvider.logo)}}
-            </div>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.letterColor">Letter Color</span></dt>
-        <dd>
-            <span>{{tyreProvider.letterColor}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.backgroundColor">Background Color</span></dt>
-        <dd>
-            <span>{{tyreProvider.backgroundColor}}</span>
-        </dd>
-    </dl>
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
 
-    <button type="submit"
-            (click)="previousState()"
-            class="btn btn-info">
-        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-    </button>
-
-    <button type="button"
-            [routerLink]="['/', { outlets: { popup: 'tyre-provider/'+ tyreProvider.id + '/edit'} }]"
-            replaceUrl="true"
-            class="btn btn-primary">
-        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-    </button>
+            <button type="button"
+                    [routerLink]="['/tyre-provider', tyreProvider.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
 </div>

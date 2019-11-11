@@ -1,27 +1,28 @@
 {
-    "motorsportsDatabaseApp": {
-        "seriesEdition" : {
-            "home": {
-                "title": "Series Editions",
-                "createLabel": "Create a new Series Edition",
-                "createOrEditLabel": "Create or edit a Series Edition",
-                "search": "Search for Series Edition"
-            },
-            "created": "A new Series Edition is created with identifier {{ param }}",
-            "updated": "A Series Edition is updated with identifier {{ param }}",
-            "deleted": "A Series Edition is deleted with identifier {{ param }}",
-            "delete": {
-                "question": "Are you sure you want to delete Series Edition {{ id }}?"
-            },
-            "detail": {
-                "title": "Series Edition"
-            },
-            "period": "Period",
-            "singleChassis": "Single Chassis",
-            "singleEngine": "Single Engine",
-            "singleTyre": "Single Tyre",
-            "allowedCategories": "Allowed Categories",
-            "series": "Series"
-        }
+  "motorsportsDatabaseApp": {
+    "seriesEdition": {
+      "home": {
+        "title": "Series Editions",
+        "createLabel": "Create a new Series Edition",
+        "createOrEditLabel": "Create or edit a Series Edition",
+        "search": "Search for Series Edition",
+        "notFound": "No Series Editions found"
+      },
+      "created": "A new Series Edition is created with identifier {{ param }}",
+      "updated": "A Series Edition is updated with identifier {{ param }}",
+      "deleted": "A Series Edition is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Series Edition {{ id }}?"
+      },
+      "detail": {
+        "title": "Series Edition"
+      },
+      "period": "Period",
+      "singleChassis": "Single Chassis",
+      "singleEngine": "Single Engine",
+      "singleTyre": "Single Tyre",
+      "allowedCategories": "Allowed Categories",
+      "series": "Series"
     }
+  }
 }

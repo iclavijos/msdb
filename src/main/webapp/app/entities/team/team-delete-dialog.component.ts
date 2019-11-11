@@ -1,64 +1,65 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { Team } from './team.model';
-import { TeamPopupService } from './team-popup.service';
+import { ITeam } from 'app/shared/model/team.model';
 import { TeamService } from './team.service';
 
 @Component({
-    selector: 'jhi-team-delete-dialog',
-    templateUrl: './team-delete-dialog.component.html'
+  selector: 'jhi-team-delete-dialog',
+  templateUrl: './team-delete-dialog.component.html'
 })
 export class TeamDeleteDialogComponent {
+  team: ITeam;
 
-    team: Team;
+  constructor(protected teamService: TeamService, public activeModal: NgbActiveModal, protected eventManager: JhiEventManager) {}
 
-    constructor(
-        private teamService: TeamService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+  clear() {
+    this.activeModal.dismiss('cancel');
+  }
 
-    clear() {
-        this.activeModal.dismiss('cancel');
-    }
-
-    confirmDelete(id: number) {
-        this.teamService.delete(id).subscribe((response) => {
-            this.eventManager.broadcast({
-                name: 'teamListModification',
-                content: 'Deleted an team'
-            });
-            this.activeModal.dismiss(true);
-        });
-    }
+  confirmDelete(id: number) {
+    this.teamService.delete(id).subscribe(() => {
+      this.eventManager.broadcast({
+        name: 'teamListModification',
+        content: 'Deleted an team'
+      });
+      this.activeModal.dismiss(true);
+    });
+  }
 }
 
 @Component({
-    selector: 'jhi-team-delete-popup',
-    template: ''
+  selector: 'jhi-team-delete-popup',
+  template: ''
 })
 export class TeamDeletePopupComponent implements OnInit, OnDestroy {
+  protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
+  constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
-    constructor(
-        private route: ActivatedRoute,
-        private teamPopupService: TeamPopupService
-    ) {}
+  ngOnInit() {
+    this.activatedRoute.data.subscribe(({ team }) => {
+      setTimeout(() => {
+        this.ngbModalRef = this.modalService.open(TeamDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
+        this.ngbModalRef.componentInstance.team = team;
+        this.ngbModalRef.result.then(
+          () => {
+            this.router.navigate(['/team', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          },
+          () => {
+            this.router.navigate(['/team', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          }
+        );
+      }, 0);
+    });
+  }
 
-    ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.teamPopupService
-                .open(TeamDeleteDialogComponent as Component, params['id']);
-        });
-    }
-
-    ngOnDestroy() {
-        this.routeSub.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.ngbModalRef = null;
+  }
 }

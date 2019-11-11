@@ -1,51 +1,24 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
-import {
-    TyreProviderService,
-    TyreProviderPopupService,
-    TyreProviderComponent,
-    TyreProviderDetailComponent,
-    TyreProviderDialogComponent,
-    TyreProviderPopupComponent,
-    TyreProviderDeletePopupComponent,
-    TyreProviderDeleteDialogComponent,
-    tyreProviderRoute,
-    tyreProviderPopupRoute,
-    TyreProviderResolvePagingParams,
-} from './';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { TyreProviderComponent } from './tyre-provider.component';
+import { TyreProviderDetailComponent } from './tyre-provider-detail.component';
+import { TyreProviderUpdateComponent } from './tyre-provider-update.component';
+import { TyreProviderDeletePopupComponent, TyreProviderDeleteDialogComponent } from './tyre-provider-delete-dialog.component';
+import { tyreProviderRoute, tyreProviderPopupRoute } from './tyre-provider.route';
 
-const ENTITY_STATES = [
-    ...tyreProviderRoute,
-    ...tyreProviderPopupRoute,
-];
+const ENTITY_STATES = [...tyreProviderRoute, ...tyreProviderPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
-    declarations: [
-        TyreProviderComponent,
-        TyreProviderDetailComponent,
-        TyreProviderDialogComponent,
-        TyreProviderDeleteDialogComponent,
-        TyreProviderPopupComponent,
-        TyreProviderDeletePopupComponent,
-    ],
-    entryComponents: [
-        TyreProviderComponent,
-        TyreProviderDialogComponent,
-        TyreProviderPopupComponent,
-        TyreProviderDeleteDialogComponent,
-        TyreProviderDeletePopupComponent,
-    ],
-    providers: [
-        TyreProviderService,
-        TyreProviderPopupService,
-        TyreProviderResolvePagingParams,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [
+    TyreProviderComponent,
+    TyreProviderDetailComponent,
+    TyreProviderUpdateComponent,
+    TyreProviderDeleteDialogComponent,
+    TyreProviderDeletePopupComponent
+  ],
+  entryComponents: [TyreProviderDeleteDialogComponent]
 })
 export class MotorsportsDatabaseTyreProviderModule {}

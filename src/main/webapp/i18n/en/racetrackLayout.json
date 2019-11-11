@@ -1,27 +1,28 @@
 {
-    "motorsportsDatabaseApp": {
-        "racetrackLayout" : {
-            "home": {
-                "title": "Racetrack Layouts",
-                "createLabel": "Create a new Racetrack Layout",
-                "createOrEditLabel": "Create or edit a Racetrack Layout",
-                "search": "Search for Racetrack Layout"
-            },
-            "created": "A new Racetrack Layout is created with identifier {{ param }}",
-            "updated": "A Racetrack Layout is updated with identifier {{ param }}",
-            "deleted": "A Racetrack Layout is deleted with identifier {{ param }}",
-            "delete": {
-                "question": "Are you sure you want to delete Racetrack Layout {{ id }}?"
-            },
-            "detail": {
-                "title": "Racetrack Layout"
-            },
-            "name": "Name",
-            "length": "Length",
-            "yearFirstUse": "Year First Use",
-            "layoutImage": "Layout Image",
-            "active": "Active",
-            "racetrack": "Racetrack"
-        }
+  "motorsportsDatabaseApp": {
+    "racetrackLayout": {
+      "home": {
+        "title": "Racetrack Layouts",
+        "createLabel": "Create a new Racetrack Layout",
+        "createOrEditLabel": "Create or edit a Racetrack Layout",
+        "search": "Search for Racetrack Layout",
+        "notFound": "No Racetrack Layouts found"
+      },
+      "created": "A new Racetrack Layout is created with identifier {{ param }}",
+      "updated": "A Racetrack Layout is updated with identifier {{ param }}",
+      "deleted": "A Racetrack Layout is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Racetrack Layout {{ id }}?"
+      },
+      "detail": {
+        "title": "Racetrack Layout"
+      },
+      "name": "Name",
+      "length": "Length",
+      "yearFirstUse": "Year First Use",
+      "layoutImage": "Layout Image",
+      "active": "Active",
+      "racetrack": "Racetrack"
     }
+  }
 }

@@ -1,80 +1,44 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-import { SERVER_API_URL } from '../../app.constants';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { Event } from './event.model';
-import { ResponseWrapper, createRequestOption } from '../../shared';
+import { SERVER_API_URL } from 'app/app.constants';
+import { createRequestOption } from 'app/shared/util/request-util';
+import { IEvent } from 'app/shared/model/event.model';
 
-@Injectable()
+type EntityResponseType = HttpResponse<IEvent>;
+type EntityArrayResponseType = HttpResponse<IEvent[]>;
+
+@Injectable({ providedIn: 'root' })
 export class EventService {
+  public resourceUrl = SERVER_API_URL + 'api/events';
+  public resourceSearchUrl = SERVER_API_URL + 'api/_search/events';
 
-    private resourceUrl = SERVER_API_URL + 'api/events';
-    private resourceSearchUrl = SERVER_API_URL + 'api/_search/events';
+  constructor(protected http: HttpClient) {}
 
-    constructor(private http: Http) { }
+  create(event: IEvent): Observable<EntityResponseType> {
+    return this.http.post<IEvent>(this.resourceUrl, event, { observe: 'response' });
+  }
 
-    create(event: Event): Observable<Event> {
-        const copy = this.convert(event);
-        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
-    }
+  update(event: IEvent): Observable<EntityResponseType> {
+    return this.http.put<IEvent>(this.resourceUrl, event, { observe: 'response' });
+  }
 
-    update(event: Event): Observable<Event> {
-        const copy = this.convert(event);
-        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
-    }
+  find(id: number): Observable<EntityResponseType> {
+    return this.http.get<IEvent>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
 
-    find(id: number): Observable<Event> {
-        return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
-    }
+  query(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<IEvent[]>(this.resourceUrl, { params: options, observe: 'response' });
+  }
 
-    query(req?: any): Observable<ResponseWrapper> {
-        const options = createRequestOption(req);
-        return this.http.get(this.resourceUrl, options)
-            .map((res: Response) => this.convertResponse(res));
-    }
+  delete(id: number): Observable<HttpResponse<any>> {
+    return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
 
-    delete(id: number): Observable<Response> {
-        return this.http.delete(`${this.resourceUrl}/${id}`);
-    }
-
-    search(req?: any): Observable<ResponseWrapper> {
-        const options = createRequestOption(req);
-        return this.http.get(this.resourceSearchUrl, options)
-            .map((res: any) => this.convertResponse(res));
-    }
-
-    private convertResponse(res: Response): ResponseWrapper {
-        const jsonResponse = res.json();
-        const result = [];
-        for (let i = 0; i < jsonResponse.length; i++) {
-            result.push(this.convertItemFromServer(jsonResponse[i]));
-        }
-        return new ResponseWrapper(res.headers, result, res.status);
-    }
-
-    /**
-     * Convert a returned JSON object to Event.
-     */
-    private convertItemFromServer(json: any): Event {
-        const entity: Event = Object.assign(new Event(), json);
-        return entity;
-    }
-
-    /**
-     * Convert a Event to a JSON which can be sent to the server.
-     */
-    private convert(event: Event): Event {
-        const copy: Event = Object.assign({}, event);
-        return copy;
-    }
+  search(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<IEvent[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
+  }
 }

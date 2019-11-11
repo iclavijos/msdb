@@ -3,16 +3,10 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <property name="now" value="now()" dbms="h2"/>
-
-    <property name="now" value="now()" dbms="mysql"/>
-    <property name="autoIncrement" value="true"/>
-
-    <property name="floatType" value="float4" dbms="postgresql, h2"/>
-    <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
+        <property name="autoIncrement" value="true"/>
 
     <!--
         Added the entity Category.
@@ -25,21 +19,44 @@
             <column name="name" type="varchar(40)">
                 <constraints nullable="false" />
             </column>
-
             <column name="shortname" type="varchar(10)">
                 <constraints nullable="false" />
             </column>
-
             <column name="logo" type="longblob">
                 <constraints nullable="true" />
             </column>
             <column name="logo_content_type" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
-        
+    </changeSet>
+
+    <changeSet id="20170213140812-1-relations" author="jhipster">
+
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
+
+    <!--
+        Load sample data generated with Faker.js
+        - This data can be easily edited using a CSV editor (or even MS Excel) and
+          is located in the 'src/main/resources/config/liquibase/fake-data' directory
+        - By default this data is applied when running with the JHipster 'dev' profile.
+          This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
+          Spring Boot configuration key.
+    -->
+    <changeSet id="20170213140812-1-data" author="jhipster" context="faker">
+        <loadData
+                  file="config/liquibase/fake-data/category.csv"
+                  separator=";"
+                  tableName="category">
+            <column name="id" type="numeric"/>
+            <column name="name" type="string"/>
+            <column name="shortname" type="string"/>
+            <column name="logo" type="blob"/>
+            <column name="logo_content_type" type="string"/>
+            <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here, do not remove-->
+        </loadData>
+    </changeSet>
+
 </databaseChangeLog>

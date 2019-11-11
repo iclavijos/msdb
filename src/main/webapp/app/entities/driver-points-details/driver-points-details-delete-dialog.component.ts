@@ -1,64 +1,72 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { DriverPointsDetails } from './driver-points-details.model';
-import { DriverPointsDetailsPopupService } from './driver-points-details-popup.service';
+import { IDriverPointsDetails } from 'app/shared/model/driver-points-details.model';
 import { DriverPointsDetailsService } from './driver-points-details.service';
 
 @Component({
-    selector: 'jhi-driver-points-details-delete-dialog',
-    templateUrl: './driver-points-details-delete-dialog.component.html'
+  selector: 'jhi-driver-points-details-delete-dialog',
+  templateUrl: './driver-points-details-delete-dialog.component.html'
 })
 export class DriverPointsDetailsDeleteDialogComponent {
+  driverPointsDetails: IDriverPointsDetails;
 
-    driverPointsDetails: DriverPointsDetails;
+  constructor(
+    protected driverPointsDetailsService: DriverPointsDetailsService,
+    public activeModal: NgbActiveModal,
+    protected eventManager: JhiEventManager
+  ) {}
 
-    constructor(
-        private driverPointsDetailsService: DriverPointsDetailsService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+  clear() {
+    this.activeModal.dismiss('cancel');
+  }
 
-    clear() {
-        this.activeModal.dismiss('cancel');
-    }
-
-    confirmDelete(id: number) {
-        this.driverPointsDetailsService.delete(id).subscribe((response) => {
-            this.eventManager.broadcast({
-                name: 'driverPointsDetailsListModification',
-                content: 'Deleted an driverPointsDetails'
-            });
-            this.activeModal.dismiss(true);
-        });
-    }
+  confirmDelete(id: number) {
+    this.driverPointsDetailsService.delete(id).subscribe(() => {
+      this.eventManager.broadcast({
+        name: 'driverPointsDetailsListModification',
+        content: 'Deleted an driverPointsDetails'
+      });
+      this.activeModal.dismiss(true);
+    });
+  }
 }
 
 @Component({
-    selector: 'jhi-driver-points-details-delete-popup',
-    template: ''
+  selector: 'jhi-driver-points-details-delete-popup',
+  template: ''
 })
 export class DriverPointsDetailsDeletePopupComponent implements OnInit, OnDestroy {
+  protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
+  constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
-    constructor(
-        private route: ActivatedRoute,
-        private driverPointsDetailsPopupService: DriverPointsDetailsPopupService
-    ) {}
-
-    ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.driverPointsDetailsPopupService
-                .open(DriverPointsDetailsDeleteDialogComponent as Component, params['id']);
+  ngOnInit() {
+    this.activatedRoute.data.subscribe(({ driverPointsDetails }) => {
+      setTimeout(() => {
+        this.ngbModalRef = this.modalService.open(DriverPointsDetailsDeleteDialogComponent as Component, {
+          size: 'lg',
+          backdrop: 'static'
         });
-    }
+        this.ngbModalRef.componentInstance.driverPointsDetails = driverPointsDetails;
+        this.ngbModalRef.result.then(
+          () => {
+            this.router.navigate(['/driver-points-details', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          },
+          () => {
+            this.router.navigate(['/driver-points-details', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          }
+        );
+      }, 0);
+    });
+  }
 
-    ngOnDestroy() {
-        this.routeSub.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.ngbModalRef = null;
+  }
 }

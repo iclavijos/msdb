@@ -1,43 +1,34 @@
-import { JhiAlertService, JhiHttpInterceptor } from 'ng-jhipster';
-import { RequestOptionsArgs, Response } from '@angular/http';
-import { Injector } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { JhiAlertService } from 'ng-jhipster';
+import { HttpInterceptor, HttpRequest, HttpResponse, HttpHandler, HttpEvent } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
-export class NotificationInterceptor extends JhiHttpInterceptor {
+@Injectable()
+export class NotificationInterceptor implements HttpInterceptor {
+  constructor(private alertService: JhiAlertService) {}
 
-    private alertService: JhiAlertService;
-
-    // tslint:disable-next-line: no-unused-variable
-    constructor(private injector: Injector) {
-        super();
-        setTimeout(() => this.alertService = injector.get(JhiAlertService));
-    }
-
-    requestIntercept(options?: RequestOptionsArgs): RequestOptionsArgs {
-        return options;
-    }
-
-    responseIntercept(observable: Observable<Response>): Observable<Response> {
-        return observable.map((response: Response) => {
-            const headers = [];
-            response.headers.forEach((value, name) => {
-                if (name.toLowerCase().endsWith('app-alert') || name.toLowerCase().endsWith('app-params')) {
-                    headers.push(name);
-                }
-            });
-            if (headers.length > 1) {
-                headers.sort();
-                const alertKey = response.headers.get(headers[ 0 ]);
-                if (typeof alertKey === 'string') {
-                    if (this.alertService) {
-                        const alertParam = headers.length >= 2 ? response.headers.get(headers[ 1 ]) : null;
-                        this.alertService.success(alertKey, { param : alertParam }, null);
-                    }
-                }
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    return next.handle(request).pipe(
+      tap((event: HttpEvent<any>) => {
+        if (event instanceof HttpResponse) {
+          const arr = event.headers.keys();
+          let alert = null;
+          let alertParams = null;
+          arr.forEach(entry => {
+            if (entry.toLowerCase().endsWith('app-alert')) {
+              alert = event.headers.get(entry);
+            } else if (entry.toLowerCase().endsWith('app-params')) {
+              alertParams = event.headers.get(entry);
             }
-            return response;
-        }).catch((error) => {
-            return Observable.throw(error); // here, response is an error
-        });
-    }
+          });
+          if (alert) {
+            if (typeof alert === 'string') {
+              this.alertService.success(alert, { param: alertParams }, null);
+            }
+          }
+        }
+      })
+    );
+  }
 }

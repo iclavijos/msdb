@@ -1,16 +1,15 @@
 {
   "generator-jhipster": {
-    "jhipsterVersion": "4.10.2",
+    "jhipsterVersion": "6.5.0",
     "baseName": "MotorsportsDatabase",
     "packageName": "com.icesoft.msdb",
     "packageFolder": "com/icesoft/msdb",
     "serverPort": "8080",
-    "authenticationType": "jwt",
-    "hibernateCache": "ehcache",
+    "authenticationType": "oauth2",
     "clusteredHttpSession": false,
     "websocket": false,
     "databaseType": "sql",
-    "devDatabaseType": "h2Disk",
+    "devDatabaseType": "mysql",
     "prodDatabaseType": "mysql",
     "searchEngine": "elasticsearch",
     "messageBroker": false,
@@ -18,7 +17,7 @@
     "buildTool": "gradle",
     "enableSocialSignIn": true,
     "jwtSecretKey": "8cc2578257acdf0437eb10cf75fa5dba3b6bb427",
-    "useSass": false,
+    "useSass": true,
     "clientPackageManager": "yarn",
     "applicationType": "monolith",
     "testFrameworks": [],
@@ -30,6 +29,18 @@
       "ca",
       "es"
     ],
-    "clientFramework": "angularX"
+    "clientFramework": "angularX",
+    "promptValues": {
+      "packageName": "com.icesoft.msdb"
+    },
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "enableSwaggerCodegen": false,
+    "embeddableLaunchScript": false,
+    "clientTheme": "none",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "blueprints": []
   }
 }

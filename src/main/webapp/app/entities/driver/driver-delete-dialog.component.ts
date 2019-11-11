@@ -1,64 +1,65 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { Driver } from './driver.model';
-import { DriverPopupService } from './driver-popup.service';
+import { IDriver } from 'app/shared/model/driver.model';
 import { DriverService } from './driver.service';
 
 @Component({
-    selector: 'jhi-driver-delete-dialog',
-    templateUrl: './driver-delete-dialog.component.html'
+  selector: 'jhi-driver-delete-dialog',
+  templateUrl: './driver-delete-dialog.component.html'
 })
 export class DriverDeleteDialogComponent {
+  driver: IDriver;
 
-    driver: Driver;
+  constructor(protected driverService: DriverService, public activeModal: NgbActiveModal, protected eventManager: JhiEventManager) {}
 
-    constructor(
-        private driverService: DriverService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+  clear() {
+    this.activeModal.dismiss('cancel');
+  }
 
-    clear() {
-        this.activeModal.dismiss('cancel');
-    }
-
-    confirmDelete(id: number) {
-        this.driverService.delete(id).subscribe((response) => {
-            this.eventManager.broadcast({
-                name: 'driverListModification',
-                content: 'Deleted an driver'
-            });
-            this.activeModal.dismiss(true);
-        });
-    }
+  confirmDelete(id: number) {
+    this.driverService.delete(id).subscribe(() => {
+      this.eventManager.broadcast({
+        name: 'driverListModification',
+        content: 'Deleted an driver'
+      });
+      this.activeModal.dismiss(true);
+    });
+  }
 }
 
 @Component({
-    selector: 'jhi-driver-delete-popup',
-    template: ''
+  selector: 'jhi-driver-delete-popup',
+  template: ''
 })
 export class DriverDeletePopupComponent implements OnInit, OnDestroy {
+  protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
+  constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
-    constructor(
-        private route: ActivatedRoute,
-        private driverPopupService: DriverPopupService
-    ) {}
+  ngOnInit() {
+    this.activatedRoute.data.subscribe(({ driver }) => {
+      setTimeout(() => {
+        this.ngbModalRef = this.modalService.open(DriverDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
+        this.ngbModalRef.componentInstance.driver = driver;
+        this.ngbModalRef.result.then(
+          () => {
+            this.router.navigate(['/driver', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          },
+          () => {
+            this.router.navigate(['/driver', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          }
+        );
+      }, 0);
+    });
+  }
 
-    ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.driverPopupService
-                .open(DriverDeleteDialogComponent as Component, params['id']);
-        });
-    }
-
-    ngOnDestroy() {
-        this.routeSub.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.ngbModalRef = null;
+  }
 }

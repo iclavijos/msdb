@@ -1,61 +1,39 @@
-/* tslint:disable max-line-length */
-import { ComponentFixture, TestBed, async } from '@angular/core/testing';
-import { DatePipe } from '@angular/common';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
-import { JhiDateUtils, JhiDataUtils, JhiEventManager } from 'ng-jhipster';
+import { of } from 'rxjs';
+
 import { MotorsportsDatabaseTestModule } from '../../../test.module';
-import { MockActivatedRoute } from '../../../helpers/mock-route.service';
-import { SeriesEditionDetailComponent } from '../../../../../../main/webapp/app/entities/series-edition/series-edition-detail.component';
-import { SeriesEditionService } from '../../../../../../main/webapp/app/entities/series-edition/series-edition.service';
-import { SeriesEdition } from '../../../../../../main/webapp/app/entities/series-edition/series-edition.model';
+import { SeriesEditionDetailComponent } from 'app/entities/series-edition/series-edition-detail.component';
+import { SeriesEdition } from 'app/shared/model/series-edition.model';
 
 describe('Component Tests', () => {
+  describe('SeriesEdition Management Detail Component', () => {
+    let comp: SeriesEditionDetailComponent;
+    let fixture: ComponentFixture<SeriesEditionDetailComponent>;
+    const route = ({ data: of({ seriesEdition: new SeriesEdition(123) }) } as any) as ActivatedRoute;
 
-    describe('SeriesEdition Management Detail Component', () => {
-        let comp: SeriesEditionDetailComponent;
-        let fixture: ComponentFixture<SeriesEditionDetailComponent>;
-        let service: SeriesEditionService;
-
-        beforeEach(async(() => {
-            TestBed.configureTestingModule({
-                imports: [MotorsportsDatabaseTestModule],
-                declarations: [SeriesEditionDetailComponent],
-                providers: [
-                    JhiDateUtils,
-                    JhiDataUtils,
-                    DatePipe,
-                    {
-                        provide: ActivatedRoute,
-                        useValue: new MockActivatedRoute({id: 123})
-                    },
-                    SeriesEditionService,
-                    JhiEventManager
-                ]
-            }).overrideTemplate(SeriesEditionDetailComponent, '')
-            .compileComponents();
-        }));
-
-        beforeEach(() => {
-            fixture = TestBed.createComponent(SeriesEditionDetailComponent);
-            comp = fixture.componentInstance;
-            service = fixture.debugElement.injector.get(SeriesEditionService);
-        });
-
-        describe('OnInit', () => {
-            it('Should call load all on init', () => {
-            // GIVEN
-
-            spyOn(service, 'find').and.returnValue(Observable.of(new SeriesEdition(10)));
-
-            // WHEN
-            comp.ngOnInit();
-
-            // THEN
-            expect(service.find).toHaveBeenCalledWith(123);
-            expect(comp.seriesEdition).toEqual(jasmine.objectContaining({id: 10}));
-            });
-        });
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [MotorsportsDatabaseTestModule],
+        declarations: [SeriesEditionDetailComponent],
+        providers: [{ provide: ActivatedRoute, useValue: route }]
+      })
+        .overrideTemplate(SeriesEditionDetailComponent, '')
+        .compileComponents();
+      fixture = TestBed.createComponent(SeriesEditionDetailComponent);
+      comp = fixture.componentInstance;
     });
 
+    describe('OnInit', () => {
+      it('Should call load all on init', () => {
+        // GIVEN
+
+        // WHEN
+        comp.ngOnInit();
+
+        // THEN
+        expect(comp.seriesEdition).toEqual(jasmine.objectContaining({ id: 123 }));
+      });
+    });
+  });
 });

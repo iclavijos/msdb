@@ -1,51 +1,24 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
-import {
-    EventEditionService,
-    EventEditionPopupService,
-    EventEditionComponent,
-    EventEditionDetailComponent,
-    EventEditionDialogComponent,
-    EventEditionPopupComponent,
-    EventEditionDeletePopupComponent,
-    EventEditionDeleteDialogComponent,
-    eventEditionRoute,
-    eventEditionPopupRoute,
-    EventEditionResolvePagingParams,
-} from './';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { EventEditionComponent } from './event-edition.component';
+import { EventEditionDetailComponent } from './event-edition-detail.component';
+import { EventEditionUpdateComponent } from './event-edition-update.component';
+import { EventEditionDeletePopupComponent, EventEditionDeleteDialogComponent } from './event-edition-delete-dialog.component';
+import { eventEditionRoute, eventEditionPopupRoute } from './event-edition.route';
 
-const ENTITY_STATES = [
-    ...eventEditionRoute,
-    ...eventEditionPopupRoute,
-];
+const ENTITY_STATES = [...eventEditionRoute, ...eventEditionPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
-    declarations: [
-        EventEditionComponent,
-        EventEditionDetailComponent,
-        EventEditionDialogComponent,
-        EventEditionDeleteDialogComponent,
-        EventEditionPopupComponent,
-        EventEditionDeletePopupComponent,
-    ],
-    entryComponents: [
-        EventEditionComponent,
-        EventEditionDialogComponent,
-        EventEditionPopupComponent,
-        EventEditionDeleteDialogComponent,
-        EventEditionDeletePopupComponent,
-    ],
-    providers: [
-        EventEditionService,
-        EventEditionPopupService,
-        EventEditionResolvePagingParams,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [
+    EventEditionComponent,
+    EventEditionDetailComponent,
+    EventEditionUpdateComponent,
+    EventEditionDeleteDialogComponent,
+    EventEditionDeletePopupComponent
+  ],
+  entryComponents: [EventEditionDeleteDialogComponent]
 })
 export class MotorsportsDatabaseEventEditionModule {}

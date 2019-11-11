@@ -1,49 +1,24 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
-import {
-    EventEntryService,
-    EventEntryPopupService,
-    EventEntryComponent,
-    EventEntryDetailComponent,
-    EventEntryDialogComponent,
-    EventEntryPopupComponent,
-    EventEntryDeletePopupComponent,
-    EventEntryDeleteDialogComponent,
-    eventEntryRoute,
-    eventEntryPopupRoute,
-} from './';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { EventEntryComponent } from './event-entry.component';
+import { EventEntryDetailComponent } from './event-entry-detail.component';
+import { EventEntryUpdateComponent } from './event-entry-update.component';
+import { EventEntryDeletePopupComponent, EventEntryDeleteDialogComponent } from './event-entry-delete-dialog.component';
+import { eventEntryRoute, eventEntryPopupRoute } from './event-entry.route';
 
-const ENTITY_STATES = [
-    ...eventEntryRoute,
-    ...eventEntryPopupRoute,
-];
+const ENTITY_STATES = [...eventEntryRoute, ...eventEntryPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
-    declarations: [
-        EventEntryComponent,
-        EventEntryDetailComponent,
-        EventEntryDialogComponent,
-        EventEntryDeleteDialogComponent,
-        EventEntryPopupComponent,
-        EventEntryDeletePopupComponent,
-    ],
-    entryComponents: [
-        EventEntryComponent,
-        EventEntryDialogComponent,
-        EventEntryPopupComponent,
-        EventEntryDeleteDialogComponent,
-        EventEntryDeletePopupComponent,
-    ],
-    providers: [
-        EventEntryService,
-        EventEntryPopupService,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [
+    EventEntryComponent,
+    EventEntryDetailComponent,
+    EventEntryUpdateComponent,
+    EventEntryDeleteDialogComponent,
+    EventEntryDeletePopupComponent
+  ],
+  entryComponents: [EventEntryDeleteDialogComponent]
 })
 export class MotorsportsDatabaseEventEntryModule {}

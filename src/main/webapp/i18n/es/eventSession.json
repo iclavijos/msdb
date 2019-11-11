@@ -1,25 +1,26 @@
 {
-    "motorsportsDatabaseApp": {
-        "eventSession" : {
-            "home": {
-                "title": "Event Sessions",
-                "createLabel": "Crear nuevo Event Session",
-                "createOrEditLabel": "Crear o editar Event Session",
-                "search": "Search for Event Session"
-            },
-            "created": "Un nuevo Event Session ha sido creado con el identificador {{ param }}",
-            "updated": "Un Event Session ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un Event Session ha sido eliminado con el identificador {{ param }}",
-            "delete": {
-                "question": "¿Seguro que quiere eliminar Event Session {{ id }}?"
-            },
-            "detail": {
-                "title": "Event Session"
-            },
-            "name": "Name",
-            "shortname": "Shortname",
-            "sessionStartTime": "Session Start Time",
-            "duration": "Duration"
-        }
+  "motorsportsDatabaseApp": {
+    "eventSession": {
+      "home": {
+        "title": "Event Sessions",
+        "createLabel": "Crear nuevo Event Session",
+        "createOrEditLabel": "Crear o editar Event Session",
+        "search": "Buscar Event Session",
+        "notFound": "Ningún Event Sessions encontrado"
+      },
+      "created": "Un nuevo Event Session ha sido creado con el identificador {{ param }}",
+      "updated": "Un Event Session ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un Event Session ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Event Session {{ id }}?"
+      },
+      "detail": {
+        "title": "Event Session"
+      },
+      "name": "Name",
+      "shortname": "Shortname",
+      "sessionStartTime": "Session Start Time",
+      "duration": "Duration"
     }
+  }
 }

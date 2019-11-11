@@ -1,27 +1,24 @@
 package com.icesoft.msdb.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
-
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * A PointsSystem.
  */
 @Entity
 @Table(name = "points_system")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "pointssystem")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "pointssystem")
 public class PointsSystem implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -155,19 +152,15 @@ public class PointsSystem implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof PointsSystem)) {
             return false;
         }
-        PointsSystem pointsSystem = (PointsSystem) o;
-        if (pointsSystem.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), pointsSystem.getId());
+        return id != null && id.equals(((PointsSystem) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return 31;
     }
 
     @Override
@@ -177,10 +170,10 @@ public class PointsSystem implements Serializable {
             ", name='" + getName() + "'" +
             ", description='" + getDescription() + "'" +
             ", points='" + getPoints() + "'" +
-            ", pointsMostLeadLaps='" + getPointsMostLeadLaps() + "'" +
-            ", pointsFastLap='" + getPointsFastLap() + "'" +
-            ", pointsPole='" + getPointsPole() + "'" +
-            ", pointsLeadLap='" + getPointsLeadLap() + "'" +
+            ", pointsMostLeadLaps=" + getPointsMostLeadLaps() +
+            ", pointsFastLap=" + getPointsFastLap() +
+            ", pointsPole=" + getPointsPole() +
+            ", pointsLeadLap=" + getPointsLeadLap() +
             "}";
     }
 }

@@ -1,51 +1,18 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
-import {
-    DriverService,
-    DriverPopupService,
-    DriverComponent,
-    DriverDetailComponent,
-    DriverDialogComponent,
-    DriverPopupComponent,
-    DriverDeletePopupComponent,
-    DriverDeleteDialogComponent,
-    driverRoute,
-    driverPopupRoute,
-    DriverResolvePagingParams,
-} from './';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { DriverComponent } from './driver.component';
+import { DriverDetailComponent } from './driver-detail.component';
+import { DriverUpdateComponent } from './driver-update.component';
+import { DriverDeletePopupComponent, DriverDeleteDialogComponent } from './driver-delete-dialog.component';
+import { driverRoute, driverPopupRoute } from './driver.route';
 
-const ENTITY_STATES = [
-    ...driverRoute,
-    ...driverPopupRoute,
-];
+const ENTITY_STATES = [...driverRoute, ...driverPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
-    declarations: [
-        DriverComponent,
-        DriverDetailComponent,
-        DriverDialogComponent,
-        DriverDeleteDialogComponent,
-        DriverPopupComponent,
-        DriverDeletePopupComponent,
-    ],
-    entryComponents: [
-        DriverComponent,
-        DriverDialogComponent,
-        DriverPopupComponent,
-        DriverDeleteDialogComponent,
-        DriverDeletePopupComponent,
-    ],
-    providers: [
-        DriverService,
-        DriverPopupService,
-        DriverResolvePagingParams,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [DriverComponent, DriverDetailComponent, DriverUpdateComponent, DriverDeleteDialogComponent, DriverDeletePopupComponent],
+  entryComponents: [DriverDeleteDialogComponent]
 })
 export class MotorsportsDatabaseDriverModule {}

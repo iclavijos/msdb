@@ -1,26 +1,26 @@
-import { JhiHttpInterceptor } from 'ng-jhipster';
-import { Injector } from '@angular/core';
-import { RequestOptionsArgs, Response } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import { LoginService } from '../../shared/login/login.service';
+import { Injectable } from '@angular/core';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
-export class AuthExpiredInterceptor extends JhiHttpInterceptor {
+import { LoginService } from 'app/core/login/login.service';
+import { StateStorageService } from 'app/core/auth/state-storage.service';
 
-    constructor(private injector: Injector) {
-        super();
-    }
+@Injectable()
+export class AuthExpiredInterceptor implements HttpInterceptor {
+  constructor(private loginService: LoginService, private stateStorageService: StateStorageService, private router: Router) {}
 
-    requestIntercept(options?: RequestOptionsArgs): RequestOptionsArgs {
-        return options;
-    }
-
-    responseIntercept(observable: Observable<Response>): Observable<Response> {
-        return <Observable<Response>> observable.catch((error, source) => {
-            if (error.status === 401) {
-                const loginService: LoginService = this.injector.get(LoginService);
-                loginService.logout();
-            }
-            return Observable.throw(error);
-        });
-    }
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    return next.handle(request).pipe(
+      tap(null, (err: any) => {
+        if (err instanceof HttpErrorResponse) {
+          if (err.status === 401 && err.url && !err.url.includes('api/account')) {
+            this.stateStorageService.storeUrl(this.router.routerState.snapshot.url);
+            this.loginService.login();
+          }
+        }
+      })
+    );
+  }
 }

@@ -1,83 +1,74 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
+import { HttpResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { JhiEventManager } from 'ng-jhipster';
 
-import { EventSession } from './event-session.model';
+import { IEventSession } from 'app/shared/model/event-session.model';
 import { EventSessionService } from './event-session.service';
-import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
 
 @Component({
-    selector: 'jhi-event-session',
-    templateUrl: './event-session.component.html'
+  selector: 'jhi-event-session',
+  templateUrl: './event-session.component.html'
 })
 export class EventSessionComponent implements OnInit, OnDestroy {
-eventSessions: EventSession[];
-    currentAccount: any;
-    eventSubscriber: Subscription;
-    currentSearch: string;
+  eventSessions: IEventSession[];
+  eventSubscriber: Subscription;
+  currentSearch: string;
 
-    constructor(
-        private eventSessionService: EventSessionService,
-        private jhiAlertService: JhiAlertService,
-        private eventManager: JhiEventManager,
-        private activatedRoute: ActivatedRoute,
-        private principal: Principal
-    ) {
-        this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
-    }
+  constructor(
+    protected eventSessionService: EventSessionService,
+    protected eventManager: JhiEventManager,
+    protected activatedRoute: ActivatedRoute
+  ) {
+    this.currentSearch =
+      this.activatedRoute.snapshot && this.activatedRoute.snapshot.queryParams['search']
+        ? this.activatedRoute.snapshot.queryParams['search']
+        : '';
+  }
 
-    loadAll() {
-        if (this.currentSearch) {
-            this.eventSessionService.search({
-                query: this.currentSearch,
-                }).subscribe(
-                    (res: ResponseWrapper) => this.eventSessions = res.json,
-                    (res: ResponseWrapper) => this.onError(res.json)
-                );
-            return;
-       }
-        this.eventSessionService.query().subscribe(
-            (res: ResponseWrapper) => {
-                this.eventSessions = res.json;
-                this.currentSearch = '';
-            },
-            (res: ResponseWrapper) => this.onError(res.json)
-        );
+  loadAll() {
+    if (this.currentSearch) {
+      this.eventSessionService
+        .search({
+          query: this.currentSearch
+        })
+        .subscribe((res: HttpResponse<IEventSession[]>) => (this.eventSessions = res.body));
+      return;
     }
+    this.eventSessionService.query().subscribe((res: HttpResponse<IEventSession[]>) => {
+      this.eventSessions = res.body;
+      this.currentSearch = '';
+    });
+  }
 
-    search(query) {
-        if (!query) {
-            return this.clear();
-        }
-        this.currentSearch = query;
-        this.loadAll();
+  search(query) {
+    if (!query) {
+      return this.clear();
     }
+    this.currentSearch = query;
+    this.loadAll();
+  }
 
-    clear() {
-        this.currentSearch = '';
-        this.loadAll();
-    }
-    ngOnInit() {
-        this.loadAll();
-        this.principal.identity().then((account) => {
-            this.currentAccount = account;
-        });
-        this.registerChangeInEventSessions();
-    }
+  clear() {
+    this.currentSearch = '';
+    this.loadAll();
+  }
 
-    ngOnDestroy() {
-        this.eventManager.destroy(this.eventSubscriber);
-    }
+  ngOnInit() {
+    this.loadAll();
+    this.registerChangeInEventSessions();
+  }
 
-    trackId(index: number, item: EventSession) {
-        return item.id;
-    }
-    registerChangeInEventSessions() {
-        this.eventSubscriber = this.eventManager.subscribe('eventSessionListModification', (response) => this.loadAll());
-    }
+  ngOnDestroy() {
+    this.eventManager.destroy(this.eventSubscriber);
+  }
 
-    private onError(error) {
-        this.jhiAlertService.error(error.message, null, null);
-    }
+  trackId(index: number, item: IEventSession) {
+    return item.id;
+  }
+
+  registerChangeInEventSessions() {
+    this.eventSubscriber = this.eventManager.subscribe('eventSessionListModification', () => this.loadAll());
+  }
 }

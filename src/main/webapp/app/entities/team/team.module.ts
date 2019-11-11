@@ -1,51 +1,18 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
-import {
-    TeamService,
-    TeamPopupService,
-    TeamComponent,
-    TeamDetailComponent,
-    TeamDialogComponent,
-    TeamPopupComponent,
-    TeamDeletePopupComponent,
-    TeamDeleteDialogComponent,
-    teamRoute,
-    teamPopupRoute,
-    TeamResolvePagingParams,
-} from './';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { TeamComponent } from './team.component';
+import { TeamDetailComponent } from './team-detail.component';
+import { TeamUpdateComponent } from './team-update.component';
+import { TeamDeletePopupComponent, TeamDeleteDialogComponent } from './team-delete-dialog.component';
+import { teamRoute, teamPopupRoute } from './team.route';
 
-const ENTITY_STATES = [
-    ...teamRoute,
-    ...teamPopupRoute,
-];
+const ENTITY_STATES = [...teamRoute, ...teamPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
-    declarations: [
-        TeamComponent,
-        TeamDetailComponent,
-        TeamDialogComponent,
-        TeamDeleteDialogComponent,
-        TeamPopupComponent,
-        TeamDeletePopupComponent,
-    ],
-    entryComponents: [
-        TeamComponent,
-        TeamDialogComponent,
-        TeamPopupComponent,
-        TeamDeleteDialogComponent,
-        TeamDeletePopupComponent,
-    ],
-    providers: [
-        TeamService,
-        TeamPopupService,
-        TeamResolvePagingParams,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [TeamComponent, TeamDetailComponent, TeamUpdateComponent, TeamDeleteDialogComponent, TeamDeletePopupComponent],
+  entryComponents: [TeamDeleteDialogComponent]
 })
 export class MotorsportsDatabaseTeamModule {}

@@ -1,28 +1,26 @@
 package com.icesoft.msdb.domain;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Objects;
 
 /**
  * A EventEdition.
  */
 @Entity
 @Table(name = "event_edition")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "eventedition")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "eventedition")
 public class EventEdition implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -43,13 +41,16 @@ public class EventEdition implements Serializable {
     @Column(name = "event_date", nullable = false)
     private LocalDate eventDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("eventEditions")
     private Category allowedCategories;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("eventEditions")
     private RacetrackLayout trackLayout;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("eventEditions")
     private Event event;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -158,26 +159,22 @@ public class EventEdition implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof EventEdition)) {
             return false;
         }
-        EventEdition eventEdition = (EventEdition) o;
-        if (eventEdition.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), eventEdition.getId());
+        return id != null && id.equals(((EventEdition) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return 31;
     }
 
     @Override
     public String toString() {
         return "EventEdition{" +
             "id=" + getId() +
-            ", editionYear='" + getEditionYear() + "'" +
+            ", editionYear=" + getEditionYear() +
             ", shortEventName='" + getShortEventName() + "'" +
             ", longEventName='" + getLongEventName() + "'" +
             ", eventDate='" + getEventDate() + "'" +

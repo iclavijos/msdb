@@ -1,86 +1,83 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-import { SERVER_API_URL } from '../../app.constants';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import * as moment from 'moment';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { DATE_FORMAT } from 'app/shared/constants/input.constants';
+import { map } from 'rxjs/operators';
 
-import { JhiDateUtils } from 'ng-jhipster';
+import { SERVER_API_URL } from 'app/app.constants';
+import { createRequestOption } from 'app/shared/util/request-util';
+import { IEventEdition } from 'app/shared/model/event-edition.model';
 
-import { EventEdition } from './event-edition.model';
-import { ResponseWrapper, createRequestOption } from '../../shared';
+type EntityResponseType = HttpResponse<IEventEdition>;
+type EntityArrayResponseType = HttpResponse<IEventEdition[]>;
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class EventEditionService {
+  public resourceUrl = SERVER_API_URL + 'api/event-editions';
+  public resourceSearchUrl = SERVER_API_URL + 'api/_search/event-editions';
 
-    private resourceUrl = SERVER_API_URL + 'api/event-editions';
-    private resourceSearchUrl = SERVER_API_URL + 'api/_search/event-editions';
+  constructor(protected http: HttpClient) {}
 
-    constructor(private http: Http, private dateUtils: JhiDateUtils) { }
+  create(eventEdition: IEventEdition): Observable<EntityResponseType> {
+    const copy = this.convertDateFromClient(eventEdition);
+    return this.http
+      .post<IEventEdition>(this.resourceUrl, copy, { observe: 'response' })
+      .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
+  }
 
-    create(eventEdition: EventEdition): Observable<EventEdition> {
-        const copy = this.convert(eventEdition);
-        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
+  update(eventEdition: IEventEdition): Observable<EntityResponseType> {
+    const copy = this.convertDateFromClient(eventEdition);
+    return this.http
+      .put<IEventEdition>(this.resourceUrl, copy, { observe: 'response' })
+      .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
+  }
+
+  find(id: number): Observable<EntityResponseType> {
+    return this.http
+      .get<IEventEdition>(`${this.resourceUrl}/${id}`, { observe: 'response' })
+      .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
+  }
+
+  query(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http
+      .get<IEventEdition[]>(this.resourceUrl, { params: options, observe: 'response' })
+      .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
+  }
+
+  delete(id: number): Observable<HttpResponse<any>> {
+    return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  search(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http
+      .get<IEventEdition[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
+      .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
+  }
+
+  protected convertDateFromClient(eventEdition: IEventEdition): IEventEdition {
+    const copy: IEventEdition = Object.assign({}, eventEdition, {
+      eventDate: eventEdition.eventDate != null && eventEdition.eventDate.isValid() ? eventEdition.eventDate.format(DATE_FORMAT) : null
+    });
+    return copy;
+  }
+
+  protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
+    if (res.body) {
+      res.body.eventDate = res.body.eventDate != null ? moment(res.body.eventDate) : null;
     }
+    return res;
+  }
 
-    update(eventEdition: EventEdition): Observable<EventEdition> {
-        const copy = this.convert(eventEdition);
-        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
+  protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
+    if (res.body) {
+      res.body.forEach((eventEdition: IEventEdition) => {
+        eventEdition.eventDate = eventEdition.eventDate != null ? moment(eventEdition.eventDate) : null;
+      });
     }
-
-    find(id: number): Observable<EventEdition> {
-        return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
-    }
-
-    query(req?: any): Observable<ResponseWrapper> {
-        const options = createRequestOption(req);
-        return this.http.get(this.resourceUrl, options)
-            .map((res: Response) => this.convertResponse(res));
-    }
-
-    delete(id: number): Observable<Response> {
-        return this.http.delete(`${this.resourceUrl}/${id}`);
-    }
-
-    search(req?: any): Observable<ResponseWrapper> {
-        const options = createRequestOption(req);
-        return this.http.get(this.resourceSearchUrl, options)
-            .map((res: any) => this.convertResponse(res));
-    }
-
-    private convertResponse(res: Response): ResponseWrapper {
-        const jsonResponse = res.json();
-        const result = [];
-        for (let i = 0; i < jsonResponse.length; i++) {
-            result.push(this.convertItemFromServer(jsonResponse[i]));
-        }
-        return new ResponseWrapper(res.headers, result, res.status);
-    }
-
-    /**
-     * Convert a returned JSON object to EventEdition.
-     */
-    private convertItemFromServer(json: any): EventEdition {
-        const entity: EventEdition = Object.assign(new EventEdition(), json);
-        entity.eventDate = this.dateUtils
-            .convertLocalDateFromServer(json.eventDate);
-        return entity;
-    }
-
-    /**
-     * Convert a EventEdition to a JSON which can be sent to the server.
-     */
-    private convert(eventEdition: EventEdition): EventEdition {
-        const copy: EventEdition = Object.assign({}, eventEdition);
-        copy.eventDate = this.dateUtils
-            .convertLocalDateToServer(eventEdition.eventDate);
-        return copy;
-    }
+    return res;
+  }
 }

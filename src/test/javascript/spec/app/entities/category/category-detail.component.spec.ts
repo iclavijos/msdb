@@ -1,61 +1,39 @@
-/* tslint:disable max-line-length */
-import { ComponentFixture, TestBed, async } from '@angular/core/testing';
-import { DatePipe } from '@angular/common';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
-import { JhiDateUtils, JhiDataUtils, JhiEventManager } from 'ng-jhipster';
+import { of } from 'rxjs';
+
 import { MotorsportsDatabaseTestModule } from '../../../test.module';
-import { MockActivatedRoute } from '../../../helpers/mock-route.service';
-import { CategoryDetailComponent } from '../../../../../../main/webapp/app/entities/category/category-detail.component';
-import { CategoryService } from '../../../../../../main/webapp/app/entities/category/category.service';
-import { Category } from '../../../../../../main/webapp/app/entities/category/category.model';
+import { CategoryDetailComponent } from 'app/entities/category/category-detail.component';
+import { Category } from 'app/shared/model/category.model';
 
 describe('Component Tests', () => {
+  describe('Category Management Detail Component', () => {
+    let comp: CategoryDetailComponent;
+    let fixture: ComponentFixture<CategoryDetailComponent>;
+    const route = ({ data: of({ category: new Category(123) }) } as any) as ActivatedRoute;
 
-    describe('Category Management Detail Component', () => {
-        let comp: CategoryDetailComponent;
-        let fixture: ComponentFixture<CategoryDetailComponent>;
-        let service: CategoryService;
-
-        beforeEach(async(() => {
-            TestBed.configureTestingModule({
-                imports: [MotorsportsDatabaseTestModule],
-                declarations: [CategoryDetailComponent],
-                providers: [
-                    JhiDateUtils,
-                    JhiDataUtils,
-                    DatePipe,
-                    {
-                        provide: ActivatedRoute,
-                        useValue: new MockActivatedRoute({id: 123})
-                    },
-                    CategoryService,
-                    JhiEventManager
-                ]
-            }).overrideTemplate(CategoryDetailComponent, '')
-            .compileComponents();
-        }));
-
-        beforeEach(() => {
-            fixture = TestBed.createComponent(CategoryDetailComponent);
-            comp = fixture.componentInstance;
-            service = fixture.debugElement.injector.get(CategoryService);
-        });
-
-        describe('OnInit', () => {
-            it('Should call load all on init', () => {
-            // GIVEN
-
-            spyOn(service, 'find').and.returnValue(Observable.of(new Category(10)));
-
-            // WHEN
-            comp.ngOnInit();
-
-            // THEN
-            expect(service.find).toHaveBeenCalledWith(123);
-            expect(comp.category).toEqual(jasmine.objectContaining({id: 10}));
-            });
-        });
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [MotorsportsDatabaseTestModule],
+        declarations: [CategoryDetailComponent],
+        providers: [{ provide: ActivatedRoute, useValue: route }]
+      })
+        .overrideTemplate(CategoryDetailComponent, '')
+        .compileComponents();
+      fixture = TestBed.createComponent(CategoryDetailComponent);
+      comp = fixture.componentInstance;
     });
 
+    describe('OnInit', () => {
+      it('Should call load all on init', () => {
+        // GIVEN
+
+        // WHEN
+        comp.ngOnInit();
+
+        // THEN
+        expect(comp.category).toEqual(jasmine.objectContaining({ id: 123 }));
+      });
+    });
+  });
 });

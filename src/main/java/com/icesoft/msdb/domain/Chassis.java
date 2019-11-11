@@ -1,30 +1,27 @@
 package com.icesoft.msdb.domain;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Objects;
 
 /**
  * A Chassis.
  */
 @Entity
 @Table(name = "chassis")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "chassis")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "chassis")
 public class Chassis implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -42,11 +39,10 @@ public class Chassis implements Serializable {
     private Integer debutYear;
 
     @OneToMany(mappedBy = "derivedFrom")
-    @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Chassis> evolutions = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("chassis")
     private Chassis derivedFrom;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -141,19 +137,15 @@ public class Chassis implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Chassis)) {
             return false;
         }
-        Chassis chassis = (Chassis) o;
-        if (chassis.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), chassis.getId());
+        return id != null && id.equals(((Chassis) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return 31;
     }
 
     @Override
@@ -162,7 +154,7 @@ public class Chassis implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", manufacturer='" + getManufacturer() + "'" +
-            ", debutYear='" + getDebutYear() + "'" +
+            ", debutYear=" + getDebutYear() +
             "}";
     }
 }
