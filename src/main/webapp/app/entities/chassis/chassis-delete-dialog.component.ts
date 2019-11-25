@@ -1,64 +1,65 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { Chassis } from './chassis.model';
-import { ChassisPopupService } from './chassis-popup.service';
+import { IChassis } from 'app/shared/model/chassis.model';
 import { ChassisService } from './chassis.service';
 
 @Component({
-    selector: 'jhi-chassis-delete-dialog',
-    templateUrl: './chassis-delete-dialog.component.html'
+  selector: 'jhi-chassis-delete-dialog',
+  templateUrl: './chassis-delete-dialog.component.html'
 })
 export class ChassisDeleteDialogComponent {
+  chassis: IChassis;
 
-    chassis: Chassis;
+  constructor(protected chassisService: ChassisService, public activeModal: NgbActiveModal, protected eventManager: JhiEventManager) {}
 
-    constructor(
-        private chassisService: ChassisService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+  clear() {
+    this.activeModal.dismiss('cancel');
+  }
 
-    clear() {
-        this.activeModal.dismiss('cancel');
-    }
-
-    confirmDelete(id: number) {
-        this.chassisService.delete(id).subscribe((response) => {
-            this.eventManager.broadcast({
-                name: 'chassisListModification',
-                content: 'Deleted an chassis'
-            });
-            this.activeModal.dismiss(true);
-        });
-    }
+  confirmDelete(id: number) {
+    this.chassisService.delete(id).subscribe(() => {
+      this.eventManager.broadcast({
+        name: 'chassisListModification',
+        content: 'Deleted an chassis'
+      });
+      this.activeModal.dismiss(true);
+    });
+  }
 }
 
 @Component({
-    selector: 'jhi-chassis-delete-popup',
-    template: ''
+  selector: 'jhi-chassis-delete-popup',
+  template: ''
 })
 export class ChassisDeletePopupComponent implements OnInit, OnDestroy {
+  protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
+  constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
-    constructor(
-        private route: ActivatedRoute,
-        private chassisPopupService: ChassisPopupService
-    ) {}
+  ngOnInit() {
+    this.activatedRoute.data.subscribe(({ chassis }) => {
+      setTimeout(() => {
+        this.ngbModalRef = this.modalService.open(ChassisDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
+        this.ngbModalRef.componentInstance.chassis = chassis;
+        this.ngbModalRef.result.then(
+          () => {
+            this.router.navigate(['/chassis', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          },
+          () => {
+            this.router.navigate(['/chassis', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          }
+        );
+      }, 0);
+    });
+  }
 
-    ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.chassisPopupService
-                .open(ChassisDeleteDialogComponent as Component, params['id']);
-        });
-    }
-
-    ngOnDestroy() {
-        this.routeSub.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.ngbModalRef = null;
+  }
 }

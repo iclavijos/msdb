@@ -13,6 +13,7 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.xml.bind.DatatypeConverter;
 
+import io.micrometer.core.annotation.Timed;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
@@ -180,7 +180,7 @@ public class ImportsResource {
         		racetrack = new Racetrack();
 	        	racetrack.setName(tmp.getRacetrackName());
 	        	racetrack.setLocation(tmp.getLocation());
-        		Racetrack found = racetrackRepository.findOne(Example.of(racetrack));
+        		Racetrack found = racetrackRepository.findOne(Example.of(racetrack)).get();
         		if (found != null) {
         			racetrack = found;
         		} else {
@@ -195,7 +195,7 @@ public class ImportsResource {
 	        	layout.setYearFirstUse(tmp.getYearFirstUse());
 	        	layout.setActive(tmp.isActive());
 
-	        	RacetrackLayout found = racetrackLayoutRepository.findOne(Example.of(layout));
+	        	RacetrackLayout found = racetrackLayoutRepository.findOne(Example.of(layout)).get();
 	        	if (found == null) {
 	        		layout.setRacetrack(racetrack);
 	        		racetrackLayoutRepository.save(layout);
@@ -326,8 +326,8 @@ public class ImportsResource {
     }
 
     private void importLapByLap(Long sessionId, String data) {
-    	if (sessionLapDataRepo.exists(sessionId.toString())) {
-    		sessionLapDataRepo.delete(sessionId.toString());
+    	if (sessionLapDataRepo.existsById(sessionId.toString())) {
+    		sessionLapDataRepo.deleteById(sessionId.toString());
     	}
         cacheHandler.resetLapByLapCaches(sessionId);
        	MappingIterator<LapInfo> readValues = initializeIterator(LapInfo.class, data);
@@ -342,7 +342,8 @@ public class ImportsResource {
     }
 
     private void importResults(Long sessionId, String data) {
-    	EventSession session = sessionRepository.findOne(sessionId);
+    	EventSession session = sessionRepository.findById(sessionId)
+            .orElseThrow(() ->new MSDBException("Invalid session id " + sessionId));
 
 //    	if (session.isRace()) {
 //    		Optional.ofNullable(session.getEventEdition().getSeriesEditions())

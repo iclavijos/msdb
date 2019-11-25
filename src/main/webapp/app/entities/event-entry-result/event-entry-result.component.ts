@@ -1,87 +1,74 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { Response } from '@angular/http';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { JhiEventManager } from 'ng-jhipster';
 
-import { EventEdition } from '../event-edition';
-import { EventSession } from '../event-session';
-import { EventEntryResult } from './event-entry-result.model';
+import { IEventEntryResult } from 'app/shared/model/event-entry-result.model';
 import { EventEntryResultService } from './event-entry-result.service';
-import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
-
-import { SessionType } from '../../shared/enumerations/sessionType.enum';
 
 @Component({
-    selector: 'jhi-event-entry-result',
-    templateUrl: './event-entry-result.component.html'
+  selector: 'jhi-event-entry-result',
+  templateUrl: './event-entry-result.component.html'
 })
 export class EventEntryResultComponent implements OnInit, OnDestroy {
+  eventEntryResults: IEventEntryResult[];
+  eventSubscriber: Subscription;
+  currentSearch: string;
 
-    @Input() session: EventSession;
-    @Input() edition: EventEdition;
-    sessionTypes = SessionType;
-    eventEntryResults: EventEntryResult[];
-    currentAccount: any;
-    eventSubscriber: Subscription;
-    filterCategory: string;
+  constructor(
+    protected eventEntryResultService: EventEntryResultService,
+    protected eventManager: JhiEventManager,
+    protected activatedRoute: ActivatedRoute
+  ) {
+    this.currentSearch =
+      this.activatedRoute.snapshot && this.activatedRoute.snapshot.queryParams['search']
+        ? this.activatedRoute.snapshot.queryParams['search']
+        : '';
+  }
 
-    constructor(
-        private eventEntryResultService: EventEntryResultService,
-        private jhiAlertService: JhiAlertService,
-        private eventManager: JhiEventManager,
-        private activatedRoute: ActivatedRoute,
-        private principal: Principal
-    ) {
+  loadAll() {
+    if (this.currentSearch) {
+      this.eventEntryResultService
+        .search({
+          query: this.currentSearch
+        })
+        .subscribe((res: HttpResponse<IEventEntryResult[]>) => (this.eventEntryResults = res.body));
+      return;
     }
+    this.eventEntryResultService.query().subscribe((res: HttpResponse<IEventEntryResult[]>) => {
+      this.eventEntryResults = res.body;
+      this.currentSearch = '';
+    });
+  }
 
-    loadAll() {
-        this.session.eventEdition = this.edition;
-        this.eventEntryResultService.query(this.session).subscribe(
-            (res: ResponseWrapper) => this.eventEntryResults = res.json,
-            (res: ResponseWrapper) => this.onError(res.json)
-        );
+  search(query) {
+    if (!query) {
+      return this.clear();
     }
+    this.currentSearch = query;
+    this.loadAll();
+  }
 
-    clear() {
-        this.loadAll();
-    }
-    ngOnInit() {
-        this.loadAll();
-        this.principal.identity().then((account) => {
-            this.currentAccount = account;
-        });
-        this.registerChangeInEventEntryResults();
-    }
+  clear() {
+    this.currentSearch = '';
+    this.loadAll();
+  }
 
-    ngOnDestroy() {
-        this.eventManager.destroy(this.eventSubscriber);
-    }
+  ngOnInit() {
+    this.loadAll();
+    this.registerChangeInEventEntryResults();
+  }
 
-    trackId(index: number, item: EventEntryResult) {
-        return item.id;
-    }
-    
-    classifiedNotRetired(eventEntryResult: EventEntryResult) {
-        return eventEntryResult.finalPosition > 1 && eventEntryResult.finalPosition <= 800 && !eventEntryResult.retired;
-    }
-    
-    gap(currentLapTime: number) {
-        return currentLapTime - this.eventEntryResults[0].bestLapTime;
-    }
+  ngOnDestroy() {
+    this.eventManager.destroy(this.eventSubscriber);
+  }
 
-    processResults() {
-        this.jhiAlertService.info('motorsportsDatabaseApp.eventEdition.result.processResults.processing', null, null);
-        this.eventEntryResultService.processSessionResults(this.session.id).subscribe(
-                () => this.jhiAlertService.success('motorsportsDatabaseApp.eventEdition.result.processResults.processed', null, null),
-                () => this.jhiAlertService.error('motorsportsDatabaseApp.eventEdition.result.processResults.notProcessed', null, null));
-    }
+  trackId(index: number, item: IEventEntryResult) {
+    return item.id;
+  }
 
-    registerChangeInEventEntryResults() {
-        this.eventSubscriber = this.eventManager.subscribe('eventEntryResultListModification', (response) => this.loadAll());
-    }
-
-    private onError(error) {
-        this.jhiAlertService.error(error.message, null, null);
-    }
+  registerChangeInEventEntryResults() {
+    this.eventSubscriber = this.eventManager.subscribe('eventEntryResultListModification', () => this.loadAll());
+  }
 }

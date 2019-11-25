@@ -1,32 +1,33 @@
 {
-    "motorsportsDatabaseApp": {
-        "driver" : {
-            "home": {
-                "title": "Pilots",
-                "createLabel": "Afegir un nou pilot",
-                "createOrEditLabel": "Afegir o editar un pilot",
-                "search": "Cercar pilots"
-            },
-            "created": "S'ha afegit un nou pilot",
-            "updated": "S'ha actualitzat el pilot",
-            "deleted": "S'ha esborrat el pilot",
-            "delete": {
-                "question": "Estàs segur que vols esborrar el pilot {{ id }}?"
-            },
-            "detail": {
-                "title": "Pilot"
-            },
-            "name": "Nom",
-            "surname": "Cognom",
-            "birthDate": "Data naixement",
-            "birthPlace": "Lloc naixement",
-            "deathDate": "Data defunció",
-            "deathPlace": "Lloc defunció",
-            "age": "Edat",
-            "portrait": "Retrat",
-            "bio": "Biografia",
-            "statistics": "Estadístiques",
-            "nationality": "Nacionalitat"
-        }
+  "motorsportsDatabaseApp": {
+    "driver": {
+      "home": {
+        "title": "Pilots",
+        "createLabel": "Afegir un nou pilot",
+        "createOrEditLabel": "Afegir o editar un pilot",
+        "search": "Cercar pilots",
+        "notFound": "No s'ha trobat cap pilot"
+      },
+      "created": "S'ha afegit un nou pilot",
+      "updated": "S'ha actualitzat el pilot",
+      "deleted": "S'ha esborrat el pilot",
+      "delete": {
+        "question": "Estàs segur que vols esborrar el pilot {{ id }}?"
+      },
+      "detail": {
+        "title": "Pilot"
+      },
+      "name": "Nom",
+      "surname": "Cognom",
+      "birthDate": "Data naixement",
+      "birthPlace": "Lloc naixement",
+      "deathDate": "Data defunció",
+      "deathPlace": "Lloc defunció",
+      "age": "Edat",
+      "portrait": "Retrat",
+      "bio": "Biografia",
+      "statistics": "Estadístiques",
+      "nationality": "Nacionalitat"
     }
+  }
 }

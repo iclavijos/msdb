@@ -1,69 +1,73 @@
 <div>
-    <h2>
+    <h2 id="page-heading">
         <span jhiTranslate="motorsportsDatabaseApp.eventSession.home.title">Event Sessions</span>
-        <button class="btn btn-primary float-right jh-create-entity create-event-session" [routerLink]="['/', { outlets: { popup: ['event-session-new'] } }]">
-            <span class="fa fa-plus"></span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-event-session" [routerLink]="['/event-session/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventSession.home.createLabel">
-            Create new Event Session
+            Create a new Event Session
             </span>
         </button>
     </h2>
+    <jhi-alert-error></jhi-alert-error>
     <jhi-alert></jhi-alert>
     <div class="row">
         <div class="col-sm-12 no-padding-right">
             <form name="searchForm" class="form-inline">
                 <div class="input-group w-100 mt-3">
                     <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.eventSession.home.search' | translate }}">
-                    <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
-                        <span class="fa fa-search"></span>
+                    <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                        <fa-icon [icon]="'search'"></fa-icon>
                     </button>
-                    <button class="input-group-addon btn btn-danger" (click)="clear()" *ngIf="currentSearch">
-                        <span class="fa fa-trash-o"></span>
+                    <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                        <fa-icon [icon]="'trash-alt'"></fa-icon>
                     </button>
                 </div>
             </form>
         </div>
     </div>
     <br/>
-    <div class="table-responsive" *ngIf="eventSessions">
-        <table class="table table-striped">
+    <div class="alert alert-warning" *ngIf="eventSessions?.length === 0">
+        <span jhiTranslate="motorsportsDatabaseApp.eventSession.home.notFound">No eventSessions found</span>
+    </div>
+    <div class="table-responsive" *ngIf="eventSessions?.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
             <thead>
             <tr>
-            <th><span jhiTranslate="global.field.id">ID</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.eventSession.name">Name</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.eventSession.shortname">Shortname</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.eventSession.sessionStartTime">Session Start Time</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.eventSession.duration">Duration</span></th>
-            <th></th>
+            <th scope="col" ><span jhiTranslate="global.field.id">ID</span></th>
+            <th scope="col" ><span jhiTranslate="motorsportsDatabaseApp.eventSession.name">Name</span></th>
+            <th scope="col" ><span jhiTranslate="motorsportsDatabaseApp.eventSession.shortname">Shortname</span></th>
+            <th scope="col" ><span jhiTranslate="motorsportsDatabaseApp.eventSession.sessionStartTime">Session Start Time</span></th>
+            <th scope="col" ><span jhiTranslate="motorsportsDatabaseApp.eventSession.duration">Duration</span></th>
+            <th scope="col"></th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let eventSession of eventSessions ;trackBy: trackId">
-                <td><a [routerLink]="['../event-session', eventSession.id ]">{{eventSession.id}}</a></td>
+                <td><a [routerLink]="['/event-session', eventSession.id, 'view' ]">{{eventSession.id}}</a></td>
                 <td>{{eventSession.name}}</td>
                 <td>{{eventSession.shortname}}</td>
                 <td>{{eventSession.sessionStartTime | date:'medium'}}</td>
                 <td>{{eventSession.duration}}</td>
                 <td class="text-right">
-                    <div class="btn-group flex-btn-group-container">
+                    <div class="btn-group">
                         <button type="submit"
-                                [routerLink]="['../event-session', eventSession.id ]"
+                                [routerLink]="['/event-session', eventSession.id, 'view' ]"
                                 class="btn btn-info btn-sm">
-                            <span class="fa fa-eye"></span>
+                            <fa-icon [icon]="'eye'"></fa-icon>
                             <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
                         </button>
                         <button type="submit"
-                                [routerLink]="['/', { outlets: { popup: 'event-session/'+ eventSession.id + '/edit'} }]"
-                                replaceUrl="true"
+                                [routerLink]="['/event-session', eventSession.id, 'edit']"
                                 class="btn btn-primary btn-sm">
-                            <span class="fa fa-pencil"></span>
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
                             <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
                         </button>
                         <button type="submit"
-                                [routerLink]="['/', { outlets: { popup: 'event-session/'+ eventSession.id + '/delete'} }]"
+                                [routerLink]="['/event-session', { outlets: { popup: eventSession.id + '/delete'} }]"
                                 replaceUrl="true"
+                                queryParamsHandling="merge"
                                 class="btn btn-danger btn-sm">
-                            <span class="fa fa-remove"></span>
+                            <fa-icon [icon]="'times'"></fa-icon>
                             <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
                         </button>
                     </div>

@@ -1,49 +1,51 @@
 {
-    "motorsportsDatabaseApp": {
-        "racetrack" : {
-            "home": {
-                "title": "Circuitos",
-                "createLabel": "Crear nuevo circuito",
-                "createOrEditLabel": "Crear o editar un circuito",
-                "search": "Buscar circuitos"
-            },
-            "created": "Un nuevo circuito ha sido creado con el identificador {{ param }}",
-            "updated": "Un circuito ha sido actualizado con el identificador {{ param }}",
-            "deleted": "Un circuito ha sido eliminado con el identificador {{ param }}",
-            "delete": {
-                "question": "¿Seguro que quiere eliminar el circuito {{ id }}?"
-            },
-            "detail": {
-                "title": "circuito"
-            },
-            "name": "Nombre",
-            "location": "Localización",
-            "country": "País",
-            "logo": "Logo",
-            "layouts": "Trazados"
-        },
-        "racetrackLayout" : {
-            "home": {
-                "title": "Trazado",
-                "createLabel": "Crear nuevo trazado",
-                "createOrEditLabel": "Crear o editar trazado",
-                "search": "Buscar trazados"
-            },
-            "created": "Se ha añadido el trazado {{ param }}",
-            "updated": "Se ha editado el trazado {{ param }}",
-            "deleted": "Se ha eliminado el trazado {{ param }}",
-            "delete": {
-                "question": "¿Seguro que quiere eliminar el trazado '{{ id }}'?"
-            },
-            "detail": {
-                "title": "Trazado"
-            },
-            "name": "Nombre",
-            "length": "Longitud",
-            "yearFirstUse": "Año primer uso",
-            "layoutImage": "Imagen",
-            "racetrack": "Circuito",
-            "active": "En activo?"
-        }
+  "motorsportsDatabaseApp": {
+    "racetrack": {
+      "home": {
+        "title": "Circuitos",
+        "createLabel": "Crear nuevo circuito",
+        "createOrEditLabel": "Crear o editar un circuito",
+        "search": "Buscar circuitos",
+        "notFound": "Ningún circuito encontrado"
+      },
+      "created": "Un nuevo circuito ha sido creado con el identificador {{ param }}",
+      "updated": "Un circuito ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un circuito ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar el circuito {{ id }}?"
+      },
+      "detail": {
+        "title": "circuito"
+      },
+      "name": "Nombre",
+      "location": "Localización",
+      "country": "País",
+      "logo": "Logo",
+      "layouts": "Trazados"
+    },
+    "racetrackLayout": {
+      "home": {
+        "title": "Trazado",
+        "createLabel": "Crear nuevo trazado",
+        "createOrEditLabel": "Crear o editar trazado",
+        "search": "Buscar trazados",
+        "notFound": "Ningún trazado encontrado"
+      },
+      "created": "Se ha añadido el trazado {{ param }}",
+      "updated": "Se ha editado el trazado {{ param }}",
+      "deleted": "Se ha eliminado el trazado {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar el trazado '{{ id }}'?"
+      },
+      "detail": {
+        "title": "Trazado"
+      },
+      "name": "Nombre",
+      "length": "Longitud",
+      "yearFirstUse": "Año primer uso",
+      "layoutImage": "Imagen",
+      "racetrack": "Circuito",
+      "active": "En activo?"
     }
+  }
 }

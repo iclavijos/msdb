@@ -1,87 +1,24 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseStandingsModule} from '../standings/standings.module';
-import { MotorsportsDatabaseSharedModule } from '../../shared';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { SeriesEditionComponent } from './series-edition.component';
+import { SeriesEditionDetailComponent } from './series-edition-detail.component';
+import { SeriesEditionUpdateComponent } from './series-edition-update.component';
+import { SeriesEditionDeletePopupComponent, SeriesEditionDeleteDialogComponent } from './series-edition-delete-dialog.component';
+import { seriesEditionRoute, seriesEditionPopupRoute } from './series-edition.route';
 
-import {
-    SeriesEditionService,
-    SeriesEditionPopupService,
-    SeriesEditionComponent,
-    SeriesEditionDetailComponent,
-    SeriesEditionDialogComponent,
-    SeriesEditionPopupComponent,
-    SeriesEditionDeletePopupComponent,
-    SeriesEditionDeleteDialogComponent,
-    SeriesEditionCalendarPopupComponent,
-    SeriesEditionCalendarDialogComponent,
-    SeriesEditionClonePopupComponent,
-    SeriesEditionCloneDialogComponent,
-    SeriesEditionDriversChampionsPopupComponent,
-    SeriesEditionDriversChampionsDialogComponent,
-    SeriesEditionManufacturersChampionsPopupComponent,
-    SeriesEditionManufacturersChampionsDialogComponent,
-    SeriesEditionTeamsChampionsPopupComponent,
-    SeriesEditionTeamsChampionsDialogComponent,
-    seriesEditionRoute,
-    seriesEditionPopupRoute,
-    SeriesEditionResolvePagingParams,
-} from './';
-
-const ENTITY_STATES = [
-    ...seriesEditionRoute,
-    ...seriesEditionPopupRoute,
-];
+const ENTITY_STATES = [...seriesEditionRoute, ...seriesEditionPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseStandingsModule,
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
-    exports: [
-        SeriesEditionComponent
-    ],
-    declarations: [
-        SeriesEditionComponent,
-        SeriesEditionDetailComponent,
-        SeriesEditionDialogComponent,
-        SeriesEditionDeleteDialogComponent,
-        SeriesEditionPopupComponent,
-        SeriesEditionDeletePopupComponent,
-        SeriesEditionCalendarPopupComponent,
-        SeriesEditionCalendarDialogComponent,
-        SeriesEditionClonePopupComponent,
-        SeriesEditionCloneDialogComponent,
-        SeriesEditionDriversChampionsPopupComponent,
-        SeriesEditionDriversChampionsDialogComponent,
-        SeriesEditionManufacturersChampionsPopupComponent,
-        SeriesEditionManufacturersChampionsDialogComponent,
-        SeriesEditionTeamsChampionsPopupComponent,
-        SeriesEditionTeamsChampionsDialogComponent,
-    ],
-    entryComponents: [
-        SeriesEditionComponent,
-        SeriesEditionDialogComponent,
-        SeriesEditionPopupComponent,
-        SeriesEditionDeleteDialogComponent,
-        SeriesEditionDeletePopupComponent,
-        SeriesEditionCalendarPopupComponent,
-        SeriesEditionCalendarDialogComponent,
-        SeriesEditionClonePopupComponent,
-        SeriesEditionCloneDialogComponent,
-        SeriesEditionDriversChampionsPopupComponent,
-        SeriesEditionDriversChampionsDialogComponent,
-        SeriesEditionManufacturersChampionsPopupComponent,
-        SeriesEditionManufacturersChampionsDialogComponent,
-        SeriesEditionTeamsChampionsPopupComponent,
-        SeriesEditionTeamsChampionsDialogComponent,
-    ],
-    providers: [
-        SeriesEditionService,
-        SeriesEditionPopupService,
-        SeriesEditionResolvePagingParams,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [
+    SeriesEditionComponent,
+    SeriesEditionDetailComponent,
+    SeriesEditionUpdateComponent,
+    SeriesEditionDeleteDialogComponent,
+    SeriesEditionDeletePopupComponent
+  ],
+  entryComponents: [SeriesEditionDeleteDialogComponent]
 })
 export class MotorsportsDatabaseSeriesEditionModule {}

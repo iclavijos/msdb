@@ -1,29 +1,30 @@
 {
-    "motorsportsDatabaseApp": {
-        "chassis" : {
-            "home": {
-                "title": "Chassis",
-                "createLabel": "Create a new Chassis",
-                "createOrEditLabel": "Create or edit a Chassis",
-                "search": "Search for Chassis"
-            },
-            "created": "A new Chassis is created with identifier {{ param }}",
-            "updated": "A Chassis is updated with identifier {{ param }}",
-            "deleted": "A Chassis is deleted with identifier {{ param }}",
-            "delete": {
-                "question": "Are you sure you want to delete Chassis {{ id }}?"
-            },
-            "detail": {
-                "title": "Chassis"
-            },
-            "name": "Name",
-            "manufacturer": "Manufacturer",
-            "debutYear": "Debut Year",
-            "evolutions": "Evolutions",
-            "derivedFrom": "Derived From",
-            "rebranded": "Rebranded?",
-            "rebrandedTooltip": "If checked, the new chassis is the same as the old one but just with a name change",
-            "image": "Image"
-        }
+  "motorsportsDatabaseApp": {
+    "chassis": {
+      "home": {
+        "title": "Chassis",
+        "createLabel": "Create a new Chassis",
+        "createOrEditLabel": "Create or edit a Chassis",
+        "search": "Search for chassis",
+        "notFound": "No chassis found"
+      },
+      "created": "A new Chassis is created with identifier {{ param }}",
+      "updated": "A Chassis is updated with identifier {{ param }}",
+      "deleted": "A Chassis is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Chassis {{ id }}?"
+      },
+      "detail": {
+        "title": "Chassis"
+      },
+      "name": "Name",
+      "manufacturer": "Manufacturer",
+      "debutYear": "Debut Year",
+      "evolutions": "Evolutions",
+      "derivedFrom": "Derived From",
+      "rebranded": "Rebranded?",
+      "rebrandedTooltip": "If checked, the new chassis is the same as the old one but just with a name change",
+      "image": "Image"
     }
+  }
 }

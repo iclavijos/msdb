@@ -15,8 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.domain.TyreProvider;
 
 /**
- * Spring Data JPA repository for the TyreProvider entity.
+ * Spring Data  repository for the TyreProvider entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface TyreProviderRepository extends JpaRepository<TyreProvider,Long> {
 

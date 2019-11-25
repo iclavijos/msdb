@@ -1,28 +1,29 @@
 {
-    "motorsportsDatabaseApp": {
-        "tyreProvider" : {
-            "home": {
-                "title": "Tyre Providers",
-                "createLabel": "Create a new Tyre Provider",
-                "createOrEditLabel": "Create or edit a Tyre Provider",
-                "search": "Search for Tyre Provider"
-            },
-            "created": "A new Tyre Provider is created with identifier {{ param }}",
-            "updated": "A Tyre Provider is updated with identifier {{ param }}",
-            "deleted": "A Tyre Provider is deleted with identifier {{ param }}",
-            "delete": {
-                "question": "Are you sure you want to delete Tyre Provider {{ id }}?"
-            },
-            "detail": {
-                "title": "Tyre Provider"
-            },
-            "name": "Name",
-            "logo": "Logo",
-            "symbol": {
-                "symbol": "Symbol",
-                "letterColor": "Letter color",
-                "backgroundColor": "Background color"
-            }
-        }
+  "motorsportsDatabaseApp": {
+    "tyreProvider": {
+      "home": {
+        "title": "Tyre Providers",
+        "createLabel": "Create a new Tyre Provider",
+        "createOrEditLabel": "Create or edit a Tyre Provider",
+        "search": "Search for Tyre Provider",
+        "notFound": "No tyre providers found"
+      },
+      "created": "A new Tyre Provider is created with identifier {{ param }}",
+      "updated": "A Tyre Provider is updated with identifier {{ param }}",
+      "deleted": "A Tyre Provider is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Tyre Provider {{ id }}?"
+      },
+      "detail": {
+        "title": "Tyre Provider"
+      },
+      "name": "Name",
+      "logo": "Logo",
+      "symbol": {
+        "symbol": "Symbol",
+        "letterColor": "Letter color",
+        "backgroundColor": "Background color"
+      }
     }
+  }
 }

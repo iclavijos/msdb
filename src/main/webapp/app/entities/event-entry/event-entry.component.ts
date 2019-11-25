@@ -1,102 +1,74 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { Response } from '@angular/http';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiParseLinks, JhiLanguageService, JhiAlertService } from 'ng-jhipster';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { JhiEventManager } from 'ng-jhipster';
 
-import { EventEdition } from '../event-edition';
-import { EventEntry } from './event-entry.model';
+import { IEventEntry } from 'app/shared/model/event-entry.model';
 import { EventEntryService } from './event-entry.service';
-import { Principal } from '../../shared';
 
 @Component({
-    selector: 'jhi-event-entry',
-    templateUrl: './event-entry.component.html',
-    styleUrls: ['event-entry.css']
+  selector: 'jhi-event-entry',
+  templateUrl: './event-entry.component.html'
 })
 export class EventEntryComponent implements OnInit, OnDestroy {
-    
-    @Input() eventEdition: EventEdition;
-    eventEntries: EventEntry[];
-    currentAccount: any;
-    filterCategory: any;
-    eventSubscriber: Subscription;
-    private selectedRaceEntry: number;
+  eventEntries: IEventEntry[];
+  eventSubscriber: Subscription;
+  currentSearch: string;
 
-    constructor(
-        private jhiLanguageService: JhiLanguageService,
-        private eventEntryService: EventEntryService,
-        private jhiAlertService: JhiAlertService,
-        private eventManager: JhiEventManager,
-        private activatedRoute: ActivatedRoute,
-        private principal: Principal
-    ) {
-    }
-    
-    expandEntryData(raceNumber: number) {
-        if (this.selectedRaceEntry === raceNumber) {
-            this.selectedRaceEntry = null;
-        } else {
-            this.selectedRaceEntry = raceNumber;
-        }
-    }
-    
-    private getBigFaceUrl(portraitUrl: string) {
-        if (portraitUrl != null) {
-            let url = portraitUrl.replace("upload/", "upload/w_240,h_240,c_thumb,g_face,r_max/");
-            let pos = url.lastIndexOf(".");
-            if (pos > -1) {
-                url = url.substring(0, pos);
-            }
-            url += ".png";
-            
-            return url;
-        }
-        return null;
-    }
-    
-    private getSmallFaceUrl(portraitUrl: string) {
-        if (portraitUrl != null) {
-            let url = portraitUrl.replace("upload/", "upload/w_120,h_120,c_thumb,g_face,r_max/");
-            let pos = url.lastIndexOf(".");
-            if (pos > -1) {
-                url = url.substring(0, pos);
-            }
-            url += ".png";
-            
-            return url;
-        }
-        return null;
-    }
+  constructor(
+    protected eventEntryService: EventEntryService,
+    protected eventManager: JhiEventManager,
+    protected activatedRoute: ActivatedRoute
+  ) {
+    this.currentSearch =
+      this.activatedRoute.snapshot && this.activatedRoute.snapshot.queryParams['search']
+        ? this.activatedRoute.snapshot.queryParams['search']
+        : '';
+  }
 
-    loadAll() {
-        this.eventEntryService.findEntries(this.eventEdition.id).subscribe(
-            (res: Response) => {
-                this.eventEntries = res.json();
-            }
-        );
+  loadAll() {
+    if (this.currentSearch) {
+      this.eventEntryService
+        .search({
+          query: this.currentSearch
+        })
+        .subscribe((res: HttpResponse<IEventEntry[]>) => (this.eventEntries = res.body));
+      return;
     }
+    this.eventEntryService.query().subscribe((res: HttpResponse<IEventEntry[]>) => {
+      this.eventEntries = res.body;
+      this.currentSearch = '';
+    });
+  }
 
-    ngOnInit() {
-        this.loadAll();
-        this.principal.identity().then((account) => {
-            this.currentAccount = account;
-        });
-        this.registerChangeInEventEntries();
+  search(query) {
+    if (!query) {
+      return this.clear();
     }
+    this.currentSearch = query;
+    this.loadAll();
+  }
 
-    ngOnDestroy() {
-        this.eventManager.destroy(this.eventSubscriber);
-    }
+  clear() {
+    this.currentSearch = '';
+    this.loadAll();
+  }
 
-    trackId(index: number, item: EventEntry) {
-        return item.id;
-    }
-    registerChangeInEventEntries() {
-        this.eventSubscriber = this.eventManager.subscribe('eventEntryListModification', (response) => this.loadAll());
-    }
+  ngOnInit() {
+    this.loadAll();
+    this.registerChangeInEventEntries();
+  }
 
-    private onError(error) {
-        this.jhiAlertService.error(error.message, null, null);
-    }
+  ngOnDestroy() {
+    this.eventManager.destroy(this.eventSubscriber);
+  }
+
+  trackId(index: number, item: IEventEntry) {
+    return item.id;
+  }
+
+  registerChangeInEventEntries() {
+    this.eventSubscriber = this.eventManager.subscribe('eventEntryListModification', () => this.loadAll());
+  }
 }

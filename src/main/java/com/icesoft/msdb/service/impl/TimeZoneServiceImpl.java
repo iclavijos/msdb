@@ -37,8 +37,4 @@ public class TimeZoneServiceImpl implements TimeZoneService {
         }
     }
 
-    public static void main(String[] args) {
-        TimeZoneServiceImpl impl = new TimeZoneServiceImpl();
-        System.out.println(impl.getTimeZone("Marrakesh", "MA"));
-    }
 }

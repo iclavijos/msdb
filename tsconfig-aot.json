@@ -1,26 +1,28 @@
 {
-    "compilerOptions": {
-        "target": "es5",
-        "module": "es2015",
-        "moduleResolution": "node",
-        "sourceMap": false,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "removeComments": false,
-        "noImplicitAny": false,
-        "suppressImplicitAnyIndexErrors": true,
-        "outDir": "build/www/app",
-        "lib": ["es2015", "dom"],
-        "typeRoots": [
-            "node_modules/@types"
-        ]
+  "compilerOptions": {
+    "target": "es6",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "sourceMap": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "skipLibCheck": true,
+    "outDir": "build/resources/main/static/app",
+    "lib": ["es7", "dom"],
+    "typeRoots": ["node_modules/@types"],
+    "baseUrl": "./",
+    "paths": {
+      "app/*": ["src/main/webapp/app/*"]
     },
-    "files": [
-        "src/main/webapp/app/app.module.ts",
-        "src/main/webapp/app/app.main-aot.ts"
-    ],
-    "angularCompilerOptions": {
-        "genDir": "build/aot",
-        "skipMetadataEmit" : true
-    }
+    "importHelpers": true
+  },
+  "angularCompilerOptions": {
+    "genDir": "build/resources/main/aot",
+    "skipMetadataEmit": true,
+    "fullTemplateTypeCheck": true,
+    "preserveWhitespaces": true
+  }
 }

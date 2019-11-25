@@ -11,8 +11,9 @@ import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.enums.SessionType;
 
 /**
- * Spring Data JPA repository for the EventEntryResult entity.
+ * Spring Data  repository for the EventEntryResult entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface EventEntryResultRepository extends JpaRepository<EventEntryResult,Long> {
 

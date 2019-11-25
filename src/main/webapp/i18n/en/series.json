@@ -1,104 +1,105 @@
 {
-    "motorsportsDatabaseApp": {
-        "series" : {
-            "home": {
-                "title": "Series",
-                "createLabel": "Create a new Series",
-                "createOrEditLabel": "Create or edit a Series",
-                "search": "Search for Series"
-            },
-            "created": "A new Series is created with identifier {{ param }}",
-            "updated": "A Series is updated with identifier {{ param }}",
-            "deleted": "A Series is deleted with identifier {{ param }}",
-            "delete": {
-                "question": "Are you sure you want to delete Series {{ id }}?"
-            },
-            "detail": {
-                "title": "Series"
-            },
-            "name": "Name",
-            "shortname": "Shortname",
-            "organizer": "Organizer",
-            "logo": "Logo",
-            "editions": "Editions",
-            "seriesEdition" : {
-	            "home": {
-	                "title": "Series Editions",
-	                "createLabel": "Create a new Series Edition",
-	                "createOrEditLabel": "Create or edit a Series Edition",
-	                "search": "Search for Series Edition"
-	            },
-	            "created": "A new Series Edition is created with identifier {{ param }}",
-	            "updated": "A Series Edition is updated with identifier {{ param }}",
-	            "deleted": "A Series Edition is deleted with identifier {{ param }}",
-	            "delete": {
-	                "question": "Are you sure you want to delete Series Edition {{ id }}?"
-	            },
-	            "detail": {
-	                "title": "Series Edition",
-	                "info": "Info",
-	                "editions": "Editions",
-	                "standings": "Standings",
-	                "driversStandings": "Drivers Standings",
-	                "teamsStandings": "Teams Standings",
-	                "manufacturersStandings": "Constructors Standings",
-	                "driver": "Driver",
-	                "team": "Team",
-	                "manufacturer": "Constructor",
-	                "points": "Points",
-	                "pointsPerRace": "Points per race",
-	                "resultsPerRace": "Results per race",
-	                "graphics": "Graphics"
-	            },
-	            "calendar": {
-	            	"title": "Calendar",
-	            	"editLabel": "Edit series calendar",
-	            	"searchEvent": "Search event",
-	            	"assignPoints": "Assign points system to each scoring session of the event"
-	            },
-	            "champions": "Champions",
-	            "period": "Period",
-	            "singleChassis": "Single Chassis",
-	            "singleEngine": "Single Engine",
-	            "singleTyre": "Single Tyre",
-	            "allowedCategories": "Allowed Categories",
-	            "pointsSystems": "Points systems",
-	            "series": "Series",
-	            "numEvents": "Number of events",
-	            "driverChamp": "Driver champ",
-	            "teamChamp": "Teamp champ",
-	            "manufacturerChamp": "Manufacturer champ",
-	            "eventDate": "Date",
-	            "event": "Event",
-	            "winner": "Winner",
-	            "updateStandings": "Update standings",
-	            "updatingStandings": "Updating standings. Wait a few seconds...",
-	            "standingsNotUpdated": "Standings could not be updated",
-	            "standingsUpdated": "Standings updated",
-	            "driversChampions": {
-	            	"edit": "Edit drivers champions",
-	            	"selectDrivers": "Select which drivers are champions of this edition"
-	            },
-	            "teamsChampions": {
-	            	"edit": "Edit teams champions",
-	            	"selectDrivers": "Select which teams are champions of this edition"
-	            },
-	            "manufacturersChampions": {
-	            	"edit": "Edit constructors champions",
-	            	"selectDrivers": "Select which constructors are champions of this edition"
-	            },
-	            "clone": {
-	            	"clone": "Copy series",
-	            	"title": "Create a new edition by copying current series edition",
-	            	"period": "New series edition's period"
-	            },
-	            "updateTeamsChampions": "Edit teams champions",
-	            "updateManufacturersChampions": "Edit manufacturers champions",
-	            "driversStandings": "Drivers standings?",
-	            "teamsStandings": "Teams standings?",
-	            "manufacturersStandings": "Constructors standings?",
-	            "standingsPerCategory": "Standings per category?"
-	        }
-        }
+  "motorsportsDatabaseApp": {
+    "series": {
+      "home": {
+        "title": "Series",
+        "createLabel": "Create a new Series",
+        "createOrEditLabel": "Create or edit a Series",
+        "search": "Search for Series",
+        "notFound": "No Series found"
+      },
+      "created": "A new Series is created with identifier {{ param }}",
+      "updated": "A Series is updated with identifier {{ param }}",
+      "deleted": "A Series is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Series {{ id }}?"
+      },
+      "detail": {
+        "title": "Series"
+      },
+      "name": "Name",
+      "shortname": "Shortname",
+      "organizer": "Organizer",
+      "logo": "Logo",
+      "editions": "Editions",
+      "seriesEdition": {
+        "home": {
+          "title": "Series Editions",
+          "createLabel": "Create a new Series Edition",
+          "createOrEditLabel": "Create or edit a Series Edition",
+          "search": "Search for Series Edition"
+        },
+        "created": "A new Series Edition is created with identifier {{ param }}",
+        "updated": "A Series Edition is updated with identifier {{ param }}",
+        "deleted": "A Series Edition is deleted with identifier {{ param }}",
+        "delete": {
+          "question": "Are you sure you want to delete Series Edition {{ id }}?"
+        },
+        "detail": {
+          "title": "Series Edition",
+          "info": "Info",
+          "editions": "Editions",
+          "standings": "Standings",
+          "driversStandings": "Drivers Standings",
+          "teamsStandings": "Teams Standings",
+          "manufacturersStandings": "Constructors Standings",
+          "driver": "Driver",
+          "team": "Team",
+          "manufacturer": "Constructor",
+          "points": "Points",
+          "pointsPerRace": "Points per race",
+          "resultsPerRace": "Results per race",
+          "graphics": "Graphics"
+        },
+        "calendar": {
+          "title": "Calendar",
+          "editLabel": "Edit series calendar",
+          "searchEvent": "Search event",
+          "assignPoints": "Assign points system to each scoring session of the event"
+        },
+        "champions": "Champions",
+        "period": "Period",
+        "singleChassis": "Single Chassis",
+        "singleEngine": "Single Engine",
+        "singleTyre": "Single Tyre",
+        "allowedCategories": "Allowed Categories",
+        "pointsSystems": "Points systems",
+        "series": "Series",
+        "numEvents": "Number of events",
+        "driverChamp": "Driver champ",
+        "teamChamp": "Teamp champ",
+        "manufacturerChamp": "Manufacturer champ",
+        "eventDate": "Date",
+        "event": "Event",
+        "winner": "Winner",
+        "updateStandings": "Update standings",
+        "updatingStandings": "Updating standings. Wait a few seconds...",
+        "standingsNotUpdated": "Standings could not be updated",
+        "standingsUpdated": "Standings updated",
+        "driversChampions": {
+          "edit": "Edit drivers champions",
+          "selectDrivers": "Select which drivers are champions of this edition"
+        },
+        "teamsChampions": {
+          "edit": "Edit teams champions",
+          "selectDrivers": "Select which teams are champions of this edition"
+        },
+        "manufacturersChampions": {
+          "edit": "Edit constructors champions",
+          "selectDrivers": "Select which constructors are champions of this edition"
+        },
+        "clone": {
+          "clone": "Copy series",
+          "title": "Create a new edition by copying current series edition",
+          "period": "New series edition's period"
+        },
+        "updateTeamsChampions": "Edit teams champions",
+        "updateManufacturersChampions": "Edit manufacturers champions",
+        "driversStandings": "Drivers standings?",
+        "teamsStandings": "Teams standings?",
+        "manufacturersStandings": "Constructors standings?",
+        "standingsPerCategory": "Standings per category?"
+      }
     }
+  }
 }

@@ -18,18 +18,19 @@ import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.SeriesEdition;
 
 /**
- * Spring Data JPA repository for the Driver entity.
+ * Spring Data  repository for the Driver entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface DriverRepository extends JpaRepository<Driver,Long> {
-	
+
 	List<Driver> findByNameAndSurnameAndBirthDateAllIgnoreCase(String name, String surname, LocalDate date);
-	
+
 	List<Driver> findByIdIn(List<Long> ids);
-	
+
 	@Query("SELECT DISTINCT eee.drivers FROM EventEditionEntry eee WHERE ?1 MEMBER OF eee.eventEdition.seriesEditions")
 	List<Driver> findDriversInSeries(SeriesEdition seriesEdition);
-	
+
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
 	@Query(value = "select d from Driver d")
 	@Transactional(readOnly=true)

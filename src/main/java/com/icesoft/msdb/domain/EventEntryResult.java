@@ -1,7 +1,11 @@
 package com.icesoft.msdb.domain;
 
+import javax.persistence.*;
+
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,11 +31,12 @@ public class EventEntryResult implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @Column(name = "starting_position")
     private Integer startingPosition;
-    
+
     @Column(name = "final_position")
     private Integer finalPosition;
 
@@ -46,28 +51,28 @@ public class EventEntryResult implements Serializable {
 
     @Column(name = "retired")
     private Boolean retired = false;
-    
+
     @Column(name = "cause", length=100)
     private String cause;
-    
+
     @Column(name = "difference")
     private Long difference;
-    
+
     @Column(name = "difference_type")
     private Integer differenceType;
-    
+
     @Column(name = "laps_led")
     private Integer lapsLed;
-    
+
     @Column(name = "pitlane_start")
     private Boolean pitlaneStart = false;
-    
+
     @OneToOne
     private EventEditionEntry sharedDriveWith;
-    
+
     @ManyToOne
     private EventSession session;
-    
+
     @OneToOne
     private EventEditionEntry entry;
 
@@ -83,7 +88,7 @@ public class EventEntryResult implements Serializable {
     public Integer getStartingPosition() {
 		return startingPosition;
 	}
-    
+
     public EventEntryResult startingPosition(Integer startingPosition) {
     	this.startingPosition = startingPosition;
     	return this;
@@ -146,10 +151,8 @@ public class EventEntryResult implements Serializable {
     }
 
     public Boolean isRetired() {
-    	if (retired == null) {
-    		retired = false;
-    	}
-        return retired;
+        return
+            Optional.ofNullable(retired).orElse(Boolean.FALSE);
     }
 
     public EventEntryResult retired(Boolean retired) {
@@ -170,7 +173,7 @@ public class EventEntryResult implements Serializable {
     	this.cause = cause;
     	return this;
     }
-    
+
 	public void setCause(String cause) {
 		this.cause = cause;
 	}
@@ -178,7 +181,7 @@ public class EventEntryResult implements Serializable {
 	public Long getDifference() {
 		return difference;
 	}
-	
+
 	public EventEntryResult difference(Long difference) {
 		this.difference = difference;
 		return this;
@@ -191,7 +194,7 @@ public class EventEntryResult implements Serializable {
 	public Integer getDifferenceType() {
 		return differenceType;
 	}
-	
+
 	public EventEntryResult differenceType(Integer differenceType) {
 		this.differenceType = differenceType;
 		return this;
@@ -211,18 +214,18 @@ public class EventEntryResult implements Serializable {
 	public void setLapsLed(Integer lapsLed) {
 		this.lapsLed = lapsLed;
 	}
-	
+
 	public Boolean isPitlaneStart() {
 		if (pitlaneStart == null) {
 			return false;
 		}
 		return pitlaneStart;
 	}
-	
+
 	public void setPitlaneStart(Boolean pitlaneStart) {
 		this.pitlaneStart = pitlaneStart;
 	}
-	
+
 	public EventEntryResult pitlaneStart(Boolean pitlaneStart) {
 		this.pitlaneStart = pitlaneStart;
 		return this;
@@ -231,7 +234,7 @@ public class EventEntryResult implements Serializable {
 	public EventSession getSession() {
 		return session;
 	}
-	
+
 	public EventEntryResult session(EventSession session) {
 		this.session = session;
 		return this;
@@ -244,7 +247,7 @@ public class EventEntryResult implements Serializable {
 	public EventEditionEntry getEntry() {
 		return entry;
 	}
-	
+
 	public EventEntryResult entry(EventEditionEntry entry) {
 		this.entry = entry;
 		return this;
@@ -257,7 +260,7 @@ public class EventEntryResult implements Serializable {
 	public EventEditionEntry getSharedDriveWith() {
 		return sharedDriveWith;
 	}
-	
+
 	public EventEntryResult sharedDriveWith(EventEditionEntry sharedDriveWith) {
 		this.sharedDriveWith = sharedDriveWith;
 		return this;
@@ -272,14 +275,10 @@ public class EventEntryResult implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof EventEntryResult)) {
             return false;
         }
-        EventEntryResult eventEntryResult = (EventEntryResult) o;
-        if (eventEntryResult.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), eventEntryResult.getId());
+        return id != null && id.equals(((EventEntryResult) o).id);
     }
 
     @Override
@@ -291,10 +290,10 @@ public class EventEntryResult implements Serializable {
     public String toString() {
         return "EventEntryResult{" +
             "id=" + getId() +
-            ", finalPosition='" + getFinalPosition() + "'" +
-            ", totalTime='" + getTotalTime() + "'" +
-            ", bestLapTime='" + getBestLapTime() + "'" +
-            ", lapsCompleted='" + getLapsCompleted() + "'" +
+            ", finalPosition=" + getFinalPosition() +
+            ", totalTime=" + getTotalTime() +
+            ", bestLapTime=" + getBestLapTime() +
+            ", lapsCompleted=" + getLapsCompleted() +
             ", retired='" + isRetired() + "'" +
             ", difference='" + getDifference() + "'" +
             "}";

@@ -1,28 +1,12 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSharedModule } from '../shared';
-
-import { HomeComponent, HomeEntriesComponent, HomeEventsComponent, HOME_ROUTE, HomeEntriesResolvePagingParams } from './';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { HOME_ROUTE } from './home.route';
+import { HomeComponent } from './home.component';
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot( HOME_ROUTE , { useHash: true })
-    ],
-    declarations: [
-        HomeComponent,
-        HomeEntriesComponent,
-        HomeEventsComponent
-    ],
-    entryComponents: [
-        HomeComponent,
-        HomeEntriesComponent,
-        HomeEventsComponent
-    ],
-    providers: [
-        HomeEntriesResolvePagingParams
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild([HOME_ROUTE])],
+  declarations: [HomeComponent]
 })
 export class MotorsportsDatabaseHomeModule {}

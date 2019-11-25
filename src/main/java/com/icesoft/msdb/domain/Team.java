@@ -1,28 +1,22 @@
 package com.icesoft.msdb.domain;
 
-import java.io.Serializable;
-import java.util.Objects;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A Team.
  */
 @Entity
 @Table(name = "team")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "team")
 public class Team extends AbstractAuditingEntity implements Serializable {
 
@@ -30,6 +24,7 @@ public class Team extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -47,7 +42,7 @@ public class Team extends AbstractAuditingEntity implements Serializable {
 
     @Transient
     private byte[] logo;
-    
+
     @Column
     private String logoUrl;
 
@@ -115,12 +110,12 @@ public class Team extends AbstractAuditingEntity implements Serializable {
     public String getLogoUrl() {
     	return logoUrl;
     }
-    
+
     public Team logoUrl(String logoUrl) {
     	this.logoUrl = logoUrl;
     	return this;
     }
-    
+
     public void setLogoUrl(String logoUrl) {
     	this.logoUrl = logoUrl;
     }
@@ -132,14 +127,10 @@ public class Team extends AbstractAuditingEntity implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Team)) {
             return false;
         }
-        Team team = (Team) o;
-        if (team.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), team.getId());
+        return id != null && id.equals(((Team) o).id);
     }
 
     @Override
@@ -150,7 +141,7 @@ public class Team extends AbstractAuditingEntity implements Serializable {
     @Override
     public String toString() {
         return "Team{" +
-    		"id=" + getId() +
+            "id=" + getId() +
             ", name='" + getName() + "'" +
             ", description='" + getDescription() + "'" +
             ", hqLocation='" + getHqLocation() + "'" +

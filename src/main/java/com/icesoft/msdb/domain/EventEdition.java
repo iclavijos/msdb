@@ -1,42 +1,27 @@
 package com.icesoft.msdb.domain;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.springframework.data.elasticsearch.annotations.Document;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * A EventEdition.
  */
 @Entity
 @Table(name = "event_edition")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "eventedition")
 @NamedEntityGraph(name="EventEditionWithoutRelations", attributeNodes= {
 		@NamedAttributeNode(value="id"),
@@ -50,6 +35,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -69,13 +55,13 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     @NotNull
     @Column(name = "event_date", nullable = false)
     private LocalDate eventDate;
-    
+
     @Column(name = "multidriver")
     private Boolean multidriver = false;
-    
+
     @Transient
     private Long previousEditionId;
-    
+
     @Transient
     private Long nextEditionId;
 
@@ -87,12 +73,13 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
         inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="ID"))
     private List<Category> allowedCategories;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("eventEditions")
     private RacetrackLayout trackLayout;
 
     @ManyToOne
     private Event event;
-    
+
     @Column(name = "single_chassis")
     private Boolean singleChassis;
 
@@ -101,13 +88,13 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
     @Column(name = "single_tyre")
     private Boolean singleTyre;
-    
+
     @Column(name = "single_fuel")
     private Boolean singleFuel;
-    
-    @ManyToMany(mappedBy = "events", fetch=FetchType.EAGER) 
+
+    @ManyToMany(mappedBy = "events", fetch=FetchType.EAGER)
     private List<SeriesEdition> seriesEditions;
-    
+
     public Long getId() {
         return id;
     }
@@ -220,11 +207,11 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     public void setEvent(Event event) {
         this.event = event;
     }
-    
+
 	public Boolean getSingleChassis() {
 		return singleChassis;
 	}
-	
+
 	public EventEdition singleChassis(Boolean singleChassis) {
 		this.singleChassis = singleChassis;
 		return this;
@@ -242,7 +229,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 		this.singleEngine = singleEngine;
 		return this;
 	}
-	
+
 	public void setSingleEngine(Boolean singleEngine) {
 		this.singleEngine = singleEngine;
 	}
@@ -255,11 +242,11 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 		this.singleTyre = singleTyre;
 		return this;
 	}
-	
+
 	public void setSingleTyre(Boolean singleTyre) {
 		this.singleTyre = singleTyre;
 	}
-	
+
 	public Boolean getSingleFuel() {
 		return singleFuel;
 	}
@@ -268,7 +255,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 		this.singleFuel = singleFuel;
 		return this;
 	}
-	
+
 	public void setSingleFuel(Boolean singleFuel) {
 		this.singleFuel = singleFuel;
 	}
@@ -284,19 +271,19 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 		this.multidriver = multidriver;
 		return this;
 	}
-    
+
 	public void setMultidriver(Boolean multidriver) {
 		this.multidriver = multidriver;
 	}
-	
+
 	public List<SeriesEdition> getSeriesEditions() {
 		return seriesEditions;
 	}
-	
+
 	public void setSeriesEditions(List<SeriesEdition> seriesEditions) {
 		this.seriesEditions = seriesEditions;
 	}
-	
+
 //	public void setSeriesEdition(SeriesEdition seriesEdition) {
 //		if (this.seriesEditions == null) {
 //			this.seriesEditions = new ArrayList<>();
@@ -307,7 +294,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 	public Long getPreviousEditionId() {
 		return previousEditionId;
 	}
-	
+
 	public EventEdition previousEditionId(Long previousEditionId) {
 		this.previousEditionId = previousEditionId;
 		return this;
@@ -320,7 +307,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 	public Long getNextEditionId() {
 		return nextEditionId;
 	}
-	
+
 	public EventEdition nextEditionId(Long nextEditionId) {
 		this.nextEditionId = nextEditionId;
 		return this;
@@ -329,7 +316,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 	public void setNextEditionId(Long nextEditionId) {
 		this.nextEditionId = nextEditionId;
 	}
-	
+
 	@JsonProperty("seriesId")
 	public List<Long> getSeriesId() {
 		if (seriesEditions != null) {
@@ -337,7 +324,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 		}
 		return null;
 	}
-	
+
 	@JsonProperty("seriesName")
 	public List<String> getSeriesName() {
 		if (seriesEditions != null) {
@@ -346,19 +333,15 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 		return null;
 	}
 
-	@Override
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof EventEdition)) {
             return false;
         }
-        EventEdition eventEdition = (EventEdition) o;
-        if (eventEdition.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), eventEdition.getId());
+        return id != null && id.equals(((EventEdition) o).id);
     }
 
     @Override
@@ -370,7 +353,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     public String toString() {
         return "EventEdition{" +
             "id=" + getId() +
-            ", editionYear='" + getEditionYear() + "'" +
+            ", editionYear=" + getEditionYear() +
             ", shortEventName='" + getShortEventName() + "'" +
             ", longEventName='" + getLongEventName() + "'" +
             ", eventDate='" + getEventDate() + "'" +

@@ -1,56 +1,10 @@
 package com.icesoft.msdb.web.rest;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.icesoft.msdb.domain.Driver;
-import com.icesoft.msdb.domain.EventEdition;
-import com.icesoft.msdb.domain.EventEditionEntry;
-import com.icesoft.msdb.domain.EventEntryResult;
-import com.icesoft.msdb.domain.EventSession;
-import com.icesoft.msdb.domain.Series;
-import com.icesoft.msdb.domain.SeriesEdition;
+import com.icesoft.msdb.MSDBException;
+import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.domain.enums.SessionType;
-import com.icesoft.msdb.repository.EventEditionRepository;
-import com.icesoft.msdb.repository.EventEntryRepository;
-import com.icesoft.msdb.repository.EventEntryResultRepository;
-import com.icesoft.msdb.repository.EventSessionRepository;
-import com.icesoft.msdb.repository.RacetrackLayoutRepository;
+import com.icesoft.msdb.repository.*;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
@@ -63,18 +17,47 @@ import com.icesoft.msdb.service.dto.SessionResultDTO;
 import com.icesoft.msdb.service.impl.CacheHandler;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-import com.icesoft.msdb.web.rest.util.HeaderUtil;
-import com.icesoft.msdb.web.rest.util.PaginationUtil;
-import com.icesoft.msdb.web.rest.views.ResponseViews;
 
+import com.icesoft.msdb.web.rest.views.ResponseViews;
+import io.github.jhipster.web.util.HeaderUtil;
+import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-import io.swagger.annotations.ApiParam;
+import io.micrometer.core.annotation.Timed;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import java.time.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
- * REST controller for managing EventEdition.
+ * REST controller for managing {@link com.icesoft.msdb.domain.EventEdition}.
  */
 @RestController
 @RequestMapping("/api")
+@Transactional
 public class EventEditionResource {
 
     private final Logger log = LoggerFactory.getLogger(EventEditionResource.class);
@@ -83,6 +66,9 @@ public class EventEditionResource {
     private static final String ENTITY_NAME_SESSION = "eventSession";
     private static final String ENTITY_NAME_ENTRY = "eventEntry";
     private static final String ENTITY_NAME_RESULT = "eventEntryResult";
+
+    @Value("${jhipster.clientApp.name}")
+    private String applicationName;
 
     private final EventEditionRepository eventEditionRepository;
     private final EventEditionSearchRepository eventEditionSearchRepo;
@@ -115,11 +101,11 @@ public class EventEditionResource {
     }
 
     /**
-     * POST  /event-editions : Create a new eventEdition.
+     * {@code POST  /event-editions} : Create a new eventEdition.
      *
-     * @param eventEdition the eventEdition to create
-     * @return the ResponseEntity with status 201 (Created) and with body the new eventEdition, or with status 400 (Bad Request) if the eventEdition has already an ID
-     * @throws URISyntaxException if the Location URI syntax is incorrect
+     * @param eventEdition the eventEdition to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new eventEdition, or with status {@code 400 (Bad Request)} if the eventEdition has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/event-editions")
     @Timed
@@ -127,7 +113,10 @@ public class EventEditionResource {
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<EventEdition> createEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to save EventEdition : {}", eventEdition);
-        eventEdition.setTrackLayout(racetrackLayoutRepo.findOne(eventEdition.getTrackLayout().getId()));
+        RacetrackLayout layout = racetrackLayoutRepo.findById(eventEdition.getTrackLayout().getId()).orElseThrow(
+            () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
+        );
+        eventEdition.setTrackLayout(layout);
         if (eventEdition.getId() != null) {
             throw new BadRequestAlertException("A new eventEdition cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -137,18 +126,18 @@ public class EventEditionResource {
         	result.getSeriesId().forEach(id -> cacheHandler.resetWinnersCache(id));
         }
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * PUT  /event-editions : Updates an existing eventEdition.
+     * {@code PUT  /event-editions} : Updates an existing eventEdition.
      *
-     * @param eventEdition the eventEdition to update
-     * @return the ResponseEntity with status 200 (OK) and with body the updated eventEdition,
-     * or with status 400 (Bad Request) if the eventEdition is not valid,
-     * or with status 500 (Internal Server Error) if the eventEdition couldn't be updated
-     * @throws URISyntaxException if the Location URI syntax is incorrect
+     * @param eventEdition the eventEdition to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated eventEdition,
+     * or with status {@code 400 (Bad Request)} if the eventEdition is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the eventEdition couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/event-editions")
     @Timed
@@ -156,54 +145,59 @@ public class EventEditionResource {
     @Transactional
     public ResponseEntity<EventEdition> updateEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to update EventEdition : {}", eventEdition);
-        eventEdition.setTrackLayout(racetrackLayoutRepo.findOne(eventEdition.getTrackLayout().getId()));
+        RacetrackLayout layout = racetrackLayoutRepo.findById(eventEdition.getTrackLayout().getId()).orElseThrow(
+            () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
+        );
+        eventEdition.setTrackLayout(layout);
         if (eventEdition.getId() == null) {
-            return createEventEdition(eventEdition);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         EventEdition result = eventEditionRepository.getOne(eventEdition.getId());
         if (result.getSeriesEditions() != null) {
     		eventEdition.setSeriesEditions(result.getSeriesEditions());
     	}
         result = eventEditionRepository.save(eventEdition);
-        eventEditionSearchRepo.delete(result.getId()); //TODO: Temporary fix to avoid duplicity after cloning series edition
+        eventEditionSearchRepo.deleteById(result.getId()); //TODO: Temporary fix to avoid duplicity after cloning series edition
         eventEditionSearchRepo.save(result);
 
         if (result.getSeriesEditions() != null) {
         	result.getSeriesId().stream().forEach(cacheHandler::resetWinnersCache);
         }
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, eventEdition.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, eventEdition.getId().toString()))
             .body(result);
     }
 
     /**
-     * GET  /event-editions : get all the eventEditions.
+     * {@code GET  /event-editions} : get all the eventEditions.
      *
-     * @param pageable the pagination information
-     * @return the ResponseEntity with status 200 (OK) and the list of eventEditions in body
-     * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
+
+     * @param pageable the pagination information.
+
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of eventEditions in body.
      */
     @GetMapping("/event-editions")
     @Timed
-    public ResponseEntity<List<EventEdition>> getAllEventEditions(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<EventEdition>> getAllEventEditions(Pageable pageable) {
         log.debug("REST request to get a page of EventEditions");
         Page<EventEdition> page = eventEditionRepository.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/event-editions");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
-     * GET  /event-editions/:id : get the "id" eventEdition.
+     * {@code GET  /event-editions/:id} : get the "id" eventEdition.
      *
-     * @param id the id of the eventEdition to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the eventEdition, or with status 404 (Not Found)
+     * @param id the id of the eventEdition to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the eventEdition, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/event-editions/{id}")
     @Timed
     public ResponseEntity<EventEdition> getEventEdition(@PathVariable Long id) {
         log.debug("REST request to get EventEdition : {}", id);
-        EventEdition eventEdition = eventEditionRepository.findOne(id);
-        if (eventEdition != null) {
+        Optional<EventEdition> eventEditionOpt = eventEditionRepository.findById(id);
+        if (eventEditionOpt.isPresent()) {
+            EventEdition eventEdition = eventEditionOpt.get();
         	List<Long> tmp = eventEditionRepository.findNextEditionId(eventEdition.getEvent().getId(), eventEdition.getEditionYear());
         	if (tmp != null && !tmp.isEmpty()) {
         		eventEdition.nextEditionId(tmp.get(0));
@@ -214,14 +208,14 @@ public class EventEditionResource {
         	}
 
         }
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEdition));
+        return ResponseUtil.wrapOrNotFound(eventEditionOpt);
     }
 
     /**
-     * DELETE  /event-editions/:id : delete the "id" eventEdition.
+     * {@code DELETE  /event-editions/:id} : delete the "id" eventEdition.
      *
-     * @param id the id of the eventEdition to delete
-     * @return the ResponseEntity with status 200 (OK)
+     * @param id the id of the eventEdition to delete.
+     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/event-editions/{id}")
     @Timed
@@ -234,16 +228,18 @@ public class EventEditionResource {
         if (eventEd.getSeriesEditions() != null) {
         	eventEd.getSeriesId().forEach(sId -> cacheHandler.resetWinnersCache(sId));
         }
-        eventEditionRepository.delete(id);
-        eventEditionSearchRepo.delete(id);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+        eventEditionRepository.deleteById(id);
+        eventEditionSearchRepo.deleteById(id);
+        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 
     @GetMapping("/event-editions/{id}/prevNextInSeries")
     @Timed
     @Transactional(readOnly=true)
     public List<EventsSeriesNavigationDTO> getPrevNextIdInSeries(@PathVariable Long id) {
-    	EventEdition event = eventEditionRepository.findOne(id);
+    	EventEdition event = eventEditionRepository.findById(id).orElseThrow(
+            () -> new MSDBException("Invalid event edition id " + id)
+        );
     	List<EventsSeriesNavigationDTO> result = new ArrayList<>();
     	for(SeriesEdition se: event.getSeriesEditions()) {
     		int index = se.getEvents().indexOf(event);
@@ -260,16 +256,16 @@ public class EventEditionResource {
     }
 
     /**
-     * SEARCH  /_search/event-editions?query=:query : search for the eventEdition corresponding
+     * {@code SEARCH  /_search/event-editions?query=:query} : search for the eventEdition corresponding
      * to the query.
      *
-     * @param query the query of the eventEdition search
-     * @param pageable the pagination information
-     * @return the result of the search
+     * @param query the query of the eventEdition search.
+     * @param pageable the pagination information.
+     * @return the result of the search.
      */
     @GetMapping("/_search/event-editions")
     @Timed
-    public ResponseEntity<List<EventEdition>> searchEventEditions(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<EventEdition>> searchEventEditions(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of EventEditions for query {}", query);
 
         QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
@@ -279,8 +275,8 @@ public class EventEditionResource {
     				.field("shortEventName"));
 
         Page<EventEdition> page = eventEditionSearchRepo.search(queryBuilder, pageable);
-        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/event-editions");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     @GetMapping("/event-editions/{id}/sessions")
@@ -318,11 +314,11 @@ public class EventEditionResource {
         log.debug("REST request to save EventSession : {}", eventSession);
         if (eventSession.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
-            		ENTITY_NAME_SESSION, "idexists", "A new eventSession cannot already have an ID")).body(null);
+            		applicationName, true, ENTITY_NAME_SESSION, "idexists", "A new eventSession cannot already have an ID")).body(null);
         }
         EventSession result = eventSessionRepository.save(eventSession);
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/sessions"))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME_SESSION, result.getId().toString()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME_SESSION, result.getId().toString()))
             .body(result);
     }
 
@@ -330,9 +326,9 @@ public class EventEditionResource {
     @Timed
     public ResponseEntity<EventSession> getEventSession(@PathVariable Long id) {
         log.debug("REST request to get EventSession : {}", id);
-        EventSession eventSession = eventSessionRepository.findOne(id);
+        Optional<EventSession> eventSession = eventSessionRepository.findById(id);
 
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventSession));
+        return ResponseUtil.wrapOrNotFound(eventSession);
     }
 
     @DeleteMapping("/event-editions/event-sessions/{id}")
@@ -341,8 +337,8 @@ public class EventEditionResource {
     @CacheEvict(cacheNames="calendar", allEntries=true)
     public ResponseEntity<Void> deleteEventSession(@PathVariable Long id) {
         log.debug("REST request to delete EventSession : {}", id);
-        eventSessionRepository.delete(id);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+        eventSessionRepository.deleteById(id);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
     }
 
     @PutMapping("/event-editions/event-sessions")
@@ -354,10 +350,12 @@ public class EventEditionResource {
         if (eventSession.getId() == null) {
             return createEventEditionSession(eventSession);
         }
-        eventSession.setEventEdition(eventEditionRepository.findOne(eventSession.getEventEdition().getId()));
+        eventSession.setEventEdition(eventEditionRepository.findById(eventSession.getEventEdition().getId()).orElseThrow(
+            () -> new MSDBException("Invalid event edition id " + eventSession.getEventEdition().getId())
+        ));
         EventSession result = eventSessionRepository.save(eventSession);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, eventSession.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, eventSession.getId().toString()))
             .body(result);
     }
 
@@ -368,7 +366,9 @@ public class EventEditionResource {
     @Transactional
     public ResponseEntity<Void> processSessionResults(@PathVariable Long sessionId) {
     	log.debug("Processing results of session {}", sessionId);
-    	EventSession session = eventSessionRepository.findOne(sessionId);
+    	EventSession session = eventSessionRepository.findById(sessionId).orElseThrow(
+            () -> new MSDBException("Invalid event session id " + sessionId)
+        );
     	session.getEventEdition().getSeriesEditions().forEach(seriesEdition -> cacheHandler.resetSeriesEditionCaches(seriesEdition));
     	resultsService.processSessionResults(sessionId);
     	if (session.getSessionType().equals(SessionType.RACE)) {
@@ -427,7 +427,9 @@ public class EventEditionResource {
     @Transactional
     public ResponseEntity<Void> copyEntries(@PathVariable Long idTarget, @PathVariable Long idSource) {
     	List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(idSource);
-    	EventEdition target = eventEditionRepository.findOne(idTarget);
+    	EventEdition target = eventEditionRepository.findById(idTarget).orElseThrow(
+            () -> new MSDBException("Invalid event edition id " + idTarget)
+        );
     	for(EventEditionEntry entry : entries) {
     		EventEditionEntry copiedEntry = new EventEditionEntry();
     		copiedEntry
@@ -452,7 +454,7 @@ public class EventEditionResource {
 
     		eventEntryRepository.save(copiedEntry);
     	}
-    	return ResponseEntity.ok().headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, idTarget.toString())).build();
+    	return ResponseEntity.ok().headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, idTarget.toString())).build();
     }
 
     @PostMapping("/event-editions/{id}/entries")
@@ -462,7 +464,7 @@ public class EventEditionResource {
         log.debug("REST request to save EventEntry : {}", eventEntry);
         if (eventEntry.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
-            		ENTITY_NAME_ENTRY, "idexists", "A new eventEntry cannot already have an ID")).body(null);
+            		applicationName, true, ENTITY_NAME_ENTRY, "idexists", "A new eventEntry cannot already have an ID")).body(null);
         }
         EventEditionEntry result = eventEntryRepository.save(eventEntry);
         if (result.getCarImage() != null) {
@@ -473,7 +475,7 @@ public class EventEditionResource {
         }
         eventEntrySearchRepo.save(result);
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/entries"))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME_ENTRY, result.getId().toString()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME_ENTRY, result.getId().toString()))
             .body(result);
     }
 
@@ -492,7 +494,7 @@ public class EventEditionResource {
         EventEditionEntry result = eventEntryRepository.save(eventEntry);
         eventEntrySearchRepo.save(result);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME_ENTRY, eventEntry.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME_ENTRY, eventEntry.getId().toString()))
             .body(result);
     }
 
@@ -500,7 +502,9 @@ public class EventEditionResource {
     @Timed
     public ResponseEntity<EventEditionEntry> getEventEntry(@PathVariable Long id) {
         log.debug("REST request to get EventEntry : {}", id);
-        EventEditionEntry eventEntry = eventEntryRepository.findOne(id);
+        EventEditionEntry eventEntry = eventEntryRepository.findById(id).orElseThrow(
+            () -> new MSDBException("Invalid event edition entry id " + id)
+        );
         EventEdition tmp = new EventEdition();
         tmp.setId(eventEntry.getEventEdition().getId());
         tmp.setMultidriver(eventEntry.getEventEdition().isMultidriver());
@@ -513,9 +517,10 @@ public class EventEditionResource {
     @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteEventEntry(@PathVariable Long id) {
         log.debug("REST request to delete EventEntry : {}", id);
-        eventEntryRepository.delete(id);
-        eventEntrySearchRepo.delete(id);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME_ENTRY, id.toString())).build();
+        eventEntryRepository.deleteById(id);
+        eventEntrySearchRepo.deleteById(id);
+        return ResponseEntity.ok().headers(HeaderUtil
+            .createEntityDeletionAlert(applicationName, false, ENTITY_NAME_ENTRY, id.toString())).build();
     }
 
     @GetMapping("/event-editions/{id}/event-sessions/{idSession}/results")
@@ -564,7 +569,9 @@ public class EventEditionResource {
     @Timed
     public ResponseEntity<EventEntryResult> getEventSessionResult(@PathVariable Long idResult) {
         log.debug("REST request to get eventSessionResult : {}", idResult);
-        EventEntryResult eventEntryResult = eventResultRepository.findOne(idResult);
+        EventEntryResult eventEntryResult = eventResultRepository.findById(idResult).orElseThrow(
+            () -> new MSDBException("Invalid event entry result id " + idResult)
+        );
         if (eventEntryResult.getEntry().getEventEdition() != null &&
         		eventEntryResult.getEntry().getEventEdition().getSeriesEditions() != null) {
         	eventEntryResult.getEntry().getEventEdition().getSeriesEditions().stream().forEach(sEd -> {
@@ -614,12 +621,12 @@ public class EventEditionResource {
         eventSessionResult.getSession().getEventEdition().getSeriesEditions().forEach(seriesEdition -> cacheHandler.resetSeriesEditionCaches(seriesEdition));
         if (eventSessionResult.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
-            		ENTITY_NAME_ENTRY, "idexists", "A new eventSessionResult cannot already have an ID")).body(null);
+            		applicationName, true, ENTITY_NAME_ENTRY, "idexists", "A new eventSessionResult cannot already have an ID")).body(null);
         }
         EventEntryResult result = eventResultRepository.save(eventSessionResult);
 
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/entries"))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME_RESULT, result.getId().toString()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME_RESULT, result.getId().toString()))
             .body(result);
     }
 
@@ -636,7 +643,8 @@ public class EventEditionResource {
         EventEntryResult result = eventResultRepository.save(eventSessionResult);
 
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME_RESULT, eventSessionResult.getId().toString()))
+            .headers(HeaderUtil
+                .createEntityUpdateAlert(applicationName, false, ENTITY_NAME_RESULT, eventSessionResult.getId().toString()))
             .body(result);
     }
 
@@ -645,8 +653,9 @@ public class EventEditionResource {
     @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteEventSessionResult(@PathVariable Long id) {
         log.debug("REST request to delete EventSessionResult : {}", id);
-        eventResultRepository.delete(id);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME_RESULT, id.toString())).build();
+        eventResultRepository.deleteById(id);
+        return ResponseEntity.ok().headers(HeaderUtil
+            .createEntityDeletionAlert(applicationName, false, ENTITY_NAME_RESULT, id.toString())).build();
     }
 
     @GetMapping("/event-editions/{id}/bestTimes")

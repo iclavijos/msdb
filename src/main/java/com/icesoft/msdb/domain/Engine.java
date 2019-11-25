@@ -1,36 +1,24 @@
 package com.icesoft.msdb.domain;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A Engine.
  */
 @Entity
 @Table(name = "engine")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "engine")
 @NamedEntityGraph(name="EngineWithoutRelations", attributeNodes= {
 		@NamedAttributeNode(value="id"),
@@ -49,8 +37,9 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -101,7 +90,7 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
 
     @OneToMany(mappedBy = "derivedFrom")
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Engine> evolutions = new HashSet<>();
 
     @ManyToOne
@@ -347,14 +336,10 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Engine)) {
             return false;
         }
-        Engine engine = (Engine) o;
-        if (engine.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), engine.getId());
+        return id != null && id.equals(((Engine) o).id);
     }
 
     @Override
@@ -368,9 +353,9 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", manufacturer='" + getManufacturer() + "'" +
-            ", capacity='" + getCapacity() + "'" +
+            ", capacity=" + getCapacity() +
             ", architecture='" + getArchitecture() + "'" +
-            ", debutYear='" + getDebutYear() + "'" +
+            ", debutYear=" + getDebutYear() +
             ", petrolEngine='" + isPetrolEngine() + "'" +
             ", dieselEngine='" + isDieselEngine() + "'" +
             ", electricEngine='" + isElectricEngine() + "'" +

@@ -11,8 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.domain.Chassis;
 
 /**
- * Spring Data JPA repository for the Chassis entity.
+ * Spring Data  repository for the Chassis entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface ChassisRepository extends JpaRepository<Chassis,Long> {
 

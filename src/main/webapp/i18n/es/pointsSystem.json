@@ -1,34 +1,35 @@
 {
-    "motorsportsDatabaseApp": {
-        "pointsSystem" : {
-            "home": {
-                "title": "Sistemas de puntuación",
-                "createLabel": "Crear nuevo sistema de puntuación",
-                "createOrEditLabel": "Crear o editar sistema de puntuación",
-                "search": "Buscar sistemas de puntuación"
-            },
-            "created": "Se ha creado un nuevo sistema de puntuación",
-            "updated": "Se ha actualizado el sistema de puntuación",
-            "deleted": "Se ha eliminado el sistema de puntuación",
-            "delete": {
-                "question": "¿Seguro que quiere eliminar el sistema de puntuación?"
-            },
-            "detail": {
-                "title": "Sistema de puntuación"
-            },
-            "name": "Nombre",
-            "description": "Descripción",
-            "points": "Puntos",
-            "pointsMostLeadLaps": "Puntos más vueltas lideradas",
-            "pointsFastLap": "Puntos vuelta rápida",
-            "pointsPole": "Puntos pole",
-            "pointsLeadLap": "Puntos liderar vuelta",
-            "active": "Activo?",
-            "pointsFastLapAwardedIf": "Otorgar puntos por vuelta rápida si: ",
-            "maxFinishinPositionFL": "Posición final máxima",
-            "pitlaneStartAllowed": "Se otorgan si ha empezado desde pitlane?",
-            "racePctCompletion": "Si menos de % de vueltas completadas",
-            "pointsPct": "% de puntos otorgados"
-        }
+  "motorsportsDatabaseApp": {
+    "pointsSystem": {
+      "home": {
+        "title": "Sistemas de puntuación",
+        "createLabel": "Crear nuevo sistema de puntuación",
+        "createOrEditLabel": "Crear o editar sistema de puntuación",
+        "search": "Buscar sistemas de puntuación",
+        "notFound": "Ningún sistema de puntuación encontrado"
+      },
+      "created": "Se ha creado un nuevo sistema de puntuación",
+      "updated": "Se ha actualizado el sistema de puntuación",
+      "deleted": "Se ha eliminado el sistema de puntuación",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar el sistema de puntuación?"
+      },
+      "detail": {
+        "title": "Sistema de puntuación"
+      },
+      "name": "Nombre",
+      "description": "Descripción",
+      "points": "Puntos",
+      "pointsMostLeadLaps": "Puntos más vueltas lideradas",
+      "pointsFastLap": "Puntos vuelta rápida",
+      "pointsPole": "Puntos pole",
+      "pointsLeadLap": "Puntos liderar vuelta",
+      "active": "Activo?",
+      "pointsFastLapAwardedIf": "Otorgar puntos por vuelta rápida si: ",
+      "maxFinishinPositionFL": "Posición final máxima",
+      "pitlaneStartAllowed": "Se otorgan si ha empezado desde pitlane?",
+      "racePctCompletion": "Si menos de % de vueltas completadas",
+      "pointsPct": "% de puntos otorgados"
     }
+  }
 }

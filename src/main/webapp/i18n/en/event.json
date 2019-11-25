@@ -1,169 +1,171 @@
 {
-    "motorsportsDatabaseApp": {
-        "event" : {
-            "home": {
-                "title": "Events",
-                "createLabel": "Create a new Event",
-                "createOrEditLabel": "Create or edit a Event",
-                "search": "Search for Event"
-            },
-            "created": "A new Event is created with identifier {{ param }}",
-            "updated": "A Event is updated with identifier {{ param }}",
-            "deleted": "A Event is deleted with identifier {{ param }}",
-            "delete": {
-                "question": "Are you sure you want to delete Event {{ id }}?"
-            },
-            "detail": {
-                "title": "Event"
-            },
-            "name": "Name",
-            "description": "Description",
-            "editions": "Editions"
-        },
-        "eventEdition" : {
-            "home": {
-                "title": "Event Editions",
-                "createLabel": "Create a new Event Edition",
-                "createOrEditLabel": "Create or edit a Event Edition",
-                "search": "Search for Event Edition"
-            },
-            "created": "A new Event Edition is created with identifier {{ param }}",
-            "updated": "A Event Edition is updated with identifier {{ param }}",
-            "deleted": "A Event Edition is deleted with identifier {{ param }}",
-            "delete": {
-                "question": "Are you sure you want to delete Event Edition {{ id }}?"
-            },
-            "copy": "Choose event to copy entries from",
-            "detail": {
-                "title": "Event Edition"
-            },
-            "editionYear": "Edition Year",
-            "shortEventName": "Short Event Name",
-            "longEventName": "Long Event Name",
-            "eventDate": "Event Date",
-            "allowedCategories": "Allowed Categories",
-            "trackLayout": "Track Layout",
-            "event": "Event",
-            "sessions": "Sessions",
-            "info": "Information",
-            "entryList": "Entry List",
-            "results": "Results",
-            "points": "Points",
-            "multidriver": "More than one driver per entry?",
-            "yourTime": "Your time",
-            "localTime": "Local time",
-			"driversTimes": "Drivers' times",
-			"lapsAnalysis": "Lap by lap",
-            "session": {
-            	"createOrEditLabel": "Create or edit a Event Session",
-            	"name": "Name",
-	            "shortname": "Shortname",
-	            "sessionStartTime": "Session Start Time",
-	            "duration": "Duration",
-	            "empty": "-",
-	            "durationType": "Type",
-	            "sessionType": "Session type",
-	            "awardsPoints": "Awards points",
-	            "additionalLap": "Extra lap?",
-	            "maxDuration": "Maximum duration (hours)",
-	            "lap": "lap",
-	            "created": "A new session is created",
-	            "updated": "A session is updated",
-	            "deleted": "A session is deleted",
-	            "delete": {
-	                "question": "Are you sure you want to delete session '{{id}}'?"
-	            }
-            },
-            "entry":{
-            	"createOrEditLabel": "Create or edit an entry",
-			    "addLabel": "Add participant",
-            	"raceNumber": "#",
-            	"teamName": "Team name",
-            	"team": "Team",
-            	"rookie": "Rookie?",
-            	"operatedBy": "Associated with",
-            	"tyres": "Tyres",
-            	"fuel": "Fuel",
-            	"engine": "Engine",
-            	"driver": "Driver",
-            	"drivers": "Drivers",
-            	"chassis": "Chassis",
-            	"category": "Category",
-            	"removeSelected": "Remove selected driver",
-            	"delete": {
-	                "question": "Are you sure you want to delete entry '{{id}}'?"
-	            },
-	            "doubleClick": "Double click on a driver's name to remove it from the entry",
-	            "carImage": "Car image"
-			},
-			"result" : {
-	            "home": {
-	                "title": "Results",
-	                "createLabel": "Add a new result",
-	                "createOrEditLabel": "Create or edit a result",
-	                "search": "Search for Results"
-	            },
-	            "upload": {
-	            	"uploadLabel": "Upload results",
-	            	"lapbylapLabel": "Import lap by lap",
-	            	"title": "Upload session results",
-	            	"desc": "Upload CSV file with session results",
-	            	"selectFile": "Select file",
-	            	"file": "File",
-                    "lapbylapTitle": "Upload file with lap by lap data",
-                    "lapbylapDesc": "Import file with lap by lap information for each entry"
-	            },
-	            "processResults": {
-	            	"label": "Process results",
-	            	"title": "Process race results",
-	            	"desc": "Calculate driver's points and update classifications",
-	            	"processing": "Processing results",
-	            	"processed": "Results processed",
-	            	"notProcessed": "Results could not be processed"
-	            },
-	            "created": "A new result is created with identifier {{ param }}",
-	            "updated": "A result is updated with identifier {{ param }}",
-	            "deleted": "A result is deleted with identifier {{ param }}",
-	            "delete": {
-	                "question": "Are you sure you want to delete result {{ id }}?"
-	            },
-	            "detail": {
-	                "title": "Result"
-	            },
-	            "finalPosition": "Final Position",
-	            "totalTime": "Total Time",
-	            "bestLapTime": "Best Lap Time",
-	            "lapsCompleted": "Laps Completed",
-	            "retired": "Retired",
-	            "dns": "Did not start",
-	            "disqualified": "Disqualified",
-	            "nc": "Not classified",
-	            "retirementCause": "Retirement cause",
-	            "difference": "Difference",
-	            "startingPosition": "Starting Pos.",
-	            "lapsLed": "Laps led",
-	            "pitlaneStart": "Pitlane start?",
-	            "pitlaneStartDesc":"* Indicates driver started race from pitlane",
-	            "sharedDrive": "Car shared with?",
-	            "sharedWith": "Shared with "
-	        },
-	        "copyEntries": {
-	        	"title" : "Copy entries from another event",
-	        	"copyLabel": "Copy entries"
-	        },
-		    "enumerations": {
-		    	"milliseconds": "Tens of thousands",
-		    	"seconds": "Seconds",
-			    "minutes": "Minutes",
-			    "hours": "Hours",
-			    "kilometers": "Kilometers",
-			    "miles": "Miles",
-			    "laps": "Laps",
-			    "practice": "Free practice",
-			    "qualifying": "Qualifying",
-			    "race": "Race",
-			    "qualifying_race": "Qualifying race"
-			}
+  "motorsportsDatabaseApp": {
+    "event": {
+      "home": {
+        "title": "Events",
+        "createLabel": "Create a new Event",
+        "createOrEditLabel": "Create or edit a Event",
+        "search": "Search for Event",
+        "notFound": "No events found"
+      },
+      "created": "A new Event is created with identifier {{ param }}",
+      "updated": "A Event is updated with identifier {{ param }}",
+      "deleted": "A Event is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Event {{ id }}?"
+      },
+      "detail": {
+        "title": "Event"
+      },
+      "name": "Name",
+      "description": "Description",
+      "editions": "Editions"
+    },
+    "eventEdition": {
+      "home": {
+        "title": "Event Editions",
+        "createLabel": "Create a new Event Edition",
+        "createOrEditLabel": "Create or edit a Event Edition",
+        "search": "Search for Event Edition",
+        "notFound": "No event edition found"
+      },
+      "created": "A new Event Edition is created with identifier {{ param }}",
+      "updated": "A Event Edition is updated with identifier {{ param }}",
+      "deleted": "A Event Edition is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Event Edition {{ id }}?"
+      },
+      "copy": "Choose event to copy entries from",
+      "detail": {
+        "title": "Event Edition"
+      },
+      "editionYear": "Edition Year",
+      "shortEventName": "Short Event Name",
+      "longEventName": "Long Event Name",
+      "eventDate": "Event Date",
+      "allowedCategories": "Allowed Categories",
+      "trackLayout": "Track Layout",
+      "event": "Event",
+      "sessions": "Sessions",
+      "info": "Information",
+      "entryList": "Entry List",
+      "results": "Results",
+      "points": "Points",
+      "multidriver": "More than one driver per entry?",
+      "yourTime": "Your time",
+      "localTime": "Local time",
+      "driversTimes": "Drivers' times",
+      "lapsAnalysis": "Lap by lap",
+      "session": {
+        "createOrEditLabel": "Create or edit a Event Session",
+        "name": "Name",
+        "shortname": "Shortname",
+        "sessionStartTime": "Session Start Time",
+        "duration": "Duration",
+        "empty": "-",
+        "durationType": "Type",
+        "sessionType": "Session type",
+        "awardsPoints": "Awards points",
+        "additionalLap": "Extra lap?",
+        "maxDuration": "Maximum duration (hours)",
+        "lap": "lap",
+        "created": "A new session is created",
+        "updated": "A session is updated",
+        "deleted": "A session is deleted",
+        "delete": {
+          "question": "Are you sure you want to delete session '{{id}}'?"
         }
+      },
+      "entry": {
+        "createOrEditLabel": "Create or edit an entry",
+        "addLabel": "Add participant",
+        "raceNumber": "#",
+        "teamName": "Team name",
+        "team": "Team",
+        "rookie": "Rookie?",
+        "operatedBy": "Associated with",
+        "tyres": "Tyres",
+        "fuel": "Fuel",
+        "engine": "Engine",
+        "driver": "Driver",
+        "drivers": "Drivers",
+        "chassis": "Chassis",
+        "category": "Category",
+        "removeSelected": "Remove selected driver",
+        "delete": {
+          "question": "Are you sure you want to delete entry '{{id}}'?"
+        },
+        "doubleClick": "Double click on a driver's name to remove it from the entry",
+        "carImage": "Car image"
+      },
+      "result": {
+        "home": {
+          "title": "Results",
+          "createLabel": "Add a new result",
+          "createOrEditLabel": "Create or edit a result",
+          "search": "Search for Results"
+        },
+        "upload": {
+          "uploadLabel": "Upload results",
+          "lapbylapLabel": "Import lap by lap",
+          "title": "Upload session results",
+          "desc": "Upload CSV file with session results",
+          "selectFile": "Select file",
+          "file": "File",
+          "lapbylapTitle": "Upload file with lap by lap data",
+          "lapbylapDesc": "Import file with lap by lap information for each entry"
+        },
+        "processResults": {
+          "label": "Process results",
+          "title": "Process race results",
+          "desc": "Calculate driver's points and update classifications",
+          "processing": "Processing results",
+          "processed": "Results processed",
+          "notProcessed": "Results could not be processed"
+        },
+        "created": "A new result is created with identifier {{ param }}",
+        "updated": "A result is updated with identifier {{ param }}",
+        "deleted": "A result is deleted with identifier {{ param }}",
+        "delete": {
+          "question": "Are you sure you want to delete result {{ id }}?"
+        },
+        "detail": {
+          "title": "Result"
+        },
+        "finalPosition": "Final Position",
+        "totalTime": "Total Time",
+        "bestLapTime": "Best Lap Time",
+        "lapsCompleted": "Laps Completed",
+        "retired": "Retired",
+        "dns": "Did not start",
+        "disqualified": "Disqualified",
+        "nc": "Not classified",
+        "retirementCause": "Retirement cause",
+        "difference": "Difference",
+        "startingPosition": "Starting Pos.",
+        "lapsLed": "Laps led",
+        "pitlaneStart": "Pitlane start?",
+        "pitlaneStartDesc": "* Indicates driver started race from pitlane",
+        "sharedDrive": "Car shared with?",
+        "sharedWith": "Shared with "
+      },
+      "copyEntries": {
+        "title": "Copy entries from another event",
+        "copyLabel": "Copy entries"
+      },
+      "enumerations": {
+        "milliseconds": "Tens of thousands",
+        "seconds": "Seconds",
+        "minutes": "Minutes",
+        "hours": "Hours",
+        "kilometers": "Kilometers",
+        "miles": "Miles",
+        "laps": "Laps",
+        "practice": "Free practice",
+        "qualifying": "Qualifying",
+        "race": "Race",
+        "qualifying_race": "Qualifying race"
+      }
     }
+  }
 }

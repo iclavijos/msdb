@@ -1,18 +1,15 @@
 package com.icesoft.msdb.web.rest;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.temporal.TemporalAdjusters;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.icesoft.msdb.MSDBException;
+import com.icesoft.msdb.domain.EventSession;
+import com.icesoft.msdb.domain.TimeZone;
+import com.icesoft.msdb.repository.*;
+import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
+import com.icesoft.msdb.service.dto.SessionDataDTO;
+import com.icesoft.msdb.service.dto.TimeZonesResponse;
+import io.micrometer.core.annotation.Timed;
+import net.minidev.json.JSONObject;
+import org.cloudinary.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,19 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.MSDBException;
-import com.icesoft.msdb.domain.EventSession;
-import com.icesoft.msdb.domain.TimeZone;
-import com.icesoft.msdb.repository.DriverRepository;
-import com.icesoft.msdb.repository.EventEditionRepository;
-import com.icesoft.msdb.repository.EventSessionRepository;
-import com.icesoft.msdb.repository.RacetrackLayoutRepository;
-import com.icesoft.msdb.repository.SeriesEditionRepository;
-import com.icesoft.msdb.repository.TeamRepository;
-import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
-import com.icesoft.msdb.service.dto.SessionDataDTO;
-import com.icesoft.msdb.service.dto.TimeZonesResponse;
+import java.time.*;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -107,7 +96,7 @@ public class HomeResource {
 	public List<TimeZone> getTimeZones() {
 		RestTemplate restTemplate = new RestTemplate();
         TimeZonesResponse timezonesResp = restTemplate.getForObject(
-        		"http://api.timezonedb.com/v2/list-time-zone?key=4CHM89W4KBP0&format=json&fields=countryName,zoneName,gmtOffset",
+        		"http://api.timezonedb.com/v2.1/list-time-zone?key=4CHM89W4KBP0&format=json&fields=countryName,zoneName,gmtOffset",
         		TimeZonesResponse.class);
         if (!timezonesResp.getStatus().equals("OK")) {
         	throw new MSDBException("Error retrieving timezones: " + timezonesResp.getMessage());

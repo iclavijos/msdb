@@ -1,61 +1,35 @@
-import './vendor.ts';
-
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
-import { Ng2Webstorage } from 'ng2-webstorage';
 
-import { MotorsportsDatabaseSharedModule, UserRouteAccessService } from './shared';
+import './vendor';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { MotorsportsDatabaseCoreModule } from 'app/core/core.module';
+import { MotorsportsDatabaseAppRoutingModule } from './app-routing.module';
 import { MotorsportsDatabaseHomeModule } from './home/home.module';
-import { MotorsportsDatabaseAdminModule } from './admin/admin.module';
-import { MotorsportsDatabaseAccountModule } from './account/account.module';
 import { MotorsportsDatabaseEntityModule } from './entities/entity.module';
 import { MotorsportsDatabaseImportsModule } from './imports/imports.module';
 import { MotorsportsDatabaseCalendarModule } from './calendar/calendar.module';
-
-import { LayoutRoutingModule } from './layouts';
-import { customHttpProvider } from './blocks/interceptor/http.provider';
-import { PaginationConfig } from './blocks/config/uib-pagination.config';
-
-import {
-    JhiMainComponent,
-    NavbarComponent,
-    FooterComponent,
-    ProfileService,
-    PageRibbonComponent,
-    ActiveMenuDirective,
-    ErrorComponent
-} from './layouts';
+// jhipster-needle-angular-add-module-import JHipster will add new module here
+import { JhiMainComponent } from './layouts/main/main.component';
+import { NavbarComponent } from './layouts/navbar/navbar.component';
+import { FooterComponent } from './layouts/footer/footer.component';
+import { PageRibbonComponent } from './layouts/profiles/page-ribbon.component';
+import { ActiveMenuDirective } from './layouts/navbar/active-menu.directive';
+import { ErrorComponent } from './layouts/error/error.component';
 
 @NgModule({
-    imports: [
-        BrowserModule,
-        LayoutRoutingModule,
-        Ng2Webstorage.forRoot({ prefix: 'jhi', separator: '-'}),
-        MotorsportsDatabaseSharedModule,
-        MotorsportsDatabaseHomeModule,
-        MotorsportsDatabaseAdminModule,
-        MotorsportsDatabaseAccountModule,
-        MotorsportsDatabaseEntityModule,
-        MotorsportsDatabaseImportsModule,
-        MotorsportsDatabaseCalendarModule
-    ],
-    declarations: [
-        JhiMainComponent,
-        NavbarComponent,
-        ErrorComponent,
-        PageRibbonComponent,
-        ActiveMenuDirective,
-        FooterComponent,
-    ],
-    providers: [
-        ProfileService,
-        //{ provide: Window, useValue: window },
-        //{ provide: Document, useValue: document },
-        customHttpProvider(),
-        PaginationConfig,
-        UserRouteAccessService
-    ],
-    bootstrap: [ JhiMainComponent ]
+  imports: [
+    BrowserModule,
+    MotorsportsDatabaseSharedModule,
+    MotorsportsDatabaseCoreModule,
+    MotorsportsDatabaseHomeModule,
+    // jhipster-needle-angular-add-module JHipster will add new module here
+    MotorsportsDatabaseEntityModule,
+    MotorsportsDatabaseImportsModule,
+    MotorsportsDatabaseCalendarModule,
+    MotorsportsDatabaseAppRoutingModule
+  ],
+  declarations: [JhiMainComponent, NavbarComponent, ErrorComponent, PageRibbonComponent, ActiveMenuDirective, FooterComponent],
+  bootstrap: [JhiMainComponent]
 })
 export class MotorsportsDatabaseAppModule {}

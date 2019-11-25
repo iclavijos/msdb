@@ -1,23 +1,24 @@
 package com.icesoft.msdb.domain;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A Chassis.
  */
 @Entity
 @Table(name = "chassis")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "chassis")
 @NamedEntityGraph(name="ChassisWithoutRelations", attributeNodes= {
 		@NamedAttributeNode(value="id"),
@@ -31,6 +32,7 @@ public class Chassis extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -46,10 +48,10 @@ public class Chassis extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Column(name = "debut_year", nullable = false)
     private Integer debutYear;
-    
+
     @Column
     private Boolean rebranded;
-    
+
     @Transient
     private byte[] image;
 
@@ -58,7 +60,7 @@ public class Chassis extends AbstractAuditingEntity implements Serializable {
 
     @OneToMany(mappedBy = "derivedFrom")
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Chassis> evolutions = new HashSet<>();
 
     @ManyToOne
@@ -111,7 +113,7 @@ public class Chassis extends AbstractAuditingEntity implements Serializable {
     public void setDebutYear(Integer debutYear) {
         this.debutYear = debutYear;
     }
-    
+
     public Boolean getRebranded() {
 		return rebranded;
 	}
@@ -120,7 +122,7 @@ public class Chassis extends AbstractAuditingEntity implements Serializable {
     	this.rebranded = rebranded;
     	return this;
     }
-    
+
 	public void setRebranded(Boolean rebranded) {
 		this.rebranded = rebranded;
 	}
@@ -128,7 +130,7 @@ public class Chassis extends AbstractAuditingEntity implements Serializable {
 	public byte[] getImage() {
 		return image;
 	}
-	
+
 	public Chassis image(byte[] image) {
 		this.image = image;
 		return this;
@@ -141,7 +143,7 @@ public class Chassis extends AbstractAuditingEntity implements Serializable {
 	public String getImageUrl() {
 		return imageUrl;
 	}
-	
+
 	public Chassis imageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 		return this;
@@ -195,14 +197,10 @@ public class Chassis extends AbstractAuditingEntity implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Chassis)) {
             return false;
         }
-        Chassis chassis = (Chassis) o;
-        if (chassis.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), chassis.getId());
+        return id != null && id.equals(((Chassis) o).id);
     }
 
     @Override
@@ -216,7 +214,7 @@ public class Chassis extends AbstractAuditingEntity implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", manufacturer='" + getManufacturer() + "'" +
-            ", debutYear='" + getDebutYear() + "'" +
+            ", debutYear=" + getDebutYear() +
             "}";
     }
 }

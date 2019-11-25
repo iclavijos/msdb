@@ -1,59 +1,51 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="pointsSystem">
+            <h2><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.detail.title">Points System</span> {{pointsSystem.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.name">Name</span></dt>
+                <dd>
+                    <span>{{pointsSystem.name}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.description">Description</span></dt>
+                <dd>
+                    <span>{{pointsSystem.description}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.points">Points</span></dt>
+                <dd>
+                    <span>{{pointsSystem.points}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps">Points Most Lead Laps</span></dt>
+                <dd>
+                    <span>{{pointsSystem.pointsMostLeadLaps}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsFastLap">Points Fast Lap</span></dt>
+                <dd>
+                    <span>{{pointsSystem.pointsFastLap}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsPole">Points Pole</span></dt>
+                <dd>
+                    <span>{{pointsSystem.pointsPole}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsLeadLap">Points Lead Lap</span></dt>
+                <dd>
+                    <span>{{pointsSystem.pointsLeadLap}}</span>
+                </dd>
+            </dl>
 
-<div *ngIf="pointsSystem">
-    <h2><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.detail.title">Points System</span></h2>
-    <hr>
-    <jhi-alert-error></jhi-alert-error>
-    <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.name">Name</span></dt>
-        <dd>
-            <span>{{pointsSystem.name}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.description">Description</span></dt>
-        <dd>
-            <span>{{pointsSystem.description}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.points">Points</span></dt>
-        <dd>
-            <span>{{pointsSystem.points}}</span>
-        </dd>
-        <div class="row">
-        	<div class="col-lg-3 col-md-3">
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps">Points Most Lead Laps</span></dt>
-		        <dd>
-		            <span>{{pointsSystem.pointsMostLeadLaps}}</span>
-		        </dd>
-		    </div>
-		    <div class="col-lg-3 col-md-3">
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsFastLap">Points Fast Lap</span></dt>
-		        <dd>
-		            <span>{{pointsSystem.pointsFastLap}}</span>
-		        </dd>
-		    </div>
-		    <div class="col-lg-3 col-md-3">
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsPole">Points Pole</span></dt>
-		        <dd>
-		            <span>{{pointsSystem.pointsPole}}</span>
-		        </dd>
-		    </div>
-		    <div class="col-lg-3 col-md-3">
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pointsLeadLap">Points Lead Lap</span></dt>
-		        <dd>
-		            <span>{{pointsSystem.pointsLeadLap}}</span>
-		        </dd>
-		    </div>
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/points-system', pointsSystem.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
         </div>
-    </dl>
-
-    <button type="submit"
-            (click)="previousState()"
-            class="btn btn-info">
-        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-    </button>
-
-    <button type="button"
-            [routerLink]="['/', { outlets: { popup: 'points-system/'+ pointsSystem.id + '/edit'} }]"
-            replaceUrl="true"
-            class="btn btn-primary">
-        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-    </button>
+    </div>
 </div>

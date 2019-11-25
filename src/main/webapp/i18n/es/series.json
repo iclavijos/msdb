@@ -1,104 +1,106 @@
 {
-    "motorsportsDatabaseApp": {
-        "series" : {
-            "home": {
-                "title": "Campeonatos",
-                "createLabel": "Añade un nuevo campeonato",
-                "createOrEditLabel": "Añade o edita un campeonato",
-                "search": "Buscar campeonatos"
-            },
-            "created": "Se ha añadido un nuevo campeonato",
-            "updated": "Se ha actualizado el campeonato",
-            "deleted": "Se ha borrado el campeonato",
-            "delete": {
-                "question": "¿Estás seguro que quieres borrar el campeonato?"
-            },
-            "detail": {
-                "title": "Campeonato"
-            },
-            "name": "Nombre",
-            "shortname": "Abreviatura",
-            "organizer": "Organizador",
-            "logo": "Logo",
-            "editions": "Ediciones",
-            "seriesEdition" : {
-	            "home": {
-	                "title": "Ediciones",
-	                "createLabel": "Añade una nueva edición",
-	                "createOrEditLabel": "Añade o edita una edición",
-	                "search": "Buscar ediciones"
-	            },
-	            "created": "Se ha añadido una nueva edición",
-	            "updated": "Se ha actualizado la edición",
-	            "deleted": "Se ha borrado la edición",
-	            "delete": {
-	                "question": "¿Estás seguro que quieres borrar la edición?"
-	            },
-	            "detail": {
-	                "title": "Edición",
-	                "info": "Info",
-	                "editions": "Ediciones",
-	                "standings": "Clasificaciones",
-	                "driversStandings": "Clasificación de pilotos",
-	                "teamsStandings": "Clasificación de equipos",
-	                "manufacturersStandings": "Clasificación de constructores",
-	                "driver": "Piloto",
-	                "team": "Equipo",
-	                "manufacturer": "Constructor",
-	                "points": "Puntos",
-	                "pointsPerRace": "Puntos por carrera",
-	                "resultsPerRace": "Resultados por carrera",
-	                "graphics": "Gráficas"
-	            },
-	            "calendar": {
-	            	"title": "Calendario",
-	            	"editLabel": "Edita el calendario del campeonato",
-	            	"searchEvent": "Buscar evento",
-	            	"assignPoints": "Asigna sistema de puntuación a cada sesión puntuable del evento"
-	            },
-	            "champions": "Campeones",
-	            "period": "Periodo",
-	            "singleChassis": "Chasis único",
-	            "singleEngine": "Motor único",
-	            "singleTyre": "Neumáticos únicos",
-	            "allowedCategories": "Categorías",
-	            "pointsSystems": "Sistemas de puntuación",
-	            "series": "Campeonato",
-	            "numEvents": "Número de citas",
-	            "driverChamp": "Piloto campeón",
-	            "teamChamp": "Equipo campeón",
-	            "manufacturerChamp": "Fabricante campeón",
-	            "eventDate": "Fecha",
-	            "event": "Cita",
-	            "winner": "Ganador",
-	            "updateStandings": "Actualiza clasificaciones",
-	            "updatingStandings": "Actualizando clasificaciones. Espera unos segundos",
-	            "standingsNotUpdated": "No se han podido actualizar las clasificaciones",
-	            "standingsUpdated": "Clasificaciones actualizadas",
-	            "driversChampions": {
-	            	"edit": "Edita los pilotos campeones",
-	            	"selectDrivers": "Selecciona los pilotos campeones de esta edición"
-	            },
-	            "teamsChampions": {
-	            	"edit": "Edita los equipos campeones",
-	            	"selectDrivers": "Selecciona los equipos campeones de esta edición"
-	            },
-	            "manufacturersChampions": {
-	            	"edit": "Edita los constructores campeones",
-	            	"selectDrivers": "Selecciona los constructores campeones de esta edición"
-	            },
-	            "clone": {
-	            	"clone": "Copia campeonato",
-	            	"title": "Crea una nueva edición copiaando el campeonato actual",
-	            	"period": "Periodo del nuevo campeonato"
-	            },
-	            "updateTeamsChampions": "Edita equipos campeones",
-	            "updateManufacturersChampions": "Edita fabricantes campeones",
-	            "driversStandings": "¿Clasificación de pilotos?",
-	            "teamsStandings": "¿Clasificación de equipos?",
-	            "manufacturersStandings": "¿Clasificación de constructores?",
-	            "standingsPerCategory": "¿Clasificaciones por categoría?"
-	        }
-        }
+  "motorsportsDatabaseApp": {
+    "series": {
+      "home": {
+        "title": "Campeonatos",
+        "createLabel": "Añade un nuevo campeonato",
+        "createOrEditLabel": "Añade o edita un campeonato",
+        "search": "Buscar campeonatos",
+        "notFound": "Ningún campeonato encontrado"
+      },
+      "created": "Se ha añadido un nuevo campeonato",
+      "updated": "Se ha actualizado el campeonato",
+      "deleted": "Se ha borrado el campeonato",
+      "delete": {
+        "question": "¿Estás seguro que quieres borrar el campeonato?"
+      },
+      "detail": {
+        "title": "Campeonato"
+      },
+      "name": "Nombre",
+      "shortname": "Abreviatura",
+      "organizer": "Organizador",
+      "logo": "Logo",
+      "editions": "Ediciones",
+      "seriesEdition": {
+        "home": {
+          "title": "Ediciones",
+          "createLabel": "Añade una nueva edición",
+          "createOrEditLabel": "Añade o edita una edición",
+          "search": "Buscar ediciones",
+          "notFound": "Ninguna edición encontrada"
+        },
+        "created": "Se ha añadido una nueva edición",
+        "updated": "Se ha actualizado la edición",
+        "deleted": "Se ha borrado la edición",
+        "delete": {
+          "question": "¿Estás seguro que quieres borrar la edición?"
+        },
+        "detail": {
+          "title": "Edición",
+          "info": "Info",
+          "editions": "Ediciones",
+          "standings": "Clasificaciones",
+          "driversStandings": "Clasificación de pilotos",
+          "teamsStandings": "Clasificación de equipos",
+          "manufacturersStandings": "Clasificación de constructores",
+          "driver": "Piloto",
+          "team": "Equipo",
+          "manufacturer": "Constructor",
+          "points": "Puntos",
+          "pointsPerRace": "Puntos por carrera",
+          "resultsPerRace": "Resultados por carrera",
+          "graphics": "Gráficas"
+        },
+        "calendar": {
+          "title": "Calendario",
+          "editLabel": "Edita el calendario del campeonato",
+          "searchEvent": "Buscar evento",
+          "assignPoints": "Asigna sistema de puntuación a cada sesión puntuable del evento"
+        },
+        "champions": "Campeones",
+        "period": "Periodo",
+        "singleChassis": "Chasis único",
+        "singleEngine": "Motor único",
+        "singleTyre": "Neumáticos únicos",
+        "allowedCategories": "Categorías",
+        "pointsSystems": "Sistemas de puntuación",
+        "series": "Campeonato",
+        "numEvents": "Número de citas",
+        "driverChamp": "Piloto campeón",
+        "teamChamp": "Equipo campeón",
+        "manufacturerChamp": "Fabricante campeón",
+        "eventDate": "Fecha",
+        "event": "Cita",
+        "winner": "Ganador",
+        "updateStandings": "Actualiza clasificaciones",
+        "updatingStandings": "Actualizando clasificaciones. Espera unos segundos",
+        "standingsNotUpdated": "No se han podido actualizar las clasificaciones",
+        "standingsUpdated": "Clasificaciones actualizadas",
+        "driversChampions": {
+          "edit": "Edita los pilotos campeones",
+          "selectDrivers": "Selecciona los pilotos campeones de esta edición"
+        },
+        "teamsChampions": {
+          "edit": "Edita los equipos campeones",
+          "selectDrivers": "Selecciona los equipos campeones de esta edición"
+        },
+        "manufacturersChampions": {
+          "edit": "Edita los constructores campeones",
+          "selectDrivers": "Selecciona los constructores campeones de esta edición"
+        },
+        "clone": {
+          "clone": "Copia campeonato",
+          "title": "Crea una nueva edición copiaando el campeonato actual",
+          "period": "Periodo del nuevo campeonato"
+        },
+        "updateTeamsChampions": "Edita equipos campeones",
+        "updateManufacturersChampions": "Edita fabricantes campeones",
+        "driversStandings": "¿Clasificación de pilotos?",
+        "teamsStandings": "¿Clasificación de equipos?",
+        "manufacturersStandings": "¿Clasificación de constructores?",
+        "standingsPerCategory": "¿Clasificaciones por categoría?"
+      }
     }
+  }
 }

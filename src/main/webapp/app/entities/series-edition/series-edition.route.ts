@@ -1,41 +1,78 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
+import { HttpResponse } from '@angular/common/http';
+import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
+import { JhiResolvePagingParams } from 'ng-jhipster';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { SeriesEdition } from 'app/shared/model/series-edition.model';
+import { SeriesEditionService } from './series-edition.service';
 import { SeriesEditionComponent } from './series-edition.component';
 import { SeriesEditionDetailComponent } from './series-edition-detail.component';
-import { SeriesEditionPopupComponent } from './series-edition-dialog.component';
+import { SeriesEditionUpdateComponent } from './series-edition-update.component';
 import { SeriesEditionDeletePopupComponent } from './series-edition-delete-dialog.component';
-import { SeriesEditionCalendarPopupComponent } from './series-edition-calendar-dialog.component';
-import { SeriesEditionClonePopupComponent } from './series-edition-clone-dialog.component';
-import { SeriesEditionDriversChampionsPopupComponent } from './series-edition-drivers-champions-dialog.component';
-import { SeriesEditionTeamsChampionsPopupComponent } from './series-edition-teams-champions-dialog.component';
-import { SeriesEditionManufacturersChampionsPopupComponent } from './series-edition-manufacturers-champions-dialog.component';
+import { ISeriesEdition } from 'app/shared/model/series-edition.model';
 
-@Injectable()
-export class SeriesEditionResolvePagingParams implements Resolve<any> {
+@Injectable({ providedIn: 'root' })
+export class SeriesEditionResolve implements Resolve<ISeriesEdition> {
+  constructor(private service: SeriesEditionService) {}
 
-    constructor(private paginationUtil: JhiPaginationUtil) {}
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
-        return {
-            page: this.paginationUtil.parsePage(page),
-            predicate: this.paginationUtil.parsePredicate(sort),
-            ascending: this.paginationUtil.parseAscending(sort)
-      };
+  resolve(route: ActivatedRouteSnapshot): Observable<ISeriesEdition> {
+    const id = route.params['id'];
+    if (id) {
+      return this.service.find(id).pipe(map((seriesEdition: HttpResponse<SeriesEdition>) => seriesEdition.body));
     }
+    return of(new SeriesEdition());
+  }
 }
 
 export const seriesEditionRoute: Routes = [
   {
-    path: 'series/series-edition/:id',
-    component: SeriesEditionDetailComponent,
+    path: '',
+    component: SeriesEditionComponent,
+    resolve: {
+      pagingParams: JhiResolvePagingParams
+    },
     data: {
-        pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
+      authorities: ['ROLE_USER'],
+      defaultSort: 'id,asc',
+      pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id/view',
+    component: SeriesEditionDetailComponent,
+    resolve: {
+      seriesEdition: SeriesEditionResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'new',
+    component: SeriesEditionUpdateComponent,
+    resolve: {
+      seriesEdition: SeriesEditionResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id/edit',
+    component: SeriesEditionUpdateComponent,
+    resolve: {
+      seriesEdition: SeriesEditionResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
     },
     canActivate: [UserRouteAccessService]
   }
@@ -43,94 +80,16 @@ export const seriesEditionRoute: Routes = [
 
 export const seriesEditionPopupRoute: Routes = [
   {
-    path: ':idSeries/series-edition-new',
-    component: SeriesEditionPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
-    },
-    canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  },
-  {
-    path: 'series-edition/:id/edit',
-    component: SeriesEditionPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
-    },
-    canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  },
-  {
-      path: ':id/calendar-edit/:eventId',
-      component: SeriesEditionCalendarPopupComponent,
-      data: {
-          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-          pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
-      },
-      canActivate: [UserRouteAccessService],
-      outlet: 'popup'
-  },
-  {
-      path: ':id/calendar',
-      component: SeriesEditionCalendarPopupComponent,
-      data: {
-          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-          pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
-      },
-      canActivate: [UserRouteAccessService],
-      outlet: 'popup'
-  },
-  {
-      path: ':id/clone',
-      component: SeriesEditionClonePopupComponent,
-      data: {
-          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-          pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
-      },
-      canActivate: [UserRouteAccessService],
-      outlet: 'popup'
-  },
-  {
-    path: 'series-edition/:id/delete',
+    path: ':id/delete',
     component: SeriesEditionDeletePopupComponent,
+    resolve: {
+      seriesEdition: SeriesEditionResolve
+    },
     data: {
-        authorities: ['ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
     },
     canActivate: [UserRouteAccessService],
     outlet: 'popup'
-  },
-  {
-      path: ':id/drivers-champions-edit',
-      component: SeriesEditionDriversChampionsPopupComponent,
-      data: {
-          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-          pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
-      },
-      canActivate: [UserRouteAccessService],
-      outlet: 'popup'
-  },
-  {
-      path: ':id/teams-champions-edit',
-      component: SeriesEditionTeamsChampionsPopupComponent,
-      data: {
-          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-          pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
-      },
-      canActivate: [UserRouteAccessService],
-      outlet: 'popup'
-  },
-  {
-      path: ':id/manufacturers-champions-edit',
-      component: SeriesEditionManufacturersChampionsPopupComponent,
-      data: {
-          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-          pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.home.title'
-      },
-      canActivate: [UserRouteAccessService],
-      outlet: 'popup'
   }
-
 ];

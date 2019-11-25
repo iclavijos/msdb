@@ -1,10 +1,9 @@
 package com.icesoft.msdb.repository.search;
-
 import com.icesoft.msdb.domain.Engine;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 /**
- * Spring Data Elasticsearch repository for the Engine entity.
+ * Spring Data Elasticsearch repository for the {@link Engine} entity.
  */
 public interface EngineSearchRepository extends ElasticsearchRepository<Engine, Long> {
 }

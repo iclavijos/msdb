@@ -1,62 +1,90 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
-
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
+import { HttpResponse } from '@angular/common/http';
+import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { DriverPointsDetails } from 'app/shared/model/driver-points-details.model';
+import { DriverPointsDetailsService } from './driver-points-details.service';
 import { DriverPointsDetailsComponent } from './driver-points-details.component';
 import { DriverPointsDetailsDetailComponent } from './driver-points-details-detail.component';
-import { DriverPointsDetailsPopupComponent } from './driver-points-details-dialog.component';
+import { DriverPointsDetailsUpdateComponent } from './driver-points-details-update.component';
 import { DriverPointsDetailsDeletePopupComponent } from './driver-points-details-delete-dialog.component';
-import { DriverPointsSeriesPopupComponent } from './driver-points-series.component';
+import { IDriverPointsDetails } from 'app/shared/model/driver-points-details.model';
+
+@Injectable({ providedIn: 'root' })
+export class DriverPointsDetailsResolve implements Resolve<IDriverPointsDetails> {
+  constructor(private service: DriverPointsDetailsService) {}
+
+  resolve(route: ActivatedRouteSnapshot): Observable<IDriverPointsDetails> {
+    const id = route.params['id'];
+    if (id) {
+      return this.service.find(id).pipe(map((driverPointsDetails: HttpResponse<DriverPointsDetails>) => driverPointsDetails.body));
+    }
+    return of(new DriverPointsDetails());
+  }
+}
 
 export const driverPointsDetailsRoute: Routes = [
-    {
-        path: 'driver-points-details',
-        component: DriverPointsDetailsComponent,
-        data: {
-            pageTitle: 'motorsportsDatabaseApp.driverPointsDetails.home.title'
-        },
-        canActivate: [UserRouteAccessService]
-    }, {
-        path: 'driver-points-details/:id',
-        component: DriverPointsDetailsDetailComponent,
-        data: {
-            pageTitle: 'motorsportsDatabaseApp.driverPointsDetails.home.title'
-        },
-        canActivate: [UserRouteAccessService]
-    }
+  {
+    path: '',
+    component: DriverPointsDetailsComponent,
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.driverPointsDetails.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id/view',
+    component: DriverPointsDetailsDetailComponent,
+    resolve: {
+      driverPointsDetails: DriverPointsDetailsResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.driverPointsDetails.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'new',
+    component: DriverPointsDetailsUpdateComponent,
+    resolve: {
+      driverPointsDetails: DriverPointsDetailsResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.driverPointsDetails.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id/edit',
+    component: DriverPointsDetailsUpdateComponent,
+    resolve: {
+      driverPointsDetails: DriverPointsDetailsResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.driverPointsDetails.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  }
 ];
 
 export const driverPointsDetailsPopupRoute: Routes = [
-    {
-        path: ':eventEditionId/:driverId/driver-points-details-new',
-        component: DriverPointsDetailsPopupComponent,
-        data: {
-            authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
-            pageTitle: 'motorsportsDatabaseApp.driverPointsDetails.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
+  {
+    path: ':id/delete',
+    component: DriverPointsDetailsDeletePopupComponent,
+    resolve: {
+      driverPointsDetails: DriverPointsDetailsResolve
     },
-    {
-        path: 'driver-points-details/:id/delete',
-        component: DriverPointsDetailsDeletePopupComponent,
-        data: {
-            authorities: ['ROLE_ADMIN'],
-            pageTitle: 'motorsportsDatabaseApp.driverPointsDetails.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.driverPointsDetails.home.title'
     },
-    {
-        path: 'driver-points-series',
-        component: DriverPointsSeriesPopupComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.driverPointsDetails.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    }
+    canActivate: [UserRouteAccessService],
+    outlet: 'popup'
+  }
 ];

@@ -1,61 +1,32 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiDataUtils } from 'ng-jhipster';
+import { JhiDataUtils } from 'ng-jhipster';
 
-import { FuelProvider } from './fuel-provider.model';
-import { FuelProviderService } from './fuel-provider.service';
+import { IFuelProvider } from 'app/shared/model/fuel-provider.model';
 
 @Component({
-    selector: 'jhi-fuel-provider-detail',
-    templateUrl: './fuel-provider-detail.component.html'
+  selector: 'jhi-fuel-provider-detail',
+  templateUrl: './fuel-provider-detail.component.html'
 })
-export class FuelProviderDetailComponent implements OnInit, OnDestroy {
+export class FuelProviderDetailComponent implements OnInit {
+  fuelProvider: IFuelProvider;
 
-    fuelProvider: FuelProvider;
-    private subscription: Subscription;
-    private eventSubscriber: Subscription;
+  constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute) {}
 
-    constructor(
-        private eventManager: JhiEventManager,
-        private dataUtils: JhiDataUtils,
-        private fuelProviderService: FuelProviderService,
-        private route: ActivatedRoute
-    ) {
-    }
+  ngOnInit() {
+    this.activatedRoute.data.subscribe(({ fuelProvider }) => {
+      this.fuelProvider = fuelProvider;
+    });
+  }
 
-    ngOnInit() {
-        this.subscription = this.route.params.subscribe((params) => {
-            this.load(params['id']);
-        });
-        this.registerChangeInFuelProviders();
-    }
+  byteSize(field) {
+    return this.dataUtils.byteSize(field);
+  }
 
-    load(id) {
-        this.fuelProviderService.find(id).subscribe((fuelProvider) => {
-            this.fuelProvider = fuelProvider;
-        });
-    }
-    byteSize(field) {
-        return this.dataUtils.byteSize(field);
-    }
-
-    openFile(contentType, field) {
-        return this.dataUtils.openFile(contentType, field);
-    }
-    previousState() {
-        window.history.back();
-    }
-
-    ngOnDestroy() {
-        this.subscription.unsubscribe();
-        this.eventManager.destroy(this.eventSubscriber);
-    }
-
-    registerChangeInFuelProviders() {
-        this.eventSubscriber = this.eventManager.subscribe(
-            'fuelProviderListModification',
-            (response) => this.load(this.fuelProvider.id)
-        );
-    }
+  openFile(contentType, field) {
+    return this.dataUtils.openFile(contentType, field);
+  }
+  previousState() {
+    window.history.back();
+  }
 }

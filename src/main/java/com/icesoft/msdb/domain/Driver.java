@@ -1,33 +1,26 @@
 package com.icesoft.msdb.domain;
 
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.HashSet;
 import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Set;
 
 /**
  * A Driver.
  */
 @Entity
 @Table(name = "driver")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "driver")
 public class Driver extends AbstractAuditingEntity implements Serializable {
 
@@ -35,6 +28,7 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -53,7 +47,7 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     @Size(max = 75)
     @Column(name = "birth_place", length = 75)
     private String birthPlace;
-    
+
     @NotNull
     @Size(max = 2)
     @Column(name = "nationality", length = 2, nullable = false)
@@ -68,7 +62,7 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
 
     @Transient
     private byte[] portrait;
-    
+
     @Column(name = "portrait_url")
     private String portraitUrl;
 
@@ -106,7 +100,7 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     public void setSurname(String surname) {
         this.surname = surname;
     }
-    
+
     public String getFullName() {
     	return name + " " + surname;
     }
@@ -140,7 +134,7 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     public String getNationality() {
 		return nationality;
 	}
-    
+
     public Driver nationality(String nationality) {
     	this.nationality = nationality;
     	return this;
@@ -188,32 +182,32 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     public void setPortrait(byte[] portrait) {
         this.portrait = portrait;
     }
-    
+
     public String getPortraitUrl() {
     	return portraitUrl;
     }
-    
+
     public Driver portraitUrl(String portraitUrl) {
     	this.portraitUrl = portraitUrl;
     	return this;
     }
-    
+
     public void setPortraitUrl(String portraitUrl) {
     	this.portraitUrl = portraitUrl;
     }
-    
+
     @JsonProperty
     public String getFaceUrl() {
     	String tmp = this.portraitUrl;
     	if (StringUtils.isEmpty(tmp)) return null;
-    	
+
     	return tmp.replace("upload/", "upload/w_70,h_70,c_thumb,g_face/");
     }
-    
+
     @JsonProperty
     public int getAge() {
     	if (birthDate == null) return 0;
-    	
+
     	LocalDate end = (deathDate != null ? deathDate : LocalDate.now());
     	return Period.between(birthDate, end).getYears();
     }
@@ -224,14 +218,10 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Driver)) {
             return false;
         }
-        Driver driver = (Driver) o;
-        if (driver.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), driver.getId());
+        return id != null && id.equals(((Driver) o).id);
     }
 
     @Override

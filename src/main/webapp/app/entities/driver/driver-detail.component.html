@@ -1,69 +1,56 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="driver">
+            <h2><span jhiTranslate="motorsportsDatabaseApp.driver.detail.title">Driver</span> {{driver.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="motorsportsDatabaseApp.driver.name">Name</span></dt>
+                <dd>
+                    <span>{{driver.name}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.driver.surname">Surname</span></dt>
+                <dd>
+                    <span>{{driver.surname}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.driver.birthDate">Birth Date</span></dt>
+                <dd>
+                    <span>{{driver.birthDate}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.driver.birthPlace">Birth Place</span></dt>
+                <dd>
+                    <span>{{driver.birthPlace}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.driver.deathDate">Death Date</span></dt>
+                <dd>
+                    <span>{{driver.deathDate}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.driver.deathPlace">Death Place</span></dt>
+                <dd>
+                    <span>{{driver.deathPlace}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.driver.portrait">Portrait</span></dt>
+                <dd>
+                    <div *ngIf="driver.portrait">
+                        <a (click)="openFile(driver.portraitContentType, driver.portrait)">
+                            <img [src]="'data:' + driver.portraitContentType + ';base64,' + driver.portrait" style="max-width: 100%;" alt="driver image"/>
+                        </a>
+                        {{driver.portraitContentType}}, {{byteSize(driver.portrait)}}
+                    </div>
+                </dd>
+            </dl>
 
-<div *ngIf="driver">
-    <h2>{{compositeName}}</h2>
-    <hr>
-    <jhi-alert-error></jhi-alert-error>
-    <ngb-tabset>
-	  <ngb-tab title="{{'motorsportsDatabaseApp.driver.bio' | translate}}">
-	    <ng-template ngbTabContent>
-		    <div class="row">
-		    	<div class="col-sm-6">
-				    <dl class="row-md jh-entity-details">
-				        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.birthDate">Birth Date</span></dt>
-				        <dd>
-				            <span>{{driver.birthDate | date:'mediumDate'}}</span>
-				        </dd>
-				        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.birthPlace">Birth Place</span></dt>
-				        <dd>
-				            <span>{{driver.birthPlace}}</span>
-				        </dd>
-				        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.nationality">Nationality</span></dt>
-				        <dd>
-				        	<span *ngIf="driver.nationality"><img src="/images/flags64/{{driver.nationality}}.png"/></span>
-				        </dd>
-				        <dt *ngIf="driver.deathDate"><span jhiTranslate="motorsportsDatabaseApp.driver.deathDate">Death Date</span></dt>
-				        <dd *ngIf="driver.deathDate">
-				            <span>{{driver.deathDate | date:'mediumDate'}}</span>
-				        </dd>
-				        <dt *ngIf="driver.deathDate"><span jhiTranslate="motorsportsDatabaseApp.driver.deathPlace">Death Place</span></dt>
-				        <dd *ngIf="driver.deathDate">
-				            <span>{{driver.deathPlace}}</span>
-				        </dd>
-				        <dt><span jhiTranslate="motorsportsDatabaseApp.driver.age">Age</span></dt>
-				        <dd>
-				            <span *ngIf="driver.age != 0">{{driver.age}}</span>
-				        </dd>
-				    </dl>
-			    </div>
-			    <div class="col-sm-6">
-			    	<dl class="row-md jh-entity-details">
-				        <dd>
-				            <div *ngIf="driver.portraitUrl">
-				            	<img [src]="driver.portraitUrl" class="img-fluid" alt="driver image"/>
-				            </div>
-				        </dd>
-				    </dl>
-			    </div>
-		    </div>
-		</ng-template>
-	</ngb-tab>
-	<ngb-tab title="{{'entity.detail.statistics' | translate}}">
-	    <ng-template ngbTabContent>
-	    	<jhi-statistics [id]="driver.id" [statsType]="'drivers'">Statistics...</jhi-statistics>
-	    </ng-template>
-	</ngb-tab>
-	</ngb-tabset>
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
 
-    <button type="submit"
-            (click)="previousState()"
-            class="btn btn-info">
-        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-    </button>
-
-    <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-            [routerLink]="['/', { outlets: { popup: 'driver/'+ driver.id + '/edit'} }]"
-            replaceUrl="true"
-            class="btn btn-primary">
-        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-    </button>
+            <button type="button"
+                    [routerLink]="['/driver', driver.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
 </div>

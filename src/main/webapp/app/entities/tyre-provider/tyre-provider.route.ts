@@ -1,82 +1,95 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
+import { HttpResponse } from '@angular/common/http';
+import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
+import { JhiResolvePagingParams } from 'ng-jhipster';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { TyreProvider } from 'app/shared/model/tyre-provider.model';
+import { TyreProviderService } from './tyre-provider.service';
 import { TyreProviderComponent } from './tyre-provider.component';
 import { TyreProviderDetailComponent } from './tyre-provider-detail.component';
-import { TyreProviderPopupComponent } from './tyre-provider-dialog.component';
+import { TyreProviderUpdateComponent } from './tyre-provider-update.component';
 import { TyreProviderDeletePopupComponent } from './tyre-provider-delete-dialog.component';
+import { ITyreProvider } from 'app/shared/model/tyre-provider.model';
 
-@Injectable()
-export class TyreProviderResolvePagingParams implements Resolve<any> {
+@Injectable({ providedIn: 'root' })
+export class TyreProviderResolve implements Resolve<ITyreProvider> {
+  constructor(private service: TyreProviderService) {}
 
-    constructor(private paginationUtil: JhiPaginationUtil) {}
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
-        return {
-            page: this.paginationUtil.parsePage(page),
-            predicate: this.paginationUtil.parsePredicate(sort),
-            ascending: this.paginationUtil.parseAscending(sort)
-      };
+  resolve(route: ActivatedRouteSnapshot): Observable<ITyreProvider> {
+    const id = route.params['id'];
+    if (id) {
+      return this.service.find(id).pipe(map((tyreProvider: HttpResponse<TyreProvider>) => tyreProvider.body));
     }
+    return of(new TyreProvider());
+  }
 }
 
 export const tyreProviderRoute: Routes = [
-    {
-        path: 'tyre-provider',
-        component: TyreProviderComponent,
-        resolve: {
-            'pagingParams': TyreProviderResolvePagingParams
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
-        },
-        canActivate: [UserRouteAccessService]
-    }, {
-        path: 'tyre-provider/:id',
-        component: TyreProviderDetailComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
-        },
-        canActivate: [UserRouteAccessService]
-    }
+  {
+    path: '',
+    component: TyreProviderComponent,
+    resolve: {
+      pagingParams: JhiResolvePagingParams
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      defaultSort: 'id,asc',
+      pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id/view',
+    component: TyreProviderDetailComponent,
+    resolve: {
+      tyreProvider: TyreProviderResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'new',
+    component: TyreProviderUpdateComponent,
+    resolve: {
+      tyreProvider: TyreProviderResolve
+    },
+    data: {
+      authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+      pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id/edit',
+    component: TyreProviderUpdateComponent,
+    resolve: {
+      tyreProvider: TyreProviderResolve
+    },
+    data: {
+      authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+      pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  }
 ];
 
 export const tyreProviderPopupRoute: Routes = [
-    {
-        path: 'tyre-provider-new',
-        component: TyreProviderPopupComponent,
-        data: {
-            authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-            pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
+  {
+    path: ':id/delete',
+    component: TyreProviderDeletePopupComponent,
+    resolve: {
+      tyreProvider: TyreProviderResolve
     },
-    {
-        path: 'tyre-provider/:id/edit',
-        component: TyreProviderPopupComponent,
-        data: {
-            authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-            pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
+    data: {
+      authorities: ['ROLE_ADMIN'],
+      pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
     },
-    {
-        path: 'tyre-provider/:id/delete',
-        component: TyreProviderDeletePopupComponent,
-        data: {
-            authorities: ['ROLE_ADMIN'],
-            pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    }
+    canActivate: [UserRouteAccessService],
+    outlet: 'popup'
+  }
 ];

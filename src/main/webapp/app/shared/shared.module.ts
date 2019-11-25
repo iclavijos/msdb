@@ -1,57 +1,19 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { DatePipe } from '@angular/common';
-
-import {
-    MotorsportsDatabaseSharedLibsModule,
-    MotorsportsDatabaseSharedCommonModule,
-    CSRFService,
-    AuthServerProvider,
-    AccountService,
-    UserService,
-    StateStorageService,
-    LoginService,
-    LoginModalService,
-    JhiLoginModalComponent,
-    Principal,
-    HasAnyAuthorityDirective,
-    JhiSocialComponent,
-    SocialService,
-    StatisticsComponent
-} from './';
+import { NgModule } from '@angular/core';
+import { MotorsportsDatabaseSharedLibsModule } from './shared-libs.module';
+import { FindLanguageFromKeyPipe } from './language/find-language-from-key.pipe';
+import { JhiAlertComponent } from './alert/alert.component';
+import { JhiAlertErrorComponent } from './alert/alert-error.component';
+import { HasAnyAuthorityDirective } from './auth/has-any-authority.directive';
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedLibsModule,
-        MotorsportsDatabaseSharedCommonModule
-    ],
-    declarations: [
-        JhiSocialComponent,
-        JhiLoginModalComponent,
-        HasAnyAuthorityDirective,
-        StatisticsComponent
-    ],
-    providers: [
-        LoginService,
-        LoginModalService,
-        AccountService,
-        StateStorageService,
-        Principal,
-        CSRFService,
-        AuthServerProvider,
-        SocialService,
-        UserService,
-        DatePipe
-    ],
-    entryComponents: [JhiLoginModalComponent],
-    exports: [
-        MotorsportsDatabaseSharedCommonModule,
-        JhiSocialComponent,
-        JhiLoginModalComponent,
-        HasAnyAuthorityDirective,
-        DatePipe,
-        StatisticsComponent
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-
+  imports: [MotorsportsDatabaseSharedLibsModule],
+  declarations: [FindLanguageFromKeyPipe, JhiAlertComponent, JhiAlertErrorComponent, HasAnyAuthorityDirective],
+  exports: [
+    MotorsportsDatabaseSharedLibsModule,
+    FindLanguageFromKeyPipe,
+    JhiAlertComponent,
+    JhiAlertErrorComponent,
+    HasAnyAuthorityDirective
+  ]
 })
 export class MotorsportsDatabaseSharedModule {}

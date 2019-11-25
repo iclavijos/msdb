@@ -15,8 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.domain.Series;
 
 /**
- * Spring Data JPA repository for the Series entity.
+ * Spring Data  repository for the Series entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface SeriesRepository extends JpaRepository<Series,Long> {
 

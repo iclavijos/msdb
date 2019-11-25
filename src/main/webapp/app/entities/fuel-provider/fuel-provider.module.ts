@@ -1,51 +1,24 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
-import {
-    FuelProviderService,
-    FuelProviderPopupService,
-    FuelProviderComponent,
-    FuelProviderDetailComponent,
-    FuelProviderDialogComponent,
-    FuelProviderPopupComponent,
-    FuelProviderDeletePopupComponent,
-    FuelProviderDeleteDialogComponent,
-    fuelProviderRoute,
-    fuelProviderPopupRoute,
-    FuelProviderResolvePagingParams,
-} from './';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { FuelProviderComponent } from './fuel-provider.component';
+import { FuelProviderDetailComponent } from './fuel-provider-detail.component';
+import { FuelProviderUpdateComponent } from './fuel-provider-update.component';
+import { FuelProviderDeletePopupComponent, FuelProviderDeleteDialogComponent } from './fuel-provider-delete-dialog.component';
+import { fuelProviderRoute, fuelProviderPopupRoute } from './fuel-provider.route';
 
-const ENTITY_STATES = [
-    ...fuelProviderRoute,
-    ...fuelProviderPopupRoute,
-];
+const ENTITY_STATES = [...fuelProviderRoute, ...fuelProviderPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
-    declarations: [
-        FuelProviderComponent,
-        FuelProviderDetailComponent,
-        FuelProviderDialogComponent,
-        FuelProviderDeleteDialogComponent,
-        FuelProviderPopupComponent,
-        FuelProviderDeletePopupComponent,
-    ],
-    entryComponents: [
-        FuelProviderComponent,
-        FuelProviderDialogComponent,
-        FuelProviderPopupComponent,
-        FuelProviderDeleteDialogComponent,
-        FuelProviderDeletePopupComponent,
-    ],
-    providers: [
-        FuelProviderService,
-        FuelProviderPopupService,
-        FuelProviderResolvePagingParams,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [
+    FuelProviderComponent,
+    FuelProviderDetailComponent,
+    FuelProviderUpdateComponent,
+    FuelProviderDeleteDialogComponent,
+    FuelProviderDeletePopupComponent
+  ],
+  entryComponents: [FuelProviderDeleteDialogComponent]
 })
 export class MotorsportsDatabaseFuelProviderModule {}

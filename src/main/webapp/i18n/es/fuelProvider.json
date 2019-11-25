@@ -1,23 +1,24 @@
 {
-    "motorsportsDatabaseApp": {
-        "fuelProvider" : {
-            "home": {
-                "title": "Proveedores de combustible",
-                "createLabel": "Crear nuevo proveedor",
-                "createOrEditLabel": "Crear o editar proveedor",
-                "search": "Buscar proveedores"
-            },
-            "created": "Se ha añadido al proveedor {{ param }}",
-            "updated": "Se ha editado al proveedor {{ param }}",
-            "deleted": "Se ha eliminado al proveedor {{ param }}",
-            "delete": {
-                "question": "¿Seguro que quieres eliminar al proveedor {{ id }}?"
-            },
-            "detail": {
-                "title": "Proveedor de combustible"
-            },
-            "name": "Nombre",
-            "logo": "Logo"
-        }
+  "motorsportsDatabaseApp": {
+    "fuelProvider": {
+      "home": {
+        "title": "Proveedores de combustible",
+        "createLabel": "Crear nuevo proveedor",
+        "createOrEditLabel": "Crear o editar proveedor",
+        "search": "Buscar proveedores",
+        "notFound": "Ningún proveedor encontrado"
+      },
+      "created": "Se ha añadido al proveedor {{ param }}",
+      "updated": "Se ha editado al proveedor {{ param }}",
+      "deleted": "Se ha eliminado al proveedor {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quieres eliminar al proveedor {{ id }}?"
+      },
+      "detail": {
+        "title": "Proveedor de combustible"
+      },
+      "name": "Nombre",
+      "logo": "Logo"
     }
+  }
 }

@@ -1,29 +1,31 @@
 package com.icesoft.msdb.domain;
 
-import org.hibernate.annotations.Cache;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import com.icesoft.msdb.MSDBException;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.data.elasticsearch.annotations.Document;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.icesoft.msdb.MSDBException;
 
 /**
  * A SeriesEdition.
  */
 @Entity
 @Table(name = "series_edition")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "seriesedition")
 public class SeriesEdition extends AbstractAuditingEntity implements Serializable {
 
@@ -31,6 +33,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -256,10 +259,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     }
 
     public List<EventEdition> getEvents() {
-    	if (events == null) {
-    		events = new ArrayList<>();
-    	}
-		return events;
+        return Optional.ofNullable(events).orElse(new ArrayList<>());
 	}
 
 	public void setEvents(List<EventEdition> events) {
@@ -361,14 +361,10 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof SeriesEdition)) {
             return false;
         }
-        SeriesEdition seriesEdition = (SeriesEdition) o;
-        if (seriesEdition.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), seriesEdition.getId());
+        return id != null && id.equals(((SeriesEdition) o).id);
     }
 
     @Override

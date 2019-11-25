@@ -1,5 +1,15 @@
 package com.icesoft.msdb.domain;
 
+import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.*;
+
+import com.icesoft.msdb.domain.enums.DurationType;
+import com.icesoft.msdb.domain.enums.SessionType;
+import org.hibernate.annotations.*;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -10,42 +20,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-
-import com.icesoft.msdb.domain.enums.DurationType;
-import com.icesoft.msdb.domain.enums.SessionType;
-
 /**
  * A EventSession.
  */
 @Entity
 @Table(name = "event_session")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class EventSession extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -65,23 +52,23 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @NotNull
     @Column(name = "duration", nullable = false)
     private Integer duration;
-    
+
     @Column(name = "max_duration")
     private Integer maxDuration;
-    
+
     @Column(name= "duration_type")
     private Integer durationType;
-    
+
     @Column(name= "session_type")
     @Enumerated(EnumType.ORDINAL)
     private SessionType sessionType;
-    
+
     @Column(name= "additional_lap")
     private Boolean additionalLap;
-    
+
     @ManyToOne
     private EventEdition eventEdition;
-    
+
     @OneToMany(mappedBy = "eventSession", cascade=CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     @NotFound(action = NotFoundAction.IGNORE)
@@ -146,11 +133,11 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     public void setDuration(Integer duration) {
         this.duration = duration;
     }
-    
+
     public Integer getMaxDuration() {
 		return maxDuration;
 	}
-    
+
     public EventSession maxDuration(Integer maxDuration) {
     	this.maxDuration = maxDuration;
     	return this;
@@ -163,7 +150,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 	public Integer getDurationType() {
 		return durationType;
 	}
-    
+
     public EventSession durationType(Integer durationType) {
     	this.durationType = durationType;
     	return this;
@@ -180,16 +167,16 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 	public void setSessionType(SessionType sessionType) {
 		this.sessionType = sessionType;
 	}
-	
+
 	public EventSession sessionType(SessionType sessionType) {
 		this.sessionType = sessionType;
 		return this;
 	}
-	
+
 	public int getSessionTypeValue() {
 		return sessionType.getValue() - 1;
 	}
-	
+
 	public boolean isRace() {
 		return sessionType.equals(SessionType.RACE);
 	}
@@ -201,7 +188,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 	public void setAdditionalLap(Boolean additionalLap) {
 		this.additionalLap = additionalLap;
 	}
-	
+
 	public EventSession additionalLap(Boolean additionalLap) {
 		this.additionalLap = additionalLap;
 		return this;
@@ -210,7 +197,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 	public void setEventEdition(EventEdition eventEdition) {
     	this.eventEdition = eventEdition;
     }
-    
+
 	public List<PointsSystemSession> addPointsSystemsSession(PointsSystemSession pss) {
 		if (pointsSystemsSession == null) {
 			pointsSystemsSession = new ArrayList<>();
@@ -218,7 +205,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 		pointsSystemsSession.add(pss);
 		return pointsSystemsSession;
 	}
-	
+
     public List<PointsSystemSession> getPointsSystemsSession() {
 		return pointsSystemsSession;
 	}
@@ -231,7 +218,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     	this.eventEdition = eventEdition;
     	return this;
     }
-    
+
     public EventEdition getEventEdition() {
     	return eventEdition;
     }
@@ -242,29 +229,29 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 		}
 		return null;
 	}
-	
+
 	public List<String> getSeriesNames() {
 		if (eventEdition!= null && eventEdition.getSeriesEditions() != null) {
 			return eventEdition.getSeriesName();
 		}
 		return null;
 	}
-	
+
 	public boolean isFinished(ZonedDateTime now) {
 		return getSessionEndTime().isBefore(ZonedDateTime.now(ZoneId.of("UTC")));
 	}
-	
+
 	public ZonedDateTime getSessionEndTime() {
 		DurationType durationType = DurationType.valueOf(getDurationType());
 		TemporalUnit temp = durationType.equals(DurationType.MINUTES) ? ChronoUnit.MINUTES :
 				durationType.equals(DurationType.HOURS) ? ChronoUnit.HOURS : null;
-		
+
 		int maxDuration = Optional.ofNullable(getMaxDuration()).orElse(new Integer(0));
-		
+
 		if (maxDuration > 0) {
 			return getSessionStartTime().plus(maxDuration, ChronoUnit.HOURS);
 		}
-		
+
 		if (!getSessionType().equals(SessionType.RACE)) {
 			return getSessionStartTime().plus(getDuration(), temp);
 		} else {
@@ -274,22 +261,18 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 				return getSessionStartTime().plus(2, ChronoUnit.HOURS);
 			}
 		}
-				
+
 	}
 
-	@Override
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof EventSession)) {
             return false;
         }
-        EventSession eventSession = (EventSession) o;
-        if (eventSession.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), eventSession.getId());
+        return id != null && id.equals(((EventSession) o).id);
     }
 
     @Override
@@ -300,11 +283,11 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @Override
     public String toString() {
         return "EventSession{" +
-        		"id=" + getId() +
-                ", name='" + getName() + "'" +
-                ", shortname='" + getShortname() + "'" +
-                ", sessionStartTime='" + getSessionStartTime() + "'" +
-                ", duration='" + getDuration() + "'" +
+            "id=" + getId() +
+            ", name='" + getName() + "'" +
+            ", shortname='" + getShortname() + "'" +
+            ", sessionStartTime='" + getSessionStartTime() + "'" +
+            ", duration='" + getDuration() + "'" +
             ", durationType='" + getDurationType() + "'" +
             ", sessionType='" + getSessionType() + "'" +
             ", additionalLap='" + getAdditionalLap() + "'" +

@@ -1,169 +1,85 @@
-<div class="row" *ngIf="eventEntries">
-	<div class="col-sm-12 no-padding-right">
-		<div class="input-group w-100 mt-3">
-			<ul *ngIf="eventEntries" class="list-unstyled">
-			 	<li *ngIf="eventEdition.allowedCategories.length === 1">
-					<strong><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category"></span>:</strong> {{eventEdition.allowedCategories[0].name}}
-				</li>
-				<li *ngIf="eventEdition.singleChassis">
-				    <strong><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.chassis"></span>:</strong> {{eventEntries[0].chassis.manufacturer}} {{eventEntries[0].chassis.name}}
-				</li>
-				<li *ngIf="eventEdition.singleEngine">
-				    <strong><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.engine"></span>:</strong> {{eventEntries[0].engine.manufacturer}} {{eventEntries[0].engine.name}}
-				</li>
-				<li *ngIf="eventEdition.singleTyre">
-				    <strong><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.tyres"></span>:</strong> {{eventEntries[0].tyres.name}}
-				</li>
-				<li *ngIf="eventEdition.singleFuel">
-				    <strong><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.fuel"></span>:</strong> {{eventEntries[0].fuel.name}}
-				</li>
-			</ul>	                    
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-9"></div>
-	<div class="col-md-3 float-right" *ngIf="eventEdition.allowedCategories.length > 1">
-		<select class="form-control" id="field_category" name="category" [(ngModel)]="filterCategory">
-			<option value="ALL"></option>
-			<option *ngFor="let category of eventEdition.allowedCategories" [ngValue]="category.shortname">{{category.name}}</option>
-		</select>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-12" id="entryList">
-		<ng-container *ngFor="let eventEntry of eventEntries | eventEntryCategoryFilter: filterCategory; trackBy: trackId; let isOdd=odd; let isEven=even" >
-	      	<div class="row" [class.odd]="isOdd" [class.even]="isEven">
-				<div class="col-md-2">
-					<div class="row">
-						<div class="col-md-3" (click)="expandEntryData(eventEntry.raceNumber);">
-							<i *ngIf="selectedRaceEntry != eventEntry.raceNumber" class="fa fa-plus-square" aria-hidden="true"></i>
-							<i *ngIf="selectedRaceEntry == eventEntry.raceNumber" class="fa fa-minus-square" aria-hidden="true"></i>
-						</div>
-			    		<div class="col-md-2">
-                            {{eventEntry.raceNumber}}
-                        </div>
-                        <div class="col-md-1">
-                             <span [style.background]="eventEntry.tyres.backgroundColor" [style.color]="eventEntry.tyres.letterColor"
-                                   style="text-align: center; line-height: 20px; width: 20px; height: 20px;"
-                                   data-toggle="tooltip" data-placement="bottom" title="{{eventEntry.tyres.name}}">
-                                 {{eventEntry.tyres.name.substring(0,1)}}
-                             </span>
-                        </div>
-				    	<div class="col-md-5" *ngIf="!eventEntry.eventEdition.multidriver">
-			            	<img *ngIf="eventEntry.drivers[0].faceUrl" [src]="eventEntry.drivers[0].faceUrl" class="img-fluid"/>
-			            </div>
-		    		</div>
-				</div>
-		    	<div class="col-md-2">
-		            <div *ngIf="!eventEntry.eventEdition.multidriver">
-		                <img *ngIf="eventEntry.drivers[0].nationality" src="/images/flags16/{{eventEntry.drivers[0].nationality}}.png"/> 
-		                <a [routerLink]="['/driver', eventEntry.drivers[0].id ]" >
-		                	{{eventEntry.drivers[0].fullName}}
-		                </a>
-		                <span *ngIf="eventEntry.rookie"> (R)</span>
-		            </div>
-		            <div *ngIf="eventEntry.eventEdition.multidriver">
-		            	<div *ngFor="let driver of eventEntry.drivers">
-			            	<img *ngIf="driver.nationality" src="/images/flags16/{{driver.nationality}}.png"/> <span class="tag">{{ driver.fullName }}</span>
-			            </div>
-		            </div>
-		        </div>
-		        <div class="col-md-3">{{eventEntry.entryName}}</div>
-		        <div class="col-md-1" *ngIf="eventEdition.allowedCategories.length != 1">
-	               	{{eventEntry.category.shortname}}
-	               </div>
-		        <div class="col-md-3"><img *ngIf="eventEntry.carImageUrl" [src]="eventEntry.carImageUrl" class="img-fluid" alt="car image"/></div>
-		        <div class="col-md-1 text-right">
-	                <div class="btn-group flex-btn-group-container">
-	                    <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-	                            [routerLink]="['/', { outlets: { popup: 'event-entry/'+ eventEntry.id + '/edit'} }]"
-	                            replaceUrl="true"
-	                            class="btn btn-primary btn-sm">
-	                        <span class="fa fa-pencil"></span>
-	                    </button>
-	                    <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
-	                            [routerLink]="['/', { outlets: { popup: 'event-entry/'+ eventEntry.id + '/delete'} }]"
-	                            replaceUrl="true"
-	                            class="btn btn-danger btn-sm">
-	                        <span class="fa fa-remove"></span>
-	                    </button>
-	                </div>
-	            </div>
-			</div>
-			<div class="row" *ngIf="selectedRaceEntry == eventEntry.raceNumber" [class.odd]="isOdd" [class.even]="isEven">
-				<div class="col-md-3">
-					<label *ngIf="eventEntry.team"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.team">Team</span></label>
-					<div *ngIf="eventEntry.team">
-                        <a [routerLink]="['/team', eventEntry.team?.id ]" >
-                        	<img *ngIf="eventEntry.team?.logoUrl" [src]="eventEntry.team.logoUrl" class="img-fluid"/>
-                        	<span *ngIf="!eventEntry.team?.logoUrl">{{eventEntry.team?.name}}</span>
-                        </a>
-                    </div></br>
-                    <label *ngIf="eventEntry.operatedBy"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.operatedBy">Operated By</span></label>
-                    <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.chassis">Chassis</span></label>
-					<div *ngIf="eventEntry.chassis">
-                        <a [routerLink]="['/chassis', eventEntry.chassis?.id ]" >{{eventEntry.chassis?.manufacturer}} {{eventEntry.chassis?.name}}</a>
-                    </div></br>
-                    <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.engine">Engine</span></label>
-					<div *ngIf="eventEntry.engine">
-                        <a [routerLink]="['/engine', eventEntry.engine?.id ]" >{{eventEntry.engine?.manufacturer}} {{eventEntry.engine?.name}}</a>
-                    </div></br>
-                    <div *ngIf="eventEntry.operatedBy">
-                        <a [routerLink]="['/team', eventEntry.operatedBy?.id ]" >{{eventEntry.operatedBy?.name}}</a>
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="motorsportsDatabaseApp.eventEntry.home.title">Event Entries</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-event-entry" [routerLink]="['/event-entry/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEntry.home.createLabel">
+            Create a new Event Entry
+            </span>
+        </button>
+    </h2>
+    <jhi-alert-error></jhi-alert-error>
+    <jhi-alert></jhi-alert>
+    <div class="row">
+        <div class="col-sm-12">
+            <form name="searchForm" class="form-inline">
+                <div class="input-group w-100 mt-3">
+                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.eventEntry.home.search' | translate }}">
+                    <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                        <fa-icon [icon]="'search'"></fa-icon>
+                    </button>
+                    <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                        <fa-icon [icon]="'trash-alt'"></fa-icon>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br/>
+    <div class="alert alert-warning" *ngIf="eventEntries?.length === 0">
+        <span jhiTranslate="motorsportsDatabaseApp.eventEntry.home.notFound">No eventEntries found</span>
+    </div>
+    <div class="table-responsive" *ngIf="eventEntries?.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
+            <thead>
+            <tr>
+            <th scope="col" ><span jhiTranslate="global.field.id">ID</span></th>
+            <th scope="col" ><span jhiTranslate="motorsportsDatabaseApp.eventEntry.teamName">Team Name</span></th>
+            <th scope="col" ><span jhiTranslate="motorsportsDatabaseApp.eventEntry.car">Car</span></th>
+            <th scope="col" ><span jhiTranslate="motorsportsDatabaseApp.eventEntry.driver">Driver</span></th>
+            <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let eventEntry of eventEntries ;trackBy: trackId">
+                <td><a [routerLink]="['/event-entry', eventEntry.id, 'view' ]">{{eventEntry.id}}</a></td>
+                <td>{{eventEntry.teamName}}</td>
+                <td>
+                    <div *ngIf="eventEntry.car">
+                        <a [routerLink]="['/car', eventEntry.car?.id, 'view' ]" >{{eventEntry.car?.id}}</a>
                     </div>
-				</div>
-				<div class="col-md-3">
-                    <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.tyres">Tyres</span></label>
-					<div *ngIf="eventEntry.tyres?.logoUrl">
-                        <a [routerLink]="['/tyre-provider', eventEntry.tyres?.id ]" >
-                        	<img [src]="eventEntry.tyres?.logoUrl" class="img-fluid" alt="tyres logo"/>
-                        </a>
-                    </div></br>
-                    <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.fuel">Fuel</span></label>
-					<div *ngIf="eventEntry.fuel">
-                        <a [routerLink]="['/fuel-provider', eventEntry.fuel?.id ]" >
-                        	<img [src]="eventEntry.fuel?.logoUrl" class="img-fluid" alt="fuel logo"/>
-                        </a>
-                    </div></br>
-                    <label *ngIf="eventEdition.allowedCategories.length != 1"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category">Category</span></label>
-					<div *ngIf="eventEdition.allowedCategories.length != 1">
-                        {{eventEntry.category.shortname}}
+                </td>
+                <td>
+                    <div *ngIf="eventEntry.driver">
+                        <a [routerLink]="['/driver', eventEntry.driver?.id, 'view' ]" >{{eventEntry.driver?.id}}</a>
                     </div>
-				</div>
-				<div class="col-md-6">
-					<div *ngIf="!eventEntry.eventEdition.multidriver">
-						<img *ngIf="eventEntry.drivers[0].faceUrl" [src]="getBigFaceUrl(eventEntry.drivers[0].portraitUrl)"/>
-					</div>
-					<div *ngIf="eventEntry.eventEdition.multidriver">
-						<div class="row">
-		            		<div class="col-md-2" *ngFor="let driver of eventEntry.drivers">
-		            			<figure class="figure">
-								  <img *ngIf="driver.faceUrl" [src]="getSmallFaceUrl(driver.portraitUrl)" alt="{{driver.fullName}}"/>
-								  <img *ngIf="!driver.faceUrl" 
-								  	[src]="getSmallFaceUrl('https://res.cloudinary.com/msdb-cloud/image/upload/v1518113603/generic.png')" alt="{{driver.fullName}}"/>
-								  <figcaption class="figure-caption text-center">{{driver.surname}}</figcaption>
-								</figure>
-		            		</div>
-		            	</div>
-					</div>
-				</div>
-			</div>
-		</ng-container>
-	</div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group">
+                        <button type="submit"
+                                [routerLink]="['/event-entry', eventEntry.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/event-entry', eventEntry.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/event-entry', { outlets: { popup: eventEntry.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
-
-<button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-   	class="btn btn-success float-right" [routerLink]="['/', { outlets: { popup: eventEdition.id + '/copy-entries' } }]">
-    <span class="fa fa-plus"></span>
-    <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.copyEntries.copyLabel">
-    Create new Event Entry
-    </span>
-</button>
-<button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-   	class="btn btn-primary float-right create-event-entry" [routerLink]="['/', { outlets: { popup: eventEdition.id + '/event-entry-new' } }]">
-    <span class="fa fa-plus"></span>
-    <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.addLabel">
-    Create new Event Entry
-    </span>
-</button>

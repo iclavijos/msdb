@@ -1,29 +1,30 @@
 {
-    "motorsportsDatabaseApp": {
-        "chassis" : {
-             "home": {
-                "title": "Chasis",
-                "createLabel": "Crear un nuevo chasis",
-                "createOrEditLabel": "Crea o edita un chasis",
-                "search": "Buscar chasis"
-            },
-            "created": "Se ha creado un chasis",
-            "updated": "Se ha actualizado el chasis",
-            "deleted": "Se ha borrado el chasis",
-            "delete": {
-                "question": "¿Está seguro que quiere borrar el chasis?"
-            },
-            "detail": {
-                "title": "Chasis"
-            },
-            "name": "Nombre",
-            "manufacturer": "Fabricante",
-            "debutYear": "Año debut",
-            "evolutions": "Evoluciones",
-            "derivedFrom": "Derivado de",
-            "rebranded": "¿Renombrado?",
-            "rebrandedTooltip": "Si está marcado, este chasis es el mismo que el antiguo pero sólo se ha cambiado el nombre",
-            "image": "Imagen"
-        }
+  "motorsportsDatabaseApp": {
+    "chassis": {
+      "home": {
+        "title": "Chasis",
+        "createLabel": "Crear un nuevo chasis",
+        "createOrEditLabel": "Crea o edita un chasis",
+        "search": "Buscar chasis",
+        "notFound": "Ningún chasis encontrado"
+      },
+      "created": "Se ha creado un chasis",
+      "updated": "Se ha actualizado el chasis",
+      "deleted": "Se ha borrado el chasis",
+      "delete": {
+        "question": "¿Está seguro que quiere borrar el chasis?"
+      },
+      "detail": {
+        "title": "Chasis"
+      },
+      "name": "Nombre",
+      "manufacturer": "Fabricante",
+      "debutYear": "Año debut",
+      "evolutions": "Evoluciones",
+      "derivedFrom": "Derivado de",
+      "rebranded": "¿Renombrado?",
+      "rebrandedTooltip": "Si está marcado, este chasis es el mismo que el antiguo pero sólo se ha cambiado el nombre",
+      "image": "Imagen"
     }
+  }
 }

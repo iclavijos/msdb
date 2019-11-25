@@ -1,56 +1,18 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSeriesEditionModule } from '../series-edition/series-edition.module';
-import { MotorsportsDatabaseSharedModule } from '../../shared';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { SeriesComponent } from './series.component';
+import { SeriesDetailComponent } from './series-detail.component';
+import { SeriesUpdateComponent } from './series-update.component';
+import { SeriesDeletePopupComponent, SeriesDeleteDialogComponent } from './series-delete-dialog.component';
+import { seriesRoute, seriesPopupRoute } from './series.route';
 
-import {
-    SeriesService,
-    SeriesPopupService,
-    SeriesComponent,
-    SeriesDetailComponent,
-    SeriesDialogComponent,
-    SeriesPopupComponent,
-    SeriesDeletePopupComponent,
-    SeriesDeleteDialogComponent,
-    seriesRoute,
-    seriesPopupRoute,
-    SeriesResolvePagingParams,
-    SeriesEditionResolvePagingParams,
-} from './';
-
-let ENTITY_STATES = [
-    ...seriesRoute,
-    ...seriesPopupRoute,
-];
+const ENTITY_STATES = [...seriesRoute, ...seriesPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSeriesEditionModule,
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
-    declarations: [
-        SeriesComponent,
-        SeriesDetailComponent,
-        SeriesDialogComponent,
-        SeriesDeleteDialogComponent,
-        SeriesPopupComponent,
-        SeriesDeletePopupComponent,
-    ],
-    entryComponents: [
-        SeriesComponent,
-        SeriesDialogComponent,
-        SeriesPopupComponent,
-        SeriesDeleteDialogComponent,
-        SeriesDeletePopupComponent,
-    ],
-    providers: [
-        SeriesService,
-        SeriesPopupService,
-        SeriesResolvePagingParams,
-        SeriesEditionResolvePagingParams,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [SeriesComponent, SeriesDetailComponent, SeriesUpdateComponent, SeriesDeleteDialogComponent, SeriesDeletePopupComponent],
+  entryComponents: [SeriesDeleteDialogComponent]
 })
 export class MotorsportsDatabaseSeriesModule {}

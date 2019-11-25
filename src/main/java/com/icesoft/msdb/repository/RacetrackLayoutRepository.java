@@ -16,15 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.domain.RacetrackLayout;
 
 /**
- * Spring Data JPA repository for the RacetrackLayout entity.
+ * Spring Data  repository for the RacetrackLayout entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface RacetrackLayoutRepository extends JpaRepository<RacetrackLayout,Long> {
-	
+
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
 	@Query(value = "select r from RacetrackLayout r")
 	@Transactional(readOnly=true)
 	Stream<RacetrackLayout> streamAll();
-	
+
 	List<RacetrackLayout> findByRacetrackIdOrderByActiveDescYearFirstUseDescNameAsc(long racetrackId);
 }

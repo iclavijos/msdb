@@ -15,16 +15,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.domain.Racetrack;
 
 /**
- * Spring Data JPA repository for the Racetrack entity.
+ * Spring Data  repository for the Racetrack entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface RacetrackRepository extends JpaRepository<Racetrack,Long> {
-	
+
 	Racetrack findByName(String name);
 
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
 	@Query(value = "select r from Racetrack r")
 	@Transactional(readOnly=true)
 	Stream<Racetrack> streamAll();
-	
+
 }

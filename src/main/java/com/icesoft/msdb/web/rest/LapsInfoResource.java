@@ -3,6 +3,7 @@ package com.icesoft.msdb.web.rest;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.LapInfo;
 import com.icesoft.msdb.repository.SessionLapDataRepository;
 import com.icesoft.msdb.service.dto.DriverRaceStatisticsDTO;
@@ -51,7 +52,8 @@ public class LapsInfoResource {
 	@GetMapping("/event-sessions/{sessionId}/laps/averages")
     @Cacheable(cacheNames = "lapsAveragesCache")
     public ResponseEntity<List<DriverRaceStatisticsDTO>> getBestPerformers(@PathVariable Long sessionId) {
-        SessionLapData sld = repo.findOne(sessionId.toString());
+        SessionLapData sld = repo.findById(sessionId.toString())
+            .orElseThrow(() -> new MSDBException("Invalid event session id " + sessionId));
 	    return ResponseEntity.ok(
 	        sld.getLapsPerDriver().parallelStream().map(DriverRaceStatisticsDTO::new).collect(Collectors.toList()));
     }
@@ -59,7 +61,8 @@ public class LapsInfoResource {
     @GetMapping("/event-sessions/{sessionId}/positions")
     @Cacheable(cacheNames = "positionsCache")
     public ResponseEntity<List<RacePositionsDTO>> getPositions(@PathVariable Long sessionId) {
-        SessionLapData sld = repo.findOne(sessionId.toString());
+        SessionLapData sld = repo.findById(sessionId.toString())
+            .orElseThrow(() -> new MSDBException("Invalid event session id " + sessionId));
         List<RacePositionsDTO> result = new ArrayList<>();
         List<String> posLap0 = resultsRepo.findBySessionIdOrderByFinalPositionAsc(sessionId).stream()
             .sorted(Comparator.comparing(r -> Optional.ofNullable(r.getStartingPosition()).orElse(901)))

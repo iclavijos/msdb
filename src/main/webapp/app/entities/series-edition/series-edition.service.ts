@@ -1,172 +1,44 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-import { SERVER_API_URL } from '../../app.constants';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { SeriesEdition } from './series-edition.model';
-import { ResponseWrapper, createRequestOption } from '../../shared';
+import { SERVER_API_URL } from 'app/app.constants';
+import { createRequestOption } from 'app/shared/util/request-util';
+import { ISeriesEdition } from 'app/shared/model/series-edition.model';
 
-@Injectable()
+type EntityResponseType = HttpResponse<ISeriesEdition>;
+type EntityArrayResponseType = HttpResponse<ISeriesEdition[]>;
+
+@Injectable({ providedIn: 'root' })
 export class SeriesEditionService {
+  public resourceUrl = SERVER_API_URL + 'api/series-editions';
+  public resourceSearchUrl = SERVER_API_URL + 'api/_search/series-editions';
 
-    private resourceUrl = SERVER_API_URL + 'api/series-editions';
-    private resourceSearchUrl = SERVER_API_URL + 'api/_search/series-editions';
+  constructor(protected http: HttpClient) {}
 
-    private seriesEdCache: SeriesEdition;
-    private cachedId = 0;
+  create(seriesEdition: ISeriesEdition): Observable<EntityResponseType> {
+    return this.http.post<ISeriesEdition>(this.resourceUrl, seriesEdition, { observe: 'response' });
+  }
 
-    constructor(private http: Http) { }
+  update(seriesEdition: ISeriesEdition): Observable<EntityResponseType> {
+    return this.http.put<ISeriesEdition>(this.resourceUrl, seriesEdition, { observe: 'response' });
+  }
 
-    create(seriesEdition: SeriesEdition): Observable<SeriesEdition> {
-        const copy = this.convert(seriesEdition);
-        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
-    }
+  find(id: number): Observable<EntityResponseType> {
+    return this.http.get<ISeriesEdition>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
 
-    update(seriesEdition: SeriesEdition): Observable<SeriesEdition> {
-        const copy = this.convert(seriesEdition);
-        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
-    }
+  query(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<ISeriesEdition[]>(this.resourceUrl, { params: options, observe: 'response' });
+  }
 
-    find(id: number): Observable<SeriesEdition> {
-        if (id === this.cachedId) {
-            return Observable.of(this.seriesEdCache);
-        }
-        return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            this.seriesEdCache = res.json();
-            this.cachedId = id;
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
-    }
+  delete(id: number): Observable<HttpResponse<any>> {
+    return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
 
-    findEvents(id: number): Observable<Response> {
-        return this.http.get(`${this.resourceUrl}/${id}/events`).map((res: Response) => {
-            return res;
-        });
-    }
-
-    findDriversStandings(id: number): Observable<Response> {
-        return this.http.get(`${this.resourceUrl}/${id}/standings/drivers`).map((res: Response) => {
-            return res;
-        });
-    }
-
-    findTeamsStandings(id: number): Observable<Response> {
-        return this.http.get(`${this.resourceUrl}/${id}/standings/teams`).map((res: Response) => {
-            return res;
-        });
-    }
-
-    findManufacturersStandings(id: number): Observable<Response> {
-        return this.http.get(`${this.resourceUrl}/${id}/standings/manufacturers`).map((res: Response) => {
-            return res;
-        });
-    }
-
-    findDriversChampions(id: number): Observable<Response> {
-        return this.http.get(`${this.resourceUrl}/${id}/champions/drivers`).map((res: Response) => {
-            return res;
-        });
-    }
-
-    findTeamsChampions(id: number): Observable<Response> {
-        return this.http.get(`${this.resourceUrl}/${id}/champions/teams`).map((res: Response) => {
-            return res;
-        });
-    }
-
-    findDriversResultsByRace(id: number, category: string): Observable<Response> {
-        return this.http.get(`${this.resourceUrl}/${id}/results/${category}`).map((res: Response) => {
-            return res;
-        });
-    }
-
-    findDriversPointsByRace(id: number, category: string): Observable<Response> {
-        return this.http.get(`${this.resourceUrl}/${id}/points/${category}`).map((res: Response) => {
-            return res;
-        });
-    }
-
-    addEventToSeries(seriesId: number, eventId: number, racesData: any): Observable<Response> {
-        return this.http.post(`${this.resourceUrl}/${seriesId}/events/${eventId}`, racesData).map((res: Response) => {
-           return res;
-        });
-    }
-
-    removeEventFromSeries(seriesId: number, eventId: number): Observable<Response> {
-        return this.http.delete(`${this.resourceUrl}/${seriesId}/events/${eventId}`).map((res: Response) => {
-           return res;
-        });
-    }
-
-    clone(seriesEditionId: number, newPeriod: string): Observable<Response> {
-    	return this.http.post(`${this.resourceUrl}/${seriesEditionId}/clone`, newPeriod).map((res: Response) => {
-           return res;
-        });
-    }
-
-    updateStandings(seriesId: number): Observable<Response> {
-        return this.http.post(`${this.resourceUrl}/${seriesId}/standings`, null).map((res: Response) => {
-            return res;
-         });
-    }
-
-    setDriversChampions(seriesEditionId: number, selectedDriversId: any) {
-    	return this.http.post(`${this.resourceUrl}/${seriesEditionId}/champions/drivers`, selectedDriversId).map((res: Response) => {
-    		return res;
-    	});
-    }
-
-    setTeamsChampions(seriesEditionId: number, selectedTeamsId: any) {
-    	return this.http.post(`${this.resourceUrl}/${seriesEditionId}/champions/teams`, selectedTeamsId).map((res: Response) => {
-    		return res;
-    	});
-    }
-
-    query(seriesId: number, req?: any): Observable<ResponseWrapper> {
-        const options = createRequestOption(req);
-        return this.http.get(`api/series/${seriesId}/editions`, options)
-            .map((res: any) => this.convertResponse(res));
-    }
-
-    delete(id: number): Observable<Response> {
-        return this.http.delete(`${this.resourceUrl}/${id}`);
-    }
-
-    search(req?: any): Observable<ResponseWrapper> {
-        const options = createRequestOption(req);
-        return this.http.get(this.resourceSearchUrl, options)
-            .map((res: any) => this.convertResponse(res));
-    }
-
-    private convertResponse(res: Response): ResponseWrapper {
-        const jsonResponse = res.json();
-        const result = [];
-        for (let i = 0; i < jsonResponse.length; i++) {
-            result.push(this.convertItemFromServer(jsonResponse[i]));
-        }
-        return new ResponseWrapper(res.headers, result, res.status);
-    }
-
-    /**
-     * Convert a returned JSON object to SeriesEdition.
-     */
-    private convertItemFromServer(json: any): SeriesEdition {
-        const entity: SeriesEdition = Object.assign(new SeriesEdition(), json);
-        return entity;
-    }
-
-    /**
-     * Convert a SeriesEdition to a JSON which can be sent to the server.
-     */
-    private convert(seriesEdition: SeriesEdition): SeriesEdition {
-        const copy: SeriesEdition = Object.assign({}, seriesEdition);
-        return copy;
-    }
+  search(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<ISeriesEdition[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
+  }
 }

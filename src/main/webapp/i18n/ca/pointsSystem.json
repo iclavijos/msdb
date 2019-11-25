@@ -1,34 +1,35 @@
 {
-    "motorsportsDatabaseApp": {
-        "pointsSystem" : {
-            "home": {
-                "title": "Sistemes de puntuació",
-                "createLabel": "Crea nou sistema de puntuació",
-                "createOrEditLabel": "Crea o edita sistema de puntuació",
-                "search": "Cerca sistemes de puntuació"
-            },
-            "created": "S'ha definit un nou sistema de puntuació",
-            "updated": "S'ha actualitzat el sistema de puntuació",
-            "deleted": "S'ha esborrat el sistema de puntuació",
-            "delete": {
-                "question": "Està segur que vol esborrar el sistema de puntuació?"
-            },
-            "detail": {
-                "title": "Sistema de puntuació"
-            },
-            "name": "Nom",
-            "description": "Descripció",
-            "points": "Punts",
-            "pointsMostLeadLaps": "Punts més voltes liderades",
-            "pointsFastLap": "Punts volta ràpida",
-            "pointsPole": "Punts Pole",
-            "pointsLeadLap": "Punts per liderar",
-            "active": "Actiu?",
-            "pointsFastLapAwardedIf": "Otorgar punts per volta ràpida si: ",
-            "maxFinishinPositionFL": "Posició final màxima",
-            "pitlaneStartAllowed": "S''otorgan si ha començat des del pitlane?",
-            "racePctCompletion": "Si menys del % de voltes completades",
-            "pointsPct": "% de punts otorgats"
-        }
+  "motorsportsDatabaseApp": {
+    "pointsSystem": {
+      "home": {
+        "title": "Sistemes de puntuació",
+        "createLabel": "Crea nou sistema de puntuació",
+        "createOrEditLabel": "Crea o edita sistema de puntuació",
+        "search": "Cerca sistemes de puntuació",
+        "notFound": "No s'ha trobat cap sistema de puntuació"
+      },
+      "created": "S'ha definit un nou sistema de puntuació",
+      "updated": "S'ha actualitzat el sistema de puntuació",
+      "deleted": "S'ha esborrat el sistema de puntuació",
+      "delete": {
+        "question": "Està segur que vol esborrar el sistema de puntuació?"
+      },
+      "detail": {
+        "title": "Sistema de puntuació"
+      },
+      "name": "Nom",
+      "description": "Descripció",
+      "points": "Punts",
+      "pointsMostLeadLaps": "Punts més voltes liderades",
+      "pointsFastLap": "Punts volta ràpida",
+      "pointsPole": "Punts Pole",
+      "pointsLeadLap": "Punts per liderar",
+      "active": "Actiu?",
+      "pointsFastLapAwardedIf": "Otorgar punts per volta ràpida si: ",
+      "maxFinishinPositionFL": "Posició final màxima",
+      "pitlaneStartAllowed": "S''otorgan si ha començat des del pitlane?",
+      "racePctCompletion": "Si menys del % de voltes completades",
+      "pointsPct": "% de punts otorgats"
     }
+  }
 }

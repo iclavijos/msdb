@@ -1,52 +1,88 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
+import { HttpResponse } from '@angular/common/http';
+import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { EventSession } from 'app/shared/model/event-session.model';
+import { EventSessionService } from './event-session.service';
 import { EventSessionComponent } from './event-session.component';
-import { EventSessionPopupComponent } from './event-session-dialog.component';
+import { EventSessionDetailComponent } from './event-session-detail.component';
+import { EventSessionUpdateComponent } from './event-session-update.component';
 import { EventSessionDeletePopupComponent } from './event-session-delete-dialog.component';
+import { IEventSession } from 'app/shared/model/event-session.model';
+
+@Injectable({ providedIn: 'root' })
+export class EventSessionResolve implements Resolve<IEventSession> {
+  constructor(private service: EventSessionService) {}
+
+  resolve(route: ActivatedRouteSnapshot): Observable<IEventSession> {
+    const id = route.params['id'];
+    if (id) {
+      return this.service.find(id).pipe(map((eventSession: HttpResponse<EventSession>) => eventSession.body));
+    }
+    return of(new EventSession());
+  }
+}
 
 export const eventSessionRoute: Routes = [
-    {
-        path: 'event-session',
-        component: EventSessionComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
-        },
-        canActivate: [UserRouteAccessService]
-    }
+  {
+    path: '',
+    component: EventSessionComponent,
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id/view',
+    component: EventSessionDetailComponent,
+    resolve: {
+      eventSession: EventSessionResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'new',
+    component: EventSessionUpdateComponent,
+    resolve: {
+      eventSession: EventSessionResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id/edit',
+    component: EventSessionUpdateComponent,
+    resolve: {
+      eventSession: EventSessionResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  }
 ];
 
 export const eventSessionPopupRoute: Routes = [
   {
-    path: ':idEdition/event-session-new',
-    component: EventSessionPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
-    },
-    canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  },
-  {
-    path: ':idEdition/event-session/:id/edit',
-    component: EventSessionPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
-    },
-    canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  },
-  {
-    path: ':idEdition/event-session/:id/delete',
+    path: ':id/delete',
     component: EventSessionDeletePopupComponent,
+    resolve: {
+      eventSession: EventSessionResolve
+    },
     data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.eventSession.home.title'
     },
     canActivate: [UserRouteAccessService],
     outlet: 'popup'

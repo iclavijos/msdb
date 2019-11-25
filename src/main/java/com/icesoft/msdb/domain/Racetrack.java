@@ -1,12 +1,12 @@
 package com.icesoft.msdb.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
-
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "racetrack")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "racetrack")
 public class Racetrack extends AbstractAuditingEntity implements Serializable {
 
@@ -25,6 +25,7 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -36,24 +37,24 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
     @Size(max = 100)
     @Column(name = "location", length = 100, nullable = false)
     private String location;
-    
+
     @NotNull
     @Size(max = 2)
     @Column(name = "country_code", length = 2, nullable = false)
     private String countryCode;
-    
+
     @Column(name= "time_zone")
     private String timeZone;
 
     @Transient
     private byte[] logo;
-    
+
     @Column(name = "logo_url")
     private String logoUrl;
 
     @OneToMany(mappedBy = "racetrack")
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<RacetrackLayout> layouts = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -94,7 +95,7 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
     public String getCountryCode() {
 		return countryCode;
 	}
-    
+
     public Racetrack countryCode(String countryCode) {
     	this.countryCode = countryCode;
     	return this;
@@ -128,12 +129,12 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
     public String getLogoUrl() {
     	return logoUrl;
     }
-    
+
     public Racetrack logoUrl(String logoUrl) {
     	this.logoUrl = logoUrl;
     	return this;
     }
-    
+
     public void setLogoUrl(String logoUrl) {
     	this.logoUrl = logoUrl;
     }
@@ -169,14 +170,10 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Racetrack)) {
             return false;
         }
-        Racetrack racetrack = (Racetrack) o;
-        if (racetrack.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), racetrack.getId());
+        return id != null && id.equals(((Racetrack) o).id);
     }
 
     @Override

@@ -1,28 +1,29 @@
 {
-    "motorsportsDatabaseApp": {
-        "tyreProvider" : {
-            "home": {
-                "title": "Proveedores neumáticos",
-                "createLabel": "Crear nuevo proveedor",
-                "createOrEditLabel": "Crear o editar proveedor",
-                "search": "Buscar proveedores"
-            },
-            "created": "Se ha añadido el proveedor {{ param }}",
-            "updated": "Se ha editado el proveedor {{ param }}",
-            "deleted": "Se ha eliminado el proveedor {{ param }}",
-            "delete": {
-                "question": "¿Seguro que quiere eliminar al proveedor {{ id }}?"
-            },
-            "detail": {
-                "title": "Proveedor de neumáticos"
-            },
-            "name": "Nombre",
-            "logo": "Logo",
-            "symbol": {
-                "symbol": "Símbolo",
-                "letterColor": "Color de la letra",
-                "backgroundColor": "Color de fondo"
-            }
-        }
+  "motorsportsDatabaseApp": {
+    "tyreProvider": {
+      "home": {
+        "title": "Proveedores neumáticos",
+        "createLabel": "Crear nuevo proveedor",
+        "createOrEditLabel": "Crear o editar proveedor",
+        "search": "Buscar proveedores",
+        "notFound": "Ningún proveedor encontrado"
+      },
+      "created": "Se ha añadido el proveedor {{ param }}",
+      "updated": "Se ha editado el proveedor {{ param }}",
+      "deleted": "Se ha eliminado el proveedor {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar al proveedor {{ id }}?"
+      },
+      "detail": {
+        "title": "Proveedor de neumáticos"
+      },
+      "name": "Nombre",
+      "logo": "Logo",
+      "symbol": {
+        "symbol": "Símbolo",
+        "letterColor": "Color de la letra",
+        "backgroundColor": "Color de fondo"
+      }
     }
+  }
 }

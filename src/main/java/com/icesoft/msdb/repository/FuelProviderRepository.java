@@ -15,8 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.domain.FuelProvider;
 
 /**
- * Spring Data JPA repository for the FuelProvider entity.
+ * Spring Data  repository for the FuelProvider entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface FuelProviderRepository extends JpaRepository<FuelProvider,Long> {
 

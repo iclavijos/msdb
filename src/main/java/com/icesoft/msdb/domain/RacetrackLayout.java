@@ -1,11 +1,12 @@
 package com.icesoft.msdb.domain;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -14,7 +15,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "racetrack_layout")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "racetracklayout")
 public class RacetrackLayout extends AbstractAuditingEntity implements Serializable {
 
@@ -22,6 +23,7 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -38,7 +40,7 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
 
     @Transient
     private byte[] layoutImage;
-    
+
     @Column
     private String layoutImageUrl;
 
@@ -108,12 +110,12 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
     public String getLayoutImageUrl() {
     	return layoutImageUrl;
     }
-    
+
     public RacetrackLayout layoutImageUrl(String layoutImageUrl) {
     	this.layoutImageUrl = layoutImageUrl;
     	return this;
     }
-    
+
     public void setLayoutImageUrl(String layoutImageUrl) {
     	this.layoutImageUrl = layoutImageUrl;
     }
@@ -150,14 +152,10 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof RacetrackLayout)) {
             return false;
         }
-        RacetrackLayout racetrackLayout = (RacetrackLayout) o;
-        if (racetrackLayout.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), racetrackLayout.getId());
+        return id != null && id.equals(((RacetrackLayout) o).id);
     }
 
     @Override
@@ -174,6 +172,6 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
             ", yearFirstUse='" + getYearFirstUse() + "'" +
             ", layoutImageUrl='" + getLayoutImageUrl() + "'" +
             ", active='" + isActive() + "'" +
-            '}';
+            "}";
     }
 }
