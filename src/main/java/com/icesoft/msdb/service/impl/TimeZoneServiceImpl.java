@@ -36,9 +36,4 @@ public class TimeZoneServiceImpl implements TimeZoneService {
             throw new MSDBException("Problems trying to retrieve geolocation information");
         }
     }
-
-    public static void main(String[] args) {
-        TimeZoneServiceImpl impl = new TimeZoneServiceImpl();
-        System.out.println(impl.getTimeZone("Marrakesh", "MA"));
-    }
 }
