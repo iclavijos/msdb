@@ -15,8 +15,6 @@ import { StateStorageService } from 'app/core/auth/state-storage.service';
 export class JhiMainComponent implements OnInit, OnDestroy {
   _cleanup: Subject<any> = new Subject<any>();
 
-  isSidebarCollapsed = false;
-
   constructor(
     private accountService: AccountService,
     private stateStorageService: StateStorageService,
@@ -66,16 +64,5 @@ export class JhiMainComponent implements OnInit, OnDestroy {
       this.stateStorageService.storeUrl(null);
       this.router.navigateByUrl(previousUrl);
     }
-
-    collapseSidebar() {
-        this.isSidebarCollapsed = true;
-    }
-
-    toggleSidebar() {
-        this.isSidebarCollapsed = !this.isSidebarCollapsed;
-    }
-
-    isAuthenticated() {
-        return this.principal.isAuthenticated();
-    }
+  }
 }

@@ -1,19 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { JhiLanguageService } from 'ng-jhipster';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Component({
-    selector: 'jhi-rebuild-indexes',
-    templateUrl: './rebuildIndexes.component.html'
+  selector: 'jhi-rebuild-indexes',
+  templateUrl: './rebuildIndexes.component.html'
 })
 export class JhiRebuildIndexesComponent implements OnInit {
-    constructor (
-        private jhiLanguageService: JhiLanguageService,
-        private http: Http
-    ) {
-    }
-    
-    ngOnInit() {
-        this.http.get('/management/indexes/rebuild').map((res: Response) => res.json()).subscribe();
-    }
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.http.get<any>('/management/indexes/rebuild').subscribe((res: HttpResponse<any>) => res.body);
+  }
 }

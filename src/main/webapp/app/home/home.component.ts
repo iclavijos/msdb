@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { LoginService } from 'app/core/login/login.service';
 import { AccountService } from 'app/core/auth/account.service';
@@ -25,20 +27,20 @@ export class HomeComponent implements OnInit {
   timezones: any;
   dates = new Set();
 
-  constructor(private accountService: AccountService, private loginService: LoginService) {}
+  constructor(
+    private accountService: AccountService,
+    private loginService: LoginService,
+    private router: Router,
+    private http: HttpClient
+  ) {}
 
   ngOnInit() {
     this.timezone = moment.tz.guess();
     if (this.timezone === undefined) {
       this.timezone = 'Europe/London';
     }
-    this.accountService.identity().subscribe((account: Account) => {
-      this.account = account;
-    });
-    this.registerAuthenticationSuccess();
-    this.http.get('api/home').subscribe((res: Response) => {
-      this.homeData = res.json();
-    });
+    this.http.get<any>('api/home').subscribe((res: HttpResponse<any>) => (this.homeData = res.body));
+
     this.http.get('api/home/calendar').subscribe((res: Response) => {
       this.calendar = this.convertData(res.json(), this.timezone);
       this.noEvents = this.calendar.length === 0;

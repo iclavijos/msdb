@@ -1,30 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 import { JhiAlertService } from 'ng-jhipster';
 
 @Component({
-    selector: 'jhi-rebuild-statistics',
-    templateUrl: './rebuildStatistics.component.html'
+  selector: 'jhi-rebuild-statistics',
+  templateUrl: './rebuildStatistics.component.html'
 })
 export class JhiRebuildStatisticsComponent implements OnInit {
-    
-    finished: boolean;
-    
-    constructor (
-        private http: Http,
-        private alertService: JhiAlertService
-    ) {
-    }
-    
-    ngOnInit() {
-        this.finished = false;
-        this.http.get('/management/stats/rebuild').map(
-                (res: Response) => this.finishedOk()).subscribe();
-    }
-    
-    private finishedOk() {
-        this.alertService.success('motorsportsDatabaseApp.stats.home.rebuilt', null, null);
-        this.finished = true;
-    }
+  finished: boolean;
+
+  constructor(private http: HttpClient, private alertService: JhiAlertService) {}
+
+  ngOnInit() {
+    this.finished = false;
+    this.http.get<any>('/management/stats/rebuild').subscribe((res: HttpResponse<any>) => this.finishedOk());
+  }
+
+  private finishedOk() {
+    this.alertService.success('motorsportsDatabaseApp.stats.home.rebuilt', null, null);
+    this.finished = true;
+  }
 }
