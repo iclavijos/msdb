@@ -5,6 +5,7 @@ import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.icesoft.msdb.MSDBException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -32,12 +33,12 @@ import com.icesoft.msdb.service.dto.EventEditionIdYearDTO;
 public class EventServiceImpl implements EventService {
 
     private final Logger log = LoggerFactory.getLogger(EventServiceImpl.class);
-    
+
     private final EventRepository eventRepository;
     private final EventEditionRepository eventEditionRepository;
     private final EventSearchRepository eventSearchRepo;
-    
-    public EventServiceImpl(EventRepository eventRepository, 
+
+    public EventServiceImpl(EventRepository eventRepository,
     			EventEditionRepository eventEditionRepository,
     			EventSearchRepository eventSearchRepo) {
     	this.eventRepository = eventRepository;
@@ -48,7 +49,7 @@ public class EventServiceImpl implements EventService {
     /**
      * Save a racetrack.
      *
-     * @param racetrack the entity to save
+     * @param event the entity to save
      * @return the persisted entity
      */
     @Override
@@ -61,7 +62,7 @@ public class EventServiceImpl implements EventService {
 
     /**
      *  Get all the racetracks.
-     *  
+     *
      *  @param pageable the pagination information
      *  @return the list of entities
      */
@@ -83,8 +84,8 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     public Event findOne(Long id) {
         log.debug("Request to get Event : {}", id);
-        Event event = eventRepository.findOne(id);
-        return event;
+        return eventRepository.findById(id)
+            .orElseThrow(() -> new MSDBException("Invalid event id " + id));
     }
 
     /**
@@ -95,20 +96,20 @@ public class EventServiceImpl implements EventService {
     @Override
     public void delete(Long id) {
         log.debug("Request to delete Event : {}", id);
-        eventRepository.delete(id);
-        eventSearchRepo.delete(id);
+        eventRepository.deleteById(id);
+        eventSearchRepo.deleteById(id);
     }
-    
+
     @Override
     public Page<Event> search(String query, Pageable pageable) {
     	QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
     			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
     				.analyzeWildcard(true)
     				.field("name"));
-    	
+
     	return eventSearchRepo.search(queryBuilder, pageable);
     }
-    
+
     @Override
     public Page<EventEdition> findEventEditions(Long idEvent, Pageable pageable) {
     	Page<EventEdition> result = eventEditionRepository.findByEventIdOrderByEditionYearDesc(idEvent, pageable);

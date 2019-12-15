@@ -48,7 +48,7 @@ public class ResultsService {
 
 	@Transactional(readOnly = false)
 	public void processSessionResults(Long sessionId) {
-		EventSession session = sessionRepo.findOne(sessionId);
+		EventSession session = sessionRepo.findById(sessionId).get();
 
 		for(PointsSystemSession pss: session.getPointsSystemsSession()) {
 			List<DriverEventPoints> drivers = new ArrayList<>();
@@ -344,7 +344,7 @@ public class ResultsService {
 	}
 
 	public String[][] getResultsRaceByRace(Long seriesEditionId, String category) {
-		SeriesEdition seriesEdition = seriesEdRepository.findOne(seriesEditionId);
+		SeriesEdition seriesEdition = seriesEdRepository.findById(seriesEditionId).get();
 		List<EventSession> races = sessionRepo.findRacesInSeries(seriesEdition);
 		List<DriverPointsDTO> dpd = getDriversStandings(seriesEditionId); //We use this as returned data is ordered by scored points
         dpd = dpd.stream().filter(d -> d.getCategory() == null ? true : d.getCategory().equals(category)).collect(Collectors.toList());

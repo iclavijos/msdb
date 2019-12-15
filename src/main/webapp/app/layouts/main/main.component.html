@@ -1,8 +1,11 @@
-<router-outlet name="navbar"></router-outlet>
-<div class="content-wrapper">
-	<div class="container-fluid">
-		<router-outlet></router-outlet>
-		<router-outlet name="popup"></router-outlet>
-	</div>
+<div class="wrapper">
+    <div class="sidebar" data-color="danger" data-background-color="white" data-image="/assets/img/sidebar-1.jpg">
+        <jhi-sidebar></jhi-sidebar>
+        <div class="sidebar-background" style="background-image: url(./assets/img/sidebar-4.jpg)"></div>
+    </div>
+    <div class="main-panel">
+        <jhi-navbar></jhi-navbar>
+        <router-outlet></router-outlet>
+        <jhi-footer></jhi-footer>
+    </div>
 </div>
-<jhi-footer></jhi-footer>

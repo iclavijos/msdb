@@ -5,8 +5,19 @@ import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
 import { HOME_ROUTE } from './home.route';
 import { HomeComponent } from './home.component';
 
+import { MatButtonModule, MatInputModule, MatRippleModule, MatFormFieldModule, MatTooltipModule, MatSelectModule } from '@angular/material';
+
 @NgModule({
-  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild([HOME_ROUTE])],
+  imports: [
+    MatButtonModule,
+    MatRippleModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatTooltipModule,
+    MotorsportsDatabaseSharedModule,
+    RouterModule.forChild([HOME_ROUTE])
+  ],
   declarations: [HomeComponent]
 })
 export class MotorsportsDatabaseHomeModule {}

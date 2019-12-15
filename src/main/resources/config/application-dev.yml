@@ -73,6 +73,7 @@ spring:
       cluster-nodes: 127.0.0.1:9300
       properties:
         path:
+          home: build/elasticsearch
           logs: build/elasticsearch/log
           data: build/elasticsearch/data
   mail:
