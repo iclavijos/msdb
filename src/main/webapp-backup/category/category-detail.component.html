@@ -1,0 +1,40 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="category">
+            <h2><span jhiTranslate="motorsportsDatabaseApp.category.detail.title">Category</span> {{category.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="motorsportsDatabaseApp.category.name">Name</span></dt>
+                <dd>
+                    <span>{{category.name}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.category.shortname">Shortname</span></dt>
+                <dd>
+                    <span>{{category.shortname}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.category.logo">Logo</span></dt>
+                <dd>
+                    <div *ngIf="category.logo">
+                        <a (click)="openFile(category.logoContentType, category.logo)">
+                            <img [src]="'data:' + category.logoContentType + ';base64,' + category.logo" style="max-width: 100%;" alt="category image"/>
+                        </a>
+                        {{category.logoContentType}}, {{byteSize(category.logo)}}
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/category', category.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="racetrack">
+            <h2><span jhiTranslate="motorsportsDatabaseApp.racetrack.detail.title">Racetrack</span> {{racetrack.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="motorsportsDatabaseApp.racetrack.name">Name</span></dt>
+                <dd>
+                    <span>{{racetrack.name}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.racetrack.location">Location</span></dt>
+                <dd>
+                    <span>{{racetrack.location}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.racetrack.logo">Logo</span></dt>
+                <dd>
+                    <div *ngIf="racetrack.logo">
+                        <a (click)="openFile(racetrack.logoContentType, racetrack.logo)">
+                            <img [src]="'data:' + racetrack.logoContentType + ';base64,' + racetrack.logo" style="max-width: 100%;" alt="racetrack image"/>
+                        </a>
+                        {{racetrack.logoContentType}}, {{byteSize(racetrack.logo)}}
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/racetrack', racetrack.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

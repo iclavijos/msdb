@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -34,11 +35,13 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
+    @Field(type = FieldType.Keyword)
     private String name;
 
     @NotNull
     @Size(max = 60)
     @Column(name = "surname", length = 60, nullable = false)
+    @Field(type = FieldType.Keyword)
     private String surname;
 
     @Column(name = "birth_date")

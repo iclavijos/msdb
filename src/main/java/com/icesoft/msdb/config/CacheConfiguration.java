@@ -104,6 +104,7 @@ public class CacheConfiguration {
             createCache(cm, "lapsDriversCache", longLivedCacheConfiguration);
             createCache(cm, "lapsAveragesCache", longLivedCacheConfiguration);
             createCache(cm, "positionsCache", longLivedCacheConfiguration);
+            createCache(cm, "racetrackLayoutsCache", longLivedCacheConfiguration);
 
             createCache(cm, "winnersCache", alwaysCacheConfiguration);
         };

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+
+import { SERVER_API_URL } from 'app/app.constants';
 
 import { JhiAlertService } from 'ng-jhipster';
 
@@ -15,7 +16,8 @@ export class JhiRebuildStatisticsComponent implements OnInit {
 
   ngOnInit() {
     this.finished = false;
-    this.http.get<any>('/management/stats/rebuild').subscribe((res: HttpResponse<any>) => this.finishedOk());
+
+    this.http.get<any>(SERVER_API_URL + '/management/stats/rebuild', { observe: 'response' }).subscribe(() => this.finishedOk());
   }
 
   private finishedOk() {

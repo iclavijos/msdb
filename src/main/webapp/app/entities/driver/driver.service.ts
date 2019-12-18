@@ -17,7 +17,7 @@ type EntityArrayResponseType = HttpResponse<IDriver[]>;
 export class DriverService {
   public resourceUrl = SERVER_API_URL + 'api/drivers';
   public resourceSearchUrl = SERVER_API_URL + 'api/_search/drivers';
-  public statsSearchUrl = SERVER_API_URL + 'api/stats/drivers/${id}';
+  public statsSearchUrl = SERVER_API_URL + 'api/stats/drivers';
 
   constructor(protected http: HttpClient) {}
 
@@ -60,15 +60,15 @@ export class DriverService {
   }
 
   getStats(id: number): Observable<HttpResponse<any>> {
-    return this.http.get<any>(`${this.statsSearchUrl}`, { observe: 'response' });
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}`, { observe: 'response' });
   }
 
   getStatsYear(id: number, year: number): Observable<HttpResponse<any>> {
-    return this.http.get<any>(`${this.statsSearchUrl}/${year}`, { observe: 'response' });
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}/${year}`, { observe: 'response' });
   }
 
   getYears(id: number): Observable<HttpResponse<any>> {
-    return this.http.get<any>(`${this.statsSearchUrl}/years`, { observe: 'response' });
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}/years`, { observe: 'response' });
   }
 
   searchCountries(query?: any): Observable<EntityArrayResponseType> {

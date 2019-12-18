@@ -3,6 +3,15 @@ import { ROUTES } from '../sidebar/sidebar.component';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 
+import { JhiLanguageService } from 'ng-jhipster';
+import { SessionStorageService } from 'ngx-webstorage';
+
+import { VERSION } from 'app/app.constants';
+import { JhiLanguageHelper } from 'app/core/language/language.helper';
+import { AccountService } from 'app/core/auth/account.service';
+import { LoginService } from 'app/core/login/login.service';
+import { ProfileService } from 'app/layouts/profiles/profile.service';
+
 @Component({
   selector: 'jhi-navbar',
   templateUrl: './navbar.component.html'
@@ -14,13 +23,35 @@ export class NavbarComponent implements OnInit {
   private toggleButton: any;
   private sidebarVisible: boolean;
   private $layer: any;
+  inProduction: boolean;
+  languages: any[];
+  swaggerEnabled: boolean;
+  version: string;
 
-  constructor(location: Location, private element: ElementRef, private router: Router) {
+  constructor(
+    location: Location,
+    private element: ElementRef,
+    private loginService: LoginService,
+    private languageService: JhiLanguageService,
+    private languageHelper: JhiLanguageHelper,
+    private sessionStorage: SessionStorageService,
+    private accountService: AccountService,
+    private profileService: ProfileService,
+    private router: Router
+  ) {
     this.location = location;
     this.sidebarVisible = false;
+    this.version = VERSION ? (VERSION.toLowerCase().startsWith('v') ? VERSION : 'v' + VERSION) : '';
   }
 
   ngOnInit() {
+    this.languages = this.languageHelper.getAll();
+
+    this.profileService.getProfileInfo().subscribe(profileInfo => {
+      this.inProduction = profileInfo.inProduction;
+      this.swaggerEnabled = profileInfo.swaggerEnabled;
+    });
+
     this.listTitles = ROUTES.filter(listTitle => listTitle);
     const navbar: HTMLElement = this.element.nativeElement;
     this.toggleButton = navbar.getElementsByClassName('navbar-toggler')[0];
@@ -32,6 +63,28 @@ export class NavbarComponent implements OnInit {
         this.mobileMenuVisible = 0;
       }
     });
+  }
+
+  changeLanguage(languageKey: string) {
+    this.sessionStorage.store('locale', languageKey);
+    this.languageService.changeLanguage(languageKey);
+  }
+
+  isAuthenticated() {
+    return this.accountService.isAuthenticated();
+  }
+
+  login() {
+    this.loginService.login();
+  }
+
+  logout() {
+    this.loginService.logout();
+    this.router.navigate(['']);
+  }
+
+  getImageUrl() {
+    return this.isAuthenticated() ? this.accountService.getImageUrl() : null;
   }
 
   sidebarOpen() {

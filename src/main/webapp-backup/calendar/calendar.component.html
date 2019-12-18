@@ -1,0 +1,45 @@
+<div class="row">
+    <div class="col-xl-3 col-sm-3 mb-3">
+        {{ 'home.selectTimeZone' | translate }}
+    </div>
+    <div class="col-xl-8 col-sm-8 mb-8">
+        <select class="form-control" [(ngModel)]="timezone" id="field_timezone" name="switchTimezone" (change)="changeTimezone()">
+            <ng-template ngFor let-item [ngForOf]="timezones" let-currentIndex="index">
+                <option [value]="item.zoneName">{{item.countryName}} ({{item.zoneName}} {{item.gmtOffset}})</option>
+            </ng-template>
+        </select>
+    </div>
+</div>
+<p-schedule [events]="events" [header]="header" [eventLimit]="10" [editable]="false" 
+	[locale]="currentLocale" [options]="options" (onViewRender)="loadEvents($event)"
+	(onEventClick)="eventClick($event)"></p-schedule>
+	
+<p-dialog [header]="event?.title" [(visible)]="dialogVisible" [responsive]="true" showEffect="fade" [modal]="false" [contentStyle]="{'overflow':'visible'}"
+    [style]="{'overflow':'visible'}" [resizable]="false">
+    <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="event">
+    	<div class="ui-grid-row">
+            <div class="ui-grid-col-12" align="center">
+            	<img *ngIf="event.seriesLogoUrl" [src]="event.seriesLogoUrl" style="max-width: 400px" alt="series logo"/>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-2"><label for="vin">{{'motorsportsDatabaseApp.calendar.session' | translate}}</label></div>
+            <div class="ui-grid-col-10"><span>{{event.sessionName}}</span></div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-2"><label for="start">{{'motorsportsDatabaseApp.calendar.start' | translate}}</label></div>
+            <div class="ui-grid-col-10"><span>{{event.start}}</span></div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-2"><label for="end">{{'motorsportsDatabaseApp.calendar.end' | translate}}</label></div>
+            <div class="ui-grid-col-10"><span>{{event.end}}</span></div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-12">
+            	<a [routerLink]="['/event-edition', event.id ]" >
+	               	<label for="Details">{{'motorsportsDatabaseApp.calendar.details' | translate}}</label>
+				</a>
+            </div>
+        </div>
+    </div>
+</p-dialog>

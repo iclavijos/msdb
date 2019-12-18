@@ -1,0 +1,143 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+            <h2 id="jhi-engine-heading" jhiTranslate="motorsportsDatabaseApp.engine.home.createOrEditLabel">Create or edit a Engine</h2>
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+                <div class="form-group" [hidden]="!editForm.get('id').value">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id" formControlName="id"
+                        readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.name" for="field_name">Name</label>
+                    <input type="text" class="form-control" name="name" id="field_name"
+                           formControlName="name"/>
+                    <div *ngIf="editForm.get('name').invalid && (editForm.get('name').dirty || editForm.get('name').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('name').errors.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('name').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 50 }">
+                        This field cannot be longer than 50 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.manufacturer" for="field_manufacturer">Manufacturer</label>
+                    <input type="text" class="form-control" name="manufacturer" id="field_manufacturer"
+                           formControlName="manufacturer"/>
+                    <div *ngIf="editForm.get('manufacturer').invalid && (editForm.get('manufacturer').dirty || editForm.get('manufacturer').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('manufacturer').errors.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('manufacturer').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 50 }">
+                        This field cannot be longer than 50 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.capacity" for="field_capacity">Capacity</label>
+                    <input type="number" class="form-control" name="capacity" id="field_capacity"
+                           formControlName="capacity"/>
+                    <div *ngIf="editForm.get('capacity').invalid && (editForm.get('capacity').dirty || editForm.get('capacity').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('capacity').errors.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('capacity')?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.architecture" for="field_architecture">Architecture</label>
+                    <input type="text" class="form-control" name="architecture" id="field_architecture"
+                           formControlName="architecture"/>
+                    <div *ngIf="editForm.get('architecture').invalid && (editForm.get('architecture').dirty || editForm.get('architecture').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('architecture').errors.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('architecture').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 10 }">
+                        This field cannot be longer than 10 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.debutYear" for="field_debutYear">Debut Year</label>
+                    <input type="number" class="form-control" name="debutYear" id="field_debutYear"
+                           formControlName="debutYear"/>
+                    <div *ngIf="editForm.get('debutYear').invalid && (editForm.get('debutYear').dirty || editForm.get('debutYear').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('debutYear').errors.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('debutYear')?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.petrolEngine" for="field_petrolEngine">Petrol Engine</label>
+                    <input type="checkbox" class="form-control" name="petrolEngine" id="field_petrolEngine"
+                           formControlName="petrolEngine"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.dieselEngine" for="field_dieselEngine">Diesel Engine</label>
+                    <input type="checkbox" class="form-control" name="dieselEngine" id="field_dieselEngine"
+                           formControlName="dieselEngine"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.electricEngine" for="field_electricEngine">Electric Engine</label>
+                    <input type="checkbox" class="form-control" name="electricEngine" id="field_electricEngine"
+                           formControlName="electricEngine"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.turbo" for="field_turbo">Turbo</label>
+                    <input type="checkbox" class="form-control" name="turbo" id="field_turbo"
+                           formControlName="turbo"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.image" for="field_image">Image</label>
+                    <div>
+                        <img [src]="'data:' + editForm.get('imageContentType').value + ';base64,' + editForm.get('image').value" style="max-height: 100px;" *ngIf="editForm.get('image').value" alt="engine image"/>
+                        <div *ngIf="editForm.get('image').value" class="form-text text-danger clearfix">
+                            <span class="pull-left">{{editForm.get('imageContentType').value}}, {{byteSize(editForm.get('image').value)}}</span>
+                            <button type="button" (click)="clearInputImage('image', 'imageContentType', 'fileImage')" class="btn btn-secondary btn-xs pull-right">
+                                <fa-icon [icon]="'times'"></fa-icon>
+                            </button>
+                        </div>
+                        <input type="file" id="file_image" (change)="setFileData($event, 'image', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                    </div>
+                    <input type="hidden" class="form-control" name="image" id="field_image"
+                           formControlName="image"/>
+                    <input type="hidden" class="form-control" name="imageContentType" id="field_imageContentType"
+                           formControlName="imageContentType" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.engine.derivedFrom" for="field_derivedFrom">Derived From</label>
+                    <select class="form-control" id="field_derivedFrom" name="derivedFrom" formControlName="derivedFrom">
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="engineOption.id === editForm.get('derivedFrom').value?.id ? editForm.get('derivedFrom').value : engineOption" *ngFor="let engineOption of engines; trackBy: trackEngineById">{{engineOption.id}}</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

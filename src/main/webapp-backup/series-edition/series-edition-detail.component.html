@@ -1,0 +1,51 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="seriesEdition">
+            <h2><span jhiTranslate="motorsportsDatabaseApp.seriesEdition.detail.title">Series Edition</span> {{seriesEdition.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="motorsportsDatabaseApp.seriesEdition.period">Period</span></dt>
+                <dd>
+                    <span>{{seriesEdition.period}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.seriesEdition.singleChassis">Single Chassis</span></dt>
+                <dd>
+                    <span>{{seriesEdition.singleChassis}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.seriesEdition.singleEngine">Single Engine</span></dt>
+                <dd>
+                    <span>{{seriesEdition.singleEngine}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.seriesEdition.singleTyre">Single Tyre</span></dt>
+                <dd>
+                    <span>{{seriesEdition.singleTyre}}</span>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.seriesEdition.allowedCategories">Allowed Categories</span></dt>
+                <dd>
+                    <div *ngIf="seriesEdition.allowedCategories">
+                        <a [routerLink]="['/category', seriesEdition.allowedCategories?.id, 'view']">{{seriesEdition.allowedCategories?.id}}</a>
+                    </div>
+                </dd>
+                <dt><span jhiTranslate="motorsportsDatabaseApp.seriesEdition.series">Series</span></dt>
+                <dd>
+                    <div *ngIf="seriesEdition.series">
+                        <a [routerLink]="['/series', seriesEdition.series?.id, 'view']">{{seriesEdition.series?.id}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/series-edition', seriesEdition.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

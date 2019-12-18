@@ -1,0 +1,14 @@
+<div *ngIf="races">
+    <div *ngIf="races.length === 1">
+        <jhi-race-data [sessionId]="races[0].id" [sessionName]="races[0].name">Race data</jhi-race-data>
+    </div>
+    <div *ngIf="races.length !== 1">
+        <ngb-tabset>
+            <ngb-tab *ngFor="let race of races" title="{{race.name}}">
+                <ng-template ngbTabContent>
+                    <jhi-race-data [sessionId]="race.id">Race data</jhi-race-data>
+                </ng-template>
+            </ngb-tab>
+        </ngb-tabset>
+    </div>
+</div>

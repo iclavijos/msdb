@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.repository.*;
+import com.icesoft.msdb.service.RacetrackService;
 import com.icesoft.msdb.service.SeriesEditionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.MSDBException;
-import com.icesoft.msdb.domain.Driver;
-import com.icesoft.msdb.domain.EventEdition;
-import com.icesoft.msdb.domain.EventEditionEntry;
-import com.icesoft.msdb.domain.EventEntryResult;
-import com.icesoft.msdb.domain.SeriesEdition;
-import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.domain.stats.ChassisStatistics;
 import com.icesoft.msdb.domain.stats.DriverStatistics;
@@ -58,6 +54,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 	private final TyreProviderStatisticsRepository tyreProvStatsRepo;
 	private final RacetrackLayoutStatisticsRepository racetrackLayoutStatsRepo;
 	private final SeriesCategoryDriverChampionRepository seriesCategoryDriverChampionRepo;
+    private final RacetrackService racetrackService;
 
 	public StatisticsServiceImpl(
 			EventEditionRepository eventEditionRepo,
@@ -70,7 +67,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 			EngineStatisticsRepository engineStatsRepo,
 			TyreProviderStatisticsRepository tyreProvStatsRepo,
 			RacetrackLayoutStatisticsRepository racetrackLayoutStatsRepo,
-            SeriesCategoryDriverChampionRepository seriesCategoryDriverChampionRepo) {
+            SeriesCategoryDriverChampionRepository seriesCategoryDriverChampionRepo,
+            RacetrackService racetrackService) {
 		this.eventEditionRepo = eventEditionRepo;
 		this.entriesRepo = entriesRepo;
 		this.resultsRepo = resultsRepo;
@@ -82,6 +80,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 		this.tyreProvStatsRepo = tyreProvStatsRepo;
 		this.racetrackLayoutStatsRepo = racetrackLayoutStatsRepo;
 		this.seriesCategoryDriverChampionRepo = seriesCategoryDriverChampionRepo;
+		this.racetrackService = racetrackService;
 	}
 
 	@Override
@@ -234,6 +233,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 
 	private List<Result> createResultObject(EventEditionEntry entry, List<EventEntryResult> results, Integer lapsCompleted) {
+        RacetrackLayout layout = racetrackService.findLayout(entry.getEventEdition().getTrackLayout().getId());
+
 		return results.parallelStream().map((result) -> {
 			List<EventEntryResult> resultsCategory = resultsRepo.findByEntryEventEditionIdAndSessionIdAndEntryCategoryIdOrderByFinalPositionAscLapsCompletedDesc(
 					entry.getEventEdition().getId(), result.getSession().getId(), entry.getCategory().getId());
@@ -288,6 +289,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 					result.getSession().getId(),
 					entry.getDrivers().get(0).getId())).orElse(new Float(0));
 
+			result.getEntry().getEventEdition().setTrackLayout(layout);
 			Result r = new Result(result, grandChelem, posInClass, startPosInClass, poleLapTime, posFL == 1, points);
 			if (results.size() == 0 || (results.size() > 0 && results.indexOf(result) == 0)) {
 				r.setLapsCompleted(lapsCompleted);

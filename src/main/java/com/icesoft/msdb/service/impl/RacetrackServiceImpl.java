@@ -10,6 +10,7 @@ import com.icesoft.msdb.service.TimeZoneService;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -143,6 +144,7 @@ public class RacetrackServiceImpl implements RacetrackService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable("racetrackLayoutsCache")
     public RacetrackLayout findLayout(Long id) {
         log.debug("Request to get RacetrackLayout : {}", id);
         return racetrackLayoutRepository.findById(id)

@@ -10,12 +10,14 @@ import { IDriver } from 'app/shared/model/driver.model';
 })
 export class DriverDetailComponent implements OnInit {
   driver: IDriver;
+  compositeName: String;
 
   constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ driver }) => {
       this.driver = driver;
+      this.compositeName = driver.surname + ', ' + driver.name;
     });
   }
 
