@@ -11,6 +11,7 @@ import { IDriver } from 'app/shared/model/driver.model';
 export class DriverDetailComponent implements OnInit {
   driver: IDriver;
   compositeName: String;
+  faceUrl: String;
 
   constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute) {}
 
@@ -18,6 +19,7 @@ export class DriverDetailComponent implements OnInit {
     this.activatedRoute.data.subscribe(({ driver }) => {
       this.driver = driver;
       this.compositeName = driver.surname + ', ' + driver.name;
+      this.faceUrl = this.driver.portraitUrl.replace('upload/', 'upload/w_300,h_300,c_thumb,g_face/');
     });
   }
 
