@@ -263,8 +263,9 @@ public class DriverResource {
     @Timed
     public ResponseEntity<List<Driver>> searchDrivers(@RequestParam String query, Pageable pageable) {
     	Page<Driver> page = performSearch(query, pageable);
+
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     @GetMapping("/_typeahead/drivers")

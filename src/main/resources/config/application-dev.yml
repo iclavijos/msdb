@@ -69,13 +69,11 @@ spring:
       port: 27017
       database: msdb
     elasticsearch:
-      cluster-name:
+      cluster-name: msdb
       cluster-nodes: 127.0.0.1:9300
       properties:
         path:
-          home: build/elasticsearch
-          logs: build/elasticsearch/log
-          data: build/elasticsearch/data
+          home: build/elastictest
   mail:
     host: localhost
     port: 25
