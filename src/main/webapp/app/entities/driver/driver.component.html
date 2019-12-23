@@ -64,19 +64,19 @@
                                         <div class="btn-group">
                                             <button type="submit"
                                                     [routerLink]="['/driver', driver.id, 'view' ]"
-                                                    class="btn btn-info btn-sm">
+                                                    class="btn btn-info btn-xs">
                                                 <fa-icon [icon]="'eye'"></fa-icon>
                                             </button>
                                             <button type="submit"
                                                     [routerLink]="['/driver', driver.id, 'edit']"
-                                                    class="btn btn-primary btn-sm">
+                                                    class="btn btn-primary btn-xs">
                                                 <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                             </button>
                                             <button type="submit"
                                                     [routerLink]="['/driver', { outlets: { popup: driver.id + '/delete'} }]"
                                                     replaceUrl="true"
                                                     queryParamsHandling="merge"
-                                                    class="btn btn-danger btn-sm">
+                                                    class="btn btn-danger btn-xs">
                                                 <fa-icon [icon]="'times'"></fa-icon>
                                             </button>
                                         </div>

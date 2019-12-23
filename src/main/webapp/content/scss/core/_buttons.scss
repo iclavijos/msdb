@@ -79,6 +79,10 @@
   .btn-group-sm & {
     @include button-size($input-btn-padding-y-sm, $input-btn-padding-x-sm, $bmd-btn-font-size-sm, $line-height-sm, $border-radius-sm);
   }
+  &.btn-xs,
+  .btn-group-xs & {
+    @include button-size($input-btn-padding-y-xs, $input-btn-padding-x-xs, $bmd-btn-font-size-xs, $line-height-sm, $border-radius-sm);
+  }
 
   &.btn-round {
     border-radius: $border-radius-extreme;
