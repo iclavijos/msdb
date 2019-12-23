@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,13 +54,14 @@ import com.icesoft.msdb.repository.search.TeamSearchRepository;
 import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
+import org.springframework.util.Assert;
 
 @Service
 @Transactional(readOnly=true)
 public class SearchServiceImpl implements SearchService {
-	
+
 	private final Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);
-	
+
 	@Autowired private DriverRepository driverRepo;
 	@Autowired private DriverSearchRepository driverSearchRepo;
 	@Autowired private TeamRepository teamRepo;
@@ -87,15 +91,15 @@ public class SearchServiceImpl implements SearchService {
 	@Autowired private RacetrackSearchRepository racetrackSearchRepo;
 	@Autowired private RacetrackLayoutRepository racetrackLayoutRepo;
 	@Autowired private RacetrackLayoutSearchRepository racetrackLayoutSearchRepo;
-		
+
 	@Override
 	@Transactional(readOnly=false)
 	public void rebuildIndexes() {
 		log.debug("Rebuilding search indexes");
+        updateSearchIndex(driverRepo.streamAll(), driverSearchRepo);
+        log.debug("Drivers index done");
 		updateSearchIndex(engineRepo.readAllByIdNotNull(), engineSearchRepo);
 		log.debug("Engines index done");
-		updateSearchIndex(driverRepo.streamAll(), driverSearchRepo);
-		log.debug("Drivers index done");
 		updateSearchIndex(teamRepo.streamAll(), teamSearchRepo);
 		log.debug("Teams index done");
 		updateSearchIndex(chassisRepo.streamAllByIdNotNull(), chassisSearchRepo);
@@ -121,13 +125,24 @@ public class SearchServiceImpl implements SearchService {
 		updateSearchIndex(racetrackLayoutRepo.streamAll(), racetrackLayoutSearchRepo);
 		log.debug("Rebuilding search indexes completed");
 	}
-	
+
 	private <T> void updateSearchIndex(final Stream<T> stream, final ElasticsearchRepository<T, Long> searchRepo) {
 		searchRepo.deleteAll();
 		stream.parallel().forEach(elem -> searchRepo.save(elem));
 		stream.close();
 	}
-	
+
+	@Override
+    public <T> Page<T> performWildcardSearch(final ElasticsearchRepository<T, Long> searchRepo, String query, String[] fields, Pageable pageable) {
+        BoolQueryBuilder queryBuilder = new BoolQueryBuilder();
+        for(String field: fields) {
+            queryBuilder.should(
+                QueryBuilders.wildcardQuery(field, "*" + query + "*"));
+        }
+
+        return searchRepo.search(queryBuilder, pageable);
+    }
+
 	@Override
 	public Page<EventEntrySearchResultDTO> searchEntries(String searchTerms, Pageable pageable) {
 		String searchValue = '*' + searchTerms + '*';
@@ -137,7 +152,7 @@ public class SearchServiceImpl implements SearchService {
 				.collect(Collectors.<EventEntrySearchResultDTO> toList());
 		return new PageImpl<>(aux, pageable, tmp.getTotalElements());
 	}
-	
+
 	private EventEntrySearchResultDTO createDTO(EventEditionEntry entry) {
 		long poleTime;
 		Integer polePosition;
@@ -145,9 +160,9 @@ public class SearchServiceImpl implements SearchService {
 		Integer racePosition;
 		String retirement = "";
 		LocalDate sessionDate;
-		
+
 		List<EventEntryResult> results = resultsRepo.findByEntryId(entry.getId());
-		
+
 		List<EventEntryResult> qResults = results.stream()
 				.filter(r -> r.getSession().getSessionType() == SessionType.QUALIFYING).collect(Collectors.<EventEntryResult> toList());
 		if (qResults != null && !qResults.isEmpty()) {
@@ -157,7 +172,7 @@ public class SearchServiceImpl implements SearchService {
 			poleTime = 0;
 			polePosition = 0;
 		}
-		
+
 		List<EventEntryResult> rResults = results.stream()
 				.filter(r -> r.getSession().getSessionType() == SessionType.RACE).collect(Collectors.<EventEntryResult> toList());
 		if (rResults != null && !rResults.isEmpty()) {
@@ -183,9 +198,9 @@ public class SearchServiceImpl implements SearchService {
 			racePosition = 0;
 			sessionDate = null;
 		}
-		
+
 		EventEntrySearchResultDTO dto = new EventEntrySearchResultDTO(entry, sessionDate, poleTime, raceFastLap, polePosition, racePosition, retirement);
-		
+
 		return dto;
 	}
 

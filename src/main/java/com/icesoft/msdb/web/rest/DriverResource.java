@@ -9,6 +9,7 @@ import com.icesoft.msdb.repository.search.DriverSearchRepository;
 import com.icesoft.msdb.repository.stats.DriverStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.DriverFullNameDTO;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
@@ -17,8 +18,6 @@ import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.micrometer.core.annotation.Timed;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,15 +66,18 @@ public class DriverResource {
     private final DriverSearchRepository driverSearchRepository;
     private final EventEntryRepository entryRepository;
 
+    private final SearchService searchService;
+
     private final DriverStatisticsRepository statsRepo;
 
     private final CDNService cdnService;
 
     public DriverResource(DriverRepository driverRepository, DriverSearchRepository driverSearchRepository, EventEntryRepository entryRepository,
-    		DriverStatisticsRepository statsRepo, CDNService cdnService) {
+                          SearchService searchService, DriverStatisticsRepository statsRepo, CDNService cdnService) {
         this.driverRepository = driverRepository;
         this.driverSearchRepository = driverSearchRepository;
         this.entryRepository = entryRepository;
+        this.searchService = searchService;
         this.statsRepo = statsRepo;
         this.cdnService = cdnService;
     }
@@ -262,7 +264,7 @@ public class DriverResource {
     @GetMapping("/_search/drivers")
     @Timed
     public ResponseEntity<List<Driver>> searchDrivers(@RequestParam String query, Pageable pageable) {
-    	Page<Driver> page = performSearch(query, pageable);
+    	Page<Driver> page = searchService.performWildcardSearch(driverSearchRepository, query, new String[]{"surname", "name"}, pageable);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
@@ -273,22 +275,12 @@ public class DriverResource {
     public ResponseEntity<List<DriverFullNameDTO>> typeahead(@RequestParam String query) throws URISyntaxException {
         log.debug("REST request to search for a page of Drivers for query '{}'", query);
 
-        Page<Driver> page = performSearch(query, PageRequest.of(0, 10));
+        Page<Driver> page = searchService.performWildcardSearch(driverSearchRepository, query, new String[]{"surname", "name"}, PageRequest.of(0, 10));
         List<DriverFullNameDTO> result = new ArrayList<>();
         for (Driver driver : page) {
 			result.add(new DriverFullNameDTO(driver));
 		}
         return new ResponseEntity<>(result, HttpStatus.OK);
-    }
-
-    private Page<Driver> performSearch(String query, Pageable pageable) {
-    	QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
-    			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
-    				.analyzeWildcard(true)
-    				.field("surname", 2.0f)
-    				.field("name"));
-
-    	return driverSearchRepository.search(queryBuilder, pageable);
     }
 
 }

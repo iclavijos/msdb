@@ -9,6 +9,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.Setting;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Period;
@@ -23,6 +25,7 @@ import java.util.Set;
 @Table(name = "driver")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "driver")
+@Setting(settingPath = "/elastic-settings/normalizer-setting.json")
 public class Driver extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,13 +38,13 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
     private String name;
 
     @NotNull
     @Size(max = 60)
     @Column(name = "surname", length = 60, nullable = false)
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
     private String surname;
 
     @Column(name = "birth_date")
