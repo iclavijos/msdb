@@ -96,33 +96,34 @@ public class SearchServiceImpl implements SearchService {
 	@Transactional(readOnly=false)
 	public void rebuildIndexes() {
 		log.debug("Rebuilding search indexes");
+        log.debug("Building Drivers index");
         updateSearchIndex(driverRepo.streamAll(), driverSearchRepo);
-        log.debug("Drivers index done");
+        log.debug("Building Engines index");
 		updateSearchIndex(engineRepo.readAllByIdNotNull(), engineSearchRepo);
-		log.debug("Engines index done");
+        log.debug("Building Teams index");
 		updateSearchIndex(teamRepo.streamAll(), teamSearchRepo);
-		log.debug("Teams index done");
+        log.debug("Building Chassis index");
 		updateSearchIndex(chassisRepo.streamAllByIdNotNull(), chassisSearchRepo);
-		log.debug("Chassis index done");
+        log.debug("Building Categories index");
 		updateSearchIndex(categoryRepo.streamAll(), categorySearchRepo);
-		log.debug("Categories index done");
+        log.debug("Building Fuel suppliers index");
 		updateSearchIndex(fuelRepo.streamAll(), fuelSearchRepo);
-		log.debug("Fuel supliers index done");
+        log.debug("Building Tyre suppliers index");
 		updateSearchIndex(tyreRepo.streamAll(), tyreSearchRepo);
-		log.debug("Tyre suppliers index done");
+        log.debug("Building Points systems index");
 		updateSearchIndex(pointsRepo.streamAll(), pointsSearchRepo);
-		log.debug("Points system index done");
+        log.debug("Building Events index");
 		updateSearchIndex(eventRepo.readAllByIdNotNull(), eventSearchRepo);
-		log.debug("Events index done");
+        log.debug("Building Series index");
 		updateSearchIndex(seriesRepo.streamAll(), seriesSearchRepo);
-		log.debug("Series index done");
+        log.debug("Building Event Editions index");
 		updateSearchIndex(eventEditionRepo.streamAllByIdNotNull(), eventEditionSearchRepo);
-		log.debug("Event editions index done");
-		updateSearchIndex(eventEntryRepo.streamAllByIdNotNull(), eventEntrySearchRepo);
-		log.debug("Event entries index done");
+        log.debug("Building Racetracks index");
 		updateSearchIndex(racetrackRepo.streamAll(), racetrackSearchRepo);
-		log.debug("Racetracks index done");
+        log.debug("Building Racetrack Layouts index");
 		updateSearchIndex(racetrackLayoutRepo.streamAll(), racetrackLayoutSearchRepo);
+        log.debug("Building Event Entries index");
+        updateSearchIndex(eventEntryRepo.streamAllByIdNotNull(), eventEntrySearchRepo);
 		log.debug("Rebuilding search indexes completed");
 	}
 
