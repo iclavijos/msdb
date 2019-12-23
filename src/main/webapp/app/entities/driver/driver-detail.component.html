@@ -38,6 +38,12 @@
                                 <span *ngIf="driver.age != 0">{{driver.age}}</span>
                             </dd>
                         </dl>
+
+                        <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                [routerLink]="['/driver', driver.id, 'edit']"
+                                class="btn btn-primary">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -52,6 +58,11 @@
                 </div>
             </div>
         </div>
+        <button type="submit"
+                (click)="previousState()"
+                class="btn btn-info">
+            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+        </button>
     </div>
 </div>
 

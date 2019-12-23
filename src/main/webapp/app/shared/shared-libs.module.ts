@@ -16,8 +16,11 @@ import {
   MatFormFieldModule,
   MatTooltipModule,
   MatTabsModule,
-  MatSelectModule
+  MatSelectModule,
+  MatDatepickerModule
 } from '@angular/material';
+
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 @NgModule({
   exports: [
@@ -36,7 +39,9 @@ import {
     MatInputModule,
     MatSelectModule,
     MatTooltipModule,
-    MatTabsModule
+    MatTabsModule,
+    MatMomentDateModule,
+    MatDatepickerModule
   ]
 })
 export class MotorsportsDatabaseSharedLibsModule {}
