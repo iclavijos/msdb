@@ -23,7 +23,8 @@
                             </dd>
                             <dt><span jhiTranslate="motorsportsDatabaseApp.driver.nationality">Nationality</span></dt>
                             <dd>
-                                <span *ngIf="driver.nationality"><img src="/images/flags64/{{driver.nationality}}.png"/></span>
+                                <span *ngIf="driver.nationality"><img src="/images/flags64/{{driver.nationality.countryCode}}.png"/></span>
+                                <span *ngIf="driver.nationality">{{driver.nationality.countryName}}</span>
                             </dd>
                             <dt *ngIf="driver.deathDate"><span jhiTranslate="motorsportsDatabaseApp.driver.deathDate">Death Date</span></dt>
                             <dd *ngIf="driver.deathDate">

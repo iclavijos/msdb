@@ -71,10 +71,6 @@ export class DriverService {
     return this.http.get<any>(`${this.statsSearchUrl}/${id}/years`, { observe: 'response' });
   }
 
-  searchCountries(query?: any): Observable<EntityArrayResponseType> {
-    return this.http.get<any>('api/_typeahead/countries?query=' + query, { observe: 'response' });
-  }
-
   protected convertDateFromClient(driver: IDriver): IDriver {
     const copy: IDriver = Object.assign({}, driver, {
       birthDate: driver.birthDate != null && driver.birthDate.isValid() ? driver.birthDate.format(DATE_FORMAT) : null,

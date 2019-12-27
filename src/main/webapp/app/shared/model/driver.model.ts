@@ -1,3 +1,5 @@
+import { ICountry } from 'app/shared/country/country.model';
+
 import { Moment } from 'moment';
 
 export interface IDriver {
@@ -6,7 +8,7 @@ export interface IDriver {
   surname?: string;
   birthDate?: Moment;
   birthPlace?: string;
-  nationality?: string;
+  nationality?: ICountry;
   deathDate?: Moment;
   deathPlace?: string;
   portraitContentType?: string;
@@ -21,7 +23,7 @@ export class Driver implements IDriver {
     public surname?: string,
     public birthDate?: Moment,
     public birthPlace?: string,
-    public nationality?: string,
+    public nationality?: ICountry,
     public deathDate?: Moment,
     public deathPlace?: string,
     public portraitContentType?: string,

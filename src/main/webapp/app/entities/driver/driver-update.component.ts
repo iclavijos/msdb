@@ -5,10 +5,12 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import * as moment from 'moment';
+import { switchMap, debounceTime, map } from 'rxjs/operators';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 import { IDriver, Driver } from 'app/shared/model/driver.model';
 import { DriverService } from './driver.service';
+import { ICountry } from 'app/shared/country/country.model';
+import { CountryService } from 'app/shared/country/country.service';
 
 @Component({
   selector: 'jhi-driver-update',
@@ -19,6 +21,8 @@ export class DriverUpdateComponent implements OnInit {
   birthDateDp: any;
   deathDateDp: any;
 
+  options: Observable<ICountry[]>;
+
   editForm = this.fb.group({
     id: [],
     name: [null, [Validators.required, Validators.maxLength(40)]],
@@ -28,23 +32,38 @@ export class DriverUpdateComponent implements OnInit {
     deathDate: [],
     deathPlace: [null, [Validators.maxLength(75)]],
     portrait: [],
-    portraitContentType: []
+    portraitContentType: [],
+    portraitUrl: [],
+    nationality: []
   });
 
   constructor(
     protected dataUtils: JhiDataUtils,
     protected jhiAlertService: JhiAlertService,
     protected driverService: DriverService,
+    protected countryService: CountryService,
     protected elementRef: ElementRef,
     protected activatedRoute: ActivatedRoute,
     private fb: FormBuilder
   ) {}
 
   ngOnInit() {
+    this.displayFn = this.displayFn.bind(this);
     this.isSaving = false;
+
+    this.options = this.editForm.get('nationality').valueChanges.pipe(
+      debounceTime(300),
+      switchMap(value => this.countryService.searchCountries(value)),
+      map(response => response.body)
+    );
+
     this.activatedRoute.data.subscribe(({ driver }) => {
       this.updateForm(driver);
     });
+  }
+
+  displayFn(country?: ICountry): string | undefined {
+    return country ? country.countryName : undefined;
   }
 
   updateForm(driver: IDriver) {
@@ -57,7 +76,9 @@ export class DriverUpdateComponent implements OnInit {
       deathDate: driver.deathDate,
       deathPlace: driver.deathPlace,
       portrait: driver.portrait,
-      portraitContentType: driver.portraitContentType
+      portraitContentType: driver.portraitContentType,
+      portraitUrl: driver.portraitUrl,
+      nationality: driver.nationality
     });
   }
 
@@ -89,7 +110,7 @@ export class DriverUpdateComponent implements OnInit {
       }
     }).then(
       // eslint-disable-next-line no-console
-      () => console.log('blob added'), // success
+      () => {}, // success
       this.onError
     );
   }
@@ -129,7 +150,9 @@ export class DriverUpdateComponent implements OnInit {
       deathDate: this.editForm.get(['deathDate']).value,
       deathPlace: this.editForm.get(['deathPlace']).value,
       portraitContentType: this.editForm.get(['portraitContentType']).value,
-      portrait: this.editForm.get(['portrait']).value
+      portrait: this.editForm.get(['portrait']).value,
+      portraitUrl: this.editForm.get(['portraitUrl']).value,
+      nationality: this.editForm.get(['nationality']).value
     };
   }
 
