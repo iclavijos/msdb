@@ -54,10 +54,9 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     @Column(name = "birth_place", length = 75)
     private String birthPlace;
 
-    @NotNull
-    @Size(max = 2)
-    @Column(name = "nationality", length = 2, nullable = false)
-    private String nationality;
+    @ManyToOne
+    @JoinColumn(name="nationality")
+    private Country nationality;
 
     @Column(name = "death_date")
     private LocalDate deathDate;
@@ -137,16 +136,16 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
         this.birthPlace = birthPlace;
     }
 
-    public String getNationality() {
+    public Country getNationality() {
 		return nationality;
 	}
 
-    public Driver nationality(String nationality) {
+    public Driver nationality(Country nationality) {
     	this.nationality = nationality;
     	return this;
     }
 
-	public void setNationality(String nationality) {
+	public void setNationality(Country nationality) {
 		this.nationality = nationality;
 	}
 

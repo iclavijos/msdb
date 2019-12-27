@@ -46,11 +46,5 @@ public class Country implements Serializable {
 	public void setCountryName(String countryName) {
 		this.countryName = countryName;
 	}
-    
-    @Transient
-    public String getFlagImg() {
-    	StringBuilder builder = new StringBuilder("/images/flags16/").append(countryCode).append(".png");
-    	return builder.toString();
-    }
-	
+
 }
