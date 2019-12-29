@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+
+import { LoginService } from 'app/core/login/login.service';
+import { AccountService } from 'app/core/auth/account.service';
+import { Account } from 'app/core/user/account.model';
+
 import * as Chartist from 'chartist';
 
 @Component({
@@ -6,7 +11,10 @@ import * as Chartist from 'chartist';
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
-  constructor() {}
+  account: Account;
+
+  constructor(private accountService: AccountService, private loginService: LoginService) {}
+
   startAnimationForLineChart(chart) {
     let seq: any;
     seq = 0;
@@ -67,7 +75,11 @@ export class HomeComponent implements OnInit {
 
     seq2 = 0;
   }
+
   ngOnInit() {
+    this.accountService.identity().subscribe((account: Account) => {
+      this.account = account;
+    });
     /* ----------==========     Daily Sales Chart initialization For Documentation    ==========---------- */
 
     const dataDailySalesChart: any = {
