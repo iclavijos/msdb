@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { JhiResolvePagingParams } from 'ng-jhipster';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
@@ -17,7 +17,7 @@ import { IRacetrack } from 'app/shared/model/racetrack.model';
 export class RacetrackResolve implements Resolve<IRacetrack> {
   constructor(private service: RacetrackService) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IRacetrack> {
+  resolve(route: ActivatedRouteSnapshot): Observable<IRacetrack> {
     const id = route.params['id'];
     if (id) {
       return this.service.find(id).pipe(
@@ -38,7 +38,7 @@ export const racetrackRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      defaultSort: 'id,asc',
+      defaultSort: 'name,asc',
       pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -62,7 +62,7 @@ export const racetrackRoute: Routes = [
       racetrack: RacetrackResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const racetrackRoute: Routes = [
       racetrack: RacetrackResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const racetrackPopupRoute: Routes = [
       racetrack: RacetrackResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'motorsportsDatabaseApp.racetrack.home.title'
     },
     canActivate: [UserRouteAccessService],

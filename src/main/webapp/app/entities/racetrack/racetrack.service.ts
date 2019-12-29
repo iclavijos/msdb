@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { IRacetrack } from 'app/shared/model/racetrack.model';
+import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
 
 type EntityResponseType = HttpResponse<IRacetrack>;
 type EntityArrayResponseType = HttpResponse<IRacetrack[]>;
@@ -40,5 +41,9 @@ export class RacetrackService {
   search(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http.get<IRacetrack[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
+  }
+
+  findLayouts(id: number): Observable<HttpResponse<IRacetrackLayout[]>> {
+    return this.http.get<IRacetrackLayout[]>(`${this.resourceUrl}/${id}/layouts`, { observe: 'response' });
   }
 }

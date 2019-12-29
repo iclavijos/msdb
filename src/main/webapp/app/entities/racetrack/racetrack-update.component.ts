@@ -45,7 +45,10 @@ export class RacetrackUpdateComponent implements OnInit {
       id: racetrack.id,
       name: racetrack.name,
       location: racetrack.location,
+      //       countryCode: racetrack.countryCode,
+      //       timeZone: racetrack.timeZone,
       logo: racetrack.logo,
+      //       logoUrl: racetrack.logoUrl,
       logoContentType: racetrack.logoContentType
     });
   }
@@ -78,7 +81,7 @@ export class RacetrackUpdateComponent implements OnInit {
       }
     }).then(
       // eslint-disable-next-line no-console
-      () => console.log('blob added'), // success
+      () => {}, // success
       this.onError
     );
   }
@@ -113,8 +116,11 @@ export class RacetrackUpdateComponent implements OnInit {
       id: this.editForm.get(['id']).value,
       name: this.editForm.get(['name']).value,
       location: this.editForm.get(['location']).value,
+      //       countryCode: '',
+      //       timeZone: '',
       logoContentType: this.editForm.get(['logoContentType']).value,
       logo: this.editForm.get(['logo']).value
+      //       logoUrl: ''
     };
   }
 
