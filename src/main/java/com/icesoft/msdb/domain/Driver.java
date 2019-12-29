@@ -56,6 +56,7 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="nationality")
+    @Field(type = FieldType.Object)
     private Country nationality;
 
     @Column(name = "death_date")

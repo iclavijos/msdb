@@ -112,7 +112,7 @@
                                                    [matAutocomplete]="auto" formControlName="nationality"
                                                    placeholder="{{ 'motorsportsDatabaseApp.driver.nationality' | translate }}"/>
                                             <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                                                <mat-option *ngFor="let country of (options | async)" [value]="country.countryCode">
+                                                <mat-option *ngFor="let country of (options | async)" [value]="country">
                                                     <img aria-hidden src="/images/flags/{{country.countryCode}}.png">
                                                     <span>{{country.countryName}}</span>
                                                 </mat-option>
