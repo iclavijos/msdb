@@ -7,6 +7,14 @@ import { RouterModule } from '@angular/router';
       {
         path: 'driver',
         loadChildren: () => import('./driver/driver.module').then(m => m.MotorsportsDatabaseDriverModule)
+      },
+      {
+        path: 'racetrack',
+        loadChildren: () => import('./racetrack/racetrack.module').then(m => m.MotorsportsDatabaseRacetrackModule)
+      },
+      {
+        path: 'racetrack-layout',
+        loadChildren: () => import('./racetrack-layout/racetrack-layout.module').then(m => m.MotorsportsDatabaseRacetrackLayoutModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ])
