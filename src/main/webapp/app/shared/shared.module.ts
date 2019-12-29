@@ -5,17 +5,26 @@ import { JhiAlertComponent } from './alert/alert.component';
 import { JhiAlertErrorComponent } from './alert/alert-error.component';
 import { HasAnyAuthorityDirective } from './auth/has-any-authority.directive';
 import { StatisticsComponent } from './statistics/statistics.component';
+import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
 
 @NgModule({
   imports: [MotorsportsDatabaseSharedLibsModule],
-  declarations: [FindLanguageFromKeyPipe, JhiAlertComponent, JhiAlertErrorComponent, HasAnyAuthorityDirective, StatisticsComponent],
+  declarations: [
+    FindLanguageFromKeyPipe,
+    JhiAlertComponent,
+    JhiAlertErrorComponent,
+    HasAnyAuthorityDirective,
+    StatisticsComponent,
+    RacetrackLengthPipe
+  ],
   exports: [
     MotorsportsDatabaseSharedLibsModule,
     FindLanguageFromKeyPipe,
     JhiAlertComponent,
     JhiAlertErrorComponent,
     HasAnyAuthorityDirective,
-    StatisticsComponent
+    StatisticsComponent,
+    RacetrackLengthPipe
   ]
 })
 export class MotorsportsDatabaseSharedModule {}
