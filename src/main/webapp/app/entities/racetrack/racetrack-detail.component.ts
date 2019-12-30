@@ -3,6 +3,8 @@ import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { JhiDataUtils } from 'ng-jhipster';
 
+import { SessionStorageService } from 'ngx-webstorage';
+
 import { IRacetrack } from 'app/shared/model/racetrack.model';
 import { RacetrackService } from './racetrack.service';
 import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
@@ -15,15 +17,18 @@ import { RacetrackLayoutService } from '../racetrack-layout/racetrack-layout.ser
 export class RacetrackDetailComponent implements OnInit {
   racetrack: IRacetrack;
   racetrackLayouts: IRacetrackLayout[];
+  locale: string;
 
   constructor(
     protected dataUtils: JhiDataUtils,
     protected activatedRoute: ActivatedRoute,
     private racetrackService: RacetrackService,
-    private racetrackLayoutService: RacetrackLayoutService
+    private racetrackLayoutService: RacetrackLayoutService,
+    private sessionStorage: SessionStorageService
   ) {}
 
   ngOnInit() {
+    this.locale = this.sessionStorage.retrieve('locale');
     this.activatedRoute.data.subscribe(({ racetrack }) => {
       this.racetrack = racetrack;
       this.loadLayouts(racetrack.id);

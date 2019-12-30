@@ -16,9 +16,7 @@
                                 <span *ngIf="racetrack.countryCode"><img src="/images/flags64/{{racetrack.countryCode}}.png"/></span>
                                 <span>{{racetrack.location}}</span>
                             </dd>
-
                         </dl>
-
                         <button type="submit"
                                 (click)="previousState()"
                                 class="btn btn-info">
@@ -63,17 +61,17 @@
                                     <td class="text-right">
                                         <div class="btn-group">
                                             <button type="submit"
-                                                    [routerLink]="['/racetrack', racetrack.id, 'view' ]"
+                                                    [routerLink]="['/racetrack-layout', racetrackLayout.id, 'view' ]"
                                                     class="btn btn-info btn-xs">
                                                 <fa-icon [icon]="'eye'"></fa-icon>
                                             </button>
                                             <button type="submit"
-                                                    [routerLink]="['/racetrack', racetrack.id, 'edit']"
+                                                    [routerLink]="['/racetrack-layout', racetrackLayout.id, 'edit']"
                                                     class="btn btn-primary btn-xs">
                                                 <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                             </button>
                                             <button type="submit"
-                                                    [routerLink]="['/racetrack', { outlets: { popup: racetrack.id + '/delete'} }]"
+                                                    [routerLink]="['/racetrack-layout', { outlets: { popup: racetrackLayout.id + '/delete'} }]"
                                                     replaceUrl="true"
                                                     queryParamsHandling="merge"
                                                     class="btn btn-danger btn-xs">
@@ -83,7 +81,6 @@
                                     </td>
                                 </tr>
                                 <tbody>
-
                             </table>
                         </div>
 

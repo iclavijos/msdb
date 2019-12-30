@@ -1,5 +1,13 @@
-<div class="row justify-content-center">
-    <div class="col-8">
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title">{{ editForm.get('name').value }} {{ editForm.get('surname').value }}</h4>
+                        <p class="card-category">{{ 'motorsportsDatabaseApp.driver.racetrack.createOrEditLabel' | translate }}</p>
+                    </div>
+                    <div class="card-body">
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
             <h2 id="jhi-racetrack-heading" jhiTranslate="motorsportsDatabaseApp.racetrack.home.createOrEditLabel">Create or edit a Racetrack</h2>
             <div>
@@ -67,5 +75,9 @@
                 </button>
             </div>
         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
