@@ -18,7 +18,8 @@ import {
   MatTabsModule,
   MatSelectModule,
   MatDatepickerModule,
-  MatAutocompleteModule
+  MatAutocompleteModule,
+  MatDialogModule
 } from '@angular/material';
 
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
@@ -43,7 +44,8 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
     MatTabsModule,
     MatMomentDateModule,
     MatDatepickerModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatDialogModule
   ]
 })
 export class MotorsportsDatabaseSharedLibsModule {}
