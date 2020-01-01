@@ -1,31 +1,32 @@
 {
-    "motorsportsDatabaseApp": {
-    	"stats": {
-    		"home": {
-    			"title": "Estadísticas",
-    			"init": "Se están recalculando las estadísticas... espera unos segundos",
-    			"rebuilt": "Estadísticas recalculadas correctamente"
-    		},
-    		"participations": "Participaciones",
-    		"starts": "Salidas",
-    		"finished": "Acabadas",
-    		"bestFinalPosition": "Mejor posición final",
-    		"championships": "Campeonatos",
-    		"wins": "Victorias",
-    		"podiums": "Podios",
-    		"poles": "Poles",
-    		"points": "Puntos",
-    		"bestStartingPosition": "Mejor posición salida",
-    		"fastLaps": "Vueltas rápidas",
-    		"top3": "Top 3",
-    		"top5": "Top 5",
-    		"top10": "Top 10",
-    		"lapsCompleted": "Vueltas completadas",
-    		"kmsCompleted": "Distancia completada",
-    		"grandChelems": "Grand Chelems",
-    		"titles": "Títulos",
-    		"time": "vez",
-    		"times": "veces"   		
-    	}
+  "motorsportsDatabaseApp": {
+    "stats": {
+      "home": {
+        "title": "Estadísticas",
+        "init": "Se están recalculando las estadísticas... espera unos segundos",
+        "rebuilt": "Estadísticas recalculadas correctamente"
+      },
+      "participations": "Participaciones",
+      "starts": "Salidas",
+      "finished": "Acabadas",
+      "bestFinalPosition": "Mejor posición final",
+      "championships": "Campeonatos",
+      "wins": "Victorias",
+      "podiums": "Podios",
+      "poles": "Poles",
+      "points": "Puntos",
+      "bestStartingPosition": "Mejor posición salida",
+      "fastLaps": "Vueltas rápidas",
+      "top3": "Top 3",
+      "top5": "Top 5",
+      "top10": "Top 10",
+      "lapsCompleted": "Vueltas completadas",
+      "kmsCompleted": "Distancia completada",
+      "grandChelems": "Grand Chelems",
+      "titles": "Títulos",
+      "time": "vez",
+      "times": "veces",
+      "noData": "No hay datos estadísticos disponibles"
     }
+  }
 }
