@@ -19,7 +19,10 @@ export class DriverDetailComponent implements OnInit {
     this.activatedRoute.data.subscribe(({ driver }) => {
       this.driver = driver;
       this.compositeName = driver.surname + ', ' + driver.name;
-      this.faceUrl = this.driver.portraitUrl.replace('upload/', 'upload/w_300,h_300,c_thumb,g_face/');
+      const tmpFaceUrl = this.driver.portraitUrl
+        ? this.driver.portraitUrl
+        : 'https://res.cloudinary.com/msdb-cloud/image/upload/v1518113603/generic.png';
+      this.faceUrl = tmpFaceUrl.replace('upload/', 'upload/w_300,h_300,c_thumb,g_face/');
     });
   }
 
