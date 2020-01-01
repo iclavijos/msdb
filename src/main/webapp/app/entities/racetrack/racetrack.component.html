@@ -14,7 +14,7 @@
                         <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
                             <fa-icon [icon]="'trash-alt'"></fa-icon>
                         </button>
-                        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-driver" [routerLink]="['/racetrack/new']">
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-driver" [routerLink]="['/racetrack/new']">
                             <fa-icon [icon]="'plus'"></fa-icon>
                             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.racetrack.home.createLabel">
                                 Create a new racetrack

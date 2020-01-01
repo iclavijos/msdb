@@ -1,7 +1,7 @@
-<jhi-alert-error></jhi-alert-error>
-<jhi-alert></jhi-alert>
 <div class="main-content">
     <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
         <div class="row">
             <div class="col-sm-12">
                 <form name="searchForm" class="form-inline">
@@ -13,7 +13,7 @@
                         <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
                             <fa-icon [icon]="'trash-alt'"></fa-icon>
                         </button>
-                        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-driver" [routerLink]="['/driver/new']">
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-driver" [routerLink]="['/driver/new']">
                             <fa-icon [icon]="'plus'"></fa-icon>
                             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.driver.home.createLabel">
                                 Create a new Driver
