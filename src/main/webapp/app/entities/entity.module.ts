@@ -9,6 +9,10 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./driver/driver.module').then(m => m.MotorsportsDatabaseDriverModule)
       },
       {
+        path: 'fuel-provider',
+        loadChildren: () => import('./fuel-provider/fuel-provider.module').then(m => m.MotorsportsDatabaseFuelProviderModule)
+      },
+      {
         path: 'racetrack',
         loadChildren: () => import('./racetrack/racetrack.module').then(m => m.MotorsportsDatabaseRacetrackModule)
       },
