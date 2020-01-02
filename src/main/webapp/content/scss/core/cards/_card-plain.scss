@@ -7,6 +7,21 @@
     margin-right: 0;
   }
 
+  .card-logo {
+    margin: -50px auto 0;
+    overflow: hidden;
+    padding: 0;
+
+    @include shadow-big();
+
+    & + .card-body {
+      margin-top: 15px;
+    }
+    img {
+      max-width: 300px;
+    }
+  }
+
   .card-body {
     padding-left: 5px;
     padding-right: 5px;
