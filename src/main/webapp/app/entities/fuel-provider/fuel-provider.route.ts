@@ -38,7 +38,7 @@ export const fuelProviderRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      defaultSort: 'id,asc',
+      defaultSort: 'name,asc',
       pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
     },
     canActivate: [UserRouteAccessService]

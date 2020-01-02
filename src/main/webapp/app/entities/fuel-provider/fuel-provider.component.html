@@ -1,0 +1,89 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-sm-12">
+                <form name="searchForm" class="form-inline">
+                    <div class="input-group w-100 mt-3">
+                        <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.fuelProvider.home.search' | translate }}">
+                        <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                            <fa-icon [icon]="'search'"></fa-icon>
+                        </button>
+                        <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                            <fa-icon [icon]="'trash-alt'"></fa-icon>
+                        </button>
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-fuel-provider" [routerLink]="['/fuel-provider/new']">
+                            <fa-icon [icon]="'plus'"></fa-icon>
+                            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.fuelProvider.home.createLabel">
+                            Create a new Fuel Provider
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.fuelProvider.home.title">Fuel Providers</span></h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning" *ngIf="fuelProviders?.length === 0">
+                            <span jhiTranslate="motorsportsDatabaseApp.fuelProvider.home.notFound">No fuelProviders found</span>
+                        </div>
+                        <div class="table-responsive" *ngIf="fuelProviders?.length > 0">
+                            <table class="table table-hover" aria-describedby="page-heading">
+                                <thead>
+                                <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+                                    <th scope="col" jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.fuelProvider.name">Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+                                    <th scope="col" jhiSortBy="logo"><span jhiTranslate="motorsportsDatabaseApp.fuelProvider.logo">Logo</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+                                    <th scope="col"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let fuelProvider of fuelProviders ;trackBy: trackId">
+                                    <td>{{fuelProvider.name}}</td>
+                                    <td>
+                                        <img *ngIf="fuelProvider.logoUrl" [src]="fuelProvider.logoUrl" style="max-height: 30px;" alt="fuel provider logo"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <div class="btn-group">
+                                            <button type="submit"
+                                                    [routerLink]="['/fuel-provider', fuelProvider.id, 'view' ]"
+                                                    class="btn btn-info btn-xs">
+                                                <fa-icon [icon]="'eye'"></fa-icon>
+                                            </button>
+                                            <button type="submit"
+                                                    [routerLink]="['/fuel-provider', fuelProvider.id, 'edit']"
+                                                    class="btn btn-primary btn-xs">
+                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                            </button>
+                                            <button type="submit"
+                                                    [routerLink]="['/fuel-provider', { outlets: { popup: fuelProvider.id + '/delete'} }]"
+                                                    replaceUrl="true"
+                                                    queryParamsHandling="merge"
+                                                    class="btn btn-danger btn-xs">
+                                                <fa-icon [icon]="'times'"></fa-icon>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div [hidden]="fuelProviders?.length === 0">
+                            <div class="row justify-content-center">
+                                <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+                            </div>
+                            <div class="row justify-content-center">
+                                <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

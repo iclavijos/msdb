@@ -20,7 +20,8 @@ export class FuelProviderUpdateComponent implements OnInit {
     id: [],
     name: [null, [Validators.required, Validators.maxLength(50)]],
     logo: [],
-    logoContentType: []
+    logoContentType: [],
+    logoUrl: []
   });
 
   constructor(
@@ -44,7 +45,8 @@ export class FuelProviderUpdateComponent implements OnInit {
       id: fuelProvider.id,
       name: fuelProvider.name,
       logo: fuelProvider.logo,
-      logoContentType: fuelProvider.logoContentType
+      logoContentType: fuelProvider.logoContentType,
+      logoUrl: fuelProvider.logoUrl
     });
   }
 
@@ -75,8 +77,7 @@ export class FuelProviderUpdateComponent implements OnInit {
         reject(`Base64 data was not set as file could not be extracted from passed parameter: ${event}`);
       }
     }).then(
-      // eslint-disable-next-line no-console
-      () => console.log('blob added'), // success
+      () => {}, // success
       this.onError
     );
   }

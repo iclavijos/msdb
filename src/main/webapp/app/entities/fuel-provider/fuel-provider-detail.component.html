@@ -1,0 +1,37 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card card-plain">
+                    <div class="card-logo">
+                        <img *ngIf="fuelProvider.logoUrl" [src]="fuelProvider.logoUrl"
+                             style="" alt="fuel provider logo"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h3 class="card-title">{{fuelProvider.name}}</h3>
+                    </div>
+                    <div class="card-body">
+                        <jhi-statistics [id]="fuelProvider.id" [statsType]="'fuelProvider'">Statistics...</jhi-statistics>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                [routerLink]="['/fuel-provider', fuelProvider.id, 'edit']"
+                class="btn btn-primary">
+            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+        </button>
+        <button type="submit"
+                (click)="previousState()"
+                class="btn btn-info">
+            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+        </button>
+    </div>
+</div>
+
