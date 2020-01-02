@@ -26,7 +26,8 @@
       "titles": "Títulos",
       "time": "vez",
       "times": "veces",
-      "noData": "No hay datos estadísticos disponibles"
+      "noData": "No hay datos estadísticos disponibles",
+      "overall": "Acumulado"
     }
   }
 }

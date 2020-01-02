@@ -26,7 +26,8 @@
       "titles": "Títols",
       "time": "vegada",
       "times": "vegades",
-      "noData": "No hi ha dades estadístiques disponibles"
+      "noData": "No hi ha dades estadístiques disponibles",
+      "overall": "Acumulat"
     }
   }
 }
