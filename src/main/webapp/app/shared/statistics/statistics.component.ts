@@ -4,7 +4,7 @@ import { HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 import { DriverService } from 'app/entities/driver/driver.service';
-// import { TeamService } from 'app/entities/team/team.service';
+import { TeamService } from 'app/entities/team/team.service';
 // import { EngineService } from 'app/entities/engine/engine.service';
 // import { ChassisService } from 'app/entities/chassis/chassis.service';
 
@@ -19,9 +19,11 @@ export class StatisticsComponent implements OnInit {
   yearsStats: number[];
   year: number;
 
-  constructor(private router: Router, private driverService: DriverService) // private teamService: TeamService,
-  // private chassisService: ChassisService,
-  // private engineService: EngineService
+  constructor(
+    private router: Router,
+    private driverService: DriverService,
+    private teamService: TeamService // private chassisService: ChassisService,
+  ) // private engineService: EngineService
   {}
 
   ngOnInit() {
@@ -35,12 +37,12 @@ export class StatisticsComponent implements OnInit {
         this.stats = stats.body;
       });
     }
-    /* if (this.statsType === 'teams') {
-            this.teamService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
-                this.yearsStats = stats.body;
-            });
-        }
-        if (this.statsType === 'chassis') {
+    if (this.statsType === 'teams') {
+      this.teamService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
+        this.stats = stats.body;
+      });
+    }
+    /*    if (this.statsType === 'chassis') {
             this.chassisService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
                 this.yearsStats = stats.body;
             });
@@ -57,12 +59,12 @@ export class StatisticsComponent implements OnInit {
         this.stats = stats.body;
       });
     }
-    /* if (this.statsType === 'teams') {
-            this.teamService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
-                this.yearsStats = stats.body;
-            });
-        }
-        if (this.statsType === 'chassis') {
+    if (this.statsType === 'teams') {
+      this.teamService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
+        this.stats = stats.body;
+      });
+    }
+    /*    if (this.statsType === 'chassis') {
             this.chassisService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
                 this.yearsStats = stats.body;
             });
@@ -79,11 +81,12 @@ export class StatisticsComponent implements OnInit {
         this.yearsStats = stats.body;
       });
     }
-    /* if (this.statsType === 'teams') {
-            this.teamService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
-                this.yearsStats = stats.body;
-            });
-        }
+    if (this.statsType === 'teams') {
+      this.teamService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
+        this.yearsStats = stats.body;
+      });
+    }
+    /*
         if (this.statsType === 'chassis') {
             this.chassisService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
                 this.yearsStats = stats.body;
