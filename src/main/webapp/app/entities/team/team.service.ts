@@ -13,6 +13,7 @@ type EntityArrayResponseType = HttpResponse<ITeam[]>;
 export class TeamService {
   public resourceUrl = SERVER_API_URL + 'api/teams';
   public resourceSearchUrl = SERVER_API_URL + 'api/_search/teams';
+  public statsSearchUrl = SERVER_API_URL + 'api/stats/teams';
 
   constructor(protected http: HttpClient) {}
 
@@ -40,5 +41,17 @@ export class TeamService {
   search(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http.get<ITeam[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
+  }
+
+  getStats(id: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}`, { observe: 'response' });
+  }
+
+  getStatsYear(id: number, year: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}/${year}`, { observe: 'response' });
+  }
+
+  getYears(id: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}/years`, { observe: 'response' });
   }
 }

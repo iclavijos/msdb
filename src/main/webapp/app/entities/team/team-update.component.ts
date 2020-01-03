@@ -5,12 +5,9 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 import { ITeam, Team } from 'app/shared/model/team.model';
 import { TeamService } from './team.service';
-import { IEventEntry } from 'app/shared/model/event-entry.model';
-import { EventEntryService } from 'app/entities/event-entry/event-entry.service';
 
 @Component({
   selector: 'jhi-team-update',
@@ -19,8 +16,6 @@ import { EventEntryService } from 'app/entities/event-entry/event-entry.service'
 export class TeamUpdateComponent implements OnInit {
   isSaving: boolean;
 
-  evententries: IEventEntry[];
-
   editForm = this.fb.group({
     id: [],
     name: [null, [Validators.required, Validators.maxLength(40)]],
@@ -28,14 +23,13 @@ export class TeamUpdateComponent implements OnInit {
     hqLocation: [null, [Validators.maxLength(100)]],
     logo: [],
     logoContentType: [],
-    participations: []
+    logoUrl: []
   });
 
   constructor(
     protected dataUtils: JhiDataUtils,
     protected jhiAlertService: JhiAlertService,
     protected teamService: TeamService,
-    protected eventEntryService: EventEntryService,
     protected elementRef: ElementRef,
     protected activatedRoute: ActivatedRoute,
     private fb: FormBuilder
@@ -46,13 +40,6 @@ export class TeamUpdateComponent implements OnInit {
     this.activatedRoute.data.subscribe(({ team }) => {
       this.updateForm(team);
     });
-    this.eventEntryService
-      .query()
-      .pipe(
-        filter((mayBeOk: HttpResponse<IEventEntry[]>) => mayBeOk.ok),
-        map((response: HttpResponse<IEventEntry[]>) => response.body)
-      )
-      .subscribe((res: IEventEntry[]) => (this.evententries = res), (res: HttpErrorResponse) => this.onError(res.message));
   }
 
   updateForm(team: ITeam) {
@@ -63,7 +50,7 @@ export class TeamUpdateComponent implements OnInit {
       hqLocation: team.hqLocation,
       logo: team.logo,
       logoContentType: team.logoContentType,
-      participations: team.participations
+      logoUrl: team.logoUrl
     });
   }
 
@@ -94,8 +81,7 @@ export class TeamUpdateComponent implements OnInit {
         reject(`Base64 data was not set as file could not be extracted from passed parameter: ${event}`);
       }
     }).then(
-      // eslint-disable-next-line no-console
-      () => console.log('blob added'), // success
+      () => {}, // success
       this.onError
     );
   }
@@ -133,7 +119,7 @@ export class TeamUpdateComponent implements OnInit {
       hqLocation: this.editForm.get(['hqLocation']).value,
       logoContentType: this.editForm.get(['logoContentType']).value,
       logo: this.editForm.get(['logo']).value,
-      participations: this.editForm.get(['participations']).value
+      logoUrl: this.editForm.get(['logoUrl']).value
     };
   }
 
@@ -151,10 +137,6 @@ export class TeamUpdateComponent implements OnInit {
   }
   protected onError(errorMessage: string) {
     this.jhiAlertService.error(errorMessage, null, null);
-  }
-
-  trackEventEntryById(index: number, item: IEventEntry) {
-    return item.id;
   }
 
   getSelected(selectedVals: any[], option: any) {
