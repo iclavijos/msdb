@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 
 import { DriverService } from 'app/entities/driver/driver.service';
 import { TeamService } from 'app/entities/team/team.service';
-// import { EngineService } from 'app/entities/engine/engine.service';
+import { EngineService } from 'app/entities/engine/engine.service';
 // import { ChassisService } from 'app/entities/chassis/chassis.service';
 
 @Component({
@@ -22,8 +22,9 @@ export class StatisticsComponent implements OnInit {
   constructor(
     private router: Router,
     private driverService: DriverService,
-    private teamService: TeamService // private chassisService: ChassisService,
-  ) // private engineService: EngineService
+    private teamService: TeamService,
+    private engineService: EngineService
+  ) // private chassisService: ChassisService,
   {}
 
   ngOnInit() {
@@ -39,6 +40,11 @@ export class StatisticsComponent implements OnInit {
     }
     if (this.statsType === 'teams') {
       this.teamService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
+        this.stats = stats.body;
+      });
+    }
+    if (this.statsType === 'engines') {
+      this.engineService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
         this.stats = stats.body;
       });
     }
@@ -64,16 +70,17 @@ export class StatisticsComponent implements OnInit {
         this.stats = stats.body;
       });
     }
+    if (this.statsType === 'engines') {
+      this.engineService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
+        this.stats = stats.body;
+      });
+    }
     /*    if (this.statsType === 'chassis') {
             this.chassisService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
                 this.yearsStats = stats.body;
             });
         }
-        if (this.statsType === 'engines') {
-            this.engineService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
-                this.yearsStats = stats.body;
-            });
-        } */
+ */
   }
   loadYears(id) {
     if (this.statsType === 'drivers') {
@@ -83,6 +90,11 @@ export class StatisticsComponent implements OnInit {
     }
     if (this.statsType === 'teams') {
       this.teamService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
+        this.yearsStats = stats.body;
+      });
+    }
+    if (this.statsType === 'engines') {
+      this.engineService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
         this.yearsStats = stats.body;
       });
     }
