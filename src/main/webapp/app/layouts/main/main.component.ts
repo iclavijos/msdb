@@ -15,6 +15,8 @@ import { StateStorageService } from 'app/core/auth/state-storage.service';
 export class JhiMainComponent implements OnInit, OnDestroy {
   _cleanup: Subject<any> = new Subject<any>();
 
+  backgroundNumber = 1;
+
   constructor(
     private accountService: AccountService,
     private stateStorageService: StateStorageService,
@@ -31,6 +33,7 @@ export class JhiMainComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.backgroundNumber = Math.floor(Math.random() * 4) + 1;
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.jhiLanguageHelper.updateTitle(this.getPageTitle(this.router.routerState.snapshot.root));

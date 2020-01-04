@@ -1,7 +1,7 @@
 <div class="wrapper">
-    <div class="sidebar" data-color="danger" data-background-color="white" data-image="/images/lateral-background-1.jpg">
+    <div class="sidebar" data-color="danger" data-background-color="white">
         <jhi-sidebar></jhi-sidebar>
-        <div class="sidebar-background" style="background-image: url(/images/lateral-background-1.jpg)"></div>
+        <div class="sidebar-background" [style.background-image]="'url(/images/lateral-background-' + backgroundNumber + '.jpg)'"></div>
     </div>
     <div class="main-panel">
         <jhi-navbar></jhi-navbar>
