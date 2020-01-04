@@ -5,6 +5,9 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="card card-profile">
+                    <div class="card-header card-header-danger">
+                        <h3 class="card-title">{{team.name}}</h3>
+                    </div>
                     <div class="card-body">
                         <h4 class="card-title"></h4>
                         <dl>
@@ -34,9 +37,6 @@
             </div>
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header card-header-danger">
-                        <h3 class="card-title">{{team.name}}</h3>
-                    </div>
                     <div class="card-body">
                         <jhi-statistics [id]="team.id" [statsType]="'teams'">Statistics...</jhi-statistics>
                     </div>
