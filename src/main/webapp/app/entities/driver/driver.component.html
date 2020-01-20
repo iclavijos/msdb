@@ -30,68 +30,65 @@
                         <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.driver.home.title">Drivers</span></h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-warning" *ngIf="drivers?.length === 0">
+                        <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
+                        <div class="alert alert-warning" [hidden]="drivers?.length > 0">
                             <span jhiTranslate="motorsportsDatabaseApp.driver.home.notFound">No drivers found</span>
                         </div>
-                        <div class="table-responsive" *ngIf="drivers?.length > 0">
-                            <table class="table table-hover" aria-describedby="page-heading">
-                                <thead>
-                                <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-                                    <th></th>
-                                    <th scope="col" jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.driver.name">Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                                    <th scope="col" jhiSortBy="surname"><span jhiTranslate="motorsportsDatabaseApp.driver.surname">Surname</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                                    <th scope="col" jhiSortBy="birthDate"><span jhiTranslate="motorsportsDatabaseApp.driver.birthDate">Birth Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                                    <th scope="col" jhiSortBy="birthPlace"><span jhiTranslate="motorsportsDatabaseApp.driver.birthPlace">Birth Place</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                                    <th scope="col" jhiSortBy="deathDate"><span jhiTranslate="motorsportsDatabaseApp.driver.deathDate">Death Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                                    <th scope="col" jhiSortBy="deathPlace"><span jhiTranslate="motorsportsDatabaseApp.driver.deathPlace">Death Place</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                                    <th scope="col" jhiSortBy="portrait"><span jhiTranslate="motorsportsDatabaseApp.driver.portrait">Portrait</span></th>
-                                    <th scope="col"></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr *ngFor="let driver of drivers ;trackBy: trackId">
-                                    <td><img *ngIf="driver?.nationality" src="/images/flags/{{driver?.nationality.countryCode}}.png"/></td>
-                                    <td>{{driver.name}}</td>
-                                    <td>{{driver.surname}}</td>
-                                    <td>{{driver.birthDate | date:'longDate'}}</td>
-                                    <td>{{driver.birthPlace}}</td>
-                                    <td>{{driver.deathDate | date:'longDate'}}</td>
-                                    <td>{{driver.deathPlace}}</td>
-                                    <td>
-                                        <img *ngIf="driver.portraitUrl" [src]="driver.portraitUrl" style="max-height: 30px;" alt="driver image"/>
+                        <div class="table-responsive" [hidden]="drivers?.length === 0">
+                            <table mat-table class="table table-hover" [dataSource]="drivers"
+                                   matSort matSortActive="surname" matSortDisableClear matSortDirection="asc">
+
+                                <ng-container matColumnDef="flag">
+                                    <th mat-header-cell *matHeaderCellDef></th>
+                                    <td mat-cell *matCellDef="let driver">
+                                        <img *ngIf="driver?.nationality" src="/images/flags/{{driver?.nationality.countryCode}}.png"/>
                                     </td>
-                                    <td class="text-right">
-                                        <div class="btn-group">
-                                            <button type="submit"
-                                                    [routerLink]="['/driver', driver.id, 'view' ]"
-                                                    class="btn btn-info btn-xs">
-                                                <fa-icon [icon]="'eye'"></fa-icon>
-                                            </button>
-                                            <button type="submit"
-                                                    [routerLink]="['/driver', driver.id, 'edit']"
-                                                    class="btn btn-primary btn-xs">
-                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                                            </button>
-                                            <button type="submit"
-                                                    [routerLink]="['/driver', { outlets: { popup: driver.id + '/delete'} }]"
-                                                    replaceUrl="true"
-                                                    queryParamsHandling="merge"
-                                                    class="btn btn-danger btn-xs">
-                                                <fa-icon [icon]="'times'"></fa-icon>
-                                            </button>
-                                        </div>
+                                </ng-container>
+
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.driver.name' | translate }}</th>
+                                    <td mat-cell *matCellDef="let driver">{{ driver.name }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="surname">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.driver.surname' | translate }}</th>
+                                    <td mat-cell *matCellDef="let driver">{{ driver.surname }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="birthDate">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.driver.birthDate' | translate }}</th>
+                                    <td mat-cell *matCellDef="let driver">{{ driver.birthDate | date:'longDate' }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="birthPlace">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.driver.birthPlace' | translate }}</th>
+                                    <td mat-cell *matCellDef="let driver">{{ driver.birthPlace }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="deathDate">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.driver.deathDate' | translate }}</th>
+                                    <td mat-cell *matCellDef="let driver">{{ driver.deathDate | date:'longDate' }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="deathPlace">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.driver.deathPlace' | translate }}</th>
+                                    <td mat-cell *matCellDef="let driver">{{ driver.deathPlace }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="portrait">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.driver.portrait' | translate }}</th>
+                                    <td mat-cell *matCellDef="let driver">
+                                        <img *ngIf="driver?.portraitUrl" [src]="driver.portraitUrl" style="max-height: 30px;" alt="driver image"/>
                                     </td>
-                                </tr>
-                                </tbody>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                             </table>
-                        </div>
-                        <div [hidden]="drivers?.length === 0">
-                            <div class="row justify-content-center">
-                                <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
-                            </div>
-                            <div class="row justify-content-center">
-                                <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
-                            </div>
+                            <mat-paginator [length]="resultsLength"
+                                           [pageSizeOptions]="[5, 10, 20]"
+                                           [pageSize]="10"
+                                           showFirstLastButtons></mat-paginator>
                         </div>
                     </div>
                 </div>
