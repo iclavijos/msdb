@@ -30,7 +30,7 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
   previousPage: any;
   reverse: any;
 
-  displayedColumns: string[] = ['flag', 'name', 'surname', 'birthDate', 'birthPlace', 'deathDate', 'deathPlace', 'portrait'];
+  displayedColumns: string[] = ['flag', 'name', 'surname', 'birthDate', 'birthPlace', 'deathDate', 'deathPlace', 'portrait', 'buttons'];
 
   resultsLength = 0;
   isLoadingResults = false;
