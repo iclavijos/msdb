@@ -32,7 +32,7 @@ public interface DriverRepository extends JpaRepository<Driver,Long> {
 	List<Driver> findDriversInSeries(SeriesEdition seriesEdition);
 
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
-	@Query(value = "select d from Driver d")
+	@Query(value = "select d from Driver d JOIN FETCH d.nationality n")
 	@Transactional(readOnly=true)
 	Stream<Driver> streamAll();
 }
