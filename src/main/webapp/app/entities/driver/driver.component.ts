@@ -1,15 +1,14 @@
 import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
-import { HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { merge, of as observableOf, Subscription } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiDataUtils, JhiEventManager, JhiParseLinks } from 'ng-jhipster';
 
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatPaginator, MatSort } from '@angular/material';
 
 import { IDriver } from 'app/shared/model/driver.model';
 
-import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { DriverService } from './driver.service';
 
 @Component({
@@ -47,7 +46,6 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
     protected router: Router,
     protected eventManager: JhiEventManager
   ) {
-    this.itemsPerPage = ITEMS_PER_PAGE;
     this.routeData = this.activatedRoute.data.subscribe(data => {
       this.page = data.pagingParams.page;
       this.previousPage = data.pagingParams.page;
@@ -61,8 +59,6 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // eslint-disable-next-line no-console
-    console.log('ngAfterViewInit');
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
@@ -109,57 +105,20 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
     );
   }
 
-  loadAll() {
-    if (this.currentSearch) {
-      this.driverService
-        .search({
-          page: this.page - 1,
-          query: this.currentSearch,
-          size: this.itemsPerPage,
-          sort: this.sorting()
-        })
-        .subscribe((res: HttpResponse<IDriver[]>) => this.paginateDrivers(res.body, res.headers));
-      return;
-    }
+  clear() {
+    this.paginator.pageIndex = 0;
+    this.currentSearch = '';
+    this.isLoadingResults = true;
     this.driverService
       .query({
-        page: this.page - 1,
-        size: this.itemsPerPage,
+        page: this.paginator.pageIndex,
+        size: this.paginator.pageSize,
         sort: this.sorting()
       })
-      .subscribe((res: HttpResponse<IDriver[]>) => this.paginateDrivers(res.body, res.headers));
-  }
-
-  loadPage(page: number) {
-    if (page !== this.previousPage) {
-      this.previousPage = page;
-      this.transition();
-    }
-  }
-
-  transition() {
-    this.router.navigate(['/driver'], {
-      queryParams: {
-        page: this.page,
-        size: this.itemsPerPage,
-        search: this.currentSearch,
-        sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-      }
-    });
-    this.loadAll();
-  }
-
-  clear() {
-    this.page = 0;
-    this.currentSearch = '';
-    this.router.navigate([
-      '/driver',
-      {
-        page: this.page,
-        sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-      }
-    ]);
-    this.loadAll();
+      .subscribe((data: HttpResponse<IDriver[]>) => {
+        this.isLoadingResults = false;
+        this.drivers = this.processDriversResponse(data);
+      });
   }
 
   search(query) {
@@ -168,20 +127,18 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
     }
     this.page = 0;
     this.currentSearch = query;
-    this.router.navigate([
-      '/driver',
-      {
-        search: this.currentSearch,
-        page: this.page,
-        sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-      }
-    ]);
-    this.loadAll();
-  }
-
-  ngOnInitOrig() {
-    this.loadAll();
-    this.registerChangeInDrivers();
+    this.isLoadingResults = true;
+    this.driverService
+      .query({
+        page: this.paginator.pageIndex,
+        query: this.currentSearch,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      })
+      .subscribe((data: HttpResponse<IDriver[]>) => {
+        this.isLoadingResults = false;
+        this.drivers = this.processDriversResponse(data);
+      });
   }
 
   ngOnDestroy() {
@@ -200,26 +157,11 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
     return this.dataUtils.openFile(contentType, field);
   }
 
-  registerChangeInDrivers() {
-    this.eventSubscriber = this.eventManager.subscribe('driverListModification', () => this.loadAll());
-  }
-
   sorting() {
     const result = [this.sort.active + ',' + this.sort.direction];
     if (this.predicate !== 'id') {
       result.push('id');
     }
     return result;
-  }
-
-  protected paginateDrivers(data: IDriver[], headers: HttpHeaders) {
-    this.links = this.parseLinks.parse(headers.get('link'));
-    this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
-    this.drivers = data.map(driver =>
-      Object.assign({}, driver, {
-        birthDate: driver.birthDate !== null ? driver.birthDate.month(driver.birthDate.month() - 1) : null,
-        deathDate: driver.deathDate !== null ? driver.deathDate.month(driver.deathDate.month() - 1) : null
-      })
-    );
   }
 }
