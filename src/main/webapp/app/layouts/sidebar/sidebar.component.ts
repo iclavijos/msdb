@@ -20,12 +20,18 @@ export const ROUTES: RouteInfo[] = [
   { path: '/series', title: 'global.menu.entities.series', icon: '', iconClass: 'icofont icofont-trophy', class: '' }
 ];
 
+export const RESTRICTED_ROUTES: RouteInfo[] = [
+  { path: '/category', title: 'global.menu.entities.category', icon: '', iconClass: 'icofont icofont-listing-number', class: '' },
+  { path: '/points-system', title: 'global.menu.entities.pointsSystem', icon: '', iconClass: 'icofont icofont-listing-number', class: '' }
+];
+
 @Component({
   selector: 'jhi-sidebar',
   templateUrl: './sidebar.component.html'
 })
 export class SidebarComponent implements OnInit {
   menuItems: any[];
+  restrictedMenuItems: any[];
   innerWidth = 1024;
 
   constructor() {}
@@ -37,7 +43,9 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit() {
     this.menuItems = ROUTES.filter(menuItem => menuItem);
+    this.restrictedMenuItems = RESTRICTED_ROUTES.filter(menuItem => menuItem);
   }
+
   isMobileMenu() {
     if (this.innerWidth > 991) {
       return false;
