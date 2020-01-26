@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { JhiResolvePagingParams } from 'ng-jhipster';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
@@ -17,7 +17,7 @@ import { ICategory } from 'app/shared/model/category.model';
 export class CategoryResolve implements Resolve<ICategory> {
   constructor(private service: CategoryService) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ICategory> {
+  resolve(route: ActivatedRouteSnapshot): Observable<ICategory> {
     const id = route.params['id'];
     if (id) {
       return this.service.find(id).pipe(
@@ -37,7 +37,7 @@ export const categoryRoute: Routes = [
       pagingParams: JhiResolvePagingParams
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       defaultSort: 'id,asc',
       pageTitle: 'motorsportsDatabaseApp.category.home.title'
     },
@@ -50,7 +50,7 @@ export const categoryRoute: Routes = [
       category: CategoryResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.category.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -62,7 +62,7 @@ export const categoryRoute: Routes = [
       category: CategoryResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.category.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const categoryRoute: Routes = [
       category: CategoryResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.category.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const categoryPopupRoute: Routes = [
       category: CategoryResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.category.home.title'
     },
     canActivate: [UserRouteAccessService],

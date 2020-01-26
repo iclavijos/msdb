@@ -9,8 +9,20 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./driver/driver.module').then(m => m.MotorsportsDatabaseDriverModule)
       },
       {
+        path: 'team',
+        loadChildren: () => import('./team/team.module').then(m => m.MotorsportsDatabaseTeamModule)
+      },
+      {
+        path: 'engine',
+        loadChildren: () => import('./engine/engine.module').then(m => m.MotorsportsDatabaseEngineModule)
+      },
+      {
         path: 'fuel-provider',
         loadChildren: () => import('./fuel-provider/fuel-provider.module').then(m => m.MotorsportsDatabaseFuelProviderModule)
+      },
+      {
+        path: 'tyre-provider',
+        loadChildren: () => import('./tyre-provider/tyre-provider.module').then(m => m.MotorsportsDatabaseTyreProviderModule)
       },
       {
         path: 'racetrack',
@@ -19,6 +31,10 @@ import { RouterModule } from '@angular/router';
       {
         path: 'racetrack-layout',
         loadChildren: () => import('./racetrack-layout/racetrack-layout.module').then(m => m.MotorsportsDatabaseRacetrackLayoutModule)
+      },
+      {
+        path: 'category',
+        loadChildren: () => import('./category/category.module').then(m => m.MotorsportsDatabaseCategoryModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ])

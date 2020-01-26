@@ -21,7 +21,7 @@ export class CategoryDeleteDialogComponent {
   }
 
   confirmDelete(id: number) {
-    this.categoryService.delete(id).subscribe(response => {
+    this.categoryService.delete(id).subscribe(() => {
       this.eventManager.broadcast({
         name: 'categoryListModification',
         content: 'Deleted an category'
@@ -46,11 +46,11 @@ export class CategoryDeletePopupComponent implements OnInit, OnDestroy {
         this.ngbModalRef = this.modalService.open(CategoryDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
         this.ngbModalRef.componentInstance.category = category;
         this.ngbModalRef.result.then(
-          result => {
+          () => {
             this.router.navigate(['/category', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           },
-          reason => {
+          () => {
             this.router.navigate(['/category', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           }

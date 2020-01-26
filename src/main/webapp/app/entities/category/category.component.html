@@ -1,0 +1,96 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-sm-12">
+                <form name="searchForm" class="form-inline">
+                    <div class="input-group w-100 mt-3">
+                        <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.category.home.search' | translate }}">
+                        <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                            <fa-icon [icon]="'search'"></fa-icon>
+                        </button>
+                        <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                            <fa-icon [icon]="'trash-alt'"></fa-icon>
+                        </button>
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-category" [routerLink]="['/category/new']">
+                            <fa-icon [icon]="'plus'"></fa-icon>
+                            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.category.home.createLabel">
+                                Create a new category
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.category.home.title">Categories</span></h4>
+                    </div>
+                    <div class="card-body">
+                        <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
+                        <div class="alert alert-warning" [hidden]="categories?.length > 0 || isLoadingResults">
+                            <span jhiTranslate="motorsportsDatabaseApp.category.home.notFound">No categories found</span>
+                        </div>
+                        <div class="table-responsive" [hidden]="categories?.length === 0">
+                            <table mat-table class="table table-hover" [dataSource]="categories"
+                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
+
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.category.name' | translate }}</th>
+                                    <td mat-cell *matCellDef="let category">{{ category.name }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="shortname">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.category.shortname' | translate }}</th>
+                                    <td mat-cell *matCellDef="let category">{{ category.shortname }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="logo">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.category.logo' | translate }}</th>
+                                    <td mat-cell *matCellDef="let category">
+                                        <img *ngIf="category?.logoUrl" [src]="category.logoUrl" style="max-height: 30px;" alt="category logo"/>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="buttons">
+                                    <th mat-header-cell *matHeaderCellDef></th>
+                                    <td mat-cell *matCellDef="let driver">
+                                        <div class="btn-group">
+                                            <button type="submit"
+                                                    [routerLink]="['/category', driver.id, 'view' ]"
+                                                    class="btn btn-info btn-xs">
+                                                <fa-icon [icon]="'eye'"></fa-icon>
+                                            </button>
+                                            <button type="submit"
+                                                    [routerLink]="['/category', driver.id, 'edit']"
+                                                    class="btn btn-primary btn-xs">
+                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                            </button>
+                                            <button type="submit"
+                                                    [routerLink]="['/category', { outlets: { popup: driver.id + '/delete'} }]"
+                                                    replaceUrl="true"
+                                                    queryParamsHandling="merge"
+                                                    class="btn btn-danger btn-xs">
+                                                <fa-icon [icon]="'times'"></fa-icon>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                            </table>
+                            <mat-paginator [length]="resultsLength"
+                                           [pageSizeOptions]="[5, 10, 20]"
+                                           [pageSize]="10"
+                                           showFirstLastButtons></mat-paginator>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
