@@ -57,20 +57,20 @@
 
                                 <ng-container matColumnDef="buttons">
                                     <th mat-header-cell *matHeaderCellDef></th>
-                                    <td mat-cell *matCellDef="let driver">
+                                    <td mat-cell *matCellDef="let category">
                                         <div class="btn-group">
                                             <button type="submit"
-                                                    [routerLink]="['/category', driver.id, 'view' ]"
+                                                    [routerLink]="['/category', category.id, 'view' ]"
                                                     class="btn btn-info btn-xs">
                                                 <fa-icon [icon]="'eye'"></fa-icon>
                                             </button>
                                             <button type="submit"
-                                                    [routerLink]="['/category', driver.id, 'edit']"
+                                                    [routerLink]="['/category', category.id, 'edit']"
                                                     class="btn btn-primary btn-xs">
                                                 <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                             </button>
                                             <button type="submit"
-                                                    [routerLink]="['/category', { outlets: { popup: driver.id + '/delete'} }]"
+                                                    [routerLink]="['/category', { outlets: { popup: category.id + '/delete'} }]"
                                                     replaceUrl="true"
                                                     queryParamsHandling="merge"
                                                     class="btn btn-danger btn-xs">
