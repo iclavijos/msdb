@@ -256,7 +256,7 @@ public class ChassisResource {
     @Timed
     public ResponseEntity<List<Chassis>> searchChassis(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Chassis for query {}", query);
-        Page<Chassis> page = chassisSearchRepository.search(queryStringQuery(query), pageable);
+        Page<Chassis> page = performSearch(query, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

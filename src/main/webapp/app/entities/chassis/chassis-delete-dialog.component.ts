@@ -21,10 +21,10 @@ export class ChassisDeleteDialogComponent {
   }
 
   confirmDelete(id: number) {
-    this.chassisService.delete(id).subscribe(response => {
+    this.chassisService.delete(id).subscribe(() => {
       this.eventManager.broadcast({
         name: 'chassisListModification',
-        content: 'Deleted an chassis'
+        content: 'Deleted a chassis'
       });
       this.activeModal.dismiss(true);
     });
@@ -46,11 +46,11 @@ export class ChassisDeletePopupComponent implements OnInit, OnDestroy {
         this.ngbModalRef = this.modalService.open(ChassisDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
         this.ngbModalRef.componentInstance.chassis = chassis;
         this.ngbModalRef.result.then(
-          result => {
+          () => {
             this.router.navigate(['/chassis', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           },
-          reason => {
+          () => {
             this.router.navigate(['/chassis', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           }

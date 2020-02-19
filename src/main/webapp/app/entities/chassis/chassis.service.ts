@@ -38,7 +38,6 @@ export class ChassisService {
   }
 
   search(req?: any): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http.get<IChassis[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
+    return this.http.get<IChassis[]>(`${this.resourceSearchUrl}?query=${req}`, { observe: 'response' });
   }
 }
