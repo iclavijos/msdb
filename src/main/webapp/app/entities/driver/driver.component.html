@@ -31,7 +31,7 @@
                     </div>
                     <div class="card-body">
                         <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
-                        <div class="alert alert-warning" [hidden]="drivers?.length > 0">
+                        <div class="alert alert-warning" [hidden]="drivers?.length > 0 || isLoadingResults">
                             <span jhiTranslate="motorsportsDatabaseApp.driver.home.notFound">No drivers found</span>
                         </div>
                         <div class="table-responsive" [hidden]="drivers?.length === 0">

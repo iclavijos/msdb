@@ -33,7 +33,7 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
   displayedColumns: string[] = ['flag', 'name', 'surname', 'birthDate', 'birthPlace', 'deathDate', 'deathPlace', 'portrait', 'buttons'];
 
   resultsLength = 0;
-  isLoadingResults = false;
+  isLoadingResults = true;
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -59,6 +59,7 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.registerChangeInDrivers();
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
@@ -67,19 +68,7 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
-          if (this.currentSearch) {
-            return this.driverService.search({
-              page: this.paginator.pageIndex,
-              query: this.currentSearch,
-              size: this.paginator.pageSize,
-              sort: this.sorting()
-            });
-          }
-          return this.driverService.query({
-            page: this.paginator.pageIndex,
-            size: this.paginator.pageSize,
-            sort: this.sorting()
-          });
+          return this.loadAll();
         }),
         map((data: HttpResponse<IDriver[]>) => {
           this.isLoadingResults = false;
@@ -105,6 +94,21 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
     );
   }
 
+  loadAll() {
+    if (this.currentSearch) {
+      return this.driverService.search({
+        page: this.paginator.pageIndex,
+        query: this.currentSearch,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      });
+    }
+    return this.driverService.query({
+      page: this.paginator.pageIndex,
+      size: this.paginator.pageSize,
+      sort: this.sorting()
+    });
+  }
   clear() {
     this.paginator.pageIndex = 0;
     this.currentSearch = '';
@@ -155,6 +159,12 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
 
   openFile(contentType, field) {
     return this.dataUtils.openFile(contentType, field);
+  }
+
+  registerChangeInDrivers() {
+    this.eventSubscriber = this.eventManager.subscribe('driverListModification', () =>
+      this.loadAll().subscribe((data: HttpResponse<IDriver[]>) => (this.drivers = this.processDriversResponse(data)))
+    );
   }
 
   sorting() {
