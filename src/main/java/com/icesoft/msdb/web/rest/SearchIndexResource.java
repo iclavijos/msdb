@@ -2,7 +2,9 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 
+import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
@@ -14,12 +16,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
+import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
@@ -36,13 +40,27 @@ public class SearchIndexResource {
 		this.searchService = searchService;
 	}
 
-    @GetMapping("/management/indexes/rebuild")
+    @PutMapping("/management/indexes/rebuild")
     @Secured({AuthoritiesConstants.ADMIN})
     @Timed
-    public ResponseEntity<Void> rebuildSearchIndexes() {
+    public DeferredResult<ResponseEntity<Void>> rebuildSearchIndexes() {
     	log.debug("REST request to rebuild search indexes");
-    	searchService.rebuildIndexes();
-    	return ResponseEntity.ok().build();
+        DeferredResult<ResponseEntity<Void>> output = new DeferredResult<>(600000L);
+
+        output.onError((Throwable t) -> {
+            log.error("Could not regenerate indexes", t);
+            output.setErrorResult(
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(t.getLocalizedMessage()));
+        });
+
+        ForkJoinPool.commonPool().submit(() -> {
+            searchService.rebuildIndexes();
+            log.info("Indexes rebuilt...");
+            output.setResult(ResponseEntity.ok().build());
+        });
+
+        return output;
     }
 
     @GetMapping("/api/search/entries")
