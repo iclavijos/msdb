@@ -95,8 +95,9 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
   }
 
   loadAll() {
+    this.drivers = [];
     if (this.currentSearch) {
-      return this.driverService.search({
+      return this.driverService.query({
         page: this.paginator.pageIndex,
         query: this.currentSearch,
         size: this.paginator.pageSize,
@@ -109,7 +110,9 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
       sort: this.sorting()
     });
   }
+
   clear() {
+    this.drivers = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';
     this.isLoadingResults = true;
@@ -126,6 +129,7 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
   }
 
   search(query) {
+    this.drivers = [];
     if (!query) {
       return this.clear();
     }
