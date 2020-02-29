@@ -93,14 +93,13 @@
                                     <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.driver.portrait" for="field_portrait">Portrait</label>
                                     <div>
                                         <img [src]="editForm.get('portraitUrl').value" style="max-height: 100px;" *ngIf="!editForm.get('portrait').value && editForm.get('portraitUrl').value != null" alt="driver portrait"/>
-                                        <img [src]="'data:' + editForm.get('portraitContentType').value + ';base64,' + editForm.get('portrait').value" style="max-height: 100px;" *ngIf="editForm.get('portrait').value" alt="driver image"/>
-                                        <div *ngIf="editForm.get('portraitUrl').value || editForm.get('portrait').value" class="form-text text-danger clearfix">
-                                            <button type="button" (click)="editForm.get('portraitUrl').value=null; editForm.get('portrait').value=null;"
-                                                    class="btn btn-secondary btn-xs pull-right">
+                                        <img [src]="'data:' + editForm.get('portraitContentType').value + ';base64,' + editForm.get('portrait').value" style="max-height: 100px;" *ngIf="editForm.get('portrait').value" alt="driver portrait"/>
+                                        <div *ngIf="editForm.get('portrait').value" class="form-text text-danger clearfix">
+                                            <button type="button" (click)="clearInputImage('portrait', 'portraitContentType', 'fileImage')" class="btn btn-secondary btn-xs pull-right">
                                                 <span class="fa fa-times"></span>
                                             </button>
                                         </div>
-                                        <input type="file" id="file_portrait" (change)="setFileData($event, driver, 'portrait', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                                        <input type="file" id="file_portrait" (change)="setFileData($event, 'portrait', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
                                     </div>
                                     <input type="hidden" class="form-control" name="portrait" id="field_portrait" formControlName="portrait"/>
                                     <input type="hidden" class="form-control" name="portraitContentType" id="field_portraitContentType" formControlName="portraitContentType" />
