@@ -1,24 +1,23 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HttpHeaders, HttpResponse } from '@angular/common/http';
+import { Component, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { filter, map } from 'rxjs/operators';
+import { merge, of as observableOf, Subscription } from 'rxjs';
+import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
 import { ITeam } from 'app/shared/model/team.model';
-import { AccountService } from 'app/core/auth/account.service';
 
-import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { TeamService } from './team.service';
+
+import { MatPaginator, MatSort } from '@angular/material';
 
 @Component({
   selector: 'jhi-team',
   templateUrl: './team.component.html'
 })
-export class TeamComponent implements OnInit, OnDestroy {
+export class TeamComponent implements AfterViewInit, OnDestroy {
   currentAccount: any;
-  teams: ITeam[];
+  teams: ITeam[] = [];
   error: any;
   success: any;
   eventSubscriber: Subscription;
@@ -32,16 +31,22 @@ export class TeamComponent implements OnInit, OnDestroy {
   previousPage: any;
   reverse: any;
 
+  displayedColumns: string[] = ['name', 'hqLocation', 'description', 'logo', 'buttons'];
+
+  resultsLength = 0;
+  isLoadingResults = true;
+
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+
   constructor(
-    protected teamService: TeamService,
+    protected teamsService: TeamService,
     protected parseLinks: JhiParseLinks,
-    protected accountService: AccountService,
     protected activatedRoute: ActivatedRoute,
     protected dataUtils: JhiDataUtils,
     protected router: Router,
     protected eventManager: JhiEventManager
   ) {
-    this.itemsPerPage = ITEMS_PER_PAGE;
     this.routeData = this.activatedRoute.data.subscribe(data => {
       this.page = data.pagingParams.page;
       this.previousPage = data.pagingParams.page;
@@ -54,82 +59,90 @@ export class TeamComponent implements OnInit, OnDestroy {
         : '';
   }
 
-  loadAll() {
-    if (this.currentSearch) {
-      this.teamService
-        .search({
-          page: this.page - 1,
-          query: this.currentSearch,
-          size: this.itemsPerPage,
-          sort: this.sort()
+  ngAfterViewInit() {
+    this.registerChangeInTeams();
+    // If the user changes the sort order, reset back to the first page.
+    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+
+    merge(this.sort.sortChange, this.paginator.page, this.paginator.pageSize)
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.isLoadingResults = true;
+          return this.loadAll();
+        }),
+        map((data: HttpResponse<ITeam[]>) => {
+          this.isLoadingResults = false;
+          return this.processTeamsResponse(data);
+        }),
+        catchError(() => {
+          this.isLoadingResults = false;
+          return observableOf([]);
         })
-        .subscribe((res: HttpResponse<ITeam[]>) => this.paginateTeams(res.body, res.headers));
-      return;
-    }
-    this.teamService
-      .query({
-        page: this.page - 1,
-        size: this.itemsPerPage,
-        sort: this.sort()
-      })
-      .subscribe((res: HttpResponse<ITeam[]>) => this.paginateTeams(res.body, res.headers));
+      )
+      .subscribe(data => (this.teams = data));
   }
 
-  loadPage(page: number) {
-    if (page !== this.previousPage) {
-      this.previousPage = page;
-      this.transition();
-    }
+  private processTeamsResponse(teams: HttpResponse<ITeam[]>) {
+    this.resultsLength = parseInt(teams.headers.get('X-Total-Count'), 10);
+    this.links = this.parseLinks.parse(teams.headers.get('link'));
+    this.totalItems = parseInt(teams.headers.get('X-Total-Count'), 10);
+    return teams.body;
   }
 
-  transition() {
-    this.router.navigate(['/team'], {
-      queryParams: {
-        page: this.page,
-        size: this.itemsPerPage,
-        search: this.currentSearch,
-        sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-      }
+  loadAll() {
+    this.teams = [];
+    if (this.currentSearch) {
+      return this.teamsService.query({
+        page: this.paginator.pageIndex,
+        query: this.currentSearch,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      });
+    }
+    return this.teamsService.query({
+      page: this.paginator.pageIndex,
+      size: this.paginator.pageSize,
+      sort: this.sorting()
     });
-    this.loadAll();
   }
 
   clear() {
-    this.page = 0;
+    this.teams = [];
+    this.paginator.pageIndex = 0;
     this.currentSearch = '';
-    this.router.navigate([
-      '/team',
-      {
-        page: this.page,
-        sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-      }
-    ]);
-    this.loadAll();
+    this.isLoadingResults = true;
+    this.teamsService
+      .query({
+        page: this.paginator.pageIndex,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      })
+      .subscribe((data: HttpResponse<ITeam[]>) => {
+        this.isLoadingResults = false;
+        this.teams = this.processTeamsResponse(data);
+      });
   }
 
   search(query) {
+    this.teams = [];
     if (!query) {
       return this.clear();
     }
     this.page = 0;
     this.currentSearch = query;
-    this.router.navigate([
-      '/team',
-      {
-        search: this.currentSearch,
-        page: this.page,
-        sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-      }
-    ]);
-    this.loadAll();
-  }
-
-  ngOnInit() {
-    this.loadAll();
-    this.accountService.identity().subscribe(account => {
-      this.currentAccount = account;
-    });
-    this.registerChangeInTeams();
+    this.isLoadingResults = true;
+    this.teamsService
+      .query({
+        page: this.paginator.pageIndex,
+        query: this.currentSearch,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      })
+      .subscribe((data: HttpResponse<ITeam[]>) => {
+        this.isLoadingResults = false;
+        this.teams = this.processTeamsResponse(data);
+      });
   }
 
   ngOnDestroy() {
@@ -149,20 +162,16 @@ export class TeamComponent implements OnInit, OnDestroy {
   }
 
   registerChangeInTeams() {
-    this.eventSubscriber = this.eventManager.subscribe('teamListModification', response => this.loadAll());
+    this.eventSubscriber = this.eventManager.subscribe('teamsListModification', () =>
+      this.loadAll().subscribe((data: HttpResponse<ITeam[]>) => (this.teams = this.processTeamsResponse(data)))
+    );
   }
 
-  sort() {
-    const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
+  sorting() {
+    const result = [this.sort.active + ',' + this.sort.direction];
     if (this.predicate !== 'id') {
       result.push('id');
     }
     return result;
-  }
-
-  protected paginateTeams(data: ITeam[], headers: HttpHeaders) {
-    this.links = this.parseLinks.parse(headers.get('link'));
-    this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
-    this.teams = data;
   }
 }

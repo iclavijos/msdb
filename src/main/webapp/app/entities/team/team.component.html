@@ -30,29 +30,39 @@
                         <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.team.home.title">Teams</span></h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-warning" *ngIf="teams?.length === 0">
-                            <span jhiTranslate="motorsportsDatabaseApp.team.home.notFound">No teams found</span>
+                        <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
+                        <div class="alert alert-warning" [hidden]="teams?.length > 0 || isLoadingResults">
+                            <span jhiTranslate="motorsportsDatabaseApp.team.home.notFound">No team found</span>
                         </div>
-                        <div class="table-responsive" *ngIf="teams?.length > 0">
-                            <table class="table table-hover" aria-describedby="page-heading">
-                                <thead>
-                                <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-                                    <th scope="col" jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.team.name">Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                                    <th scope="col" jhiSortBy="description"><span jhiTranslate="motorsportsDatabaseApp.team.description">Description</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                                    <th scope="col" jhiSortBy="hqLocation"><span jhiTranslate="motorsportsDatabaseApp.team.hqLocation">Hq Location</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                                    <th scope="col" jhiSortBy="logo"><span jhiTranslate="motorsportsDatabaseApp.team.logo">Logo</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                                    <th scope="col"></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr *ngFor="let team of teams ;trackBy: trackId">
-                                    <td>{{team.name}}</td>
-                                    <td>{{team.description}}</td>
-                                    <td>{{team.hqLocation}}</td>
-                                    <td>
-                                        <img *ngIf="team.logoUrl" [src]="team.logoUrl" style="max-height: 30px;" alt="team logo"/>
+                        <div class="table-responsive" [hidden]="team?.length === 0">
+                            <table mat-table class="table table-hover" [dataSource]="teams"
+                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
+
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.team.name' | translate }}</th>
+                                    <td mat-cell *matCellDef="let team">{{ team.name }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="hqLocation">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.team.hqLocation' | translate }}</th>
+                                    <td mat-cell *matCellDef="let team">{{ team.hqLocation }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="description">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.team.description' | translate }}</th>
+                                    <td mat-cell *matCellDef="let team">{{ team.description }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="logo">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.team.logo' | translate }}</th>
+                                    <td mat-cell *matCellDef="let team">
+                                        <img *ngIf="team?.logoUrl" [src]="team.logoUrl" style="max-height: 30px;" alt="team logo"/>
                                     </td>
-                                    <td class="text-right">
+                                </ng-container>
+
+                                <ng-container matColumnDef="buttons">
+                                    <th mat-header-cell *matHeaderCellDef></th>
+                                    <td mat-cell *matCellDef="let team">
                                         <div class="btn-group">
                                             <button type="submit"
                                                     [routerLink]="['/team', team.id, 'view' ]"
@@ -73,17 +83,15 @@
                                             </button>
                                         </div>
                                     </td>
-                                </tr>
-                                </tbody>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                             </table>
-                        </div>
-                        <div [hidden]="teams?.length === 0">
-                            <div class="row justify-content-center">
-                                <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
-                            </div>
-                            <div class="row justify-content-center">
-                                <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
-                            </div>
+                            <mat-paginator [length]="resultsLength"
+                                           [pageSizeOptions]="[5, 10, 20]"
+                                           [pageSize]="10"
+                                           showFirstLastButtons></mat-paginator>
                         </div>
                     </div>
                 </div>
