@@ -49,7 +49,7 @@
                                 </ng-container>
 
                                 <ng-container matColumnDef="debutYear">
-                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.chassis.debutYear' | translate }}</th>
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.chassis.debutYear' | translate }}</th>
                                     <td mat-cell *matCellDef="let chassis">{{ chassis.debutYear }}</td>
                                 </ng-container>
 
