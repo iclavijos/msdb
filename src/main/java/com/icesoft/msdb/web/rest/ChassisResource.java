@@ -9,15 +9,13 @@ import com.icesoft.msdb.repository.search.ChassisSearchRepository;
 import com.icesoft.msdb.repository.stats.ChassisStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.micrometer.core.annotation.Timed;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,22 +25,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link com.icesoft.msdb.domain.Chassis}.
@@ -65,16 +59,18 @@ public class ChassisResource {
     private final ChassisStatisticsRepository statsRepo;
 
     private final ChassisSearchRepository chassisSearchRepository;
+    private final SearchService searchService;
 
     private final CDNService cdnService;
 
     public ChassisResource(ChassisRepository chassisRepository, ChassisSearchRepository chassisSearchRepository, EventEntryRepository entryRepository,
-    		ChassisStatisticsRepository chassisStatsRepo, CDNService cdnService) {
+    		ChassisStatisticsRepository chassisStatsRepo, CDNService cdnService, SearchService searchService) {
         this.chassisRepository = chassisRepository;
         this.chassisSearchRepository = chassisSearchRepository;
         this.entryRepository = entryRepository;
         this.statsRepo = chassisStatsRepo;
         this.cdnService = cdnService;
+        this.searchService = searchService;
     }
 
     /**
@@ -140,7 +136,7 @@ public class ChassisResource {
     }
 
     /**
-     * {@code GET  /chassis} : get all the chassis.
+     * {@code GET  /chassis} : get chassis.
      *
 
      * @param pageable the pagination information.
@@ -149,9 +145,15 @@ public class ChassisResource {
      */
     @GetMapping("/chassis")
     @Timed
-    public ResponseEntity<List<Chassis>> getAllChassis(Pageable pageable) {
+    public ResponseEntity<List<Chassis>> getChassis(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of Chassis");
-        Page<Chassis> page = chassisRepository.findAll(pageable);
+        Page<Chassis> page;
+        Optional<String> queryOpt = Optional.ofNullable(query);
+        if (queryOpt.isPresent()) {
+            page = searchService.performWildcardSearch(chassisSearchRepository, query.toLowerCase(), new String[]{"manufacturer", "name"}, pageable);
+        } else {
+            page = chassisRepository.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -244,38 +246,13 @@ public class ChassisResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-    /**
-     * {@code SEARCH  /_search/chassis?query=:query} : search for the chassis corresponding
-     * to the query.
-     *
-     * @param query the query of the chassis search.
-     * @param pageable the pagination information.
-     * @return the result of the search.
-     */
-    @GetMapping("/_search/chassis")
-    @Timed
-    public ResponseEntity<List<Chassis>> searchChassis(@RequestParam String query, Pageable pageable) {
-        log.debug("REST request to search for a page of Chassis for query {}", query);
-        Page<Chassis> page = performSearch(query, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
-
     @GetMapping("/_typeahead/chassis")
     @Timed
     public List<Chassis> typeahead(@RequestParam String query) {
         log.debug("REST request to search for a page of Chassis for query {}", query);
-        Page<Chassis> page = performSearch(query, PageRequest.of(0, 10));
+        Page<Chassis> page = page = searchService
+            .performWildcardSearch(chassisSearchRepository, query.toLowerCase(), new String[]{"manufacturer", "name"}, PageRequest.of(0, 10));
         return page.getContent();
     }
 
-    private Page<Chassis> performSearch(String query, Pageable pageable) {
-    	QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
-    			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
-    				.analyzeWildcard(true)
-    				.field("name", 2.0f)
-    				.field("manufacturer"));
-
-    	return chassisSearchRepository.search(queryBuilder, pageable);
-    }
 }

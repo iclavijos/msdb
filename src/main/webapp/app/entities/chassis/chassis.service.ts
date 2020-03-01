@@ -13,6 +13,7 @@ type EntityArrayResponseType = HttpResponse<IChassis[]>;
 export class ChassisService {
   public resourceUrl = SERVER_API_URL + 'api/chassis';
   public resourceSearchUrl = SERVER_API_URL + 'api/_search/chassis';
+  public statsSearchUrl = SERVER_API_URL + 'api/stats/chassis';
 
   constructor(protected http: HttpClient) {}
 
@@ -39,5 +40,17 @@ export class ChassisService {
 
   search(req?: any): Observable<EntityArrayResponseType> {
     return this.http.get<IChassis[]>(`${this.resourceSearchUrl}?query=${req}`, { observe: 'response' });
+  }
+
+  getStats(id: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}`, { observe: 'response' });
+  }
+
+  getStatsYear(id: number, year: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}/${year}`, { observe: 'response' });
+  }
+
+  getYears(id: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}/years`, { observe: 'response' });
   }
 }

@@ -91,8 +91,9 @@ export class ChassisComponent implements AfterViewInit, OnDestroy {
   }
 
   loadAll() {
+    this.chassis = [];
     if (this.currentSearch) {
-      return this.chassisService.search({
+      return this.chassisService.query({
         page: this.paginator.pageIndex,
         query: this.currentSearch,
         size: this.paginator.pageSize,
@@ -107,6 +108,7 @@ export class ChassisComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
+    this.chassis = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';
     this.isLoadingResults = true;
@@ -123,6 +125,7 @@ export class ChassisComponent implements AfterViewInit, OnDestroy {
   }
 
   search(query) {
+    this.chassis = [];
     if (!query) {
       return this.clear();
     }
@@ -130,7 +133,7 @@ export class ChassisComponent implements AfterViewInit, OnDestroy {
     this.currentSearch = query;
     this.isLoadingResults = true;
     this.chassisService
-      .search({
+      .query({
         page: this.paginator.pageIndex,
         query: this.currentSearch,
         size: this.paginator.pageSize,

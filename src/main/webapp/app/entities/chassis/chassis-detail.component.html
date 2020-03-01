@@ -3,42 +3,43 @@
         <jhi-alert-error></jhi-alert-error>
         <jhi-alert></jhi-alert>
         <div class="row">
-            <div class="col-md-4">
-                <div class="card card-profile">
-                    <div class="card-body">
-                        <h4 class="card-title"></h4>
-                        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.debutYear">Debut Year</span></dt>
-                        <dd>
-                            <span>{{chassis.debutYear}}</span>
-                        </dd>
-                        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.derivedFrom">Derived From</span></dt>
-                        <dd>
-                            <div *ngIf="chassis.derivedFrom">
-                                <a [routerLink]="['/chassis', chassis.derivedFrom?.id]">{{chassis.derivedFrom?.manufacturer}} {{chassis.derivedFrom?.name}}</a>
-                            </div>
-                        </dd>
-                        <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.rebranded">Rebranded</span>
-                            <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.chassis.rebrandedTooltip' | translate }}"></i></dt>
-                        <dd>
-                            <span><i [ngClass]="chassis.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
-                        </dd>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-danger">
                         <h3 class="card-title">{{chassis.manufacturer}} {{chassis.name}}</h3>
                     </div>
                     <div class="card-body">
-                        <dl class="row-md jh-entity-details">
-                            <dd>
+                        <div class="row jh-entity-details">
+                            <div class="col-md-4">
+                                <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.debutYear">Debut Year</span></dt>
+                                <dd>
+                                    <span>{{chassis.debutYear}}</span>
+                                </dd>
+                                <dt *ngIf="chassis.derivedFrom"><span jhiTranslate="motorsportsDatabaseApp.chassis.derivedFrom">Derived From</span></dt>
+                                <dd *ngIf="chassis.derivedFrom">
+                                    <a [routerLink]="['/chassis', chassis.derivedFrom?.id]">{{chassis.derivedFrom?.manufacturer}} {{chassis.derivedFrom?.name}}</a>
+                                </dd>
+                                <dt *ngIf="chassis.derivedFrom">
+                                    <span jhiTranslate="motorsportsDatabaseApp.chassis.rebranded">Rebranded</span>
+                                    <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.chassis.rebrandedTooltip' | translate }}"></i>
+                                </dt>
+                                <dd *ngIf="chassis.derivedFrom">
+                                    <span><i [ngClass]="chassis.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+                                </dd>
+                            </div>
+                            <div class="col-md-8">
+                                <dd>
+                                    <jhi-statistics [id]="chassis.id" [statsType]="'chassis'">Statistics...</jhi-statistics>
+                                </dd>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
                                 <div *ngIf="chassis.imageUrl">
                                     <img [src]="chassis.imageUrl" class="img-fluid" alt="chassis image"/>
                                 </div>
-                            </dd>
-                        </dl>
-                        <jhi-statistics [id]="chassis.id" [statsType]="'chassis'">Statistics...</jhi-statistics>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
