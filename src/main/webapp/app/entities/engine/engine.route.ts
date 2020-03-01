@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { JhiResolvePagingParams } from 'ng-jhipster';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
@@ -17,7 +17,7 @@ import { IEngine } from 'app/shared/model/engine.model';
 export class EngineResolve implements Resolve<IEngine> {
   constructor(private service: EngineService) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IEngine> {
+  resolve(route: ActivatedRouteSnapshot): Observable<IEngine> {
     const id = route.params['id'];
     if (id) {
       return this.service.find(id).pipe(
@@ -38,7 +38,7 @@ export const engineRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_USER'],
-      defaultSort: 'id,asc',
+      defaultSort: 'name,asc',
       pageTitle: 'motorsportsDatabaseApp.engine.home.title'
     },
     canActivate: [UserRouteAccessService]

@@ -5,7 +5,7 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { switchMap, debounceTime, map } from 'rxjs/operators';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 import { IEngine, Engine } from 'app/shared/model/engine.model';
 import { EngineService } from './engine.service';
@@ -17,7 +17,7 @@ import { EngineService } from './engine.service';
 export class EngineUpdateComponent implements OnInit {
   isSaving: boolean;
 
-  engines: IEngine[];
+  options: Observable<IEngine[]>;
 
   editForm = this.fb.group({
     id: [],
@@ -29,10 +29,13 @@ export class EngineUpdateComponent implements OnInit {
     petrolEngine: [],
     dieselEngine: [],
     electricEngine: [],
+    otherEngine: [],
     turbo: [],
     image: [],
     imageContentType: [],
-    derivedFrom: []
+    imageUrl: [],
+    derivedFrom: [],
+    rebranded: []
   });
 
   constructor(
@@ -46,16 +49,24 @@ export class EngineUpdateComponent implements OnInit {
 
   ngOnInit() {
     this.isSaving = false;
+
+    this.options = this.editForm.get('derivedFrom').valueChanges.pipe(
+      debounceTime(300),
+      switchMap(value => {
+        if (typeof value !== 'object' && value !== null) {
+          return this.engineService.typeahead(value);
+        }
+      }),
+      map(response => response.body)
+    );
+
     this.activatedRoute.data.subscribe(({ engine }) => {
       this.updateForm(engine);
     });
-    this.engineService
-      .query()
-      .pipe(
-        filter((mayBeOk: HttpResponse<IEngine[]>) => mayBeOk.ok),
-        map((response: HttpResponse<IEngine[]>) => response.body)
-      )
-      .subscribe((res: IEngine[]) => (this.engines = res), (res: HttpErrorResponse) => this.onError(res.message));
+  }
+
+  displayFn(engine?: IEngine): string | undefined {
+    return engine ? engine.manufacturer + ' ' + engine.name : undefined;
   }
 
   updateForm(engine: IEngine) {
@@ -69,10 +80,13 @@ export class EngineUpdateComponent implements OnInit {
       petrolEngine: engine.petrolEngine,
       dieselEngine: engine.dieselEngine,
       electricEngine: engine.electricEngine,
+      otherEngine: engine.otherEngine,
       turbo: engine.turbo,
       image: engine.image,
       imageContentType: engine.imageContentType,
-      derivedFrom: engine.derivedFrom
+      imageUrl: engine.imageUrl,
+      derivedFrom: engine.derivedFrom,
+      rebranded: engine.rebranded
     });
   }
 
@@ -104,7 +118,7 @@ export class EngineUpdateComponent implements OnInit {
       }
     }).then(
       // eslint-disable-next-line no-console
-      () => console.log('blob added'), // success
+      () => {}, // success
       this.onError
     );
   }
@@ -145,10 +159,13 @@ export class EngineUpdateComponent implements OnInit {
       petrolEngine: this.editForm.get(['petrolEngine']).value,
       dieselEngine: this.editForm.get(['dieselEngine']).value,
       electricEngine: this.editForm.get(['electricEngine']).value,
+      otherEngine: this.editForm.get(['otherEngine']).value,
       turbo: this.editForm.get(['turbo']).value,
       imageContentType: this.editForm.get(['imageContentType']).value,
       image: this.editForm.get(['image']).value,
-      derivedFrom: this.editForm.get(['derivedFrom']).value
+      imageUrl: this.editForm.get(['imageUrl']).value,
+      derivedFrom: this.editForm.get(['derivedFrom']).value,
+      rebranded: this.editForm.get(['rebranded']).value
     };
   }
 

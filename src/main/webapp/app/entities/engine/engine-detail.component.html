@@ -1,0 +1,110 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card card-profile">
+                    <div class="card-header card-header-danger">
+                        <h3 class="card-title">{{engine.name}}</h3>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title"></h4>
+                        <dl>
+                            <dd>
+                                <div *ngIf="engine.logoUrl">
+                                    <img [src]="engine.logoUrl" class="img-fluid" alt="engine logo"/>
+                                </div>
+                            </dd>
+                        </dl>
+                        <dl class="row-md jh-entity-details">
+                            <dt><span jhiTranslate="motorsportsDatabaseApp.engine.manufacturer">Manufacturer</span></dt>
+                            <dd>
+                                <span>{{engine.manufacturer}}</span>
+                            </dd>
+                            <dt><span jhiTranslate="motorsportsDatabaseApp.engine.capacity">Capacity</span></dt>
+                            <dd>
+                                <span>{{engine.capacity}}</span>
+                            </dd>
+                            <dt><span jhiTranslate="motorsportsDatabaseApp.engine.architecture">Architecture</span></dt>
+                            <dd>
+                                <span>{{engine.architecture}}</span>
+                            </dd>
+                            <dt><span jhiTranslate="motorsportsDatabaseApp.engine.debutYear">Debut Year</span></dt>
+                            <dd>
+                                <span>{{engine.debutYear}}</span>
+                            </dd>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4">
+                                    <dt><span jhiTranslate="motorsportsDatabaseApp.engine.petrolEngine">Petrol Engine</span></dt>
+                                    <dd>
+                                        <span><i [ngClass]="engine.petrolEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+                                    </dd>
+                                    <dt><span jhiTranslate="motorsportsDatabaseApp.engine.dieselEngine">Diesel Engine</span></dt>
+                                    <dd>
+                                        <span><i [ngClass]="engine.dieselEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+                                    </dd>
+                                </div>
+                                <div class="col-lg-4 col-md-4">
+                                    <dt><span jhiTranslate="motorsportsDatabaseApp.engine.electricEngine">Electric Engine</span></dt>
+                                    <dd>
+                                        <span><i [ngClass]="engine.electricEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+                                    </dd>
+                                    <dt><span jhiTranslate="motorsportsDatabaseApp.engine.otherEngine">Other Engine</span></dt>
+                                    <dd>
+                                        <span><i [ngClass]="engine.otherEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+                                    </dd>
+                                </div>
+                                <div class="col-lg-4 col-md-4">
+                                    <dt><span jhiTranslate="motorsportsDatabaseApp.engine.turbo">Turbo</span></dt>
+                                    <dd>
+                                        <span><i [ngClass]="engine.turbo ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+                                    </dd>
+                                </div>
+                            </div>
+                            <div *ngIf="engine.derivedFrom">
+                                <dt><span jhiTranslate="motorsportsDatabaseApp.engine.derivedFrom">Derived From</span></dt>
+                                <dd>
+                                    <div *ngIf="engine.derivedFrom">
+                                        <a [routerLink]="['/engine', engine.derivedFrom?.id, 'view']">{{engine.derivedFrom?.manufacturer}} {{engine.derivedFrom?.name}}</a>
+                                    </div>
+                                </dd>
+                                <dt><span jhiTranslate="motorsportsDatabaseApp.engine.rebranded">Rebranded</span>
+                                    <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.engine.rebrandedTooltip' | translate }}"></i></dt>
+                                <dd>
+                                    <span><i [ngClass]="engine.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+                                </dd>
+                            </div>
+                        </dl>
+
+                        <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                [routerLink]="['/engine', engine.id, 'edit']"
+                                class="btn btn-primary">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <jhi-statistics [id]="engine.id" [statsType]="'teams'">Statistics...</jhi-statistics>
+
+                        <dl class="row-md jh-entity-details">
+                            <dd>
+                                <div *ngIf="engine.imageUrl">
+                                    <img [src]="engine.imageUrl" class="img-fluid" alt="engine image"/>
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="submit"
+                (click)="previousState()"
+                class="btn btn-info">
+            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+        </button>
+    </div>
+</div>

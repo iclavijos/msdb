@@ -21,7 +21,7 @@ export class EngineDeleteDialogComponent {
   }
 
   confirmDelete(id: number) {
-    this.engineService.delete(id).subscribe(response => {
+    this.engineService.delete(id).subscribe(() => {
       this.eventManager.broadcast({
         name: 'engineListModification',
         content: 'Deleted an engine'
@@ -46,11 +46,11 @@ export class EngineDeletePopupComponent implements OnInit, OnDestroy {
         this.ngbModalRef = this.modalService.open(EngineDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
         this.ngbModalRef.componentInstance.engine = engine;
         this.ngbModalRef.result.then(
-          result => {
+          () => {
             this.router.navigate(['/engine', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           },
-          reason => {
+          () => {
             this.router.navigate(['/engine', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           }

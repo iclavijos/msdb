@@ -1,5 +1,6 @@
 package com.icesoft.msdb.web.rest;
 
+import com.icesoft.msdb.domain.Chassis;
 import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.domain.stats.EngineStatistics;
 import com.icesoft.msdb.domain.stats.ParticipantStatistics;
@@ -11,6 +12,7 @@ import com.icesoft.msdb.repository.search.EngineSearchRepository;
 import com.icesoft.msdb.repository.stats.EngineStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
@@ -65,18 +67,20 @@ public class EngineResource {
 
     private final EngineSearchRepository engineSearchRepository;
     private final EventEntryRepository entryRepository;
+    private final SearchService searchService;
 
     private final EngineStatisticsRepository statsRepo;
 
     private final CDNService cdnService;
 
     public EngineResource(EngineRepository engineRepository, EngineSearchRepository engineSearchRepository, EventEntryRepository entryRepository,
-    		EngineStatisticsRepository statsRepo, CDNService cdnService) {
+    		EngineStatisticsRepository statsRepo, CDNService cdnService, SearchService searchService) {
         this.engineRepository = engineRepository;
         this.engineSearchRepository = engineSearchRepository;
         this.entryRepository = entryRepository;
         this.statsRepo = statsRepo;
         this.cdnService = cdnService;
+        this.searchService = searchService;
     }
 
     /**
@@ -152,9 +156,15 @@ public class EngineResource {
      */
     @GetMapping("/engines")
     @Timed
-    public ResponseEntity<List<Engine>> getAllEngines(Pageable pageable) {
+    public ResponseEntity<List<Engine>> getEngines(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of Engines");
-        Page<Engine> page = engineRepository.findAll(pageable);
+        Page<Engine> page;
+        Optional<String> queryOpt = Optional.ofNullable(query);
+        if (queryOpt.isPresent()) {
+            page = searchService.performWildcardSearch(engineSearchRepository, query.toLowerCase(), new String[]{"manufacturer", "name"}, pageable);
+        } else {
+            page = engineRepository.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -249,39 +259,12 @@ public class EngineResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-    /**
-     * {@code SEARCH  /_search/engines?query=:query} : search for the engine corresponding
-     * to the query.
-     *
-     * @param query the query of the engine search.
-     * @param pageable the pagination information.
-     * @return the result of the search.
-     */
-    @GetMapping("/_search/engines")
-    @Timed
-    public ResponseEntity<List<Engine>> searchEngines(@RequestParam String query, Pageable pageable) {
-        log.debug("REST request to search for a page of Engines for query {}", query);
-        Page<Engine> page = performSearch(query, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
-
     @GetMapping("/_typeahead/engines")
     @Timed
     public List<Engine> typeahead(@RequestParam String query) {
-        log.debug("REST request to search for a page of Engines for query {}", query);
-        Page<Engine> page = performSearch(query, PageRequest.of(0, 10));
+        log.debug("REST request to search Engines for query {}", query);
+        Page<Engine> page = page = searchService
+            .performWildcardSearch(engineSearchRepository, query.toLowerCase(), new String[]{"manufacturer", "name"}, PageRequest.of(0, 10));
         return page.getContent();
-    }
-
-    private Page<Engine> performSearch(String query, Pageable pageable) {
-    	QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
-    			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
-    				.analyzeWildcard(true)
-    				.field("name", 2.0f)
-    				.field("manufacturer", 1.5f)
-    				.field("architecture"));
-
-    	return engineSearchRepository.search(queryBuilder, pageable);
     }
 }

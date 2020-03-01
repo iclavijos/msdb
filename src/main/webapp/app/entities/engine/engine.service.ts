@@ -12,7 +12,8 @@ type EntityArrayResponseType = HttpResponse<IEngine[]>;
 @Injectable({ providedIn: 'root' })
 export class EngineService {
   public resourceUrl = SERVER_API_URL + 'api/engines';
-  public resourceSearchUrl = SERVER_API_URL + 'api/_search/engines';
+  public resourceSearchUrl = SERVER_API_URL + 'api/_typeahead/engines';
+  public statsSearchUrl = SERVER_API_URL + 'api/stats/engines';
 
   constructor(protected http: HttpClient) {}
 
@@ -37,8 +38,19 @@ export class EngineService {
     return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  search(req?: any): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http.get<IEngine[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
+  typeahead(req?: any): Observable<EntityArrayResponseType> {
+    return this.http.get<IEngine[]>(`${this.resourceSearchUrl}?query=${req}`, { observe: 'response' });
+  }
+
+  getStats(id: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}`, { observe: 'response' });
+  }
+
+  getStatsYear(id: number, year: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}/${year}`, { observe: 'response' });
+  }
+
+  getYears(id: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}/years`, { observe: 'response' });
   }
 }
