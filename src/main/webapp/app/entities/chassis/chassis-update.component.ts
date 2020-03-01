@@ -48,7 +48,7 @@ export class ChassisUpdateComponent implements OnInit {
       debounceTime(300),
       switchMap(value => {
         if (typeof value !== 'object' && value !== null) {
-          return this.chassisService.search(value);
+          return this.chassisService.typeahead(value);
         }
       }),
       map(response => response.body)

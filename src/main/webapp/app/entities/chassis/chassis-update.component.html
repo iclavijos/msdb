@@ -10,7 +10,7 @@
                     <div class="card-body">
                         <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-5">
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.chassis.manufacturer' | translate }}" type="text"
                                                class="form-control" name="manufacturer" id="field_manufacturer" formControlName="manufacturer">
@@ -26,7 +26,7 @@
                                         </div>
                                     </mat-form-field>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-5">
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.chassis.name' | translate }}" type="text"
                                                class="form-control" name="name" id="field_name" formControlName="name">
@@ -42,9 +42,7 @@
                                         </div>
                                     </mat-form-field>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.chassis.debutYear' | translate }}" type="text"
                                                class="form-control" name="debutYear" id="field_debutYear" formControlName="debutYear">
@@ -60,7 +58,9 @@
                                         </div>
                                     </mat-form-field>
                                 </div>
-                                <div class="col-md-9">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
                                     <mat-form-field class="example-full-width">
                                         <input matInput id="field_derivedFrom" type="text" name="derivedFrom" class="form-control"
                                                [matAutocomplete]="auto" formControlName="derivedFrom"
@@ -72,13 +72,13 @@
                                         </mat-autocomplete>
                                     </mat-form-field>
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-md-3">
                                     <label jhiTranslate="motorsportsDatabaseApp.chassis.rebranded">Rebranded</label> <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.chassis.rebrandedTooltip' | translate }}"></i>
                                     <i [ngClass]="editForm.get('rebranded').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="editForm.get('rebranded').value = !editForm.get('rebranded').value"></i>
                                 </div>
-                                <div class="col-md-9">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
                                     <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.chassis.image" for="field_image">Image</label>
                                     <div>
                                         <img [src]="editForm.get('imageUrl').value" style="max-height: 100px;" *ngIf="!editForm.get('image').value && editForm.get('imageUrl').value != null" alt="chassis image"/>
