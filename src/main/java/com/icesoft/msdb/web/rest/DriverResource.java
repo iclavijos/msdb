@@ -13,7 +13,6 @@ import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.DriverFullNameDTO;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -28,23 +27,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link com.icesoft.msdb.domain.Driver}.
@@ -144,18 +139,24 @@ public class DriverResource {
     }
 
     /**
-     * {@code GET  /drivers} : get all the drivers.
+     * {@code GET  /drivers} : get drivers.
      *
-
+     * @param query the search term
      * @param pageable the pagination information.
 
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of drivers in body.
      */
     @GetMapping("/drivers")
     @Timed
-    public ResponseEntity<List<Driver>> getAllDrivers(Pageable pageable) {
+    public ResponseEntity<List<Driver>> getDrivers(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of Drivers");
-        Page<Driver> page = driverRepository.findAll(pageable);
+        Page<Driver> page;
+        Optional<String> queryOpt = Optional.ofNullable(query);
+        if (queryOpt.isPresent()) {
+            page = searchService.performWildcardSearch(driverSearchRepository, query.toLowerCase(), new String[]{"surname", "name"}, pageable);
+        } else {
+            page = driverRepository.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -253,29 +254,13 @@ public class DriverResource {
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 
-    /**
-     * {@code SEARCH  /_search/drivers?query=:query} : search for the driver corresponding
-     * to the query.
-     *
-     * @param query the query of the driver search.
-     * @param pageable the pagination information.
-     * @return the result of the search.
-     */
-    @GetMapping("/_search/drivers")
-    @Timed
-    public ResponseEntity<List<Driver>> searchDrivers(@RequestParam String query, Pageable pageable) {
-    	Page<Driver> page = searchService.performWildcardSearch(driverSearchRepository, query, new String[]{"surname", "name"}, pageable);
-
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
-
     @GetMapping("/_typeahead/drivers")
     @Timed
     public ResponseEntity<List<DriverFullNameDTO>> typeahead(@RequestParam String query) throws URISyntaxException {
         log.debug("REST request to search for a page of Drivers for query '{}'", query);
 
-        Page<Driver> page = searchService.performWildcardSearch(driverSearchRepository, query, new String[]{"surname", "name"}, PageRequest.of(0, 10));
+        Page<Driver> page = searchService
+            .performWildcardSearch(driverSearchRepository, query.toLowerCase(), new String[]{"surname", "name"}, PageRequest.of(0, 10));
         List<DriverFullNameDTO> result = new ArrayList<>();
         for (Driver driver : page) {
 			result.add(new DriverFullNameDTO(driver));
