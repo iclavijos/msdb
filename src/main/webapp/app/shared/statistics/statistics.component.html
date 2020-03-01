@@ -8,7 +8,7 @@
 	<div class="col-sm-2">
 		<select class="form-control" id="field_jumpToEdition"
 			name="jumpToYear" (change)="jumpToYear($event.target.value)">
-			<option>{{ 'motorsportsDatabaseApp.stats.overall' | translate }}</option>
+			<option value="">{{ 'motorsportsDatabaseApp.stats.overall' | translate }}</option>
 			<option *ngFor="let aYear of yearsStats" [value]="aYear">{{aYear}}</option>
 		</select>
 	</div>
