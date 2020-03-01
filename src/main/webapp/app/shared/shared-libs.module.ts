@@ -19,7 +19,11 @@ import {
   MatSelectModule,
   MatDatepickerModule,
   MatAutocompleteModule,
-  MatDialogModule
+  MatDialogModule,
+  MatTableModule,
+  MatPaginatorModule,
+  MatProgressSpinnerModule,
+  MatSortModule
 } from '@angular/material';
 
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
@@ -45,7 +49,11 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
     MatMomentDateModule,
     MatDatepickerModule,
     MatAutocompleteModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
+    MatSortModule
   ]
 })
 export class MotorsportsDatabaseSharedLibsModule {}
