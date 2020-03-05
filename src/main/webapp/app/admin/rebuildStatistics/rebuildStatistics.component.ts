@@ -17,7 +17,7 @@ export class JhiRebuildStatisticsComponent implements OnInit {
   ngOnInit() {
     this.finished = false;
 
-    this.http.get<any>(SERVER_API_URL + '/management/stats/rebuild', { observe: 'response' }).subscribe(() => this.finishedOk());
+    this.http.put<any>(SERVER_API_URL + '/management/stats/rebuild', { observe: 'response' }).subscribe(() => this.finishedOk());
   }
 
   private finishedOk() {
