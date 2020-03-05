@@ -53,11 +53,11 @@ export class StatisticsComponent implements OnInit {
         this.stats = stats.body;
       });
     }
-    /*    if (this.statsType === 'engines') {
-            this.engineService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
-                this.yearsStats = stats.body;
-            });
-        } */
+    if (this.statsType === 'engines') {
+      this.engineService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
+        this.stats = stats.body;
+      });
+    }
   }
   loadStatsYear(id, year) {
     if (this.statsType === 'drivers') {
@@ -81,6 +81,7 @@ export class StatisticsComponent implements OnInit {
       });
     }
   }
+
   loadYears(id) {
     if (this.statsType === 'drivers') {
       this.driverService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
@@ -102,13 +103,11 @@ export class StatisticsComponent implements OnInit {
         this.yearsStats = stats.body;
       });
     }
-    /*
-
-        if (this.statsType === 'engines') {
-            this.engineService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
-                this.yearsStats = stats.body;
-            });
-        } */
+    if (this.statsType === 'engines') {
+      this.engineService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
+        this.yearsStats = stats.body;
+      });
+    }
   }
 
   finishingPosition(position: number): string {
