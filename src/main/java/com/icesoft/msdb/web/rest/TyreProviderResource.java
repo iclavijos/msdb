@@ -5,6 +5,7 @@ import com.icesoft.msdb.repository.TyreProviderRepository;
 import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -57,14 +58,16 @@ public class TyreProviderResource {
     private final TyreProviderRepository tyreProviderRepository;
 
     private final TyreProviderSearchRepository tyreProviderSearchRepository;
+    private final SearchService searchService;
 
     private final CDNService cdnService;
 
     public TyreProviderResource(TyreProviderRepository tyreProviderRepository, TyreProviderSearchRepository tyreProviderSearchRepository,
-    		CDNService cdnService) {
+    		CDNService cdnService, SearchService searchService) {
         this.tyreProviderRepository = tyreProviderRepository;
         this.tyreProviderSearchRepository = tyreProviderSearchRepository;
         this.cdnService = cdnService;
+        this.searchService = searchService;
     }
 
     /**
@@ -136,9 +139,15 @@ public class TyreProviderResource {
      */
     @GetMapping("/tyre-providers")
     @Timed
-    public ResponseEntity<List<TyreProvider>> getAllTyreProviders(Pageable pageable) {
+    public ResponseEntity<List<TyreProvider>> getTyreProviders(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of TyreProviders");
-        Page<TyreProvider> page = tyreProviderRepository.findAll(pageable);
+        Page<TyreProvider> page;
+        Optional<String> queryOpt = Optional.ofNullable(query);
+        if (queryOpt.isPresent()) {
+            page = searchService.performWildcardSearch(tyreProviderSearchRepository, query.toLowerCase(), new String[]{"manufacturer", "name"}, pageable);
+        } else {
+            page = tyreProviderRepository.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

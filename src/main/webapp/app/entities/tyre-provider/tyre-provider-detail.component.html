@@ -1,0 +1,63 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h3 class="card-title">{{tyreProvider.name}}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <img *ngIf="tyreProvider.logoUrl" [src]="tyreProvider.logoUrl"
+                                     style="" alt="tyre provider logo"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.symbol.letterColor">Letter Color</span></dt>
+                                <dd>
+                                    <input [(colorPicker)]="tyreProvider.letterColor" [style.background]="tyreProvider.letterColor"
+                                           [cpDisabled]="true" [readonly]="true"/>
+                                </dd>
+                            </div>
+                            <div class="col-md-3">
+                                <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.symbol.backgroundColor">Background Color</span></dt>
+                                <dd>
+                                    <input [(colorPicker)]="tyreProvider.backgroundColor" [style.background]="tyreProvider.backgroundColor"
+                                           [cpDisabled]="true" [readonly]="true"/>
+                                </dd>
+                            </div>
+                            <div class="col-md-2">
+                                <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.symbol.symbol">Symbol</span></dt>
+                                <dd>
+                                    <div [style.background]="tyreProvider.backgroundColor" [style.color]="tyreProvider.letterColor"
+                                         style="width: 30px; height: 30px; vertical-align: top; text-align:center;">
+                                        <h3>{{tyreProvider.name.substring(0,1)}}</h3>
+                                    </div>
+                                </dd>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <jhi-statistics [id]="tyreProvider.id" [statsType]="'tyreProvider'">Statistics...</jhi-statistics>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                [routerLink]="['/tyre-provider', tyreProvider.id, 'edit']"
+                class="btn btn-primary">
+            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+        </button>
+        <button type="submit"
+                (click)="previousState()"
+                class="btn btn-info">
+            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+        </button>
+    </div>
+</div>

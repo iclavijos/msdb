@@ -21,6 +21,7 @@ export class TyreProviderUpdateComponent implements OnInit {
     name: [null, [Validators.required, Validators.maxLength(50)]],
     logo: [],
     logoContentType: [],
+    logoUrl: [],
     letterColor: [null, [Validators.required]],
     backgroundColor: [null, [Validators.required]]
   });
@@ -47,6 +48,7 @@ export class TyreProviderUpdateComponent implements OnInit {
       name: tyreProvider.name,
       logo: tyreProvider.logo,
       logoContentType: tyreProvider.logoContentType,
+      logoUrl: tyreProvider.logoUrl,
       letterColor: tyreProvider.letterColor,
       backgroundColor: tyreProvider.backgroundColor
     });
@@ -116,6 +118,7 @@ export class TyreProviderUpdateComponent implements OnInit {
       name: this.editForm.get(['name']).value,
       logoContentType: this.editForm.get(['logoContentType']).value,
       logo: this.editForm.get(['logo']).value,
+      logoUrl: this.editForm.get(['logoUrl']).value,
       letterColor: this.editForm.get(['letterColor']).value,
       backgroundColor: this.editForm.get(['backgroundColor']).value
     };
