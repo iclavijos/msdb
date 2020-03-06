@@ -17,6 +17,10 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./engine/engine.module').then(m => m.MotorsportsDatabaseEngineModule)
       },
       {
+        path: 'chassis',
+        loadChildren: () => import('./chassis/chassis.module').then(m => m.MotorsportsDatabaseChassisModule)
+      },
+      {
         path: 'fuel-provider',
         loadChildren: () => import('./fuel-provider/fuel-provider.module').then(m => m.MotorsportsDatabaseFuelProviderModule)
       },
