@@ -1,22 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HttpHeaders, HttpResponse } from '@angular/common/http';
+import { Component, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { filter, map } from 'rxjs/operators';
+import { merge, of as observableOf, Subscription } from 'rxjs';
+import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
 import { IFuelProvider } from 'app/shared/model/fuel-provider.model';
-import { AccountService } from 'app/core/auth/account.service';
-
-import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { FuelProviderService } from './fuel-provider.service';
+
+import { MatPaginator, MatSort } from '@angular/material';
 
 @Component({
   selector: 'jhi-fuel-provider',
   templateUrl: './fuel-provider.component.html'
 })
-export class FuelProviderComponent implements OnInit, OnDestroy {
+export class FuelProviderComponent implements AfterViewInit, OnDestroy {
   currentAccount: any;
   fuelProviders: IFuelProvider[];
   error: any;
@@ -32,16 +30,22 @@ export class FuelProviderComponent implements OnInit, OnDestroy {
   previousPage: any;
   reverse: any;
 
+  displayedColumns: string[] = ['name', 'logo', 'buttons'];
+
+  resultsLength = 0;
+  isLoadingResults = true;
+
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+
   constructor(
     protected fuelProviderService: FuelProviderService,
     protected parseLinks: JhiParseLinks,
-    protected accountService: AccountService,
     protected activatedRoute: ActivatedRoute,
     protected dataUtils: JhiDataUtils,
     protected router: Router,
     protected eventManager: JhiEventManager
   ) {
-    this.itemsPerPage = ITEMS_PER_PAGE;
     this.routeData = this.activatedRoute.data.subscribe(data => {
       this.page = data.pagingParams.page;
       this.previousPage = data.pagingParams.page;
@@ -54,82 +58,90 @@ export class FuelProviderComponent implements OnInit, OnDestroy {
         : '';
   }
 
-  loadAll() {
-    if (this.currentSearch) {
-      this.fuelProviderService
-        .search({
-          page: this.page - 1,
-          query: this.currentSearch,
-          size: this.itemsPerPage,
-          sort: this.sort()
+  ngAfterViewInit() {
+    this.registerChangeInFuelProviders();
+    // If the user changes the sort order, reset back to the first page.
+    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+
+    merge(this.sort.sortChange, this.paginator.page, this.paginator.pageSize)
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.isLoadingResults = true;
+          return this.loadAll();
+        }),
+        map((data: HttpResponse<IFuelProvider[]>) => {
+          this.isLoadingResults = false;
+          return this.processFuelProvidersResponse(data);
+        }),
+        catchError(() => {
+          this.isLoadingResults = false;
+          return observableOf([]);
         })
-        .subscribe((res: HttpResponse<IFuelProvider[]>) => this.paginateFuelProviders(res.body, res.headers));
-      return;
-    }
-    this.fuelProviderService
-      .query({
-        page: this.page - 1,
-        size: this.itemsPerPage,
-        sort: this.sort()
-      })
-      .subscribe((res: HttpResponse<IFuelProvider[]>) => this.paginateFuelProviders(res.body, res.headers));
+      )
+      .subscribe(data => (this.fuelProviders = data));
   }
 
-  loadPage(page: number) {
-    if (page !== this.previousPage) {
-      this.previousPage = page;
-      this.transition();
-    }
+  private processFuelProvidersResponse(fuelProviders: HttpResponse<IFuelProvider[]>) {
+    this.resultsLength = parseInt(fuelProviders.headers.get('X-Total-Count'), 10);
+    this.links = this.parseLinks.parse(fuelProviders.headers.get('link'));
+    this.totalItems = parseInt(fuelProviders.headers.get('X-Total-Count'), 10);
+    return fuelProviders.body;
   }
 
-  transition() {
-    this.router.navigate(['/fuel-provider'], {
-      queryParams: {
-        page: this.page,
-        size: this.itemsPerPage,
-        search: this.currentSearch,
-        sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-      }
+  loadAll() {
+    this.fuelProviders = [];
+    if (this.currentSearch) {
+      return this.fuelProviderService.query({
+        page: this.paginator.pageIndex,
+        query: this.currentSearch,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      });
+    }
+    return this.fuelProviderService.query({
+      page: this.paginator.pageIndex,
+      size: this.paginator.pageSize,
+      sort: this.sorting()
     });
-    this.loadAll();
   }
 
   clear() {
-    this.page = 0;
+    this.fuelProviders = [];
+    this.paginator.pageIndex = 0;
     this.currentSearch = '';
-    this.router.navigate([
-      '/fuel-provider',
-      {
-        page: this.page,
-        sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-      }
-    ]);
-    this.loadAll();
+    this.isLoadingResults = true;
+    this.fuelProviderService
+      .query({
+        page: this.paginator.pageIndex,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      })
+      .subscribe((data: HttpResponse<IFuelProvider[]>) => {
+        this.isLoadingResults = false;
+        this.fuelProviders = this.processFuelProvidersResponse(data);
+      });
   }
 
   search(query) {
+    this.fuelProviders = [];
     if (!query) {
       return this.clear();
     }
     this.page = 0;
     this.currentSearch = query;
-    this.router.navigate([
-      '/fuel-provider',
-      {
-        search: this.currentSearch,
-        page: this.page,
-        sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-      }
-    ]);
-    this.loadAll();
-  }
-
-  ngOnInit() {
-    this.loadAll();
-    this.accountService.identity().subscribe(account => {
-      this.currentAccount = account;
-    });
-    this.registerChangeInFuelProviders();
+    this.isLoadingResults = true;
+    this.fuelProviderService
+      .query({
+        page: this.paginator.pageIndex,
+        query: this.currentSearch,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      })
+      .subscribe((data: HttpResponse<IFuelProvider[]>) => {
+        this.isLoadingResults = false;
+        this.fuelProviders = this.processFuelProvidersResponse(data);
+      });
   }
 
   ngOnDestroy() {
@@ -149,20 +161,16 @@ export class FuelProviderComponent implements OnInit, OnDestroy {
   }
 
   registerChangeInFuelProviders() {
-    this.eventSubscriber = this.eventManager.subscribe('fuelProviderListModification', response => this.loadAll());
+    this.eventSubscriber = this.eventManager.subscribe('fuelProvidersListModification', () =>
+      this.loadAll().subscribe((data: HttpResponse<IFuelProvider[]>) => (this.fuelProviders = this.processFuelProvidersResponse(data)))
+    );
   }
 
-  sort() {
-    const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
+  sorting() {
+    const result = [this.sort.active + ',' + this.sort.direction];
     if (this.predicate !== 'id') {
       result.push('id');
     }
     return result;
-  }
-
-  protected paginateFuelProviders(data: IFuelProvider[], headers: HttpHeaders) {
-    this.links = this.parseLinks.parse(headers.get('link'));
-    this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
-    this.fuelProviders = data;
   }
 }

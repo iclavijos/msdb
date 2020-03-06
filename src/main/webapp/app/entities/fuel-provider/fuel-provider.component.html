@@ -13,10 +13,10 @@
                         <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
                             <fa-icon [icon]="'trash-alt'"></fa-icon>
                         </button>
-                        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-fuel-provider" [routerLink]="['/fuel-provider/new']">
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-fuelProvider" [routerLink]="['/fuel-provider/new']">
                             <fa-icon [icon]="'plus'"></fa-icon>
                             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.fuelProvider.home.createLabel">
-                            Create a new Fuel Provider
+                                Create a new fuel provider
                             </span>
                         </button>
                     </div>
@@ -27,28 +27,32 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-danger">
-                        <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.fuelProvider.home.title">Fuel Providers</span></h4>
+                        <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.fuelProvider.home.title">Fuel provider</span></h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-warning" *ngIf="fuelProviders?.length === 0">
-                            <span jhiTranslate="motorsportsDatabaseApp.fuelProvider.home.notFound">No fuelProviders found</span>
+                        <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
+                        <div class="alert alert-warning" [hidden]="fuelProviders?.length > 0 || isLoadingResults">
+                            <span jhiTranslate="motorsportsDatabaseApp.fuelProvider.home.notFound">No fuel providers found</span>
                         </div>
-                        <div class="table-responsive" *ngIf="fuelProviders?.length > 0">
-                            <table class="table table-hover" aria-describedby="page-heading">
-                                <thead>
-                                <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-                                    <th scope="col" jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.fuelProvider.name">Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                                    <th scope="col" jhiSortBy="logo"><span jhiTranslate="motorsportsDatabaseApp.fuelProvider.logo">Logo</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-                                    <th scope="col"></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr *ngFor="let fuelProvider of fuelProviders ;trackBy: trackId">
-                                    <td>{{fuelProvider.name}}</td>
-                                    <td>
-                                        <img *ngIf="fuelProvider.logoUrl" [src]="fuelProvider.logoUrl" style="max-height: 30px;" alt="fuel provider logo"/>
+                        <div class="table-responsive" [hidden]="fuelProviders?.length === 0">
+                            <table mat-table class="table table-hover" [dataSource]="fuelProviders"
+                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
+
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.fuelProvider.name' | translate }}</th>
+                                    <td mat-cell *matCellDef="let fuelProvider">{{ fuelProvider.name }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="logo">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.fuelProvider.logo' | translate }}</th>
+                                    <td mat-cell *matCellDef="let fuelProvider">
+                                        <img *ngIf="fuelProvider?.logoUrl" [src]="fuelProvider.logoUrl" style="max-height: 30px;" alt="fuel provider logo"/>
                                     </td>
-                                    <td class="text-right">
+                                </ng-container>
+
+                                <ng-container matColumnDef="buttons">
+                                    <th mat-header-cell *matHeaderCellDef></th>
+                                    <td mat-cell *matCellDef="let fuelProvider">
                                         <div class="btn-group">
                                             <button type="submit"
                                                     [routerLink]="['/fuel-provider', fuelProvider.id, 'view' ]"
@@ -69,17 +73,15 @@
                                             </button>
                                         </div>
                                     </td>
-                                </tr>
-                                </tbody>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                             </table>
-                        </div>
-                        <div [hidden]="fuelProviders?.length === 0">
-                            <div class="row justify-content-center">
-                                <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
-                            </div>
-                            <div class="row justify-content-center">
-                                <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
-                            </div>
+                            <mat-paginator [length]="resultsLength"
+                                           [pageSizeOptions]="[5, 10, 20]"
+                                           [pageSize]="10"
+                                           showFirstLastButtons></mat-paginator>
                         </div>
                     </div>
                 </div>

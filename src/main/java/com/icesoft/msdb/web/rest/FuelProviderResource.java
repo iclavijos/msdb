@@ -5,20 +5,22 @@ import com.icesoft.msdb.repository.FuelProviderRepository;
 import com.icesoft.msdb.repository.search.FuelProviderSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.micrometer.core.annotation.Timed;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -56,14 +58,16 @@ public class FuelProviderResource {
     private final FuelProviderRepository fuelProviderRepository;
 
     private final FuelProviderSearchRepository fuelProviderSearchRepository;
+    private final SearchService searchService;
 
     private final CDNService cdnService;
 
     public FuelProviderResource(FuelProviderRepository fuelProviderRepository, FuelProviderSearchRepository fuelProviderSearchRepository,
-    		CDNService cdnService) {
+                                CDNService cdnService, SearchService searchService) {
         this.fuelProviderRepository = fuelProviderRepository;
         this.fuelProviderSearchRepository = fuelProviderSearchRepository;
         this.cdnService = cdnService;
+        this.searchService = searchService;
     }
 
     /**
@@ -83,13 +87,13 @@ public class FuelProviderResource {
         }
         FuelProvider result = fuelProviderRepository.save(fuelProvider);
         fuelProviderSearchRepository.save(result);
-
         if (fuelProvider.getLogo() != null) {
-	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), fuelProvider.getLogo(), ENTITY_NAME);
-	        result.logoUrl(cdnUrl);
+            String cdnUrl = cdnService.uploadImage(result.getId().toString(), fuelProvider.getLogo(), ENTITY_NAME);
+            fuelProvider.logoUrl(cdnUrl);
 
-			result = fuelProviderRepository.save(result);
+            result = fuelProviderRepository.save(result);
         }
+
         return ResponseEntity.created(new URI("/api/fuel-providers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -113,10 +117,10 @@ public class FuelProviderResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         if (fuelProvider.getLogo() != null) {
-        	String cdnUrl = cdnService.uploadImage(fuelProvider.getId().toString(), fuelProvider.getLogo(), ENTITY_NAME);
-        	fuelProvider.logoUrl(cdnUrl);
+            String cdnUrl = cdnService.uploadImage(fuelProvider.getId().toString(), fuelProvider.getLogo(), ENTITY_NAME);
+            fuelProvider.logoUrl(cdnUrl);
         } else if (fuelProvider.getLogoUrl() == null) {
-        	cdnService.deleteImage(fuelProvider.getId().toString(), ENTITY_NAME);
+            cdnService.deleteImage(fuelProvider.getId().toString(), ENTITY_NAME);
         }
         FuelProvider result = fuelProviderRepository.save(fuelProvider);
         fuelProviderSearchRepository.save(result);
@@ -135,9 +139,15 @@ public class FuelProviderResource {
      */
     @GetMapping("/fuel-providers")
     @Timed
-    public ResponseEntity<List<FuelProvider>> getAllFuelProviders(Pageable pageable) {
+    public ResponseEntity<List<FuelProvider>> getFuelProviders(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of FuelProviders");
-        Page<FuelProvider> page = fuelProviderRepository.findAll(pageable);
+        Page<FuelProvider> page;
+        Optional<String> queryOpt = Optional.ofNullable(query);
+        if (queryOpt.isPresent()) {
+            page = searchService.performWildcardSearch(fuelProviderSearchRepository, query.toLowerCase(), new String[]{"manufacturer", "name"}, pageable);
+        } else {
+            page = fuelProviderRepository.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -186,21 +196,21 @@ public class FuelProviderResource {
     public ResponseEntity<List<FuelProvider>> searchFuelProviders(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of FuelProviders for query {}", query);
         String searchValue = '*' + query + '*';
-        Page<FuelProvider> page = fuelProviderSearchRepository.search(queryStringQuery(searchValue), pageable);
+        Page<FuelProvider> page = fuelProviderSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    @GetMapping("/_typeahead/fuel")
+    @GetMapping("/_typeahead/fuels")
     @Timed
     public List<FuelProvider> typeahead(@RequestParam String query) {
-        log.debug("REST request to search for a page of FuelProviders for query {}", query);
-        QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
-    			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
-    				.analyzeWildcard(true)
-    				.field("name"));
-
-    	Page<FuelProvider> page = fuelProviderSearchRepository.search(queryBuilder, PageRequest.of(0, 10));
+        log.debug("REST request to search for a page of FuelProvider for query {}", query);
+        String searchValue = '*' + query + '*';
+        NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
+            .withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
+            .withSort(SortBuilders.fieldSort("name"))
+            .withPageable(PageRequest.of(0, 10));
+        Page<FuelProvider> page = fuelProviderSearchRepository.search(nqb.build());
         return page.getContent();
     }
 }

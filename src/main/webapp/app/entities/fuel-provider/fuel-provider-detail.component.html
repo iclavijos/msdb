@@ -3,21 +3,21 @@
         <jhi-alert-error></jhi-alert-error>
         <jhi-alert></jhi-alert>
         <div class="row">
-            <div class="col-md-4">
-                <div class="card card-plain">
-                    <div class="card-logo">
-                        <img *ngIf="fuelProvider.logoUrl" [src]="fuelProvider.logoUrl"
-                             style="" alt="fuel provider logo"/>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-danger">
                         <h3 class="card-title">{{fuelProvider.name}}</h3>
                     </div>
                     <div class="card-body">
-                        <jhi-statistics [id]="fuelProvider.id" [statsType]="'fuelProvider'">Statistics...</jhi-statistics>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img *ngIf="fuelProvider.logoUrl" [src]="fuelProvider.logoUrl"
+                                     class="img-fluid" alt="fuel provider logo"/>
+                            </div>
+                            <div class="col-md-8">
+                                <jhi-statistics [id]="fuelProvider.id" [statsType]="'fuelProvider'">Statistics...</jhi-statistics>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -34,4 +34,3 @@
         </button>
     </div>
 </div>
-
