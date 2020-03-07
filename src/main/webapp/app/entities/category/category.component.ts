@@ -6,7 +6,6 @@ import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
 import { ICategory } from 'app/shared/model/category.model';
-
 import { CategoryService } from './category.service';
 
 import { MatPaginator, MatSort } from '@angular/material';
@@ -91,8 +90,9 @@ export class CategoryComponent implements AfterViewInit, OnDestroy {
   }
 
   loadAll() {
+    this.categories = [];
     if (this.currentSearch) {
-      return this.categoryService.search({
+      return this.categoryService.query({
         page: this.paginator.pageIndex,
         query: this.currentSearch,
         size: this.paginator.pageSize,
@@ -107,6 +107,7 @@ export class CategoryComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
+    this.categories = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';
     this.isLoadingResults = true;
@@ -123,6 +124,7 @@ export class CategoryComponent implements AfterViewInit, OnDestroy {
   }
 
   search(query) {
+    this.categories = [];
     if (!query) {
       return this.clear();
     }
@@ -130,7 +132,7 @@ export class CategoryComponent implements AfterViewInit, OnDestroy {
     this.currentSearch = query;
     this.isLoadingResults = true;
     this.categoryService
-      .search({
+      .query({
         page: this.paginator.pageIndex,
         query: this.currentSearch,
         size: this.paginator.pageSize,

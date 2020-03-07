@@ -5,12 +5,14 @@ import com.icesoft.msdb.domain.Category;
 import com.icesoft.msdb.repository.CategoryRepository;
 import com.icesoft.msdb.repository.search.CategorySearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.micrometer.core.annotation.Timed;
+import io.searchbox.core.Search;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
@@ -55,10 +57,13 @@ public class CategoryResource {
     private final CategoryRepository categoryRepository;
 
     private final CategorySearchRepository categorySearchRepository;
+    private final SearchService searchService;
 
-    public CategoryResource(CategoryRepository categoryRepository, CategorySearchRepository categorySearchRepository) {
+    public CategoryResource(CategoryRepository categoryRepository, CategorySearchRepository categorySearchRepository,
+                            SearchService searchService) {
         this.categoryRepository = categoryRepository;
         this.categorySearchRepository = categorySearchRepository;
+        this.searchService = searchService;
     }
 
     /**
@@ -117,9 +122,15 @@ public class CategoryResource {
      */
     @GetMapping("/categories")
     @Timed
-    public ResponseEntity<List<Category>> getAllCategories(Pageable pageable) {
+    public ResponseEntity<List<Category>> getCategories(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of Categories");
-        Page<Category> page = categoryRepository.findAll(pageable);
+        Page<Category> page;
+        Optional<String> queryOpt = Optional.ofNullable(query);
+        if (queryOpt.isPresent()) {
+            page = searchService.performWildcardSearch(categorySearchRepository, query.toLowerCase(), new String[]{"name", "shortname"}, pageable);
+        } else {
+            page = categoryRepository.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -154,26 +165,4 @@ public class CategoryResource {
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 
-    /**
-     * {@code SEARCH  /_search/categories?query=:query} : search for the category corresponding
-     * to the query.
-     *
-     * @param query the query of the category search.
-     * @param pageable the pagination information.
-     * @return the result of the search.
-     */
-    @GetMapping("/_search/categories")
-    @Timed
-    public ResponseEntity<List<Category>> searchCategories(@RequestParam String query, Pageable pageable) {
-        log.debug("REST request to search for a page of Categories for query {}", query);
-
-        QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
-            QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
-                .analyzeWildcard(true)
-                .field("name"));
-
-        Page<Category> page = categorySearchRepository.search(queryBuilder, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
 }
