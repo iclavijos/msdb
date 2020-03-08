@@ -38,11 +38,6 @@ export class RacetrackService {
     return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  search(req?: any): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http.get<IRacetrack[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
-  }
-
   findLayouts(id: number): Observable<HttpResponse<IRacetrackLayout[]>> {
     return this.http.get<IRacetrackLayout[]>(`${this.resourceUrl}/${id}/layouts`, { observe: 'response' });
   }

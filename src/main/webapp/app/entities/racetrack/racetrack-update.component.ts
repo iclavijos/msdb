@@ -20,8 +20,11 @@ export class RacetrackUpdateComponent implements OnInit {
     id: [],
     name: [null, [Validators.required, Validators.maxLength(100)]],
     location: [null, [Validators.required, Validators.maxLength(100)]],
+    countryCode: [],
+    timeZone: [],
     logo: [],
-    logoContentType: []
+    logoContentType: [],
+    logoUrl: []
   });
 
   constructor(
@@ -45,10 +48,10 @@ export class RacetrackUpdateComponent implements OnInit {
       id: racetrack.id,
       name: racetrack.name,
       location: racetrack.location,
-      //       countryCode: racetrack.countryCode,
-      //       timeZone: racetrack.timeZone,
+      countryCode: racetrack.countryCode,
+      timeZone: racetrack.timeZone,
       logo: racetrack.logo,
-      //       logoUrl: racetrack.logoUrl,
+      logoUrl: racetrack.logoUrl,
       logoContentType: racetrack.logoContentType
     });
   }
@@ -116,11 +119,11 @@ export class RacetrackUpdateComponent implements OnInit {
       id: this.editForm.get(['id']).value,
       name: this.editForm.get(['name']).value,
       location: this.editForm.get(['location']).value,
-      //       countryCode: '',
-      //       timeZone: '',
+      countryCode: this.editForm.get(['countryCode']).value,
+      timeZone: this.editForm.get(['timeZone']).value,
       logoContentType: this.editForm.get(['logoContentType']).value,
-      logo: this.editForm.get(['logo']).value
-      //       logoUrl: ''
+      logo: this.editForm.get(['logo']).value,
+      logoUrl: this.editForm.get(['logoUrl']).value
     };
   }
 

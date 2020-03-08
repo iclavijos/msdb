@@ -6,6 +6,7 @@ import javax.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -31,11 +32,13 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 100)
     @Column(name = "name", length = 100, nullable = false)
+    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
     private String name;
 
     @NotNull
     @Size(max = 100)
     @Column(name = "location", length = 100, nullable = false)
+    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
     private String location;
 
     @NotNull

@@ -4,8 +4,10 @@ import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.TimeZone;
 
+import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.TimeZoneService;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
@@ -46,6 +48,7 @@ public class RacetrackServiceImpl implements RacetrackService {
 
     private final RacetrackLayoutRepository racetrackLayoutRepository;
     private final RacetrackLayoutSearchRepository racetrackLayoutSearchRepo;
+    private final SearchService searchService;
 
     private final CDNService cdnService;
     private final TimeZoneService timeZoneService;
@@ -54,13 +57,14 @@ public class RacetrackServiceImpl implements RacetrackService {
     		RacetrackSearchRepository racetrackSearchRepo,
     		RacetrackLayoutRepository racetrackLayoutRepository,
     		RacetrackLayoutSearchRepository racetrackLayoutSearchRepo,
-    		CDNService cdnService, TimeZoneService timeZoneService) {
+    		CDNService cdnService, TimeZoneService timeZoneService, SearchService searchService) {
         this.racetrackRepository = racetrackRepository;
         this.racetrackSearchRepo = racetrackSearchRepo;
         this.racetrackLayoutRepository = racetrackLayoutRepository;
         this.racetrackLayoutSearchRepo = racetrackLayoutSearchRepo;
         this.cdnService = cdnService;
         this.timeZoneService = timeZoneService;
+        this.searchService = searchService;
     }
 
     /**
@@ -122,10 +126,15 @@ public class RacetrackServiceImpl implements RacetrackService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<Racetrack> findAll(Pageable pageable) {
+    public Page<Racetrack> findRacetracks(Optional<String> query, Pageable pageable) {
         log.debug("Request to get all Racetracks");
-        Page<Racetrack> result = racetrackRepository.findAll(pageable);
-        return result;
+        Page<Racetrack> page;
+        if (query.isPresent()) {
+            page = searchService.performWildcardSearch(racetrackSearchRepo, query.get().toLowerCase(), new String[]{"name", "location"}, pageable);
+        } else {
+            page = racetrackRepository.findAll(pageable);
+        }
+        return page;
     }
 
     /**

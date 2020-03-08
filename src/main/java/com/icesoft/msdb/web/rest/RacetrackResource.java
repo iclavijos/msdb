@@ -2,8 +2,6 @@ package com.icesoft.msdb.web.rest;
 
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
-import com.icesoft.msdb.repository.RacetrackRepository;
-import com.icesoft.msdb.repository.search.RacetrackSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.RacetrackService;
 import com.icesoft.msdb.service.dto.RacetrackLayoutSearchResultDTO;
@@ -21,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +32,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link com.icesoft.msdb.domain.Racetrack}.
@@ -117,9 +111,9 @@ public class RacetrackResource {
      */
     @GetMapping("/racetracks")
     @Timed
-    public ResponseEntity<List<Racetrack>> getAllRacetracks(Pageable pageable) {
+    public ResponseEntity<List<Racetrack>> getAllRacetracks(@RequestParam(required = false) String query,  Pageable pageable) {
         log.debug("REST request to get a page of Racetracks");
-        Page<Racetrack> page = racetrackService.findAll(pageable);
+        Page<Racetrack> page = racetrackService.findRacetracks(Optional.ofNullable(query), pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
