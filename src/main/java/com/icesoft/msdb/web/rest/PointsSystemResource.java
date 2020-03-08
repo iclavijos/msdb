@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.repository.PointsSystemRepository;
 import com.icesoft.msdb.repository.search.PointsSystemSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -53,10 +54,13 @@ public class PointsSystemResource {
     private final PointsSystemRepository pointsSystemRepository;
 
     private final PointsSystemSearchRepository pointsSystemSearchRepository;
+    private final SearchService searchService;
 
-    public PointsSystemResource(PointsSystemRepository pointsSystemRepository, PointsSystemSearchRepository pointsSystemSearchRepository) {
+    public PointsSystemResource(PointsSystemRepository pointsSystemRepository, PointsSystemSearchRepository pointsSystemSearchRepository,
+                                SearchService searchService) {
         this.pointsSystemRepository = pointsSystemRepository;
         this.pointsSystemSearchRepository = pointsSystemSearchRepository;
+        this.searchService = searchService;
     }
 
     /**
@@ -115,9 +119,15 @@ public class PointsSystemResource {
      */
     @GetMapping("/points-systems")
     @Timed
-    public ResponseEntity<List<PointsSystem>> getAllPointsSystems(Pageable pageable) {
+    public ResponseEntity<List<PointsSystem>> getPointsSystems(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of PointsSystems");
-        Page<PointsSystem> page = pointsSystemRepository.findAll(pageable);
+        Page<PointsSystem> page;
+        Optional<String> queryOpt = Optional.ofNullable(query);
+        if (queryOpt.isPresent()) {
+            page = searchService.performWildcardSearch(pointsSystemSearchRepository, query.toLowerCase(), new String[]{"name", "description"}, pageable);
+        } else {
+            page = pointsSystemRepository.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -150,22 +160,5 @@ public class PointsSystemResource {
         pointsSystemRepository.deleteById(id);
         pointsSystemSearchRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
-    }
-
-    /**
-     * {@code SEARCH  /_search/points-systems?query=:query} : search for the pointsSystem corresponding
-     * to the query.
-     *
-     * @param query the query of the pointsSystem search.
-     * @param pageable the pagination information.
-     * @return the result of the search.
-     */
-    @GetMapping("/_search/points-systems")
-    @Timed
-    public ResponseEntity<List<PointsSystem>> searchPointsSystems(@RequestParam String query, Pageable pageable) {
-        log.debug("REST request to search for a page of PointsSystems for query {}", query);
-        Page<PointsSystem> page = pointsSystemSearchRepository.search(queryStringQuery(query), pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 }

@@ -18,12 +18,19 @@ export class PointsSystemUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [],
     name: [null, [Validators.required, Validators.maxLength(50)]],
-    description: [null, [Validators.required, Validators.maxLength(100)]],
+    description: [null, [Validators.maxLength(100)]],
     points: [],
-    pointsMostLeadLaps: [],
-    pointsFastLap: [],
-    pointsPole: [],
-    pointsLeadLap: []
+    pointsMostLeadLaps: [null, [Validators.min(0), Validators.max(10)]],
+    pointsFastLap: [null, [Validators.min(0), Validators.max(10)]],
+    dnfFastLap: [],
+    pitlaneStartAllowed: [],
+    pctCompletedFastLap: [null, [Validators.min(0), Validators.max(100)]],
+    pointsPole: [null, [Validators.min(0), Validators.max(10)]],
+    pointsLeadLap: [null, [Validators.min(0), Validators.max(10)]],
+    racePctCompleted: [null, [Validators.min(0), Validators.max(100)]],
+    pctTotalPoints: [null, [Validators.min(0), Validators.max(100)]],
+    maxPosFastLap: [null, [Validators.min(0), Validators.max(100)]],
+    active: []
   });
 
   constructor(protected pointsSystemService: PointsSystemService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}
@@ -43,8 +50,15 @@ export class PointsSystemUpdateComponent implements OnInit {
       points: pointsSystem.points,
       pointsMostLeadLaps: pointsSystem.pointsMostLeadLaps,
       pointsFastLap: pointsSystem.pointsFastLap,
+      dnfFastLap: pointsSystem.dnfFastLap,
+      pitlaneStartAllowed: pointsSystem.pitlaneStartAllowed,
+      pctCompletedFastLap: pointsSystem.pctCompletedFastLap,
       pointsPole: pointsSystem.pointsPole,
-      pointsLeadLap: pointsSystem.pointsLeadLap
+      pointsLeadLap: pointsSystem.pointsLeadLap,
+      racePctCompleted: pointsSystem.racePctCompleted,
+      pctTotalPoints: pointsSystem.pctTotalPoints,
+      maxPosFastLap: pointsSystem.maxPosFastLap,
+      active: pointsSystem.active
     });
   }
 
@@ -71,8 +85,15 @@ export class PointsSystemUpdateComponent implements OnInit {
       points: this.editForm.get(['points']).value,
       pointsMostLeadLaps: this.editForm.get(['pointsMostLeadLaps']).value,
       pointsFastLap: this.editForm.get(['pointsFastLap']).value,
+      dnfFastLap: this.editForm.get(['dnfFastLap']).value,
+      pitlaneStartAllowed: this.editForm.get(['pitlaneStartAllowed']).value,
+      pctCompletedFastLap: this.editForm.get(['pctCompletedFastLap']).value,
       pointsPole: this.editForm.get(['pointsPole']).value,
-      pointsLeadLap: this.editForm.get(['pointsLeadLap']).value
+      pointsLeadLap: this.editForm.get(['pointsLeadLap']).value,
+      racePctCompleted: this.editForm.get(['racePctCompleted']).value,
+      pctTotalPoints: this.editForm.get(['pctTotalPoints']).value,
+      maxPosFastLap: this.editForm.get(['maxPosFastLap']).value,
+      active: this.editForm.get(['active']).value
     };
   }
 

@@ -12,7 +12,7 @@
       "updated": "A Points System is updated",
       "deleted": "A Points System is deleted",
       "delete": {
-        "question": "Are you sure you want to delete Points System?"
+        "question": "Are you sure you want to delete Points System '{{ id }}'?"
       },
       "detail": {
         "title": "Points System"
@@ -28,8 +28,10 @@
       "pointsFastLapAwardedIf": "Award fast lap points if: ",
       "maxFinishinPositionFL": "Maximum finishing position",
       "pitlaneStartAllowed": "Award points if started from pitlane?",
-      "racePctCompletion": "If less than % laps completed",
-      "pointsPct": "% of points awarded"
+      "racePctCompletion": "If less than {{racePct}}% of the laps are completed, award only {{pointsPct}}% of the points",
+      "pointsRacePctCompletion1": "If less than ",
+      "pointsRacePctCompletion2": "% of the laps are completed, award only ",
+      "pointsRacePctCompletion3": "% of the points"
     }
   }
 }

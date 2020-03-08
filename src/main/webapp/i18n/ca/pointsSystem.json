@@ -12,7 +12,7 @@
       "updated": "S'ha actualitzat el sistema de puntuació",
       "deleted": "S'ha esborrat el sistema de puntuació",
       "delete": {
-        "question": "Està segur que vol esborrar el sistema de puntuació?"
+        "question": "Està segur que vol esborrar el sistema de puntuació '{{ id }}'?"
       },
       "detail": {
         "title": "Sistema de puntuació"
@@ -28,8 +28,10 @@
       "pointsFastLapAwardedIf": "Otorgar punts per volta ràpida si: ",
       "maxFinishinPositionFL": "Posició final màxima",
       "pitlaneStartAllowed": "S''otorgan si ha començat des del pitlane?",
-      "racePctCompletion": "Si menys del % de voltes completades",
-      "pointsPct": "% de punts otorgats"
+      "racePctCompletion": "Si es completa menys del {{racePct}}% de les voltes, otorgar només el {{pointsPct}}% dels punts",
+      "pointsRacePctCompletion1": "Si es completa menys del ",
+      "pointsRacePctCompletion2": "% de les voltes, otorgar només el ",
+      "pointsRacePctCompletion3": "% dels punts"
     }
   }
 }

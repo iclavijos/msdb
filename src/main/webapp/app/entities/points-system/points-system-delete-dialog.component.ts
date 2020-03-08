@@ -25,7 +25,7 @@ export class PointsSystemDeleteDialogComponent {
   }
 
   confirmDelete(id: number) {
-    this.pointsSystemService.delete(id).subscribe(response => {
+    this.pointsSystemService.delete(id).subscribe(() => {
       this.eventManager.broadcast({
         name: 'pointsSystemListModification',
         content: 'Deleted an pointsSystem'
@@ -50,11 +50,11 @@ export class PointsSystemDeletePopupComponent implements OnInit, OnDestroy {
         this.ngbModalRef = this.modalService.open(PointsSystemDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
         this.ngbModalRef.componentInstance.pointsSystem = pointsSystem;
         this.ngbModalRef.result.then(
-          result => {
+          () => {
             this.router.navigate(['/points-system', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           },
-          reason => {
+          () => {
             this.router.navigate(['/points-system', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           }

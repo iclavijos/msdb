@@ -12,7 +12,6 @@ type EntityArrayResponseType = HttpResponse<IPointsSystem[]>;
 @Injectable({ providedIn: 'root' })
 export class PointsSystemService {
   public resourceUrl = SERVER_API_URL + 'api/points-systems';
-  public resourceSearchUrl = SERVER_API_URL + 'api/_search/points-systems';
 
   constructor(protected http: HttpClient) {}
 
@@ -35,10 +34,5 @@ export class PointsSystemService {
 
   delete(id: number): Observable<HttpResponse<any>> {
     return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
-  }
-
-  search(req?: any): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http.get<IPointsSystem[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
   }
 }
