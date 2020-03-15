@@ -92,11 +92,13 @@
                                                 <fa-icon [icon]="'eye'"></fa-icon>
                                             </button>
                                             <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                                     [routerLink]="['/driver', driver.id, 'edit']"
                                                     class="btn btn-primary btn-xs">
                                                 <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                             </button>
                                             <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN']"
                                                     [routerLink]="['/driver', { outlets: { popup: driver.id + '/delete'} }]"
                                                     replaceUrl="true"
                                                     queryParamsHandling="merge"

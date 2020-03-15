@@ -80,11 +80,13 @@
                                                 <fa-icon [icon]="'eye'"></fa-icon>
                                             </button>
                                             <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN']"
                                                     [routerLink]="['/racetrack-layout', racetrack.id, 'edit']"
                                                     class="btn btn-primary btn-xs">
                                                 <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                             </button>
                                             <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN']"
                                                     [routerLink]="['/racetrack-layout', { outlets: { popup: racetrack.id + '/delete'} }]"
                                                     replaceUrl="true"
                                                     queryParamsHandling="merge"

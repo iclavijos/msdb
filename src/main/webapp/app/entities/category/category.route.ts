@@ -89,7 +89,7 @@ export const categoryPopupRoute: Routes = [
       category: CategoryResolve
     },
     data: {
-      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'motorsportsDatabaseApp.category.home.title'
     },
     canActivate: [UserRouteAccessService],

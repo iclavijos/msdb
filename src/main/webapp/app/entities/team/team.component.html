@@ -70,11 +70,13 @@
                                                 <fa-icon [icon]="'eye'"></fa-icon>
                                             </button>
                                             <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                                     [routerLink]="['/team', team.id, 'edit']"
                                                     class="btn btn-primary btn-xs">
                                                 <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                             </button>
                                             <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN']"
                                                     [routerLink]="['/team', { outlets: { popup: team.id + '/delete'} }]"
                                                     replaceUrl="true"
                                                     queryParamsHandling="merge"

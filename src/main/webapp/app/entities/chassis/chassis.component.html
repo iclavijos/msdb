@@ -82,11 +82,13 @@
                                                 <fa-icon [icon]="'eye'"></fa-icon>
                                             </button>
                                             <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                                     [routerLink]="['/chassis', chassis.id, 'edit']"
                                                     class="btn btn-primary btn-xs">
                                                 <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                             </button>
                                             <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN']"
                                                     [routerLink]="['/chassis', { outlets: { popup: chassis.id + '/delete'} }]"
                                                     replaceUrl="true"
                                                     queryParamsHandling="merge"
