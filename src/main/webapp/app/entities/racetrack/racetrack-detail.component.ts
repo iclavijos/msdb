@@ -19,6 +19,8 @@ export class RacetrackDetailComponent implements OnInit {
   racetrackLayouts: IRacetrackLayout[];
   locale: string;
 
+  displayedColumns: string[] = ['name', 'length', 'yearFirstUse', 'layoutImage', 'active', 'buttons'];
+
   constructor(
     protected dataUtils: JhiDataUtils,
     protected activatedRoute: ActivatedRoute,

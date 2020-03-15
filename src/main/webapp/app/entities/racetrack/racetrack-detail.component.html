@@ -40,38 +40,52 @@
                         <div class="alert alert-warning" *ngIf="racetrackLayouts?.length === 0">
                             <span jhiTranslate="motorsportsDatabaseApp.racetrack.home.notFound">No racetracks found</span>
                         </div>
-                        <div class="table-responsive" *ngIf="racetrackLayouts?.length > 0">
-                            <table class="table table-hover" aria-describedby="page-heading">
-                                <thead>
-                                <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse">
-                                    <th scope="col" jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.name">Name</span></th>
-                                    <th scope="col" jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.length">Length</span></th>
-                                    <th scope="col"><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.yearFirstUse">Year First Use</span></th>
-                                    <th scope="col"><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.layoutImage">Layout</span></th>
-                                    <th scope="col"><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.active">Active</span></th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tr *ngFor="let racetrackLayout of racetrackLayouts ;trackBy: trackId">
-                                    <td>{{racetrackLayout.name}}</td>
-                                    <td>{{racetrackLayout.length | racetrackLengthMask }}</td>
-                                    <td>{{racetrackLayout.yearFirstUse}}</td>
-                                    <td><img *ngIf="racetrackLayout.layoutImageUrl" [src]="racetrackLayout.layoutImageUrl" style="max-height: 30px;" alt="racetrack layout"/></td>
-                                    <td><i [ngClass]="racetrackLayout.active ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
-                                    <td class="text-right">
+                        <div class="table-responsive" [hidden]="racetrackLayouts?.length === 0">
+                            <table mat-table class="table table-hover" [dataSource]="racetrackLayouts">
+
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.racetrackLayout.name' | translate }}</th>
+                                    <td mat-cell *matCellDef="let layout">{{ layout.name }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="length">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.racetrackLayout.length' | translate }}</th>
+                                    <td mat-cell *matCellDef="let layout">{{ layout.length | racetrackLengthMask }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="yearFirstUse">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.racetrackLayout.yearFirstUse' | translate }}</th>
+                                    <td mat-cell *matCellDef="let layout">{{ layout.yearFirstUse }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="layoutImage">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.racetrackLayout.layoutImage' | translate }}</th>
+                                    <td mat-cell *matCellDef="let layout">
+                                        <img *ngIf="layout?.layoutImageUrl" [src]="layout.layoutImageUrl" style="max-height: 30px;" alt="racetrack layout"/>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="active">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.racetrackLayout.active' | translate }}</th>
+                                    <td mat-cell *matCellDef="let layout"><i [ngClass]="layout.active ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="buttons">
+                                    <th mat-header-cell *matHeaderCellDef></th>
+                                    <td mat-cell *matCellDef="let racetrack">
                                         <div class="btn-group">
                                             <button type="submit"
-                                                    [routerLink]="['/racetrack-layout', racetrackLayout.id, 'view' ]"
+                                                    [routerLink]="['/racetrack-layout', racetrack.id, 'view' ]"
                                                     class="btn btn-info btn-xs">
                                                 <fa-icon [icon]="'eye'"></fa-icon>
                                             </button>
                                             <button type="submit"
-                                                    [routerLink]="['/racetrack-layout', racetrackLayout.id, 'edit']"
+                                                    [routerLink]="['/racetrack-layout', racetrack.id, 'edit']"
                                                     class="btn btn-primary btn-xs">
                                                 <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                             </button>
                                             <button type="submit"
-                                                    [routerLink]="['/racetrack-layout', { outlets: { popup: racetrackLayout.id + '/delete'} }]"
+                                                    [routerLink]="['/racetrack-layout', { outlets: { popup: racetrack.id + '/delete'} }]"
                                                     replaceUrl="true"
                                                     queryParamsHandling="merge"
                                                     class="btn btn-danger btn-xs">
@@ -79,13 +93,15 @@
                                             </button>
                                         </div>
                                     </td>
-                                </tr>
-                                <tbody>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                             </table>
                         </div>
 
                         <button class="btn btn-primary float-right create-racetrack-layout" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                [routerLink]="['/', { outlets: { popup: 'racetrack/' + racetrack.id + '/racetrack-layout-new'   } }]">
+                                [routerLink]="['/racetrack-layout/new/', racetrack.id]">
                             <span class="fa fa-plus"></span>
                             <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.racetrackLayout.home.createLabel">
                                 Add new Layout

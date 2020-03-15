@@ -7,21 +7,24 @@ export interface IRacetrackLayout {
   yearFirstUse?: number;
   layoutImageContentType?: string;
   layoutImage?: any;
+  layoutImageUrl?: string;
   active?: boolean;
   racetrack?: IRacetrack;
 }
 
 export class RacetrackLayout implements IRacetrackLayout {
   constructor(
+    public racetrack?: IRacetrack,
     public id?: number,
     public name?: string,
     public length?: number,
     public yearFirstUse?: number,
     public layoutImageContentType?: string,
     public layoutImage?: any,
-    public active?: boolean,
-    public racetrack?: IRacetrack
+    public layoutImageUrl?: string,
+    public active?: boolean
   ) {
+    this.racetrack = racetrack;
     this.active = this.active || false;
   }
 }

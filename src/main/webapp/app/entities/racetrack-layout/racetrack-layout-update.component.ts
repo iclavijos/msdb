@@ -5,7 +5,6 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 import { IRacetrackLayout, RacetrackLayout } from 'app/shared/model/racetrack-layout.model';
 import { RacetrackLayoutService } from './racetrack-layout.service';
@@ -19,17 +18,17 @@ import { RacetrackService } from 'app/entities/racetrack/racetrack.service';
 export class RacetrackLayoutUpdateComponent implements OnInit {
   isSaving: boolean;
 
-  racetracks: IRacetrack[];
+  private racetrack: IRacetrack;
 
   editForm = this.fb.group({
     id: [],
     name: [null, [Validators.required, Validators.maxLength(100)]],
-    length: [null, [Validators.required]],
-    yearFirstUse: [null, [Validators.required]],
+    length: [null, [Validators.required, Validators.min(0)]],
+    yearFirstUse: [null, [Validators.required, Validators.min(1900), Validators.max(2050)]],
     layoutImage: [],
     layoutImageContentType: [],
-    active: [],
-    racetrack: []
+    layoutImageUrl: [],
+    active: []
   });
 
   constructor(
@@ -46,14 +45,14 @@ export class RacetrackLayoutUpdateComponent implements OnInit {
     this.isSaving = false;
     this.activatedRoute.data.subscribe(({ racetrackLayout }) => {
       this.updateForm(racetrackLayout);
+      if (!racetrackLayout.racetrack) {
+        this.activatedRoute.data.subscribe(({ racetrack }) => {
+          this.racetrack = racetrack;
+        });
+      } else {
+        this.racetrack = racetrackLayout.racetrack;
+      }
     });
-    this.racetrackService
-      .query()
-      .pipe(
-        filter((mayBeOk: HttpResponse<IRacetrack[]>) => mayBeOk.ok),
-        map((response: HttpResponse<IRacetrack[]>) => response.body)
-      )
-      .subscribe((res: IRacetrack[]) => (this.racetracks = res), (res: HttpErrorResponse) => this.onError(res.message));
   }
 
   updateForm(racetrackLayout: IRacetrackLayout) {
@@ -64,8 +63,8 @@ export class RacetrackLayoutUpdateComponent implements OnInit {
       yearFirstUse: racetrackLayout.yearFirstUse,
       layoutImage: racetrackLayout.layoutImage,
       layoutImageContentType: racetrackLayout.layoutImageContentType,
-      active: racetrackLayout.active,
-      racetrack: racetrackLayout.racetrack
+      layoutImageUrl: racetrackLayout.layoutImageUrl,
+      active: racetrackLayout.active
     });
   }
 
@@ -97,7 +96,7 @@ export class RacetrackLayoutUpdateComponent implements OnInit {
       }
     }).then(
       // eslint-disable-next-line no-console
-      () => console.log('blob added'), // success
+      () => {}, // success
       this.onError
     );
   }
@@ -135,8 +134,9 @@ export class RacetrackLayoutUpdateComponent implements OnInit {
       yearFirstUse: this.editForm.get(['yearFirstUse']).value,
       layoutImageContentType: this.editForm.get(['layoutImageContentType']).value,
       layoutImage: this.editForm.get(['layoutImage']).value,
+      layoutImageUrl: this.editForm.get(['layoutImageUrl']).value,
       active: this.editForm.get(['active']).value,
-      racetrack: this.editForm.get(['racetrack']).value
+      racetrack: this.racetrack
     };
   }
 

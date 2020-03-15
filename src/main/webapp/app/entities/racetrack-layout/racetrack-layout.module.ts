@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
-import { RacetrackLayoutComponent } from './racetrack-layout.component';
 import { RacetrackLayoutDetailComponent } from './racetrack-layout-detail.component';
 import { RacetrackLayoutUpdateComponent } from './racetrack-layout-update.component';
 import { RacetrackLayoutDeletePopupComponent, RacetrackLayoutDeleteDialogComponent } from './racetrack-layout-delete-dialog.component';
@@ -13,7 +12,6 @@ const ENTITY_STATES = [...racetrackLayoutRoute, ...racetrackLayoutPopupRoute];
 @NgModule({
   imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
   declarations: [
-    RacetrackLayoutComponent,
     RacetrackLayoutDetailComponent,
     RacetrackLayoutUpdateComponent,
     RacetrackLayoutDeleteDialogComponent,
