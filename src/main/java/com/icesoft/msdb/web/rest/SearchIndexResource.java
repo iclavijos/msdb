@@ -45,7 +45,7 @@ public class SearchIndexResource {
     @Timed
     public DeferredResult<ResponseEntity<Void>> rebuildSearchIndexes() {
     	log.debug("REST request to rebuild search indexes");
-        DeferredResult<ResponseEntity<Void>> output = new DeferredResult<>(600000L);
+        DeferredResult<ResponseEntity<Void>> output = new DeferredResult<>(1800000L);
 
         output.onError((Throwable t) -> {
             log.error("Could not regenerate indexes", t);
