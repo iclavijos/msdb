@@ -28,6 +28,8 @@ import {
 
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
+import { ColorPickerModule } from 'ngx-color-picker';
+
 @NgModule({
   exports: [
     FormsModule,
@@ -53,7 +55,8 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
     MatTableModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
-    MatSortModule
+    MatSortModule,
+    ColorPickerModule
   ]
 })
 export class MotorsportsDatabaseSharedLibsModule {}
