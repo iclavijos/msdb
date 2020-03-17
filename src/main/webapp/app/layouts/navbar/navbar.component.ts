@@ -27,6 +27,7 @@ export class NavbarComponent implements OnInit {
   languages: any[];
   swaggerEnabled: boolean;
   version: string;
+  private userFullName: string;
 
   constructor(
     location: Location,
@@ -71,7 +72,11 @@ export class NavbarComponent implements OnInit {
   }
 
   isAuthenticated() {
-    return this.accountService.isAuthenticated();
+    const authenticated = this.accountService.isAuthenticated();
+    if (authenticated) {
+      this.accountService.identity().subscribe(userIdentity => (this.userFullName = userIdentity.firstName + ' ' + userIdentity.lastName));
+    }
+    return authenticated;
   }
 
   login() {
