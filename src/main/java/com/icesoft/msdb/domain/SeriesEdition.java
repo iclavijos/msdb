@@ -11,6 +11,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     @NotNull
     @Size(max = 150)
     @Column(name = "edition_name", length = 150, nullable = false)
+    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
     private String editionName;
 
 	@NotNull
