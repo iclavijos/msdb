@@ -37,7 +37,7 @@ export const pointsSystemRoute: Routes = [
       pagingParams: JhiResolvePagingParams
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       defaultSort: 'id,asc',
       pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
     },
@@ -50,7 +50,7 @@ export const pointsSystemRoute: Routes = [
       pointsSystem: PointsSystemResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -62,7 +62,7 @@ export const pointsSystemRoute: Routes = [
       pointsSystem: PointsSystemResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const pointsSystemRoute: Routes = [
       pointsSystem: PointsSystemResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const pointsSystemPopupRoute: Routes = [
       pointsSystem: PointsSystemResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title'
     },
     canActivate: [UserRouteAccessService],

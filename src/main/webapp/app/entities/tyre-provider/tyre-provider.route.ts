@@ -62,7 +62,7 @@ export const tyreProviderRoute: Routes = [
       tyreProvider: TyreProviderResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const tyreProviderRoute: Routes = [
       tyreProvider: TyreProviderResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const tyreProviderPopupRoute: Routes = [
       tyreProvider: TyreProviderResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title'
     },
     canActivate: [UserRouteAccessService],

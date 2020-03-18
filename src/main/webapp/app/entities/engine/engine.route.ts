@@ -62,7 +62,7 @@ export const engineRoute: Routes = [
       engine: EngineResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.engine.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const engineRoute: Routes = [
       engine: EngineResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.engine.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const enginePopupRoute: Routes = [
       engine: EngineResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'motorsportsDatabaseApp.engine.home.title'
     },
     canActivate: [UserRouteAccessService],

@@ -62,7 +62,7 @@ export const fuelProviderRoute: Routes = [
       fuelProvider: FuelProviderResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const fuelProviderRoute: Routes = [
       fuelProvider: FuelProviderResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const fuelProviderPopupRoute: Routes = [
       fuelProvider: FuelProviderResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title'
     },
     canActivate: [UserRouteAccessService],
