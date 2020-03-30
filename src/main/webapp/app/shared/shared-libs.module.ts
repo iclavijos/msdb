@@ -8,6 +8,7 @@ import { NgJhipsterModule } from 'ng-jhipster';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
+import { MomentTimezoneModule } from 'angular-moment-timezone';
 
 import {
   MatButtonModule,
@@ -29,6 +30,7 @@ import {
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 import { ColorPickerModule } from 'ngx-color-picker';
+import { LightboxModule } from 'ngx-lightbox';
 
 @NgModule({
   exports: [
@@ -56,7 +58,9 @@ import { ColorPickerModule } from 'ngx-color-picker';
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSortModule,
-    ColorPickerModule
+    ColorPickerModule,
+    MomentTimezoneModule,
+    LightboxModule
   ]
 })
 export class MotorsportsDatabaseSharedLibsModule {}

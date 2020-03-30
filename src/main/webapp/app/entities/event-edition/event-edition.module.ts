@@ -19,6 +19,7 @@ const ENTITY_STATES = [...eventEditionRoute, ...eventEditionPopupRoute];
     EventEditionDeleteDialogComponent,
     EventEditionDeletePopupComponent
   ],
-  entryComponents: [EventEditionDeleteDialogComponent]
+  exports: [EventEditionComponent]
+  //   entryComponents: [EventEditionDeleteDialogComponent]
 })
 export class MotorsportsDatabaseEventEditionModule {}

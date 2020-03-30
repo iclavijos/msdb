@@ -1,0 +1,126 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h3 class="card-title">{{eventEdition.longEventName}}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <mat-tab-group dynamicHeight mat-stretch-tabs>
+                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.info' | translate}}">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-md-4">
+                                                <dl class="row-md jh-entity-details">
+                                                    <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate">Event Date</span></dt>
+                                                    <dd>
+                                                        <span>{{eventEdition.eventDate | date:'mediumDate'}}</span>
+                                                    </dd>
+                                                    <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.shortEventName">Short Event Name</span></dt>
+                                                    <dd>
+                                                        <span>{{eventEdition.shortEventName}}</span>
+                                                    </dd>
+                                                    <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout">Track Layout</span></dt>
+                                                    <dd>
+                                                        <div *ngIf="eventEdition.trackLayout">
+                                                            <a [routerLink]="['/racetrack', eventEdition.trackLayout.racetrack.id, 'racetrack-layout', eventEdition.trackLayout?.id ]" >
+                                                                {{eventEdition.trackLayout?.racetrack.name}} - {{eventEdition.trackLayout?.name}}
+                                                            </a>
+                                                            <div *ngIf="eventEdition.trackLayout.layoutImageUrl">
+                                                                <img [src]="eventEdition.trackLayout.layoutImageUrl" class="img-fluid" alt="layout image"/>
+                                                            </div>
+                                                        </div>
+                                                    </dd>
+                                                    <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.event">Event</span></dt>
+                                                    <dd>
+                                                        <div *ngIf="eventEdition.event">
+                                                            <a [routerLink]="['/event', eventEdition.event?.id]">{{eventEdition.event?.name}}</a>
+                                                        </div>
+                                                    </dd>
+                                                </dl>
+                                            </div>
+                                            <div class="col-lg-8 col-md-8">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.allowedCategories">Allowed Categories</span></dt>
+                                                        <dd>
+                                                            <ul class="list-unstyled">
+                                                                <li *ngFor="let category of eventEdition.allowedCategories">
+                                                                    <span>{{category.name}} ({{category.shortname}})</span>
+                                                                </li>
+                                                            </ul>
+                                                        </dd>
+                                                    </div>
+                                                    <div *ngIf="afficheAlbum[0]" class="col-md-6">
+                                                        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.affiche">Official poster</span></dt>
+                                                        <dd>
+                                                            <img #afficheImg [src]="afficheAlbum[0].thumb" alt="affiche official poster"
+                                                                 (click)="openAffiche()"
+                                                                 (mouseover)="zoomIn(afficheImg)" (mouseleave)="zoomOut(afficheImg)"/>
+                                                        </dd>
+                                                    </div>
+                                                </div>
+                                                <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.sessions">Sessions</span></dt>
+                                                <dd>
+                                                    <div class="table-responsive" *ngIf="eventEdition.sessions">
+
+                                                    </div>
+                                                    <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                                            class="btn btn-primary float-right create-event-session" [routerLink]="['/', { outlets: { popup: eventEdition.id + '/event-session-new' } }]">
+                                                        <span class="fa fa-plus"></span>
+                                                    </button>&nbsp;
+                                                    <button type="button" *ngIf="!convertedTime && eventEdition.sessions"
+                                                            class="btn btn-outline-primary float-right create-event-session" (click)="convertToCurrentTZ()">
+                                                        <span jhiTranslate="motorsportsDatabaseApp.eventEdition.yourTime">Your Time</span>
+                                                    </button>
+                                                    <button type="button" *ngIf="convertedTime && eventEdition.sessions"
+                                                            class="btn btn-outline-primary float-right create-event-session" (click)="convertToLocalTZ()">
+                                                        <span jhiTranslate="motorsportsDatabaseApp.eventEdition.localTime">Local Time</span>
+                                                    </button>
+                                                </dd>
+                                            </div>
+                                        </div>
+                                    </mat-tab>
+                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.entryList' | translate}}">
+                                        <div>
+                                            Large content
+                                        </div>
+                                    </mat-tab>
+                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.results' | translate}}">
+                                        <div>
+                                            Large content
+                                        </div>
+                                    </mat-tab>
+                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.driversTimes' | translate}}">
+                                        <div>
+                                            Large content
+                                        </div>
+                                    </mat-tab>
+                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.info' | translate}}">
+                                        <div>
+                                            Large content
+                                        </div>
+                                    </mat-tab>
+                                </mat-tab-group>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                [routerLink]="['/event-edition', eventEdition.id, 'edit-edition']"
+                class="btn btn-primary">
+            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+        </button>
+        <button type="submit"
+                (click)="previousState()"
+                class="btn btn-info">
+            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+        </button>
+    </div>
+</div>

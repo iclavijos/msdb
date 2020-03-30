@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { JhiResolvePagingParams } from 'ng-jhipster';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
@@ -17,7 +17,7 @@ import { IEvent } from 'app/shared/model/event.model';
 export class EventResolve implements Resolve<IEvent> {
   constructor(private service: EventService) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IEvent> {
+  resolve(route: ActivatedRouteSnapshot): Observable<IEvent> {
     const id = route.params['id'];
     if (id) {
       return this.service.find(id).pipe(
@@ -62,7 +62,7 @@ export const eventRoute: Routes = [
       event: EventResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.event.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -74,7 +74,7 @@ export const eventRoute: Routes = [
       event: EventResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.event.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -89,7 +89,7 @@ export const eventPopupRoute: Routes = [
       event: EventResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN'],
       pageTitle: 'motorsportsDatabaseApp.event.home.title'
     },
     canActivate: [UserRouteAccessService],

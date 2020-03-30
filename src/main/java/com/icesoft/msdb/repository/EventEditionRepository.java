@@ -29,7 +29,7 @@ public interface EventEditionRepository extends JpaRepository<EventEdition, Long
 
 	List<EventEdition> findBySeriesEditionsId(Long seriesEditionId);
 
-	Page<EventEdition> findByEventIdOrderByEditionYearDesc(Long eventId, Pageable page);
+	Page<EventEdition> findByEventId(Long eventId, Pageable page);
 
 	@Query("select e.id from EventEdition e where e.event.id = ?1 and e.editionYear = ("
 			+ "select max(e.editionYear) from EventEdition e where e.event.id = ?1 and e.editionYear < ?2)")
@@ -39,7 +39,7 @@ public interface EventEditionRepository extends JpaRepository<EventEdition, Long
 			+ "select min(e.editionYear) from EventEdition e where e.event.id = ?1 and e.editionYear > ?2)")
 	List<Long> findNextEditionId(Long editionId, Integer editionYear);
 
-	@Query("select e.id, e.editionYear from EventEdition e where e.event.id = ?1 order by e.editionYear desc")
+	@Query("select e.id, e.editionYear from EventEdition e where e.event.id = ?1")
 	List<Object[]> findEventEditionsIdYear(Long editionId);
 
 }

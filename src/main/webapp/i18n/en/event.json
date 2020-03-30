@@ -12,7 +12,7 @@
       "updated": "A Event is updated with identifier {{ param }}",
       "deleted": "A Event is deleted with identifier {{ param }}",
       "delete": {
-        "question": "Are you sure you want to delete Event {{ id }}?"
+        "question": "Are you sure you want to delete event '{{ id }}'?"
       },
       "detail": {
         "title": "Event"
@@ -52,6 +52,7 @@
       "results": "Results",
       "points": "Points",
       "multidriver": "More than one driver per entry?",
+      "affiche": "Official poster",
       "yourTime": "Your time",
       "localTime": "Local time",
       "driversTimes": "Drivers' times",
@@ -77,6 +78,7 @@
         }
       },
       "entry": {
+        "notFound": "No entries found",
         "createOrEditLabel": "Create or edit an entry",
         "addLabel": "Add participant",
         "raceNumber": "#",

@@ -1,6 +1,7 @@
 package com.icesoft.msdb.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,11 +25,11 @@ public interface EventService {
 
     /**
      *  Get all the events.
-     *  
+     *
      *  @param pageable the pagination information
      *  @return the list of entities
      */
-    Page<Event> findAll(Pageable pageable);
+    Page<Event> findAll(Optional<String> query, Pageable pageable);
 
     /**
      *  Get the "id" event.
@@ -44,10 +45,10 @@ public interface EventService {
      *  @param id the id of the entity
      */
     void delete(Long id);
-    
+
     Page<Event> search(String query, Pageable pageable);
 
     Page<EventEdition> findEventEditions(Long idEvent, Pageable pageable);
-    
+
     List<EventEditionIdYearDTO> findEventEditionsIdYear(Long idEvent);
 }

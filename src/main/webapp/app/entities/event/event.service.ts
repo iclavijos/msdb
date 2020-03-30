@@ -41,4 +41,8 @@ export class EventService {
     const options = createRequestOption(req);
     return this.http.get<IEvent[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
   }
+
+  findEventEditionIds(idEvent: number): Observable<any> {
+    return this.http.get(`${this.resourceUrl}/${idEvent}/editionIds`);
+  }
 }

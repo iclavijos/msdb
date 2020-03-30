@@ -12,7 +12,7 @@
       "updated": "Se ha editado el evento {{ param }}",
       "deleted": "Se ha borrado el evento {{ param }}",
       "delete": {
-        "question": "¿Seguro que quiere eliminar el evento {{ id }}?"
+        "question": "¿Seguro que quiere eliminar el evento '{{ id }}'?"
       },
       "detail": {
         "title": "Evento"
@@ -52,6 +52,7 @@
       "results": "Resultados",
       "points": "Puntos",
       "multidriver": "Más de un piloto per participante?",
+      "affiche": "Póster oficial",
       "yourTime": "Tu hora",
       "localTime": "Hora local",
       "driversTimes": "Tiempos de los pilotos",
@@ -77,6 +78,7 @@
         }
       },
       "entry": {
+        "notFound": "No se han encontrado participantes",
         "createOrEditLabel": "Añade o edita un participante",
         "addLabel": "Añadir participante",
         "raceNumber": "#",

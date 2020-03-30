@@ -169,23 +169,6 @@ public class EventEditionResource {
     }
 
     /**
-     * {@code GET  /event-editions} : get all the eventEditions.
-     *
-
-     * @param pageable the pagination information.
-
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of eventEditions in body.
-     */
-    @GetMapping("/event-editions")
-    @Timed
-    public ResponseEntity<List<EventEdition>> getAllEventEditions(Pageable pageable) {
-        log.debug("REST request to get a page of EventEditions");
-        Page<EventEdition> page = eventEditionRepository.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
-
-    /**
      * {@code GET  /event-editions/:id} : get the "id" eventEdition.
      *
      * @param id the id of the eventEdition to retrieve.

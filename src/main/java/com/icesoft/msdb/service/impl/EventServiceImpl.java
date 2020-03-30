@@ -3,9 +3,11 @@ package com.icesoft.msdb.service.impl;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.icesoft.msdb.MSDBException;
+import com.icesoft.msdb.service.SearchService;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -37,13 +39,16 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final EventEditionRepository eventEditionRepository;
     private final EventSearchRepository eventSearchRepo;
+    private final SearchService searchService;
 
     public EventServiceImpl(EventRepository eventRepository,
     			EventEditionRepository eventEditionRepository,
-    			EventSearchRepository eventSearchRepo) {
+    			EventSearchRepository eventSearchRepo,
+                SearchService searchService) {
     	this.eventRepository = eventRepository;
     	this.eventEditionRepository = eventEditionRepository;
     	this.eventSearchRepo = eventSearchRepo;
+    	this.searchService = searchService;
     }
 
     /**
@@ -68,10 +73,15 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<Event> findAll(Pageable pageable) {
+    public Page<Event> findAll(Optional<String> query, Pageable pageable) {
         log.debug("Request to get all Events");
-        Page<Event> result = eventRepository.findAll(pageable);
-        return result;
+        Page<Event> page;
+        if (query.isPresent()) {
+            page = searchService.performWildcardSearch(eventSearchRepo, query.get().toLowerCase(), new String[]{"name", "description"}, pageable);
+        } else {
+            page = eventRepository.findAll(pageable);
+        }
+        return page;
     }
 
     /**
@@ -112,7 +122,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Page<EventEdition> findEventEditions(Long idEvent, Pageable pageable) {
-    	Page<EventEdition> result = eventEditionRepository.findByEventIdOrderByEditionYearDesc(idEvent, pageable);
+    	Page<EventEdition> result = eventEditionRepository.findByEventId(idEvent, pageable);
     	return result;
     }
 

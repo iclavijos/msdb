@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-import { JhiResolvePagingParams } from 'ng-jhipster';
+import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { EventEdition } from 'app/shared/model/event-edition.model';
 import { EventEditionService } from './event-edition.service';
-import { EventEditionComponent } from './event-edition.component';
+// import { EventEditionComponent } from './event-edition.component';
 import { EventEditionDetailComponent } from './event-edition-detail.component';
 import { EventEditionUpdateComponent } from './event-edition-update.component';
 import { EventEditionDeletePopupComponent } from './event-edition-delete-dialog.component';
@@ -17,7 +16,7 @@ import { IEventEdition } from 'app/shared/model/event-edition.model';
 export class EventEditionResolve implements Resolve<IEventEdition> {
   constructor(private service: EventEditionService) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IEventEdition> {
+  resolve(route: ActivatedRouteSnapshot): Observable<IEventEdition> {
     const id = route.params['id'];
     if (id) {
       return this.service.find(id).pipe(
@@ -30,21 +29,21 @@ export class EventEditionResolve implements Resolve<IEventEdition> {
 }
 
 export const eventEditionRoute: Routes = [
+  //   {
+  //     path: '',
+  //     component: EventEditionComponent,
+  //     resolve: {
+  //       pagingParams: JhiResolvePagingParams
+  //     },
+  //     data: {
+  //       authorities: ['ROLE_USER'],
+  //       defaultSort: 'id,asc',
+  //       pageTitle: 'motorsportsDatabaseApp.eventEdition.home.title'
+  //     },
+  //     canActivate: [UserRouteAccessService]
+  //   }
   {
-    path: '',
-    component: EventEditionComponent,
-    resolve: {
-      pagingParams: JhiResolvePagingParams
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-      defaultSort: 'id,asc',
-      pageTitle: 'motorsportsDatabaseApp.eventEdition.home.title'
-    },
-    canActivate: [UserRouteAccessService]
-  },
-  {
-    path: ':id/view',
+    path: ':id/view-edition',
     component: EventEditionDetailComponent,
     resolve: {
       eventEdition: EventEditionResolve
@@ -56,7 +55,7 @@ export const eventEditionRoute: Routes = [
     canActivate: [UserRouteAccessService]
   },
   {
-    path: 'new',
+    path: 'new-edition',
     component: EventEditionUpdateComponent,
     resolve: {
       eventEdition: EventEditionResolve
@@ -68,7 +67,7 @@ export const eventEditionRoute: Routes = [
     canActivate: [UserRouteAccessService]
   },
   {
-    path: ':id/edit',
+    path: ':id/edit-edition',
     component: EventEditionUpdateComponent,
     resolve: {
       eventEdition: EventEditionResolve
@@ -83,7 +82,7 @@ export const eventEditionRoute: Routes = [
 
 export const eventEditionPopupRoute: Routes = [
   {
-    path: ':id/delete',
+    path: ':id/delete-edition',
     component: EventEditionDeletePopupComponent,
     resolve: {
       eventEdition: EventEditionResolve

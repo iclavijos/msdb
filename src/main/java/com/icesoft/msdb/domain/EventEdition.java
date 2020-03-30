@@ -76,7 +76,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
         inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="ID"))
     private List<Category> allowedCategories;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties("eventEditions")
     private RacetrackLayout trackLayout;
 
