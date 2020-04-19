@@ -6,6 +6,7 @@ import { JhiAlertErrorComponent } from './alert/alert-error.component';
 import { HasAnyAuthorityDirective } from './auth/has-any-authority.directive';
 import { StatisticsComponent } from './statistics/statistics.component';
 import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
+import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
 
 @NgModule({
   imports: [MotorsportsDatabaseSharedLibsModule],
@@ -15,7 +16,8 @@ import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
     JhiAlertErrorComponent,
     HasAnyAuthorityDirective,
     StatisticsComponent,
-    RacetrackLengthPipe
+    RacetrackLengthPipe,
+    LocalizedDatePipe
   ],
   exports: [
     MotorsportsDatabaseSharedLibsModule,
@@ -24,7 +26,8 @@ import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
     JhiAlertErrorComponent,
     HasAnyAuthorityDirective,
     StatisticsComponent,
-    RacetrackLengthPipe
+    RacetrackLengthPipe,
+    LocalizedDatePipe
   ]
 })
 export class MotorsportsDatabaseSharedModule {}
