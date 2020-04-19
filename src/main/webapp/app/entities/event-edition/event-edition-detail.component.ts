@@ -37,7 +37,7 @@ export class EventEditionDetailComponent implements OnInit {
   keysSession: any[];
   keysDuration: any[];
 
-  private afficheAlbum: any[] = [];
+  private lightboxAlbum: any[] = [];
 
   constructor(
     private eventService: EventService,
@@ -64,22 +64,31 @@ export class EventEditionDetailComponent implements OnInit {
       const srcUrl = 'https://res.cloudinary.com/msdb-cloud/image/upload/v1585520865/affiche/Affiche_Sebring_2020.jpg';
       const thumbUrl =
         'https://res.cloudinary.com/msdb-cloud/image/upload/c_thumb,w_200,g_face/v1585520865/affiche/Affiche_Sebring_2020.jpg';
-      const album = {
+      const affiche = {
         src: srcUrl,
         caption: '',
         thumb: thumbUrl
       };
-
-      this.afficheAlbum.push(album);
+      const layout = {
+        src: this.eventEdition.trackLayout.layoutImageUrl,
+        caption: '',
+        thumb: this.eventEdition.trackLayout.layoutImageUrl
+      };
+      this.lightboxAlbum.push(affiche);
+      this.lightboxAlbum.push(layout);
     });
   }
 
   openAffiche() {
-    this.lightbox.open(this.afficheAlbum, 0);
+    this.lightbox.open(this.lightboxAlbum, 0, { centerVertically: true });
+  }
+
+  openLayout() {
+    this.lightbox.open(this.lightboxAlbum, 1, { centerVertically: true });
   }
 
   zoomIn(elementToZoom: HTMLElement) {
-    this.renderer.setStyle(elementToZoom, 'transform', 'scale(1.5)');
+    this.renderer.setStyle(elementToZoom, 'transform', 'scale(1.1)');
   }
 
   zoomOut(elementToUnzoom: HTMLElement) {

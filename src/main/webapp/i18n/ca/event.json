@@ -59,6 +59,7 @@
       "lapsAnalysis": "Volta a volta",
       "session": {
         "createOrEditLabel": "Crea o edita una sessió",
+        "notFound": "No hi ha sessions definides",
         "name": "Nom",
         "shortname": "Nom curt",
         "sessionStartTime": "Dia i hora d'inici",

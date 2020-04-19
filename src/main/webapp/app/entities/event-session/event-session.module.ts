@@ -19,6 +19,7 @@ const ENTITY_STATES = [...eventSessionRoute, ...eventSessionPopupRoute];
     EventSessionDeleteDialogComponent,
     EventSessionDeletePopupComponent
   ],
+  exports: [EventSessionComponent],
   entryComponents: [EventSessionDeleteDialogComponent]
 })
 export class MotorsportsDatabaseEventSessionModule {}

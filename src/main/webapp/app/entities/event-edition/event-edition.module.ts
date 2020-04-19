@@ -8,10 +8,12 @@ import { EventEditionUpdateComponent } from './event-edition-update.component';
 import { EventEditionDeletePopupComponent, EventEditionDeleteDialogComponent } from './event-edition-delete-dialog.component';
 import { eventEditionRoute, eventEditionPopupRoute } from './event-edition.route';
 
+import { MotorsportsDatabaseEventSessionModule } from '../event-session/event-session.module';
+
 const ENTITY_STATES = [...eventEditionRoute, ...eventEditionPopupRoute];
 
 @NgModule({
-  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  imports: [MotorsportsDatabaseSharedModule, MotorsportsDatabaseEventSessionModule, RouterModule.forChild(ENTITY_STATES)],
   declarations: [
     EventEditionComponent,
     EventEditionDetailComponent,
@@ -19,7 +21,7 @@ const ENTITY_STATES = [...eventEditionRoute, ...eventEditionPopupRoute];
     EventEditionDeleteDialogComponent,
     EventEditionDeletePopupComponent
   ],
-  exports: [EventEditionComponent]
-  //   entryComponents: [EventEditionDeleteDialogComponent]
+  exports: [EventEditionComponent],
+  entryComponents: [EventEditionDeleteDialogComponent]
 })
 export class MotorsportsDatabaseEventEditionModule {}

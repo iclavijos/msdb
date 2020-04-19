@@ -43,6 +43,10 @@ import { RouterModule } from '@angular/router';
       {
         path: 'points-system',
         loadChildren: () => import('./points-system/points-system.module').then(m => m.MotorsportsDatabasePointsSystemModule)
+      },
+      {
+        path: 'event',
+        loadChildren: () => import('./event/event.module').then(m => m.MotorsportsDatabaseEventModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ])

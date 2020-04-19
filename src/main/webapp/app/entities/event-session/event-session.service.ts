@@ -17,6 +17,7 @@ type EntityArrayResponseType = HttpResponse<IEventSession[]>;
 export class EventSessionService {
   public resourceUrl = SERVER_API_URL + 'api/event-sessions';
   public resourceSearchUrl = SERVER_API_URL + 'api/_search/event-sessions';
+  public resourceEventEditionUrl = SERVER_API_URL + 'api/event-editions';
 
   constructor(protected http: HttpClient) {}
 
@@ -77,6 +78,22 @@ export class EventSessionService {
     if (res.body) {
       res.body.forEach((eventSession: IEventSession) => {
         eventSession.sessionStartTime = eventSession.sessionStartTime != null ? moment(eventSession.sessionStartTime) : null;
+      });
+    }
+    return res;
+  }
+
+  findSessions(id: number, timeZone: string): Observable<EntityArrayResponseType> {
+    return this.http
+      .get<IEventSession[]>(`${this.resourceEventEditionUrl}/${id}/sessions`, { observe: 'response' })
+      .pipe(map((res: EntityArrayResponseType) => this.transformDateTime(res, timeZone)));
+  }
+
+  private transformDateTime(res: EntityArrayResponseType, timeZone: string): EntityArrayResponseType {
+    if (res.body) {
+      res.body.forEach((eventSession: IEventSession) => {
+        eventSession.sessionStartTime =
+          eventSession.sessionStartTime != null ? moment(Number(eventSession.sessionStartTime) * 1000).tz(timeZone) : null;
       });
     }
     return res;

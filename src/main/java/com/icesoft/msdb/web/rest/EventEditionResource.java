@@ -264,6 +264,7 @@ public class EventEditionResource {
 
     @GetMapping("/event-editions/{id}/sessions")
     @Timed
+    @Transactional(readOnly = true)
     public List<EventSession> getEventEditionSessions(@PathVariable Long id) {
     	log.debug("REST request to get all EventEditions {} sessions", id);
     	List<EventSession> result = eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(id);

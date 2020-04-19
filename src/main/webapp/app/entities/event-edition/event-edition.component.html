@@ -1,7 +1,7 @@
 <div>
     <div class="row">
         <div class="col-sm-12">
-            <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-event" [routerLink]="['/event-edition/new-edition']">
+            <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-event" [routerLink]="['/event/edition/new-ed']">
                 <fa-icon [icon]="'plus'"></fa-icon>
                 <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.home.createLabel">
                         Create a new event edition
@@ -64,19 +64,19 @@
                                 <td mat-cell *matCellDef="let eventEdition">
                                     <div class="btn-group">
                                         <button type="submit"
-                                                [routerLink]="['/event-edition', eventEdition.id, 'view-edition' ]"
+                                                [routerLink]="['/event', 'edition', eventEdition.id, 'view-ed' ]"
                                                 class="btn btn-info btn-xs">
                                             <fa-icon [icon]="'eye'"></fa-icon>
                                         </button>
                                         <button type="submit"
                                                 *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                                [routerLink]="['/event-edition', eventEdition.id, 'edit-edition']"
+                                                [routerLink]="['/event/edition', eventEdition.id, 'edit-ed']"
                                                 class="btn btn-primary btn-xs">
                                             <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                         </button>
                                         <button type="submit"
                                                 *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                                [routerLink]="['/event-edition', { outlets: { popup: eventEdition.id + '/delete-edition'} }]"
+                                                [routerLink]="['/event/edition', { outlets: { popup: eventEdition.id + '/delete-ed'} }]"
                                                 replaceUrl="true"
                                                 queryParamsHandling="merge"
                                                 class="btn btn-danger btn-xs">

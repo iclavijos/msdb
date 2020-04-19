@@ -78,6 +78,10 @@ export const eventRoute: Routes = [
       pageTitle: 'motorsportsDatabaseApp.event.home.title'
     },
     canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'edition',
+    loadChildren: () => import('../event-edition/event-edition.module').then(m => m.MotorsportsDatabaseEventEditionModule)
   }
 ];
 

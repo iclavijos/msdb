@@ -43,7 +43,7 @@ export const eventEditionRoute: Routes = [
   //     canActivate: [UserRouteAccessService]
   //   }
   {
-    path: ':id/view-edition',
+    path: ':id/view-ed',
     component: EventEditionDetailComponent,
     resolve: {
       eventEdition: EventEditionResolve
@@ -55,7 +55,7 @@ export const eventEditionRoute: Routes = [
     canActivate: [UserRouteAccessService]
   },
   {
-    path: 'new-edition',
+    path: 'new-ed',
     component: EventEditionUpdateComponent,
     resolve: {
       eventEdition: EventEditionResolve
@@ -67,7 +67,7 @@ export const eventEditionRoute: Routes = [
     canActivate: [UserRouteAccessService]
   },
   {
-    path: ':id/edit-edition',
+    path: ':id/edit-ed',
     component: EventEditionUpdateComponent,
     resolve: {
       eventEdition: EventEditionResolve
@@ -77,12 +77,16 @@ export const eventEditionRoute: Routes = [
       pageTitle: 'motorsportsDatabaseApp.eventEdition.home.title'
     },
     canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'session',
+    loadChildren: () => import('../event-session/event-session.module').then(m => m.MotorsportsDatabaseEventSessionModule)
   }
 ];
 
 export const eventEditionPopupRoute: Routes = [
   {
-    path: ':id/delete-edition',
+    path: ':id/delete-ed',
     component: EventEditionDeletePopupComponent,
     resolve: {
       eventEdition: EventEditionResolve

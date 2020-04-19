@@ -1,4 +1,3 @@
-import { Moment } from 'moment';
 import { ICategory } from 'app/shared/model/category.model';
 import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
 import { IEvent } from 'app/shared/model/event.model';

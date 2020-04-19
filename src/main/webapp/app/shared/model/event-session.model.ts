@@ -1,7 +1,6 @@
 import { Moment } from 'moment';
 import { IEventEdition } from 'app/shared/model/event-edition.model';
 
-import { IPointsSystem } from 'app/shared/model/points-system.model';
 import { DurationType } from 'app/shared/enumerations/durationType.enum';
 import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 

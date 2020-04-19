@@ -8,6 +8,7 @@ import javax.validation.constraints.*;
 
 import com.icesoft.msdb.domain.enums.DurationType;
 import com.icesoft.msdb.domain.enums.SessionType;
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.*;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
