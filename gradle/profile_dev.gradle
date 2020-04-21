@@ -27,21 +27,21 @@ bootRun {
     args = []
 }
 
-task webpack(type: YarnTask) {
-    inputs.files("yarn.lock")
-    inputs.files("build.gradle")
-    inputs.dir("src/main/webapp/")
-
-    def webpackDevFiles = fileTree("webpack//")
-    webpackDevFiles.exclude("webpack.prod.js")
-    inputs.files(webpackDevFiles)
-
-    outputs.dir("build/resources/main/static/")
-
-    dependsOn yarn
-    args = ["run", "webpack:build"]
-    environment = [APP_VERSION: project.version]
-}
+//task webpack(type: YarnTask) {
+//    inputs.files("yarn.lock")
+//    inputs.files("build.gradle")
+//    inputs.dir("src/main/webapp/")
+//
+//    def webpackDevFiles = fileTree("webpack//")
+//    webpackDevFiles.exclude("webpack.prod.js")
+//    inputs.files(webpackDevFiles)
+//
+//    outputs.dir("build/resources/main/static/")
+//
+//    dependsOn yarn
+//    args = ["run", "webpack:build"]
+//    environment = [APP_VERSION: project.version]
+//}
 
 processResources {
     inputs.property('version', version)
@@ -56,5 +56,5 @@ processResources {
     }
 }
 
-processResources.dependsOn webpack
+// processResources.dependsOn webpack
 bootJar.dependsOn processResources
