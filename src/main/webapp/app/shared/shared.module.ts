@@ -7,6 +7,7 @@ import { HasAnyAuthorityDirective } from './auth/has-any-authority.directive';
 import { StatisticsComponent } from './statistics/statistics.component';
 import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
 import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
+import { EventEntryCategoryFilter } from './filters/entry-category-filter.pipe';
 
 @NgModule({
   imports: [MotorsportsDatabaseSharedLibsModule],
@@ -17,7 +18,8 @@ import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
     HasAnyAuthorityDirective,
     StatisticsComponent,
     RacetrackLengthPipe,
-    LocalizedDatePipe
+    LocalizedDatePipe,
+    EventEntryCategoryFilter
   ],
   exports: [
     MotorsportsDatabaseSharedLibsModule,
@@ -27,7 +29,8 @@ import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
     HasAnyAuthorityDirective,
     StatisticsComponent,
     RacetrackLengthPipe,
-    LocalizedDatePipe
+    LocalizedDatePipe,
+    EventEntryCategoryFilter
   ]
 })
 export class MotorsportsDatabaseSharedModule {}

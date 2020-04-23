@@ -9,11 +9,17 @@ import { EventEditionDeletePopupComponent, EventEditionDeleteDialogComponent } f
 import { eventEditionRoute, eventEditionPopupRoute } from './event-edition.route';
 
 import { MotorsportsDatabaseEventSessionModule } from '../event-session/event-session.module';
+import { MotorsportsDatabaseEventEntryModule } from '../event-entry/event-entry.module';
 
 const ENTITY_STATES = [...eventEditionRoute, ...eventEditionPopupRoute];
 
 @NgModule({
-  imports: [MotorsportsDatabaseSharedModule, MotorsportsDatabaseEventSessionModule, RouterModule.forChild(ENTITY_STATES)],
+  imports: [
+    MotorsportsDatabaseSharedModule,
+    MotorsportsDatabaseEventSessionModule,
+    MotorsportsDatabaseEventEntryModule,
+    RouterModule.forChild(ENTITY_STATES)
+  ],
   declarations: [
     EventEditionComponent,
     EventEditionDetailComponent,
