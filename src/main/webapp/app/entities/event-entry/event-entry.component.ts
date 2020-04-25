@@ -10,7 +10,6 @@ import { EventEntryService } from './event-entry.service';
 
 @Component({
   selector: 'jhi-event-entry',
-  styleUrls: ['event-entry.component.scss'],
   templateUrl: './event-entry.component.html',
   animations: [
     trigger('detailExpand', [

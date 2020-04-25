@@ -41,4 +41,8 @@ export class EventEntryService {
     const options = createRequestOption(req);
     return this.http.get<IEventEntry[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
   }
+
+  findEntries(id: number): Observable<EntityArrayResponseType> {
+    return this.http.get<IEventEntry[]>(`api/event-editions/${id}/entries`, { observe: 'response' });
+  }
 }
