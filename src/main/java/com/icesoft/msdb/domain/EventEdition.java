@@ -80,6 +80,12 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     @JsonIgnoreProperties("eventEditions")
     private RacetrackLayout trackLayout;
 
+    @Transient
+    private byte[] poster;
+
+    @Column(name = "poster_url")
+    private String posterUrl;
+
     @ManyToOne
     private Event event;
 
@@ -196,6 +202,32 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
     public void setTrackLayout(RacetrackLayout racetrackLayout) {
         this.trackLayout = racetrackLayout;
+    }
+
+    public byte[] getPoster() {
+        return poster;
+    }
+
+    public EventEdition poster(byte[] poster) {
+        this.poster = poster;
+        return this;
+    }
+
+    public void setPoster(byte[] poster) {
+        this.poster = poster;
+    }
+
+    public String getPosterUrl() {
+        return posterUrl;
+    }
+
+    public EventEdition posterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
+        return this;
+    }
+
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
     }
 
     public Event getEvent() {

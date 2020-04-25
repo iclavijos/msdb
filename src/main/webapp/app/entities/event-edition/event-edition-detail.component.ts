@@ -61,13 +61,13 @@ export class EventEditionDetailComponent implements OnInit {
 
       this.lapNumbers = Array.from(Array(58), (x, i) => i);
 
-      const srcUrl = 'https://res.cloudinary.com/msdb-cloud/image/upload/v1585520865/affiche/Affiche_Sebring_2020.jpg';
-      const thumbUrl =
-        'https://res.cloudinary.com/msdb-cloud/image/upload/c_thumb,w_200,g_face/v1585520865/affiche/Affiche_Sebring_2020.jpg';
+      const afficheThumb = this.eventEdition.posterUrl
+        ? this.eventEdition.posterUrl.replace('/upload', '/upload/c_thumb,w_200,g_face')
+        : '';
       const affiche = {
-        src: srcUrl,
+        src: this.eventEdition.posterUrl,
         caption: '',
-        thumb: thumbUrl
+        thumb: afficheThumb
       };
       const layout = {
         src: this.eventEdition.trackLayout.layoutImageUrl,
