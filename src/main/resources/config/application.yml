@@ -110,11 +110,16 @@ spring:
       client:
         provider:
           oidc:
-            issuer-uri: http://localhost:9080/auth/realms/jhipster
+            issuer-uri: https://dev-871921.okta.com/oauth2/default
         registration:
           oidc:
-            client-id: web_app
-            client-secret: web_app
+            client-id: ${oidc_client_id}
+            client-secret: ${oidc_client_secret}
+
+        # access-token-uri: https://dev-871921.oktapreview.com/oauth2/default/v1/token
+
+  flyway:
+    table: schema_version
 
 server:
   servlet:

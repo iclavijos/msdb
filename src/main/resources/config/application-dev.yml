@@ -16,8 +16,8 @@
 logging:
   level:
     ROOT: INFO
-    io.github.jhipster: INFO
-    com.icesoft.msdb: DEBUG
+    io.github.jhipster: DEBUG
+    com.icesoft.msdb: TRACE
 
 management:
   health:
@@ -42,7 +42,7 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://localhost:3306/msdb?useUnicode=true&characterEncoding=utf8&useSSL=false
+    url: jdbc:mysql://localhost:3306/msdb?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
     username: msdb
     password: msdb
     hikari:
@@ -56,13 +56,14 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     database: MYSQL
-    # show-sql: true
+    show-sql: false
     properties:
       hibernate.id.new_generator_mappings: true
       hibernate.connection.provider_disables_autocommit: true
       hibernate.cache.use_second_level_cache: true
       hibernate.cache.use_query_cache: false
       hibernate.generate_statistics: false
+      hibernate.format_sql: false
   data:
     mongodb:
       host: localhost
