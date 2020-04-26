@@ -148,3 +148,5 @@ Desktop.ini
 /yarn.lock
 /out/
 /tempFolder/
+/data/
+/src/main/webapp-backup/
