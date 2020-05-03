@@ -591,7 +591,7 @@ public class EventEditionResource {
     				session.getEventEdition().getLongEventName(),
     				session.getName(),
     				session.getSessionTypeValue(),
-    				session.getSessionStartTime(), session.getSessionEndTime(),
+    				session.getSessionStartTimeDate(), session.getSessionEndTime(),
     				logoUrl);
     	}).collect(Collectors.toList());
     }

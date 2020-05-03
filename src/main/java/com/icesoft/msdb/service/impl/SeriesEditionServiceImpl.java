@@ -1,5 +1,6 @@
 package com.icesoft.msdb.service.impl;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -313,8 +314,8 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 				newSession.setShortname(es.getShortname());
 
 				newSession.setSessionType(es.getSessionType());
-				ZonedDateTime zdt = es.getSessionStartTime();
-				newSession.setSessionStartTime(zdt.plusYears(yearCopy - zdt.getYear()));
+                ZonedDateTime zdt = es.getSessionStartTimeDate();
+				newSession.setSessionStartTime(zdt.plusYears(yearCopy - zdt.getYear()).toInstant().toEpochMilli());
 				final EventSession copy = sessionRepo.save(newSession);
 
 				List<PointsSystemSession> pssL = new ArrayList<>();

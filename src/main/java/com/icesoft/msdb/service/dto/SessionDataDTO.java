@@ -1,5 +1,6 @@
 package com.icesoft.msdb.service.dto;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -15,10 +16,10 @@ public class SessionDataDTO {
 	private final String eventName;
 	private final List<Long> seriesIds;
 	private final List<String> seriesNames;
-	
+
 	public SessionDataDTO(EventSession session) {
 		this.sessionName = session.getName();
-		this.sessionStartTime = session.getSessionStartTime();
+		this.sessionStartTime = session.getSessionStartTimeDate();
 		this.sessionEndTime = session.getSessionEndTime();
 		this.duration = session.getDuration();
 		this.durationType = session.getDurationType();
@@ -27,7 +28,7 @@ public class SessionDataDTO {
 		this.seriesIds = session.getSeriesIds();
 		this.seriesNames = session.getSeriesNames();
 	}
-	
+
 	public ZonedDateTime getSessionStartTime() {
 		return sessionStartTime;
 	}

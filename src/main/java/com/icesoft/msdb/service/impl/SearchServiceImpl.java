@@ -193,7 +193,7 @@ public class SearchServiceImpl implements SearchService {
 				}
 			}
 			racePosition = result.getFinalPosition();
-			sessionDate = result.getSession().getSessionStartTime().toLocalDate();
+			sessionDate = result.getSession().getSessionStartTimeDate().toLocalDate();
 		} else {
 			raceFastLap = 0;
 			racePosition = 0;

@@ -1,6 +1,7 @@
-import { DatePipe } from '@angular/common';
 import { Pipe, PipeTransform } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+
+import { Moment } from 'moment';
 
 @Pipe({
   name: 'localizedDate',
@@ -9,8 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class LocalizedDatePipe implements PipeTransform {
   constructor(private translateService: TranslateService) {}
 
-  transform(value: any, pattern = 'medium'): any {
-    const datePipe: DatePipe = new DatePipe(this.translateService.currentLang);
-    return datePipe.transform(value, pattern);
+  transform(value: Moment, pattern = 'LLL'): any {
+    return value.lang(this.translateService.currentLang).format(pattern);
   }
 }

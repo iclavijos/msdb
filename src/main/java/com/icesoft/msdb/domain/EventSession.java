@@ -12,6 +12,8 @@ import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.*;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -47,8 +49,8 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     private String shortname;
 
     @NotNull
-    @Column(name = "session_start_time", nullable = false)
-    private ZonedDateTime sessionStartTime;
+    @Column(name = "start_time_ts2", nullable = false)
+    private Long sessionStartTime;
 
     @NotNull
     @Column(name = "duration", nullable = false)
@@ -109,16 +111,21 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
         this.shortname = shortname;
     }
 
-    public ZonedDateTime getSessionStartTime() {
+    public Long getSessionStartTime() {
         return sessionStartTime;
     }
 
-    public EventSession sessionStartTime(ZonedDateTime sessionStartTime) {
+    @JsonIgnore
+    public ZonedDateTime getSessionStartTimeDate() {
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(getSessionStartTime()), ZoneId.of("UTC"));
+    }
+
+    public EventSession sessionStartTime(Long sessionStartTime) {
         this.sessionStartTime = sessionStartTime;
         return this;
     }
 
-    public void setSessionStartTime(ZonedDateTime sessionStartTime) {
+    public void setSessionStartTime(Long sessionStartTime) {
         this.sessionStartTime = sessionStartTime;
     }
 
@@ -250,16 +257,16 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 		int maxDuration = Optional.ofNullable(getMaxDuration()).orElse(new Integer(0));
 
 		if (maxDuration > 0) {
-			return getSessionStartTime().plus(maxDuration, ChronoUnit.HOURS);
+			return getSessionStartTimeDate().plus(maxDuration, ChronoUnit.HOURS);
 		}
 
 		if (!getSessionType().equals(SessionType.RACE)) {
-			return getSessionStartTime().plus(getDuration(), temp);
+			return getSessionStartTimeDate().plus(getDuration(), temp);
 		} else {
 			if (temp != null) {
-				return getSessionStartTime().plus(getDuration(), temp);
+				return getSessionStartTimeDate().plus(getDuration(), temp);
 			} else {
-				return getSessionStartTime().plus(2, ChronoUnit.HOURS);
+				return getSessionStartTimeDate().plus(2, ChronoUnit.HOURS);
 			}
 		}
 
