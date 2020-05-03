@@ -366,9 +366,9 @@ public class ImportsResource {
 
         		result.setStartingPosition(tmp.getStartingPosition());
 	        	try {
-	        		result.setFinalPosition(Integer.parseInt(tmp.getFinalPosition()));
+	        		result.setFinalPosition(Integer.parseInt(tmp.getFinalPositionStr()));
 	        	} catch (NumberFormatException e) {
-	        		String pos = tmp.getFinalPosition();
+	        		String pos = tmp.getFinalPositionStr();
 	        		if (pos.equals("DNF")) {
 	        			result.setFinalPosition(900);
 	        		} else if (pos.equals("DNS")) {

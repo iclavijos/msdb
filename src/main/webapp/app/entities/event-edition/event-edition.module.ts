@@ -10,6 +10,7 @@ import { eventEditionRoute, eventEditionPopupRoute } from './event-edition.route
 
 import { MotorsportsDatabaseEventSessionModule } from '../event-session/event-session.module';
 import { MotorsportsDatabaseEventEntryModule } from '../event-entry/event-entry.module';
+import { MotorsportsDatabaseEventEntryResultModule } from '../event-entry-result/event-entry-result.module';
 
 const ENTITY_STATES = [...eventEditionRoute, ...eventEditionPopupRoute];
 
@@ -18,6 +19,7 @@ const ENTITY_STATES = [...eventEditionRoute, ...eventEditionPopupRoute];
     MotorsportsDatabaseSharedModule,
     MotorsportsDatabaseEventSessionModule,
     MotorsportsDatabaseEventEntryModule,
+    MotorsportsDatabaseEventEntryResultModule,
     RouterModule.forChild(ENTITY_STATES)
   ],
   declarations: [

@@ -149,7 +149,9 @@
         "pitlaneStart": "Sortida des de pitlane?",
         "pitlaneStartDesc": "* Indica que el pilot ha començat la cursa des del pitlane",
         "sharedDrive": "Vehicle compartit amb?",
-        "sharedWith": "Compartit amb "
+        "sharedWith": "Compartit amb ",
+        "difference": "Diferència 1er",
+        "previous": "Diferència anterior"
       },
       "copyEntries": {
         "title": "Copia participants d'un altre event",

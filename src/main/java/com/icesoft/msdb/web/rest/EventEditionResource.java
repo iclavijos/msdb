@@ -509,6 +509,7 @@ public class EventEditionResource {
 
     @GetMapping("/event-editions/{id}/event-sessions/{idSession}/results")
     @Timed
+    @Transactional(readOnly = true)
     public List<SessionResultDTO> getEventSessionResults(@PathVariable Long id, @PathVariable Long idSession) {
     	log.debug("REST request to get EventEdition {} results for session {}", id, idSession);
     	List<EventEntryResult> result = eventResultRepository.findBySessionIdOrderByFinalPositionAsc(idSession);
@@ -551,6 +552,7 @@ public class EventEditionResource {
 
     @GetMapping("/event-editions/event-sessions/results/{idResult}")
     @Timed
+    @Transactional(readOnly = true)
     public ResponseEntity<EventEntryResult> getEventSessionResult(@PathVariable Long idResult) {
         log.debug("REST request to get eventSessionResult : {}", idResult);
         EventEntryResult eventEntryResult = eventResultRepository.findById(idResult).orElseThrow(

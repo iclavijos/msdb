@@ -4,13 +4,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 
 import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { IEventSession } from 'app/shared/model/event-session.model';
 import { EventService } from '../event/event.service';
 import { EventEditionService } from './event-edition.service';
 
 import { DurationType } from 'app/shared/enumerations/durationType.enum';
 import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 
-import moment from 'moment-timezone';
 import { Lightbox } from 'ngx-lightbox';
 
 @Component({
@@ -19,6 +19,7 @@ import { Lightbox } from 'ngx-lightbox';
 })
 export class EventEditionDetailComponent implements OnInit {
   eventEdition: IEventEdition;
+  eventSessions: IEventSession[];
   convertedTime = false;
   private subscription: Subscription;
   private eventSubscriber: Subscription;
@@ -99,26 +100,15 @@ export class EventEditionDetailComponent implements OnInit {
     this.lightbox.close();
   }
 
+  updateSessions(newSessions) {
+    this.eventSessions = newSessions;
+  }
+
   jumpToEdition(id) {
     if (!id) {
       return false;
     }
     this.router.navigate(['/event-edition', id]);
-  }
-
-  convertToCurrentTZ() {
-    const currentTZ = moment.tz.guess();
-    for (const session of this.eventEdition.sessions) {
-      session.sessionStartTime.tz(currentTZ);
-    }
-    this.convertedTime = true;
-  }
-
-  convertToLocalTZ() {
-    for (const session of this.eventEdition.sessions) {
-      session.sessionStartTime.tz(this.eventEdition.trackLayout.racetrack.timeZone);
-    }
-    this.convertedTime = false;
   }
 
   previousState() {

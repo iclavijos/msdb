@@ -28,9 +28,10 @@ export class EventEntryResultService {
     return this.http.get<IEventEntryResult>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  query(req?: any): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http.get<IEventEntryResult[]>(this.resourceUrl, { params: options, observe: 'response' });
+  query(eventEditionId: number, eventSessionId: number): Observable<EntityArrayResponseType> {
+    return this.http.get<IEventEntryResult[]>(`api/event-editions/${eventEditionId}/event-sessions/${eventSessionId}/results`, {
+      observe: 'response'
+    });
   }
 
   delete(id: number): Observable<HttpResponse<any>> {
@@ -40,5 +41,45 @@ export class EventEntryResultService {
   search(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http.get<IEventEntryResult[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
+  }
+
+  processSessionResults(id: number): Observable<any> {
+    return this.http.put(`api/event-editions/event-sessions/${id}/process-results`, null);
+  }
+
+  private convertTime(timeMillis: number, handleHours?: boolean) {
+    const millis = timeMillis % 10000;
+    let seconds = Math.floor(timeMillis / 10000);
+    let minutes = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+
+    let result = '';
+
+    const hours = Math.floor(minutes / 60);
+    if (handleHours) {
+      if (hours > 0) {
+        minutes = minutes % 60;
+        result = String(hours) + 'h';
+      }
+    }
+
+    if (minutes > 0) {
+      if (hours > 0 && minutes < 10) {
+        result += '0' + String(minutes) + "'";
+      } else if (minutes < 10) {
+        result += String(minutes) + "'";
+      }
+    }
+
+    if (seconds < 10) {
+      result += '0' + String(seconds) + '".';
+    } else {
+      result += String(seconds) + '".';
+    }
+    if (millis < 1000) {
+      result += '0';
+    }
+    result += String(millis);
+    return result;
   }
 }

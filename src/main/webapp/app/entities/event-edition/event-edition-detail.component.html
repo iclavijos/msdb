@@ -12,7 +12,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <mat-tab-group dynamicHeight mat-stretch-tabs>
-                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.info' | translate}}">
+                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.info' | translate }}">
                                         <div class="row">
                                             <div class="col-lg-4 col-md-4">
                                                 <dl class="row-md jh-entity-details">
@@ -69,27 +69,31 @@
                                             <div class="col-lg-8 col-md-8">
                                                 <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.sessions">Sessions</span></dt>
                                                 <dd>
-                                                    <jhi-event-session [eventEdition]="eventEdition" (showPoints)="showPoints"></jhi-event-session>
+                                                    <jhi-event-session [eventEdition]="eventEdition" (showPoints)="showPoints" (sessions)="updateSessions($event)"></jhi-event-session>
                                                 </dd>
                                             </div>
                                         </div>
                                     </mat-tab>
-                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.entryList' | translate}}">
+                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.entryList' | translate }}">
                                         <div>
                                             <jhi-event-entry [eventEdition]="eventEdition"></jhi-event-entry>
                                         </div>
                                     </mat-tab>
-                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.results' | translate}}">
+                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.results' | translate }}">
+                                        <div>
+                                            <mat-tab-group dynamicHeight mat-stretch-tabs>
+                                                <mat-tab *ngFor="let eventSession of eventSessions" label="{{ eventSession.name }}">
+                                                    <jhi-event-entry-result [eventSession]="eventSession" [eventEdition]="eventEdition">Result...</jhi-event-entry-result>
+                                                </mat-tab>
+                                            </mat-tab-group>
+                                        </div>
+                                    </mat-tab>
+                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.driversTimes' | translate }}">
                                         <div>
                                             Large content
                                         </div>
                                     </mat-tab>
-                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.driversTimes' | translate}}">
-                                        <div>
-                                            Large content
-                                        </div>
-                                    </mat-tab>
-                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.info' | translate}}">
+                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.info' | translate }}">
                                         <div>
                                             Large content
                                         </div>

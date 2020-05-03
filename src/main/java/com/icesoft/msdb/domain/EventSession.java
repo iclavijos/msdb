@@ -49,7 +49,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     private String shortname;
 
     @NotNull
-    @Column(name = "start_time_ts2", nullable = false)
+    @Column(name = "start_time_ts", nullable = false)
     private Long sessionStartTime;
 
     @NotNull

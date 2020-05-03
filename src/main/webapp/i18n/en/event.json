@@ -150,7 +150,9 @@
         "pitlaneStart": "Pitlane start?",
         "pitlaneStartDesc": "* Indicates driver started race from pitlane",
         "sharedDrive": "Car shared with?",
-        "sharedWith": "Shared with "
+        "sharedWith": "Shared with ",
+        "difference": "Difference to 1st",
+        "previous": "Difference to prev."
       },
       "copyEntries": {
         "title": "Copy entries from another event",

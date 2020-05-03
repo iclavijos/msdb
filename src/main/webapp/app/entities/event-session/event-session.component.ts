@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
-import { MatTable } from '@angular/material';
 
 import { EventEdition } from 'app/shared/model/event-edition.model';
 import { IEventSession } from 'app/shared/model/event-session.model';
@@ -26,17 +25,16 @@ export class EventSessionComponent implements OnInit, OnDestroy {
   totalItems: any;
   sessionTypes = SessionType;
   durationTypes = DurationType;
-  showPoints = false;
+  showPointsResult = false;
   convertedTime = false;
-  @Output() showPointsEmitter = new EventEmitter<boolean>();
+  @Output() showPoints = new EventEmitter<boolean>();
+  @Output() sessions = new EventEmitter<IEventSession[]>();
 
   displayedColumns: string[] = ['sessionStartTime', 'name', 'duration', 'buttons'];
   footerColumns: string[] = ['empty', 'empty', 'empty', 'timeConverter'];
 
   resultsLength = 0;
   isLoadingResults = true;
-
-  @ViewChild(MatTable, { static: false }) table: MatTable<any>;
 
   constructor(
     protected eventSessionService: EventSessionService,
@@ -53,10 +51,16 @@ export class EventSessionComponent implements OnInit, OnDestroy {
   }
 
   loadAll() {
+    let showPoints = false;
     this.eventSessions = [];
-    this.eventSessionService
-      .findSessions(this.eventEdition.id, this.eventEdition.trackLayout.racetrack.timeZone)
-      .subscribe(sessions => (this.eventSessions = sessions.body));
+    this.eventSessionService.findSessions(this.eventEdition.id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe(sessions => {
+      this.eventSessions = sessions.body;
+      this.eventSessions.forEach(
+        item => (showPoints = showPoints || (item.pointsSystemsSession !== null && item.pointsSystemsSession.length > 0))
+      );
+      this.showPoints.emit(showPoints);
+      this.sessions.emit(this.eventSessions);
+    });
   }
 
   ngOnDestroy() {

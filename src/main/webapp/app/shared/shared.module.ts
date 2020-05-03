@@ -6,6 +6,7 @@ import { JhiAlertErrorComponent } from './alert/alert-error.component';
 import { HasAnyAuthorityDirective } from './auth/has-any-authority.directive';
 import { StatisticsComponent } from './statistics/statistics.component';
 import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
+import { TimeMaskPipe } from './mask/time-mask.pipe';
 import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
 import { EventEntryCategoryFilter } from './filters/entry-category-filter.pipe';
 
@@ -18,6 +19,7 @@ import { EventEntryCategoryFilter } from './filters/entry-category-filter.pipe';
     HasAnyAuthorityDirective,
     StatisticsComponent,
     RacetrackLengthPipe,
+    TimeMaskPipe,
     LocalizedDatePipe,
     EventEntryCategoryFilter
   ],
@@ -29,6 +31,7 @@ import { EventEntryCategoryFilter } from './filters/entry-category-filter.pipe';
     HasAnyAuthorityDirective,
     StatisticsComponent,
     RacetrackLengthPipe,
+    TimeMaskPipe,
     LocalizedDatePipe,
     EventEntryCategoryFilter
   ]
