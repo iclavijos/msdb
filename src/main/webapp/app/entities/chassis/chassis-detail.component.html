@@ -3,52 +3,55 @@
         <jhi-alert-error></jhi-alert-error>
         <jhi-alert></jhi-alert>
         <div class="row">
-            <div class="col-md-12">
-                <div class="card">
+            <div class="col-md-4">
+                <div class="card card-profile">
                     <div class="card-header card-header-danger">
                         <h3 class="card-title">{{chassis.manufacturer}} {{chassis.name}}</h3>
                     </div>
                     <div class="card-body">
-                        <div class="row jh-entity-details">
-                            <div class="col-md-4">
-                                <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.debutYear">Debut Year</span></dt>
-                                <dd>
-                                    <span>{{chassis.debutYear}}</span>
-                                </dd>
-                                <dt *ngIf="chassis.derivedFrom"><span jhiTranslate="motorsportsDatabaseApp.chassis.derivedFrom">Derived From</span></dt>
-                                <dd *ngIf="chassis.derivedFrom">
-                                    <a [routerLink]="['/chassis', chassis.derivedFrom?.id]">{{chassis.derivedFrom?.manufacturer}} {{chassis.derivedFrom?.name}}</a>
-                                </dd>
-                                <dt *ngIf="chassis.derivedFrom">
-                                    <span jhiTranslate="motorsportsDatabaseApp.chassis.rebranded">Rebranded</span>
-                                    <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.chassis.rebrandedTooltip' | translate }}"></i>
-                                </dt>
-                                <dd *ngIf="chassis.derivedFrom">
-                                    <span><i [ngClass]="chassis.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
-                                </dd>
-                            </div>
-                            <div class="col-md-8">
-                                <dd>
-                                    <jhi-statistics [id]="chassis.id" [statsType]="'chassis'">Statistics...</jhi-statistics>
-                                </dd>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
+                        <h4 class="card-title"></h4>
+                        <dl class="row-md jh-entity-details">
+                            <dt><span jhiTranslate="motorsportsDatabaseApp.chassis.debutYear">Debut Year</span></dt>
+                            <dd>
+                                <span>{{chassis.debutYear}}</span>
+                            </dd>
+                            <dt *ngIf="chassis.derivedFrom"><span jhiTranslate="motorsportsDatabaseApp.chassis.derivedFrom">Derived From</span></dt>
+                            <dd *ngIf="chassis.derivedFrom">
+                                <a [routerLink]="['/chassis', chassis.derivedFrom?.id, 'view']">{{chassis.derivedFrom?.manufacturer}} {{chassis.derivedFrom?.name}}</a>
+                            </dd>
+                            <dt *ngIf="chassis.derivedFrom">
+                                <span jhiTranslate="motorsportsDatabaseApp.chassis.rebranded">Rebranded</span>
+                                <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.chassis.rebrandedTooltip' | translate }}"></i>
+                            </dt>
+                            <dd *ngIf="chassis.derivedFrom">
+                                <span><i [ngClass]="chassis.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+                            </dd>
+                        </dl>
+
+                        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                [routerLink]="['/chassis', chassis.id, 'edit']"
+                                class="btn btn-primary">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <jhi-statistics [id]="chassis.id" [statsType]="'chassis'">Statistics...</jhi-statistics>
+
+                        <dl class="row-md jh-entity-details">
+                            <dd>
                                 <div *ngIf="chassis.imageUrl">
                                     <img [src]="chassis.imageUrl" class="img-fluid" alt="chassis image"/>
                                 </div>
-                            </div>
-                        </div>
+                            </dd>
+                        </dl>
                     </div>
                 </div>
             </div>
         </div>
-        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                [routerLink]="['/chassis', chassis.id, 'edit']"
-                class="btn btn-primary">
-            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-        </button>
         <button type="submit"
                 (click)="previousState()"
                 class="btn btn-info">
