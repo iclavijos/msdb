@@ -396,6 +396,7 @@ public class ResultsService {
 		List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(eventEditionId);
 		List<EventSession> sessions = sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventEditionId);
 		String[][] data = new String[entries.size() + 1][sessions.size() + 1];
+		data[0][0] = "-";
 
 		for(int i = 1; i <= sessions.size(); i++) {
 			data[0][i] = sessions.get(i - 1).getName();
@@ -413,7 +414,7 @@ public class ResultsService {
                     }
                 }
 				if (result != null) {
-					data[i][j] = Optional.ofNullable(result.getBestLapTime()).map(laptime -> laptime.toString()).orElse("");
+					data[i][j] = Optional.ofNullable(result.getBestLapTime()).map(laptime -> laptime.toString()).orElse("-");
 				} else {
 					data[i][j] = "-";
 				}

@@ -38,6 +38,8 @@ export class EventEditionDetailComponent implements OnInit {
   keysSession: any[];
   keysDuration: any[];
 
+  bestTimesColumns: string[];
+
   private lightboxAlbum: any[] = [];
 
   constructor(
@@ -58,7 +60,10 @@ export class EventEditionDetailComponent implements OnInit {
       }
       this.eventEditionService.hasLapsData(eventEdition.id).subscribe(res => (this.hasLapsData = res));
       this.eventService.findEventEditionIds(eventEdition.event.id).subscribe(res => (this.editions = res));
-      this.eventEditionService.findDriversBestTimes(eventEdition.id).subscribe(res => (this.driversBestTimes = res));
+      this.eventEditionService.findDriversBestTimes(eventEdition.id).subscribe(res => {
+        this.driversBestTimes = res.slice(1);
+        this.bestTimesColumns = res[0];
+      });
 
       this.lapNumbers = Array.from(Array(58), (x, i) => i);
 
