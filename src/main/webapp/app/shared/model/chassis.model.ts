@@ -10,6 +10,7 @@ export interface IChassis {
   image?: any;
   imageContentType?: any;
   imageUrl?: string;
+  evolutions?: IChassis[];
 }
 
 export class Chassis implements IChassis {
@@ -22,6 +23,7 @@ export class Chassis implements IChassis {
     public rebranded?: boolean,
     public image?: any,
     public imageContentType?: any,
-    public imageUrl?: string
+    public imageUrl?: string,
+    public evolutions?: IChassis[]
   ) {}
 }

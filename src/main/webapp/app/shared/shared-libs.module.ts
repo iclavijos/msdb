@@ -27,7 +27,9 @@ import {
   MatPaginatorModule,
   MatProgressSpinnerModule,
   MatSortModule,
-  MatExpansionModule
+  MatExpansionModule,
+  MatIconModule,
+  MatTreeModule
 } from '@angular/material';
 
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
@@ -62,6 +64,8 @@ import { LightboxModule } from 'ngx-lightbox';
     MatProgressSpinnerModule,
     MatExpansionModule,
     MatSortModule,
+    MatIconModule,
+    MatTreeModule,
     ColorPickerModule,
     MomentTimezoneModule,
     LightboxModule,

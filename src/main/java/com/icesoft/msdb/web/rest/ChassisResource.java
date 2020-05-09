@@ -10,6 +10,7 @@ import com.icesoft.msdb.repository.stats.ChassisStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.SearchService;
+import com.icesoft.msdb.service.dto.ChassisEvolutionDTO;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
@@ -187,6 +188,15 @@ public class ChassisResource {
         chassisSearchRepository.deleteById(id);
         cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+    }
+
+    @GetMapping("/chassis/{id}/evolutions")
+    @Timed
+    public ResponseEntity<List<ChassisEvolutionDTO>> getChassisEvolutions(@PathVariable Long id) {
+        log.debug("REST request to get Chassis evolutions : {}", id);
+        Optional<Chassis> chassis = chassisRepository.findById(id);
+        ChassisEvolutionDTO parentResult = new ChassisEvolutionDTO(chassis.orElse(new Chassis()));
+        return ResponseEntity.ok(parentResult.getEvolutions());
     }
 
     @GetMapping("/chassis/{chassisId}/statistics")

@@ -53,4 +53,8 @@ export class ChassisService {
   getYears(id: number): Observable<HttpResponse<any>> {
     return this.http.get<any>(`${this.statsSearchUrl}/${id}/years`, { observe: 'response' });
   }
+
+  getEvolutions(id: number): Observable<EntityArrayResponseType> {
+    return this.http.get<IChassis[]>(`${this.resourceUrl}/${id}/evolutions`, { observe: 'response' });
+  }
 }
