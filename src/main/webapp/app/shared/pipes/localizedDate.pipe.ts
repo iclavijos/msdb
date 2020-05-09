@@ -18,6 +18,6 @@ export class LocalizedDatePipe implements PipeTransform {
     } else {
       momentDate = value;
     }
-    return momentDate.lang(this.translateService.currentLang).format(pattern);
+    return momentDate.locale(this.translateService.currentLang).format(pattern);
   }
 }
