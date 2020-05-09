@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChange } from '@angular/core';
 
 import { HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -12,7 +12,7 @@ import { ChassisService } from 'app/entities/chassis/chassis.service';
   selector: 'jhi-statistics',
   templateUrl: './statistics.component.html'
 })
-export class StatisticsComponent implements OnInit {
+export class StatisticsComponent implements OnChanges {
   @Input() id: number;
   @Input() statsType: string;
   stats: any[];
@@ -27,7 +27,9 @@ export class StatisticsComponent implements OnInit {
     private chassisService: ChassisService
   ) {}
 
-  ngOnInit() {
+  ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
+    this.id = changes['id'].currentValue;
+    if (changes['statsType']) this.statsType = changes['statsType'].currentValue;
     this.loadStats(this.id);
     this.loadYears(this.id);
   }
