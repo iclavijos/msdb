@@ -16,6 +16,12 @@
                     </span>
                     </a>
                 </li>
+                <li class="nav-item" routerLinkActive="active">
+                    <a class="nav-link" routerLink="/calendar">
+                        <fa-icon icon="calendar"></fa-icon>
+                        <span jhiTranslate="global.menu.calendar">Calendar</span>
+                    </a>
+                </li>
                 <li *jhiHasAnyAuthority="'ROLE_ADMIN'" ngbDropdown class="nav-item dropdown pointer" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                     <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="import-menu">
                         <span>

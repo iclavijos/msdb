@@ -117,7 +117,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 
     @JsonIgnore
     public ZonedDateTime getSessionStartTimeDate() {
-        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(getSessionStartTime()), ZoneId.of("UTC"));
+        return ZonedDateTime.ofInstant(Instant.ofEpochSecond(getSessionStartTime()), ZoneId.of("UTC"));
     }
 
     public EventSession sessionStartTime(Long sessionStartTime) {

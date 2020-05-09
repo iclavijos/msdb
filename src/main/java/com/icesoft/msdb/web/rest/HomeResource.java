@@ -79,7 +79,10 @@ public class HomeResource {
 		ZonedDateTime today = ZonedDateTime.of(todayMidnight, ZoneId.of("UTC"));
 		ZonedDateTime nextSunday = today.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
 		nextSunday = nextSunday.plusWeeks(1).withHour(23).withMinute(59).plusDays(1);
-		List<EventSession> sessions = eventSessionRepository.findUpcomingSessions(today, nextSunday);
+		List<EventSession> sessions = eventSessionRepository
+            .findUpcomingSessions(
+                today.toEpochSecond(),
+                nextSunday.toEpochSecond());
 
 		ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
 		List<SessionDataDTO> filtered =

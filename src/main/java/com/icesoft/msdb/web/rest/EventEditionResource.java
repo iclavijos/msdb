@@ -581,7 +581,7 @@ public class EventEditionResource {
     	LocalDateTime startMidnight = LocalDateTime.of(startDate, LocalTime.MIDNIGHT);
 		ZonedDateTime start = ZonedDateTime.of(startMidnight, ZoneId.of("UTC"));
 		ZonedDateTime end = ZonedDateTime.of(endDate.atTime(23, 59, 59), ZoneId.of("UTC"));
-    	List<EventSession> tmp = eventSessionRepository.findUpcomingSessions(start, end);
+    	List<EventSession> tmp = eventSessionRepository.findUpcomingSessions(start.toEpochSecond(), end.toEpochSecond());
     	return tmp.parallelStream().map(session -> {
     		String[] logoUrl = null;
     		if (session.getEventEdition().getSeriesEditions() != null) {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { DatePipe } from '@angular/common';
 
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
@@ -15,7 +16,7 @@ export class EventEditionService {
   public resourceSearchUrl = SERVER_API_URL + 'api/_search/event-editions';
   public eventResourceUrl = 'api/events';
 
-  constructor(protected http: HttpClient) {}
+  constructor(protected http: HttpClient, protected datePipe: DatePipe) {}
 
   create(event: IEventEdition): Observable<EntityResponseType> {
     return this.http.post<IEventEdition>(this.resourceUrl, event, { observe: 'response' });
@@ -58,5 +59,12 @@ export class EventEditionService {
 
   hasLapsData(eventId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.resourceUrl}/${eventId}/laps`);
+  }
+
+  findCalendarEvents(startDate: Date, endDate: Date) {
+    const dateFormat = 'yyyy-MM-dd';
+    const fromDate = this.datePipe.transform(startDate, dateFormat);
+    const toDate = this.datePipe.transform(endDate, dateFormat);
+    return this.http.get<any[]>(`${this.resourceUrl}/calendar/${fromDate}/${toDate}`);
   }
 }

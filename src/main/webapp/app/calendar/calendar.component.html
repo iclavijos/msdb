@@ -1,0 +1,40 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-3 col-sm-3 mb-3">
+                {{ 'home.selectTimeZone' | translate }}
+            </div>
+            <div class="col-xl-8 col-sm-8 mb-8">
+                <select class="form-control" [(ngModel)]="timezone" id="field_timezone" name="switchTimezone" (change)="changeTimezone()">
+                    <ng-template ngFor let-item [ngForOf]="timezones" let-currentIndex="index">
+                        <option [value]="item.zoneName">{{item.countryName}} ({{item.zoneName}} {{item.gmtOffset}})</option>
+                    </ng-template>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <full-calendar
+                #calendar
+                defaultView="dayGridMonth"
+                [plugins]="calendarPlugins"
+                [header]="{
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                 }"
+                [events]="events"
+                [locales]="calendarLocales"
+                [timeZone]="timezone"
+                [allDaySlot]="false"
+                [nowIndicator]="true"
+                [aspectRatio]="1"
+                [eventTimeFormat]="{
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }"
+                (eventClick)="openEventDialog($event)"
+            >
+            </full-calendar>
+        </div>
+    </div>
+</div>

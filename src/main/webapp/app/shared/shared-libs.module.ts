@@ -10,6 +10,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
 import { MomentTimezoneModule } from 'angular-moment-timezone';
 
+import { FullCalendarModule } from '@fullcalendar/angular';
+
 import {
   MatButtonModule,
   MatInputModule,
@@ -62,7 +64,8 @@ import { LightboxModule } from 'ngx-lightbox';
     MatSortModule,
     ColorPickerModule,
     MomentTimezoneModule,
-    LightboxModule
+    LightboxModule,
+    FullCalendarModule
   ]
 })
 export class MotorsportsDatabaseSharedLibsModule {}

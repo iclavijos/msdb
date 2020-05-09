@@ -29,7 +29,7 @@ public interface EventSessionRepository extends JpaRepository<EventSession,Long>
 	List<EventSession> findRacesSessions(Long eventEditionId);
 
 	@Query("SELECT s FROM EventSession s WHERE s.sessionStartTime BETWEEN ?1 AND ?2 ORDER BY s.sessionStartTime ASC")
-	List<EventSession> findUpcomingSessions(ZonedDateTime fromDate, ZonedDateTime toDate);
+	List<EventSession> findUpcomingSessions(Long fromDate, Long toDate);
 
 	@Query("SELECT es FROM EventSession es WHERE ?1 MEMBER OF es.eventEdition.seriesEditions AND "
 			+ "(es.sessionType = com.icesoft.msdb.domain.enums.SessionType.RACE OR es.sessionType = com.icesoft.msdb.domain.enums.SessionType.QUALIFYING_RACE) "
