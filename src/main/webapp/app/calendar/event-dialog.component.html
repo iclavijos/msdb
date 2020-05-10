@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>{{ data.event.event.title }}</h1>
+<div mat-dialog-content>
+    <div class="ui-grid-row">
+        <div class="ui-grid-col-12" align="center">
+            <img *ngIf="data.event.event.extendedProps.seriesLogoUrl" [src]="data.event.event.extendedProps.seriesLogoUrl[0]" style="max-width: 400px" alt="series logo"/>
+        </div>
+    </div>
+    <div class="ui-grid-row">
+        <div class="ui-grid-col-2"><label>{{'motorsportsDatabaseApp.calendar.start' | translate}}</label></div>
+        <div class="ui-grid-col-10"><span>{{data.event.event.start | localizedDate }}</span></div>
+    </div>
+    <div class="ui-grid-row">
+        <div class="ui-grid-col-2"><label>{{'motorsportsDatabaseApp.calendar.end' | translate}}</label></div>
+        <div class="ui-grid-col-10"><span>{{data.event.event.end | localizedDate }}</span></div>
+    </div>
+    <div class="ui-grid-col-12">
+        <a [routerLink]="['/event/edition', data.event.event.id, 'view-ed' ]" >
+            <span>{{'motorsportsDatabaseApp.calendar.details' | translate}}</span>
+        </a>
+    </div>
+</div>
