@@ -1,11 +1,8 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.domain.Chassis;
 import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.domain.stats.EngineStatistics;
-import com.icesoft.msdb.domain.stats.ParticipantStatistics;
 import com.icesoft.msdb.domain.stats.ParticipantStatisticsSnapshot;
-import com.icesoft.msdb.domain.stats.TeamStatistics;
 import com.icesoft.msdb.repository.EngineRepository;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.search.EngineSearchRepository;
@@ -13,15 +10,15 @@ import com.icesoft.msdb.repository.stats.EngineStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.SearchService;
+import com.icesoft.msdb.service.dto.EngineEvolutionDTO;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
+import com.icesoft.msdb.service.dto.ItemEvolutionDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.micrometer.core.annotation.Timed;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,9 +41,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link com.icesoft.msdb.domain.Engine}.
@@ -206,6 +200,15 @@ public class EngineResource {
     	log.debug("REST request to get statistics for engine : {}", id);
     	Optional<EngineStatistics> stats = statsRepo.findById(id.toString());
         return ResponseUtil.wrapOrNotFound(stats);
+    }
+
+    @GetMapping("/engines/{id}/evolutions")
+    @Timed
+    public ResponseEntity<List<ItemEvolutionDTO>> getEngineEvolutions(@PathVariable Long id) {
+        log.debug("REST request to get engine evolutions : {}", id);
+        Optional<Engine> engine = engineRepository.findById(id);
+        EngineEvolutionDTO parentResult = new EngineEvolutionDTO(engine.orElse(new Engine()));
+        return ResponseEntity.ok(parentResult.getEvolutions());
     }
 
     @GetMapping("/engines/{id}/participations/{category}")

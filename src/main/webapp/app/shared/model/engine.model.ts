@@ -17,6 +17,7 @@ export interface IEngine {
   image?: any;
   imageUrl?: string;
   derivedFrom?: IEngine;
+  evolutions?: IEngine[];
 }
 
 export class Engine implements IEngine {
@@ -36,7 +37,8 @@ export class Engine implements IEngine {
     public imageContentType?: string,
     public image?: any,
     public imageUrl?: string,
-    public derivedFrom?: IEngine
+    public derivedFrom?: IEngine,
+    public evolutions?: IEngine[]
   ) {
     this.petrolEngine = this.petrolEngine || false;
     this.dieselEngine = this.dieselEngine || false;
