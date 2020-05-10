@@ -12,6 +12,7 @@ import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.ChassisEvolutionDTO;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
+import com.icesoft.msdb.service.dto.ItemEvolutionDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -192,7 +193,7 @@ public class ChassisResource {
 
     @GetMapping("/chassis/{id}/evolutions")
     @Timed
-    public ResponseEntity<List<ChassisEvolutionDTO>> getChassisEvolutions(@PathVariable Long id) {
+    public ResponseEntity<List<ItemEvolutionDTO>> getChassisEvolutions(@PathVariable Long id) {
         log.debug("REST request to get Chassis evolutions : {}", id);
         Optional<Chassis> chassis = chassisRepository.findById(id);
         ChassisEvolutionDTO parentResult = new ChassisEvolutionDTO(chassis.orElse(new Chassis()));
