@@ -30,6 +30,7 @@ export class MyEvent {
   end: any;
   seriesLogoUrl: string;
   allDay = false;
+  status: string;
 }
 
 @Component({
@@ -37,10 +38,7 @@ export class MyEvent {
   templateUrl: 'event-dialog.component.html'
 })
 export class EventDialogComponent {
-  constructor(public dialogRef: MatDialogRef<EventDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: MyEvent) {
-    // eslint-disable-next-line no-console
-    console.log(data);
-  }
+  constructor(public dialogRef: MatDialogRef<EventDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: MyEvent) {}
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -114,15 +112,19 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         .tz(currentTZ)
         .toDate();
       newEvent.seriesLogoUrl = session.seriesLogoUrl;
-      if (session.sessionType === 2) {
-        newEvent.textColor = 'white';
-        newEvent.color = 'green';
-      } else if (session.sessionType === 1 || session.sessionType === 3) {
-        newEvent.textColor = 'white';
-        newEvent.color = 'blue';
+      newEvent.textColor = 'white';
+      if (session.status === 'C') {
+        newEvent.color = 'red';
+      } else if (session.status === 'S') {
+        newEvent.color = 'orange';
       } else {
-        newEvent.textColor = 'white';
-        newEvent.color = 'grey';
+        if (session.sessionType === 2) {
+          newEvent.color = 'green';
+        } else if (session.sessionType === 1 || session.sessionType === 3) {
+          newEvent.color = 'blue';
+        } else {
+          newEvent.color = 'grey';
+        }
       }
       result.push(newEvent);
     }

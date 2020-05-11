@@ -24,6 +24,7 @@ export interface IEventEdition {
   posterContentType?: string;
   poster?: any;
   posterUrl?: string;
+  status?: string;
 }
 
 export class EventEdition implements IEventEdition {
@@ -47,6 +48,7 @@ export class EventEdition implements IEventEdition {
     public seriesId?: number[],
     public posterContentType?: string,
     public poster?: any,
-    public posterUrl?: string
+    public posterUrl?: string,
+    public string?: string
   ) {}
 }

@@ -12,9 +12,10 @@ public class SessionCalendarDTO {
 	private final ZonedDateTime startTime;
 	private final ZonedDateTime endTime;
 	private final String[] seriesLogoUrl;
+	private final String status;
 
 
-	public SessionCalendarDTO(Long id, String eventName, String sessionName, int sessionType, ZonedDateTime startTime, ZonedDateTime endTime, String... seriesLogoUrl) {
+	public SessionCalendarDTO(Long id, String eventName, String sessionName, int sessionType, ZonedDateTime startTime, ZonedDateTime endTime, String status, String... seriesLogoUrl) {
 		this.id = id;
 		this.eventName = eventName;
 		this.sessionName = sessionName;
@@ -22,6 +23,7 @@ public class SessionCalendarDTO {
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.seriesLogoUrl = seriesLogoUrl;
+		this.status = status;
 	}
 
 	public Long getId() {
@@ -52,4 +54,7 @@ public class SessionCalendarDTO {
 		return seriesLogoUrl;
 	}
 
+    public String getStatus() {
+        return status;
+    }
 }

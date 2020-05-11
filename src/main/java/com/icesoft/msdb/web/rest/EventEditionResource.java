@@ -611,6 +611,7 @@ public class EventEditionResource {
     				session.getName(),
     				session.getSessionTypeValue(),
     				session.getSessionStartTimeDate(), session.getSessionEndTime(),
+    				session.getEventEdition().getStatus().getCode(),
     				logoUrl);
     	}).collect(Collectors.toList());
     }

@@ -5,6 +5,8 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.icesoft.msdb.domain.enums.EventStatusType;
+import com.icesoft.msdb.repository.converter.EventStatusTypeConverter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -62,6 +64,9 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
     @Column(name = "multidriver")
     private Boolean multidriver = false;
+
+    @Convert(converter = EventStatusTypeConverter.class)
+    private EventStatusType status;
 
     @Transient
     private Long previousEditionId;
@@ -312,7 +317,15 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 		this.multidriver = multidriver;
 	}
 
-	public Set<SeriesEdition> getSeriesEditions() {
+    public EventStatusType getStatus() {
+        return status;
+    }
+
+    public void setStatus(EventStatusType status) {
+        this.status = status;
+    }
+
+    public Set<SeriesEdition> getSeriesEditions() {
 		return seriesEditions;
 	}
 
