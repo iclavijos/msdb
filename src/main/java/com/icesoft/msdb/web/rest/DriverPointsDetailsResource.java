@@ -62,10 +62,10 @@ public class DriverPointsDetailsResource {
         EventSession eventSession = eventSessionRepository.findById(driverPointsDetails.getSession().getId())
             .orElseThrow(() -> new MSDBException("Invalid session id " + driverPointsDetails.getSession().getId()));
         if (eventSession.getEventEdition().getSeriesEditions().size() == 1 ) {
-            driverPointsDetails.setSeriesEdition(eventSession.getEventEdition().getSeriesEditions().get(0));
+            driverPointsDetails.setSeriesEdition(eventSession.getEventEdition().getSeriesEditions().stream().findFirst().get());
         }
         if (eventSession.getEventEdition().getAllowedCategories().size() == 1) {
-            driverPointsDetails.setCategory(eventSession.getEventEdition().getAllowedCategories().get(0));
+            driverPointsDetails.setCategory(eventSession.getEventEdition().getAllowedCategories().stream().findFirst().get());
         }
         //TODO: Handle multi categories and multiseries
         driverPointsDetails.setReason(driverPointsDetails.getSession().getName() + " - " + driverPointsDetails.getReason());

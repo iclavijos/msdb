@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -102,7 +103,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     private Boolean singleFuel;
 
     @ManyToMany(mappedBy = "events", fetch=FetchType.EAGER)
-    private List<SeriesEdition> seriesEditions;
+    private Set<SeriesEdition> seriesEditions;
 
     public Long getId() {
         return id;
@@ -311,11 +312,11 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 		this.multidriver = multidriver;
 	}
 
-	public List<SeriesEdition> getSeriesEditions() {
+	public Set<SeriesEdition> getSeriesEditions() {
 		return seriesEditions;
 	}
 
-	public void setSeriesEditions(List<SeriesEdition> seriesEditions) {
+	public void setSeriesEditions(Set<SeriesEdition> seriesEditions) {
 		this.seriesEditions = seriesEditions;
 	}
 

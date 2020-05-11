@@ -2,9 +2,7 @@ package com.icesoft.msdb.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.icesoft.msdb.repository.*;
@@ -111,14 +109,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		});
 
 		eventEd = eventRepo.findById(idEvent).get();
-		if (seriesEd.getEvents() != null && !seriesEd.getEvents().isEmpty()) {
-			if (!seriesEd.getEvents().contains(eventEd)) {
-				seriesEd.getEvents().add(eventEd);
-			}
-		} else {
-			seriesEd.setEvents(new ArrayList<>());
-			seriesEd.getEvents().add(eventEd);
-		}
+		seriesEd.addEvent(eventEd);
 
 		seriesRepo.save(seriesEd);
 	}
@@ -132,7 +123,8 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 			throw new MSDBException("Provided series id does not match an already assigned one");
 		}
 		SeriesEdition sEdition = seriesRepo.findById(seriesId).get();
-		sEdition.getEvents().remove(eventEd);
+		sEdition.removeEvent(eventEd);
+		eventEd.getSeriesEditions().remove(sEdition);
 		sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventId).parallelStream()
 			.forEach(session -> {
 				if (session.getPointsSystemsSession() != null && !session.getPointsSystemsSession().isEmpty()) {
@@ -157,13 +149,15 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 				teamPointsRepo.deleteSessionPoints(session.getId(), seriesId);
 				manufacturerPointsRepo.deleteSessionPoints(session.getId(), seriesId);
 			});
+		seriesRepo.save(sEdition);
+		eventRepo.save(eventEd);
 	}
 
 	@Transactional(readOnly=true)
 	public List<EventEdition> findSeriesEvents(Long seriesId) {
 	    return seriesRepo.findById(seriesId)
             .orElseThrow(() ->new MSDBException("Invalid series edition id " + seriesId))
-            .getEvents();
+            .getEvents().stream().collect(Collectors.toList());
 	}
 
 	@Override
@@ -271,7 +265,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		newSeriesEd.setSingleEngine(seriesEd.isSingleEngine());
 		newSeriesEd.setSingleTyre(seriesEd.isSingleTyre());
 		final SeriesEdition seriesEdCopy = seriesRepo.save(newSeriesEd);
-		List<SeriesEdition> series = new ArrayList<>();
+		Set<SeriesEdition> series = new HashSet<>();
 		series.add(seriesEdCopy);
 
 		seriesEd.getEvents().stream().forEach(ev -> {

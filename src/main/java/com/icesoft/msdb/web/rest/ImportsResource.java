@@ -288,9 +288,6 @@ public class ImportsResource {
 	        		if (seriesEd == null) {
 	        			throw new MSDBException("Provided series name is not valid: " + tmp.getSeriesEditionName());
 	        		}
-	        		if (seriesEd.getEvents() == null) {
-	        			seriesEd.setEvents(new ArrayList<>());
-	        		}
 	        	}
 
 	        	eventEdition = eventEditionRepository.save(eventEdition);

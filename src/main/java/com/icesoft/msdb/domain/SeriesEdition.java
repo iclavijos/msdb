@@ -14,10 +14,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -84,7 +81,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         joinColumns=@JoinColumn(name="series_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="event_id", referencedColumnName="ID"))
     @OrderBy("eventDate ASC")
-    private List<EventEdition> events;
+    private Set<EventEdition> events = new HashSet<>();
 
 //    @ManyToMany(fetch=FetchType.EAGER)
 //    @Fetch(FetchMode.SELECT)
@@ -260,13 +257,23 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     	this.pointsSystems = pointsSystems;
     }
 
-    public List<EventEdition> getEvents() {
-        return Optional.ofNullable(events).orElse(new ArrayList<>());
+    public Set<EventEdition> getEvents() {
+        return Optional.ofNullable(events).orElse(new HashSet<>());
 	}
 
-	public void setEvents(List<EventEdition> events) {
+	public void setEvents(Set<EventEdition> events) {
 		this.events = events;
 	}
+
+	public void addEvent(EventEdition event) {
+        this.events.add(event);
+        event.getSeriesEditions().add(this);
+    }
+
+    public void removeEvent(EventEdition event) {
+        this.events.remove(event);
+        event.getSeriesEditions().remove(this);
+    }
 
 	public Series getSeries() {
         return series;

@@ -9,6 +9,7 @@ import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
 import com.icesoft.msdb.service.dto.EventsSeriesNavigationDTO;
@@ -81,12 +82,14 @@ public class EventEditionResource {
     private final StatisticsService statsService;
     private final CDNService cdnService;
     private final CacheHandler cacheHandler;
+    private final SeriesEditionService seriesEditionService;
 
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventEditionSearchRepository eventEditionSearchRepo,
     		EventEntrySearchRepository eventEntrySearchRepo, EventSessionRepository eventSessionRepository,
     		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository,
     		RacetrackLayoutRepository racetrackLayoutRepo, ResultsService resultsService,
-    		CDNService cdnService, StatisticsService statsService, CacheHandler cacheHandler) {
+    		CDNService cdnService, StatisticsService statsService, CacheHandler cacheHandler,
+            SeriesEditionService seriesEditionService) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventEditionSearchRepo = eventEditionSearchRepo;
         this.eventSessionRepository = eventSessionRepository;
@@ -98,6 +101,7 @@ public class EventEditionResource {
         this.cdnService = cdnService;
         this.statsService = statsService;
         this.cacheHandler = cacheHandler;
+        this.seriesEditionService = seriesEditionService;
     }
 
     /**
@@ -208,11 +212,24 @@ public class EventEditionResource {
     public ResponseEntity<Void> deleteEventEdition(@PathVariable Long id) {
         log.debug("REST request to delete EventEdition : {}", id);
         EventEdition eventEd = eventEditionRepository.getOne(id);
+
         if (eventEd.getSeriesEditions() != null) {
-        	eventEd.getSeriesId().forEach(sId -> cacheHandler.resetWinnersCache(sId));
+            eventEd.getSeriesId().forEach(sId -> {
+                seriesEditionService.removeEventFromSeries(sId, id);
+                cacheHandler.resetWinnersCache(sId);
+            });
         }
+
+        List<EventSession> sessions = eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(id);
+        sessions.forEach(eventSession -> {
+            eventResultRepository.deleteBySession(eventSession);
+        });
+        eventSessionRepository.deleteInBatch(sessions);
+        eventEntryRepository.deleteByEventEdition(eventEd);
+
         eventEditionRepository.deleteById(id);
         eventEditionSearchRepo.deleteById(id);
+
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 
@@ -225,14 +242,14 @@ public class EventEditionResource {
         );
     	List<EventsSeriesNavigationDTO> result = new ArrayList<>();
     	for(SeriesEdition se: event.getSeriesEditions()) {
-    		int index = se.getEvents().indexOf(event);
-    		EventEdition next = (index < se.getEvents().size() - 1) ? se.getEvents().get(index + 1) : null;
-            EventEdition prev = (index > 0) ? se.getEvents().get(index - 1) : null;
-            result.add(new EventsSeriesNavigationDTO(
-            		Optional.ofNullable(prev).map(ee -> ee.getId()).orElse(null),
-            		Optional.ofNullable(next).map(ee -> ee.getId()).orElse(null),
-            		Optional.ofNullable(prev).map(ee -> ee.getLongEventName()).orElse(null),
-            		Optional.ofNullable(next).map(ee -> ee.getLongEventName()).orElse(null)));
+//    		int index = se.getEvents().indexOf(event);
+//    		EventEdition next = (index < se.getEvents().size() - 1) ? se.getEvents().get(index + 1) : null;
+//            EventEdition prev = (index > 0) ? se.getEvents().get(index - 1) : null;
+//            result.add(new EventsSeriesNavigationDTO(
+//            		Optional.ofNullable(prev).map(ee -> ee.getId()).orElse(null),
+//            		Optional.ofNullable(next).map(ee -> ee.getId()).orElse(null),
+//            		Optional.ofNullable(prev).map(ee -> ee.getLongEventName()).orElse(null),
+//            		Optional.ofNullable(next).map(ee -> ee.getLongEventName()).orElse(null)));
     	}
 
     	return result;

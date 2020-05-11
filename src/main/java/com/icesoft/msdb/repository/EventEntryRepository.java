@@ -3,6 +3,7 @@ package com.icesoft.msdb.repository;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.icesoft.msdb.domain.EventEdition;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,5 +31,7 @@ public interface EventEntryRepository extends JpaRepository<EventEditionEntry,Lo
 
 	@Query("SELECT e FROM EventEditionEntry e WHERE e.id IN ?1 ORDER BY e.eventEdition.eventDate ASC")
 	List<EventEditionEntry> findEntriesInList(List<Long> ids);
+
+	void deleteByEventEdition(EventEdition eventEdition);
 
 }
