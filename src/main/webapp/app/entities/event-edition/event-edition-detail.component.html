@@ -16,39 +16,32 @@
                                         <div class="row">
                                             <div class="col-lg-4 col-md-4">
                                                 <dl class="row-md jh-entity-details">
-                                                    <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate">Event Date</span></dt>
-                                                    <dd>
-                                                        <span>{{eventEdition.eventDate | date:'mediumDate'}}</span>
-                                                    </dd>
-                                                    <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.shortEventName">Short Event Name</span></dt>
-                                                    <dd>
-                                                        <span>{{eventEdition.shortEventName}}</span>
-                                                    </dd>
-
-                                                    <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.event">Event</span></dt>
-                                                    <dd>
-                                                        <div *ngIf="eventEdition.event">
-                                                            <a [routerLink]="['/event', eventEdition.event?.id]">{{eventEdition.event?.name}}</a>
-                                                        </div>
-                                                    </dd>
-                                                    <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.allowedCategories">Allowed Categories</span></dt>
-                                                    <dd>
-                                                        <ul class="list-unstyled">
-                                                            <li *ngFor="let category of eventEdition.allowedCategories">
-                                                                <span>{{category.name}} ({{category.shortname}})</span>
-                                                            </li>
-                                                        </ul>
-                                                    </dd>
                                                     <div class="row">
-                                                        <div class="col-lg-6 col-md-6" *ngIf="eventEdition.posterUrl">
-                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.affiche">Official poster</span></dt>
-                                                            <dd>
-                                                                <img #afficheImg [src]="lightboxAlbum[0].thumb" alt="affiche official poster"
-                                                                     (click)="openAffiche()"
-                                                                     (mouseover)="zoomIn(afficheImg)" (mouseleave)="zoomOut(afficheImg)"/>
-                                                            </dd>
-                                                        </div>
                                                         <div class="col-lg-6 col-md-6">
+                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate">Event Date</span></dt>
+                                                            <dd>
+                                                                <span>{{eventEdition.eventDate | date:'mediumDate'}}</span>
+                                                            </dd>
+                                                            <div *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
+                                                                <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.shortEventName">Short Event Name</span></dt>
+                                                                <dd>
+                                                                    <span>{{eventEdition.shortEventName}}</span>
+                                                                </dd>
+                                                            </div>
+                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.event">Event</span></dt>
+                                                            <dd>
+                                                                <div *ngIf="eventEdition.event">
+                                                                    <a [routerLink]="['/event', eventEdition.event?.id]">{{eventEdition.event?.name}}</a>
+                                                                </div>
+                                                            </dd>
+                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.allowedCategories">Allowed Categories</span></dt>
+                                                            <dd>
+                                                                <ul class="list-unstyled">
+                                                                    <li *ngFor="let category of eventEdition.allowedCategories">
+                                                                        <span>{{category.name}} ({{category.shortname}})</span>
+                                                                    </li>
+                                                                </ul>
+                                                            </dd>
                                                             <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout">Track Layout</span></dt>
                                                             <dd>
                                                                 <div *ngIf="eventEdition.trackLayout">
@@ -61,6 +54,14 @@
                                                                              (mouseover)="zoomIn(layoutImg)" (mouseleave)="zoomOut(layoutImg)"/>
                                                                     </div>
                                                                 </div>
+                                                            </dd>
+                                                        </div>
+                                                        <div class="col-lg-6 col-md-6" *ngIf="eventEdition.posterUrl">
+                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.affiche">Official poster</span></dt>
+                                                            <dd>
+                                                                <img #afficheImg [src]="lightboxAlbum[1].thumb" alt="affiche official poster"
+                                                                     (click)="openAffiche()"
+                                                                     (mouseover)="zoomIn(afficheImg)" (mouseleave)="zoomOut(afficheImg)"/>
                                                             </dd>
                                                         </div>
                                                     </div>
@@ -83,7 +84,9 @@
                                         <div>
                                             <mat-tab-group dynamicHeight mat-stretch-tabs>
                                                 <mat-tab *ngFor="let eventSession of eventSessions" label="{{ eventSession.name }}">
-                                                    <jhi-event-entry-result [eventSession]="eventSession" [eventEdition]="eventEdition">Result...</jhi-event-entry-result>
+                                                    <ng-template matTabContent>
+                                                        <jhi-event-entry-result [eventSession]="eventSession" [eventEdition]="eventEdition">Result...</jhi-event-entry-result>
+                                                    </ng-template>
                                                 </mat-tab>
                                             </mat-tab-group>
                                         </div>

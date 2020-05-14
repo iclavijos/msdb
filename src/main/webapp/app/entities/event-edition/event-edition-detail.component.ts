@@ -100,10 +100,10 @@ export class EventEditionDetailComponent implements OnInit {
       const layout = {
         src: this.eventEdition.trackLayout.layoutImageUrl,
         caption: '',
-        thumb: this.eventEdition.trackLayout.layoutImageUrl
+        thumb: this.eventEdition.trackLayout.layoutImageUrl.replace('/upload', '/upload/c_thumb,w_200,g_face')
       };
       this.lightboxAlbum.push(layout);
-      if (this.eventEdition.posterUrl) {
+      if (afficheThumb) {
         this.lightboxAlbum.push(affiche);
       }
     });
