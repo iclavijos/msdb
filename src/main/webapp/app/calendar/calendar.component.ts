@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild, AfterViewInit, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
+import { IEventEdition } from 'app/shared/model/event-edition.model';
 import { EventEditionService } from 'app/entities/event-edition/event-edition.service';
 
 import * as moment from 'moment-timezone';
@@ -38,10 +40,19 @@ export class MyEvent {
   templateUrl: 'event-dialog.component.html'
 })
 export class EventDialogComponent {
-  constructor(public dialogRef: MatDialogRef<EventDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: MyEvent) {}
+  constructor(
+    public dialogRef: MatDialogRef<EventDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: MyEvent,
+    protected router: Router
+  ) {}
 
-  onNoClick(): void {
+  private close() {
     this.dialogRef.close();
+  }
+
+  private navigateToEvent(event: IEventEdition) {
+    this.dialogRef.close();
+    this.router.navigate(['/event/edition', event.id, 'view-ed']);
   }
 }
 
