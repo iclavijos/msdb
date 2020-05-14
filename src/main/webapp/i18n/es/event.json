@@ -57,6 +57,14 @@
       "localTime": "Hora local",
       "driversTimes": "Tiempos de los pilotos",
       "lapsAnalysis": "Vuelta a vuelta",
+      "reschedule": {
+        "reschedule": "Replanifica",
+        "title": "Replanifica un evento",
+        "question": "¿Cuál es la nueva fecha del evento?",
+        "newDate": "Selecciona nueva fecha",
+        "cancel": "Cancela",
+        "confirm": "Confirma"
+      },
       "session": {
         "createOrEditLabel": "Crea o edita una sesión",
         "notFound": "No hay sesiones definidas",

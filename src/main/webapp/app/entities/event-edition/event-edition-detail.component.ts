@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit, Renderer2, Inject, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs/Rx';
@@ -8,10 +8,36 @@ import { IEventSession } from 'app/shared/model/event-session.model';
 import { EventService } from '../event/event.service';
 import { EventEditionService } from './event-edition.service';
 
+import { EventSessionComponent } from '../event-session/event-session.component';
+
 import { DurationType } from 'app/shared/enumerations/durationType.enum';
 import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
 import { Lightbox } from 'ngx-lightbox';
+
+import { Moment } from 'moment';
+import * as moment from 'moment';
+
+@Component({
+  selector: 'jhi-reschedule-dialog',
+  templateUrl: 'reschedule-dialog.component.html'
+})
+export class RescheduleDialogComponent {
+  startDate = new Date();
+  newDate: Moment;
+
+  constructor(public dialogRef: MatDialogRef<RescheduleDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {}
+
+  cancel(): void {
+    this.dialogRef.close();
+  }
+
+  confirmReschedule(): void {
+    this.dialogRef.close(this.newDate);
+  }
+}
 
 @Component({
   selector: 'jhi-event-edition-detail',
@@ -33,7 +59,6 @@ export class EventEditionDetailComponent implements OnInit {
   hasLapsData: any;
   lapTimes: any[] = [];
   maxLaps = -1;
-  lapNumbers: number[];
 
   keysSession: any[];
   keysDuration: any[];
@@ -42,13 +67,16 @@ export class EventEditionDetailComponent implements OnInit {
 
   private lightboxAlbum: any[] = [];
 
+  @ViewChild('eventSessions', { static: false }) eventSessionsComponent: EventSessionComponent;
+
   constructor(
     private eventService: EventService,
     private eventEditionService: EventEditionService,
     protected activatedRoute: ActivatedRoute,
     private router: Router,
     private lightbox: Lightbox,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -65,8 +93,6 @@ export class EventEditionDetailComponent implements OnInit {
         this.bestTimesColumns = res[0];
       });
 
-      this.lapNumbers = Array.from(Array(58), (x, i) => i);
-
       const afficheThumb = this.eventEdition.posterUrl
         ? this.eventEdition.posterUrl.replace('/upload', '/upload/c_thumb,w_200,g_face')
         : '';
@@ -80,8 +106,7 @@ export class EventEditionDetailComponent implements OnInit {
         caption: '',
         thumb: this.eventEdition.trackLayout.layoutImageUrl
       };
-      this.lightboxAlbum.push(affiche);
-      this.lightboxAlbum.push(layout);
+      this.lightboxAlbum.push(affiche, layout);
     });
   }
 
@@ -118,5 +143,30 @@ export class EventEditionDetailComponent implements OnInit {
 
   previousState() {
     window.history.back();
+  }
+
+  rescheduleEventDialog() {
+    const dialogRef = this.dialog.open(RescheduleDialogComponent, {
+      data: {
+        eventEdition: this.eventEdition
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(newDate => {
+      if (newDate) {
+        this.eventEditionService
+          .rescheduleEvent(this.eventEdition.id, moment.tz(newDate, this.eventEdition.trackLayout.racetrack.timeZone))
+          .subscribe(event => {
+            const diffDays = event.body.eventDate.diff(this.eventEdition.eventDate, 'days');
+            const clonedSessions = [];
+            this.eventSessionsComponent.eventSessions.forEach(val => clonedSessions.push(Object.assign({}, val)));
+            for (const session of clonedSessions) {
+              session.sessionStartTime = session.sessionStartTime.add(diffDays, 'days');
+            }
+            this.eventSessionsComponent.eventSessions = clonedSessions;
+            this.eventEdition = event.body;
+          });
+      }
+    });
   }
 }

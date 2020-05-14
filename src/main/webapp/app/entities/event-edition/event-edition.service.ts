@@ -10,6 +10,8 @@ import { IEventEdition } from 'app/shared/model/event-edition.model';
 type EntityResponseType = HttpResponse<IEventEdition>;
 type EntityArrayResponseType = HttpResponse<IEventEdition[]>;
 
+import Moment from 'moment';
+
 @Injectable({ providedIn: 'root' })
 export class EventEditionService {
   public resourceUrl = SERVER_API_URL + 'api/event-editions';
@@ -66,5 +68,9 @@ export class EventEditionService {
     const fromDate = this.datePipe.transform(startDate, dateFormat);
     const toDate = this.datePipe.transform(endDate, dateFormat);
     return this.http.get<any[]>(`${this.resourceUrl}/calendar/${fromDate}/${toDate}`);
+  }
+
+  rescheduleEvent(eventId: number, newDate: Moment) {
+    return this.http.put<IEventEdition>(`${this.resourceUrl}/${eventId}/reschedule`, newDate, { observe: 'response' });
   }
 }

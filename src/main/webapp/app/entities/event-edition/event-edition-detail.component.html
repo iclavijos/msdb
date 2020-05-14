@@ -69,7 +69,7 @@
                                             <div class="col-lg-8 col-md-8">
                                                 <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.sessions">Sessions</span></dt>
                                                 <dd>
-                                                    <jhi-event-session [eventEdition]="eventEdition" (showPoints)="showPoints" (sessions)="updateSessions($event)"></jhi-event-session>
+                                                    <jhi-event-session #eventSessions [eventEdition]="eventEdition" (showPoints)="showPoints" (sessions)="updateSessions($event)"></jhi-event-session>
                                                 </dd>
                                             </div>
                                         </div>
@@ -123,6 +123,11 @@
                 [routerLink]="['/event/edition', eventEdition.id, 'edit-ed']"
                 class="btn btn-primary">
             <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+        </button>
+        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                (click)="rescheduleEventDialog()"
+                class="btn btn-primary">
+            <fa-icon [icon]="'calendar'"></fa-icon>&nbsp;<span jhiTranslate="motorsportsDatabaseApp.eventEdition.reschedule.reschedule"> Reschedule</span>
         </button>
         <button type="submit"
                 (click)="previousState()"

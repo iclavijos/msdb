@@ -2,17 +2,22 @@ package com.icesoft.msdb.service.impl;
 
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.icesoft.msdb.MSDBException;
+import com.icesoft.msdb.domain.EventSession;
+import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.service.SearchService;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -38,16 +43,19 @@ public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
     private final EventEditionRepository eventEditionRepository;
+    private final EventSessionRepository eventSessionRepository;
     private final EventSearchRepository eventSearchRepo;
     private final SearchService searchService;
 
     public EventServiceImpl(EventRepository eventRepository,
     			EventEditionRepository eventEditionRepository,
     			EventSearchRepository eventSearchRepo,
+                EventSessionRepository eventSessionRepository,
                 SearchService searchService) {
     	this.eventRepository = eventRepository;
     	this.eventEditionRepository = eventEditionRepository;
     	this.eventSearchRepo = eventSearchRepo;
+    	this.eventSessionRepository = eventSessionRepository;
     	this.searchService = searchService;
     }
 
@@ -134,4 +142,24 @@ public class EventServiceImpl implements EventService {
 				.map(e -> new EventEditionIdYearDTO((Long)e[0], (Integer)e[1]))
 				.collect(Collectors.<EventEditionIdYearDTO> toList());
 	}
+
+	@Override
+    @Transactional
+    @CacheEvict(cacheNames="calendar", allEntries=true)
+    public EventEdition rescheduleEvent(EventEdition event, LocalDate newDate) {
+        log.debug("Rescheduling event {}", event.getLongEventName());
+        long daysBetween = ChronoUnit.DAYS.between(event.getEventDate(), newDate);
+        log.trace("Days between: {}", daysBetween);
+        List<EventSession> sessions = eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(event.getId());
+        sessions.forEach(session -> {
+            LocalDateTime time = LocalDateTime.ofInstant(Instant.ofEpochSecond(session.getSessionStartTime()), ZoneId.of("UTC"));
+            log.trace("Original time for session {}: {}", session.getName(), time);
+            time = time.plusDays(daysBetween);
+            log.trace("New time: {}", time);
+            session.setSessionStartTime(time.toEpochSecond(ZoneOffset.UTC));
+        });
+        event.setEventDate(event.getEventDate().plusDays(daysBetween));
+        eventSessionRepository.saveAll(sessions);
+        return event;
+    }
 }

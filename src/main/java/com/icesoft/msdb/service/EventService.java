@@ -1,5 +1,6 @@
 package com.icesoft.msdb.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,4 +52,6 @@ public interface EventService {
     Page<EventEdition> findEventEditions(Long idEvent, Pageable pageable);
 
     List<EventEditionIdYearDTO> findEventEditionsIdYear(Long idEvent);
+
+    EventEdition rescheduleEvent(EventEdition event, LocalDate newDate);
 }

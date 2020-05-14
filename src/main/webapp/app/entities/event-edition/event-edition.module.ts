@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 
 import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
 import { EventEditionComponent } from './event-edition.component';
-import { EventEditionDetailComponent } from './event-edition-detail.component';
+import { EventEditionDetailComponent, RescheduleDialogComponent } from './event-edition-detail.component';
 import { EventEditionUpdateComponent } from './event-edition-update.component';
 import { EventEditionDeletePopupComponent, EventEditionDeleteDialogComponent } from './event-edition-delete-dialog.component';
 import { eventEditionRoute, eventEditionPopupRoute } from './event-edition.route';
@@ -27,9 +27,10 @@ const ENTITY_STATES = [...eventEditionRoute, ...eventEditionPopupRoute];
     EventEditionDetailComponent,
     EventEditionUpdateComponent,
     EventEditionDeleteDialogComponent,
-    EventEditionDeletePopupComponent
+    EventEditionDeletePopupComponent,
+    RescheduleDialogComponent
   ],
   exports: [EventEditionComponent],
-  entryComponents: [EventEditionDeleteDialogComponent]
+  entryComponents: [EventEditionDeleteDialogComponent, RescheduleDialogComponent]
 })
 export class MotorsportsDatabaseEventEditionModule {}

@@ -18,7 +18,7 @@ import moment from 'moment-timezone';
 })
 export class EventSessionComponent implements OnInit, OnDestroy {
   @Input() eventEdition: EventEdition;
-  eventSessions: IEventSession[];
+  public eventSessions: IEventSession[];
   currentAccount: any;
   eventSubscriber: Subscription;
   links: any;
@@ -76,7 +76,7 @@ export class EventSessionComponent implements OnInit, OnDestroy {
     const clonedSessions = [];
     this.eventSessions.forEach(val => clonedSessions.push(Object.assign({}, val)));
     for (const session of clonedSessions) {
-      session.sessionStartTime = session.sessionStartTime = session.sessionStartTime.tz(currentTZ);
+      session.sessionStartTime = session.sessionStartTime.tz(currentTZ);
     }
     this.convertedTime = true;
     this.eventSessions = clonedSessions;

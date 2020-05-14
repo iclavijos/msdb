@@ -3,6 +3,8 @@ import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
 import { IEvent } from 'app/shared/model/event.model';
 import { IEventSession } from 'app/shared/model/event-session.model';
 
+import Moment from 'moment';
+
 export interface IEventEdition {
   id?: number;
   previousEditionId?: number;
@@ -10,7 +12,7 @@ export interface IEventEdition {
   editionYear?: number;
   shortEventName?: string;
   longEventName?: string;
-  eventDate?: any;
+  eventDate?: Moment;
   allowedCategories?: ICategory[];
   trackLayout?: IRacetrackLayout;
   event?: IEvent;
@@ -35,7 +37,7 @@ export class EventEdition implements IEventEdition {
     public editionYear?: number,
     public shortEventName?: string,
     public longEventName?: string,
-    public eventDate?: any,
+    public eventDate?: Moment,
     public allowedCategories?: ICategory[],
     public trackLayout?: IRacetrackLayout,
     public event?: IEvent,

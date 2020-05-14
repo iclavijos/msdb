@@ -75,6 +75,7 @@ export class EventEditionComponent implements AfterViewInit, OnDestroy {
     this.resultsLength = parseInt(eventEditions.headers.get('X-Total-Count'), 10);
     this.links = this.parseLinks.parse(eventEditions.headers.get('link'));
     this.totalItems = parseInt(eventEditions.headers.get('X-Total-Count'), 10);
+
     return eventEditions.body;
   }
 

@@ -57,6 +57,14 @@
       "localTime": "Local time",
       "driversTimes": "Drivers' times",
       "lapsAnalysis": "Lap by lap",
+      "reschedule": {
+        "reschedule": "Reschedule",
+        "title": "Reschedule an event",
+        "question": "Which is new event's date?",
+        "newDate": "Pick a new date",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      },
       "session": {
         "createOrEditLabel": "Create or edit a Event Session",
         "notFound": "No sessions defined",

@@ -9,6 +9,7 @@ import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.service.EventService;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
@@ -82,6 +83,7 @@ public class EventEditionResource {
     private final StatisticsService statsService;
     private final CDNService cdnService;
     private final CacheHandler cacheHandler;
+    private final EventService eventService;
     private final SeriesEditionService seriesEditionService;
 
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventEditionSearchRepository eventEditionSearchRepo,
@@ -89,7 +91,7 @@ public class EventEditionResource {
     		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository,
     		RacetrackLayoutRepository racetrackLayoutRepo, ResultsService resultsService,
     		CDNService cdnService, StatisticsService statsService, CacheHandler cacheHandler,
-            SeriesEditionService seriesEditionService) {
+            EventService eventService, SeriesEditionService seriesEditionService) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventEditionSearchRepo = eventEditionSearchRepo;
         this.eventSessionRepository = eventSessionRepository;
@@ -101,6 +103,7 @@ public class EventEditionResource {
         this.cdnService = cdnService;
         this.statsService = statsService;
         this.cacheHandler = cacheHandler;
+        this.eventService = eventService;
         this.seriesEditionService = seriesEditionService;
     }
 
@@ -667,5 +670,17 @@ public class EventEditionResource {
     public ResponseEntity<String[][]> getDriversBestTimes(@PathVariable Long id) {
     	log.debug("REST request to retrieve drivers best times on event {}", id);
     	return ResponseEntity.ok(resultsService.getDriverEventBestTimes(id));
+    }
+
+    @PutMapping("/event-editions/{id}/reschedule")
+    @Timed
+    public ResponseEntity<EventEdition> rescheduleEvent(@PathVariable Long id, @Valid @RequestBody LocalDate newDate) {
+        EventEdition event = eventEditionRepository.findById(id)
+            .orElseThrow(() -> new MSDBException("Invalid event edition id"));
+        event = eventService.rescheduleEvent(event, newDate);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil
+                .createEntityUpdateAlert(applicationName, false, ENTITY_NAME, id.toString()))
+            .body(event);
     }
 }
