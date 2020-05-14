@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, Renderer2, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs/Rx';
@@ -7,8 +7,6 @@ import { IEventEdition } from 'app/shared/model/event-edition.model';
 import { IEventSession } from 'app/shared/model/event-session.model';
 import { EventService } from '../event/event.service';
 import { EventEditionService } from './event-edition.service';
-
-import { EventSessionComponent } from '../event-session/event-session.component';
 
 import { DurationType } from 'app/shared/enumerations/durationType.enum';
 import { SessionType } from 'app/shared/enumerations/sessionType.enum';
@@ -67,8 +65,6 @@ export class EventEditionDetailComponent implements OnInit {
 
   private lightboxAlbum: any[] = [];
 
-  @ViewChild('eventSessions', { static: false }) eventSessionsComponent: EventSessionComponent;
-
   constructor(
     private eventService: EventService,
     private eventEditionService: EventEditionService,
@@ -106,16 +102,19 @@ export class EventEditionDetailComponent implements OnInit {
         caption: '',
         thumb: this.eventEdition.trackLayout.layoutImageUrl
       };
-      this.lightboxAlbum.push(affiche, layout);
+      this.lightboxAlbum.push(layout);
+      if (this.eventEdition.posterUrl) {
+        this.lightboxAlbum.push(affiche);
+      }
     });
   }
 
   openAffiche() {
-    this.lightbox.open(this.lightboxAlbum, 0, { centerVertically: true });
+    this.lightbox.open(this.lightboxAlbum, 1, { centerVertically: true });
   }
 
   openLayout() {
-    this.lightbox.open(this.lightboxAlbum, 1, { centerVertically: true });
+    this.lightbox.open(this.lightboxAlbum, 0, { centerVertically: true });
   }
 
   zoomIn(elementToZoom: HTMLElement) {
@@ -157,13 +156,13 @@ export class EventEditionDetailComponent implements OnInit {
         this.eventEditionService
           .rescheduleEvent(this.eventEdition.id, moment.tz(newDate, this.eventEdition.trackLayout.racetrack.timeZone))
           .subscribe(event => {
-            const diffDays = event.body.eventDate.diff(this.eventEdition.eventDate, 'days');
-            const clonedSessions = [];
-            this.eventSessionsComponent.eventSessions.forEach(val => clonedSessions.push(Object.assign({}, val)));
-            for (const session of clonedSessions) {
-              session.sessionStartTime = session.sessionStartTime.add(diffDays, 'days');
-            }
-            this.eventSessionsComponent.eventSessions = clonedSessions;
+            //             const diffDays = event.body.eventDate.diff(this.eventEdition.eventDate, 'days');
+            //             const clonedSessions = [];
+            //             this.eventSessionsComponent.eventSessions.forEach(val => clonedSessions.push(Object.assign({}, val)));
+            //             for (const session of clonedSessions) {
+            //               session.sessionStartTime = session.sessionStartTime.add(diffDays, 'days');
+            //             }
+            //             this.eventSessionsComponent.eventSessions = clonedSessions;
             this.eventEdition = event.body;
           });
       }

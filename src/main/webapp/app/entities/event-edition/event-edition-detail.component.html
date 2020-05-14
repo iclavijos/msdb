@@ -69,7 +69,7 @@
                                             <div class="col-lg-8 col-md-8">
                                                 <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.sessions">Sessions</span></dt>
                                                 <dd>
-                                                    <jhi-event-session #eventSessions [eventEdition]="eventEdition" (showPoints)="showPoints" (sessions)="updateSessions($event)"></jhi-event-session>
+                                                    <jhi-event-session [eventEdition]="eventEdition" (showPoints)="showPoints" (sessions)="updateSessions($event)"></jhi-event-session>
                                                 </dd>
                                             </div>
                                         </div>

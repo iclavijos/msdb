@@ -18,7 +18,7 @@ import moment from 'moment-timezone';
 })
 export class EventSessionComponent implements OnInit, OnDestroy {
   @Input() eventEdition: EventEdition;
-  public eventSessions: IEventSession[];
+  eventSessions: IEventSession[];
   currentAccount: any;
   eventSubscriber: Subscription;
   links: any;
