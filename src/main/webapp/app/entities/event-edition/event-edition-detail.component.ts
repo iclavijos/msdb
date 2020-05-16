@@ -58,6 +58,9 @@ export class EventEditionDetailComponent implements OnInit {
   lapTimes: any[] = [];
   maxLaps = -1;
 
+  posAffiche: number;
+  posLayout: number;
+
   keysSession: any[];
   keysDuration: any[];
 
@@ -89,32 +92,33 @@ export class EventEditionDetailComponent implements OnInit {
         this.bestTimesColumns = res[0];
       });
 
-      const afficheThumb = this.eventEdition.posterUrl
-        ? this.eventEdition.posterUrl.replace('/upload', '/upload/c_thumb,w_200,g_face')
-        : '';
-      const affiche = {
-        src: this.eventEdition.posterUrl,
-        caption: '',
-        thumb: afficheThumb
-      };
-      const layout = {
-        src: this.eventEdition.trackLayout.layoutImageUrl,
-        caption: '',
-        thumb: this.eventEdition.trackLayout.layoutImageUrl.replace('/upload', '/upload/c_thumb,w_200,g_face')
-      };
-      this.lightboxAlbum.push(layout);
-      if (afficheThumb) {
-        this.lightboxAlbum.push(affiche);
+      if (this.eventEdition.trackLayout.layoutImageUrl) {
+        const layout = {
+          src: this.eventEdition.trackLayout.layoutImageUrl,
+          caption: '',
+          thumb: this.eventEdition.trackLayout.layoutImageUrl.replace('/upload', '/upload/c_thumb,w_200,g_face')
+        };
+        this.posLayout = this.lightboxAlbum.push(layout);
+      }
+
+      if (this.eventEdition.posterUrl) {
+        const afficheThumb = this.eventEdition.posterUrl.replace('/upload', '/upload/c_thumb,w_200,g_face');
+        const affiche = {
+          src: this.eventEdition.posterUrl,
+          caption: '',
+          thumb: afficheThumb
+        };
+        this.posAffiche = this.lightboxAlbum.push(affiche);
       }
     });
   }
 
   openAffiche() {
-    this.lightbox.open(this.lightboxAlbum, 1, { centerVertically: true });
+    this.lightbox.open(this.lightboxAlbum, this.posAffiche - 1, { centerVertically: true });
   }
 
   openLayout() {
-    this.lightbox.open(this.lightboxAlbum, 0, { centerVertically: true });
+    this.lightbox.open(this.lightboxAlbum, this.posLayout - 1, { centerVertically: true });
   }
 
   zoomIn(elementToZoom: HTMLElement) {

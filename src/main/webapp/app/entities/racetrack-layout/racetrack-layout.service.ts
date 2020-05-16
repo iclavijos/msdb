@@ -38,7 +38,6 @@ export class RacetrackLayoutService {
   }
 
   search(req?: any): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http.get<IRacetrackLayout[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
+    return this.http.get<IRacetrackLayout[]>(`${this.resourceSearchUrl}?query=${req}`, { observe: 'response' });
   }
 }

@@ -57,6 +57,12 @@
       "localTime": "Hora local",
       "driversTimes": "Tiempos de los pilotos",
       "lapsAnalysis": "Vuelta a vuelta",
+      "status": {
+        "label": "Situación",
+        "ongoing": "Planificado",
+        "suspended": "Suspendido",
+        "cancelled": "Cancelado"
+      },
       "reschedule": {
         "reschedule": "Replanifica",
         "title": "Replanifica un evento",

@@ -29,10 +29,16 @@ import {
   MatSortModule,
   MatExpansionModule,
   MatIconModule,
-  MatTreeModule
+  MatTreeModule,
+  MatListModule,
+  MatButtonToggleModule,
+  MatCheckboxModule,
+  MatRadioModule
 } from '@angular/material';
 
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
+
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { ColorPickerModule } from 'ngx-color-picker';
 import { LightboxModule } from 'ngx-lightbox';
@@ -66,10 +72,15 @@ import { LightboxModule } from 'ngx-lightbox';
     MatSortModule,
     MatIconModule,
     MatTreeModule,
+    MatListModule,
+    MatButtonToggleModule,
+    MatCheckboxModule,
+    MatRadioModule,
     ColorPickerModule,
     MomentTimezoneModule,
     LightboxModule,
-    FullCalendarModule
+    FullCalendarModule,
+    ScrollingModule
   ]
 })
 export class MotorsportsDatabaseSharedLibsModule {}

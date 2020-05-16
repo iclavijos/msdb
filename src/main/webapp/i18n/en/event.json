@@ -57,6 +57,12 @@
       "localTime": "Local time",
       "driversTimes": "Drivers' times",
       "lapsAnalysis": "Lap by lap",
+      "status": {
+        "label": "Status",
+        "ongoing": "Ongoing",
+        "suspended": "Suspended",
+        "cancelled": "Cancelled"
+      },
       "reschedule": {
         "reschedule": "Reschedule",
         "title": "Reschedule an event",

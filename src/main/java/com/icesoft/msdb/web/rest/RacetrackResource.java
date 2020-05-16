@@ -271,7 +271,7 @@ public class RacetrackResource {
         return racetrackLayouts;
     }
 
-    @GetMapping("/_search/layouts")
+    @GetMapping("/_search/racetrack-layouts")
     @Timed
     public List<RacetrackLayoutSearchResultDTO> searchTypeaheadLayouts(@RequestParam String query) {
     	log.debug("REST request to search RacetracksLayouts for query {}", query);

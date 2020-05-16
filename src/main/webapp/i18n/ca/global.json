@@ -119,7 +119,9 @@
     "ribbon": {
       "dev": "Development"
     },
-    "item-count": "Visualitzant {{first}} - {{second}} de {{total}} elements"
+    "item-count": "Visualitzant {{first}} - {{second}} de {{total}} elements",
+    "yes": "Sí",
+    "no": "No"
   },
   "entity": {
     "action": {
