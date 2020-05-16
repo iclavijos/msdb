@@ -1,7 +1,8 @@
-import { Component, OnInit, ViewChild, AfterViewInit, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { IEventEdition } from 'app/shared/model/event-edition.model';
 import { EventEditionService } from 'app/entities/event-edition/event-edition.service';
@@ -59,7 +60,7 @@ export class EventDialogComponent {
 @Component({
   templateUrl: './calendar.component.html'
 })
-export class CalendarComponent implements OnInit, AfterViewInit {
+export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('calendar', { static: false }) calendarComponent: FullCalendarComponent;
 
   calendarPlugins = [dayGridPlugin, timeGridPlugin, timeLinePlugin, listPlugin, momentTimezonePlugin];
@@ -68,6 +69,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
   sessions: any;
   timezone: string;
   timezones: any[];
+
+  private langChangeSubscription: Subscription;
 
   constructor(
     private eventEditionService: EventEditionService,
@@ -96,9 +99,13 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     } else {
       this.calendarComponent.getApi().setOption('locale', 'es');
     }
-    this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
+    this.langChangeSubscription = this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
       this.calendarComponent.getApi().setOption('locale', langChangeEvent.lang);
     });
+  }
+
+  ngOnDestroy() {
+    this.langChangeSubscription.unsubscribe();
   }
 
   openEventDialog = eventInfo => {
