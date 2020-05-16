@@ -1,5 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+
+import { Component, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, NavigationEnd, NavigationError } from '@angular/router';
+import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -10,9 +14,17 @@ import { StateStorageService } from 'app/core/auth/state-storage.service';
 
 @Component({
   selector: 'jhi-main',
-  templateUrl: './main.component.html'
+  templateUrl: './main.component.html',
+  providers: [
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
+    },
+    { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS }
+  ]
 })
-export class JhiMainComponent implements OnInit, OnDestroy {
+export class JhiMainComponent implements OnInit, OnDestroy, AfterViewInit {
   _cleanup: Subject<any> = new Subject<any>();
 
   backgroundNumber = 1;
@@ -21,7 +33,9 @@ export class JhiMainComponent implements OnInit, OnDestroy {
     private accountService: AccountService,
     private stateStorageService: StateStorageService,
     private jhiLanguageHelper: JhiLanguageHelper,
-    private router: Router
+    private router: Router,
+    private translateService: TranslateService,
+    private dateAdapter: DateAdapter<any>
   ) {}
 
   private getPageTitle(routeSnapshot: ActivatedRouteSnapshot) {
@@ -45,9 +59,16 @@ export class JhiMainComponent implements OnInit, OnDestroy {
     this.subscribeToLoginEvents();
   }
 
+  ngAfterViewInit() {
+    this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
+      this.dateAdapter.setLocale(langChangeEvent.lang);
+    });
+  }
+
   ngOnDestroy() {
     this._cleanup.next();
     this._cleanup.complete();
+    this.translateService.onLangChange.unsubscribe();
   }
 
   private subscribeToLoginEvents() {
