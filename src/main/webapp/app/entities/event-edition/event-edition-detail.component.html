@@ -18,6 +18,16 @@
                                                 <dl class="row-md jh-entity-details">
                                                     <div class="row">
                                                         <div class="col-lg-6 col-md-6">
+                                                            <dd *ngIf="eventEdition.status === 'SUSPENDED'">
+                                                                <h1><span class="badge badge-warning">
+                                                                    {{ 'motorsportsDatabaseApp.eventEdition.status.suspended' | translate }}
+                                                                </span></h1>
+                                                            </dd>
+                                                            <dd *ngIf="eventEdition.status === 'CANCELLED'">
+                                                                <h1><span class="badge badge-danger">
+                                                                    {{ 'motorsportsDatabaseApp.eventEdition.status.cancelled' | translate }}
+                                                                </span></h1>
+                                                            </dd>
                                                             <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate">Event Date</span></dt>
                                                             <dd>
                                                                 <span>{{eventEdition.eventDate | date:'mediumDate'}}</span>
