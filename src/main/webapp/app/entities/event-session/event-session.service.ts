@@ -15,7 +15,7 @@ type EntityArrayResponseType = HttpResponse<IEventSession[]>;
 
 @Injectable({ providedIn: 'root' })
 export class EventSessionService {
-  public resourceUrl = SERVER_API_URL + 'api/event-sessions';
+  public resourceUrl = SERVER_API_URL + 'api/event-editions/event-sessions/';
   public resourceSearchUrl = SERVER_API_URL + 'api/_search/event-sessions';
   public resourceEventEditionUrl = SERVER_API_URL + 'api/event-editions';
 

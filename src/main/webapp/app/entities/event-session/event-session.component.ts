@@ -1,14 +1,17 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
+import { JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
 import { EventEdition } from 'app/shared/model/event-edition.model';
 import { IEventSession } from 'app/shared/model/event-session.model';
+import { EventSessionDeleteDialogComponent } from './event-session-delete-dialog.component';
 import { EventSessionService } from './event-session.service';
 
 import { DurationType } from 'app/shared/enumerations/durationType.enum';
 import { SessionType } from 'app/shared/enumerations/sessionType.enum';
+
+import { MatDialog } from '@angular/material/dialog';
 
 import moment from 'moment-timezone';
 
@@ -16,7 +19,7 @@ import moment from 'moment-timezone';
   selector: 'jhi-event-session',
   templateUrl: './event-session.component.html'
 })
-export class EventSessionComponent implements OnInit, OnDestroy {
+export class EventSessionComponent implements OnInit {
   @Input() eventEdition: EventEdition;
   eventSessions: IEventSession[];
   currentAccount: any;
@@ -42,11 +45,10 @@ export class EventSessionComponent implements OnInit, OnDestroy {
     protected activatedRoute: ActivatedRoute,
     protected dataUtils: JhiDataUtils,
     protected router: Router,
-    protected eventManager: JhiEventManager
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
-    this.registerChangeInEventSessions();
     this.loadAll();
   }
 
@@ -63,12 +65,20 @@ export class EventSessionComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
-    this.eventManager.destroy(this.eventSubscriber);
-  }
+  deleteSession(session: IEventSession) {
+    const dialogRef = this.dialog.open(EventSessionDeleteDialogComponent, {
+      data: {
+        eventSession: session
+      }
+    });
 
-  registerChangeInEventSessions() {
-    this.eventSubscriber = this.eventManager.subscribe('eventSessionsListModification', () => this.loadAll());
+    dialogRef.afterClosed().subscribe(idToDelete => {
+      if (idToDelete) {
+        this.eventSessionService.delete(session.id).subscribe(() => {
+          this.loadAll();
+        });
+      }
+    });
   }
 
   convertToCurrentTZ() {
