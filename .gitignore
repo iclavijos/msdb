@@ -150,3 +150,4 @@ Desktop.ini
 /tempFolder/
 /data/
 /src/main/webapp-backup/
+/src/main/resources/config/liquibase/
