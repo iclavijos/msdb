@@ -1,10 +1,3 @@
-// import {
-//   MAT_MOMENT_DATE_FORMATS,
-//   MomentDateAdapter,
-//   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
-// } from '@angular/material-moment-adapter';
-// import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
-
 import { Component, OnInit, ElementRef } from '@angular/core';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
@@ -30,14 +23,6 @@ import * as moment from 'moment';
   selector: 'jhi-event-edition-update',
   templateUrl: './event-edition-update.component.html',
   styleUrls: ['event-edition.scss']
-  //   providers: [
-  //     {
-  //       provide: DateAdapter,
-  //       useClass: MomentDateAdapter,
-  //       deps: [ MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS ]
-  //     },
-  //     { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS }
-  //   ]
 })
 export class EventEditionUpdateComponent implements OnInit {
   isSaving: boolean;
@@ -72,8 +57,7 @@ export class EventEditionUpdateComponent implements OnInit {
     protected elementRef: ElementRef,
     protected activatedRoute: ActivatedRoute,
     private fb: FormBuilder
-  ) //     private dateAdapter: DateAdapter<any>
-  {}
+  ) {}
 
   ngOnInit() {
     this.displayFnLayouts = this.displayFnLayouts.bind(this);
@@ -134,12 +118,6 @@ export class EventEditionUpdateComponent implements OnInit {
   displayFnEvents(event?: any): string | undefined {
     return event ? event.name : undefined;
   }
-
-  //   ngAfterViewInit() {
-  //     this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
-  //         this.dateAdapter.setLocale(langChangeEvent.lang);
-  //     });
-  //   }
 
   updateForm(eventEdition: IEventEdition) {
     eventEdition.eventDate[1]--;
