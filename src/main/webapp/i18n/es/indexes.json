@@ -2,7 +2,7 @@
   "motorsportsDatabaseApp": {
     "indexes": {
       "home": {
-        "title": "Índeces",
+        "title": "Índices",
         "init": "Se están recalculando los índices de búsqueda... espere unos segundos",
         "rebuilt": "Índices recalculados correctamente"
       }
