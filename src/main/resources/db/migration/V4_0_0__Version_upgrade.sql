@@ -35,4 +35,10 @@ ALTER TABLE `event_edition`
 ADD COLUMN `poster_url` VARCHAR(150) NULL,
 ADD COLUMN `status` VARCHAR(1) NOT NULL DEFAULT 'O';
 
+UPDATE event_session
+SET start_time_ts = UNIX_TIMESTAMP(session_start_time);
+
+ALTER TABLE event_session
+drop column session_start_time;
+
 
