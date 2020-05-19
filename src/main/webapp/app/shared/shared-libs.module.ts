@@ -43,6 +43,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { LightboxModule } from 'ngx-lightbox';
 
+import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
+
 @NgModule({
   exports: [
     FormsModule,
@@ -80,7 +82,10 @@ import { LightboxModule } from 'ngx-lightbox';
     MomentTimezoneModule,
     LightboxModule,
     FullCalendarModule,
-    ScrollingModule
+    ScrollingModule,
+    NgxMatDatetimePickerModule,
+    NgxMatTimepickerModule,
+    NgxMatNativeDateModule
   ]
 })
 export class MotorsportsDatabaseSharedLibsModule {}

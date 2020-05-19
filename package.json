@@ -9,6 +9,7 @@
   ],
   "dependencies": {
     "@agm/core": "1.0.0-beta.6",
+    "@angular-material-components/datetime-picker": "^2.0.4",
     "@angular/animations": "^8.2.4",
     "@angular/cdk": "8.2.3",
     "@angular/common": "8.2.4",
