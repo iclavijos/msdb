@@ -1,7 +1,7 @@
 version: '2.1'
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.4
     container_name: elasticsearch
     volumes:
       - ~/volumes/jhipster/MotorsportsDatabase/elasticsearch/:/usr/share/elasticsearch/data/
@@ -13,7 +13,7 @@ services:
       - 'discovery.type=single-node'
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:6.4.3
+    image: docker.elastic.co/kibana/kibana:6.8.4
     container_name: kibana
     environment:
       SERVER_NAME: kibana.local
