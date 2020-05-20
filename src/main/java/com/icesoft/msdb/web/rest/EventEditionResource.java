@@ -310,7 +310,7 @@ public class EventEditionResource {
     	return result;
     }
 
-    @PostMapping("/event-editions/{id}/sessions")
+    @PostMapping("/event-editions/event-sessions")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict(cacheNames="calendar", allEntries=true)
