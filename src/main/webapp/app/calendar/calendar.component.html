@@ -13,28 +13,30 @@
             </div>
         </div>
         <div class="row">
-            <full-calendar
-                #calendar
-                defaultView="dayGridMonth"
-                [plugins]="calendarPlugins"
-                [header]="{
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-                 }"
-                [events]="events"
-                [locales]="calendarLocales"
-                [timeZone]="timezone"
-                [allDaySlot]="false"
-                [nowIndicator]="true"
-                [aspectRatio]="1"
-                [eventTimeFormat]="{
-                    hour: '2-digit',
-                    minute: '2-digit'
-                }"
-                (eventClick)="openEventDialog($event)"
-            >
-            </full-calendar>
+            <div class="col-md-12">
+                <full-calendar
+                    #calendar
+                    defaultView="dayGridMonth"
+                    [plugins]="calendarPlugins"
+                    [header]="{
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                     }"
+                    [events]="events"
+                    [locales]="calendarLocales"
+                    [timeZone]="timezone"
+                    [allDaySlot]="false"
+                    [nowIndicator]="true"
+                    [aspectRatio]="1"
+                    [eventTimeFormat]="{
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }"
+                    (eventClick)="openEventDialog($event)"
+                >
+                </full-calendar>
+            </div>
         </div>
     </div>
 </div>
