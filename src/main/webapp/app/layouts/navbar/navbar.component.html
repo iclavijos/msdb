@@ -1,167 +1,107 @@
-<nav class="navbar navbar-expand-lg navbar-transparent  navbar-absolute fixed-top">
-    <div class="container-fluid">
-        <button mat-raised-button class="navbar-toggler" type="button" (click)="sidebarToggle()">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="navbar-toggler-icon icon-bar"></span>
-            <span class="navbar-toggler-icon icon-bar"></span>
-            <span class="navbar-toggler-icon icon-bar"></span>
-        </button>
-        <div class="navbar-collapse collapse" id="navbarResponsive" [ngbCollapse]="isNavbarCollapsed" [ngSwitch]="isAuthenticated()">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-                    <a class="nav-link" routerLink="/" (click)="collapseNavbar()">
-                    <span>
-                        <fa-icon icon="home"></fa-icon>
-                        <span jhiTranslate="global.menu.home">Home</span>
-                    </span>
-                    </a>
-                </li>
-                <li class="nav-item" routerLinkActive="active">
-                    <a class="nav-link" routerLink="/calendar">
-                        <fa-icon icon="calendar"></fa-icon>
-                        <span jhiTranslate="global.menu.calendar">Calendar</span>
-                    </a>
-                </li>
-                <li *jhiHasAnyAuthority="'ROLE_ADMIN'" ngbDropdown class="nav-item dropdown pointer" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-                    <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="import-menu">
-                        <span>
-                            <i class="fa fa-upload" aria-hidden="true"></i>
-                            <span jhiTranslate="global.menu.imports.main">Imports</span>
-                            <b class="caret"></b>
-                        </span>
-                    </a>
-                    <ul class="dropdown-menu" ngbDropdownMenu>
-                        <li>
-                            <a class="dropdown-item" routerLink="import/drivers" routerLinkActive="active" (click)="collapseNavbar()">
-                                <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
-                                <span jhiTranslate="global.menu.imports.drivers">Import drivers</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" routerLink="import/racetracks" routerLinkActive="active" (click)="collapseNavbar()">
-                                <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
-                                <span jhiTranslate="global.menu.imports.racetracks">Import racetracks</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" routerLink="import/teams" routerLinkActive="active" (click)="collapseNavbar()">
-                                <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
-                                <span jhiTranslate="global.menu.imports.teams">Import teams</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" routerLink="import/engines" routerLinkActive="active" (click)="collapseNavbar()">
-                                <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
-                                <span jhiTranslate="global.menu.imports.engines">Import engines</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" routerLink="import/events" routerLinkActive="active" (click)="collapseNavbar()">
-                                <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
-                                <span jhiTranslate="global.menu.imports.events">Import events</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li *jhiHasAnyAuthority="'ROLE_ADMIN'" ngbDropdown class="nav-item dropdown pointer" display="dynamic" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-                    <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="admin-menu">
-                    <span>
-                        <fa-icon icon="user-plus"></fa-icon>
-                        <span jhiTranslate="global.menu.admin.main">Administration</span>
-                    </span>
-                    </a>
-                    <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="admin-menu">
-                        <li>
-                            <a class="dropdown-item" routerLink="admin/metrics" routerLinkActive="active" (click)="collapseNavbar()">
-                                <fa-icon icon="tachometer-alt" fixedWidth="true"></fa-icon>
-                                <span jhiTranslate="global.menu.admin.metrics">Metrics</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" routerLink="admin/health" routerLinkActive="active" (click)="collapseNavbar()">
-                                <fa-icon icon="heart" fixedWidth="true"></fa-icon>
-                                <span jhiTranslate="global.menu.admin.health">Health</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" routerLink="admin/configuration" routerLinkActive="active" (click)="collapseNavbar()">
-                                <fa-icon icon="list" fixedWidth="true"></fa-icon>
-                                <span jhiTranslate="global.menu.admin.configuration">Configuration</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" routerLink="admin/audits" routerLinkActive="active" (click)="collapseNavbar()">
-                                <fa-icon icon="bell" fixedWidth="true"></fa-icon>
-                                <span jhiTranslate="global.menu.admin.audits">Audits</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" routerLink="admin/logs" routerLinkActive="active" (click)="collapseNavbar()">
-                                <fa-icon icon="tasks" fixedWidth="true"></fa-icon>
-                                <span jhiTranslate="global.menu.admin.logs">Logs</span>
-                            </a>
-                        </li>
-                        <li *ngIf="swaggerEnabled">
-                            <a class="dropdown-item" routerLink="admin/docs" routerLinkActive="active" (click)="collapseNavbar()">
-                                <fa-icon icon="book" fixedWidth="true"></fa-icon>
-                                <span jhiTranslate="global.menu.admin.apidocs">API</span>
-                            </a>
-                        </li>
-                        <!-- jhipster-needle-add-element-to-admin-menu - JHipster will add entities to the admin menu here -->
-                        <li>
-                            <a class="dropdown-item" routerLink="admin/rebuildIndexes" routerLinkActive="active" (click)="collapseNavbar()">
-                                <fa-icon icon="search" fixedWidth="true"></fa-icon>
-                                <span jhiTranslate="global.menu.admin.rebuildIndexes">Rebuild search indexes</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" routerLink="admin/rebuildStatistics" routerLinkActive="active" (click)="collapseNavbar()">
-                                <i class="icofont icofont-chart-bar-graph"></i>
-                                <span jhiTranslate="global.menu.admin.rebuildStatistics">Rebuild statistics</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li ngbDropdown class="nav-item dropdown pointer" display="dynamic" *ngIf="languages && languages.length > 1">
-                    <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="languagesnavBarDropdown">
-                    <span>
-                        <fa-icon icon="language"></fa-icon>
-                        <span jhiTranslate="global.menu.language">Language</span>
-                    </span>
-                    </a>
-                    <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="languagesnavBarDropdown">
-                        <li *ngFor="let language of languages">
-                            <a class="dropdown-item" [jhiActiveMenu]="language" href="javascript:void(0);" (click)="changeLanguage(language);collapseNavbar();">{{language | findLanguageFromKey}}</a>
-                        </li>
-                    </ul>
-                </li>
-                <li ngbDropdown class="nav-item dropdown pointer" display="dynamic" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-                    <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="account-menu">
-                        <span *ngIf="!getImageUrl()">
-                            <fa-icon icon="user"></fa-icon>
-                            <span *ngSwitchCase="false" jhiTranslate="global.menu.account.main">Account</span>
-                            <span *ngSwitchCase="true">{{ userFullName }}</span>
-                        </span>
-                        <span *ngIf="getImageUrl()">
-                            <img [src]="getImageUrl()" class="profile-image rounded-circle" alt="Avatar">
-                        </span>
-                    </a>
-                    <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="account-menu">
-                        <li *ngSwitchCase="true">
-                            <a class="dropdown-item" (click)="logout()" id="logout">
-                                <fa-icon icon="sign-out-alt" fixedWidth="true"></fa-icon>
-                                <span jhiTranslate="global.menu.account.logout">Sign out</span>
-                            </a>
-                        </li>
-                        <li *ngSwitchCase="false">
-                            <a class="dropdown-item" (click)="login()" id="login">
-                                <fa-icon icon="sign-in-alt" fixedWidth="true"></fa-icon>
-                                <span jhiTranslate="global.menu.account.login">Sign in</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<div [ngSwitch]="isAuthenticated()">
+    <button mat-button (click)="router.navigate(['/']);">
+        <mat-icon>home</mat-icon>
+        <span *ngIf="!(isHandset$ | async)" jhiTranslate="global.menu.home">Home</span>
+    </button>
+    <button mat-button (click)="router.navigate(['/calendar']);">
+        <fa-icon icon="calendar"></fa-icon>
+        <span *ngIf="!(isHandset$ | async)" jhiTranslate="global.menu.calendar">Calendar</span>
+    </button>
+    <button mat-button [matMenuTriggerFor]="imports" *jhiHasAnyAuthority="'ROLE_ADMIN'">
+        <i class="fa fa-upload" aria-hidden="true"></i>
+        <span *ngIf="!(isHandset$ | async)" jhiTranslate="global.menu.imports.main">Imports</span>
+    </button>
+    <button mat-button [matMenuTriggerFor]="admin" *jhiHasAnyAuthority="'ROLE_ADMIN'">
+        <fa-icon icon="user-plus"></fa-icon>
+        <span *ngIf="!(isHandset$ | async)" jhiTranslate="global.menu.admin.main">Administration</span>
+    </button>
+    <button mat-button [matMenuTriggerFor]="languages" *ngIf="langs && langs.length > 1">
+        <fa-icon icon="language"></fa-icon>
+        <span *ngIf="!(isHandset$ | async)" jhiTranslate="global.menu.language">Language</span>
+    </button>
+    <button mat-button [matMenuTriggerFor]="account">
+        <span *ngIf="!getImageUrl()">
+            <fa-icon icon="user"></fa-icon>
+            <span *ngIf="!(isHandset$ | async) && !isAuthenticated()" jhiTranslate="global.menu.account.main">Account</span>
+            <span *ngIf="!(isHandset$ | async) && isAuthenticated()">{{ userFullName }}</span>
+        </span>
+        <span *ngIf="getImageUrl()">
+            <img [src]="getImageUrl()" class="profile-image rounded-circle" alt="Avatar">
+        </span>
+    </button>
+</div>
+
+<mat-menu #imports="matMenu">
+    <button mat-menu-item (click)="router.navigate(['/import/drivers']);">
+        <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+        <span jhiTranslate="global.menu.imports.drivers">Import drivers</span>
+    </button>
+    <button mat-menu-item (click)="router.navigate(['/import/racetracks']);">
+        <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+        <span jhiTranslate="global.menu.imports.racetracks">Import racetracks</span>
+    </button>
+    <button mat-menu-item (click)="router.navigate(['/import/teams']);">
+        <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+        <span jhiTranslate="global.menu.imports.teams">Import teams</span>
+    </button>
+    <button mat-menu-item (click)="router.navigate(['/import/engines']);">
+        <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+        <span jhiTranslate="global.menu.imports.engines">Import engines</span>
+    </button>
+    <button mat-menu-item (click)="router.navigate(['/import/events']);">
+        <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+        <span jhiTranslate="global.menu.imports.events">Import events</span>
+    </button>
+</mat-menu>
+
+<mat-menu #admin="matMenu">
+    <button mat-menu-item (click)="router.navigate(['/admin/metrics']);">
+        <fa-icon icon="tachometer-alt" fixedWidth="true"></fa-icon>
+        <span jhiTranslate="global.menu.admin.metrics">Metrics</span>
+    </button>
+    <button mat-menu-item (click)="router.navigate(['/admin/health']);">
+        <fa-icon icon="heart" fixedWidth="true"></fa-icon>
+        <span jhiTranslate="global.menu.admin.health">Health</span>
+    </button>
+    <button mat-menu-item (click)="router.navigate(['/admin/configuration']);">
+        <fa-icon icon="list" fixedWidth="true"></fa-icon>
+        <span jhiTranslate="global.menu.admin.configuration">Configuration</span>
+    </button>
+    <button mat-menu-item (click)="router.navigate(['/admin/audits']);">
+        <fa-icon icon="bell" fixedWidth="true"></fa-icon>
+        <span jhiTranslate="global.menu.admin.audits">Audits</span>
+    </button>
+    <button mat-menu-item (click)="router.navigate(['/admin/logs']);">
+        <fa-icon icon="tasks" fixedWidth="true"></fa-icon>
+        <span jhiTranslate="global.menu.admin.logs">Logs</span>
+    </button>
+    <button mat-menu-item (click)="router.navigate(['/admin/docs']);" *ngIf="swaggerEnabled">
+        <fa-icon icon="book" fixedWidth="true"></fa-icon>
+        <span jhiTranslate="global.menu.admin.apidocs">API</span>
+    </button>
+    <button mat-menu-item (click)="router.navigate(['/admin/rebuildIndexes']);">
+        <fa-icon icon="search" fixedWidth="true"></fa-icon>
+        <span jhiTranslate="global.menu.admin.rebuildIndexes">Rebuild search indexes</span>
+    </button>
+    <button mat-menu-item (click)="router.navigate(['/admin/rebuildStatistics']);">
+        <i class="icofont icofont-chart-bar-graph"></i>
+        <span jhiTranslate="global.menu.admin.rebuildStatistics">Rebuild statistics</span>
+    </button>
+</mat-menu>
+
+<mat-menu #languages="matMenu">
+    <button mat-menu-item *ngFor="let lang of langs" (click)="changeLanguage(lang);collapseNavbar();">
+        {{lang | findLanguageFromKey}}
+    </button>
+</mat-menu>
+
+<mat-menu #account="matMenu" [ngSwitch]="isAuthenticated()">
+    <button mat-menu-item (click)="logout()" *ngSwitchCase="true">
+        <fa-icon icon="sign-out-alt" fixedWidth="true"></fa-icon>
+        <span jhiTranslate="global.menu.account.logout">Sign out</span>
+    </button>
+    <button mat-menu-item (click)="login()" *ngSwitchCase="false">
+        <fa-icon icon="sign-in-alt" fixedWidth="true"></fa-icon>
+        <span jhiTranslate="global.menu.account.login">Sign in</span>
+    </button>
+</mat-menu>

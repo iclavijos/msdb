@@ -1,12 +1,36 @@
-<div class="wrapper">
-    <div class="sidebar" data-color="danger" data-background-color="white">
-        <jhi-sidebar></jhi-sidebar>
-        <div class="sidebar-background" [style.background-image]="'url(/images/lateral-background-' + backgroundNumber + '.jpg)'"></div>
-    </div>
-    <div class="main-panel">
-        <jhi-navbar></jhi-navbar>
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport
+                 [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+                 [mode]="(isHandset$ | async) ? 'over' : 'side'"
+                 [opened]="(isHandset$ | async) === false">
+        <div>
+            <div class="logo">
+                <a routerLink="/" class="simple-text">
+                    <div class="logo-img">
+                        <img src="/content/images/logo.png" class="img-fluid"/>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <mat-nav-list>
+            <jhi-sidebar></jhi-sidebar>
+        </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <mat-toolbar>
+            <button
+                type="button"
+                aria-label="Toggle sidenav"
+                mat-icon-button
+                (click)="drawer.toggle()"
+                *ngIf="isHandset$ | async">
+                <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+            </button>
+            <span class="fill-space"></span>
+            <jhi-navbar></jhi-navbar>
+        </mat-toolbar>
         <router-outlet></router-outlet>
         <router-outlet name="popup"></router-outlet>
         <jhi-footer></jhi-footer>
-    </div>
-</div>
+    </mat-sidenav-content>
+</mat-sidenav-container>

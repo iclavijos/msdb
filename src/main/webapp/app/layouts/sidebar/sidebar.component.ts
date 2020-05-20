@@ -27,7 +27,8 @@ export const RESTRICTED_ROUTES: RouteInfo[] = [
 
 @Component({
   selector: 'jhi-sidebar',
-  templateUrl: './sidebar.component.html'
+  templateUrl: './sidebar.component.html',
+  styleUrls: ['./sidebar.scss']
 })
 export class SidebarComponent implements OnInit {
   menuItems: any[];

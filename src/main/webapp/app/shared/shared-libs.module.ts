@@ -33,7 +33,10 @@ import {
   MatListModule,
   MatButtonToggleModule,
   MatCheckboxModule,
-  MatRadioModule
+  MatRadioModule,
+  MatToolbarModule,
+  MatSidenavModule,
+  MatMenuModule
 } from '@angular/material';
 
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
@@ -78,6 +81,9 @@ import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateMod
     MatButtonToggleModule,
     MatCheckboxModule,
     MatRadioModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatMenuModule,
     ColorPickerModule,
     MomentTimezoneModule,
     LightboxModule,

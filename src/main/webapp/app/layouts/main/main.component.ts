@@ -1,11 +1,12 @@
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 import { Component, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, NavigationEnd, NavigationError } from '@angular/router';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, Observable } from 'rxjs';
+import { map, shareReplay, takeUntil } from 'rxjs/operators';
 
 import { JhiLanguageHelper } from 'app/core/language/language.helper';
 import { Account } from 'app/core/user/account.model';
@@ -15,6 +16,7 @@ import { StateStorageService } from 'app/core/auth/state-storage.service';
 @Component({
   selector: 'jhi-main',
   templateUrl: './main.component.html',
+  styleUrls: ['./main.scss'],
   providers: [
     {
       provide: DateAdapter,
@@ -29,13 +31,19 @@ export class JhiMainComponent implements OnInit, OnDestroy, AfterViewInit {
 
   backgroundNumber = 1;
 
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
+    map(result => result.matches),
+    shareReplay()
+  );
+
   constructor(
     private accountService: AccountService,
     private stateStorageService: StateStorageService,
     private jhiLanguageHelper: JhiLanguageHelper,
     private router: Router,
     private translateService: TranslateService,
-    private dateAdapter: DateAdapter<any>
+    private dateAdapter: DateAdapter<any>,
+    private breakpointObserver: BreakpointObserver
   ) {}
 
   private getPageTitle(routeSnapshot: ActivatedRouteSnapshot) {
