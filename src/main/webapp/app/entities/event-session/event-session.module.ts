@@ -13,6 +13,6 @@ const ENTITY_STATES = [...eventSessionRoute];
   imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
   declarations: [EventSessionComponent, EventSessionUpdateComponent, EventSessionDeleteDialogComponent],
   exports: [EventSessionComponent],
-  entryComponents: [EventSessionDeleteDialogComponent]
+  entryComponents: [EventSessionDeleteDialogComponent, EventSessionUpdateComponent]
 })
 export class MotorsportsDatabaseEventSessionModule {}

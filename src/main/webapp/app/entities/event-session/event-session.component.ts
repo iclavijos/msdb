@@ -4,7 +4,8 @@ import { Subscription } from 'rxjs';
 import { JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
 import { EventEdition } from 'app/shared/model/event-edition.model';
-import { IEventSession } from 'app/shared/model/event-session.model';
+import { IEventSession, EventSession } from 'app/shared/model/event-session.model';
+import { EventSessionUpdateComponent } from './event-session-update.component';
 import { EventSessionDeleteDialogComponent } from './event-session-delete-dialog.component';
 import { EventSessionService } from './event-session.service';
 
@@ -62,6 +63,38 @@ export class EventSessionComponent implements OnInit {
       );
       this.showPoints.emit(showPoints);
       this.sessions.emit(this.eventSessions);
+    });
+  }
+
+  createSession() {
+    const newSession = new EventSession();
+    newSession.eventEdition = this.eventEdition;
+    const dialogRef = this.dialog.open(EventSessionUpdateComponent, {
+      data: {
+        eventSession: newSession
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(newEventSession => {
+      if (newEventSession) {
+        this.loadAll();
+      }
+    });
+  }
+
+  editSession(session: IEventSession) {
+    session.eventEdition = this.eventEdition;
+    const dialogRef = this.dialog.open(EventSessionUpdateComponent, {
+      data: {
+        eventEditionId: this.eventEdition.id,
+        eventSession: session
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(updatedEventSession => {
+      if (updatedEventSession) {
+        this.loadAll();
+      }
     });
   }
 

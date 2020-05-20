@@ -2,7 +2,8 @@
     <div class="row">
         <div class="col-sm-12">
             <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                    class="btn btn-primary float-right create-event-session" [routerLink]="['/', { outlets: { popup: eventEdition.id + '/event-session-new' } }]">
+                    (click)="createSession()"
+                    class="btn btn-primary float-right create-event-session">
                 <span class="fa fa-plus"></span>
             </button>
         </div>
@@ -56,7 +57,7 @@
                             <div class="btn-group">
                                 <button type="submit"
                                         *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                        [routerLink]="['/event/edition', session.id, 'edit-ed']"
+                                        (click)="editSession(session)"
                                         class="btn btn-primary btn-xs">
                                     <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                 </button>
