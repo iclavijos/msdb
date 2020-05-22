@@ -19,13 +19,10 @@ export class SeriesDetailComponent implements OnInit {
     });
   }
 
-  byteSize(field) {
-    return this.dataUtils.byteSize(field);
-  }
-
   openFile(contentType, field) {
     return this.dataUtils.openFile(contentType, field);
   }
+
   previousState() {
     window.history.back();
   }

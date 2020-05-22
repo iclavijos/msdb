@@ -1,35 +1,34 @@
-import { Injectable } from '@angular/core';
+import { NgModule, Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, Routes, RouterModule } from '@angular/router';
 import { JhiResolvePagingParams } from 'ng-jhipster';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { Series } from 'app/shared/model/series.model';
 import { SeriesService } from './series.service';
 import { SeriesComponent } from './series.component';
 import { SeriesDetailComponent } from './series-detail.component';
 import { SeriesUpdateComponent } from './series-update.component';
 import { SeriesDeletePopupComponent } from './series-delete-dialog.component';
-import { ISeries } from 'app/shared/model/series.model';
+import { ISeries, Series } from 'app/shared/model/series.model';
 
 @Injectable({ providedIn: 'root' })
 export class SeriesResolve implements Resolve<ISeries> {
   constructor(private service: SeriesService) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ISeries> {
+  resolve(route: ActivatedRouteSnapshot): Observable<ISeries> {
     const id = route.params['id'];
     if (id) {
       return this.service.find(id).pipe(
-        filter((response: HttpResponse<Series>) => response.ok),
-        map((series: HttpResponse<Series>) => series.body)
+        filter((response: HttpResponse<ISeries>) => response.ok),
+        map((series: HttpResponse<ISeries>) => series.body)
       );
     }
     return of(new Series());
   }
 }
 
-export const seriesRoute: Routes = [
+const seriesRoute: Routes = [
   {
     path: '',
     component: SeriesComponent,
@@ -37,7 +36,6 @@ export const seriesRoute: Routes = [
       pagingParams: JhiResolvePagingParams
     },
     data: {
-      authorities: ['ROLE_USER'],
       defaultSort: 'id,asc',
       pageTitle: 'motorsportsDatabaseApp.series.home.title'
     },
@@ -50,7 +48,6 @@ export const seriesRoute: Routes = [
       series: SeriesResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
       pageTitle: 'motorsportsDatabaseApp.series.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -62,7 +59,7 @@ export const seriesRoute: Routes = [
       series: SeriesResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.series.home.title'
     },
     canActivate: [UserRouteAccessService]
@@ -74,14 +71,11 @@ export const seriesRoute: Routes = [
       series: SeriesResolve
     },
     data: {
-      authorities: ['ROLE_USER'],
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
       pageTitle: 'motorsportsDatabaseApp.series.home.title'
     },
     canActivate: [UserRouteAccessService]
-  }
-];
-
-export const seriesPopupRoute: Routes = [
+  },
   {
     path: ':id/delete',
     component: SeriesDeletePopupComponent,
@@ -94,5 +88,15 @@ export const seriesPopupRoute: Routes = [
     },
     canActivate: [UserRouteAccessService],
     outlet: 'popup'
+  },
+  {
+    path: 'edition',
+    loadChildren: () => import('../series-edition/series-edition.module').then(m => m.MotorsportsDatabaseSeriesEditionModule)
   }
 ];
+
+@NgModule({
+  imports: [RouterModule.forChild(seriesRoute)],
+  exports: [RouterModule]
+})
+export class SeriesRoutingModule {}

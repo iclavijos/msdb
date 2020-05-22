@@ -12,6 +12,7 @@ type EntityArrayResponseType = HttpResponse<ISeriesEdition[]>;
 @Injectable({ providedIn: 'root' })
 export class SeriesEditionService {
   public resourceUrl = SERVER_API_URL + 'api/series-editions';
+  public seriesResourceUrl = SERVER_API_URL + 'api/series';
   public resourceSearchUrl = SERVER_API_URL + 'api/_search/series-editions';
 
   constructor(protected http: HttpClient) {}
@@ -40,5 +41,10 @@ export class SeriesEditionService {
   search(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http.get<ISeriesEdition[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
+  }
+
+  findSeriesEditions(idSeries: number, req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<ISeriesEdition[]>(`${this.seriesResourceUrl}/${idSeries}/editions`, { params: options, observe: 'response' });
   }
 }

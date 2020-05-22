@@ -22,7 +22,8 @@ export class SeriesUpdateComponent implements OnInit {
     shortname: [null, [Validators.required, Validators.maxLength(10)]],
     organizer: [null, [Validators.maxLength(50)]],
     logo: [],
-    logoContentType: []
+    logoContentType: [],
+    logoUrl: []
   });
 
   constructor(
@@ -48,7 +49,8 @@ export class SeriesUpdateComponent implements OnInit {
       shortname: series.shortname,
       organizer: series.organizer,
       logo: series.logo,
-      logoContentType: series.logoContentType
+      logoContentType: series.logoContentType,
+      logoUrl: series.logoUrl
     });
   }
 
@@ -117,7 +119,8 @@ export class SeriesUpdateComponent implements OnInit {
       shortname: this.editForm.get(['shortname']).value,
       organizer: this.editForm.get(['organizer']).value,
       logoContentType: this.editForm.get(['logoContentType']).value,
-      logo: this.editForm.get(['logo']).value
+      logo: this.editForm.get(['logo']).value,
+      logoUrl: this.editForm.get(['logoUrl']).value
     };
   }
 
