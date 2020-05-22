@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 
 @NgModule({
   imports: [
-    RouterModule.forChild([
+    RouterModule.forRoot([
       {
         path: 'driver',
         loadChildren: () => import('./driver/driver.module').then(m => m.MotorsportsDatabaseDriverModule)
@@ -47,6 +47,10 @@ import { RouterModule } from '@angular/router';
       {
         path: 'event',
         loadChildren: () => import('./event/event.module').then(m => m.MotorsportsDatabaseEventModule)
+      },
+      {
+        path: 'series',
+        loadChildren: () => import('./series/series.module').then(m => m.MotorsportsDatabaseSeriesModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ])
