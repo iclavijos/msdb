@@ -36,7 +36,9 @@ import {
   MatRadioModule,
   MatToolbarModule,
   MatSidenavModule,
-  MatMenuModule
+  MatMenuModule,
+  MatGridListModule,
+  MatCardModule
 } from '@angular/material';
 
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
@@ -84,6 +86,8 @@ import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateMod
     MatToolbarModule,
     MatSidenavModule,
     MatMenuModule,
+    MatGridListModule,
+    MatCardModule,
     ColorPickerModule,
     MomentTimezoneModule,
     LightboxModule,
