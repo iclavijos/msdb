@@ -41,4 +41,28 @@ SET start_time_ts = UNIX_TIMESTAMP(session_start_time);
 ALTER TABLE event_session
 drop column session_start_time;
 
+create or replace view `events_results` AS
+    SELECT
+        `ed`.`id` AS `editionId`,
+        `ee`.`id` AS `entryId`,
+        `ee`.`team_name` AS `teamName`,
+        `c`.`id` AS `catId`,
+        `c`.`shortname` AS `catName`,
+        `es`.`name` AS `sessionName`,
+        `eer`.`final_position` AS `finalPos`,
+        `es`.`start_time_ts` AS `sessionStartTime`
+    FROM
+        ((((`event_entry_result` `eer`
+        JOIN `event_entry` `ee`)
+        JOIN `event_session` `es`)
+        JOIN `event_edition` `ed`)
+        JOIN `category` `c`)
+    WHERE
+        ((`eer`.`session_id` = `es`.`id`)
+            AND (`es`.`event_edition_id` = `ed`.`id`)
+            AND (`es`.`session_type` = 2)
+            AND (`eer`.`entry_id` = `ee`.`id`)
+            AND (`ee`.`category_id` = `c`.`id`))
+    ORDER BY `es`.`start_time_ts`;
+
 
