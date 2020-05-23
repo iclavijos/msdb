@@ -225,14 +225,14 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	    		for(Object[] winner : tmpWinners) {
 	    			if (winner[2].equals(session)) {
 		        		EventEditionEntry entry = eventEntryRepo.findById((Long)winner[0]).get();
-		        		catWinners.addWinners((String)winner[1], entry.getDriversName());
+		        		catWinners.addWinners((String)winner[1], entry);
 		        		if (winner[3].equals(new Integer(1))) {
 		        			overallWinner = entry;
 		        		}
 	    			}
 	        	}
 	    		if (catWinners.getNumberOfCategories() > 1) {
-	    			catWinners.addWinners("Overall", overallWinner.getDriversName());
+	    			catWinners.addWinners("Overall", overallWinner);
 	    		}
 	    		catWinners.getWinners().sort((w1, w2) -> w1.compareTo(w2));
 	    		winners.add(catWinners);

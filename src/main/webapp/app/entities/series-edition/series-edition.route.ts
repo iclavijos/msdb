@@ -38,7 +38,7 @@ const seriesEditionRoute: Routes = [
     },
     data: {
       defaultSort: 'id,asc',
-      pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
+      pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.detail.title'
     },
     canActivate: [UserRouteAccessService]
   },
@@ -49,7 +49,7 @@ const seriesEditionRoute: Routes = [
       seriesEdition: SeriesEditionResolve
     },
     data: {
-      pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title'
+      pageTitle: 'motorsportsDatabaseApp.series.seriesEdition.detail.title'
     },
     canActivate: [UserRouteAccessService]
   }

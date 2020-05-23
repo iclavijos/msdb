@@ -9,12 +9,12 @@ public class SeriesEventsAndWinnersDTO {
 
 	private final EventEdition eventEdition;
 	private final List<EventEditionWinnersDTO> winners;
-	
+
 	public SeriesEventsAndWinnersDTO(EventEdition eventEdition, List<EventEditionWinnersDTO> winners) {
 		this.eventEdition = eventEdition;
 		this.winners = winners;
 	}
-	
+
 	public Long getEventEditionId() {
 		return eventEdition.getId();
 	}
@@ -27,5 +27,6 @@ public class SeriesEventsAndWinnersDTO {
 	public List<EventEditionWinnersDTO> getWinners() {
 		return winners;
 	}
-	
+	public String getEventEditionPosterUrl() { return eventEdition.getPosterUrl(); }
+
 }
