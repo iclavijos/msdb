@@ -9,6 +9,8 @@ import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
 import { TimeMaskPipe } from './mask/time-mask.pipe';
 import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
 import { EventEntryCategoryFilter } from './filters/entry-category-filter.pipe';
+import { MaterialElevationDirective } from './directives/material-elevation.directive';
+import { ImagesService } from './services/images.service';
 
 @NgModule({
   imports: [MotorsportsDatabaseSharedLibsModule],
@@ -21,7 +23,8 @@ import { EventEntryCategoryFilter } from './filters/entry-category-filter.pipe';
     RacetrackLengthPipe,
     TimeMaskPipe,
     LocalizedDatePipe,
-    EventEntryCategoryFilter
+    EventEntryCategoryFilter,
+    MaterialElevationDirective
   ],
   exports: [
     MotorsportsDatabaseSharedLibsModule,
@@ -33,7 +36,9 @@ import { EventEntryCategoryFilter } from './filters/entry-category-filter.pipe';
     RacetrackLengthPipe,
     TimeMaskPipe,
     LocalizedDatePipe,
-    EventEntryCategoryFilter
-  ]
+    EventEntryCategoryFilter,
+    MaterialElevationDirective
+  ],
+  providers: [ImagesService]
 })
 export class MotorsportsDatabaseSharedModule {}
