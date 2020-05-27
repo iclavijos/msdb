@@ -17,9 +17,9 @@ import com.icesoft.msdb.service.CDNService;
 
 @Service
 public class CloudinaryService implements CDNService {
-	
+
 	private final Logger log = LoggerFactory.getLogger(CloudinaryService.class);
-	
+
 	@Autowired Cloudinary cloudinary;
 
 	@Override
@@ -43,10 +43,9 @@ public class CloudinaryService implements CDNService {
 		try {
 			cloudinary.uploader().destroy(folder + "/" + imageId, ObjectUtils.emptyMap());
 		} catch (IOException e) {
-			log.error("Image could not be deleted from CDN", e);
-			throw new MSDBException(e);
+			log.warn("Image could not be deleted from CDN", e);
 		}
-		
+
 	}
 
 }
