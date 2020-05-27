@@ -21,7 +21,7 @@ export class TeamDeleteDialogComponent {
   }
 
   confirmDelete(id: number) {
-    this.teamService.delete(id).subscribe(response => {
+    this.teamService.delete(id).subscribe(() => {
       this.eventManager.broadcast({
         name: 'teamListModification',
         content: 'Deleted an team'
@@ -46,11 +46,11 @@ export class TeamDeletePopupComponent implements OnInit, OnDestroy {
         this.ngbModalRef = this.modalService.open(TeamDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
         this.ngbModalRef.componentInstance.team = team;
         this.ngbModalRef.result.then(
-          result => {
+          () => {
             this.router.navigate(['/team', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           },
-          reason => {
+          () => {
             this.router.navigate(['/team', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           }

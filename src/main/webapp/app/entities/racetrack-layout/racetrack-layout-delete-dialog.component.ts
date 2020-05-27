@@ -25,7 +25,7 @@ export class RacetrackLayoutDeleteDialogComponent {
   }
 
   confirmDelete(id: number) {
-    this.racetrackLayoutService.delete(id).subscribe(response => {
+    this.racetrackLayoutService.delete(id).subscribe(() => {
       this.eventManager.broadcast({
         name: 'racetrackLayoutListModification',
         content: 'Deleted an racetrackLayout'
@@ -50,11 +50,11 @@ export class RacetrackLayoutDeletePopupComponent implements OnInit, OnDestroy {
         this.ngbModalRef = this.modalService.open(RacetrackLayoutDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
         this.ngbModalRef.componentInstance.racetrackLayout = racetrackLayout;
         this.ngbModalRef.result.then(
-          result => {
+          () => {
             this.router.navigate(['/racetrack-layout', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           },
-          reason => {
+          () => {
             this.router.navigate(['/racetrack-layout', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           }

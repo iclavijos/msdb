@@ -25,7 +25,7 @@ export class EventEditionDeleteDialogComponent {
   }
 
   confirmDelete(id: number) {
-    this.eventEditionService.delete(id).subscribe(response => {
+    this.eventEditionService.delete(id).subscribe(() => {
       this.eventManager.broadcast({
         name: 'eventEditionListModification',
         content: 'Deleted an eventEdition'
@@ -50,11 +50,11 @@ export class EventEditionDeletePopupComponent implements OnInit, OnDestroy {
         this.ngbModalRef = this.modalService.open(EventEditionDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
         this.ngbModalRef.componentInstance.eventEdition = eventEdition;
         this.ngbModalRef.result.then(
-          result => {
+          () => {
             this.router.navigate(['/event-edition', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           },
-          reason => {
+          () => {
             this.router.navigate(['/event-edition', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           }

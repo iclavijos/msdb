@@ -25,7 +25,7 @@ export class FuelProviderDeleteDialogComponent {
   }
 
   confirmDelete(id: number) {
-    this.fuelProviderService.delete(id).subscribe(response => {
+    this.fuelProviderService.delete(id).subscribe(() => {
       this.eventManager.broadcast({
         name: 'fuelProviderListModification',
         content: 'Deleted an fuelProvider'
@@ -50,11 +50,11 @@ export class FuelProviderDeletePopupComponent implements OnInit, OnDestroy {
         this.ngbModalRef = this.modalService.open(FuelProviderDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
         this.ngbModalRef.componentInstance.fuelProvider = fuelProvider;
         this.ngbModalRef.result.then(
-          result => {
+          () => {
             this.router.navigate(['/fuel-provider', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           },
-          reason => {
+          () => {
             this.router.navigate(['/fuel-provider', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           }

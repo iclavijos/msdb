@@ -25,7 +25,7 @@ export class TyreProviderDeleteDialogComponent {
   }
 
   confirmDelete(id: number) {
-    this.tyreProviderService.delete(id).subscribe(response => {
+    this.tyreProviderService.delete(id).subscribe(() => {
       this.eventManager.broadcast({
         name: 'tyreProviderListModification',
         content: 'Deleted an tyreProvider'
@@ -50,11 +50,11 @@ export class TyreProviderDeletePopupComponent implements OnInit, OnDestroy {
         this.ngbModalRef = this.modalService.open(TyreProviderDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
         this.ngbModalRef.componentInstance.tyreProvider = tyreProvider;
         this.ngbModalRef.result.then(
-          result => {
+          () => {
             this.router.navigate(['/tyre-provider', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           },
-          reason => {
+          () => {
             this.router.navigate(['/tyre-provider', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           }

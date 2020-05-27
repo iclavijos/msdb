@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { JhiResolvePagingParams } from 'ng-jhipster';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
@@ -17,7 +17,7 @@ import { IFuelProvider } from 'app/shared/model/fuel-provider.model';
 export class FuelProviderResolve implements Resolve<IFuelProvider> {
   constructor(private service: FuelProviderService) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<IFuelProvider> {
+  resolve(route: ActivatedRouteSnapshot): Observable<IFuelProvider> {
     const id = route.params['id'];
     if (id) {
       return this.service.find(id).pipe(

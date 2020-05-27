@@ -21,7 +21,7 @@ export class RacetrackDeleteDialogComponent {
   }
 
   confirmDelete(id: number) {
-    this.racetrackService.delete(id).subscribe(response => {
+    this.racetrackService.delete(id).subscribe(() => {
       this.eventManager.broadcast({
         name: 'racetrackListModification',
         content: 'Deleted an racetrack'
@@ -46,11 +46,11 @@ export class RacetrackDeletePopupComponent implements OnInit, OnDestroy {
         this.ngbModalRef = this.modalService.open(RacetrackDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
         this.ngbModalRef.componentInstance.racetrack = racetrack;
         this.ngbModalRef.result.then(
-          result => {
+          () => {
             this.router.navigate(['/racetrack', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           },
-          reason => {
+          () => {
             this.router.navigate(['/racetrack', { outlets: { popup: null } }]);
             this.ngbModalRef = null;
           }
