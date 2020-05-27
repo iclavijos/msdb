@@ -79,6 +79,16 @@ spring:
     password:
   thymeleaf:
     cache: true
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            issuer-uri: https://sso.motorsports-database.racing/oauth2/aus403xcf1zWXZj56357
+        registration:
+          oidc:
+            client-id: ${OIDC_CLIENT_ID}
+            client-secret: ${OIDC_CLIENT_SECRET}
 
 # ===================================================================
 # To enable TLS in production, generate a certificate using:
@@ -101,6 +111,7 @@ spring:
 # ===================================================================
 server:
   port: 8080
+  use-forward-headers: true
   compression:
     enabled: true
     mime-types: text/html,text/xml,text/plain,text/css, application/javascript, application/json

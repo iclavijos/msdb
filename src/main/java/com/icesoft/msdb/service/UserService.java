@@ -21,7 +21,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -150,6 +152,7 @@ public class UserService {
         Collection<String> dbAuthorities = getAuthorities();
         Collection<String> userAuthorities =
             user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toList());
+
         for (String authority : userAuthorities) {
             if (!dbAuthorities.contains(authority)) {
                 log.debug("Saving authority '{}' in local database", authority);
@@ -159,12 +162,13 @@ public class UserService {
             }
         }
         // save account in to sync users between IdP and JHipster's local database
-        Optional<User> existingUser = userRepository.findOneByLogin(user.getLogin());
+        Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(user.getEmail()); // findOneByLogin(user.getLogin());
         if (existingUser.isPresent()) {
             // if IdP sends last updated information, use it to determine if an update should happen
             if (details.get("updated_at") != null) {
                 Instant dbModifiedDate = existingUser.get().getLastModifiedDate();
-                Instant idpModifiedDate = new Date(Long.valueOf((Integer) details.get("updated_at"))).toInstant();
+                // Instant idpModifiedDate = new Date(Long.valueOf((Integer) details.get("updated_at"))).toInstant();
+                Instant idpModifiedDate = DateTimeFormatter.ISO_INSTANT.parse((String)details.get("updated_at"), Instant::from);
                 if (idpModifiedDate.isAfter(dbModifiedDate)) {
                     log.debug("Updating user '{}' in local database", user.getLogin());
                     updateUser(user.getFirstName(), user.getLastName(), user.getEmail(),
@@ -201,8 +205,8 @@ public class UserService {
             throw new IllegalArgumentException("AuthenticationToken is not OAuth2 or JWT!");
         }
         User user = getUser(attributes);
-        user.setAuthorities(authToken.getAuthorities().stream()
-            .map(GrantedAuthority::getAuthority)
+        List<String> groups = (List<String>)attributes.get("https://www.motorsports-database.racing/groups");
+        user.setAuthorities(groups.stream()
             .map(authority -> {
                 Authority auth = new Authority();
                 auth.setName(authority);

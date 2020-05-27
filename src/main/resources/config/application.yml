@@ -110,14 +110,12 @@ spring:
       client:
         provider:
           oidc:
-            issuer-uri: https://dev-871921.okta.com/oauth2/default
+            # issuer-uri: https://dev-871921.okta.com/oauth2/default
+            issuer-uri: https://msdb.eu.auth0.com/
         registration:
           oidc:
-            client-id: ${oidc_client_id}
-            client-secret: ${oidc_client_secret}
-
-        # access-token-uri: https://dev-871921.oktapreview.com/oauth2/default/v1/token
-
+            client-id: ${OIDC_CLIENT_ID}
+            client-secret: ${OIDC_CLIENT_SECRET}
   flyway:
     table: schema_version
 
