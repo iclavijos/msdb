@@ -99,7 +99,7 @@ public class HomeResource {
 	public List<TimeZone> getTimeZones() {
 		RestTemplate restTemplate = new RestTemplate();
         TimeZonesResponse timezonesResp = restTemplate.getForObject(
-        		"http://api.timezonedb.com/v2.1/list-time-zone?key=4CHM89W4KBP0&format=json&fields=countryName,zoneName,gmtOffset",
+        		"https://api.timezonedb.com/v2.1/list-time-zone?key=4CHM89W4KBP0&format=json&fields=countryName,zoneName,gmtOffset",
         		TimeZonesResponse.class);
         if (!timezonesResp.getStatus().equals("OK")) {
         	throw new MSDBException("Error retrieving timezones: " + timezonesResp.getMessage());
