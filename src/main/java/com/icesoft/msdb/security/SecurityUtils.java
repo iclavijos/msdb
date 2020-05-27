@@ -87,7 +87,7 @@ public final class SecurityUtils {
 
     @SuppressWarnings("unchecked")
     private static Collection<String> getRolesFromClaims(Map<String, Object> claims) {
-        return (Collection<String>) claims.getOrDefault("groups",
+        return (Collection<String>) claims.getOrDefault("https://www.motorsports-database.racing/groups",
             claims.getOrDefault("roles", new ArrayList<>()));
     }
 
