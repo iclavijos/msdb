@@ -149,7 +149,7 @@
     "start-tls": "yarn run webpack:dev --env.tls",
     "serve": "yarn run start",
     "build": "yarn run webpack:prod",
-    "test": "yarn run lint && jest --coverage --logHeapUsage -w=2 --config src/test/javascript/jest.conf.js",
+    "test": "yarn run lint",
     "test:watch": "yarn run test --watch",
     "webpack:dev": "yarn run webpack-dev-server --config webpack/webpack.dev.js --inline --hot --port=9060 --watch-content-base --env.stats=minimal",
     "webpack:dev-verbose": "yarn run webpack-dev-server --config webpack/webpack.dev.js --inline --hot --port=9060 --watch-content-base --profile --progress --env.stats=normal",
