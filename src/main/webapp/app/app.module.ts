@@ -9,8 +9,8 @@ import { MotorsportsDatabaseCoreModule } from 'app/core/core.module';
 import { MotorsportsDatabaseAppRoutingModule } from './app-routing.module';
 import { MotorsportsDatabaseHomeModule } from './home/home.module';
 import { MotorsportsDatabaseEntityModule } from './entities/entity.module';
+import { MotorsportsDatabaseLegalModule } from './legal/legal.module';
 // import { MotorsportsDatabaseImportsModule } from './imports/imports.module';
-// import { MotorsportsDatabaseCalendarModule } from './calendar/calendar.module';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 import { JhiMainComponent } from './layouts/main/main.component';
 import { NavbarComponent } from './layouts/navbar/navbar.component';
@@ -29,6 +29,7 @@ import { ErrorComponent } from './layouts/error/error.component';
     MotorsportsDatabaseHomeModule,
     // jhipster-needle-angular-add-module JHipster will add new module here
     MotorsportsDatabaseEntityModule,
+    MotorsportsDatabaseLegalModule,
     // MotorsportsDatabaseImportsModule,
     // MotorsportsDatabaseCalendarModule,
     MotorsportsDatabaseAppRoutingModule

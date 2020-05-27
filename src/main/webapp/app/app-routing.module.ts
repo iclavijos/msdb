@@ -25,6 +25,10 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
           canActivate: [UserRouteAccessService],
           loadChildren: () => import('./calendar/calendar.module').then(m => m.MotorsportsDatabaseCalendarModule)
         },
+        {
+          path: 'legal',
+          loadChildren: () => import('./legal/legal.module').then(m => m.MotorsportsDatabaseLegalModule)
+        },
         ...LAYOUT_ROUTES
       ],
       { enableTracing: DEBUG_INFO_ENABLED }
