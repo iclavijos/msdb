@@ -8,7 +8,7 @@ import { NgJhipsterModule } from 'ng-jhipster';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
-import { MomentTimezoneModule } from 'angular-moment-timezone';
+// import { MomentTimezoneModule } from 'angular-moment-timezone';
 
 import { FullCalendarModule } from '@fullcalendar/angular';
 
@@ -89,7 +89,6 @@ import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateMod
     MatGridListModule,
     MatCardModule,
     ColorPickerModule,
-    MomentTimezoneModule,
     LightboxModule,
     FullCalendarModule,
     ScrollingModule,
