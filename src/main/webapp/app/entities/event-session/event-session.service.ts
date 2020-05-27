@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import * as moment from 'moment';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { DATE_FORMAT } from 'app/shared/constants/input.constants';
 import { map } from 'rxjs/operators';
@@ -12,6 +11,9 @@ import { IEventSession } from 'app/shared/model/event-session.model';
 
 type EntityResponseType = HttpResponse<IEventSession>;
 type EntityArrayResponseType = HttpResponse<IEventSession[]>;
+
+import * as moment from 'moment';
+import 'moment-timezone';
 
 @Injectable({ providedIn: 'root' })
 export class EventSessionService {

@@ -139,4 +139,8 @@ export class TyreProviderUpdateComponent implements OnInit {
   protected onError(errorMessage: string) {
     this.jhiAlertService.error(errorMessage, null, null);
   }
+
+  resetLogo() {
+    this.editForm.patchValue({ logoUrl: null, logo: null });
+  }
 }

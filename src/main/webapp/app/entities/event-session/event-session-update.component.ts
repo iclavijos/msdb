@@ -102,7 +102,7 @@ export class EventSessionUpdateComponent implements OnInit {
     }
   }
 
-  private onChangeType(event) {
+  public onChangeType(event) {
     const selectedType = parseInt(event.value, 10);
     this.isRaceAndLaps = selectedType >= 2 && this.editForm.get(['durationType']).value === 5;
   }

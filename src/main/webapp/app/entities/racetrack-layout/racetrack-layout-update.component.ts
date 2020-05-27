@@ -159,4 +159,10 @@ export class RacetrackLayoutUpdateComponent implements OnInit {
   trackRacetrackById(index: number, item: IRacetrack) {
     return item.id;
   }
+
+  switchActive() {
+    this.editForm.patchValue({
+      active: !this.editForm.get(['active']).value
+    });
+  }
 }

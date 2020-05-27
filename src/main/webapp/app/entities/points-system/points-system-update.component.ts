@@ -109,4 +109,12 @@ export class PointsSystemUpdateComponent implements OnInit {
   protected onSaveError() {
     this.isSaving = false;
   }
+
+  switchActive() {
+    this.editForm.patchValue({ active: !this.editForm.get('active').value });
+  }
+
+  switchPitlaneStart() {
+    this.editForm.patchValue({ pitlaneStartAllowed: !this.editForm.get('pitlaneStartAllowed').value });
+  }
 }

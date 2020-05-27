@@ -38,7 +38,7 @@ export class EventEntryComponent implements OnInit, OnDestroy {
     protected eventManager: JhiEventManager
   ) {}
 
-  private getBigFaceUrl(portraitUrl: string) {
+  public getBigFaceUrl(portraitUrl: string) {
     if (portraitUrl != null) {
       let url = portraitUrl.replace('upload/', 'upload/w_240,h_240,c_thumb,g_face,r_max/');
       const pos = url.lastIndexOf('.');
@@ -52,7 +52,7 @@ export class EventEntryComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  private getSmallFaceUrl(portraitUrl: string) {
+  public getSmallFaceUrl(portraitUrl: string) {
     if (portraitUrl != null) {
       let url = portraitUrl.replace('upload/', 'upload/w_120,h_120,c_thumb,g_face,r_max/');
       const pos = url.lastIndexOf('.');

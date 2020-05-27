@@ -188,4 +188,28 @@ export class EngineUpdateComponent implements OnInit {
   trackEngineById(index: number, item: IEngine) {
     return item.id;
   }
+
+  switchPetrolEngine() {
+    this.editForm.patchValue({ petrolEngine: !this.editForm.get('petrolEngine').value });
+  }
+
+  switchDieselEngine() {
+    this.editForm.patchValue({ dieselEngine: !this.editForm.get('dieselEngine').value });
+  }
+
+  switchElectricEngine() {
+    this.editForm.patchValue({ electricEngine: !this.editForm.get('electricEngine').value });
+  }
+
+  switchOtherEngine() {
+    this.editForm.patchValue({ otherEngine: !this.editForm.get('otherEngine').value });
+  }
+
+  switchTurbo() {
+    this.editForm.patchValue({ turbo: !this.editForm.get('turbo').value });
+  }
+
+  switchRebranded() {
+    this.editForm.patchValue({ rebranded: !this.editForm.get('rebranded').value });
+  }
 }

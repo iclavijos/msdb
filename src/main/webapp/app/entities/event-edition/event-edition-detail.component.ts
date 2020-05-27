@@ -66,7 +66,7 @@ export class EventEditionDetailComponent implements OnInit {
 
   bestTimesColumns: string[];
 
-  private lightboxAlbum: any[] = [];
+  public lightboxAlbum: any[] = [];
 
   constructor(
     private eventService: EventService,

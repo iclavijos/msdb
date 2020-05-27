@@ -14,6 +14,7 @@ export interface IDriver {
   portraitContentType?: string;
   portrait?: any;
   portraitUrl?: string;
+  age?: number;
 }
 
 export class Driver implements IDriver {
@@ -28,6 +29,7 @@ export class Driver implements IDriver {
     public deathPlace?: string,
     public portraitContentType?: string,
     public portrait?: any,
-    public portraitUrl?: string
+    public portraitUrl?: string,
+    public age?: number
   ) {}
 }

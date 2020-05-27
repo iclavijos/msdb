@@ -34,7 +34,7 @@
                         <div class="alert alert-warning" [hidden]="teams?.length > 0 || isLoadingResults">
                             <span jhiTranslate="motorsportsDatabaseApp.team.home.notFound">No team found</span>
                         </div>
-                        <div class="table-responsive" [hidden]="team?.length === 0">
+                        <div class="table-responsive" [hidden]="teams?.length === 0">
                             <table mat-table class="table table-hover" [dataSource]="teams"
                                    matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
 

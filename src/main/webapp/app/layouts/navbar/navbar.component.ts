@@ -34,7 +34,7 @@ export class NavbarComponent implements OnInit {
   langs: any[];
   swaggerEnabled: boolean;
   version: string;
-  private userFullName: string;
+  public userFullName: string;
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
     map(result => result.matches),
@@ -50,7 +50,7 @@ export class NavbarComponent implements OnInit {
     private sessionStorage: SessionStorageService,
     private accountService: AccountService,
     private profileService: ProfileService,
-    private router: Router,
+    public router: Router,
     private breakpointObserver: BreakpointObserver
   ) {
     this.location = location;

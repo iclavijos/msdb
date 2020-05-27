@@ -14,7 +14,7 @@ import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 
 import { MatDialog } from '@angular/material/dialog';
 
-import moment from 'moment-timezone';
+import * as moment from 'moment-timezone';
 
 @Component({
   selector: 'jhi-event-session',

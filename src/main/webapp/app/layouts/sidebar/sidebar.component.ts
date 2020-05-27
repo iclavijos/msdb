@@ -37,7 +37,7 @@ export class SidebarComponent implements OnInit {
 
   constructor() {}
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize() {
     this.innerWidth = window.innerWidth;
   }

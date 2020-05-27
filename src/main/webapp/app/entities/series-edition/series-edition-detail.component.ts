@@ -37,17 +37,17 @@ export class SeriesEditionDetailComponent implements OnInit {
     window.history.back();
   }
 
-  private getPosterUrl(posterUrl: string): string {
+  public getPosterUrl(posterUrl: string): string {
     if (posterUrl) return posterUrl;
 
     return this.genericPosterUrl;
   }
 
-  private getFaceUrl(faceUrl: string, numDrivers: number, thumbSize: number): string {
+  public getFaceUrl(faceUrl: string, numDrivers: number, thumbSize: number): string {
     return this.imagesService.getFaceUrl(faceUrl, thumbSize, thumbSize);
   }
 
-  private concatDriverNames(drivers: any[]): string {
+  public concatDriverNames(drivers: any[]): string {
     return drivers.map(d => d.driverName).join(', ');
   }
 }

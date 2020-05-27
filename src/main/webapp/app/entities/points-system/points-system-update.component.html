@@ -28,7 +28,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <label jhiTranslate="motorsportsDatabaseApp.pointsSystem.active">Active</label>
-                                    <i [ngClass]="editForm.get('active').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="editForm.get('active').value = !editForm.get('active').value"></i>
+                                    <i [ngClass]="editForm.get('active').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="switchActive()"></i>
                                 </div>
                             </div>
                             <div class="row">
@@ -148,7 +148,7 @@
                                                     <div class="form-group col-lg-4 col-md-4">
                                                         <label jhiTranslate="motorsportsDatabaseApp.pointsSystem.pitlaneStartAllowed">Pitlane start allowed</label>
                                                         <i [ngClass]="editForm.get('pitlaneStartAllowed').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"
-                                                           (click)="editForm.get('pitlaneStartAllowed').value = !editForm.get('pitlaneStartAllowed').value"></i>
+                                                           (click)="switchPitlaneStart()"></i>
                                                     </div>
                                                 </div>
                                             </div>

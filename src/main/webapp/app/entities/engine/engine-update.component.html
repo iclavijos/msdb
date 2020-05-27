@@ -96,23 +96,23 @@
                             <div class="row">
                                 <div class="col-md-2">
                                     <label jhiTranslate="motorsportsDatabaseApp.engine.petrolEngine">Petrol Engine</label>
-                                    <i [ngClass]="editForm.get('petrolEngine').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="editForm.get('petrolEngine').value = !editForm.get('petrolEngine').value"></i>
+                                    <i [ngClass]="editForm.get('petrolEngine').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="switchPetrolEngine()"></i>
                                 </div>
                                 <div class="col-md-2">
                                     <label jhiTranslate="motorsportsDatabaseApp.engine.dieselEngine">Diesel Engine</label>
-                                    <i [ngClass]="editForm.get('dieselEngine').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="editForm.get('dieselEngine').value = !editForm.get('dieselEngine').value"></i>
+                                    <i [ngClass]="editForm.get('dieselEngine').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="switchDieselEngine()"></i>
                                 </div>
                                 <div class="col-md-2">
                                     <label jhiTranslate="motorsportsDatabaseApp.engine.electricEngine">Electric Engine</label>
-                                    <i [ngClass]="editForm.get('electricEngine').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="editForm.get('electricEngine').value = !editForm.get('electricEngine').value"></i>
+                                    <i [ngClass]="editForm.get('electricEngine').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="switchElectricEngine()"></i>
                                 </div>
                                 <div class="col-md-2">
                                     <label jhiTranslate="motorsportsDatabaseApp.engine.otherEngine">Other Engine</label>
-                                    <i [ngClass]="editForm.get('otherEngine').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="editForm.get('otherEngine').value = !editForm.get('otherEngine').value"></i>
+                                    <i [ngClass]="editForm.get('otherEngine').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="switchOtherEngine()"></i>
                                 </div>
                                 <div class="col-md-2">
                                     <label jhiTranslate="motorsportsDatabaseApp.engine.turbo">Turbo</label>
-                                    <i [ngClass]="editForm.get('turbo').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="editForm.get('turbo').value = !editForm.get('turbo').value"></i>
+                                    <i [ngClass]="editForm.get('turbo').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="switchTurbo()"></i>
                                 </div>
                             </div>
                             <div class="row">
@@ -130,7 +130,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <label jhiTranslate="motorsportsDatabaseApp.engine.rebranded">Rebranded</label> <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.engine.rebrandedTooltip' | translate }}"></i>
-                                    <i [ngClass]="editForm.get('rebranded').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="editForm.get('rebranded').value = !editForm.get('rebranded').value"></i>
+                                    <i [ngClass]="editForm.get('rebranded').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="switchRebranded()"></i>
                                 </div>
                             </div>
                             <div class="row">

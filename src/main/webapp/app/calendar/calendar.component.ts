@@ -34,6 +34,8 @@ export class MyEvent {
   seriesLogoUrl: string;
   allDay = false;
   status: string;
+
+  event: any;
 }
 
 @Component({
@@ -47,11 +49,11 @@ export class EventDialogComponent {
     protected router: Router
   ) {}
 
-  private close() {
+  public close() {
     this.dialogRef.close();
   }
 
-  private navigateToEvent(event: IEventEdition) {
+  public navigateToEvent(event: IEventEdition) {
     this.dialogRef.close();
     this.router.navigate(['/event/edition', event.id, 'view-ed']);
   }
@@ -147,5 +149,9 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       result.push(newEvent);
     }
     return result;
+  }
+
+  changeTimezone() {
+    this.convertEvents(this.sessions, this.timezone);
   }
 }

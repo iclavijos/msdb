@@ -63,7 +63,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <label jhiTranslate="motorsportsDatabaseApp.racetrackLayout.active">Active</label>
-                                    <i [ngClass]="editForm.get('active').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="editForm.get('active').value = !editForm.get('active').value"></i>
+                                    <i [ngClass]="editForm.get('active').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="switchActive()"></i>
                                 </div>
                             </div>
                             <div class="row">

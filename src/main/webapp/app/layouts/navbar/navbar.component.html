@@ -90,7 +90,7 @@
 </mat-menu>
 
 <mat-menu #languages="matMenu">
-    <button mat-menu-item *ngFor="let lang of langs" (click)="changeLanguage(lang);collapseNavbar();">
+    <button mat-menu-item *ngFor="let lang of langs" (click)="changeLanguage(lang);">
         {{lang | findLanguageFromKey}}
     </button>
 </mat-menu>

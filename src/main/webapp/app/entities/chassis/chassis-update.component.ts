@@ -164,4 +164,8 @@ export class ChassisUpdateComponent implements OnInit {
   protected onError(errorMessage: string) {
     this.jhiAlertService.error(errorMessage, null, null);
   }
+
+  switchRebranded() {
+    this.editForm.patchValue({ rebranded: !this.editForm.get('rebranded').value });
+  }
 }

@@ -74,7 +74,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <label jhiTranslate="motorsportsDatabaseApp.chassis.rebranded">Rebranded</label> <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.chassis.rebrandedTooltip' | translate }}"></i>
-                                    <i [ngClass]="editForm.get('rebranded').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="editForm.get('rebranded').value = !editForm.get('rebranded').value"></i>
+                                    <i [ngClass]="editForm.get('rebranded').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="switchRebranded()"></i>
                                 </div>
                             </div>
                             <div class="row">
