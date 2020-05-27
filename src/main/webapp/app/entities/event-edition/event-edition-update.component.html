@@ -92,7 +92,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <mat-label>{{'motorsportsDatabaseApp.eventEdition.allowedCategories' | translate }}</mat-label>
                                     <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
                                         <mat-selection-list [compareWith]="compareCategories" name="allowedCategories" id="field_allowedCategories" formControlName="allowedCategories">
@@ -101,6 +101,13 @@
                                             </mat-list-option>
                                         </mat-selection-list>
                                     </cdk-virtual-scroll-viewport>
+                                </div>
+                                <div class="col-3">
+                                    <mat-list>
+                                        <mat-list-item *ngFor="let cat of editForm.get('allowedCategories').value">
+                                            <p mat-line>{{cat.name}}</p>
+                                        </mat-list-item>
+                                    </mat-list>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="row">
@@ -137,6 +144,25 @@
                                                     </mat-option>
                                                 </mat-autocomplete>
                                             </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="col-md-6">
+                                                <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.poster" for="field_poster">Event edition poster</label>
+                                                <div>
+                                                    <img [src]="editForm.get('posterUrl').value" style="max-height: 100px;" *ngIf="!editForm.get('poster').value && editForm.get('posterUrl').value != null" alt="event edition poster"/>
+                                                    <img [src]="'data:' + editForm.get('posterContentType').value + ';base64,' + editForm.get('poster').value" style="max-height: 100px;" *ngIf="editForm.get('poster').value" alt="event edition poster"/>
+                                                    <div *ngIf="editForm.get('poster').value" class="form-text text-danger clearfix">
+                                                        <button type="button" (click)="clearInputImage('poster', 'posterContentType', 'fileImage')" class="btn btn-secondary btn-xs pull-right">
+                                                            <span class="fa fa-times"></span>
+                                                        </button>
+                                                    </div>
+                                                    <input type="file" id="file_poster" (change)="setFileData($event, 'poster', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                                                </div>
+                                                <input type="hidden" class="form-control" name="image" id="field_poster" formControlName="poster"/>
+                                                <input type="hidden" class="form-control" name="imageContentType" id="field_posterContentType" formControlName="posterContentType" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

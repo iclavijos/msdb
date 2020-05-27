@@ -127,7 +127,17 @@ public class EventEditionResource {
         if (eventEdition.getId() != null) {
             throw new BadRequestAlertException("A new eventEdition cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
         EventEdition result = eventEditionRepository.save(eventEdition);
+        if (eventEdition.getPoster() != null) {
+            result.setPosterUrl(updateImage(
+                eventEdition.getPoster(),
+                null,
+                result.getId().toString(),
+                "affiche"
+                ));
+            result = eventEditionRepository.save(result);
+        }
         eventEditionSearchRepo.save(result);
         if (result.getSeriesEditions() != null) {
         	result.getSeriesId().forEach(id -> cacheHandler.resetWinnersCache(id));
@@ -163,7 +173,19 @@ public class EventEditionResource {
         if (result.getSeriesEditions() != null) {
     		eventEdition.setSeriesEditions(result.getSeriesEditions());
     	}
+
+        if (eventEdition.getPoster() != null || result.getPosterUrl() != null) {
+            eventEdition.setId(result.getId());
+            eventEdition.setPosterUrl(updateImage(
+                eventEdition.getPoster(),
+                eventEdition.getPosterUrl(),
+                result.getId().toString(),
+                "affiche"
+            ));
+            result = eventEditionRepository.save(result);
+        }
         result = eventEditionRepository.save(eventEdition);
+
         eventEditionSearchRepo.deleteById(result.getId()); //TODO: Temporary fix to avoid duplicity after cloning series edition
         eventEditionSearchRepo.save(result);
 
@@ -229,6 +251,10 @@ public class EventEditionResource {
         });
         eventSessionRepository.deleteInBatch(sessions);
         eventEntryRepository.deleteByEventEdition(eventEd);
+
+        if (eventEd.getPosterUrl() != null) {
+            cdnService.deleteImage(id.toString(), "affiche");
+        }
 
         eventEditionRepository.deleteById(id);
         eventEditionSearchRepo.deleteById(id);
@@ -682,5 +708,17 @@ public class EventEditionResource {
             .headers(HeaderUtil
                 .createEntityUpdateAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .body(event);
+    }
+
+    private String updateImage(byte[] image, String imageUrl, String id, String folder) {
+        if (image != null) {
+            return cdnService.uploadImage(id, image, folder);
+        } else if (imageUrl == null) {
+            if (id != null) {
+                cdnService.deleteImage(id, folder);
+                return null;
+            }
+        }
+        return imageUrl;
     }
 }

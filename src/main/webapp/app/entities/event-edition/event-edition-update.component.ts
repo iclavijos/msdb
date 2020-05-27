@@ -138,6 +138,49 @@ export class EventEditionUpdateComponent implements OnInit {
     });
   }
 
+  byteSize(field) {
+    return this.dataUtils.byteSize(field);
+  }
+
+  openFile(contentType, field) {
+    return this.dataUtils.openFile(contentType, field);
+  }
+
+  setFileData(event, field: string, isImage) {
+    return new Promise((resolve, reject) => {
+      if (event && event.target && event.target.files && event.target.files[0]) {
+        const file: File = event.target.files[0];
+        if (isImage && !file.type.startsWith('image/')) {
+          reject(`File was expected to be an image but was found to be ${file.type}`);
+        } else {
+          const filedContentType: string = field + 'ContentType';
+          this.dataUtils.toBase64(file, base64Data => {
+            this.editForm.patchValue({
+              [field]: base64Data,
+              [filedContentType]: file.type
+            });
+          });
+        }
+      } else {
+        reject(`Base64 data was not set as file could not be extracted from passed parameter: ${event}`);
+      }
+    }).then(
+      // eslint-disable-next-line no-console
+      () => {}, // success
+      this.onError
+    );
+  }
+
+  clearInputImage(field: string, fieldContentType: string, idInput: string) {
+    this.editForm.patchValue({
+      [field]: null,
+      [fieldContentType]: null
+    });
+    if (this.elementRef && idInput && this.elementRef.nativeElement.querySelector('#' + idInput)) {
+      this.elementRef.nativeElement.querySelector('#' + idInput).value = null;
+    }
+  }
+
   compareCategories(c1: ICategory, c2: ICategory) {
     return c1 && c2 && c1.name === c2.name;
   }
