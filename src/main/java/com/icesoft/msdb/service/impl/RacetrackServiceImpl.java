@@ -100,7 +100,6 @@ public class RacetrackServiceImpl implements RacetrackService {
     public RacetrackLayout save(RacetrackLayout layout) {
         log.debug("Request to save RacetrackLayout : {}", layout);
 
-
         if (layout.getLayoutImage() != null) {
         	byte[] layoutImg = layout.getLayoutImage();
         	layout = racetrackLayoutRepository.save(layout);
