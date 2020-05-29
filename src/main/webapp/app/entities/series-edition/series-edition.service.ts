@@ -52,4 +52,56 @@ export class SeriesEditionService {
   findEvents(id: number): Observable<HttpResponse<IEventEdition[]>> {
     return this.http.get<IEventEdition[]>(`${this.resourceUrl}/${id}/events`, { observe: 'response' });
   }
+
+  findDriversStandings(id: number): Observable<HttpResponse<any[]>> {
+    return this.http.get<HttpResponse<any[]>>(`${this.resourceUrl}/${id}/standings/drivers`);
+  }
+
+  findTeamsStandings(id: number): Observable<HttpResponse<any[]>> {
+    return this.http.get<HttpResponse<any[]>>(`${this.resourceUrl}/${id}/standings/teams`);
+  }
+
+  findManufacturersStandings(id: number): Observable<HttpResponse<any[]>> {
+    return this.http.get<HttpResponse<any[]>>(`${this.resourceUrl}/${id}/standings/manufacturers`);
+  }
+
+  findDriversChampions(id: number): Observable<HttpResponse<any[]>> {
+    return this.http.get<HttpResponse<any[]>>(`${this.resourceUrl}/${id}/champions/drivers`);
+  }
+
+  findTeamsChampions(id: number): Observable<HttpResponse<any[]>> {
+    return this.http.get<HttpResponse<any[]>>(`${this.resourceUrl}/${id}/champions/teams`);
+  }
+
+  findDriversResultsByRace(id: number, category: string): Observable<HttpResponse<any[]>> {
+    return this.http.get<HttpResponse<any[]>>(`${this.resourceUrl}/${id}/results/${category}`);
+  }
+
+  findDriversPointsByRace(id: number, category: string): Observable<HttpResponse<any[]>> {
+    return this.http.get<HttpResponse<any[]>>(`${this.resourceUrl}/${id}/points/${category}`);
+  }
+
+  addEventToSeries(seriesId: number, eventId: number, racesData: any) {
+    return this.http.post(`${this.resourceUrl}/${seriesId}/events/${eventId}`, racesData);
+  }
+
+  removeEventFromSeries(seriesId: number, eventId: number) {
+    return this.http.delete(`${this.resourceUrl}/${seriesId}/events/${eventId}`);
+  }
+
+  clone(seriesEditionId: number, newPeriod: string) {
+    return this.http.post(`${this.resourceUrl}/${seriesEditionId}/clone`, newPeriod);
+  }
+
+  updateStandings(seriesId: number) {
+    return this.http.post(`${this.resourceUrl}/${seriesId}/standings`, null);
+  }
+
+  setDriversChampions(seriesEditionId: number, selectedDriversId: any) {
+    return this.http.post(`${this.resourceUrl}/${seriesEditionId}/champions/drivers`, selectedDriversId);
+  }
+
+  setTeamsChampions(seriesEditionId: number, selectedTeamsId: any) {
+    return this.http.post(`${this.resourceUrl}/${seriesEditionId}/champions/teams`, selectedTeamsId);
+  }
 }

@@ -49,7 +49,7 @@ public interface DriverEventPointsRepository extends JpaRepository<DriverEventPo
         "join driver d on dep.driver_id = d.id " +
         "left join category c on dep.category_id = c.id " +
         "WHERE se.id = ?1 " +
-        "GROUP BY ee.long_event_name, es.name, d.name, d.surname " +
-        "ORDER BY es.session_start_time ASC, points DESC", nativeQuery = true)
+        "GROUP BY e.name, es.name, d.name, d.surname, c.shortname " +
+        "ORDER BY ANY_VALUE(es.start_time_ts) ASC, points DESC", nativeQuery = true)
 	List<Object[]> getDriversPointsInSeries(Long seriesEditionId);
 }

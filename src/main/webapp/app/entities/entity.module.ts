@@ -1,8 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { MotorsportsDatabaseStandingsModule } from './standings/standings.module';
+
 @NgModule({
   imports: [
+    MotorsportsDatabaseStandingsModule,
     RouterModule.forRoot([
       {
         path: 'driver',

@@ -10,22 +10,130 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-12 text-right">
-                                <mat-button-toggle-group #viewType="matButtonToggleGroup" value="grid">
-                                    <mat-button-toggle value="grid" aria-label="Grid view">
-                                        <mat-icon>view_module</mat-icon>
-                                    </mat-button-toggle>
-                                    <mat-button-toggle value="list" aria-label="List view">
-                                        <mat-icon>list</mat-icon>
-                                    </mat-button-toggle>
-                                </mat-button-toggle-group>
+                            <div class="col-md-12">
+                                <mat-tab-group dynamicHeight mat-stretch-tabs>
+                                    <mat-tab label="{{'global.menu.calendar' | translate }}">
+                                        <div class="row">
+                                            <div class="col-12 text-right">
+                                                <mat-button-toggle-group #viewType="matButtonToggleGroup" value="grid">
+                                                    <mat-button-toggle value="grid" aria-label="Grid view">
+                                                        <mat-icon>view_module</mat-icon>
+                                                    </mat-button-toggle>
+                                                    <mat-button-toggle value="list" aria-label="List view">
+                                                        <mat-icon>list</mat-icon>
+                                                    </mat-button-toggle>
+                                                </mat-button-toggle-group>
+                                            </div>
+                                        </div>
+                                        <div class="row" *ngIf="viewType.value === 'grid'">
+                                            <div *ngTemplateOutlet="gridViewTemplate"></div>
+                                        </div>
+                                        <div class="row" *ngIf="viewType.value === 'list'">
+                                            <div *ngTemplateOutlet="listViewTemplate"></div>
+                                        </div>
+                                    </mat-tab>
+                                    <mat-tab label="{{'motorsportsDatabaseApp.series.seriesEdition.detail.info' | translate }}">
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <dl class="row-md jh-entity-details">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 col-md-4">
+                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.period">Period</span></dt>
+                                                            <dd>
+                                                                <span>{{seriesEdition.period}}</span>
+                                                            </dd>
+                                                        </div>
+                                                        <div class="col-lg-8 col-md-8">
+                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.numEvents">Number Events</span></dt>
+                                                            <dd>
+                                                                <span>{{seriesEdition.numEvents}}</span>
+                                                            </dd>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-lg-4 col-md-4">
+                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.singleChassis">Single Chassis</span></dt>
+                                                            <dd>
+                                                                <span><i [ngClass]="seriesEdition.singleChassis ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+                                                            </dd>
+                                                        </div>
+                                                        <div class="col-lg-4 col-md-4">
+                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.singleEngine">Single Engine</span></dt>
+                                                            <dd>
+                                                                <span><i [ngClass]="seriesEdition.singleEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+                                                            </dd>
+                                                        </div>
+                                                        <div class="col-lg-4 col-md-4">
+                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.singleTyre">Single Tyre</span></dt>
+                                                            <dd>
+                                                                <span><i [ngClass]="seriesEdition.singleTyre ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+                                                            </dd>
+                                                        </div>
+                                                    </div>
+                                                    <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.allowedCategories">Allowed Categories</span></dt>
+                                                    <dd>
+                                                        <ul class="list-unstyled">
+                                                            <li *ngFor="let category of seriesEdition.allowedCategories">
+                                                                <span>{{category.name}} ({{category.shortname}})</span>
+                                                            </li>
+                                                        </ul>
+                                                    </dd>
+                                                    <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.pointsSystems">Points Systems</span></dt>
+                                                    <dd>
+                                                        <ul class="list-unstyled">
+                                                            <li *ngFor="let pointsSystem of seriesEdition.pointsSystems">
+                                                                <span>{{pointsSystem.name}} ({{pointsSystem.description}})</span>
+                                                            </li>
+                                                        </ul>
+                                                    </dd>
+                                                    <dt *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
+                                                        <button [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/drivers-champions-edit' } }]"
+                                                                class="btn btn-primary btn-sm">
+                                                            <span class="fa fa-pencil"></span><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.driversChampions.edit">Update drivers Champions</span>
+                                                        </button>
+                                                        <button *ngIf="seriesEdition.teamsStandings"
+                                                                [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/teams-champions-edit' } }]"
+                                                                class="btn btn-primary btn-sm">
+                                                            <span class="fa fa-pencil"></span><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.updateTeamsChampions">Update teams Champions</span>
+                                                        </button>
+                                                        <button *ngIf="seriesEdition.manufacturersStandings"
+                                                                [routerLink]="['/', { outlets: { popup: seriesEdition.id + '/manufacturers-champions-edit' } }]"
+                                                                class="btn btn-primary btn-sm">
+                                                            <span class="fa fa-pencil"></span><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.updateManufacturersChampions">Update manufacturers Champions</span>
+                                                        </button>
+                                                    </dt>
+                                                    <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.champions">Champions</span></dt>
+                                                    <dd>
+                                                        <div class="row">
+                                                            <div [ngClass]="colsChampsDriver" *ngFor="let driver of driversChampions">
+                                                                <figure class="figure">
+                                                                    <img [src]="driver.driverImage" alt="{{driver.driverName}}" class="img-fluid" />
+                                                                    <figcaption class="figure-caption text-center">{{driver.driverName}}</figcaption>
+                                                                </figure>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row" *ngIf="seriesEdition.teamsStandings">
+                                                            <div [ngClass]="colsChampsTeam" *ngFor="let team of teamsChampions">
+                                                                <figure class="figure">
+                                                                    <img [src]="team.teamImage" alt="{{team.teamName}}" class="img-fluid" />
+                                                                    <figcaption class="figure-caption text-center">{{team.teamName}}</figcaption>
+                                                                </figure>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row" *ngIf="seriesEdition.manufacturersStandings">
+
+                                                        </div>
+                                                    </dd>
+                                                </dl>
+                                            </div>
+                                            <div class="col-10">
+                                                <jhi-standings [seriesEdition]="seriesEdition">Standings...</jhi-standings>
+                                            </div>
+                                        </div>
+                                    </mat-tab>
+                                </mat-tab-group>
                             </div>
-                        </div>
-                        <div class="row" *ngIf="viewType.value === 'grid'">
-                            <div *ngTemplateOutlet="gridViewTemplate"></div>
-                        </div>
-                        <div class="row" *ngIf="viewType.value === 'list'">
-                            <div *ngTemplateOutlet="listViewTemplate"></div>
                         </div>
                     </div>
                 </div>

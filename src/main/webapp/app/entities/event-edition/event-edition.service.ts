@@ -73,4 +73,14 @@ export class EventEditionService {
   rescheduleEvent(eventId: number, newDate: moment.Moment) {
     return this.http.put<IEventEdition>(`${this.resourceUrl}/${eventId}/reschedule`, newDate, { observe: 'response' });
   }
+
+  loadDriversPoints(id: number, seriesId: number) {
+    let endpoint: string;
+    if (seriesId !== undefined) {
+      endpoint = `${this.resourceUrl}/${seriesId}/${id}/points`;
+    } else {
+      endpoint = `${this.resourceUrl}/${id}/points`;
+    }
+    return this.http.get<any>(endpoint);
+  }
 }

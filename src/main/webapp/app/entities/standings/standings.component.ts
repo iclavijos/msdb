@@ -1,14 +1,15 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
-import { EventEditionService } from '../event-edition';
-import { SeriesEdition, SeriesEditionService } from '../series-edition';
+import { EventEditionService } from 'app/entities/event-edition/event-edition.service';
+import { SeriesEditionService } from 'app/entities/series-edition/series-edition.service';
+import { SeriesEdition } from 'app/shared/model/series-edition.model';
 
 @Component({
   selector: 'jhi-standings',
   templateUrl: './standings.component.html',
-  styleUrls: ['standings.css']
+  styleUrls: ['standings.scss']
 })
 export class StandingsComponent implements OnInit {
   drivers: any;
@@ -18,8 +19,8 @@ export class StandingsComponent implements OnInit {
   teamsUnfiltered: any;
   manufacturersUnfiltered: any;
   headers: any;
-  pointsByRace: any;
-  resultsByRace: any;
+  pointsByRace = [];
+  resultsByRace = [];
   numRaces: number;
   @Input() eventEditionId: number;
   @Input() seriesEdition: SeriesEdition;
@@ -35,7 +36,7 @@ export class StandingsComponent implements OnInit {
   constructor(
     private eventEditionService: EventEditionService,
     private seriesEditionService: SeriesEditionService,
-    private http: Http,
+    private http: HttpClient,
     private router: Router
   ) {}
 
@@ -47,7 +48,7 @@ export class StandingsComponent implements OnInit {
         this.selectSeriesEditions = this.seriesEditionIds.length > 1;
       }
       this.eventEditionService.loadDriversPoints(this.eventEditionId, seriesId).subscribe(driversPoints => {
-        this.drivers = driversPoints.json;
+        this.drivers = driversPoints;
       });
     } else if (this.seriesEdition) {
       this.showExtendedStandings = true;
@@ -55,30 +56,30 @@ export class StandingsComponent implements OnInit {
       this.filterCategory = this.seriesEdition.allowedCategories[0].shortname;
 
       this.seriesEditionService.findDriversStandings(this.seriesEdition.id).subscribe(driversStandings => {
-        this.driversUnfiltered = driversStandings.json();
+        this.driversUnfiltered = driversStandings;
         if (this.seriesEdition.standingsPerCategory) {
           this.drivers = this.driversUnfiltered.filter(d => d.category === this.filterCategory);
         } else {
-          this.drivers = driversStandings.json();
+          this.drivers = driversStandings;
         }
       });
       if (this.seriesEdition.teamsStandings) {
         this.seriesEditionService.findTeamsStandings(this.seriesEdition.id).subscribe(teamsStandings => {
-          this.teamsUnfiltered = teamsStandings.json();
+          this.teamsUnfiltered = teamsStandings;
           if (this.seriesEdition.standingsPerCategory) {
             this.teams = this.teamsUnfiltered.filter(d => d.category === this.filterCategory);
           } else {
-            this.teams = teamsStandings.json();
+            this.teams = teamsStandings;
           }
         });
       }
       if (this.seriesEdition.manufacturersStandings) {
         this.seriesEditionService.findManufacturersStandings(this.seriesEdition.id).subscribe(manufacturersStandings => {
-          this.manufacturersUnfiltered = manufacturersStandings.json();
+          this.manufacturersUnfiltered = manufacturersStandings;
           if (this.seriesEdition.standingsPerCategory) {
             this.manufacturers = this.manufacturersUnfiltered.filter(d => d.category === this.filterCategory);
           } else {
-            this.manufacturers = manufacturersStandings.json();
+            this.manufacturers = manufacturersStandings;
           }
         });
       }
@@ -90,10 +91,10 @@ export class StandingsComponent implements OnInit {
 
   private updateDriversPoints() {
     this.seriesEditionService.findDriversPointsByRace(this.seriesEdition.id, this.filterCategory).subscribe(pointsByRace => {
-      this.pointsByRace = pointsByRace.json();
-      this.numRaces = this.pointsByRace[0].length - 2;
+      this.pointsByRace = pointsByRace;
+      this.numRaces = pointsByRace[0].length - 2;
       this.data = {
-        labels: this.pointsByRace[0].slice(1, this.numRaces + 1),
+        labels: pointsByRace[0].slice(1, this.numRaces + 1),
         datasets: []
       };
       this.options = {
@@ -126,11 +127,11 @@ export class StandingsComponent implements OnInit {
 
   private updateDriversResults() {
     this.seriesEditionService.findDriversResultsByRace(this.seriesEdition.id, this.filterCategory).subscribe(resultsByRace => {
-      this.resultsByRace = resultsByRace.json();
+      this.resultsByRace = resultsByRace;
     });
   }
 
-  changeCategory(event) {
+  changeCategory() {
     this.drivers = this.driversUnfiltered.filter(d => d.category === this.filterCategory);
     if (this.teamsUnfiltered) {
       this.teams = this.teamsUnfiltered.filter(d => d.category === this.filterCategory);
@@ -139,7 +140,7 @@ export class StandingsComponent implements OnInit {
       this.manufacturers = this.manufacturersUnfiltered.filter(d => d.category === this.filterCategory);
     }
     this.updateDriversResults();
-    let data = {
+    const data = {
       labels: this.pointsByRace[0].slice(1, this.numRaces + 1),
       datasets: []
     };
@@ -149,25 +150,25 @@ export class StandingsComponent implements OnInit {
   }
 
   refreshGraphic() {
-    let data = {
+    const data = {
       labels: this.pointsByRace[0].slice(1, this.numRaces + 1),
       datasets: []
     };
-    for (let driver of this.selectedDrivers) {
+    for (const driver of this.selectedDrivers) {
       let accPoints = 0;
       let driverPoints: any;
-      for (let points of this.pointsByRace) {
+      for (const points of this.pointsByRace) {
         if (points[0] === driver) {
           driverPoints = points;
         }
       }
-      let pointsData = [];
+      const pointsData = [];
       for (let i = 1; i < driverPoints.length - 1; i++) {
-        accPoints += parseInt(driverPoints[i]);
+        accPoints += parseInt(driverPoints[i], 10);
         pointsData.push(accPoints);
       }
       const randomColor = this.randomColor();
-      let dataset = {
+      const dataset = {
         label: driver,
         data: pointsData,
         fill: false,
@@ -182,30 +183,30 @@ export class StandingsComponent implements OnInit {
 
   randomColor(brightness = 3) {
     // Six levels of brightness from 0 to 5, 0 being the darkest
-    var rgb = [Math.random() * 256, Math.random() * 256, Math.random() * 256];
-    var mix = [brightness * 51, brightness * 51, brightness * 51]; //51 => 255/5
-    var mixedrgb = [rgb[0] + mix[0], rgb[1] + mix[1], rgb[2] + mix[2]].map(function(x) {
+    const rgb = [Math.random() * 256, Math.random() * 256, Math.random() * 256];
+    const mix = [brightness * 51, brightness * 51, brightness * 51]; // 51 => 255/5
+    const mixedrgb = [rgb[0] + mix[0], rgb[1] + mix[1], rgb[2] + mix[2]].map(function(x) {
       return Math.round(x / 2.0);
     });
     return 'rgb(' + mixedrgb.join(',') + ')';
   }
 
   getPointsDetail(driverId: number) {
-    if (this.eventEditionId != undefined) {
+    if (this.eventEditionId !== undefined) {
       this.router.navigate([
         '/driver-points-details',
         {
           eventEditionId: this.eventEditionId,
-          driverId: driverId,
+          driverId,
           seriesEditionIds: this.seriesEditionIds
         }
       ]);
     } else {
-      //Navigate to popup with points in series edition
+      // Navigate to popup with points in series edition
       this.router.navigate([
         '/driver-points-series',
         {
-          driverId: driverId,
+          driverId,
           seriesEditionId: this.seriesEdition.id
         }
       ]);
@@ -217,7 +218,7 @@ export class StandingsComponent implements OnInit {
       return false;
     }
     this.eventEditionService.loadDriversPoints(this.eventEditionId, id).subscribe(driversPoints => {
-      this.drivers = driversPoints.json;
+      this.drivers = driversPoints;
     });
   }
 }
