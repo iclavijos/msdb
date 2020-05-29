@@ -73,12 +73,12 @@ export class SeriesEditionService {
     return this.http.get<HttpResponse<any[]>>(`${this.resourceUrl}/${id}/champions/teams`);
   }
 
-  findDriversResultsByRace(id: number, category: string): Observable<HttpResponse<any[]>> {
-    return this.http.get<HttpResponse<any[]>>(`${this.resourceUrl}/${id}/results/${category}`);
+  findDriversResultsByRace(id: number, category: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.resourceUrl}/${id}/results/${category}`);
   }
 
-  findDriversPointsByRace(id: number, category: string): Observable<HttpResponse<any[]>> {
-    return this.http.get<HttpResponse<any[]>>(`${this.resourceUrl}/${id}/points/${category}`);
+  findDriversPointsByRace(id: number, category: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.resourceUrl}/${id}/points/${category}`);
   }
 
   addEventToSeries(seriesId: number, eventId: number, racesData: any) {
