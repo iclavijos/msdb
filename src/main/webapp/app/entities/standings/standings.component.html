@@ -8,160 +8,152 @@
 </div>
 <mat-tab-group dynamicHeight mat-stretch-tabs>
     <mat-tab label="{{'motorsportsDatabaseApp.series.seriesEdition.detail.standings' | translate }}">
-        <ng-template matTabContent>
-            <div class="row" *ngIf="selectSeriesEditions">
-                <div class="col-lg-2 col-md-2">
-                    <select class="form-control" id="field_switchSeries" name="switchSeries" (change)="switchSeries($event.target.value)">
-                        <ng-template ngFor let-item [ngForOf]="seriesEditionIds" let-currentIndex="index">
-                            <option [value]="item">{{seriesEditionNames[currentIndex]}}</option>
-                        </ng-template>
-                    </select>
-                </div>
+        <div class="row" *ngIf="selectSeriesEditions">
+            <div class="col-lg-2 col-md-2">
+                <select class="form-control" id="field_switchSeries" name="switchSeries" (change)="switchSeries($event.target.value)">
+                    <ng-template ngFor let-item [ngForOf]="seriesEditionIds" let-currentIndex="index">
+                        <option [value]="item">{{seriesEditionNames[currentIndex]}}</option>
+                    </ng-template>
+                </select>
             </div>
-            <div class="row">
-                <div class="col-4">
-                    <div class="card standings-card">
-                        <div class="card-header">
-                            <h4>{{'motorsportsDatabaseApp.series.seriesEdition.detail.driversStandings' | translate}}</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <table class="table table-sm">
-                                        <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.driver' | translate}}</th>
-                                            <th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
-                                            <th *ngIf="eventEditionId"></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr *ngFor="let driver of drivers; let i = index">
-                                            <td>{{i + 1}}</td>
-                                            <td><a [routerLink]="['/driver', driver.driverId]">{{driver.driverName}}</a></td>
-                                            <td>{{driver.points}}</td>
-                                            <td *ngIf="eventEditionId"><div (click)="getPointsDetail(driver.driverId)"><i class="fa fa-search" aria-hidden="true"></i></div></td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <div class="card standings-card">
+                    <div class="card-header">
+                        <h4>{{'motorsportsDatabaseApp.series.seriesEdition.detail.driversStandings' | translate}}</h4>
                     </div>
-                </div>
-                <div class="col-md-4" *ngIf="teams">
-                    <div class="card standings-card">
-                        <div class="card-header">
-                            <h4>{{'motorsportsDatabaseApp.series.seriesEdition.detail.teamsStandings' | translate}}</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <table class="table table-sm">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-sm">
                                     <thead>
                                     <tr>
                                         <th></th>
-                                        <th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.team'	| translate}}</th>
+                                        <th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.driver' | translate}}</th>
                                         <th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
+                                        <th *ngIf="eventEditionId"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr *ngFor="let team of teams; let i = index">
+                                    <tr *ngFor="let driver of drivers; let i = index">
                                         <td>{{i + 1}}</td>
-                                        <td><a [routerLink]="['/team', team.teamId]">{{team.teamName}}</a></td>
-                                        <td>{{team.points}}</td>
+                                        <td><a [routerLink]="['/driver', driver.driverId]">{{driver.driverName}}</a></td>
+                                        <td>{{driver.points}}</td>
+                                        <td *ngIf="eventEditionId"><div (click)="getPointsDetail(driver.driverId)"><i class="fa fa-search" aria-hidden="true"></i></div></td>
                                     </tr>
                                     </tbody>
                                 </table>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card col-md-4" *ngIf="manufacturers">
-                    <div class="card-block">
-                        <h4 class="card-title">{{'motorsportsDatabaseApp.series.seriesEdition.detail.manufacturersStandings' | translate}}</h4>
-                        <div class="card-text">
-                            <table class="table table-sm">
+            </div>
+            <div class="col-md-4" *ngIf="teams">
+                <div class="card standings-card">
+                    <div class="card-header">
+                        <h4>{{'motorsportsDatabaseApp.series.seriesEdition.detail.teamsStandings' | translate}}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-sm">
                                 <thead>
                                 <tr>
                                     <th></th>
-                                    <th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.manufacturer'	| translate}}</th>
+                                    <th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.team'	| translate}}</th>
                                     <th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr *ngFor="let manufacturer of manufacturers; let i = index">
+                                <tr *ngFor="let team of teams; let i = index">
                                     <td>{{i + 1}}</td>
-                                    <td>{{manufacturer.manufacturerName}}</td>
-                                    <td>{{manufacturer.points}}</td>
+                                    <td><a [routerLink]="['/team', team.teamId]">{{team.teamName}}</a></td>
+                                    <td>{{team.points}}</td>
                                 </tr>
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </ng-template>
-    </mat-tab>
-    <mat-tab label="{{ 'motorsportsDatabaseApp.series.seriesEdition.detail.pointsPerRace' | translate }}">
-        <ng-template matTabContent>
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th class="rotate" *ngFor="let eventName of pointsByRace[0] | slice:1"><div><span>{{eventName}}</span></div></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr *ngFor="let row of pointsByRace | slice:1">
-                        <td *ngFor="let value of row; let isOdd=odd" [class.odd]="isOdd">{{value}}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </ng-template>
-    </mat-tab>
-    <mat-tab label="{{ 'motorsportsDatabaseApp.series.seriesEdition.detail.resultsPerRace' | translate }}">
-        <ng-template matTabContent>
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th class="rotate" *ngFor="let eventName of resultsByRace[0] | slice:1"><div><span>{{eventName}}</span></div></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr *ngFor="let row of resultsByRace | slice:1">
-                        <td>{{row[0]}}</td>
-                        <td *ngFor="let value of row | slice:1; let isOdd=odd" [class.odd]="isOdd"
-                            [class.retired]="value === 'DNF' || value === 'DNS' || value === 'NC'"
-                            [class.disqualified]="value === 'DSQ'"
-                            [class.winner]="value === '1'" [class.second]="value === '2'" [class.third]="value === '3'"
-                        >{{value}}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </ng-template>
-    </mat-tab>
-    <mat-tab label="{{ 'motorsportsDatabaseApp.series.seriesEdition.detail.graphics' | translate }}">
-        <ng-template matTabContent>
-            <div class="row">
-                <div class="col-lg-10 col-md-10">
-                    <p-chart type="line" [data]="data" [options]="options"></p-chart>
-                </div>
-                <div class="col-lg-2 col-md-2">
-                    <div *ngFor="let driver of drivers">
-                        <p-checkbox  name="groupDrivers" [(ngModel)]="selectedDrivers"
-                                     [value]="driver.driverName" [label]="driver.driverName" (onChange)="refreshGraphic()">
-                        </p-checkbox>
+            <div class="card col-md-4" *ngIf="manufacturers">
+                <div class="card-block">
+                    <h4 class="card-title">{{'motorsportsDatabaseApp.series.seriesEdition.detail.manufacturersStandings' | translate}}</h4>
+                    <div class="card-text">
+                        <table class="table table-sm">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.manufacturer'	| translate}}</th>
+                                <th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let manufacturer of manufacturers; let i = index">
+                                <td>{{i + 1}}</td>
+                                <td>{{manufacturer.manufacturerName}}</td>
+                                <td>{{manufacturer.points}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        </ng-template>
+        </div>
+    </mat-tab>
+    <mat-tab label="{{ 'motorsportsDatabaseApp.series.seriesEdition.detail.pointsPerRace' | translate }}">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th class="rotate" *ngFor="let eventName of pointsByRace[0] | slice:1"><div><span>{{eventName}}</span></div></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let row of pointsByRace | slice:1">
+                    <td *ngFor="let value of row; let isOdd=odd" [class.odd]="isOdd">{{value}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </mat-tab>
+    <mat-tab label="{{ 'motorsportsDatabaseApp.series.seriesEdition.detail.resultsPerRace' | translate }}">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th class="rotate" *ngFor="let eventName of resultsByRace[0] | slice:1"><div><span>{{eventName}}</span></div></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let row of resultsByRace | slice:1">
+                    <td>{{row[0]}}</td>
+                    <td *ngFor="let value of row | slice:1; let isOdd=odd" [class.odd]="isOdd"
+                        [class.retired]="value === 'DNF' || value === 'DNS' || value === 'NC'"
+                        [class.disqualified]="value === 'DSQ'"
+                        [class.winner]="value === '1'" [class.second]="value === '2'" [class.third]="value === '3'"
+                    >{{value}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </mat-tab>
+    <mat-tab label="{{ 'motorsportsDatabaseApp.series.seriesEdition.detail.graphics' | translate }}">
+        <div class="row">
+            <div class="col-lg-10 col-md-10">
+                <p-chart type="line" [data]="data" [options]="options"></p-chart>
+            </div>
+            <div class="col-lg-2 col-md-2">
+                <div *ngFor="let driver of drivers">
+                    <p-checkbox  name="groupDrivers" [(ngModel)]="selectedDrivers"
+                                 [value]="driver.driverName" [label]="driver.driverName" (onChange)="refreshGraphic()">
+                    </p-checkbox>
+                </div>
+            </div>
+        </div>
     </mat-tab>
 </mat-tab-group>
