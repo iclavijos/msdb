@@ -18,6 +18,17 @@ export class SeriesEditionDetailComponent implements OnInit {
 
   displayedColumns: string[] = ['date', 'name', 'poster', 'winners', 'buttons'];
 
+  driversStandings: any;
+  teamsStandings: any;
+  manufacturersStandings: any;
+  driversChampions: any[];
+  teamsChampions: any[];
+  numEvents = 0;
+  eventsProcessed = 0;
+  displayEvents = false;
+  colsChampsDriver = 'col-md-3';
+  colsChampsTeam = 'col-md-3';
+
   constructor(
     protected activatedRoute: ActivatedRoute,
     protected seriesEditionService: SeriesEditionService,
