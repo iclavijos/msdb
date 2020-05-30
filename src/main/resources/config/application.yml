@@ -93,7 +93,7 @@ spring:
     execution:
       thread-name-prefix: motorsports-database-task-
       pool:
-        core-size: 2
+        core-size: 10
         max-size: 50
         queue-capacity: 10000
     scheduling:

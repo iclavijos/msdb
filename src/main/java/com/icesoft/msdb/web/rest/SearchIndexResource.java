@@ -63,13 +63,4 @@ public class SearchIndexResource {
         return output;
     }
 
-    @GetMapping("/api/search/entries")
-    @Timed
-    public ResponseEntity<List<EventEntrySearchResultDTO>> searchEntries(@RequestParam String query, Pageable pageable) throws URISyntaxException {
-    	log.debug(String.format("REST request to search entries for '%s", query));
-    	Page<EventEntrySearchResultDTO> page = searchService.searchEntries(query, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-    }
-
 }

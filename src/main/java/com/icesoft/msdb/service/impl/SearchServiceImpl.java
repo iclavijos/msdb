@@ -3,21 +3,27 @@ package com.icesoft.msdb.service.impl;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.icesoft.msdb.MSDBException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.EventEditionEntry;
@@ -54,6 +60,7 @@ import com.icesoft.msdb.repository.search.TeamSearchRepository;
 import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 
 @Service
@@ -92,45 +99,96 @@ public class SearchServiceImpl implements SearchService {
 	@Autowired private RacetrackLayoutRepository racetrackLayoutRepo;
 	@Autowired private RacetrackLayoutSearchRepository racetrackLayoutSearchRepo;
 
+	@Autowired @Qualifier("taskExecutor") private Executor executor;
+	@Autowired TransactionTemplate txTemplate;
+
 	@Override
-	@Transactional(readOnly=false)
+	@Transactional()
 	public void rebuildIndexes() {
 		log.debug("Rebuilding search indexes");
-        log.debug("Building Drivers index");
-        updateSearchIndex(driverRepo.streamAll(), driverSearchRepo);
-        log.debug("Building Engines index");
-		updateSearchIndex(engineRepo.readAllByIdNotNull(), engineSearchRepo);
-        log.debug("Building Teams index");
-		updateSearchIndex(teamRepo.streamAll(), teamSearchRepo);
-        log.debug("Building Chassis index");
-		updateSearchIndex(chassisRepo.streamAllByIdNotNull(), chassisSearchRepo);
-        log.debug("Building Categories index");
-		updateSearchIndex(categoryRepo.streamAll(), categorySearchRepo);
-        log.debug("Building Fuel suppliers index");
-		updateSearchIndex(fuelRepo.streamAll(), fuelSearchRepo);
-        log.debug("Building Tyre suppliers index");
-		updateSearchIndex(tyreRepo.streamAll(), tyreSearchRepo);
-        log.debug("Building Points systems index");
-		updateSearchIndex(pointsRepo.streamAll(), pointsSearchRepo);
-        log.debug("Building Events index");
-		updateSearchIndex(eventRepo.readAllByIdNotNull(), eventSearchRepo);
-        log.debug("Building Series index");
-		updateSearchIndex(seriesRepo.streamAll(), seriesSearchRepo);
-        log.debug("Building Event Editions index");
-		updateSearchIndex(eventEditionRepo.streamAllByIdNotNull(), eventEditionSearchRepo);
-        log.debug("Building Racetracks index");
-		updateSearchIndex(racetrackRepo.streamAll(), racetrackSearchRepo);
-        log.debug("Building Racetrack Layouts index");
-		updateSearchIndex(racetrackLayoutRepo.streamAll(), racetrackLayoutSearchRepo);
+        List<Runnable> tasks = new ArrayList<>();
+        tasks.add(() -> {
+            log.debug("Building Drivers index");
+            txTemplate.execute(status -> updateSearchIndex(driverRepo.streamAll(), driverSearchRepo));
+            log.debug("Building Drivers index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Engines index");
+            txTemplate.execute(status -> updateSearchIndex(engineRepo.readAllByIdNotNull(), engineSearchRepo));
+            log.debug("Building Engines index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Teams index");
+            txTemplate.execute(status -> updateSearchIndex(teamRepo.streamAll(), teamSearchRepo));
+            log.debug("Building Teams index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Chassis index");
+            txTemplate.execute(status -> updateSearchIndex(chassisRepo.streamAllByIdNotNull(), chassisSearchRepo));
+            log.debug("Building Chassis index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Categories index");
+            txTemplate.execute(status -> updateSearchIndex(categoryRepo.streamAll(), categorySearchRepo));
+            log.debug("Building Categories index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Fuel suppliers index");
+            txTemplate.execute(status -> updateSearchIndex(fuelRepo.streamAll(), fuelSearchRepo));
+            log.debug("Building Fuel suppliers index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Tyre suppliers index");
+            txTemplate.execute(status -> updateSearchIndex(tyreRepo.streamAll(), tyreSearchRepo));
+            log.debug("Building Tyre suppliers index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Points systems index");
+            txTemplate.execute(status -> updateSearchIndex(pointsRepo.streamAll(), pointsSearchRepo));
+            log.debug("Building Points systems index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Events index");
+            txTemplate.execute(status -> updateSearchIndex(eventRepo.readAllByIdNotNull(), eventSearchRepo));
+            log.debug("Building Events index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Series index");
+            txTemplate.execute(status -> updateSearchIndex(seriesRepo.streamAll(), seriesSearchRepo));
+            log.debug("Building Series index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Event Editions index");
+            txTemplate.execute(status -> updateSearchIndex(eventEditionRepo.streamAllByIdNotNull(), eventEditionSearchRepo));
+            log.debug("Building Event Editions index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Racetracks & layouts index");
+            txTemplate.execute(status -> {
+                updateSearchIndex(racetrackRepo.streamAll(), racetrackSearchRepo);
+                log.debug("Racetracks done. Now layouts");
+                updateSearchIndex(racetrackLayoutRepo.streamAll(), racetrackLayoutSearchRepo);
+                return null;
+            });
+            log.debug("Building Racetracks & layouts index done");
+        });
+
+        tasks.forEach(task -> {
+            executor.execute(task);
+        });
+        log.debug("Rebuilding search indexes completed");
+
         //log.debug("Building Event Entries index");
         //updateSearchIndex(eventEntryRepo.streamAllByIdNotNull(), eventEntrySearchRepo);
-		log.debug("Rebuilding search indexes completed");
+
 	}
 
-	private <T> void updateSearchIndex(final Stream<T> stream, final ElasticsearchRepository<T, Long> searchRepo) {
+	private <T> Void updateSearchIndex(final Stream<T> stream, final ElasticsearchRepository<T, Long> searchRepo) {
 		searchRepo.deleteAll();
+		log.trace("Index deleted. Rebuilding...");
 		stream.parallel().forEach(elem -> searchRepo.save(elem));
 		stream.close();
+		return null;
 	}
 
 	@Override
