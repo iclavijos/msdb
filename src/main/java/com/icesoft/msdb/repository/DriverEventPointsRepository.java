@@ -41,7 +41,7 @@ public interface DriverEventPointsRepository extends JpaRepository<DriverEventPo
 			+ "ORDER BY dep.session.sessionStartTime desc, dep.points desc")
 	List<Object[]> getDriverPointsInEvent(Long eventEditionId, Long driverId);
 
-	@Query(value = "SELECT e.name eventName, es.name sessionName, d.name driverName, d.surname, SUM(dep.points) as points, c.shortname " +
+	@Query(value = "SELECT e.name eventName, es.name sessionName, d.name driverName, d.surname, SUM(dep.points) as points, c.shortname, es.start_time_ts " +
         "FROM series_edition se join driver_event_points dep on dep.series_edition_id = se.id " +
         "join event_session es on dep.session_id = es.id " +
         "join event_edition ee on es.event_edition_id = ee.id " +
@@ -49,7 +49,7 @@ public interface DriverEventPointsRepository extends JpaRepository<DriverEventPo
         "join driver d on dep.driver_id = d.id " +
         "left join category c on dep.category_id = c.id " +
         "WHERE se.id = ?1 " +
-        "GROUP BY e.name, es.name, d.name, d.surname, c.shortname " +
-        "ORDER BY ANY_VALUE(es.start_time_ts) ASC, points DESC", nativeQuery = true)
+        "GROUP BY e.name, es.name, d.name, d.surname, c.shortname, es.start_time_ts " +
+        "ORDER BY es.start_time_ts ASC, points DESC", nativeQuery = true)
 	List<Object[]> getDriversPointsInSeries(Long seriesEditionId);
 }
