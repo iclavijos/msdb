@@ -1,7 +1,7 @@
 <div class="row" *ngIf="seriesEdition?.standingsPerCategory">
     <div class="col-md-9"></div>
     <div class="col-md-3 float-right">
-        <select class="form-control" id="field_category" name="category" [(ngModel)]="filterCategory" (change)="changeCategory($event)">
+        <select class="form-control" id="field_category" name="category" [(ngModel)]="filterCategory" (change)="changeCategory()">
             <option *ngFor="let category of seriesEdition.allowedCategories" [ngValue]="category.shortname">{{category.name}}</option>
         </select>
     </div>
@@ -148,11 +148,13 @@
                 <p-chart type="line" [data]="data" [options]="options"></p-chart>
             </div>
             <div class="col-lg-2 col-md-2">
-                <div *ngFor="let driver of drivers">
-                    <p-checkbox  name="groupDrivers" [(ngModel)]="selectedDrivers"
-                                 [value]="driver.driverName" [label]="driver.driverName" (onChange)="refreshGraphic()">
-                    </p-checkbox>
-                </div>
+                <mat-list>
+                    <mat-list-item class="checklist-item" *ngFor="let driver of drivers">
+                        <mat-checkbox [name]="driver.driverName"
+                                      [value]="driver.driverName"
+                                      (change)="refreshGraphic($event)">{{ driver.driverName }}</mat-checkbox>
+                    </mat-list-item>
+                </mat-list>
             </div>
         </div>
     </mat-tab>

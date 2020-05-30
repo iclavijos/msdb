@@ -149,7 +149,17 @@ export class StandingsComponent implements OnInit {
     this.updateDriversPoints();
   }
 
-  refreshGraphic() {
+  refreshGraphic(event) {
+    if (event.checked) {
+      if (!this.selectedDrivers.includes(event.source.value)) {
+        this.selectedDrivers.push(event.source.value);
+      }
+    } else {
+      if (this.selectedDrivers.includes(event.source.value)) {
+        this.selectedDrivers.splice(this.selectedDrivers.indexOf(event.source.value), 1);
+      }
+    }
+
     const data = {
       labels: this.pointsByRace[0].slice(1, this.numRaces + 1),
       datasets: []
