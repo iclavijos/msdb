@@ -135,7 +135,8 @@
       "save": "Save",
       "view": "View",
       "copy": "Copy",
-      "add": "Add"
+      "add": "Add",
+      "detail": "Detail"
     },
     "detail": {
       "field": "Field",

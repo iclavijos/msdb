@@ -135,7 +135,8 @@
       "save": "Guardar",
       "view": "Vista",
       "copy": "Copia",
-      "add": "Añadir"
+      "add": "Añadir",
+      "detail": "Detalle"
     },
     "detail": {
       "field": "Campo",

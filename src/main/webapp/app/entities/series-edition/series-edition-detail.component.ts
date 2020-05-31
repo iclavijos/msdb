@@ -40,7 +40,12 @@ export class SeriesEditionDetailComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ seriesEdition }) => {
       this.seriesEdition = seriesEdition;
-      this.seriesEditionService.findEvents(seriesEdition.id).subscribe(events => (this.seriesEdition.events = events.body));
+      this.seriesEditionService.findEvents(seriesEdition.id).subscribe(events => {
+        this.seriesEdition.events = events.body;
+        if (events.body.filter(event => event.status !== 'ONGOING').length > 0) {
+          this.displayedColumns.unshift('status');
+        }
+      });
     });
   }
 
