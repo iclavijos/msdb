@@ -64,7 +64,7 @@ export class EventSessionService {
   protected convertDateFromClient(eventSession: IEventSession): IEventSession {
     const copy: IEventSession = Object.assign({}, eventSession, {
       sessionStartTime:
-        eventSession.sessionStartTime != null && eventSession.sessionStartTime.isValid() ? eventSession.sessionStartTime.format('X') : null
+        eventSession.sessionStartTime != null && eventSession.sessionStartTime.isValid() ? eventSession.sessionStartTime.unix() : null
     });
     return copy;
   }

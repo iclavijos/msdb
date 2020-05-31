@@ -40,11 +40,11 @@
 
                     <ng-container matColumnDef="timeConverter">
                         <mat-footer-cell *matFooterCellDef>
-                            <button type="button" *ngIf="!convertedTime && eventSessions"
+                            <button type="button" *ngIf="!convertedTime && eventSessions?.length > 0"
                                     class="btn btn-outline-primary float-right create-event-session" (click)="convertToCurrentTZ()">
                                 <span jhiTranslate="motorsportsDatabaseApp.eventEdition.yourTime">Your Time</span>
                             </button>
-                            <button type="button" *ngIf="convertedTime && eventSessions"
+                            <button type="button" *ngIf="convertedTime && eventSessions?.length > 0"
                                     class="btn btn-outline-primary float-right create-event-session" (click)="convertToLocalTZ()">
                                 <span jhiTranslate="motorsportsDatabaseApp.eventEdition.localTime">Local Time</span>
                             </button>

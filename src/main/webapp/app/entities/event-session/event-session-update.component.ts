@@ -6,7 +6,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
-import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
 import { IEventSession } from 'app/shared/model/event-session.model';
 import { EventSessionService } from './event-session.service';
 
@@ -75,7 +74,7 @@ export class EventSessionUpdateComponent implements OnInit {
       id: eventSession.id,
       name: eventSession.name,
       shortname: eventSession.shortname,
-      sessionStartTime: eventSession.sessionStartTime != null ? eventSession.sessionStartTime.format(DATE_TIME_FORMAT) : null,
+      sessionStartTime: new Date(moment(eventSession.sessionStartTime).format('YYYY-MM-DDTHH:mm:ss')),
       duration: eventSession.duration,
       durationType: eventSession.durationType,
       additionalLap: eventSession.additionalLap,
@@ -115,7 +114,7 @@ export class EventSessionUpdateComponent implements OnInit {
       shortname: this.editForm.get(['shortname']).value,
       sessionStartTime:
         this.editForm.get(['sessionStartTime']).value != null
-          ? moment(this.editForm.get(['sessionStartTime']).value, DATE_TIME_FORMAT)
+          ? moment(this.editForm.get(['sessionStartTime']).value).tz(this.eventSession.eventEdition.trackLayout.racetrack.timeZone, true)
           : undefined,
       duration: this.editForm.get(['duration']).value,
       durationType: this.editForm.get(['durationType']).value,

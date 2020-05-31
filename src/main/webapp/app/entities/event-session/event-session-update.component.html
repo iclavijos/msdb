@@ -82,12 +82,6 @@
                            name="duration" id="field_duration" formControlName="duration">
                     <div *ngIf="editForm.get('duration').invalid && (editForm.get('duration').dirty || editForm.get('duration').touched)">
                         <small class="form-text text-danger"
-                               *ngIf="editForm.get('duration').errors.required" jhiTranslate="entity.validation.required">
-                            This field is required.
-                        </small>
-                    </div>
-                    <div [hidden]="!(editForm.controls.duration?.dirty && editForm.controls.duration?.invalid)">
-                        <small class="form-text text-danger"
                                [hidden]="!editForm.controls.duration?.errors?.required" jhiTranslate="entity.validation.required">
                             This field is required.
                         </small>
