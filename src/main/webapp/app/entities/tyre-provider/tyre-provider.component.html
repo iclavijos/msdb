@@ -55,19 +55,16 @@
                                     <td mat-cell *matCellDef="let tyreProvider">
                                         <div class="btn-group">
                                             <button type="submit"
-                                                    [routerLink]="['/tyre-provider', tyreProvider.id, 'view' ]"
-                                                    class="btn btn-info btn-xs">
-                                                <fa-icon [icon]="'eye'"></fa-icon>
-                                            </button>
-                                            <button type="submit"
                                                     *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                                     [routerLink]="['/tyre-provider', tyreProvider.id, 'edit']"
+                                                    (click)="$event.stopPropagation()"
                                                     class="btn btn-primary btn-xs">
                                                 <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                             </button>
                                             <button type="submit"
                                                     *jhiHasAnyAuthority="['ROLE_ADMIN']"
                                                     [routerLink]="['/tyre-provider', { outlets: { popup: tyreProvider.id + '/delete'} }]"
+                                                    (click)="$event.stopPropagation()"
                                                     replaceUrl="true"
                                                     queryParamsHandling="merge"
                                                     class="btn btn-danger btn-xs">
@@ -78,7 +75,8 @@
                                 </ng-container>
 
                                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                                    [routerLink]="['/tyre-provider', row.id, 'view' ]"></tr>
                             </table>
                             <mat-paginator [length]="resultsLength"
                                            [pageSizeOptions]="[5, 10, 20]"

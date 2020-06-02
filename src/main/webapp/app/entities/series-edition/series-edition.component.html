@@ -71,12 +71,14 @@
                                         <button type="submit"
                                                 *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                                 [routerLink]="['/series/edition', seriesEdition.id, 'edit-ed']"
+                                                (click)="$event.stopPropagation()"
                                                 class="btn btn-primary btn-xs">
                                             <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                         </button>
                                         <button type="submit"
                                                 *jhiHasAnyAuthority="['ROLE_ADMIN']"
                                                 [routerLink]="['/series/edition', { outlets: { popup: seriesEdition.id + '/delete-ed'} }]"
+                                                (click)="$event.stopPropagation()"
                                                 replaceUrl="true"
                                                 queryParamsHandling="merge"
                                                 class="btn btn-danger btn-xs">
@@ -87,8 +89,8 @@
                             </ng-container>
 
                             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/series', 'edition', row.id, 'view' ]"
-                            ></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                                [routerLink]="['/series', 'edition', row.id, 'view' ]"></tr>
                         </table>
                         <mat-paginator [length]="resultsLength"
                                        [pageSizeOptions]="[5, 10, 20]"
