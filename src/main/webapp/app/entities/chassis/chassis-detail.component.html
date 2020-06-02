@@ -41,7 +41,9 @@
                                     <!-- This is the tree node template for leaf nodes -->
                                     <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
                                         <!-- use a disabled button to provide padding for tree leaf -->
-                                        <button mat-icon-button disabled></button>
+                                        <button mat-icon-button disabled>
+                                            <mat-icon class="mat-icon-rtl-mirror">chevron_right</mat-icon>
+                                        </button>
                                         <a [routerLink]="['/chassis', node.chassis.id, 'view']">{{ node.chassis.manufacturer }} {{node.chassis.name}}</a>
                                     </mat-tree-node>
                                     <!-- This is the tree node template for expandable nodes -->
@@ -55,7 +57,6 @@
                                         <a [routerLink]="['/chassis', node.chassis.id, 'view']">{{ node.chassis.manufacturer }} {{node.chassis.name}}</a>
                                     </mat-tree-node>
                                 </mat-tree>
-
                             </dd>
                         </dl>
                     </div>

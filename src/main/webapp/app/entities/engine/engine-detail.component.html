@@ -70,7 +70,7 @@
                             </div>
                         </dl>
 
-                        <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                 [routerLink]="['/engine', engine.id, 'edit']"
                                 class="btn btn-primary">
                             <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
@@ -83,7 +83,9 @@
                                     <!-- This is the tree node template for leaf nodes -->
                                     <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
                                         <!-- use a disabled button to provide padding for tree leaf -->
-                                        <button mat-icon-button disabled></button>
+                                        <button mat-icon-button disabled>
+                                            <mat-icon class="mat-icon-rtl-mirror">chevron_right</mat-icon>
+                                        </button>
                                         <a [routerLink]="['/engine', node.engine.id, 'view']">{{ node.engine.manufacturer }} {{node.engine.name}}</a>
                                     </mat-tree-node>
                                     <!-- This is the tree node template for expandable nodes -->
@@ -98,6 +100,7 @@
                                     </mat-tree-node>
                                 </mat-tree>
                             </dd>
+                        </dl>
                     </div>
                 </div>
             </div>
