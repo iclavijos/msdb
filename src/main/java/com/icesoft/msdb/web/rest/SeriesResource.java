@@ -146,7 +146,7 @@ public class SeriesResource {
     @Timed
     public ResponseEntity<List<SeriesEdition>> getAllEditions(@PathVariable Long id, Pageable pageable) {
         log.debug("REST request to get a page of Series");
-        Page<SeriesEdition> page = seriesEditionRepository.findBySeriesIdOrderByPeriodDesc(id, pageable);
+        Page<SeriesEdition> page = seriesEditionRepository.findBySeriesId(id, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

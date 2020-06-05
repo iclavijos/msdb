@@ -34,6 +34,6 @@ public interface SeriesEditionRepository extends JpaRepository<SeriesEdition,Lon
 	@Query("select ed from SeriesEdition ed where ed.series.id=?1 and ed.period like lower(concat('%', ?2,'%'))")
 	Page<SeriesEdition> search(Long id, String period, Pageable pageable);
 
-	Page<SeriesEdition> findBySeriesIdOrderByPeriodDesc(Long seriesId, Pageable pageable);
+	Page<SeriesEdition> findBySeriesId(Long seriesId, Pageable pageable);
 
 }
