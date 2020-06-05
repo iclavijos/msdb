@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs/Rx';
 
 import { IEventEdition } from 'app/shared/model/event-edition.model';
 import { IEventSession } from 'app/shared/model/event-session.model';
+import { IEventEntry } from 'app/shared/model/event-entry.model';
 import { EventService } from '../event/event.service';
 import { EventEditionService } from './event-edition.service';
 
@@ -44,6 +45,7 @@ export class RescheduleDialogComponent {
 export class EventEditionDetailComponent implements OnInit {
   eventEdition: IEventEdition;
   eventSessions: IEventSession[];
+  eventEntries: IEventEntry[];
   convertedTime = false;
   private subscription: Subscription;
   private eventSubscriber: Subscription;
@@ -57,6 +59,7 @@ export class EventEditionDetailComponent implements OnInit {
   hasLapsData: any;
   lapTimes: any[] = [];
   maxLaps = -1;
+  index = 0;
 
   posAffiche: number;
   posLayout: number;
@@ -135,6 +138,10 @@ export class EventEditionDetailComponent implements OnInit {
 
   updateSessions(newSessions) {
     this.eventSessions = newSessions;
+  }
+
+  updateEntries(newEntries) {
+    this.eventEntries = newEntries;
   }
 
   jumpToEdition(id) {

@@ -16,12 +16,16 @@ export class EventEntryResultService {
 
   constructor(protected http: HttpClient) {}
 
-  create(eventEntryResult: IEventEntryResult): Observable<EntityResponseType> {
-    return this.http.post<IEventEntryResult>(this.resourceUrl, eventEntryResult, { observe: 'response' });
+  create(eventEntryResult: IEventEntryResult, sessionId: number): Observable<EntityResponseType> {
+    const copy: IEventEntryResult = Object.assign({}, eventEntryResult);
+    copy.session = null;
+    return this.http.post<IEventEntryResult>(`api/event-editions/event-sessions/${sessionId}/results`, copy, { observe: 'response' });
   }
 
-  update(eventEntryResult: IEventEntryResult): Observable<EntityResponseType> {
-    return this.http.put<IEventEntryResult>(this.resourceUrl, eventEntryResult, { observe: 'response' });
+  update(eventEntryResult: IEventEntryResult, sessionId: number): Observable<EntityResponseType> {
+    const copy: IEventEntryResult = Object.assign({}, eventEntryResult);
+    copy.session = null;
+    return this.http.put<IEventEntryResult>(`api/event-editions/event-sessions/${sessionId}/results`, copy, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {

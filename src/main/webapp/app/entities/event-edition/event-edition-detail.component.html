@@ -11,7 +11,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <mat-tab-group dynamicHeight mat-stretch-tabs>
+                                <mat-tab-group dynamicHeight mat-stretch-tabs [(selectedIndex)]="index">
                                     <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.info' | translate }}">
                                         <div class="row">
                                             <div class="col-lg-4 col-md-4">
@@ -87,15 +87,15 @@
                                     </mat-tab>
                                     <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.entryList' | translate }}">
                                         <div>
-                                            <jhi-event-entry [eventEdition]="eventEdition"></jhi-event-entry>
+                                            <jhi-event-entry [eventEdition]="eventEdition" (entries)="updateEntries($event)"></jhi-event-entry>
                                         </div>
                                     </mat-tab>
                                     <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.results' | translate }}">
                                         <div>
-                                            <mat-tab-group dynamicHeight mat-stretch-tabs>
+                                            <mat-tab-group dynamicHeight mat-stretch-tabs *ngIf="index == 2" [selectedIndex]="0">
                                                 <mat-tab *ngFor="let eventSession of eventSessions" label="{{ eventSession.name }}">
                                                     <ng-template matTabContent>
-                                                        <jhi-event-entry-result [eventSession]="eventSession" [eventEdition]="eventEdition">Result...</jhi-event-entry-result>
+                                                        <jhi-event-entry-result [eventSession]="eventSession" [eventEdition]="eventEdition" [eventEntries]="eventEntries">Result...</jhi-event-entry-result>
                                                     </ng-template>
                                                 </mat-tab>
                                             </mat-tab-group>

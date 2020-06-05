@@ -120,7 +120,8 @@
           "title": "Results",
           "createLabel": "Add a new result",
           "createOrEditLabel": "Create or edit a result",
-          "search": "Search for Results"
+          "search": "Search for Results",
+          "notFound": "There are no results"
         },
         "upload": {
           "uploadLabel": "Upload results",

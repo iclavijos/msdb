@@ -39,6 +39,6 @@ import { ImagesService } from './services/images.service';
     EventEntryCategoryFilter,
     MaterialElevationDirective
   ],
-  providers: [ImagesService]
+  providers: [ImagesService, TimeMaskPipe]
 })
 export class MotorsportsDatabaseSharedModule {}

@@ -119,7 +119,8 @@
         "home": {
           "title": "Clasificaciones",
           "createLabel": "Añadir un nuevo resultado",
-          "createOrEditLabel": "Crear o editar un resultado"
+          "createOrEditLabel": "Crear o editar un resultado",
+          "notFound": "No hay resultados"
         },
         "upload": {
           "uploadLabel": "Importar resultados",

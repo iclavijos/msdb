@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
@@ -28,6 +28,7 @@ export class EventEntryComponent implements OnInit, OnDestroy {
   eventSubscriber: Subscription;
   // displayedColumns: string[] = ['raceNumber', 'tyres', 'drivers', 'entryName', 'category', 'carImage', 'buttons'];
   displayedColumns: string[] = ['raceNumber', 'tyres', 'drivers', 'buttons'];
+  @Output() entries = new EventEmitter<IEventEntry[]>();
 
   constructor(
     private eventEntryService: EventEntryService,
@@ -67,7 +68,10 @@ export class EventEntryComponent implements OnInit, OnDestroy {
   }
 
   loadAll() {
-    this.eventEntryService.findEntries(this.eventEdition.id).subscribe(entries => (this.eventEntries = entries.body));
+    this.eventEntryService.findEntries(this.eventEdition.id).subscribe(entries => {
+      this.eventEntries = entries.body;
+      this.entries.emit(entries.body);
+    });
   }
 
   ngOnInit() {

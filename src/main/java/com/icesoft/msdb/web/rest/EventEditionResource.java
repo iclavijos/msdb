@@ -645,13 +645,18 @@ public class EventEditionResource {
     	}).collect(Collectors.toList());
     }
 
-    @PostMapping("/event-editions/{id}/event-sessions/{idSession}/results")
+    @PostMapping("/event-editions/event-sessions/{sessionId}/results")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     //@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, allEntries = true)
-    public ResponseEntity<EventEntryResult> createEventSessionResult(@Valid @RequestBody EventEntryResult eventSessionResult) throws URISyntaxException {
+    public ResponseEntity<EventEntryResult> createEventSessionResult(
+            @Valid @RequestBody EventEntryResult eventSessionResult, @PathVariable Long sessionId) throws URISyntaxException {
+
         log.debug("REST request to save EventEntryResult : {}", eventSessionResult);
-        eventSessionResult.getSession().getEventEdition().getSeriesEditions().forEach(seriesEdition -> cacheHandler.resetSeriesEditionCaches(seriesEdition));
+        EventSession session = eventSessionRepository.findById(sessionId).orElseThrow(
+            () -> new MSDBException("Invalid session id") );
+        eventSessionResult.setSession(session);
+        session.getEventEdition().getSeriesEditions().forEach(seriesEdition -> cacheHandler.resetSeriesEditionCaches(seriesEdition));
         if (eventSessionResult.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
             		applicationName, true, ENTITY_NAME_ENTRY, "idexists", "A new eventSessionResult cannot already have an ID")).body(null);
@@ -663,16 +668,21 @@ public class EventEditionResource {
             .body(result);
     }
 
-    @PutMapping("/event-editions/event-sessions/results")
+    @PutMapping("/event-editions/event-sessions/{sessionId}/results")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     //@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, allEntries = true)
-    public ResponseEntity<EventEntryResult> updateEventSessionResult(@Valid @RequestBody EventEntryResult eventSessionResult) throws URISyntaxException {
+    public ResponseEntity<EventEntryResult> updateEventSessionResult(
+            @Valid @RequestBody EventEntryResult eventSessionResult, @PathVariable Long sessionId) throws URISyntaxException {
         log.debug("REST request to update EventEntryResult : {}", eventSessionResult);
-        eventSessionResult.getSession().getEventEdition().getSeriesEditions().forEach(seriesEdition -> cacheHandler.resetSeriesEditionCaches(seriesEdition));
+
         if (eventSessionResult.getId() == null) {
-            return createEventSessionResult(eventSessionResult);
+            return createEventSessionResult(eventSessionResult, sessionId);
         }
+        EventSession session = eventSessionRepository.findById(sessionId).orElseThrow(
+            () -> new MSDBException("Invalid session id") );
+        eventSessionResult.setSession(session);
+        eventSessionResult.getSession().getEventEdition().getSeriesEditions().forEach(seriesEdition -> cacheHandler.resetSeriesEditionCaches(seriesEdition));
         EventEntryResult result = eventResultRepository.save(eventSessionResult);
 
         return ResponseEntity.ok()

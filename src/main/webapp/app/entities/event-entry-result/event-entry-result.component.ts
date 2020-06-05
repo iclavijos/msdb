@@ -6,8 +6,12 @@ import { JhiEventManager, JhiParseLinks, JhiDataUtils, JhiAlertService } from 'n
 
 import { EventEdition } from 'app/shared/model/event-edition.model';
 import { EventSession } from 'app/shared/model/event-session.model';
-import { IEventEntryResult } from 'app/shared/model/event-entry-result.model';
+import { EventEntry } from 'app/shared/model/event-entry.model';
+import { IEventEntryResult, EventEntryResult } from 'app/shared/model/event-entry-result.model';
 import { EventEntryResultService } from './event-entry-result.service';
+import { EventEntryResultUpdateComponent } from './event-entry-result-update.component';
+
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'jhi-event-entry-result',
@@ -16,6 +20,7 @@ import { EventEntryResultService } from './event-entry-result.service';
 export class EventEntryResultComponent implements OnInit, OnDestroy {
   @Input() eventEdition: EventEdition;
   @Input() eventSession: EventSession;
+  @Input() eventEntries: EventEntry;
   eventEntryResults: IEventEntryResult[];
   currentAccount: any;
   eventSubscriber: Subscription;
@@ -34,13 +39,14 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     protected activatedRoute: ActivatedRoute,
     protected dataUtils: JhiDataUtils,
     protected router: Router,
-    protected eventManager: JhiEventManager
+    protected eventManager: JhiEventManager,
+    protected dialog: MatDialog
   ) {}
 
   ngOnInit() {
     this.registerChangeInEventEntryResults();
     this.loadAll();
-    this.displayedColumns = ['position', 'tyres', 'driver', 'team']; //  'bestLapTime', 'lapsCompleted', 'lapsLed', 'retired', 'retirementCause', 'buttons'];
+    this.displayedColumns = ['position', 'tyres', 'driver', 'team'];
 
     if (this.eventEdition.allowedCategories.length > 1) {
       this.displayedColumns.push('category');
@@ -103,6 +109,40 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     } else {
       this.dataSource.filter = '';
     }
+  }
+
+  addResult() {
+    const dialogRef = this.dialog.open(EventEntryResultUpdateComponent, {
+      data: {
+        eventEntryResult: new EventEntryResult(),
+        eventSession: this.eventSession,
+        eventEntries: this.eventEntries,
+        eventEdition: this.eventEdition
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadAll();
+      }
+    });
+  }
+
+  editResult(result: EventEntryResult) {
+    const dialogRef = this.dialog.open(EventEntryResultUpdateComponent, {
+      data: {
+        eventEntryResult: result,
+        eventSession: this.eventSession,
+        eventEntries: this.eventEntries,
+        eventEdition: this.eventEdition
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadAll();
+      }
+    });
   }
 
   ngOnDestroy() {

@@ -16,7 +16,7 @@ export interface IEventEntryResult {
   pitlaneStart?: boolean;
   entry?: IEventEntry;
   session?: IEventSession;
-  sharedDriveWith?: IEventEntry;
+  sharedWith?: IEventEntry;
 }
 
 export class EventEntryResult implements IEventEntryResult {
@@ -35,7 +35,7 @@ export class EventEntryResult implements IEventEntryResult {
     public pitlaneStart?: boolean,
     public entry?: IEventEntry,
     public session?: IEventSession,
-    public sharedDriveWith?: IEventEntry
+    public sharedWith?: IEventEntry
   ) {
     this.retired = this.retired || false;
   }
