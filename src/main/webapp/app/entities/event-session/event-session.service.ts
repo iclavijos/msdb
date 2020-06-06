@@ -9,6 +9,8 @@ import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { IEventSession } from 'app/shared/model/event-session.model';
 
+import { SessionType } from 'app/shared/enumerations/sessionType.enum';
+
 type EntityResponseType = HttpResponse<IEventSession>;
 type EntityArrayResponseType = HttpResponse<IEventSession[]>;
 
@@ -20,6 +22,8 @@ export class EventSessionService {
   public resourceUrl = SERVER_API_URL + 'api/event-editions/event-sessions';
   public resourceSearchUrl = SERVER_API_URL + 'api/_search/event-sessions';
   public resourceEventEditionUrl = SERVER_API_URL + 'api/event-editions';
+
+  private sessionTypes = SessionType;
 
   constructor(protected http: HttpClient) {}
 
@@ -94,6 +98,7 @@ export class EventSessionService {
   private transformDateTime(res: EntityArrayResponseType, timeZone: string): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((eventSession: IEventSession) => {
+        eventSession.sessionType = this.sessionTypes[this.sessionTypes[eventSession.sessionTypeValue]];
         eventSession.sessionStartTime =
           eventSession.sessionStartTime != null ? moment(Number(eventSession.sessionStartTime) * 1000).tz(timeZone) : null;
       });

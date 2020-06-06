@@ -20,7 +20,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class EventEntryResultComponent implements OnInit, OnDestroy {
   @Input() eventEdition: EventEdition;
   @Input() eventSession: EventSession;
-  @Input() eventEntries: EventEntry;
+  @Input() eventEntries: EventEntry[];
   eventEntryResults: IEventEntryResult[];
   currentAccount: any;
   eventSubscriber: Subscription;

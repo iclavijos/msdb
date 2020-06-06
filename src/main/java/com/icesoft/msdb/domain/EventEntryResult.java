@@ -1,20 +1,11 @@
 package com.icesoft.msdb.domain;
 
-import javax.persistence.*;
-
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -68,7 +59,8 @@ public class EventEntryResult implements Serializable {
     private Boolean pitlaneStart = false;
 
     @OneToOne
-    private EventEditionEntry sharedDriveWith;
+    @JoinColumn(name = "shared_drive_with_id", referencedColumnName = "id")
+    private EventEditionEntry sharedWith;
 
     @ManyToOne
     private EventSession session;
@@ -257,17 +249,17 @@ public class EventEntryResult implements Serializable {
 		this.entry = entry;
 	}
 
-	public EventEditionEntry getSharedDriveWith() {
-		return sharedDriveWith;
+	public EventEditionEntry getSharedWith() {
+		return sharedWith;
 	}
 
-	public EventEntryResult sharedDriveWith(EventEditionEntry sharedDriveWith) {
-		this.sharedDriveWith = sharedDriveWith;
+	public EventEntryResult sharedWith(EventEditionEntry sharedWith) {
+		this.sharedWith = sharedWith;
 		return this;
 	}
 
-	public void setSharedDriveWith(EventEditionEntry sharedDriveWith) {
-		this.sharedDriveWith = sharedDriveWith;
+	public void setSharedWith(EventEditionEntry sharedWith) {
+		this.sharedWith = sharedWith;
 	}
 
 	@Override

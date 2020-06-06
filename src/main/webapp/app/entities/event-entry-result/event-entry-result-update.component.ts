@@ -9,6 +9,7 @@ import { IEventEntryResult } from 'app/shared/model/event-entry-result.model';
 import { EventEntryResultService } from './event-entry-result.service';
 import { IEventEdition } from 'app/shared/model/event-edition.model';
 import { IEventEntry } from 'app/shared/model/event-entry.model';
+import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -23,6 +24,7 @@ export class EventEntryResultUpdateComponent implements OnInit {
   eventEdition: IEventEdition;
   eventEntryResult: IEventEntryResult;
   entries: IEventEntry[];
+  sessionTypes = SessionType;
 
   positions: number[];
 
@@ -89,6 +91,7 @@ export class EventEntryResultUpdateComponent implements OnInit {
     return {
       ...this.eventEntryResult,
       id: this.editForm.get(['id']).value,
+      startingPosition: this.editForm.get(['startingPosition']).value,
       entry: this.editForm.get(['entry']).value,
       finalPosition: this.editForm.get(['finalPosition']).value,
       totalTime: this.toMillis(this.editForm.get(['totalTime']).value),

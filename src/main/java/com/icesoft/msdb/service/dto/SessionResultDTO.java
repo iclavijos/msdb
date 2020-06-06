@@ -42,8 +42,8 @@ public class SessionResultDTO {
     	this.cause = result.getCause();
     	this.difference = result.getDifference() != null ? result.getDifference().toString() : "";
     	this.pitlaneStart = result.isPitlaneStart();
-    	this.sharedWith = result.getSharedDriveWith();
-    	this.sharedWithNumber = result.getSharedDriveWith() != null ? result.getSharedDriveWith().getRaceNumber() : "";
+    	this.sharedWith = result.getSharedWith();
+    	this.sharedWithNumber = result.getSharedWith() != null ? result.getSharedWith().getRaceNumber() : "";
     	this.differenceType = result.getDifferenceType();
     	this.entry = result.getEntry();
     	this.entry.setEventEdition(null);

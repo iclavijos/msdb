@@ -2,7 +2,6 @@ package com.icesoft.msdb.web.rest;
 
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -423,7 +422,7 @@ public class ImportsResource {
 		            	} else if (entries.size() > 1) {
 		            		log.warn("Found more than one entry with shared race number {}. Ignoring...", tmp.getRaceNumber());
 		            	} else {
-		            		result.setSharedDriveWith(shareds.get(0));
+		            		result.setSharedWith(shareds.get(0));
 		            	}
 		        	}
 		        	resultRepository.save(result);

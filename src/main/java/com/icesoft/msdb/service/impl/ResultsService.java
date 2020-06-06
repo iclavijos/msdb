@@ -101,7 +101,7 @@ public class ResultsService {
 
 	    for(int i = 0; i < results.size(); i++) {
             EventEntryResult result = results.get(i);
-            Boolean sharedDrive = result.getSharedDriveWith() != null;
+            Boolean sharedDrive = result.getSharedWith() != null;
 
             float calculatedPoints = 0f;
             if (points != null) {
@@ -139,7 +139,7 @@ public class ResultsService {
                     }
                 }
                 if (sharedDrive) {
-                    for(Driver d: result.getSharedDriveWith().getDrivers()) {
+                    for(Driver d: result.getSharedWith().getDrivers()) {
                         DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), session.getName());
                         dep.setCategory(category);
                         dep.addPoints(calculatedPoints);
