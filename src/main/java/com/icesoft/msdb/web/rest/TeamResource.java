@@ -1,5 +1,6 @@
 package com.icesoft.msdb.web.rest;
 
+import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.domain.stats.ParticipantStatisticsSnapshot;
 import com.icesoft.msdb.domain.stats.TeamStatistics;
@@ -9,6 +10,7 @@ import com.icesoft.msdb.repository.search.TeamSearchRepository;
 import com.icesoft.msdb.repository.stats.TeamStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
@@ -62,6 +64,7 @@ public class TeamResource {
 
     private final TeamRepository teamRepository;
     private final EventEntryRepository entryRepository;
+    private final SearchService searchService;
 
     private final TeamStatisticsRepository statsRepo;
 
@@ -70,10 +73,11 @@ public class TeamResource {
     private final TeamSearchRepository teamSearchRepository;
 
     public TeamResource(TeamRepository teamRepository, TeamSearchRepository teamSearchRepository,
-    		EventEntryRepository entryRepository,
+    		EventEntryRepository entryRepository, SearchService searchService,
     		TeamStatisticsRepository statsRepo, CDNService cdnService) {
         this.teamRepository = teamRepository;
         this.teamSearchRepository = teamSearchRepository;
+        this.searchService = searchService;
         this.entryRepository = entryRepository;
         this.statsRepo = statsRepo;
         this.cdnService = cdnService;
@@ -147,9 +151,16 @@ public class TeamResource {
      */
     @GetMapping("/teams")
     @Timed
-    public ResponseEntity<List<Team>> getAllTeams(Pageable pageable) {
-        log.debug("REST request to get a page of Teams");
-        Page<Team> page = teamRepository.findAll(pageable);
+    public ResponseEntity<List<Team>> searchTeams(@RequestParam(required = false) String query, Pageable pageable) {
+        log.debug("REST request to search for a page of Teams for query '{}'", query);
+
+        Page<Team> page;
+        Optional<String> queryOpt = Optional.ofNullable(query);
+        if (queryOpt.isPresent()) {
+            page = searchService.performWildcardSearch(teamSearchRepository, query.toLowerCase(), new String[]{"name", "location"}, pageable);
+        } else {
+            page = teamRepository.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -235,38 +246,4 @@ public class TeamResource {
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 
-    /**
-     * {@code SEARCH  /_search/teams?query=:query} : search for the team corresponding
-     * to the query.
-     *
-     * @param query the query of the team search.
-     * @param pageable the pagination information.
-     * @return the result of the search.
-     */
-    @GetMapping("/_search/teams")
-    @Timed
-    public ResponseEntity<List<Team>> searchTeams(@RequestParam String query, Pageable pageable) {
-        log.debug("REST request to search for a page of Teams for query '{}'", query);
-        Page<Team> page = performSearch(query, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-    }
-
-    @GetMapping("/_typeahead/teams")
-    @Timed
-    public List<Team> typeahead(@RequestParam String query) {
-        log.debug("REST request to search Teams for query {}", query);
-        Page<Team> result = performSearch(query, PageRequest.of(0, 10));
-
-        return result.getContent();
-    }
-
-    private Page<Team> performSearch(String query, Pageable pageable) {
-    	QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
-    			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
-    				.analyzeWildcard(true)
-    				.field("name"));
-
-    	return teamSearchRepository.search(queryBuilder, pageable);
-    }
 }
