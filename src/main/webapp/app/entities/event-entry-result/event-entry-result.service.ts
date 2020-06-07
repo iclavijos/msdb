@@ -39,7 +39,7 @@ export class EventEntryResultService {
   }
 
   delete(id: number): Observable<HttpResponse<any>> {
-    return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+    return this.http.delete<any>(`api/event-editions/event-sessions/results/${id}`, { observe: 'response' });
   }
 
   search(req?: any): Observable<EntityArrayResponseType> {

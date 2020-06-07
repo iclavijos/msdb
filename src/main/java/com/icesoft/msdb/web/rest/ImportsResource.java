@@ -1,5 +1,6 @@
 package com.icesoft.msdb.web.rest;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.xml.bind.DatatypeConverter;
 
+import io.github.jhipster.web.util.HeaderUtil;
 import io.micrometer.core.annotation.Timed;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -133,12 +135,12 @@ public class ImportsResource {
         	case EVENTS: importEvents(data); break;
         	default: log.warn("The uploaded file does not correspond to any known entity");
         }
-
-        return new ResponseEntity<>("File uploaded", HttpStatus.ACCEPTED);
+        return ResponseEntity.created(new URI("/")).build();
+        // return new ResponseEntity<>("File uploaded", HttpStatus.ACCEPTED);
     }
 
     private <T> MappingIterator<T> initializeIterator(Class<T> type, String data) {
-    	CsvSchema bootstrapSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator(';');
+    	CsvSchema bootstrapSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator(',');
         CsvMapper mapper = new CsvMapper();
         try {
         	JavaTimeModule javaTimeModule=new JavaTimeModule();

@@ -11,6 +11,7 @@ import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
 import { EventEntryCategoryFilter } from './filters/entry-category-filter.pipe';
 import { MaterialElevationDirective } from './directives/material-elevation.directive';
 import { ImagesService } from './services/images.service';
+import { ImportsService } from './services/imports.service';
 
 @NgModule({
   imports: [MotorsportsDatabaseSharedLibsModule],
@@ -39,6 +40,6 @@ import { ImagesService } from './services/images.service';
     EventEntryCategoryFilter,
     MaterialElevationDirective
   ],
-  providers: [ImagesService, TimeMaskPipe]
+  providers: [ImagesService, ImportsService, TimeMaskPipe]
 })
 export class MotorsportsDatabaseSharedModule {}

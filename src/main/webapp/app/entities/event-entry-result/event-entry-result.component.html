@@ -6,6 +6,14 @@
                     (click)="addResult()">
                 <span class="fa fa-plus"></span>
             </button>
+            <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                    class="btn btn-success float-right"
+                    (click)="uploadResults()">
+                <span class="fa fa-plus"></span>
+                <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.uploadLabel">
+                                    Upload session results
+                                    </span>
+            </button>
         </div>
         <div class="col-sm-12">
             <div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
@@ -169,8 +177,7 @@
                                 </button>
                                 <button type="submit"
                                         *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                        [routerLink]="['/event/edition', { outlets: { popup: eventEdition.id + '/delete-ed'} }]"
-                                        replaceUrl="true"
+                                        (click)="deleteResult(result)"
                                         queryParamsHandling="merge"
                                         class="btn btn-danger btn-xs">
                                     <fa-icon [icon]="'times'"></fa-icon>

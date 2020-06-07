@@ -4,7 +4,8 @@ import { RouterModule } from '@angular/router';
 import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
 import { EventEntryResultComponent } from './event-entry-result.component';
 import { EventEntryResultUpdateComponent } from './event-entry-result-update.component';
-// import { EventEntryResultDeletePopupComponent, EventEntryResultDeleteDialogComponent } from './event-entry-result-delete-dialog.component';
+import { EventEntryUploadResultsComponent } from './event-entry-result-upload.component';
+import { EventEntryResultDeleteDialogComponent } from './event-entry-result-delete-dialog.component';
 import { eventEntryResultRoute, eventEntryResultPopupRoute } from './event-entry-result.route';
 
 const ENTITY_STATES = [...eventEntryResultRoute, ...eventEntryResultPopupRoute];
@@ -13,11 +14,11 @@ const ENTITY_STATES = [...eventEntryResultRoute, ...eventEntryResultPopupRoute];
   imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
   declarations: [
     EventEntryResultComponent,
-    EventEntryResultUpdateComponent
-    //     EventEntryResultDeleteDialogComponent,
-    //     EventEntryResultDeletePopupComponent
+    EventEntryResultUpdateComponent,
+    EventEntryUploadResultsComponent,
+    EventEntryResultDeleteDialogComponent
   ],
   exports: [EventEntryResultComponent],
-  entryComponents: [EventEntryResultUpdateComponent]
+  entryComponents: [EventEntryResultUpdateComponent, EventEntryUploadResultsComponent, EventEntryResultDeleteDialogComponent]
 })
 export class MotorsportsDatabaseEventEntryResultModule {}

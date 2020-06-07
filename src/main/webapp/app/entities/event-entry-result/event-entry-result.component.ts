@@ -10,6 +10,8 @@ import { EventEntry } from 'app/shared/model/event-entry.model';
 import { IEventEntryResult, EventEntryResult } from 'app/shared/model/event-entry-result.model';
 import { EventEntryResultService } from './event-entry-result.service';
 import { EventEntryResultUpdateComponent } from './event-entry-result-update.component';
+import { EventEntryUploadResultsComponent } from './event-entry-result-upload.component';
+import { EventEntryResultDeleteDialogComponent } from './event-entry-result-delete-dialog.component';
 
 import { MatDialog } from '@angular/material/dialog';
 
@@ -135,6 +137,34 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
         eventSession: this.eventSession,
         eventEntries: this.eventEntries,
         eventEdition: this.eventEdition
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadAll();
+      }
+    });
+  }
+
+  deleteResult(result: EventEntryResult) {
+    const dialogRef = this.dialog.open(EventEntryResultDeleteDialogComponent, {
+      data: {
+        eventEntryResult: result
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadAll();
+      }
+    });
+  }
+
+  uploadResults() {
+    const dialogRef = this.dialog.open(EventEntryUploadResultsComponent, {
+      data: {
+        eventSession: this.eventSession
       }
     });
 

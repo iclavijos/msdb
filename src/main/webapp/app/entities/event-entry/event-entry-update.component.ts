@@ -285,13 +285,6 @@ export class EventEntryUpdateComponent implements OnInit {
     );
   }
 
-  protected onSaveSuccess() {
-    this.isSaving = false;
-  }
-
-  protected onSaveError() {
-    this.isSaving = false;
-  }
   protected onError(errorMessage: string) {
     this.jhiAlertService.error(errorMessage, null, null);
   }
