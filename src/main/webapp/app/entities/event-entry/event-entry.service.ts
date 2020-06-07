@@ -17,11 +17,15 @@ export class EventEntryService {
   constructor(protected http: HttpClient) {}
 
   create(eventEntry: IEventEntry): Observable<EntityResponseType> {
-    return this.http.post<IEventEntry>(this.resourceUrl, eventEntry, { observe: 'response' });
+    const copy: IEventEntry = Object.assign({}, eventEntry);
+    copy.eventEdition = null;
+    return this.http.post<IEventEntry>(`api/event-editions/${eventEntry.eventEdition.id}/entries`, copy, { observe: 'response' });
   }
 
   update(eventEntry: IEventEntry): Observable<EntityResponseType> {
-    return this.http.put<IEventEntry>(this.resourceUrl, eventEntry, { observe: 'response' });
+    const copy: IEventEntry = Object.assign({}, eventEntry);
+    copy.eventEdition = null;
+    return this.http.put<IEventEntry>(`api/event-editions/${eventEntry.eventEdition.id}/entries`, copy, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {

@@ -41,7 +41,7 @@
                                                             <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.event">Event</span></dt>
                                                             <dd>
                                                                 <div *ngIf="eventEdition.event">
-                                                                    <a [routerLink]="['/event', eventEdition.event?.id]">{{eventEdition.event?.name}}</a>
+                                                                    <a [routerLink]="['/event', eventEdition.event?.id, 'view']">{{eventEdition.event?.name}}</a>
                                                                 </div>
                                                             </dd>
                                                             <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.allowedCategories">Allowed Categories</span></dt>

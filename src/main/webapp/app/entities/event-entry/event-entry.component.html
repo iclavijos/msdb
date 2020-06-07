@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-sm-12">
             <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                    class="btn btn-primary float-right create-event-entry" [routerLink]="['/', { outlets: { popup: eventEdition.id + '/event-entry-new' } }]">
+                    class="btn btn-primary float-right create-event-entry" (click)="addEntry()">
                 <span class="fa fa-plus"></span>
             </button>
         </div>
@@ -119,8 +119,7 @@
                         <mat-action-row>
                             <div class="btn-group flex-btn-group-container">
                                 <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                        [routerLink]="['/', { outlets: { popup: 'event-entry/'+ entry.id + '/edit'} }]"
-                                        replaceUrl="true"
+                                        (click)="editEntry(entry)"
                                         class="btn btn-primary btn-sm">
                                     <span class="fa fa-pencil"></span>
                                 </button>

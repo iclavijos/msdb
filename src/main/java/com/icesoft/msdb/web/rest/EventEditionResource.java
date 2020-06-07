@@ -487,15 +487,21 @@ public class EventEditionResource {
     	return ResponseEntity.ok().headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, idTarget.toString())).build();
     }
 
-    @PostMapping("/event-editions/{id}/entries")
+    @PostMapping("/event-editions/{eventEditionId}/entries")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    public ResponseEntity<EventEditionEntry> createEventEditionEntry(@Valid @RequestBody EventEditionEntry eventEntry) throws URISyntaxException {
+    public ResponseEntity<EventEditionEntry> createEventEditionEntry(
+        @Valid @RequestBody EventEditionEntry eventEntry, @PathVariable Long eventEditionId) throws URISyntaxException {
         log.debug("REST request to save EventEntry : {}", eventEntry);
         if (eventEntry.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
             		applicationName, true, ENTITY_NAME_ENTRY, "idexists", "A new eventEntry cannot already have an ID")).body(null);
         }
+
+        EventEdition eventEdition = eventEditionRepository.findById(eventEditionId).orElseThrow(
+            () -> new MSDBException("Invalid event edition id")
+        );
+        eventEntry.setEventEdition(eventEdition);
         EventEditionEntry result = eventEntryRepository.save(eventEntry);
         if (result.getCarImage() != null) {
 	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getCarImage(), ENTITY_NAME_ENTRY);
@@ -509,14 +515,19 @@ public class EventEditionResource {
             .body(result);
     }
 
-    @PutMapping("/event-editions/{id}/entries")
+    @PutMapping("/event-editions/{eventEditionId}/entries")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    public ResponseEntity<EventEditionEntry> updateEventEditionEntry(@Valid @RequestBody EventEditionEntry eventEntry) throws URISyntaxException {
+    public ResponseEntity<EventEditionEntry> updateEventEditionEntry(
+        @Valid @RequestBody EventEditionEntry eventEntry, @PathVariable Long eventEditionId) throws URISyntaxException {
         log.debug("REST request to update EventEntry : {}", eventEntry);
         if (eventEntry.getId() == null) {
-            return createEventEditionEntry(eventEntry);
+            return createEventEditionEntry(eventEntry, eventEditionId);
         }
+        EventEdition eventEdition = eventEditionRepository.findById(eventEditionId).orElseThrow(
+            () -> new MSDBException("Invalid event edition id")
+        );
+        eventEntry.setEventEdition(eventEdition);
         if (eventEntry.getCarImage() != null) {
 	        String cdnUrl = cdnService.uploadImage(eventEntry.getId().toString(), eventEntry.getCarImage(), ENTITY_NAME_ENTRY);
 	        eventEntry.setCarImageUrl(cdnUrl);
