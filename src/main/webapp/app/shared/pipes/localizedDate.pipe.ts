@@ -14,7 +14,9 @@ export class LocalizedDatePipe implements PipeTransform {
   transform(value: Moment, pattern = 'LLL'): any {
     let momentDate: Moment;
     if (!value.lang) {
-      momentDate = moment(value);
+      const valueCopy = Object.assign([], value);
+      valueCopy[1] = value[1] - 1;
+      momentDate = moment(valueCopy);
     } else {
       momentDate = value;
     }
