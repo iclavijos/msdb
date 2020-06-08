@@ -192,7 +192,7 @@ export class EventEditionUpdateComponent implements OnInit {
   save() {
     this.isSaving = true;
     const eventEdition = this.createFromForm();
-    if (eventEdition.id !== undefined) {
+    if (eventEdition.id !== null) {
       this.subscribeToSaveResponse(this.eventEditionService.update(eventEdition));
     } else {
       this.subscribeToSaveResponse(this.eventEditionService.create(eventEdition));
