@@ -74,11 +74,19 @@ export class SeriesEditionService {
   }
 
   findDriversResultsByRace(id: number, category: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.resourceUrl}/${id}/results/${category}`);
+    if (category) {
+      return this.http.get<any[]>(`${this.resourceUrl}/${id}/results/${category}`);
+    } else {
+      return this.http.get<any[]>(`${this.resourceUrl}/${id}/results`);
+    }
   }
 
   findDriversPointsByRace(id: number, category: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.resourceUrl}/${id}/points/${category}`);
+    if (category) {
+      return this.http.get<any[]>(`${this.resourceUrl}/${id}/points/${category}`);
+    } else {
+      return this.http.get<any[]>(`${this.resourceUrl}/${id}/points`);
+    }
   }
 
   addEventToSeries(seriesId: number, eventId: number, racesData: any) {

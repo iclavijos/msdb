@@ -53,7 +53,7 @@ export class StandingsComponent implements OnInit {
     } else if (this.seriesEdition) {
       this.showExtendedStandings = true;
 
-      this.filterCategory = this.seriesEdition.allowedCategories[0].shortname;
+      this.filterCategory = this.seriesEdition.allowedCategories.length > 0 ? this.seriesEdition.allowedCategories[0].shortname : null;
 
       this.seriesEditionService.findDriversStandings(this.seriesEdition.id).subscribe(driversStandings => {
         this.driversUnfiltered = driversStandings;
