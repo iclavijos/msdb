@@ -3,8 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 
 import { SeriesEditionService } from './series-edition.service';
 import { ISeriesEdition } from 'app/shared/model/series-edition.model';
+import { SeriesEditionCalendarDialogComponent } from './series-edition-calendar-dialog.component';
 
 import { ImagesService } from 'app/shared/services/images.service';
+
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'jhi-series-edition-detail',
@@ -32,7 +35,8 @@ export class SeriesEditionDetailComponent implements OnInit {
   constructor(
     protected activatedRoute: ActivatedRoute,
     protected seriesEditionService: SeriesEditionService,
-    protected imagesService: ImagesService
+    protected imagesService: ImagesService,
+    private dialog: MatDialog
   ) {
     this.genericPosterUrl = imagesService.getGenericRacePoster();
   }
@@ -40,12 +44,16 @@ export class SeriesEditionDetailComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ seriesEdition }) => {
       this.seriesEdition = seriesEdition;
-      this.seriesEditionService.findEvents(seriesEdition.id).subscribe(events => {
-        this.seriesEdition.events = events.body;
-        if (events.body.filter(event => event.status !== 'ONGOING').length > 0) {
-          this.displayedColumns.unshift('status');
-        }
-      });
+      this.loadSeriesEvents();
+    });
+  }
+
+  loadSeriesEvents() {
+    this.seriesEditionService.findEvents(this.seriesEdition.id).subscribe(events => {
+      this.seriesEdition.events = events.body;
+      if (events.body.filter(event => event.status !== 'ONGOING').length > 0) {
+        this.displayedColumns.unshift('status');
+      }
     });
   }
 
@@ -65,5 +73,34 @@ export class SeriesEditionDetailComponent implements OnInit {
 
   public concatDriverNames(drivers: any[]): string {
     return drivers.map(d => d.driverName).join(', ');
+  }
+
+  addEventToCalendar() {
+    const dialogRef = this.dialog.open(SeriesEditionCalendarDialogComponent, {
+      data: {
+        seriesEdition: this.seriesEdition
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadSeriesEvents();
+      }
+    });
+  }
+
+  editEventAssignment(event) {
+    const dialogRef = this.dialog.open(SeriesEditionCalendarDialogComponent, {
+      data: {
+        seriesEdition: this.seriesEdition,
+        eventEdition: event
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadSeriesEvents();
+      }
+    });
   }
 }

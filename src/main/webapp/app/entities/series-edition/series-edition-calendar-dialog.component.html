@@ -1,0 +1,114 @@
+<h1 mat-dialog-title>{{'motorsportsDatabaseApp.series.seriesEdition.calendar.editLabel' | translate }}</h1>
+<div mat-dialog-content [formGroup]="editForm">
+    <jhi-alert-error></jhi-alert-error>
+    <div class="row">
+        <div class="col-12">
+            <mat-form-field class="example-full-width">
+                <input matInput type="text" [matAutocomplete]="autoEvent" formControlName="event"
+                       placeholder="{{ 'motorsportsDatabaseApp.series.seriesEdition.calendar.searchEvent' | translate }}"/>
+                <mat-autocomplete #autoEvent="matAutocomplete" [displayWith]="displayFnEvents">
+                    <mat-option *ngFor="let event of eventOptions | async" [value]="event" (click)="setEvent(event)">
+                        <span matTooltip="{{ event.longEventName }}">{{ event.longEventName }}</span>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 form-group" *ngIf="this.editForm.get(['event']).value?.sessions">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.calendar.assignPoints">Assign points</label>
+            <div formArrayName="races">
+                <mat-list>
+                    <mat-list-item *ngFor="let race of editForm.controls.races.controls; let i=index">
+                            <div class="row" [formGroupName]="i">
+                                <div class="col-8">
+                                    <mat-form-field>
+                                        <mat-label>{{race.value.raceName}}</mat-label>
+                                        <mat-select formControlName="pSystemAssigned">
+                                            <mat-option value=""></mat-option>
+                                            <mat-option *ngFor="let pSystem of seriesEdition.pointsSystems" [value]="pSystem.id">
+                                                {{pSystem.name}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-4">
+                                    <mat-form-field>
+                                        <mat-label>Multiplier factor</mat-label>
+                                        <mat-select formControlName="psMultiplier">
+                                            <mat-option value="0.5">x0.5</mat-option>
+                                            <mat-option value="1" selected="selected">x1</mat-option>
+                                            <mat-option value="1.5">x1.5</mat-option>
+                                            <mat-option value="2">x2</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                        </div>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+        </div>
+    </div>
+</div>
+<mat-dialog-actions align="end">
+    <button mat-button class="btn btn-secondary" (click)="close()">
+        <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+    </button>
+    <button mat-button (click)="save()" [disabled]="editForm.invalid || isSaving" class="btn btn-primary" >
+        <span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+    </button>
+</mat-dialog-actions>
+
+
+<!-- form name="calendarForm" [formGroup]="myForm" role="form" novalidate (ngSubmit)="save()" #calendarForm="ngForm">
+
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <div class="form-group">
+                        <ng-template #eventTemplate let-r="result">
+                            {{r.longEventName}}
+                        </ng-template>
+                        <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.calendar.searchEvent" for="field_event">Search event</label>
+                        <input id="field_event" type="text" name="field_event" class="form-control" [inputFormatter]="inputFormatter" (selectItem)="onEventSelected($event)"
+                               [(ngModel)]="eventEdition" [ngModelOptions]="{standalone: true}" [ngbTypeahead]="search" [focusFirst]="false" [resultTemplate]="eventTemplate" required/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group" *ngIf="eventEdition?.sessions">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.calendar.assignPoints" for="field_event">Assign points</label>
+             scoring races
+            <div formArrayName="races">
+                <ul class="list-unstyled">
+                    <li *ngFor="let race of myForm.controls.races.controls; let i=index">
+                        <div class="panel-body form-group" [formGroupName]="i">
+                            <div class="row">
+                                <div class="col-lg-8 col-md-8">
+                                    <label class="mr-sm-2" for="field_points">{{race.value.raceName}}</label>
+                                    <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="field_points" name="points" formControlName="pSystemAssigned">
+                                        <option value=""></option>
+                                        <option *ngFor="let pSystem of seriesEdition.pointsSystems" [value]="pSystem.id">{{pSystem.name}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-4 col-md-4">
+                                    <label class="mr-sm-2" for="field_multiplier">Multiply factor</label>
+                                    <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="multiply" formControlName="psMultiplier">
+                                        <option value="0.5">x0.5</option>
+                                        <option value="1" selected="selected">x1</option>
+                                        <option value="1.5">x1.5</option>
+                                        <option value="2">x2</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</form -->

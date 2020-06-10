@@ -16,7 +16,7 @@ public class SeriesEventsAndWinnersDTO {
 		this.winners = winners;
 	}
 
-	public Long getEventEditionId() {
+	public Long getId() {
 		return eventEdition.getId();
 	}
 	public String getEventEditionName() {

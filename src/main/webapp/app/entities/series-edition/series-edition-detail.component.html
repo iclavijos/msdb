@@ -13,6 +13,22 @@
                             <div class="col-md-12">
                                 <mat-tab-group dynamicHeight mat-stretch-tabs>
                                     <mat-tab label="{{'global.menu.calendar' | translate }}">
+                                        <div class="row" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
+                                            <div class="col-12 text-right">
+                                                <button mat-button (click)="updateStandings()" class="btn btn-info float-right">
+                                                    <fa-icon [icon]="'list-ol'"></fa-icon>
+                                                    <span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.updateStandings">Update standings</span>
+                                                </button>
+                                                <button mat-button (click)="addEventToCalendar()" class="btn btn-primary float-right">
+                                                    <fa-icon [icon]="'calendar'"></fa-icon>
+                                                    <span jhiTranslate="entity.action.add">Add</span>
+                                                </button>
+                                                <button mat-button class="btn btn-warning float-right">
+                                                    <fa-icon [icon]="'copy'"></fa-icon>
+                                                    <span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.clone.clone"> Clone</span>
+                                                </button>
+                                            </div>
+                                        </div>
                                         <div class="row">
                                             <div class="col-12 text-right">
                                                 <mat-button-toggle-group #viewType="matButtonToggleGroup" value="grid">
@@ -191,6 +207,18 @@
             <mat-card-content>
                 <h5 class="card-subtitle">{{ event.eventEditionName }}</h5>
             </mat-card-content>
+            <mat-card-actions *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" align="end">
+                <button mat-button
+                        (click)="editEventAssignment(event)"
+                        class="btn btn-primary btn-xs">
+                    <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                </button>
+                <button mat-button
+                        (click)="removeEventFromSeries(event)"
+                        class="btn btn-danger btn-xs">
+                    <fa-icon [icon]="'times'"></fa-icon>
+                </button>
+            </mat-card-actions>
         </mat-card>
     </div>
 </ng-template>
@@ -245,6 +273,18 @@
                     </span></h1>
                 </div>
             </div>
+            <mat-card-actions *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" align="end">
+                <button mat-button
+                        (click)="editEventAssignment(event)"
+                        class="btn btn-primary btn-xs">
+                    <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                </button>
+                <button mat-button
+                        (click)="removeEventFromSeries(event)"
+                        class="btn btn-danger btn-xs">
+                    <fa-icon [icon]="'times'"></fa-icon>
+                </button>
+            </mat-card-actions>
         </mat-card>
     </div>
 </ng-template>
@@ -301,6 +341,16 @@
                                 [routerLink]="['/event/edition', event.eventEditionId, 'view-ed']"
                                 class="btn btn-primary">
                             <fa-icon [icon]="'eye'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.view"> view</span>
+                        </button>
+                        <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                (click)="editEventAssignment(event)"
+                                class="btn btn-primary">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon> <span jhiTranslate="entity.action.edit"> edit</span>
+                        </button>
+                        <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                (click)="removeEventFromSeries(event)"
+                                class="btn btn-danger">
+                            <fa-icon [icon]="'times'"></fa-icon> <span jhiTranslate="entity.action.delete"> delete</span>
                         </button>
                     </td>
                 </ng-container>
