@@ -201,19 +201,19 @@ public class SeriesEditionResource {
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/series-editions/{id}/points/{category}")
+    @GetMapping({"/series-editions/{id}/points", "/series-editions/{id}/points/{category}"})
     @Timed
     @Cacheable(cacheNames="pointRaceByRace")
-    public ResponseEntity<Object[][]> getSeriesPointsRaceByRace(@PathVariable Long id, @PathVariable String category) {
+    public ResponseEntity<Object[][]> getSeriesPointsRaceByRace(@PathVariable Long id, @PathVariable(required = false) String category) {
     	PointsRaceByRace points = resultsService.getPointsRaceByRace(id);
     	List<DriverPointsDTO> standings = resultsService.getDriversStandings(id);
     	return new ResponseEntity<>(points.getResultsMatrix(standings, category), HttpStatus.OK);
     }
 
-    @GetMapping("/series-editions/{id}/results/{category}")
+    @GetMapping({"/series-editions/{id}/results", "/series-editions/{id}/results/{category}"})
     @Timed
     @Cacheable(cacheNames="resultsRaceByRace")
-    public ResponseEntity<String[][]> getSeriesResultsRaceByRace(@PathVariable Long id, @PathVariable String category) {
+    public ResponseEntity<String[][]> getSeriesResultsRaceByRace(@PathVariable Long id, @PathVariable(required = false) String category) {
     	String[][] result = resultsService.getResultsRaceByRace(id, category);
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
