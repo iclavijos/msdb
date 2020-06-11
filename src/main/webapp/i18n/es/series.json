@@ -56,7 +56,8 @@
           "title": "Calendario",
           "editLabel": "Edita el calendario del campeonato",
           "searchEvent": "Buscar evento",
-          "assignPoints": "Asigna sistema de puntuación a cada sesión puntuable del evento"
+          "assignPoints": "Asigna sistema de puntuación a cada sesión puntuable del evento",
+          "remove": "Estás seguro que quieres eliminar la prueba '{{ event }}' del campeonato?"
         },
         "champions": "Campeones",
         "period": "Periodo",

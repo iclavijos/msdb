@@ -24,7 +24,7 @@ import * as moment from 'moment';
   templateUrl: './series-edition-calendar-dialog.component.html'
 })
 export class SeriesEditionCalendarDialogComponent implements OnInit {
-  private seriesEdition: ISeriesEdition;
+  seriesEdition: ISeriesEdition;
   eventEdition: IEventEdition;
   isSaving: boolean;
   searching = false;
@@ -104,7 +104,7 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
   }
 
   addRaces(races: IEventSession[]) {
-    const control = this.editForm.controls['races'] as FormArray;
+    const control = this.editForm.get('races') as FormArray;
     for (const race of races) {
       control.push(this.initSession(race));
     }

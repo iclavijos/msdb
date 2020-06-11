@@ -55,7 +55,8 @@
           "title": "Calendar",
           "editLabel": "Edit series calendar",
           "searchEvent": "Search event",
-          "assignPoints": "Assign points system to each scoring session of the event"
+          "assignPoints": "Assign points system to each scoring session of the event",
+          "remove": "Are you sure you want to remove event '{{ event }}' from series?"
         },
         "champions": "Champions",
         "period": "Period",

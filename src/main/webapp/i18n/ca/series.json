@@ -56,7 +56,8 @@
           "title": "Calendari",
           "editLabel": "Edita el calendari del campionat",
           "searchEvent": "Cercar l'event",
-          "assignPoints": "Assigna sistema de puntuació per cada sessió putuable de l'event"
+          "assignPoints": "Assigna sistema de puntuació per cada sessió putuable de l'event",
+          "remove": "Estàs segur que vols eliminar la prova '{{ event }}' del campionat?"
         },
         "champions": "Campions",
         "period": "Periòde",

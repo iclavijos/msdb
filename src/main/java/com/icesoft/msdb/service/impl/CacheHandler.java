@@ -23,9 +23,9 @@ public class CacheHandler {
 	@Autowired private SeriesEditionRepository seriesEditionRepo;
 
 	public void resetSeriesEditionCaches(SeriesEdition seriesEdition) {
+        cacheManager.getCache("winnersCache").evict(seriesEdition.getId());
         seriesEdition.getAllowedCategories().forEach(cat -> {
             SimpleKey key = new SimpleKey(seriesEdition.getId(), cat.getShortname());
-            cacheManager.getCache("winnersCache").evict(seriesEdition.getId());
             cacheManager.getCache("pointRaceByRace").evict(key);
             cacheManager.getCache("resultsRaceByRace").evict(key);
             cacheManager.getCache("driversStandingsCache").evict(seriesEdition.getId());
