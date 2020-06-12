@@ -55,7 +55,7 @@
                                                             <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout">Track Layout</span></dt>
                                                             <dd>
                                                                 <div *ngIf="eventEdition.trackLayout">
-                                                                    <a [routerLink]="['/racetrack', eventEdition.trackLayout.racetrack.id, 'racetrack-layout', eventEdition.trackLayout?.id ]" >
+                                                                    <a [routerLink]="['/racetrack-layout', eventEdition.trackLayout?.id, 'view' ]" >
                                                                         {{eventEdition.trackLayout?.racetrack.name}} - {{eventEdition.trackLayout?.name}}
                                                                     </a>
                                                                     <div *ngIf="eventEdition.trackLayout.layoutImageUrl">
