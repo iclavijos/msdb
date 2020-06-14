@@ -1,10 +1,12 @@
 package com.icesoft.msdb.web.rest;
 
 import com.icesoft.msdb.MSDBException;
+import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.TimeZone;
 import com.icesoft.msdb.repository.*;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
+import com.icesoft.msdb.domain.Ephemeris;
 import com.icesoft.msdb.service.dto.SessionDataDTO;
 import com.icesoft.msdb.service.dto.TimeZonesResponse;
 import io.micrometer.core.annotation.Timed;
@@ -13,8 +15,10 @@ import org.cloudinary.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -94,6 +98,29 @@ public class HomeResource {
 		return filtered;
 	}
 
+	@GetMapping("/home/ephemeris/{today}")
+    @Timed
+    @Cacheable(cacheNames = "ephemeris", key="#today")
+    public ResponseEntity<List<Ephemeris.EphemerisItem>> getTodayEphemeris(@PathVariable String today) {
+        String[] data = today.split("-");
+        int day, month;
+        if (data.length != 2) {
+            throw new MSDBException("Invalid day format supplied");
+        } else {
+            try {
+                day = Integer.parseInt(data[0]);
+                month = Integer.parseInt(data[1]);
+            } catch (NumberFormatException e) {
+                throw new MSDBException("Invalid date supplied");
+            }
+        }
+	    List<Driver> bornDrivers = driversRepository.findBornOnDay(day, month);
+        List<Driver> deadDrivers = driversRepository.findDeadOnDay(day, month);
+        List<EventSession> events = eventSessionRepository.findRacesOnDay(day, month);
+        Ephemeris result = new Ephemeris(bornDrivers, deadDrivers, events);
+        return ResponseEntity.ok(result.getEphemerisItems());
+    }
+
 	@GetMapping("/timezones")
 	@Cacheable(cacheNames="timezones")
 	public List<TimeZone> getTimeZones() {
@@ -104,6 +131,7 @@ public class HomeResource {
         if (!timezonesResp.getStatus().equals("OK")) {
         	throw new MSDBException("Error retrieving timezones: " + timezonesResp.getMessage());
         }
+        // This is just an internal joke :P
         TimeZone nerdTZ = new TimeZone("Toledo Hora imperial", "Europe/London", 0L);
         timezonesResp.getZones().add(nerdTZ);
         return timezonesResp.getZones();

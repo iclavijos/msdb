@@ -1,0 +1,38 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header"><h3>{{ 'home.thisDayIn' | translate }}</h3></div>
+                    <div class="card-body">
+                        <mat-list>
+                            <mat-list-item *ngFor="let year of years">
+                                <h3 mat-line>{{ year }}</h3>
+                                <div mat-line *ngFor="let event of ephemeris | ephemerisYearFilter:year">
+                                    <div *ngIf="event.type === 'RACE'">
+                                        <span *ngIf="!event.detail" jhiTranslate="home.eventTookPlace"
+                                           [translateValues]="{event: event.name}">Event took place</span>
+                                        <span *ngIf="event.detail" jhiTranslate="home.eventRaceTookPlace"
+                                              [translateValues]="{event: event.name, race: event.detail}">Event took place</span>
+                                    </div>
+                                    <div *ngIf="event.type !== 'RACE'">
+                                        {{ event.name }}
+                                        <span *ngIf="event.type === 'BORN'">
+                                            {{ 'home.born' | translate }}
+                                            <span *ngIf="event.place">{{ 'home.in' | translate }} {{ event.place }}</span>
+                                        </span>
+                                        <span *ngIf="event.type === 'DEAD'">
+                                            {{ 'home.died' | translate }}
+                                            <span *ngIf="event.place">{{ 'home.at' | translate }} {{ event.place }}</span>
+                                        </span>({{ event.age }} {{ 'home.yearsOld' | translate }})
+                                        </span>
+                                    </div>
+                                </div>
+                            </mat-list-item>
+                        </mat-list>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

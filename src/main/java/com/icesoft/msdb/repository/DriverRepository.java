@@ -31,6 +31,11 @@ public interface DriverRepository extends JpaRepository<Driver,Long> {
 	@Query("SELECT DISTINCT eee.drivers FROM EventEditionEntry eee WHERE ?1 MEMBER OF eee.eventEdition.seriesEditions")
 	List<Driver> findDriversInSeries(SeriesEdition seriesEdition);
 
+	@Query("FROM Driver d WHERE day(d.birthDate) = ?1 AND month(d.birthDate) = ?2")
+	List<Driver> findBornOnDay(Integer day, Integer month);
+    @Query("FROM Driver d WHERE day(d.deathDate) = ?1 AND month(d.deathDate) = ?2")
+    List<Driver> findDeadOnDay(Integer day, Integer month);
+
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
 	@Query(value = "select d from Driver d JOIN FETCH d.nationality n")
 	@Transactional(readOnly=true)

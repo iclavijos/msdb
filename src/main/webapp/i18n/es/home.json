@@ -1,30 +1,38 @@
 {
-    "home": {
-        "title": "¡Bienvenido a Motorsports Database!",
-        "logged": {
-            "message": "Estás conectado como \"{{username}}\"."
-        },
-        "link": {
-            "follow": "Sigue a @iclavijos en Twitter"
-        },
-        "searchEntries": "Buscar participaciones:",
-        "searchEvents": "Buscar citas:",
-        "entriesResult": "Participaciones encontradas",
-        "drivers": "Pilotos",
-        "teams": "Equipos",
-        "racetracks": "Circuitos",
-        "events": "Citas",
-        "entryName": "Participante",
-        "date": "Fecha",
-        "eventName": "Cita",
-        "car": "Chasis/Motor",
-        "fastestLap": "Vuelta rápida",
-        "qualyLap": "V. rápida Q",
-        "raceLap": "V. rápida Carrera",
-        "racePosition": "Pos. Carrera",
-        "upcomingEvents": "Próximos eventos",
-        "noUpcomingEvents": "No hay eventos programados en las próximas dos semanas",
-        "searchDB": "Buscar en la base de datos",
-        "selectTimeZone": "Selecciona la zona horaria"
-    }
+  "home": {
+    "title": "¡Bienvenido a Motorsports Database!",
+    "logged": {
+      "message": "Estás conectado como \"{{username}}\"."
+    },
+    "link": {
+      "follow": "Sigue a @iclavijos en Twitter"
+    },
+    "searchEntries": "Buscar participaciones:",
+    "searchEvents": "Buscar citas:",
+    "entriesResult": "Participaciones encontradas",
+    "drivers": "Pilotos",
+    "teams": "Equipos",
+    "racetracks": "Circuitos",
+    "events": "Citas",
+    "entryName": "Participante",
+    "date": "Fecha",
+    "eventName": "Cita",
+    "car": "Chasis/Motor",
+    "fastestLap": "Vuelta rápida",
+    "qualyLap": "V. rápida Q",
+    "raceLap": "V. rápida Carrera",
+    "racePosition": "Pos. Carrera",
+    "upcomingEvents": "Próximos eventos",
+    "noUpcomingEvents": "No hay eventos programados en las próximas dos semanas",
+    "searchDB": "Buscar en la base de datos",
+    "selectTimeZone": "Selecciona la zona horaria",
+    "thisDayIn": "Este día del año...",
+    "born": "nació",
+    "died": "murió",
+    "in": "en",
+    "at": "en",
+    "yearsOld": "años",
+    "eventTookPlace": "Se disputó el/las {{ event }}",
+    "eventRaceTookPlace": "Se disputó la {{ race }} del/de las {{ event }}"
+  }
 }

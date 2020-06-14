@@ -1,0 +1,52 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header"><h3>{{ 'home.upcomingEvents' | translate }}</h3></div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-3">
+                                {{ 'home.selectTimeZone' | translate }}
+                            </div>
+                            <div class="col-9">
+                                <mat-select [(ngModel)]="timezone" (selectionChange)="changeTimezone()">
+                                    <mat-option *ngFor="let item of timezones" [value]="item.zoneName">
+                                        {{item.countryName}} ({{item.zoneName}} {{item.gmtOffset}})
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card-block" *ngFor="let day of dates">
+                                    <h5 class="card-title">{{ day }}</h5>
+                                    <div class="card-body">
+                                        <p *ngFor="let session of filteredSessions(day);">
+                                            <strong>{{ session.sessionStartTime.format("HH:mm") }}
+                                                <span *ngIf="session.sessionEndTime"> - {{ session.sessionEndTime.format("HH:mm")}}</span>
+                                                <span *ngIf="session.durationType === 5"> ({{ session.duration}}L)</span>
+                                                <span *ngIf="session.durationType === 3"> ({{ session.duration}}KM)</span>
+                                                <span *ngIf="session.durationType === 4"> ({{ session.duration}}M)</span>: </strong>
+                                            <span>
+                                                <span *ngIf="session.seriesIds">
+                                                    <ng-template ngFor let-item [ngForOf]="session.seriesIds" let-currentIndex="index">
+                                                      <a [routerLink]="['/series/edition', item, 'view' ]" >{{session.seriesNames[currentIndex]}} </a>
+                                                    </ng-template> -
+                                                </span>
+                                                <a [routerLink]="['/event/edition', session.eventEditionId, 'view-ed' ]" >{{ session.eventName }}, {{ session.sessionName }}</a>
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="card-block" *ngIf="noEvents">
+                                    <span jhiTranslate="home.noUpcomingEvents"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

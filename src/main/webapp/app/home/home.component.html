@@ -8,7 +8,7 @@
                             <i class="icofont icofont-racer"></i>
                         </div>
                         <p class="card-category">{{ 'home.drivers' | translate }}</p>
-                        <h3 class="card-title"></h3>
+                        <h3 class="card-title">{{ homeData.drivers }}</h3>
                     </div>
                     <div class="card-footer">
                     </div>
@@ -18,15 +18,12 @@
                 <div class="card card-stats">
                     <div class="card-header card-header-success card-header-icon">
                         <div class="card-icon">
-                            <i class="material-icons">store</i>
+                            <i class="icofont icofont-whistle"></i>
                         </div>
-                        <p class="card-category">Revenue</p>
-                        <h3 class="card-title">$34,245</h3>
+                        <p class="card-category">{{ 'home.racetracks' | translate }}</p>
+                        <h3 class="card-title">{{ homeData.racetracks }}</h3>
                     </div>
                     <div class="card-footer">
-                        <div class="stats">
-                            <i class="material-icons">date_range</i> Last 24 Hours
-                        </div>
                     </div>
                 </div>
             </div>
@@ -34,15 +31,12 @@
                 <div class="card card-stats">
                     <div class="card-header card-header-danger card-header-icon">
                         <div class="card-icon">
-                            <i class="material-icons">info_outline</i>
+                            <i class="icofont icofont-racing-car"></i>
                         </div>
-                        <p class="card-category">Fixed Issues</p>
-                        <h3 class="card-title">75</h3>
+                        <p class="card-category">{{ 'home.teams' | translate}}</p>
+                        <h3 class="card-title">{{ homeData.teams }}</h3>
                     </div>
                     <div class="card-footer">
-                        <div class="stats">
-                            <i class="material-icons">local_offer</i> Tracked from Github
-                        </div>
                     </div>
                 </div>
             </div>
@@ -50,17 +44,22 @@
                 <div class="card card-stats">
                     <div class="card-header card-header-info card-header-icon">
                         <div class="card-icon">
-                            <i class="fa fa-twitter"></i>
+                            <i class="icofont icofont-trophy-alt"></i>
                         </div>
-                        <p class="card-category">Followers</p>
-                        <h3 class="card-title">+245</h3>
+                        <p class="card-category">{{ 'home.events' | translate }}</p>
+                        <h3 class="card-title">{{ homeData.events }}</h3>
                     </div>
                     <div class="card-footer">
-                        <div class="stats">
-                            <i class="material-icons">update</i> Just Updated
-                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <jhi-home-events></jhi-home-events>
+            </div>
+            <div class="col-6">
+                <jhi-home-ephemeris></jhi-home-ephemeris>
             </div>
         </div>
     </div>

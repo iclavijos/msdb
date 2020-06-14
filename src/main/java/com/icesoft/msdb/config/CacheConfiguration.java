@@ -95,6 +95,7 @@ public class CacheConfiguration {
             createCache(cm, "homeInfo", jcacheConfiguration);
             createCache(cm, "calendar", jcacheConfiguration);
             createCache(cm, "timezones", oneDayCacheConfiguration);
+            createCache(cm, "ephemeris", oneDayCacheConfiguration);
 
             createCache(cm, "driversStandingsCache", longLivedCacheConfiguration);
             createCache(cm, "teamsStandingsCache", longLivedCacheConfiguration);

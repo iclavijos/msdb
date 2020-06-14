@@ -9,6 +9,7 @@ import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
 import { TimeMaskPipe } from './mask/time-mask.pipe';
 import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
 import { EventEntryCategoryFilter } from './filters/entry-category-filter.pipe';
+import { EphemerisYearFilter } from './filters/ephemeris-year-filter.pipe';
 import { MaterialElevationDirective } from './directives/material-elevation.directive';
 import { ImagesService } from './services/images.service';
 import { ImportsService } from './services/imports.service';
@@ -25,6 +26,7 @@ import { ImportsService } from './services/imports.service';
     TimeMaskPipe,
     LocalizedDatePipe,
     EventEntryCategoryFilter,
+    EphemerisYearFilter,
     MaterialElevationDirective
   ],
   exports: [
@@ -38,6 +40,7 @@ import { ImportsService } from './services/imports.service';
     TimeMaskPipe,
     LocalizedDatePipe,
     EventEntryCategoryFilter,
+    EphemerisYearFilter,
     MaterialElevationDirective
   ],
   providers: [ImagesService, ImportsService, TimeMaskPipe]

@@ -35,4 +35,9 @@ public interface EventSessionRepository extends JpaRepository<EventSession,Long>
 			+ "(es.sessionType = com.icesoft.msdb.domain.enums.SessionType.RACE OR es.sessionType = com.icesoft.msdb.domain.enums.SessionType.QUALIFYING_RACE) "
 			+ "ORDER BY es.sessionStartTime")
 	List<EventSession> findRacesInSeries(SeriesEdition seriesEdition);
+
+    @Query("FROM EventSession e WHERE day(from_unixtime(e.sessionStartTime)) = ?1 AND " +
+        "month(from_unixtime(e.sessionStartTime)) = ?2 AND from_unixtime(e.sessionStartTime) < CURRENT_DATE AND " +
+        "sessionType = com.icesoft.msdb.domain.enums.SessionType.RACE")
+	List<EventSession> findRacesOnDay(Integer day, Integer month);
 }
