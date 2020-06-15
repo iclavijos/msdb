@@ -12,6 +12,7 @@ export class HomeEventsComponent implements OnInit {
   calendar: any;
   timezone: any;
   timezones: any;
+  noEvents = false;
   dates = new Set();
 
   constructor(private http: HttpClient) {}
