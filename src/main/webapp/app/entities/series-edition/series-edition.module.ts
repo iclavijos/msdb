@@ -4,6 +4,7 @@ import { MotorsportsDatabaseStandingsModule } from '../standings/standings.modul
 import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
 import { SeriesEditionComponent } from './series-edition.component';
 import { SeriesEditionDetailComponent } from './series-edition-detail.component';
+import { SeriesEditionUpdateComponent } from './series-edition-update.component';
 import { SeriesEditionCalendarDialogComponent } from './series-edition-calendar-dialog.component';
 import { SeriesEditionCalendarRemoveDialogComponent } from './series-edition-calendar-remove-dialog.component';
 import { SeriesEditionRoutingModule } from './series-edition.route';
@@ -13,10 +14,11 @@ import { SeriesEditionRoutingModule } from './series-edition.route';
   declarations: [
     SeriesEditionComponent,
     SeriesEditionDetailComponent,
+    SeriesEditionUpdateComponent,
     SeriesEditionCalendarDialogComponent,
     SeriesEditionCalendarRemoveDialogComponent
   ],
   exports: [SeriesEditionComponent],
-  entryComponents: [SeriesEditionCalendarDialogComponent, SeriesEditionCalendarRemoveDialogComponent]
+  entryComponents: [SeriesEditionUpdateComponent, SeriesEditionCalendarDialogComponent, SeriesEditionCalendarRemoveDialogComponent]
 })
 export class MotorsportsDatabaseSeriesEditionModule {}

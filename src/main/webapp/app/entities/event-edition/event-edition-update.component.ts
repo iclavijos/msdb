@@ -21,8 +21,7 @@ import * as moment from 'moment';
 
 @Component({
   selector: 'jhi-event-edition-update',
-  templateUrl: './event-edition-update.component.html',
-  styleUrls: ['event-edition.scss']
+  templateUrl: './event-edition-update.component.html'
 })
 export class EventEditionUpdateComponent implements OnInit {
   isSaving: boolean;

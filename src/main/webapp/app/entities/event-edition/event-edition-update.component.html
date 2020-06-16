@@ -94,7 +94,7 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <mat-label>{{'motorsportsDatabaseApp.eventEdition.allowedCategories' | translate }}</mat-label>
-                                    <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
+                                    <cdk-virtual-scroll-viewport itemSize="50" class="selection-list-viewport">
                                         <mat-selection-list [compareWith]="compareCategories" name="allowedCategories" id="field_allowedCategories" formControlName="allowedCategories">
                                             <mat-list-option *ngFor="let category of categories" [value]="category">
                                                 {{ category.name }}

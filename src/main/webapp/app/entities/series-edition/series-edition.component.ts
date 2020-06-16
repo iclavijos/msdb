@@ -6,10 +6,13 @@ import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
 import { Series } from 'app/shared/model/series.model';
-import { ISeriesEdition } from 'app/shared/model/series-edition.model';
+import { ISeriesEdition, SeriesEdition } from 'app/shared/model/series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
+import { SeriesEditionUpdateComponent } from './series-edition-update.component';
 
 import { MatPaginator, MatSort } from '@angular/material';
+
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'jhi-series-edition',
@@ -44,7 +47,8 @@ export class SeriesEditionComponent implements AfterViewInit, OnDestroy {
     protected activatedRoute: ActivatedRoute,
     protected dataUtils: JhiDataUtils,
     protected router: Router,
-    protected eventManager: JhiEventManager
+    protected eventManager: JhiEventManager,
+    protected dialog: MatDialog
   ) {}
 
   ngAfterViewInit() {
@@ -124,5 +128,36 @@ export class SeriesEditionComponent implements AfterViewInit, OnDestroy {
       result.push('id');
     }
     return result;
+  }
+
+  createSeriesEdition() {
+    const dialogRef = this.dialog.open(SeriesEditionUpdateComponent, {
+      data: {
+        series: this.series,
+        seriesEdition: new SeriesEdition()
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadAll().subscribe(data => (this.seriesEditions = data.body));
+      }
+    });
+  }
+
+  editSeriesEdition(seriesEdition: ISeriesEdition, $event) {
+    $event.stopPropagation();
+    const dialogRef = this.dialog.open(SeriesEditionUpdateComponent, {
+      data: {
+        series: this.series,
+        seriesEdition
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadAll().subscribe(data => (this.seriesEditions = data.body));
+      }
+    });
   }
 }

@@ -1,7 +1,8 @@
 <div>
     <div class="row">
         <div class="col-sm-12">
-            <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-series" [routerLink]="['/series/edition/new']">
+            <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-series"
+                    (click)="createSeriesEdition()">
                 <fa-icon [icon]="'plus'"></fa-icon>
                 <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.series.home.createLabel">
                         Create a new series edition
@@ -18,7 +19,7 @@
                 <div class="card-body">
                     <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
                     <div class="alert alert-warning" [hidden]="seriesEditions?.length > 0 || isLoadingResults">
-                        <span jhiTranslate="motorsportsDatabaseApp.seriesEdition.home.notFound">No series editions found</span>
+                        <span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.home.notFound">No series editions found</span>
                     </div>
                     <div class="table-responsive" [hidden]="seriesEditions?.length === 0">
                         <table mat-table class="table table-hover" [dataSource]="seriesEditions"
@@ -70,8 +71,7 @@
                                     <div class="btn-group">
                                         <button type="submit"
                                                 *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                                [routerLink]="['/series/edition', seriesEdition.id, 'edit-ed']"
-                                                (click)="$event.stopPropagation()"
+                                                (click)="editSeriesEdition(seriesEdition, $event)"
                                                 class="btn btn-primary btn-xs">
                                             <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                         </button>
