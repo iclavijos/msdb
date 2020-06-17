@@ -142,6 +142,12 @@
                 class="btn btn-primary">
             <fa-icon [icon]="'calendar'"></fa-icon>&nbsp;<span jhiTranslate="motorsportsDatabaseApp.eventEdition.reschedule.reschedule"> Reschedule</span>
         </button>
+        <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                class="btn btn-primary" (click)="copyEntries()">
+            <fa-icon [icon]="'clone'"></fa-icon>&nbsp;<span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.copyEntries.copyLabel">
+            Clone entries
+            </span>
+        </button>
         <button type="submit"
                 (click)="previousState()"
                 class="btn btn-info">

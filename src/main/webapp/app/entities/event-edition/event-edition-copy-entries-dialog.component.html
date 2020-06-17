@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>{{'motorsportsDatabaseApp.eventEdition.copyEntries.title' | translate }}</h1>
+<div mat-dialog-content [formGroup]="editForm">
+    <p>{{'motorsportsDatabaseApp.eventEdition.copy' | translate }}</p>
+    <mat-form-field class="example-full-width">
+        <input matInput type="text" [matAutocomplete]="autoEvent" formControlName="sourceEvent"
+               placeholder="{{ 'motorsportsDatabaseApp.series.seriesEdition.calendar.searchEvent' | translate }}"/>
+        <mat-autocomplete #autoEvent="matAutocomplete" [displayWith]="displayFnEvents">
+            <mat-option *ngFor="let event of eventOptions | async" [value]="event" (click)="setEvent(event)">
+                <span matTooltip="{{ event.longEventName }}">{{ event.longEventName }}</span>
+            </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
+</div>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="close()">{{ 'entity.action.cancel' | translate }}</button>
+    <button mat-button (click)="confirmCopy()" cdkFocusInitial>{{ 'entity.action.copy' | translate }}</button>
+</mat-dialog-actions>

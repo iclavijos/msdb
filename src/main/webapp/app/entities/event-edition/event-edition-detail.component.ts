@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs/Rx';
 import { IEventEdition } from 'app/shared/model/event-edition.model';
 import { IEventSession } from 'app/shared/model/event-session.model';
 import { IEventEntry } from 'app/shared/model/event-entry.model';
+import { EventEditionCopyEntriesDialogComponent } from './event-edition-copy-entries-dialog.component';
 import { EventService } from '../event/event.service';
 import { EventEditionService } from './event-edition.service';
 
@@ -177,6 +178,18 @@ export class EventEditionDetailComponent implements OnInit {
             this.eventEdition = event.body;
           });
       }
+    });
+  }
+
+  copyEntries() {
+    const dialogRef = this.dialog.open(EventEditionCopyEntriesDialogComponent, {
+      data: {
+        targetEvent: this.eventEdition
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      // TODO: How to force reload of entries?
     });
   }
 }

@@ -83,4 +83,8 @@ export class EventEditionService {
     }
     return this.http.get<any>(endpoint);
   }
+
+  copyEntries(idSource: number, idTarget: number) {
+    return this.http.post<any>(`${this.resourceUrl}/${idTarget}/entries/${idSource}`, null);
+  }
 }
