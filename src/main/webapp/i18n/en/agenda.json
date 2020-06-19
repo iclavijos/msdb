@@ -1,0 +1,13 @@
+{
+  "motorsportsDatabaseApp": {
+    "agenda": {
+      "title": "Agenda",
+      "date": "Pick the date to be used as reference",
+      "reference": "Reference date to calculate the week or month",
+      "range": "Dates range to query",
+      "week": "Week",
+      "month": "Month",
+      "resultTitle": "Agenda for period from {{startDate}} to {{endDate}}"
+    }
+  }
+}

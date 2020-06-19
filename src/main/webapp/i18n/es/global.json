@@ -62,6 +62,7 @@
       },
       "language": "Idioma",
       "calendar": "Calendario",
+      "agenda": "Agenda",
       "browseDB": "Explora base de datos"
     },
     "form": {

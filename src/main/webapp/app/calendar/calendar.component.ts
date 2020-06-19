@@ -34,6 +34,7 @@ export class MyEvent {
   seriesLogoUrl: string;
   allDay = false;
   status: string;
+  sessionType: string;
 
   event: any;
 }
@@ -83,6 +84,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   events = (dates, callback) => {
     this.eventEditionService.findCalendarEvents(dates.start, dates.end).subscribe(events => {
+      this.sessions = events;
       callback(this.convertEvents(events, this.timezone));
     });
   };
@@ -116,8 +118,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   };
 
-  private convertEvents(sessions, currentTZ) {
-    this.sessions = sessions;
+  public convertEvents(sessions, currentTZ, toDate = true) {
     const result = [];
     for (const session of sessions) {
       const newEvent = new MyEvent();
@@ -125,14 +126,13 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       newEvent.title = session.eventName + ' - ' + session.sessionName;
       newEvent.eventName = session.eventName;
       newEvent.sessionName = session.sessionName;
-      newEvent.start = moment(session.startTime * 1000)
-        .tz(currentTZ)
-        .toDate();
-      newEvent.end = moment(session.endTime * 1000)
-        .tz(currentTZ)
-        .toDate();
+      newEvent.start = moment(session.startTime * 1000).tz(currentTZ);
+      if (toDate) newEvent.start = newEvent.start.toDate();
+      newEvent.end = moment(session.endTime * 1000).tz(currentTZ);
+      if (toDate) newEvent.end = newEvent.end.toDate();
       newEvent.seriesLogoUrl = session.seriesLogoUrl;
       newEvent.textColor = 'white';
+      newEvent.sessionType = session.sessionType;
       if (session.status === 'C') {
         newEvent.color = 'red';
       } else if (session.status === 'S') {

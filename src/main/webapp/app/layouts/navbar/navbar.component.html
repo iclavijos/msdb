@@ -7,6 +7,10 @@
         <fa-icon icon="calendar"></fa-icon>
         <span *ngIf="!(isHandset$ | async)" jhiTranslate="global.menu.calendar">Calendar</span>
     </button>
+    <button mat-button (click)="router.navigate(['/agenda']);" *jhiHasAnyAuthority="'ROLE_USER'">
+        <fa-icon icon="tasks"></fa-icon>
+        <span *ngIf="!(isHandset$ | async)" jhiTranslate="global.menu.agenda">Agenda</span>
+    </button>
     <button mat-button [matMenuTriggerFor]="imports" *jhiHasAnyAuthority="'ROLE_ADMIN'">
         <i class="fa fa-upload" aria-hidden="true"></i>
         <span *ngIf="!(isHandset$ | async)" jhiTranslate="global.menu.imports.main">Imports</span>
