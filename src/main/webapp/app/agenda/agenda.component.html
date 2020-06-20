@@ -46,24 +46,29 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <h3>{{ 'motorsportsDatabaseApp.agenda.resultTitle' |
+                                <h3 *ngIf="rangeType === 'WEEK'">{{ 'motorsportsDatabaseApp.agenda.resultTitleWeek' |
                                         translate: {
                                             startDate: formatDate(selectedDate, 'LL'),
                                             endDate: formatDate(endDate, 'LL')
                                         }
                                     }}</h3>
+                                <h3 *ngIf="rangeType === 'MONTH'">
+                                    {{ 'motorsportsDatabaseApp.agenda.resultTitleMonth' |
+                                        translate: { month: formatDate(selectedDate, 'MMMM') }
+                                    }}
+                                </h3>
                             </div>
                             <div class="col-12">
                                 <div class="row series-row">
                                     <div class="col-2"></div>
                                     <div class="col-10">
                                         <div class="row">
-                                            <div class="col-4">Event</div>
+                                            <div class="col-4">{{ 'motorsportsDatabaseApp.agenda.event' | translate }}</div>
                                             <div class="col-8">
                                                 <div class="row">
-                                                    <div class="col-4">Session</div>
-                                                    <div class="col-4">Start</div>
-                                                    <div class="col-4">End</div>
+                                                    <div class="col-4">{{ 'motorsportsDatabaseApp.agenda.session' | translate }}</div>
+                                                    <div class="col-4">{{ 'motorsportsDatabaseApp.agenda.start' | translate }}</div>
+                                                    <div class="col-4">{{ 'motorsportsDatabaseApp.agenda.end' | translate }}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -90,10 +95,10 @@
                                                         {{ session.sessionName }}
                                                     </div>
                                                     <div class="col-4">
-                                                        {{ formatDate(session.start, 'LLL') }}
+                                                        {{ formatDate(session.start, 'LLLL') }}
                                                     </div>
                                                     <div class="col-4">
-                                                        {{ formatDate(session.end, 'LLL') }}
+                                                        {{ formatDate(session.end, 'LLLL') }}
                                                     </div>
                                                 </div>
                                             </div>

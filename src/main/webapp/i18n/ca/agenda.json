@@ -7,7 +7,12 @@
       "range": "Rang de dates a consultar",
       "week": "Setmana",
       "month": "Mes",
-      "resultTitle": "Agenda per el periode del {{startDate}} al {{endDate}}"
+      "resultTitleWeek": "Agenda per a la setmana del {{startDate}} al {{endDate}}",
+      "resultTitleMonth": "Agenda para el mes de {{ month }}",
+      "event": "Event",
+      "session": "Sessió",
+      "start": "Hora d'inici",
+      "end": "Hora de finalització (aprox)"
     }
   }
 }
