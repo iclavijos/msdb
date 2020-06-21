@@ -92,7 +92,7 @@
         },
         "clone": {
           "clone": "Copia campeonato",
-          "title": "Crea una nueva edición copiaando el campeonato actual",
+          "title": "Crea una nueva edición copiando el campeonato actual",
           "period": "Periodo del nuevo campeonato"
         },
         "updateTeamsChampions": "Edita equipos campeones",

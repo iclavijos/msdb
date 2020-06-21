@@ -10,13 +10,17 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "POINTS_SYSTEM_SESSION")
-public class PointsSystemSession {
+public class PointsSystemSession implements Serializable {
 
-	@EmbeddedId
+    private static final long serialVersionUID = 1L;
+
+    @EmbeddedId
 	private PointsSystemSessionPK id;
-	
+
 	@ManyToOne
     @MapsId("series_edition_id")
     @JoinColumn(name = "SERIES_EDITION_ID")
@@ -31,7 +35,7 @@ public class PointsSystemSession {
 
     @ManyToOne
     private PointsSystem pointsSystem;
-    
+
     @Column(name="ps_multiplier")
     private Float psMultiplier = 1.0f;
 
@@ -91,5 +95,5 @@ public class PointsSystemSession {
 		return "PointsSystemSession [id=" + id + ", seriesEdition=" + seriesEdition + ", eventSession=" + eventSession
 				+ ", pointsSystem=" + pointsSystem + ", psMultiplier=" + psMultiplier + "]";
 	}
-    
+
 }

@@ -7,6 +7,7 @@ import { SeriesEditionDetailComponent } from './series-edition-detail.component'
 import { SeriesEditionUpdateComponent } from './series-edition-update.component';
 import { SeriesEditionCalendarDialogComponent } from './series-edition-calendar-dialog.component';
 import { SeriesEditionCalendarRemoveDialogComponent } from './series-edition-calendar-remove-dialog.component';
+import { SeriesEditionCloneDialogComponent } from './series-edition-clone-dialog.component';
 import { SeriesEditionRoutingModule } from './series-edition.route';
 
 @NgModule({
@@ -16,9 +17,15 @@ import { SeriesEditionRoutingModule } from './series-edition.route';
     SeriesEditionDetailComponent,
     SeriesEditionUpdateComponent,
     SeriesEditionCalendarDialogComponent,
-    SeriesEditionCalendarRemoveDialogComponent
+    SeriesEditionCalendarRemoveDialogComponent,
+    SeriesEditionCloneDialogComponent
   ],
   exports: [SeriesEditionComponent],
-  entryComponents: [SeriesEditionUpdateComponent, SeriesEditionCalendarDialogComponent, SeriesEditionCalendarRemoveDialogComponent]
+  entryComponents: [
+    SeriesEditionUpdateComponent,
+    SeriesEditionCalendarDialogComponent,
+    SeriesEditionCalendarRemoveDialogComponent,
+    SeriesEditionCloneDialogComponent
+  ]
 })
 export class MotorsportsDatabaseSeriesEditionModule {}

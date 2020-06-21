@@ -5,6 +5,7 @@ import { SeriesEditionService } from './series-edition.service';
 import { ISeriesEdition } from 'app/shared/model/series-edition.model';
 import { SeriesEditionCalendarDialogComponent } from './series-edition-calendar-dialog.component';
 import { SeriesEditionCalendarRemoveDialogComponent } from './series-edition-calendar-remove-dialog.component';
+import { SeriesEditionCloneDialogComponent } from './series-edition-clone-dialog.component';
 
 import { ImagesService } from 'app/shared/services/images.service';
 
@@ -117,6 +118,14 @@ export class SeriesEditionDetailComponent implements OnInit {
     dialogRef.afterClosed().subscribe(res => {
       if (res) {
         this.loadSeriesEvents();
+      }
+    });
+  }
+
+  cloneSeries() {
+    this.dialog.open(SeriesEditionCloneDialogComponent, {
+      data: {
+        seriesEdition: this.seriesEdition
       }
     });
   }

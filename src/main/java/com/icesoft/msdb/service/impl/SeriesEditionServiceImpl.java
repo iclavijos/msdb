@@ -1,11 +1,13 @@
 package com.icesoft.msdb.service.impl;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import com.icesoft.msdb.repository.*;
+import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -249,27 +251,21 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		SeriesEdition seriesEd = seriesRepo.findById(seriesEditionId)
             .orElseThrow(() ->  new MSDBException("No series edition with id " + seriesEditionId));
 
-		SeriesEdition newSeriesEd = new SeriesEdition();
+		seriesEd.getEvents().isEmpty();
+
+		SeriesEdition newSeriesEd = SerializationUtils.clone(seriesEd); // new SeriesEdition();
+        newSeriesEd.setId(null);
 		newSeriesEd.setPeriod(newPeriod);
-		newSeriesEd.setNumEvents(seriesEd.getNumEvents());
-		newSeriesEd.setEditionName(newPeriod + " " + seriesEd.getEditionName());
-		List<Category> categories = new ArrayList<>();
-		seriesEd.getAllowedCategories().stream().forEach(cat -> categories.add(cat));
-		newSeriesEd.setAllowedCategories(categories);
-		newSeriesEd.setMultidriver(seriesEd.isMultidriver());
-		List<PointsSystem> pointsSystems = new ArrayList<>();
-		pointsSystems.addAll(seriesEd.getPointsSystems());
-		newSeriesEd.setPointsSystems(pointsSystems);
-		newSeriesEd.setSeries(seriesEd.getSeries());
-		newSeriesEd.setSingleChassis(seriesEd.isSingleChassis());
-		newSeriesEd.setSingleEngine(seriesEd.isSingleEngine());
-		newSeriesEd.setSingleTyre(seriesEd.isSingleTyre());
+		newSeriesEd.setEditionName(newPeriod + " " + seriesEd.getSeries().getName());
+		newSeriesEd.setEvents(null);
+
 		final SeriesEdition seriesEdCopy = seriesRepo.save(newSeriesEd);
 		Set<SeriesEdition> series = new HashSet<>();
 		series.add(seriesEdCopy);
 
 		seriesEd.getEvents().stream().forEach(ev -> {
-			EventEdition newEvent = new EventEdition();
+			EventEdition newEvent = SerializationUtils.clone(ev); // new EventEdition();
+            newEvent.setId(null);
 			newEvent.setSeriesEditions(series);
 			Integer year;
 			try {
@@ -278,38 +274,24 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 				year = Integer.valueOf(newPeriod.substring(0, newPeriod.indexOf("-")));
 			}
 			newEvent.setEditionYear(year);
-			List<Category> categoriesEv = new ArrayList<>();
-			ev.getAllowedCategories().stream().forEach(cat -> categoriesEv.add(cat));
-			newEvent.setAllowedCategories(categoriesEv);
-			newEvent.setEvent(ev.getEvent());
-			newEvent.setEventDate(ev.getEventDate());
-			newEvent.setLongEventName(year + " " + ev.getLongEventName());
-			newEvent.setMultidriver(ev.isMultidriver());
-			newEvent.setShortEventName(year + " " + ev.getShortEventName());
-			newEvent.setSingleChassis(ev.getSingleChassis());
-			newEvent.setSingleEngine(ev.getSingleEngine());
-			newEvent.setSingleEngine(ev.getSingleEngine());
-			newEvent.setSingleTyre(ev.getSingleTyre());
-			newEvent.setTrackLayout(ev.getTrackLayout());
+			newEvent.setEventDate(ev.getEventDate().withYear(year));
+			newEvent.setLongEventName(year + " " + ev.getEvent().getName());
+			newEvent.setShortEventName(year + " " + ev.getEvent().getName());
+
 			final EventEdition evCopy = eventRepo.save(newEvent);
 			eventEdSearchRepo.save(evCopy);
-			seriesEdCopy.getEvents().add(newEvent);
+			seriesEdCopy.addEvent(newEvent);
 			seriesRepo.save(seriesEdCopy);
 			final int yearCopy = year;
 
 			sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(ev.getId()).stream().forEach(es -> {
-				EventSession newSession = new EventSession();
+				EventSession newSession = SerializationUtils.clone(es); // new EventSession();
+                newSession.setId(null);
 				newSession.setEventEdition(evCopy);
-				newSession.setAdditionalLap(es.getAdditionalLap());
-				newSession.setDuration(es.getDuration());
-				newSession.setDurationType(es.getDurationType());
-				newSession.setMaxDuration(es.getMaxDuration());
-				newSession.setName(es.getName());
-				newSession.setShortname(es.getShortname());
+				newSession.setPointsSystemsSession(null);
 
-				newSession.setSessionType(es.getSessionType());
                 ZonedDateTime zdt = es.getSessionStartTimeDate();
-				newSession.setSessionStartTime(zdt.plusYears(yearCopy - zdt.getYear()).toInstant().toEpochMilli());
+				newSession.setSessionStartTime(zdt.withYear(yearCopy).toEpochSecond());
 				final EventSession copy = sessionRepo.save(newSession);
 
 				List<PointsSystemSession> pssL = new ArrayList<>();
