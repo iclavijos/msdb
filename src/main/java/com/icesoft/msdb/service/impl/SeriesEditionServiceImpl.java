@@ -125,10 +125,10 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		SeriesEdition sEdition = seriesRepo.findById(seriesId).get();
 		sEdition.removeEvent(eventEd);
 		eventEd.getSeriesEditions().remove(sEdition);
-		sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventId).parallelStream()
+		sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventId).stream()
 			.forEach(session -> {
+                List<PointsSystemSession> tmp = new ArrayList<>();
 				if (session.getPointsSystemsSession() != null && !session.getPointsSystemsSession().isEmpty()) {
-					List<PointsSystemSession> tmp = new ArrayList<>();
 					for (PointsSystemSession pss : session.getPointsSystemsSession()) {
 						if (pss.getSeriesEdition().getId().equals(seriesId)) {
 							log.debug("Deleting points system association " + pss);
@@ -137,9 +137,9 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 							tmp.add(pss);
 						}
 					}
-					session.setPointsSystemsSession(tmp);
-					sessionRepo.save(session);
 				}
+                session.setPointsSystemsSession(tmp);
+                sessionRepo.save(session);
 			});
 
 		//We must remove the assigned points, if there were any
