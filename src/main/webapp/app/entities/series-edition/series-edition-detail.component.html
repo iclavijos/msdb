@@ -23,9 +23,9 @@
                                                     <fa-icon [icon]="'calendar'"></fa-icon>
                                                     <span jhiTranslate="entity.action.add">Add</span>
                                                 </button>
-                                                <button mat-button class="btn btn-warning float-right">
-                                                    <fa-icon [icon]="'copy'"></fa-icon>
-                                                    <span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.clone.clone"> Clone</span>
+                                                <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                                        class="btn btn-warning float-right" (click)="cloneSeries()">
+                                                    <fa-icon [icon]="'clone'"></fa-icon> <span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.clone.clone"> Clone</span>
                                                 </button>
                                             </div>
                                         </div>
