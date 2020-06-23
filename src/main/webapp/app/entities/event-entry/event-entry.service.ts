@@ -20,7 +20,7 @@ export class EventEntryService {
   create(eventEntry: IEventEntry): Observable<EntityResponseType> {
     const copy: IEventEntry = Object.assign({}, eventEntry);
     copy.eventEdition = null;
-    return this.http.post<IEventEntry>(`${this.resourceUrl}/${eventEntry.eventEdition.id}/entries`, copy, { observe: 'response' });
+    return this.http.post<IEventEntry>(`api/event-editions/${eventEntry.eventEdition.id}/entries`, copy, { observe: 'response' });
   }
 
   update(eventEntry: IEventEntry): Observable<EntityResponseType> {
