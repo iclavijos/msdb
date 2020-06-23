@@ -11,7 +11,8 @@ type EntityArrayResponseType = HttpResponse<IEventEntry[]>;
 
 @Injectable({ providedIn: 'root' })
 export class EventEntryService {
-  public resourceUrl = SERVER_API_URL + 'api/event-entries';
+  public resourceUrlOld = SERVER_API_URL + 'api/event-entries';
+  public resourceUrl = SERVER_API_URL + 'api/event-editions/entries';
   public resourceSearchUrl = SERVER_API_URL + 'api/_search/event-entries';
 
   constructor(protected http: HttpClient) {}
@@ -19,7 +20,7 @@ export class EventEntryService {
   create(eventEntry: IEventEntry): Observable<EntityResponseType> {
     const copy: IEventEntry = Object.assign({}, eventEntry);
     copy.eventEdition = null;
-    return this.http.post<IEventEntry>(`api/event-editions/${eventEntry.eventEdition.id}/entries`, copy, { observe: 'response' });
+    return this.http.post<IEventEntry>(`${this.resourceUrl}/${eventEntry.eventEdition.id}/entries`, copy, { observe: 'response' });
   }
 
   update(eventEntry: IEventEntry): Observable<EntityResponseType> {
@@ -29,12 +30,12 @@ export class EventEntryService {
   }
 
   find(id: number): Observable<EntityResponseType> {
-    return this.http.get<IEventEntry>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+    return this.http.get<IEventEntry>(`${this.resourceUrlOld}/${id}`, { observe: 'response' });
   }
 
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
-    return this.http.get<IEventEntry[]>(this.resourceUrl, { params: options, observe: 'response' });
+    return this.http.get<IEventEntry[]>(this.resourceUrlOld, { params: options, observe: 'response' });
   }
 
   delete(id: number): Observable<HttpResponse<any>> {

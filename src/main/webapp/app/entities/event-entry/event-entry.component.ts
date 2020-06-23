@@ -8,6 +8,7 @@ import { EventEdition } from 'app/shared/model/event-edition.model';
 import { IEventEntry, EventEntry } from 'app/shared/model/event-entry.model';
 import { EventEntryService } from './event-entry.service';
 import { EventEntryUpdateComponent } from './event-entry-update.component';
+import { EventEntryDeleteDialogComponent } from './event-entry-delete-dialog.component';
 
 import { MatDialog } from '@angular/material/dialog';
 
@@ -98,6 +99,20 @@ export class EventEntryComponent implements OnInit, OnDestroy {
       data: {
         eventEntry: entry,
         eventEdition: this.eventEdition
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadAll();
+      }
+    });
+  }
+
+  deleteEntry(entry: IEventEntry) {
+    const dialogRef = this.dialog.open(EventEntryDeleteDialogComponent, {
+      data: {
+        eventEntry: entry
       }
     });
 
