@@ -125,8 +125,8 @@
                                                 <input matInput type="text" [matAutocomplete]="autoLayout" formControlName="trackLayout"
                                                        placeholder="{{ 'motorsportsDatabaseApp.eventEdition.trackLayout' | translate }}"/>
                                                 <mat-autocomplete #autoLayout="matAutocomplete" [displayWith]="displayFnLayouts">
-                                                    <mat-option *ngFor="let trackLayout of layoutOptions | async" [value]="trackLayout">
-                                                        <img *ngIf="trackLayout.layoutImg" src="{{ trackLayout.layoutImg }}" style="max-height: 100px; max-width: 200px"/>
+                                                    <mat-option *ngFor="let trackLayout of layoutOptions | async" [value]="trackLayout" style="height: 80px">
+                                                        <img *ngIf="trackLayout.layoutImg" src="{{ trackLayout.layoutImg }}" class="img-fluid"/>
                                                         <span>{{ trackLayout.fullName }}</span>
                                                     </mat-option>
                                                 </mat-autocomplete>
