@@ -120,6 +120,9 @@ export class EventEditionComponent implements AfterViewInit, OnDestroy {
 
   sorting() {
     const result = [this.sort.active + ',' + this.sort.direction];
+    if (this.sort.active === 'editionYear') {
+      result.push('eventDate,' + this.sort.direction);
+    }
     if (this.predicate !== 'id') {
       result.push('id');
     }
