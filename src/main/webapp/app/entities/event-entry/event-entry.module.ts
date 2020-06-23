@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
 import { EventEntryComponent } from './event-entry.component';
 import { EventEntryUpdateComponent } from './event-entry-update.component';
-// import { EventEntryDeletePopupComponent, EventEntryDeleteDialogComponent } from './event-entry-delete-dialog.component';
+import { EventEntryDeleteDialogComponent } from './event-entry-delete-dialog.component';
 import { eventEntryRoute, eventEntryPopupRoute } from './event-entry.route';
 
 const ENTITY_STATES = [...eventEntryRoute, ...eventEntryPopupRoute];
@@ -13,11 +13,11 @@ const ENTITY_STATES = [...eventEntryRoute, ...eventEntryPopupRoute];
   imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
   declarations: [
     EventEntryComponent,
-    EventEntryUpdateComponent
-    //     EventEntryDeleteDialogComponent,
+    EventEntryUpdateComponent,
+    EventEntryDeleteDialogComponent
     //     EventEntryDeletePopupComponent
   ],
   exports: [EventEntryComponent],
-  entryComponents: [EventEntryUpdateComponent]
+  entryComponents: [EventEntryUpdateComponent, EventEntryDeleteDialogComponent]
 })
 export class MotorsportsDatabaseEventEntryModule {}
