@@ -86,12 +86,13 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
     this.resultsLength = parseInt(drivers.headers.get('X-Total-Count'), 10);
     this.links = this.parseLinks.parse(drivers.headers.get('link'));
     this.totalItems = parseInt(drivers.headers.get('X-Total-Count'), 10);
-    return drivers.body.map(driver =>
-      Object.assign({}, driver, {
-        birthDate: driver.birthDate !== null ? driver.birthDate.month(driver.birthDate.month() - 1) : null,
-        deathDate: driver.deathDate !== null ? driver.deathDate.month(driver.deathDate.month() - 1) : null
-      })
-    );
+    return drivers.body;
+    //     return drivers.body.map(driver =>
+    //       Object.assign({}, driver, {
+    //         birthDate: driver.birthDate !== null ? driver.birthDate.month(driver.birthDate.month() - 1) : null,
+    //         deathDate: driver.deathDate !== null ? driver.deathDate.month(driver.deathDate.month() - 1) : null
+    //       })
+    //     );
   }
 
   loadAll() {
