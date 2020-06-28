@@ -10,7 +10,7 @@
                     <div class="card-body">
                         <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-4">
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.series.name' | translate }}" type="text"
                                                class="form-control" name="name" id="field_name" formControlName="name">
@@ -26,7 +26,7 @@
                                         </div>
                                     </mat-form-field>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-3">
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.series.shortname' | translate }}" type="text"
                                                class="form-control" name="shortname" id="field_shortname" formControlName="shortname">
@@ -42,20 +42,28 @@
                                         </div>
                                     </mat-form-field>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-3">
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.series.organizer' | translate }}" type="text"
-                                               class="form-control" name="organizer" id="field_organizer" formControlName="organizer">
-                                        <div *ngIf="editForm.get('organizer').invalid && (editForm.get('organizer').dirty || editForm.get('organizer').touched)">
-                                            <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('organizer').errors.required" jhiTranslate="entity.validation.required">
-                                                This field is required.
-                                            </small>
-                                            <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('organizer').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 50 }">
-                                                This field cannot be longer than 50 characters.
-                                            </small>
-                                        </div>
+                                               class="form-control" formControlName="organizer">
+                                        <mat-error *ngIf="editForm.get('organizer')?.hasError('required')">
+                                            {{ 'entity.validation.required' | translate }}
+                                        </mat-error>
+                                        <mat-error *ngIf="editForm.get('organizer')?.hasError('maxlength')">
+                                            {{ 'entity.validation.min' | translate: '{ min: 50 }' }}
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-2">
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput type="number" formControlName="relevance"
+                                               placeholder="{{ 'motorsportsDatabaseApp.series.relevance' | translate }}"/>
+                                        <mat-error *ngIf="editForm.get('relevance')?.hasError('max')">
+                                            {{ 'entity.validation.max' | translate: '{ max: 1000 }' }}
+                                        </mat-error>
+                                        <mat-error *ngIf="editForm.get('relevance')?.hasError('min')">
+                                            {{ 'entity.validation.min' | translate: '{ min: 100 }' }}
+                                        </mat-error>
                                     </mat-form-field>
                                 </div>
                             </div>

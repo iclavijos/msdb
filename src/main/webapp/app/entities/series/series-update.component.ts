@@ -23,7 +23,8 @@ export class SeriesUpdateComponent implements OnInit {
     organizer: [null, [Validators.maxLength(50)]],
     logo: [],
     logoContentType: [],
-    logoUrl: []
+    logoUrl: [],
+    relevance: [1000, [Validators.min(100), Validators.max(1000)]]
   });
 
   constructor(
@@ -50,7 +51,8 @@ export class SeriesUpdateComponent implements OnInit {
       organizer: series.organizer,
       logo: series.logo,
       logoContentType: series.logoContentType,
-      logoUrl: series.logoUrl
+      logoUrl: series.logoUrl,
+      relevance: series.relevance
     });
   }
 
@@ -120,7 +122,8 @@ export class SeriesUpdateComponent implements OnInit {
       organizer: this.editForm.get(['organizer']).value,
       logoContentType: this.editForm.get(['logoContentType']).value,
       logo: this.editForm.get(['logo']).value,
-      logoUrl: this.editForm.get(['logoUrl']).value
+      logoUrl: this.editForm.get(['logoUrl']).value,
+      relevance: this.editForm.get('relevance').value
     };
   }
 

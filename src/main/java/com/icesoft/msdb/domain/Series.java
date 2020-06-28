@@ -50,6 +50,9 @@ public class Series extends AbstractAuditingEntity implements Serializable {
     @Column(name = "logo_url")
     private String logoUrl;
 
+    @Column
+    private Integer relevance;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -123,6 +126,15 @@ public class Series extends AbstractAuditingEntity implements Serializable {
     public void setLogoUrl(String logoUrl) {
         this.logoUrl = logoUrl;
     }
+
+    public Integer getRelevance() {
+        return relevance;
+    }
+
+    public void setRelevance(Integer relevance) {
+        this.relevance = relevance;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -149,6 +161,7 @@ public class Series extends AbstractAuditingEntity implements Serializable {
             ", shortname='" + getShortname() + "'" +
             ", organizer='" + getOrganizer() + "'" +
             ", logoUrl='" + getLogoUrl() + "'" +
+            ", relevance='" + getRelevance() + "'" +
             '}';
     }
 }
