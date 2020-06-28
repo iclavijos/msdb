@@ -47,6 +47,7 @@ import java.net.URISyntaxException;
 
 import java.time.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -641,10 +642,14 @@ public class EventEditionResource {
     	List<EventSession> tmp = eventSessionRepository.findUpcomingSessions(start.toEpochSecond(), end.toEpochSecond());
     	return tmp.parallelStream().map(session -> {
     		String[] logoUrl = null;
+            Integer seriesRelevance = null;
     		if (session.getEventEdition().getSeriesEditions() != null) {
     			logoUrl = session.getEventEdition().getSeriesEditions().stream()
     					.map(sEd -> sEd.getSeries().getLogoUrl())
     					.toArray(String[]::new);
+    			seriesRelevance = session.getEventEdition().getSeriesEditions().stream()
+                        .map(sEd -> sEd.getSeries().getRelevance())
+                        .max(Integer::compareTo).orElse(1000);
     		}
     		return new SessionCalendarDTO(session.getEventEdition().getId(),
     				session.getEventEdition().getLongEventName(),
@@ -652,8 +657,11 @@ public class EventEditionResource {
     				session.getSessionTypeValue(),
     				session.getSessionStartTimeDate(), session.getSessionEndTime(),
     				session.getEventEdition().getStatus().getCode(),
+                    seriesRelevance,
     				logoUrl);
-    	}).collect(Collectors.toList());
+    	})
+            .sorted(Comparator.comparing(SessionCalendarDTO::getSeriesRelevance))
+            .collect(Collectors.toList());
     }
 
     @PostMapping("/event-editions/event-sessions/{sessionId}/results")
