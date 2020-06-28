@@ -9,6 +9,7 @@ export interface ISeries {
   logo?: any;
   editions?: ISeriesEdition[];
   logoUrl?: string;
+  relevance?: number;
 }
 
 export class Series implements ISeries {
@@ -20,6 +21,7 @@ export class Series implements ISeries {
     public logoContentType?: string,
     public logo?: any,
     public editions?: ISeriesEdition[],
-    public logoUrl?: string
+    public logoUrl?: string,
+    public relevance?: number
   ) {}
 }

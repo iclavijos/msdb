@@ -21,6 +21,7 @@
       "shortname": "Abreviatura",
       "organizer": "Organizador",
       "logo": "Logo",
+      "relevance": "Relevancia",
       "editions": "Ediciones",
       "seriesEdition": {
         "home": {

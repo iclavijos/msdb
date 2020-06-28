@@ -21,6 +21,7 @@
       "shortname": "Shortname",
       "organizer": "Organizer",
       "logo": "Logo",
+      "relevance": "Relevance",
       "editions": "Editions",
       "seriesEdition": {
         "home": {
