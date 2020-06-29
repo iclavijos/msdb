@@ -201,32 +201,32 @@ public class StatisticsServiceImpl implements StatisticsService {
 		String year = event.getEditionYear().toString();
 		entriesRepo.findEventEditionEntries(event.getId()).stream().forEach((entry) -> {
 			entry.getDrivers().parallelStream().forEach((driver) -> {
-				DriverStatistics ds = driverStatsRepo.findById(driver.getId().toString()).get();
-				if (ds != null) {
-					ds.removeStatisticsOfEvent(event.getId(), year);
-					driverStatsRepo.save(ds);
+				Optional<DriverStatistics> ds = driverStatsRepo.findById(driver.getId().toString());
+				if (ds.isPresent()) {
+					ds.get().removeStatisticsOfEvent(event.getId(), year);
+					driverStatsRepo.save(ds.get());
 				}
 			});
 
 			if (entry.getTeam() != null) {
-				TeamStatistics ts = teamStatsRepo.findById(entry.getTeam().getId().toString()).get();
-				if (ts != null) {
-					ts.removeStatisticsOfEvent(event.getId(), year);
-					teamStatsRepo.save(ts);
+				Optional<TeamStatistics> ts = teamStatsRepo.findById(entry.getTeam().getId().toString());
+				if (ts.isPresent()) {
+					ts.get().removeStatisticsOfEvent(event.getId(), year);
+					teamStatsRepo.save(ts.get());
 				}
 			}
 
-			ChassisStatistics cs = chassisStatsRepo.findById(entry.getChassis().getId().toString()).get();
-			if (cs != null) {
-				cs.removeStatisticsOfEvent(event.getId(), year);
-				chassisStatsRepo.save(cs);
+			Optional<ChassisStatistics> cs = chassisStatsRepo.findById(entry.getChassis().getId().toString());
+			if (cs.isPresent()) {
+				cs.get().removeStatisticsOfEvent(event.getId(), year);
+				chassisStatsRepo.save(cs.get());
 			}
 
 			if (entry.getEngine() != null) {
-				EngineStatistics es = engineStatsRepo.findById(entry.getEngine().getId().toString()).get();
-				if (es != null) {
-					es.removeStatisticsOfEvent(event.getId(), year);
-					engineStatsRepo.save(es);
+				Optional<EngineStatistics> es = engineStatsRepo.findById(entry.getEngine().getId().toString());
+				if (es.isPresent()) {
+					es.get().removeStatisticsOfEvent(event.getId(), year);
+					engineStatsRepo.save(es.get());
 				}
 			}
 		});

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
+import { JhiAlertService } from 'ng-jhipster';
+
 import { SeriesEditionService } from './series-edition.service';
 import { ISeriesEdition } from 'app/shared/model/series-edition.model';
 import { SeriesEditionCalendarDialogComponent } from './series-edition-calendar-dialog.component';
@@ -36,6 +38,7 @@ export class SeriesEditionDetailComponent implements OnInit {
 
   constructor(
     protected activatedRoute: ActivatedRoute,
+    protected alertService: JhiAlertService,
     protected seriesEditionService: SeriesEditionService,
     protected imagesService: ImagesService,
     private dialog: MatDialog
@@ -130,5 +133,49 @@ export class SeriesEditionDetailComponent implements OnInit {
     });
   }
 
-  updateStandings() {}
+  updateStandings() {
+    this.alertService.info('motorsportsDatabaseApp.series.seriesEdition.updatingStandings', null, null);
+    this.seriesEditionService
+      .updateStandings(this.seriesEdition.id)
+      .subscribe(
+        () => this.standingsUpdated(),
+        () => this.alertService.error('motorsportsDatabaseApp.series.seriesEdition.standingsNotUpdated', null, null)
+      );
+  }
+
+  loadDriversStandings(id) {
+    this.seriesEditionService.findDriversStandings(id).subscribe(standings => {
+      this.driversStandings = standings.body;
+    });
+  }
+
+  loadTeamsStandings(id) {
+    this.seriesEditionService.findTeamsStandings(id).subscribe(standings => {
+      this.teamsStandings = standings.body;
+    });
+  }
+
+  standingsUpdated() {
+    this.alertService.success('motorsportsDatabaseApp.series.seriesEdition.standingsUpdated', null, null);
+    this.loadDriversStandings(this.seriesEdition.id);
+    this.loadTeamsStandings(this.seriesEdition.id);
+  }
+
+  loadDriversChampions(id) {
+    this.seriesEditionService.findDriversChampions(id).subscribe(champions => {
+      this.driversChampions = champions.body;
+      if (this.driversChampions.length > 0) {
+        this.colsChampsDriver = 'col-' + Math.floor(12 / this.driversChampions.length);
+      }
+    });
+  }
+
+  loadTeamsChampions(id) {
+    this.seriesEditionService.findTeamsChampions(id).subscribe(champions => {
+      this.teamsChampions = champions.body;
+      if (this.teamsChampions.length > 0) {
+        this.colsChampsTeam = 'col-' + Math.floor(12 / this.teamsChampions.length);
+      }
+    });
+  }
 }

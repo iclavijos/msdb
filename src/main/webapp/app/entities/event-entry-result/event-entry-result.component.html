@@ -1,18 +1,25 @@
 <div>
     <div class="row">
         <div class="col-sm-12" *ngIf="eventEntries?.length > 0">
-            <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+            <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                     class="btn btn-primary float-right create-event-entry-result"
                     (click)="addResult()">
                 <span class="fa fa-plus"></span>
             </button>
-            <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+            <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                     class="btn btn-success float-right"
                     (click)="uploadResults()">
                 <span class="fa fa-plus"></span>
                 <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.uploadLabel">
-                                    Upload session results
-                                    </span>
+                    Upload session results
+                </span>
+            </button>
+            <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" type="button"
+                    class="btn btn-info float-right" (click)="processResults()">
+                <span class="fa fa-check-square"></span>
+                <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.processResults.label">
+	                Process race results
+	            </span>
             </button>
         </div>
         <div class="col-sm-12">
