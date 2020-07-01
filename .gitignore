@@ -1,7 +1,8 @@
 ######################
 # Project Specific
 ######################
-/build/www/**
+/src/main/webapp/content/css/main.css
+/build/resources/main/static/**
 /src/test/javascript/coverage/
 
 ######################
@@ -11,6 +12,8 @@
 node_tmp/
 node_modules/
 npm-debug.log.*
+/.awcache/*
+/.cache-loader/*
 
 ######################
 # SASS
@@ -48,6 +51,8 @@ local.properties
 # PDT-specific
 .buildpath
 
+# STS-specific
+/.sts4-cache/*
 ######################
 # Intellij
 ######################
@@ -58,6 +63,7 @@ local.properties
 *.ids
 *.orig
 classes/
+out/
 
 ######################
 # Visual Studio Code
@@ -142,3 +148,6 @@ Desktop.ini
 /yarn.lock
 /out/
 /tempFolder/
+/data/
+/src/main/webapp-backup/
+/src/main/resources/config/liquibase/

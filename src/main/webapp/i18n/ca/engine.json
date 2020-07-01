@@ -1,37 +1,38 @@
 {
-    "motorsportsDatabaseApp": {
-        "engine" : {
-            "home": {
-                "title": "Motors",
-                "createLabel": "Crear nou motor",
-                "createOrEditLabel": "Crear o editar un motor",
-                "search": "Cercar motors"
-            },
-            "created": "S'ha creat un nou motor",
-            "updated": "S'ha actualitzat el motor",
-            "deleted": "S'ha esborrat el motor",
-            "delete": {
-                "question": "Està segur que vol esborrar aquest motor?"
-            },
-            "detail": {
-                "title": "Motor"
-            },
-            "name": "Nom",
-            "manufacturer": "Fabricant",
-            "capacity": "Cilindrada",
-            "architecture": "Arquitectura",
-            "debutYear": "Any debut",
-            "petrolEngine": "Benzina?",
-            "dieselEngine": "Diesel?",
-            "electricEngine": "Electric?",
-            "otherEngine": "Altre tipus?",
-            "turbo": "Turbo?",
-            "image": "Image",
-            "comments": "Comentaris",
-            "evolutions": "Evolucions",
-            "derivedFrom": "Derivat de",
-            "rebranded": "Renombrat?",
-            "rebrandedTooltip": "Si està marcat, aquest motor és el mateix que l'anterior però només s'ha canviat el nom"
-        }
+  "motorsportsDatabaseApp": {
+    "engine": {
+      "home": {
+        "title": "Motors",
+        "createLabel": "Crear nou motor",
+        "createOrEditLabel": "Crear o editar un motor",
+        "search": "Cercar motors",
+        "notFound": "No s'ha trobat cap motor"
+      },
+      "created": "S'ha creat un nou motor",
+      "updated": "S'ha actualitzat el motor",
+      "deleted": "S'ha esborrat el motor",
+      "delete": {
+        "question": "Està segur que vol esborrar aquest motor?"
+      },
+      "detail": {
+        "title": "Motor"
+      },
+      "name": "Nom",
+      "manufacturer": "Fabricant",
+      "capacity": "Cilindrada",
+      "architecture": "Arquitectura",
+      "debutYear": "Any debut",
+      "petrolEngine": "Benzina?",
+      "dieselEngine": "Diesel?",
+      "electricEngine": "Electric?",
+      "otherEngine": "Altre tipus?",
+      "turbo": "Turbo?",
+      "image": "Image",
+      "comments": "Comentaris",
+      "evolutions": "Evolucions",
+      "derivedFrom": "Derivat de",
+      "rebranded": "Renombrat?",
+      "rebrandedTooltip": "Si està marcat, aquest motor és el mateix que l'anterior però només s'ha canviat el nom"
     }
+  }
 }

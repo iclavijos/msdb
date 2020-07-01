@@ -1,29 +1,30 @@
 {
-    "motorsportsDatabaseApp": {
-        "chassis" : {
-            "home": {
-                "title": "Xassis",
-                "createLabel": "Crea un nou Xassís",
-                "createOrEditLabel": "Crea o edita un Xassís",
-                "search": "Cercar xassís"
-            },
-            "created": "S'ha creat un nou xassís",
-            "updated": "S'ha actualitzat el xassís",
-            "deleted": "S'ha esborrat el xassís",
-            "delete": {
-                "question": "Estàs segur que vols esborrar aquest xassís?"
-            },
-            "detail": {
-                "title": "Xassís"
-            },
-            "name": "Nom",
-            "manufacturer": "Fabricant",
-            "debutYear": "Any debut",
-            "evolutions": "Evolucions",
-            "derivedFrom": "Derivat de",
-            "rebranded": "Renombrat?",
-            "rebrandedTooltip": "Si està marcat, el nou xassís és el mateix que l'anterior però només s'ha canviat el nom",
-            "image": "Imatge"
-        }
+  "motorsportsDatabaseApp": {
+    "chassis": {
+      "home": {
+        "title": "Xassis",
+        "createLabel": "Crea un nou Xassís",
+        "createOrEditLabel": "Crea o edita un Xassís",
+        "search": "Cercar xassís",
+        "notFound": "No s'ha trobat cap xassís"
+      },
+      "created": "S'ha creat un nou xassís",
+      "updated": "S'ha actualitzat el xassís",
+      "deleted": "S'ha esborrat el xassís",
+      "delete": {
+        "question": "Estàs segur que vols esborrar aquest xassís?"
+      },
+      "detail": {
+        "title": "Xassís"
+      },
+      "name": "Nom",
+      "manufacturer": "Fabricant",
+      "debutYear": "Any debut",
+      "evolutions": "Evolucions",
+      "derivedFrom": "Derivat de",
+      "rebranded": "Renombrat?",
+      "rebrandedTooltip": "Si està marcat, el nou xassís és el mateix que l'anterior però només s'ha canviat el nom",
+      "image": "Imatge"
     }
+  }
 }

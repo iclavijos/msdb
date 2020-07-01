@@ -18,13 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.domain.Team;
 
 /**
- * Spring Data JPA repository for the Team entity.
+ * Spring Data  repository for the Team entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface TeamRepository extends JpaRepository<Team,Long> {
-	
+
 	List<Team> findByIdIn(List<Long> ids);
-	
+
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
 	@Query(value = "select t from Team t")
 	@Transactional(readOnly=true)

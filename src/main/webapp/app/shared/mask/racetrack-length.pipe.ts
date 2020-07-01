@@ -2,19 +2,16 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({ name: 'racetrackLengthMask' })
 export class RacetrackLengthPipe implements PipeTransform {
-
-  constructor() {
-  }
+  constructor() {}
 
   transform(length: number): string {
-      if (!length) {
-          return;
-      }
+    if (!length) {
+      return;
+    }
 
-      const km = Math.round((length / 1000) * 100) / 100;
-      const mi = Math.round((length * 0.000621371) * 100) / 100;
+    const km = Math.round((length / 1000) * 1000) / 1000;
+    const mi = Math.round(length * 0.000621371 * 1000) / 1000;
 
-      return km + 'km / ' + mi + 'mi';
+    return km + 'km / ' + mi + 'mi';
   }
-
 }

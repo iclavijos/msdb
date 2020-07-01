@@ -1,27 +1,36 @@
-
-<div *ngIf="fuelProvider">
-    <h2>{{fuelProvider.name}}</h2>
-    <hr>
-    <jhi-alert-error></jhi-alert-error>
-    <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="motorsportsDatabaseApp.fuelProvider.logo">Logo</span></dt>
-        <dd>
-            <div *ngIf="fuelProvider.logoUrl">
-                 <img [src]="fuelProvider.logoUrl" style="max-height: 200px;" alt="fuel provider logo"/>
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h3 class="card-title">{{fuelProvider.name}}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img *ngIf="fuelProvider.logoUrl" [src]="fuelProvider.logoUrl"
+                                     class="img-fluid" alt="fuel provider logo"/>
+                            </div>
+                            <div class="col-md-8">
+                                <jhi-statistics [id]="fuelProvider.id" [statsType]="'fuelProvider'">Statistics...</jhi-statistics>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </dd>
-    </dl>
-
-    <button type="submit"
-            (click)="previousState()"
-            class="btn btn-info">
-        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-    </button>
-
-    <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-            [routerLink]="['/', { outlets: { popup: 'fuel-provider/'+ fuelProvider.id + '/edit'} }]"
-            replaceUrl="true"
-            class="btn btn-primary">
-        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-    </button>
+        </div>
+        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                [routerLink]="['/fuel-provider', fuelProvider.id, 'edit']"
+                class="btn btn-primary">
+            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+        </button>
+        <button type="submit"
+                (click)="previousState()"
+                class="btn btn-info">
+            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+        </button>
+    </div>
 </div>

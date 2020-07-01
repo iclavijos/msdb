@@ -1,26 +1,17 @@
-<form name="copyEntriesForm" (ngSubmit)="confirmCopy()" #copyEntriesForm="ngForm">
-    <div class="modal-header">
-        <h4 class="modal-title" jhiTranslate="motorsportsDatabaseApp.eventEdition.copyEntries.title">Copy entries from another event</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
-                (click)="clear()">&times;</button>
-    </div>
-    <div class="modal-body">
-        <jhi-alert-error></jhi-alert-error>
-        <p jhiTranslate="motorsportsDatabaseApp.eventEdition.copy">Choose event to copy entries from</p>
-        <div class="form-group">
-        	<ng-template #eventTemplate let-r="result">
-			  {{r.longEventName}}
-			</ng-template>
-            <input id="field_copyFrom" type="text" name="field_copyFrom" class="form-control" [inputFormatter]="inputFormatter"
-            	[(ngModel)]="selectedEventEdition" [ngbTypeahead]="search" [focusFirst]="false" [resultTemplate]="eventTemplate"/>
-	    </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
-            <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
-        </button>
-        <button type="submit" [disabled]="copyEntriesForm.form.invalid || isSaving" class="btn btn-primary">
-            <span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.copy">Copy</span>
-        </button>
-    </div>
-</form>
+<h1 mat-dialog-title>{{'motorsportsDatabaseApp.eventEdition.copyEntries.title' | translate }}</h1>
+<div mat-dialog-content [formGroup]="editForm">
+    <p>{{'motorsportsDatabaseApp.eventEdition.copy' | translate }}</p>
+    <mat-form-field class="example-full-width">
+        <input matInput type="text" [matAutocomplete]="autoEvent" formControlName="sourceEvent"
+               placeholder="{{ 'motorsportsDatabaseApp.series.seriesEdition.calendar.searchEvent' | translate }}"/>
+        <mat-autocomplete #autoEvent="matAutocomplete" [displayWith]="displayFnEvents">
+            <mat-option *ngFor="let event of eventOptions | async" [value]="event" (click)="setEvent(event)">
+                <span matTooltip="{{ event.longEventName }}">{{ event.longEventName }}</span>
+            </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
+</div>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="close()">{{ 'entity.action.cancel' | translate }}</button>
+    <button mat-button (click)="confirmCopy()" cdkFocusInitial>{{ 'entity.action.copy' | translate }}</button>
+</mat-dialog-actions>

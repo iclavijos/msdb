@@ -1,0 +1,185 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title">{{ editForm.get('longEventName').value }}</h4>
+                        <p class="card-category">{{ 'motorsportsDatabaseApp.eventEdition.home.createOrEditLabel' | translate }}</p>
+                    </div>
+                    <div class="card-body">
+                        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+                            <jhi-alert-error></jhi-alert-error>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-3">
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.editionYear' | translate }}" type="number"
+                                               class="form-control" name="editionYear" id="field_editionYear" formControlName="editionYear">
+                                        <div *ngIf="editForm.get('editionYear').invalid && (editForm.get('editionYear').dirty || editForm.get('editionYear').touched)">
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('editionYear').errors.required" jhiTranslate="entity.validation.required">
+                                                This field is required.
+                                            </small>
+                                            <small class="form-text text-danger"
+                                                   [hidden]="!editForm.get('editionYear').errors.number" jhiTranslate="entity.validation.number">
+                                                This field should be a number.
+                                            </small>
+                                        </div>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-3 col-md-3">
+                                    <mat-form-field class="example-full-width">
+                                        <mat-label>{{'motorsportsDatabaseApp.eventEdition.eventDate' | translate }}</mat-label>
+                                        <input matInput [matDatepicker]="picker" class="form-control" name="eventDate"
+                                               id="field_eventDate" formControlName="eventDate">
+                                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker></mat-datepicker>
+                                        <div *ngIf="editForm.get('eventDate').invalid && (editForm.get('eventDate').dirty || editForm.get('eventDate').touched)">
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('eventDate').errors.required" jhiTranslate="entity.validation.required">
+                                                This field is required.
+                                            </small>
+                                        </div>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-3 col-md-3">
+                                    <mat-label>{{'motorsportsDatabaseApp.eventEdition.status.label' | translate }}</mat-label>
+                                    <mat-button-toggle-group name="status" id="field_status" formControlName="status">
+                                        <mat-button-toggle value="ONGOING">
+                                            {{'motorsportsDatabaseApp.eventEdition.status.ongoing' | translate }}
+                                        </mat-button-toggle>
+                                        <mat-button-toggle value="SUSPENDED">
+                                            {{'motorsportsDatabaseApp.eventEdition.status.suspended' | translate }}
+                                        </mat-button-toggle>
+                                        <mat-button-toggle value="CANCELLED">
+                                            {{'motorsportsDatabaseApp.eventEdition.status.cancelled' | translate }}
+                                        </mat-button-toggle>
+                                    </mat-button-toggle-group>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.shortEventName' | translate }}" type="text"
+                                               class="form-control" name="shortEventName" id="field_shortEventName" formControlName="shortEventName">
+                                        <div *ngIf="editForm.get('shortEventName').invalid && (editForm.get('shortEventName').dirty || editForm.get('shortEventName').touched)">
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('shortEventName').errors.required" jhiTranslate="entity.validation.required">
+                                                This field is required.
+                                            </small>
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('shortEventName').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 40 }">
+                                                This field cannot be longer than 40 characters.
+                                            </small>
+                                        </div>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-8">
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.longEventName' | translate }}" type="text"
+                                               class="form-control" name="longEventName" id="field_longEventName" formControlName="longEventName">
+                                        <div *ngIf="editForm.get('longEventName').invalid && (editForm.get('longEventName').dirty || editForm.get('longEventName').touched)">
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('longEventName').errors.required" jhiTranslate="entity.validation.required">
+                                                This field is required.
+                                            </small>
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('longEventName').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
+                                                This field cannot be longer than 100 characters.
+                                            </small>
+                                        </div>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <mat-label>{{'motorsportsDatabaseApp.eventEdition.allowedCategories' | translate }}</mat-label>
+                                    <cdk-virtual-scroll-viewport itemSize="50" class="selection-list-viewport">
+                                        <mat-selection-list [compareWith]="compareCategories" name="allowedCategories" id="field_allowedCategories" formControlName="allowedCategories">
+                                            <mat-list-option *ngFor="let category of categories" [value]="category">
+                                                {{ category.name }}
+                                            </mat-list-option>
+                                        </mat-selection-list>
+                                    </cdk-virtual-scroll-viewport>
+                                </div>
+                                <div class="col-3">
+                                    <mat-list>
+                                        <mat-list-item *ngFor="let cat of editForm.get('allowedCategories').value">
+                                            <p mat-line>{{cat.name}}</p>
+                                        </mat-list-item>
+                                    </mat-list>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <mat-label>{{'motorsportsDatabaseApp.eventEdition.multidriver' | translate }}</mat-label>
+                                            <mat-radio-group class="form-control" name="multidriver" id="field_multidriver" formControlName="multidriver">
+                                                <mat-radio-button [value]="true">{{'global.yes' | translate }}</mat-radio-button>
+                                                <mat-radio-button [value]="false">{{'global.no' | translate }}</mat-radio-button>
+                                            </mat-radio-group>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <mat-form-field class="example-full-width">
+                                                <input matInput type="text" [matAutocomplete]="autoLayout" formControlName="trackLayout"
+                                                       placeholder="{{ 'motorsportsDatabaseApp.eventEdition.trackLayout' | translate }}"/>
+                                                <mat-autocomplete #autoLayout="matAutocomplete" [displayWith]="displayFnLayouts">
+                                                    <mat-option *ngFor="let trackLayout of layoutOptions | async" [value]="trackLayout" style="height: 80px">
+                                                        <img *ngIf="trackLayout.layoutImg" src="{{ trackLayout.layoutImg }}" class="img-fluid"/>
+                                                        <span>{{ trackLayout.fullName }}</span>
+                                                    </mat-option>
+                                                </mat-autocomplete>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <mat-form-field class="example-full-width">
+                                                <input matInput type="text" [matAutocomplete]="autoEvent" formControlName="event"
+                                                       placeholder="{{ 'motorsportsDatabaseApp.eventEdition.event' | translate }}"/>
+                                                <mat-autocomplete #autoEvent="matAutocomplete" [displayWith]="displayFnEvents">
+                                                    <mat-option *ngFor="let event of eventOptions | async" [value]="event">
+                                                        <span>{{ event.name }}</span>
+                                                    </mat-option>
+                                                </mat-autocomplete>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="col-md-6">
+                                                <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.poster" for="field_poster">Event edition poster</label>
+                                                <div>
+                                                    <img [src]="editForm.get('posterUrl').value" style="max-height: 100px;" *ngIf="!editForm.get('poster').value && editForm.get('posterUrl').value != null" alt="event edition poster"/>
+                                                    <img [src]="'data:' + editForm.get('posterContentType').value + ';base64,' + editForm.get('poster').value" style="max-height: 100px;" *ngIf="editForm.get('poster').value" alt="event edition poster"/>
+                                                    <div *ngIf="editForm.get('poster').value" class="form-text text-danger clearfix">
+                                                        <button type="button" (click)="clearInputImage('poster', 'posterContentType', 'fileImage')" class="btn btn-secondary btn-xs pull-right">
+                                                            <span class="fa fa-times"></span>
+                                                        </button>
+                                                    </div>
+                                                    <input type="file" id="file_poster" (change)="setFileData($event, 'poster', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                                                </div>
+                                                <input type="hidden" class="form-control" name="image" id="field_poster" formControlName="poster"/>
+                                                <input type="hidden" class="form-control" name="imageContentType" id="field_posterContentType" formControlName="posterContentType" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                                </button>
+                                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,23 +1,24 @@
 {
-    "motorsportsDatabaseApp": {
-        "fuelProvider" : {
-            "home": {
-                "title": "Fuel Providers",
-                "createLabel": "Create a new Fuel Provider",
-                "createOrEditLabel": "Create or edit a Fuel Provider",
-                "search": "Search for Fuel Provider"
-            },
-            "created": "A new Fuel Provider is created with identifier {{ param }}",
-            "updated": "A Fuel Provider is updated with identifier {{ param }}",
-            "deleted": "A Fuel Provider is deleted with identifier {{ param }}",
-            "delete": {
-                "question": "Are you sure you want to delete Fuel Provider {{ id }}?"
-            },
-            "detail": {
-                "title": "Fuel Provider"
-            },
-            "name": "Name",
-            "logo": "Logo"
-        }
+  "motorsportsDatabaseApp": {
+    "fuelProvider": {
+      "home": {
+        "title": "Fuel Providers",
+        "createLabel": "Create a new Fuel Provider",
+        "createOrEditLabel": "Create or edit a Fuel Provider",
+        "search": "Search for Fuel Provider",
+        "notFound": "No Fuel Providers found"
+      },
+      "created": "A new Fuel Provider is created with identifier {{ param }}",
+      "updated": "A Fuel Provider is updated with identifier {{ param }}",
+      "deleted": "A Fuel Provider is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Fuel Provider {{ id }}?"
+      },
+      "detail": {
+        "title": "Fuel Provider"
+      },
+      "name": "Name",
+      "logo": "Logo"
     }
+  }
 }

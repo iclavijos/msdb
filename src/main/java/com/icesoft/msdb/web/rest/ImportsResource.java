@@ -1,8 +1,8 @@
 package com.icesoft.msdb.web.rest;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -13,6 +13,8 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.xml.bind.DatatypeConverter;
 
+import io.github.jhipster.web.util.HeaderUtil;
+import io.micrometer.core.annotation.Timed;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
@@ -134,12 +135,12 @@ public class ImportsResource {
         	case EVENTS: importEvents(data); break;
         	default: log.warn("The uploaded file does not correspond to any known entity");
         }
-
-        return new ResponseEntity<>("File uploaded", HttpStatus.ACCEPTED);
+        return ResponseEntity.created(new URI("/")).build();
+        // return new ResponseEntity<>("File uploaded", HttpStatus.ACCEPTED);
     }
 
     private <T> MappingIterator<T> initializeIterator(Class<T> type, String data) {
-    	CsvSchema bootstrapSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator(';');
+    	CsvSchema bootstrapSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator(',');
         CsvMapper mapper = new CsvMapper();
         try {
         	JavaTimeModule javaTimeModule=new JavaTimeModule();
@@ -180,7 +181,7 @@ public class ImportsResource {
         		racetrack = new Racetrack();
 	        	racetrack.setName(tmp.getRacetrackName());
 	        	racetrack.setLocation(tmp.getLocation());
-        		Racetrack found = racetrackRepository.findOne(Example.of(racetrack));
+        		Racetrack found = racetrackRepository.findOne(Example.of(racetrack)).get();
         		if (found != null) {
         			racetrack = found;
         		} else {
@@ -195,7 +196,7 @@ public class ImportsResource {
 	        	layout.setYearFirstUse(tmp.getYearFirstUse());
 	        	layout.setActive(tmp.isActive());
 
-	        	RacetrackLayout found = racetrackLayoutRepository.findOne(Example.of(layout));
+	        	RacetrackLayout found = racetrackLayoutRepository.findOne(Example.of(layout)).get();
 	        	if (found == null) {
 	        		layout.setRacetrack(racetrack);
 	        		racetrackLayoutRepository.save(layout);
@@ -288,9 +289,6 @@ public class ImportsResource {
 	        		if (seriesEd == null) {
 	        			throw new MSDBException("Provided series name is not valid: " + tmp.getSeriesEditionName());
 	        		}
-	        		if (seriesEd.getEvents() == null) {
-	        			seriesEd.setEvents(new ArrayList<>());
-	        		}
 	        	}
 
 	        	eventEdition = eventEditionRepository.save(eventEdition);
@@ -308,7 +306,7 @@ public class ImportsResource {
     		session.setEventEdition(eventEdition);
     		session.setName(tmp.getSessionName());
     		session.setShortname(tmp.getSessionShortName());
-    		session.setSessionStartTime(tmp.getSessionStartTime().atZone(tz.toZoneId()));
+    		session.setSessionStartTime(tmp.getSessionStartTime().atZone(tz.toZoneId()).toInstant().toEpochMilli());
     		session.setDuration(tmp.getSessionDuration());
     		session.setSessionType(SessionType.valueOf(tmp.getSessionType().toUpperCase()));
     		session.setDurationType(DurationType.valueOf(tmp.getDurationType().toUpperCase()).getValue());
@@ -326,8 +324,8 @@ public class ImportsResource {
     }
 
     private void importLapByLap(Long sessionId, String data) {
-    	if (sessionLapDataRepo.exists(sessionId.toString())) {
-    		sessionLapDataRepo.delete(sessionId.toString());
+    	if (sessionLapDataRepo.existsById(sessionId.toString())) {
+    		sessionLapDataRepo.deleteById(sessionId.toString());
     	}
         cacheHandler.resetLapByLapCaches(sessionId);
        	MappingIterator<LapInfo> readValues = initializeIterator(LapInfo.class, data);
@@ -342,7 +340,8 @@ public class ImportsResource {
     }
 
     private void importResults(Long sessionId, String data) {
-    	EventSession session = sessionRepository.findOne(sessionId);
+    	EventSession session = sessionRepository.findById(sessionId)
+            .orElseThrow(() ->new MSDBException("Invalid session id " + sessionId));
 
 //    	if (session.isRace()) {
 //    		Optional.ofNullable(session.getEventEdition().getSeriesEditions())
@@ -365,9 +364,9 @@ public class ImportsResource {
 
         		result.setStartingPosition(tmp.getStartingPosition());
 	        	try {
-	        		result.setFinalPosition(Integer.parseInt(tmp.getFinalPosition()));
+	        		result.setFinalPosition(Integer.parseInt(tmp.getFinalPositionStr()));
 	        	} catch (NumberFormatException e) {
-	        		String pos = tmp.getFinalPosition();
+	        		String pos = tmp.getFinalPositionStr();
 	        		if (pos.equals("DNF")) {
 	        			result.setFinalPosition(900);
 	        		} else if (pos.equals("DNS")) {
@@ -425,7 +424,7 @@ public class ImportsResource {
 		            	} else if (entries.size() > 1) {
 		            		log.warn("Found more than one entry with shared race number {}. Ignoring...", tmp.getRaceNumber());
 		            	} else {
-		            		result.setSharedDriveWith(shareds.get(0));
+		            		result.setSharedWith(shareds.get(0));
 		            	}
 		        	}
 		        	resultRepository.save(result);

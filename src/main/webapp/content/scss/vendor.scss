@@ -1,0 +1,23 @@
+/* after changing this file run 'yarn run webpack:build' */
+
+/***************************
+put Sass variables here:
+eg $input-color: red;
+****************************/
+// Override Bootstrap variables
+@import 'bootstrap-variables';
+// Import Bootstrap source files from node_modules
+@import '~bootstrap/scss/bootstrap';
+
+/* jhipster-needle-scss-add-vendor JHipster will add new css style */
+
+@import '~icofont/css/icofont.min.css';
+@import '~@mdi/font/css/materialdesignicons.min.css';
+
+@import '~ngx-lightbox/lightbox.css';
+
+@import '~@fullcalendar/core/main.css';
+@import '~@fullcalendar/daygrid/main.css';
+@import '~@fullcalendar/timegrid/main.css';
+@import '~@fullcalendar/timeline/main.css';
+@import '~@fullcalendar/list/main.css';

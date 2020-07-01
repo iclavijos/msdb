@@ -1,0 +1,61 @@
+.standings-card {
+  margin-left: 5px;
+}
+
+.checklist-item {
+  height: auto;
+}
+
+td {
+  text-align: center;
+}
+
+td.odd {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+td.retired {
+  background-color: #efcfff;
+}
+
+td.disqualified {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+td.winner {
+  background-color: #ffffbf;
+}
+
+td.second {
+  background-color: #dfdfdf;
+}
+
+td.third {
+  background-color: #ffdf9f;
+}
+
+.container-scroll {
+  overflow-x: auto;
+}
+.container-scroll > .row {
+  width: 133.33333333%; /* = 100% * 4/3 */
+}
+
+th.rotate {
+  /* Something you can count on */
+  height: 140px;
+  white-space: nowrap;
+}
+
+th.rotate > div {
+  transform:
+    /* Magic Numbers */ translate(32px, 47px) /* 45 is really 360 - 45 */ rotate(315deg);
+  width: 30px;
+}
+
+th.rotate > div > span {
+  border-bottom: 1px solid #ccc;
+  padding: 8px 1px;
+  font-size: 1.5vmin;
+}

@@ -1,26 +1,27 @@
 {
-    "motorsportsDatabaseApp": {
-        "team" : {
-            "home": {
-                "title": "Equips",
-                "createLabel": "Afegir un equip",
-                "createOrEditLabel": "Afegir o editar un equip",
-                "search": "Cercar equips"
-            },
-            "created": "S'ha afegit l'equip {{ param }}",
-            "updated": "S'ha modificat l'equip {{ param }}",
-            "deleted": "S'ha esborrat l'equip {{ param }}",
-            "delete": {
-                "question": "Estàs segur que vols esborrar l'equip {{ id }}?"
-            },
-            "detail": {
-                "title": "Equip"
-            },
-            "name": "Nom",
-            "description": "Descripció",
-            "hqLocation": "Localització seu",
-            "logo": "Logo",
-            "participations": "Participacions"
-        }
+  "motorsportsDatabaseApp": {
+    "team": {
+      "home": {
+        "title": "Equips",
+        "createLabel": "Afegir un equip",
+        "createOrEditLabel": "Afegir o editar un equip",
+        "search": "Cercar equips",
+        "notFound": "No s'ha trobat cap equip"
+      },
+      "created": "S'ha afegit l'equip {{ param }}",
+      "updated": "S'ha modificat l'equip {{ param }}",
+      "deleted": "S'ha esborrat l'equip {{ param }}",
+      "delete": {
+        "question": "Estàs segur que vols esborrar l'equip {{ id }}?"
+      },
+      "detail": {
+        "title": "Equip"
+      },
+      "name": "Nom",
+      "description": "Descripció",
+      "hqLocation": "Localització seu",
+      "logo": "Logo",
+      "participations": "Participacions"
     }
+  }
 }

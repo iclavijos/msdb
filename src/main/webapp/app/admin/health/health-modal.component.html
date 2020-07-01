@@ -10,15 +10,15 @@
     <div *ngIf="currentHealth.details">
         <h5 jhiTranslate="health.details.properties">Properties</h5>
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped" aria-describedby="showHealthLabel">
                 <thead>
                     <tr>
-                        <th class="text-left" jhiTranslate="health.details.name">Name</th>
-                        <th class="text-left" jhiTranslate="health.details.value">Value</th>
+                        <th scope="col" class="text-left" jhiTranslate="health.details.name">Name</th>
+                        <th scope="col" class="text-left" jhiTranslate="health.details.value">Value</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let entry of currentHealth.details | keys">
+                    <tr *ngFor="let entry of currentHealth.details.details | keys">
                         <td class="text-left">{{entry.key}}</td>
                         <td class="text-left">{{readableValue(entry.value)}}</td>
                     </tr>

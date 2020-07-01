@@ -2,6 +2,7 @@ package com.icesoft.msdb.repository;
 
 import java.util.List;
 
+import com.icesoft.msdb.domain.EventSession;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,8 +12,9 @@ import com.icesoft.msdb.domain.EventEntryResult;
 import com.icesoft.msdb.domain.enums.SessionType;
 
 /**
- * Spring Data JPA repository for the EventEntryResult entity.
+ * Spring Data  repository for the EventEntryResult entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface EventEntryResultRepository extends JpaRepository<EventEntryResult,Long> {
 
@@ -38,5 +40,7 @@ public interface EventEntryResultRepository extends JpaRepository<EventEntryResu
 
     @Query("SELECT MAX(r.lapsCompleted) FROM EventEntryResult r WHERE r.session.id = ?1")
     Integer findSessionMaxLapsCompleted(Long sessionId);
+
+    void deleteBySession(EventSession eventSession);
 
 }

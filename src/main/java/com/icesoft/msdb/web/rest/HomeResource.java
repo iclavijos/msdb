@@ -1,40 +1,33 @@
 package com.icesoft.msdb.web.rest;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.temporal.TemporalAdjusters;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.icesoft.msdb.MSDBException;
+import com.icesoft.msdb.domain.Driver;
+import com.icesoft.msdb.domain.EventSession;
+import com.icesoft.msdb.domain.TimeZone;
+import com.icesoft.msdb.repository.*;
+import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
+import com.icesoft.msdb.domain.Ephemeris;
+import com.icesoft.msdb.service.dto.SessionDataDTO;
+import com.icesoft.msdb.service.dto.TimeZonesResponse;
+import io.micrometer.core.annotation.Timed;
+import net.minidev.json.JSONObject;
+import org.cloudinary.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.codahale.metrics.annotation.Timed;
-import com.icesoft.msdb.MSDBException;
-import com.icesoft.msdb.domain.EventSession;
-import com.icesoft.msdb.domain.TimeZone;
-import com.icesoft.msdb.repository.DriverRepository;
-import com.icesoft.msdb.repository.EventEditionRepository;
-import com.icesoft.msdb.repository.EventSessionRepository;
-import com.icesoft.msdb.repository.RacetrackLayoutRepository;
-import com.icesoft.msdb.repository.SeriesEditionRepository;
-import com.icesoft.msdb.repository.TeamRepository;
-import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
-import com.icesoft.msdb.service.dto.SessionDataDTO;
-import com.icesoft.msdb.service.dto.TimeZonesResponse;
+import java.time.*;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -90,7 +83,10 @@ public class HomeResource {
 		ZonedDateTime today = ZonedDateTime.of(todayMidnight, ZoneId.of("UTC"));
 		ZonedDateTime nextSunday = today.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
 		nextSunday = nextSunday.plusWeeks(1).withHour(23).withMinute(59).plusDays(1);
-		List<EventSession> sessions = eventSessionRepository.findUpcomingSessions(today, nextSunday);
+		List<EventSession> sessions = eventSessionRepository
+            .findUpcomingSessions(
+                today.toEpochSecond(),
+                nextSunday.toEpochSecond());
 
 		ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
 		List<SessionDataDTO> filtered =
@@ -102,16 +98,40 @@ public class HomeResource {
 		return filtered;
 	}
 
+	@GetMapping("/home/ephemeris/{today}")
+    @Timed
+    @Cacheable(cacheNames = "ephemeris", key="#today")
+    public ResponseEntity<List<Ephemeris.EphemerisItem>> getTodayEphemeris(@PathVariable String today) {
+        String[] data = today.split("-");
+        int day, month;
+        if (data.length != 2) {
+            throw new MSDBException("Invalid day format supplied");
+        } else {
+            try {
+                day = Integer.parseInt(data[0]);
+                month = Integer.parseInt(data[1]);
+            } catch (NumberFormatException e) {
+                throw new MSDBException("Invalid date supplied");
+            }
+        }
+	    List<Driver> bornDrivers = driversRepository.findBornOnDay(day, month);
+        List<Driver> deadDrivers = driversRepository.findDeadOnDay(day, month);
+        List<EventSession> events = eventSessionRepository.findRacesOnDay(day, month);
+        Ephemeris result = new Ephemeris(bornDrivers, deadDrivers, events);
+        return ResponseEntity.ok(result.getEphemerisItems());
+    }
+
 	@GetMapping("/timezones")
 	@Cacheable(cacheNames="timezones")
 	public List<TimeZone> getTimeZones() {
 		RestTemplate restTemplate = new RestTemplate();
         TimeZonesResponse timezonesResp = restTemplate.getForObject(
-        		"http://api.timezonedb.com/v2.1/list-time-zone?key=4CHM89W4KBP0&format=json&fields=countryName,zoneName,gmtOffset",
+        		"https://api.timezonedb.com/v2.1/list-time-zone?key=4CHM89W4KBP0&format=json&fields=countryName,zoneName,gmtOffset",
         		TimeZonesResponse.class);
         if (!timezonesResp.getStatus().equals("OK")) {
         	throw new MSDBException("Error retrieving timezones: " + timezonesResp.getMessage());
         }
+        // This is just an internal joke :P
         TimeZone nerdTZ = new TimeZone("Toledo Hora imperial", "Europe/London", 0L);
         timezonesResp.getZones().add(nerdTZ);
         return timezonesResp.getZones();

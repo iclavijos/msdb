@@ -1,168 +1,190 @@
 {
-    "motorsportsDatabaseApp": {
-        "event" : {
-            "home": {
-                "title": "Events",
-                "createLabel": "Afegir un nou event",
-                "createOrEditLabel": "Afegir o editar un nou event",
-                "search": "Cercar events"
-            },
-            "created": "S'ha afegit l'event {{ param }}",
-            "updated": "S'ha modificat l'event {{ param }}",
-            "deleted": "S'ha esborrat l'event {{ param }}",
-            "delete": {
-                "question": "Estàs segur que vols esborrar l'event {{ id }}?"
-            },
-            "detail": {
-                "title": "Event"
-            },
-            "name": "Nom",
-            "description": "Descripció",
-            "editions": "Edicions"
-        },
-        "eventEdition" : {
-            "home": {
-                "title": "Edició d'event",
-                "createLabel": "Crea una nova edició d'un event",
-                "createOrEditLabel": "Crea o edita l'edició d'un event",
-                "search": "Cercar edicions d'events"
-            },
-            "created": "S'ha creat una nova edició d'un event",
-            "updated": "S'ha actualitzat una edició d'un event",
-            "deleted": "S'ha esborrat l'edició de l'event",
-            "delete": {
-                "question": "Esteu segurs que voleu esborrar l'edició de l'event?"
-            },
-            "copy": "Seleccioni l'event del que copiar els participants",
-            "detail": {
-                "title": "Edició d'event"
-            },
-            "editionYear": "Any",
-            "shortEventName": "Nom curt",
-            "longEventName": "Nom llarg",
-            "eventDate": "Data",
-            "allowedCategories": "Categories permeses",
-            "trackLayout": "Traóat",
-            "event": "Event",
-            "sessions": "Sessions",
-            "info": "Detalls",
-            "entryList": "Inscrits",
-            "results": "Resultats",
-            "points": "Punts",
-            "multidriver": "Més d'un pilot per participant?",
-            "yourTime": "La teva hora",
-            "localTime": "Hora local",
-			"driversTimes": "Temps dels pilots",
-			"lapsAnalysis": "Volta a volta",
-            "session": {
-            	"createOrEditLabel": "Crea o edita una sessió",
-            	"name": "Nom",
-	            "shortname": "Nom curt",
-	            "sessionStartTime": "Dia i hora d'inici",
-	            "duration": "Duració",
-	            "empty": "-",
-	            "durationType": "Tipus",
-	            "sessionType": "Tipus de sessió",
-	            "awardsPoints": "Concedeix punts",
-	            "additionalLap": "Volta extra?",
-	            "maxDuration": "Duració màxima (hores)",
-	            "lap": "volta",
-	            "created": "S'ha creat una nova sessió",
-	            "updated": "S'ha actualitzat la sessió",
-	            "deleted": "S'ha esborrat la sessió",
-	            "delete": {
-	                "question": "Esteu segurs que voleu esborrar la sessió '{{id}}'?"
-	            }
-            },
-            "entry":{
-            	"createOrEditLabel": "Afegeix o edita un participant",
-			    "addLabel": "Afegir participant",
-            	"raceNumber": "#",
-            	"teamName": "Nom Equip",
-            	"team": "Equip",
-            	"rookie": "Debutant?",
-            	"operatedBy": "Associat amb",
-            	"tyres": "Neumótics",
-            	"fuel": "Combustible",
-            	"engine": "Motor",
-            	"driver": "Pilot",
-            	"drivers": "Pilots",
-            	"chassis": "Xassís",
-            	"category": "Categoria",
-            	"removeSelected": "Eliminar pilot seleccionat",
-            	"delete": {
-	                "question": "Esteu segurs que voleu esborrar el participant '{{id}}'?"
-	            },
-	            "doubleClick": "Fes doble click en un pilot per eliminar-lo com a participant",
-	            "carImage": "Imatge del vehicle"
-			},
-			"result" : {
-	            "home": {
-	                "title": "Classificacions",
-	                "createLabel": "Afegir un nou resultat",
-	                "createOrEditLabel": "Crea o edita un resultat"
-	            },
-	            "upload": {
-	            	"uploadLabel": "Importar resultats",
-	            	"lapbylapLabel": "Importar volta a volta",
-	            	"title": "Importar resultats de sessió",
-	            	"desc": "Importar fitxer CSV amb els resultats de la sessió",
-	            	"selectFile": "Seleccionar arxiu",
-	            	"file": "Arxiu",
-                    "lapbylapTitle": "Importar fitxer amb volta a volta",
-                    "lapbylapDesc": "Carrega un fitxer amb els temps per volta de cada participant"
-	            },
-	            "processResults": {
-	            	"label": "Processar resultats",
-	            	"title": "Processar resultats de la cursa",
-	            	"desc": "Calcular punts per cada pilot i actualitzar classificacions generals",
-	            	"processing": "Processant resultats",
-	            	"processed": "Resultats processats",
-	            	"notProcessed": "No s'han pogut processar els resultats"
-	            },
-	            "created": "S'ha afegit un nou resultat",
-	            "updated": "S'ha actualitzat el resultat",
-	            "deleted": "S'ha esborrat el resultat",
-	            "delete": {
-	                "question": "Esteu segurs que voleu esborrar el resultat?"
-	            },
-	            "detail": {
-	                "title": "Resultat"
-	            },
-	            "finalPosition": "Posició final",
-	            "totalTime": "Temps total",
-	            "bestLapTime": "Millor volta",
-	            "lapsCompleted": "Voltes completades",
-	            "retired": "Retirat",
-	            "dns": "No ha començat",
-	            "disqualified": "Descalificat",
-	            "nc": "No classificat",
-	            "retirementCause": "Motiu abandonament",
-	            "difference": "Diferència",
-	            "startingPosition": "Pos. sortida",
-	            "lapsLed": "Voltes liderades",
-	            "pitlaneStart": "Sortida des de pitlane?",
-	            "pitlaneStartDesc":"* Indica que el pilot ha començat la cursa des del pitlane",
-	            "sharedDrive": "Vehicle compartit amb?",
-	            "sharedWith": "Compartit amb "
-	        },
-	        "copyEntries": {
-	        	"title" : "Copia participants d'un altre event",
-	        	"copyLabel": "Copia participants"
-	        },
-		    "enumerations": {
-		    	"milliseconds": "Deumilèssimes",
-		    	"seconds": "Segons",
-			    "minutes": "Minuts",
-			    "hours": "Hores",
-			    "kilometers": "Kilòmetres",
-			    "miles": "Milles",
-			    "laps": "Voltes",
-			    "practice": "Entrenaments lliures",
-			    "qualifying": "Classificació",
-			    "race": "Cursa",
-			    "qualifying_race": "Cursa de classificació"
-			}
+  "motorsportsDatabaseApp": {
+    "event": {
+      "home": {
+        "title": "Events",
+        "createLabel": "Afegir un nou event",
+        "createOrEditLabel": "Afegir o editar un nou event",
+        "search": "Cercar events",
+        "notFound": "No s'ha trobat cap event"
+      },
+      "created": "S'ha afegit l'event {{ param }}",
+      "updated": "S'ha modificat l'event {{ param }}",
+      "deleted": "S'ha esborrat l'event {{ param }}",
+      "delete": {
+        "question": "Estàs segur que vols esborrar l'event '{{ id }}'?"
+      },
+      "detail": {
+        "title": "Event"
+      },
+      "name": "Nom",
+      "description": "Descripció",
+      "editions": "Edicions"
+    },
+    "eventEdition": {
+      "home": {
+        "title": "Edició d'event",
+        "createLabel": "Crea una nova edició d'un event",
+        "createOrEditLabel": "Crea o edita l'edició d'un event",
+        "search": "Cercar edicions d'events",
+        "notFound": "No s'ha trobat cap edició d'event"
+      },
+      "created": "S'ha creat una nova edició d'un event",
+      "updated": "S'ha actualitzat una edició d'un event",
+      "deleted": "S'ha esborrat l'edició de l'event",
+      "delete": {
+        "question": "Esteu segurs que voleu esborrar l'edició de l'event?"
+      },
+      "copy": "Seleccioni l'event del que copiar els participants",
+      "detail": {
+        "title": "Edició d'event"
+      },
+      "editionYear": "Any",
+      "shortEventName": "Nom curt",
+      "longEventName": "Nom llarg",
+      "eventDate": "Data",
+      "allowedCategories": "Categories permeses",
+      "trackLayout": "Traçat",
+      "event": "Event",
+      "sessions": "Sessions",
+      "info": "Detalls",
+      "entryList": "Inscrits",
+      "results": "Resultats",
+      "points": "Punts",
+      "multidriver": "Més d'un pilot per participant?",
+      "affiche": "Pòster oficial",
+      "yourTime": "La teva hora",
+      "localTime": "Hora local",
+      "driversTimes": "Temps dels pilots",
+      "lapsAnalysis": "Volta a volta",
+      "status": {
+        "label": "Situació",
+        "ongoing": "Planificat",
+        "suspended": "Suspés",
+        "cancelled": "Cancel.lat"
+      },
+      "reschedule": {
+        "reschedule": "Replanifica",
+        "title": "Replanifica un event",
+        "question": "Quina és la nova data del event?",
+        "newDate": "Selecciona nova data",
+        "cancel": "Cancel.la",
+        "confirm": "Confirma"
+      },
+      "session": {
+        "createOrEditLabel": "Crea o edita una sessió",
+        "notFound": "No hi ha sessions definides",
+        "name": "Nom",
+        "shortname": "Nom curt",
+        "sessionStartTime": "Dia i hora d'inici",
+        "duration": "Duració",
+        "empty": "-",
+        "durationType": "Tipus",
+        "sessionType": "Tipus de sessió",
+        "awardsPoints": "Concedeix punts",
+        "additionalLap": "Volta extra?",
+        "maxDuration": "Duració màxima (hores)",
+        "lap": "volta",
+        "created": "S'ha creat una nova sessió",
+        "updated": "S'ha actualitzat la sessió",
+        "deleted": "S'ha esborrat la sessió",
+        "delete": {
+          "question": "Esteu segurs que voleu esborrar la sessió '{{id}}'?"
         }
+      },
+      "entry": {
+        "notFound": "No s'han trobat participants",
+        "createOrEditLabel": "Afegeix o edita un participant",
+        "addLabel": "Afegir participant",
+        "raceNumber": "#",
+        "teamName": "Nom Equip",
+        "team": "Equip",
+        "rookie": "Debutant?",
+        "operatedBy": "Associat amb",
+        "tyres": "Neumàtics",
+        "fuel": "Combustible",
+        "engine": "Motor",
+        "driver": "Pilot",
+        "drivers": "Pilots",
+        "chassis": "Xassís",
+        "category": "Categoria",
+        "removeSelected": "Eliminar pilot seleccionat",
+        "delete": {
+          "question": "Esteu segurs que voleu esborrar el participant '{{id}}'?"
+        },
+        "doubleClick": "Fes doble click en un pilot per eliminar-lo com a participant",
+        "carImage": "Imatge del vehicle"
+      },
+      "result": {
+        "home": {
+          "title": "Classificacions",
+          "createLabel": "Afegir un nou resultat",
+          "createOrEditLabel": "Crea o edita un resultat",
+          "notFound": "No hi ha resultats"
+        },
+        "upload": {
+          "uploadLabel": "Importar resultats",
+          "lapbylapLabel": "Importar volta a volta",
+          "title": "Importar resultats de sessió",
+          "desc": "Importar fitxer CSV amb els resultats de la sessió",
+          "selectFile": "Seleccionar arxiu",
+          "file": "Arxiu",
+          "lapbylapTitle": "Importar fitxer amb volta a volta",
+          "lapbylapDesc": "Carrega un fitxer amb els temps per volta de cada participant"
+        },
+        "processResults": {
+          "label": "Processar resultats",
+          "title": "Processar resultats de la cursa",
+          "desc": "Calcular punts per cada pilot i actualitzar classificacions generals",
+          "processing": "Processant resultats",
+          "processed": "Resultats processats",
+          "notProcessed": "No s'han pogut processar els resultats"
+        },
+        "created": "S'ha afegit un nou resultat",
+        "updated": "S'ha actualitzat el resultat",
+        "deleted": "S'ha esborrat el resultat",
+        "delete": {
+          "question": "Esteu segurs que voleu esborrar el resultat?"
+        },
+        "detail": {
+          "title": "Resultat"
+        },
+        "finalPosition": "Posició final",
+        "totalTime": "Temps total",
+        "bestLapTime": "Millor volta",
+        "lapsCompleted": "Voltes completades",
+        "retired": "Retirat",
+        "dns": "No ha començat",
+        "disqualified": "Descalificat",
+        "nc": "No classificat",
+        "retirementCause": "Motiu abandonament",
+        "difference": "Diferència",
+        "startingPosition": "Pos. sortida",
+        "lapsLed": "Voltes liderades",
+        "pitlaneStart": "Sortida des de pitlane?",
+        "pitlaneStartDesc": "* Indica que el pilot ha començat la cursa des del pitlane",
+        "sharedDrive": "Vehicle compartit amb?",
+        "sharedWith": "Compartit amb ",
+        "difference": "Diferència 1er",
+        "previous": "Diferència anterior"
+      },
+      "copyEntries": {
+        "title": "Copia participants d'un altre event",
+        "copyLabel": "Copia participants"
+      },
+      "enumerations": {
+        "milliseconds": "Deumilèssimes",
+        "seconds": "Segons",
+        "minutes": "Minuts",
+        "hours": "Hores",
+        "kilometers": "Kilòmetres",
+        "miles": "Milles",
+        "laps": "Voltes",
+        "practice": "Entrenaments lliures",
+        "qualifying": "Classificació",
+        "race": "Cursa",
+        "qualifyingRace": "Cursa de classificació"
+      }
     }
+  }
 }

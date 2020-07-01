@@ -11,11 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.domain.Event;
 
 /**
- * Spring Data JPA repository for the Event entity.
+ * Spring Data  repository for the Event entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface EventRepository extends JpaRepository<Event,Long> {
-	
+
 	Event findByName(String name);
 
 	@EntityGraph(value="EventWithoutRelations", type=EntityGraphType.LOAD)

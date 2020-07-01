@@ -15,30 +15,31 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.domain.EventEdition;
 
 /**
- * Spring Data JPA repository for the EventEdition entity.
+ * Spring Data  repository for the EventEdition entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface EventEditionRepository extends JpaRepository<EventEdition, Long> {
 
 	@EntityGraph(value="EventEditionWithoutRelations", type=EntityGraphType.LOAD)
 	@Transactional(readOnly=true)
 	Stream<EventEdition> streamAllByIdNotNull();
-	
+
 	List<EventEdition> findAllByOrderByEventDateAsc();
-	
+
 	List<EventEdition> findBySeriesEditionsId(Long seriesEditionId);
-	
-	Page<EventEdition> findByEventIdOrderByEditionYearDesc(Long eventId, Pageable page);
-	
+
+	Page<EventEdition> findByEventId(Long eventId, Pageable page);
+
 	@Query("select e.id from EventEdition e where e.event.id = ?1 and e.editionYear = ("
 			+ "select max(e.editionYear) from EventEdition e where e.event.id = ?1 and e.editionYear < ?2)")
 	List<Long> findPreviousEditionId(Long eventId, Integer editionYear);
-	
+
 	@Query("select e.id from EventEdition e where e.event.id = ?1 and e.editionYear = ("
 			+ "select min(e.editionYear) from EventEdition e where e.event.id = ?1 and e.editionYear > ?2)")
 	List<Long> findNextEditionId(Long editionId, Integer editionYear);
-	
-	@Query("select e.id, e.editionYear from EventEdition e where e.event.id = ?1 order by e.editionYear desc")
+
+	@Query("select e.id, e.editionYear from EventEdition e where e.event.id = ?1")
 	List<Object[]> findEventEditionsIdYear(Long editionId);
-	
+
 }

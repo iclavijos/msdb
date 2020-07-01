@@ -1,34 +1,37 @@
 {
-    "motorsportsDatabaseApp": {
-        "pointsSystem" : {
-            "home": {
-                "title": "Points Systems",
-                "createLabel": "Create a new Points System",
-                "createOrEditLabel": "Create or edit a Points System",
-                "search": "Search for Points System"
-            },
-            "created": "A new Points System is created",
-            "updated": "A Points System is updated",
-            "deleted": "A Points System is deleted",
-            "delete": {
-                "question": "Are you sure you want to delete Points System?"
-            },
-            "detail": {
-                "title": "Points System"
-            },
-            "name": "Name",
-            "description": "Description",
-            "points": "Points",
-            "pointsMostLeadLaps": "Points Most Led Laps",
-            "pointsFastLap": "Points Fast Lap",
-            "pointsPole": "Points Pole",
-            "pointsLeadLap": "Points Lead Lap",
-            "active": "Active?",
-            "pointsFastLapAwardedIf": "Award fast lap points if: ",
-            "maxFinishinPositionFL": "Maximum finishing position",
-            "pitlaneStartAllowed": "Award points if started from pitlane?",
-            "racePctCompletion": "If less than % laps completed",
-            "pointsPct": "% of points awarded"
-        }
+  "motorsportsDatabaseApp": {
+    "pointsSystem": {
+      "home": {
+        "title": "Points Systems",
+        "createLabel": "Create a new Points System",
+        "createOrEditLabel": "Create or edit a Points System",
+        "search": "Search for Points System",
+        "notFound": "No points systems found"
+      },
+      "created": "A new Points System is created",
+      "updated": "A Points System is updated",
+      "deleted": "A Points System is deleted",
+      "delete": {
+        "question": "Are you sure you want to delete Points System '{{ id }}'?"
+      },
+      "detail": {
+        "title": "Points System"
+      },
+      "name": "Name",
+      "description": "Description",
+      "points": "Points",
+      "pointsMostLeadLaps": "Points Most Led Laps",
+      "pointsFastLap": "Points Fast Lap",
+      "pointsPole": "Points Pole",
+      "pointsLeadLap": "Points Lead Lap",
+      "active": "Active?",
+      "pointsFastLapAwardedIf": "Award fast lap points if: ",
+      "maxFinishinPositionFL": "Maximum finishing position",
+      "pitlaneStartAllowed": "Award points if started from pitlane?",
+      "racePctCompletion": "If less than {{racePct}}% of the laps are completed, award only {{pointsPct}}% of the points",
+      "pointsRacePctCompletion1": "If less than ",
+      "pointsRacePctCompletion2": "% of the laps are completed, award only ",
+      "pointsRacePctCompletion3": "% of the points"
     }
+  }
 }

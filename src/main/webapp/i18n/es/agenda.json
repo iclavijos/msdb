@@ -1,0 +1,18 @@
+{
+  "motorsportsDatabaseApp": {
+    "agenda": {
+      "title": "Agenda",
+      "date": "Selecciona la fecha de referencia",
+      "reference": "Fecha de referencia para la semana o el mes",
+      "range": "Rango de fechas a consultar",
+      "week": "Semana",
+      "month": "Mes",
+      "resultTitleWeek": "Agenda para la semana del {{startDate}} al {{endDate}}",
+      "resultTitleMonth": "Agenda para el mes de {{ month }}",
+      "event": "Evento",
+      "session": "Sesión",
+      "start": "Hora de inicio",
+      "end": "Hora de finalización (aprox)"
+    }
+  }
+}

@@ -1,61 +1,65 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiDataUtils } from 'ng-jhipster';
+import { JhiDataUtils } from 'ng-jhipster';
 
-import { Engine } from './engine.model';
+import { FlatTreeControl } from '@angular/cdk/tree';
+import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+
+import { IEngine } from 'app/shared/model/engine.model';
 import { EngineService } from './engine.service';
 
+interface EngineNode {
+  expandable: boolean;
+  engine: IEngine;
+  level: number;
+}
+
 @Component({
-    selector: 'jhi-engine-detail',
-    templateUrl: './engine-detail.component.html'
+  selector: 'jhi-engine-detail',
+  templateUrl: './engine-detail.component.html'
 })
-export class EngineDetailComponent implements OnInit, OnDestroy {
+export class EngineDetailComponent implements OnInit {
+  treeControl = new FlatTreeControl<EngineNode>(node => node.level, node => node.expandable);
 
-    engine: Engine;
-    private subscription: Subscription;
-    private eventSubscriber: Subscription;
+  treeFlattener = new MatTreeFlattener(
+    (node: IEngine, nodeLevel: number) => {
+      return {
+        expandable: !!node.evolutions && node.evolutions.length > 0,
+        engine: node,
+        level: nodeLevel
+      };
+    },
+    node => node.level,
+    node => node.expandable,
+    node => node.evolutions
+  );
 
-    constructor(
-        private eventManager: JhiEventManager,
-        private dataUtils: JhiDataUtils,
-        private engineService: EngineService,
-        private route: ActivatedRoute
-    ) {
-    }
+  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-    ngOnInit() {
-        this.subscription = this.route.params.subscribe((params) => {
-            this.load(params['id']);
-        });
-        this.registerChangeInEngines();
-    }
+  engine: IEngine;
 
-    load(id) {
-        this.engineService.find(id).subscribe((engine) => {
-            this.engine = engine;
-        });
-    }
-    byteSize(field) {
-        return this.dataUtils.byteSize(field);
-    }
+  constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute, protected engineService: EngineService) {}
 
-    openFile(contentType, field) {
-        return this.dataUtils.openFile(contentType, field);
-    }
-    previousState() {
-        window.history.back();
-    }
+  hasChild = (_: number, node: EngineNode) => node.expandable;
 
-    ngOnDestroy() {
-        this.subscription.unsubscribe();
-        this.eventManager.destroy(this.eventSubscriber);
-    }
+  ngOnInit() {
+    this.activatedRoute.data.subscribe(({ engine }) => {
+      this.engine = engine;
+      this.engineService.getEvolutions(engine.id).subscribe(evolutions => {
+        this.engine.evolutions = evolutions.body;
+        this.dataSource.data = evolutions.body;
+      });
+    });
+  }
 
-    registerChangeInEngines() {
-        this.eventSubscriber = this.eventManager.subscribe(
-            'engineListModification',
-            (response) => this.load(this.engine.id)
-        );
-    }
+  byteSize(field) {
+    return this.dataUtils.byteSize(field);
+  }
+
+  openFile(contentType, field) {
+    return this.dataUtils.openFile(contentType, field);
+  }
+  previousState() {
+    window.history.back();
+  }
 }

@@ -1,57 +1,92 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
+import { HttpResponse } from '@angular/common/http';
+import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { EventEntry } from 'app/shared/model/event-entry.model';
+import { EventEntryService } from './event-entry.service';
+// import { EventEntryComponent } from './event-entry.component';
+// import { EventEntryDetailComponent } from './event-entry-detail.component';
+// import { EventEntryUpdateComponent } from './event-entry-update.component';
+// import { EventEntryDeletePopupComponent } from './event-entry-delete-dialog.component';
+import { IEventEntry } from 'app/shared/model/event-entry.model';
 
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
+@Injectable({ providedIn: 'root' })
+export class EventEntryResolve implements Resolve<IEventEntry> {
+  constructor(private service: EventEntryService) {}
 
-import { EventEntryDetailComponent } from './event-entry-detail.component';
-import { EventEntryPopupComponent } from './event-entry-dialog.component';
-import { EventEntryDeletePopupComponent } from './event-entry-delete-dialog.component';
-
-import { Principal } from '../../shared';
-
+  resolve(route: ActivatedRouteSnapshot): Observable<IEventEntry> {
+    const id = route.params['id'];
+    if (id) {
+      return this.service.find(id).pipe(
+        filter((response: HttpResponse<EventEntry>) => response.ok),
+        map((eventEntry: HttpResponse<EventEntry>) => eventEntry.body)
+      );
+    }
+    return of(new EventEntry());
+  }
+}
 
 export const eventEntryRoute: Routes = [
-  {
-    path: 'event-entry/:id',
-    component: EventEntryDetailComponent,
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
-    },
-        canActivate: [UserRouteAccessService]
-  }
+  //   {
+  //     path: '',
+  //     component: EventEntryComponent,
+  //     data: {
+  //       authorities: ['ROLE_USER'],
+  //       pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
+  //     },
+  //     canActivate: [UserRouteAccessService]
+  //   },
+  //   {
+  //     path: ':id/view',
+  //     component: EventEntryDetailComponent,
+  //     resolve: {
+  //       eventEntry: EventEntryResolve
+  //     },
+  //     data: {
+  //       authorities: ['ROLE_USER'],
+  //       pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
+  //     },
+  //     canActivate: [UserRouteAccessService]
+  //   },
+  //   {
+  //     path: 'new',
+  //     component: EventEntryUpdateComponent,
+  //     resolve: {
+  //       eventEntry: EventEntryResolve
+  //     },
+  //     data: {
+  //       authorities: ['ROLE_USER'],
+  //       pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
+  //     },
+  //     canActivate: [UserRouteAccessService]
+  //   },
+  //   {
+  //     path: ':id/edit',
+  //     component: EventEntryUpdateComponent,
+  //     resolve: {
+  //       eventEntry: EventEntryResolve
+  //     },
+  //     data: {
+  //       authorities: ['ROLE_USER'],
+  //       pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
+  //     },
+  //     canActivate: [UserRouteAccessService]
+  //   }
 ];
 
 export const eventEntryPopupRoute: Routes = [
-  {
-    path: ':idEdition/event-entry-new',
-    component: EventEntryPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
-    },
-        canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  },
-  {
-    path: 'event-entry/:id/edit',
-    component: EventEntryPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
-    },
-        canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  },
-  {
-    path: 'event-entry/:id/delete',
-    component: EventEntryDeletePopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
-    },
-        canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  }
+  //   {
+  //     path: ':id/delete',
+  //     component: EventEntryDeletePopupComponent,
+  //     resolve: {
+  //       eventEntry: EventEntryResolve
+  //     },
+  //     data: {
+  //       authorities: ['ROLE_USER'],
+  //       pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title'
+  //     },
+  //     canActivate: [UserRouteAccessService],
+  //     outlet: 'popup'
+  //   }
 ];

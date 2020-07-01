@@ -1,0 +1,138 @@
+<h1 mat-dialog-title>{{'motorsportsDatabaseApp.eventEdition.session.createOrEditLabel' | translate }}</h1>
+<div mat-dialog-content>
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+        <jhi-alert-error></jhi-alert-error>
+        <div class="row">
+            <div class="col-md-12">
+                <mat-form-field class="example-full-width">
+                    <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.session.name' | translate }}" type="text"
+                           class="form-control" name="name" id="field_name" formControlName="name">
+                    <div *ngIf="editForm.get('name').invalid && (editForm.get('name').dirty || editForm.get('name').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('name').errors.required" jhiTranslate="entity.validation.required">
+                            This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('name').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 50 }">
+                            This field cannot be longer than 40 characters.
+                        </small>
+                    </div>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <mat-form-field class="example-full-width">
+                    <mat-label>
+                        {{ 'motorsportsDatabaseApp.eventEdition.session.shortname' | translate}}
+                    </mat-label>
+                    <input matInput type="text"
+                           class="form-control" name="shortname" id="field_shortname" formControlName="shortname">
+                    <div *ngIf="editForm.get('shortname').invalid && (editForm.get('shortname').dirty || editForm.get('shortname').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('shortname').errors.required" jhiTranslate="entity.validation.required">
+                            This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('shortname').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 10 }">
+                            This field cannot be longer than 60 characters.
+                        </small>
+                    </div>
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field class="example-full-width">
+                    <mat-label>
+                        {{'motorsportsDatabaseApp.eventEdition.session.sessionStartTime' | translate}}
+                    </mat-label>
+                    <input matInput [ngxMatDatetimePicker]="picker"
+                           name="sessionStartTime" id="field_sessionStartTime" formControlName="sessionStartTime">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker #picker [showSeconds]="false">
+                    </ngx-mat-datetime-picker>
+                    <div *ngIf="editForm.get('sessionStartTime').invalid && (editForm.get('sessionStartTime').dirty || editForm.get('sessionStartTime').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('sessionStartTime').errors.required" jhiTranslate="entity.validation.required">
+                            This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('sessionStartTime').errors.ZonedDateTimelocal" jhiTranslate="entity.validation.ZonedDateTimelocal">
+                            This field should be a date and time.
+                        </small>
+                    </div>
+                </mat-form-field>
+            </div>
+            <div class="col-md-3">
+                <mat-form-field class="example-full-width">
+                    <mat-label>
+                        {{'motorsportsDatabaseApp.eventEdition.session.sessionType' | translate}}
+                    </mat-label>
+                    <mat-select id="field_sessionType" name="sessionType" formControlName="sessionType">
+                        <mat-option *ngFor="let session of sessionKeys()" [value]="sessionValues[session]">
+                            {{'motorsportsDatabaseApp.eventEdition.enumerations.' + session | translate}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-3">
+                <mat-form-field class="example-full-width">
+                    <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.session.duration' | translate }}" type="number"
+                           name="duration" id="field_duration" formControlName="duration">
+                    <div *ngIf="editForm.get('duration').invalid && (editForm.get('duration').dirty || editForm.get('duration').touched)">
+                        <small class="form-text text-danger"
+                               [hidden]="!editForm.controls.duration?.errors?.required" jhiTranslate="entity.validation.required">
+                            This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                               [hidden]="!editForm.controls.duration?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-3 col-md-3">
+                <mat-form-field class="example-full-width">
+                    <mat-label>
+                        {{'motorsportsDatabaseApp.eventEdition.session.durationType' | translate}}
+                    </mat-label>
+                    <mat-select id="field_durationType" name="durationType" formControlName="durationType" (selectionChange)="onChangeType($event)" required>
+                        <mat-option *ngFor="let duration of durationKeys()" [value]="durationValues[duration]">
+                            {{'motorsportsDatabaseApp.eventEdition.enumerations.' + duration | translate}}
+                        </mat-option>
+                    </mat-select>
+                    <div [hidden]="!(editForm.controls.durationType?.dirty && editForm.controls.durationType?.invalid)">
+                        <small class="form-text text-danger"
+                               [hidden]="!editForm.controls.durationType?.errors?.required" jhiTranslate="entity.validation.required">
+                            This field is required.
+                        </small>
+                    </div>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-2 col-md-2">
+                <div class="form-group">
+                    <mat-checkbox id="field_additionalLap" name="additionalLap" formControlName="additionalLap">
+                        {{'motorsportsDatabaseApp.eventEdition.session.additionalLap' | translate}}
+                    </mat-checkbox>
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="isRaceAndLaps">
+            <div class="col-lg-4 col-md-4">
+                <mat-form-field class="example-full-width">
+                    <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.session.maxDuration' | translate }}" type="number"
+                           name="maxDuration" id="field_maxDuration" formControlName="maxDuration">
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+</div>
+<mat-dialog-actions align="end">
+    <button type="button" id="cancel-save" class="btn btn-secondary" (click)="cancel()">
+        <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+    </button>
+    <button type="button" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary" (click)="save()">
+        <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+    </button>
+</mat-dialog-actions>

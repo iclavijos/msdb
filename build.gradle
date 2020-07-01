@@ -3,242 +3,268 @@ import org.gradle.internal.os.OperatingSystem
 buildscript {
     repositories {
         mavenLocal()
-        jcenter()
-        maven { url "http://repo.spring.io/plugins-release" }
-        maven { url "https://plugins.gradle.org/m2/" }
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url "https://repo.spring.io/plugins-release" }
     }
     dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}"
-        classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
-        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
-        classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.14'
-        classpath 'io.github.swagger2markup:swagger2markup-gradle-plugin:1.3.1'
-        classpath 'io.github.swagger2markup:swagger2markup-spring-restdocs-ext:1.3.1'
         //jhipster-needle-gradle-buildscript-dependency - JHipster will add additional gradle build script plugins here
     }
 }
 
 plugins {
-    id "org.sonarqube" version "2.5"
-    id "net.ltgt.apt" version "0.11"
-    id "io.spring.dependency-management" version "1.0.3.RELEASE"
-    id "com.moowork.node" version "1.2.0"
+    id "java"
+    id "maven-publish"
+    id "idea"
+    id "jacoco"
+    id "org.springframework.boot"
+    id "com.google.cloud.tools.jib"
+    id "com.gorylenko.gradle-git-properties"
+    id "com.github.node-gradle.node"
+    id "net.ltgt.apt-eclipse"
+    id "net.ltgt.apt-idea"
+    id "net.ltgt.apt"
+    id "org.liquibase.gradle"
+    id "org.sonarqube"
+    id "io.spring.nohttp"
     //jhipster-needle-gradle-plugins - JHipster will add additional gradle plugins here
 }
 
-apply plugin: 'java'
+group = "com.icesoft.msdb"
+version = "4.0.0-SNAPSHOT"
+
+description = ""
 
 sourceCompatibility=1.8
 targetCompatibility=1.8
-apply plugin: 'maven'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'war'
-apply plugin: 'propdeps'
-apply plugin: 'com.moowork.node'
-apply plugin: 'io.spring.dependency-management'
-apply plugin: 'idea'
-defaultTasks 'bootRun'
+assert System.properties["java.specification.version"] == "1.8" || "11" || "12" || "13"
 
-group = 'com.icesoft.msdb'
-version = '3.3.0'
+apply from: "gradle/docker.gradle"
+apply from: "gradle/sonar.gradle"
+//jhipster-needle-gradle-apply-from - JHipster will add additional gradle scripts to be applied here
 
-description = ''
-
-bootRepackage {
-   mainClass = 'com.icesoft.msdb.MotorsportsDatabaseApp'
+if (project.hasProperty("prod")) {
+    apply from: "gradle/profile_prod.gradle"
+} else {
+    apply from: "gradle/profile_dev.gradle"
 }
 
-war {
-
+if (project.hasProperty("war")) {
+    apply from: "gradle/war.gradle"
 }
 
-springBoot {
-    mainClass = 'com.icesoft.msdb.MotorsportsDatabaseApp'
-    executable = true
-    buildInfo()
+
+idea {
+    module {
+        excludeDirs += files("node_modules")
+    }
 }
 
+eclipse {
+    sourceSets {
+        main {
+            java {
+                srcDirs += ["build/generated/sources/annotationProcessor/java/main"]
+            }
+        }
+    }
+}
+
+// See https://virgo47.wordpress.com/2018/09/14/classpath-too-long-with-spring-boot-and-gradle/ for details
+// https://github.com/jhipster/generator-jhipster/issues/9713
 if (OperatingSystem.current().isWindows()) {
-    task pathingJar(type: Jar) {
-        dependsOn configurations.runtime
-        appendix = 'pathing'
+    task classpathJar(type: Jar) {
+        inputs.files sourceSets.main.runtimeClasspath
 
+        archiveName = "runboot-classpath.jar"
         doFirst {
             manifest {
-                attributes 'Class-Path': configurations.runtime.files.collect {
-                    it.toURL().toString().replaceFirst(/file:\/+/, '/').replaceAll(' ', '%20')
-                }.join(' ')
+                def classpath = sourceSets.main.runtimeClasspath.files
+                attributes "Class-Path": classpath.collect {f -> f.toURI().toString()}.join(" ")
             }
         }
     }
 
     bootRun {
-        addResources = false
-        dependsOn pathingJar
-        doFirst {
-            classpath = files("$buildDir/classes/java/main", "$buildDir/resources/main", pathingJar.archivePath)
-        }
+        classpath = classpathJar.outputs.files
     }
-} else {
-    bootRun {
-        addResources = false
-    }
+}
+
+defaultTasks "bootRun"
+
+springBoot {
+    mainClassName = "com.icesoft.msdb.MotorsportsDatabaseApp"
 }
 
 test {
-    exclude '**/CucumberTest*'
+    useJUnitPlatform()
+    exclude "**/*IT*", "**/*IntTest*"
 
+    testLogging {
+        events 'FAILED', 'SKIPPED'
+    }
     // uncomment if the tests reports are not generated
     // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
     // ignoreFailures true
-    reports.html.enabled = true
+    reports.html.enabled = false
 }
 
+task integrationTest(type: Test) {
+    useJUnitPlatform()
+    description = "Execute integration tests."
+    group = "verification"
+    include "**/*IT*", "**/*IntTest*"
+
+    testLogging {
+        events 'FAILED', 'SKIPPED'
+    }
+    // uncomment if the tests reports are not generated
+    // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
+    // ignoreFailures true
+    reports.html.enabled = false
+}
+
+check.dependsOn integrationTest
 task testReport(type: TestReport) {
     destinationDir = file("$buildDir/reports/tests")
     reportOn test
 }
 
-
-apply from: 'gradle/docker.gradle'
-apply from: 'gradle/sonar.gradle'
-apply from: 'gradle/mapstruct.gradle'
-apply from: 'gradle/swagger2markup.gradle'
-//jhipster-needle-gradle-apply-from - JHipster will add additional gradle scripts to be applied here
-
-if (project.hasProperty('prod')) {
-    apply from: 'gradle/profile_prod.gradle'
-} else {
-    apply from: 'gradle/profile_dev.gradle'
+task integrationTestReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/tests")
+    reportOn integrationTest
 }
 
-if (project.hasProperty('graphite')) {
-    apply from: 'gradle/graphite.gradle'
+if (!project.hasProperty("runList")) {
+    project.ext.runList = "main"
 }
 
-if (project.hasProperty('prometheus')) {
-    apply from: 'gradle/prometheus.gradle'
+project.ext.diffChangelogFile = "src/main/resources/config/liquibase/changelog/" + new Date().format("yyyyMMddHHmmss") + "_changelog.xml"
+
+checkstyle {
+    toolVersion '${checkstyle_version}'
+    configFile file("checkstyle.xml")
+    checkstyleTest.enabled = false
+}
+nohttp {
+    source.include "build.gradle", "README.md"
 }
 
 configurations {
     providedRuntime
-    compile.exclude module: "spring-boot-starter-tomcat"
+    implementation.exclude module: "spring-boot-starter-tomcat"
 }
 
 repositories {
     mavenLocal()
+    mavenCentral()
     jcenter()
+    //jhipster-needle-gradle-repositories - JHipster will add additional repositories
 }
 
 dependencies {
-    compile "io.github.jhipster:jhipster:${jhipster_server_version}"
-    compile "io.dropwizard.metrics:metrics-core:${dropwizard_metrics_version}"
-    compile "io.dropwizard.metrics:metrics-jcache:${dropwizard_metrics_version}"
-    compile "io.dropwizard.metrics:metrics-jvm:${dropwizard_metrics_version}"
-    compile "io.dropwizard.metrics:metrics-servlet:${dropwizard_metrics_version}"
-    compile "io.dropwizard.metrics:metrics-json:${dropwizard_metrics_version}"
-    compile "io.dropwizard.metrics:metrics-servlets:${dropwizard_metrics_version}"
-    compile "net.logstash.logback:logstash-logback-encoder:${logstash_logback_encoder_version}"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-json-org"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-hppc"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5"
-    compile "com.fasterxml.jackson.core:jackson-annotations"
-    compile "com.fasterxml.jackson.core:jackson-databind"
-    compile "com.fasterxml.jackson.module:jackson-module-afterburner"
-    compile ("com.ryantenney.metrics:metrics-spring:${metrics_spring_version}")
-    compile "javax.cache:cache-api"
-    compile "org.hibernate:hibernate-core:${hibernate_version}"
-    compile ("com.zaxxer:HikariCP:${hikaricp_version}")
-    compile "org.apache.commons:commons-lang3:${commons_lang_version}"
-    compile "commons-io:commons-io:${commons_io_version}"
-    compile "javax.transaction:javax.transaction-api"
-    compile "org.ehcache:ehcache"
-    compile "org.hibernate:hibernate-jcache:${hibernate_version}"
-    compile "org.hibernate:hibernate-envers:${hibernate_version}"
-    compile "org.hibernate:hibernate-entitymanager:${hibernate_version}"
-    compile "org.hibernate:hibernate-validator"
-    compile "org.hibernate:hibernate-entitymanager:${hibernate_version}"
-    compile "org.flywaydb:flyway-core:4.2.0"
-    compile "org.springframework.boot:spring-boot-actuator"
-    compile "org.springframework.boot:spring-boot-autoconfigure"
-    compile "org.springframework.boot:spring-boot-loader-tools"
-    compile "org.springframework.boot:spring-boot-starter-mail"
-    compile "org.springframework.boot:spring-boot-starter-logging"
-    compile "org.springframework.boot:spring-boot-starter-aop"
-    compile "org.springframework.boot:spring-boot-starter-data-jpa"
-    compile "org.springframework.boot:spring-boot-starter-data-elasticsearch"
-    // needed to get around elasticsearch stacktrace about jna not found
-    // https://github.com/elastic/elasticsearch/issues/13245
-    compile "net.java.dev.jna:jna"
-    compile "org.springframework.boot:spring-boot-starter-data-mongodb"
-    compile "org.springframework.boot:spring-boot-starter-security"
-    compile ("org.springframework.boot:spring-boot-starter-web") {
-        exclude module: 'spring-boot-starter-tomcat'
-    }
-    compile "org.springframework.boot:spring-boot-starter-undertow"
-    compile "org.springframework.boot:spring-boot-starter-thymeleaf"
-    compile "org.zalando:problem-spring-web:${problem_spring_web_version}"
-    compile "org.springframework.boot:spring-boot-starter-cloud-connectors"
-    compile ("org.springframework:spring-context-support")
-    compile "org.springframework.security:spring-security-config"
-    compile "org.springframework.security:spring-security-data"
-    compile "org.springframework.security:spring-security-web"
-    compile "io.jsonwebtoken:jjwt:${jjwt_version}"
-    compile ("io.springfox:springfox-swagger2:${springfox_version}") {
-        exclude module: 'mapstruct'
-    }
-    compile "io.springfox:springfox-bean-validators:${springfox_version}"
-    compile "mysql:mysql-connector-java"
-    compile "com.h2database:h2"
-    compile "org.mapstruct:mapstruct-jdk8:${mapstruct_version}"
-    compile "org.apache.httpcomponents:httpclient"
-    compile "org.springframework.social:spring-social-security"
-    compile "org.springframework.social:spring-social-google:${spring_social_google_version}"
-    compile "org.springframework.social:spring-social-facebook"
-    compile "org.springframework.social:spring-social-twitter"
+    // import JHipster dependencies BOM
+    implementation platform("io.github.jhipster:jhipster-dependencies:${jhipster_dependencies_version}" )
 
-    compile 'com.sendgrid:sendgrid-java:3.0.9'
-    compile 'com.cloudinary:cloudinary-http44:1.8.1'
-    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.8.7'
-
-	compile 'com.google.maps:google-maps-services:0.1.20'
-
-	compile 'org.springframework.boot:spring-boot-devtools'
-
-    testCompile "org.awaitility:awaitility:${awaitility_version}"
-    testCompile "com.jayway.jsonpath:json-path"
-    testCompile ("org.springframework.boot:spring-boot-starter-test") {
-        exclude group: 'com.vaadin.external.google', module: 'android-json'
+    // Use ", version: jhipster_dependencies_version, changing: true" if you want
+    // to use a SNAPSHOT release instead of a stable release
+    implementation group: "io.github.jhipster", name: "jhipster-framework"
+    implementation "org.springframework.boot:spring-boot-starter-cache"
+    implementation "io.dropwizard.metrics:metrics-core"
+    implementation "io.micrometer:micrometer-registry-prometheus"
+    implementation "net.logstash.logback:logstash-logback-encoder"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-hppc"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5"
+    implementation "com.fasterxml.jackson.core:jackson-annotations"
+    implementation "com.fasterxml.jackson.core:jackson-databind"
+    implementation "com.fasterxml.jackson.module:jackson-module-afterburner"
+    implementation "javax.cache:cache-api"
+    implementation "org.hibernate:hibernate-core"
+    implementation "com.zaxxer:HikariCP"
+    implementation "org.apache.commons:commons-lang3"
+    implementation "commons-io:commons-io"
+    implementation "javax.transaction:javax.transaction-api"
+    implementation "org.ehcache:ehcache"
+    implementation "org.hibernate:hibernate-jcache"
+    implementation "org.hibernate:hibernate-entitymanager"
+    implementation "org.hibernate.validator:hibernate-validator"
+    implementation "org.flywaydb:flyway-core"
+    implementation "org.springframework.boot:spring-boot-loader-tools"
+    implementation "org.springframework.boot:spring-boot-starter-mail"
+    implementation "org.springframework.boot:spring-boot-starter-logging"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.springframework.boot:spring-boot-starter-data-elasticsearch"
+    implementation "org.springframework.boot:spring-boot-starter-data-mongodb"
+    // Spring Data Jest dependencies for Elasticsearch
+    implementation ("com.github.vanroy:spring-boot-starter-data-jest") {
+        exclude module: "commons-logging"
     }
-    testCompile "org.springframework.security:spring-security-test"
-    testCompile "org.springframework.boot:spring-boot-test"
-    testCompile "org.assertj:assertj-core:${assertj_version}"
-    testCompile "junit:junit"
-    testCompile "org.mockito:mockito-core"
-    testCompile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
-    testCompile "org.hamcrest:hamcrest-library"
-    optional ("org.springframework.boot:spring-boot-configuration-processor:${spring_boot_version}") {
-        exclude group: 'com.vaadin.external.google', module: 'android-json'
+    // log4j2-mock needed to create embedded elasticsearch instance with SLF4J
+    runtimeOnly "de.dentrassi.elasticsearch:log4j2-mock:${log4j2_mock_version}"
+    // end of Spring Data Jest dependencies
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation ("org.springframework.boot:spring-boot-starter-web") {
+        exclude module: "spring-boot-starter-tomcat"
     }
-    testCompile 'io.springfox:springfox-staticdocs:2.6.1'
-    testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc:1.1.2.RELEASE'
-    testCompile 'org.springframework.restdocs:spring-restdocs-core:1.1.2.RELEASE'
+    implementation "org.springframework.boot:spring-boot-starter-undertow"
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+    implementation "org.zalando:problem-spring-web"
+    implementation "org.springframework.boot:spring-boot-starter-cloud-connectors"
+    implementation "org.springframework.security:spring-security-config"
+    implementation "org.springframework.security:spring-security-data"
+    implementation "org.springframework.security:spring-security-web"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
+    implementation ("io.springfox:springfox-swagger2") {
+        exclude module: "mapstruct"
+    }
+    implementation "io.springfox:springfox-bean-validators"
+    implementation "mysql:mysql-connector-java"
+
+    implementation 'com.sendgrid:sendgrid-java:3.0.9'
+    implementation 'com.cloudinary:cloudinary-http44:1.8.1'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.8.7'
+
+    implementation 'com.google.maps:google-maps-services:0.1.20'
+
+    implementation "org.mapstruct:mapstruct:${mapstruct_version}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstruct_version}"
+    annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernate_version}"
+    annotationProcessor "org.glassfish.jaxb:jaxb-runtime:${jaxb_runtime_version}"
+    annotationProcessor ("org.springframework.boot:spring-boot-configuration-processor:${spring_boot_version}") {
+        exclude group: "com.vaadin.external.google", module: "android-json"
+    }
+    testImplementation "com.jayway.jsonpath:json-path"
+    testImplementation ("org.springframework.boot:spring-boot-starter-test") {
+        exclude module: "junit"
+        exclude group: "com.vaadin.external.google", module: "android-json"
+    }
+    testImplementation "org.springframework.security:spring-security-test"
+    testImplementation "org.springframework.boot:spring-boot-test"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine"
+    testImplementation "com.tngtech.archunit:archunit-junit5-api:${archunit_junit5_version}"
+    testRuntimeOnly "com.tngtech.archunit:archunit-junit5-engine:${archunit_junit5_version}"
+    testImplementation "org.assertj:assertj-core"
+    testImplementation "junit:junit"
+    testImplementation "org.mockito:mockito-core"
+    testImplementation "org.hamcrest:hamcrest-library"
+    testImplementation "com.h2database:h2"
     //jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
 }
 
 task cleanResources(type: Delete) {
-    delete 'build/resources'
+    delete "build/resources"
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.2.1'
+wrapper {
+    gradleVersion = "6.0"
 }
 
-task stage(dependsOn: 'bootRepackage') {
-}
 
-if (project.hasProperty('nodeInstall')) {
+if (project.hasProperty("nodeInstall")) {
     node {
         version = "${node_version}"
         npmVersion = "${npm_version}"
@@ -246,7 +272,5 @@ if (project.hasProperty('nodeInstall')) {
         download = true
     }
 }
-
 compileJava.dependsOn processResources
-processResources.dependsOn cleanResources,bootBuildInfo
-bootBuildInfo.mustRunAfter cleanResources
+processResources.dependsOn bootBuildInfo

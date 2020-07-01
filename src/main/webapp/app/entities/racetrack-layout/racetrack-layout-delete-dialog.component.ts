@@ -1,64 +1,69 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { RacetrackLayout } from './racetrack-layout.model';
-import { RacetrackLayoutPopupService } from './racetrack-layout-popup.service';
+import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
 import { RacetrackLayoutService } from './racetrack-layout.service';
 
 @Component({
-    selector: 'jhi-racetrack-layout-delete-dialog',
-    templateUrl: './racetrack-layout-delete-dialog.component.html'
+  selector: 'jhi-racetrack-layout-delete-dialog',
+  templateUrl: './racetrack-layout-delete-dialog.component.html'
 })
 export class RacetrackLayoutDeleteDialogComponent {
+  racetrackLayout: IRacetrackLayout;
 
-    racetrackLayout: RacetrackLayout;
+  constructor(
+    protected racetrackLayoutService: RacetrackLayoutService,
+    public activeModal: NgbActiveModal,
+    protected eventManager: JhiEventManager
+  ) {}
 
-    constructor(
-        private racetrackLayoutService: RacetrackLayoutService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+  clear() {
+    this.activeModal.dismiss('cancel');
+  }
 
-    clear() {
-        this.activeModal.dismiss('cancel');
-    }
-
-    confirmDelete(id: number) {
-        this.racetrackLayoutService.delete(id).subscribe((response) => {
-            this.eventManager.broadcast({
-                name: 'racetrackLayoutListModification',
-                content: 'Deleted an racetrackLayout'
-            });
-            this.activeModal.dismiss(true);
-        });
-    }
+  confirmDelete(id: number) {
+    this.racetrackLayoutService.delete(id).subscribe(() => {
+      this.eventManager.broadcast({
+        name: 'racetrackLayoutListModification',
+        content: 'Deleted an racetrackLayout'
+      });
+      this.activeModal.dismiss(true);
+    });
+  }
 }
 
 @Component({
-    selector: 'jhi-racetrack-layout-delete-popup',
-    template: ''
+  selector: 'jhi-racetrack-layout-delete-popup',
+  template: ''
 })
 export class RacetrackLayoutDeletePopupComponent implements OnInit, OnDestroy {
+  protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
+  constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
-    constructor(
-        private route: ActivatedRoute,
-        private racetrackLayoutPopupService: RacetrackLayoutPopupService
-    ) {}
+  ngOnInit() {
+    this.activatedRoute.data.subscribe(({ racetrackLayout }) => {
+      setTimeout(() => {
+        this.ngbModalRef = this.modalService.open(RacetrackLayoutDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
+        this.ngbModalRef.componentInstance.racetrackLayout = racetrackLayout;
+        this.ngbModalRef.result.then(
+          () => {
+            this.router.navigate(['/racetrack-layout', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          },
+          () => {
+            this.router.navigate(['/racetrack-layout', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          }
+        );
+      }, 0);
+    });
+  }
 
-    ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.racetrackLayoutPopupService
-                .open(RacetrackLayoutDeleteDialogComponent as Component, params['id']);
-        });
-    }
-
-    ngOnDestroy() {
-        this.routeSub.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.ngbModalRef = null;
+  }
 }

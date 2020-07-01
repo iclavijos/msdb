@@ -1,0 +1,11 @@
+{
+  "motorsportsDatabaseApp": {
+    "indexes": {
+      "home": {
+        "title": "Índices",
+        "init": "Se están recalculando los índices de búsqueda... espere unos segundos",
+        "rebuilt": "Índices recalculados correctamente"
+      }
+    }
+  }
+}

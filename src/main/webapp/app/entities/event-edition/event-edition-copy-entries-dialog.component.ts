@@ -1,114 +1,75 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, Inject } from '@angular/core';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { FormBuilder, Validators, FormGroup, FormControl, ValidationErrors, FormArray } from '@angular/forms';
+import { Observable, of } from 'rxjs';
+import { switchMap, debounceTime, map } from 'rxjs/operators';
+import { JhiAlertService } from 'ng-jhipster';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager, JhiLanguageService } from 'ng-jhipster';
-
-import { Observable } from 'rxjs/Rx';
-import {map} from 'rxjs/operator/map';
-import {debounceTime} from 'rxjs/operator/debounceTime';
-import {distinctUntilChanged} from 'rxjs/operator/distinctUntilChanged';
-import {_catch} from 'rxjs/operator/catch';
-import {_do} from 'rxjs/operator/do';
-import {switchMap} from 'rxjs/operator/switchMap';
-import {of} from 'rxjs/observable/of';
-
-import { EventEdition } from './event-edition.model';
-import { EventEditionPopupService } from './event-edition-popup.service';
+import { IEventEdition } from 'app/shared/model/event-edition.model';
 import { EventEditionService } from './event-edition.service';
 
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
 @Component({
-    selector: 'jhi-event-edition-copy-entries-dialog',
-    templateUrl: './event-edition-copy-entries-dialog.component.html'
+  templateUrl: './event-edition-copy-entries-dialog.component.html'
 })
 export class EventEditionCopyEntriesDialogComponent implements OnInit {
+  targetEvent: IEventEdition;
+  sourceEvent: IEventEdition;
+  eventOptions: Observable<IEventEdition[]>;
+  isSaving: boolean;
+  public editForm: FormGroup;
 
-    eventEdition: EventEdition;
-    selectedEventEdition: EventEdition;
-	isSaving: boolean;
-    private eventEditionSearch: string;
-    searching = false;
-    searchFailed = false;
+  constructor(
+    private _fb: FormBuilder,
+    private alertService: JhiAlertService,
+    private eventEditionService: EventEditionService,
+    private dialogRef: MatDialogRef<EventEditionCopyEntriesDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) data: any
+  ) {
+    this.targetEvent = data.targetEvent;
+    this.editForm = this._fb.group({
+      sourceEvent: new FormControl()
+    });
+  }
 
-    constructor(
-        private jhiLanguageService: JhiLanguageService,
-        private eventEditionService: EventEditionService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager,
-    ) {
-    }
-    
-    ngOnInit() {
-        this.isSaving = false;
-    }
-    
-    private innersearch(term: string) {
-        if (term === '') {
-          return of.call([]);
+  ngOnInit() {
+    this.isSaving = false;
+
+    this.displayFnEvents = this.displayFnEvents.bind(this);
+
+    this.eventOptions = this.editForm.get('sourceEvent').valueChanges.pipe(
+      debounceTime(300),
+      switchMap(value => {
+        if (typeof value === 'string') {
+          return this.eventEditionService.search({
+            query: value
+          });
+        } else {
+          return of(null);
         }
+      }),
+      map(response => (response ? response.body : null))
+    );
+  }
 
-        return map.call(this.eventEditionService.typeAhead(term),
-          response => response.json);
-      }
-    
-    search = (text$: Observable<string>) =>
-    _do.call(
-      switchMap.call(
-        _do.call(
-          distinctUntilChanged.call(
-            debounceTime.call(text$, 300)),
-          () => this.searching = true),
-        term =>
-          _catch.call(
-            _do.call(this.innersearch(term), () => this.searchFailed = false),
-            () => {
-              this.searchFailed = true;
-              return of.call([]);
-            }
-          )
-      ),
-      () => this.searching = false);
-    
-    inputFormatter = (result: any) => result.longEventName;
-    
-    clear () {
-        this.activeModal.dismiss('cancel');
-    }
+  displayFnEvents(event?: any): string | undefined {
+    return event ? event.longEventName : undefined;
+  }
 
-    confirmCopy () {
-    	this.isSaving = true;
-        this.eventEditionService.copyEntries(this.selectedEventEdition.id, this.eventEdition.id).subscribe(response => {
-            this.eventManager.broadcast({
-                name: 'eventEntryListModification'
-            });
-            this.activeModal.dismiss(true);
-        });
-        this.isSaving = false;
-    }
-}
+  setEvent(event: IEventEdition) {
+    this.sourceEvent = event;
+  }
 
-@Component({
-    selector: 'jhi-event-edition-copy-entries-popup',
-    template: ''
-})
-export class EventEditionCopyEntriesPopupComponent implements OnInit, OnDestroy {
+  close() {
+    this.dialogRef.close('ok');
+  }
 
-    modalRef: NgbModalRef;
-    routeSub: any;
-
-    constructor (
-        private route: ActivatedRoute,
-        private eventEditionPopupService: EventEditionPopupService
-    ) {}
-
-    ngOnInit() {
-        this.routeSub = this.route.params.subscribe(params => {
-            this.eventEditionPopupService
-                .open(EventEditionCopyEntriesDialogComponent as Component, params['id']);
-        });
-    }
-
-    ngOnDestroy() {
-        this.routeSub.unsubscribe();
-    }
+  confirmCopy() {
+    this.isSaving = true;
+    this.eventEditionService.copyEntries(this.sourceEvent.id, this.targetEvent.id).subscribe(() => this.dialogRef.close('ok'));
+    this.isSaving = false;
+  }
 }

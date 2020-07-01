@@ -1,37 +1,17 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
 
 import { ChartModule, CheckboxModule } from 'primeng/primeng';
 
 import 'chart.js/dist/Chart.min.js';
 
-import {
-    StandingsComponent
-} from './';
-
-const ENTITY_STATES = [
-];
+import { StandingsComponent } from './standings.component';
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        ChartModule,
-        CheckboxModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
-    exports: [
-        StandingsComponent
-    ],
-    declarations: [
-        StandingsComponent
-    ],
-    entryComponents: [
-        StandingsComponent
-    ],
-    providers: [
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseSharedModule, ChartModule, CheckboxModule],
+  exports: [StandingsComponent],
+  declarations: [StandingsComponent],
+  entryComponents: [StandingsComponent]
 })
 export class MotorsportsDatabaseStandingsModule {}

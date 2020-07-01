@@ -1,32 +1,33 @@
 {
-    "motorsportsDatabaseApp": {
-        "driver" : {
-            "home": {
-                "title": "Pilotos",
-                "createLabel": "Crear nuevo piloto",
-                "createOrEditLabel": "Crear o editar piloto",
-                "search": "Buscar pilotos"
-            },
-            "created": "Se ha añadido el piloto {{ param }}",
-            "updated": "Se ha actualizado el piloto {{ param }}",
-            "deleted": "Se ha eliminado el piloto {{ param }}",
-            "delete": {
-                "question": "¿Seguro que quiere eliminar al piloto {{ id }}?"
-            },
-            "detail": {
-                "title": "Piloto"
-            },
-            "name": "Nombre",
-            "surname": "Apellido",
-            "birthDate": "Fecha nacimiento",
-            "birthPlace": "Lugar nacimiento",
-            "deathDate": "Fecha defunción",
-            "deathPlace": "Lugar defunción",
-            "age": "Edad",
-            "portrait": "Retrato",
-            "bio": "Biografía",
-            "statistics": "Estadísticas",
-            "nationality": "Nacionalidad"
-        }
+  "motorsportsDatabaseApp": {
+    "driver": {
+      "home": {
+        "title": "Pilotos",
+        "createLabel": "Crear nuevo piloto",
+        "createOrEditLabel": "Crear o editar piloto",
+        "search": "Buscar pilotos",
+        "notFound": "Ningún piloto encontrado"
+      },
+      "created": "Se ha añadido el piloto {{ param }}",
+      "updated": "Se ha actualizado el piloto {{ param }}",
+      "deleted": "Se ha eliminado el piloto {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar al piloto {{ id }}?"
+      },
+      "detail": {
+        "title": "Piloto"
+      },
+      "name": "Nombre",
+      "surname": "Apellidos",
+      "birthDate": "Fecha nacimiento",
+      "birthPlace": "Lugar nacimiento",
+      "deathDate": "Fecha defunción",
+      "deathPlace": "Lugar defunción",
+      "age": "Edad",
+      "portrait": "Retrato",
+      "bio": "Biografía",
+      "statistics": "Estadísticas",
+      "nationality": "Nacionalidad"
     }
+  }
 }

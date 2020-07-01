@@ -1,0 +1,60 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title">{{ editForm.get('name').value }}</h4>
+                        <p class="card-category">{{ 'motorsportsDatabaseApp.event.home.createOrEditLabel' | translate }}</p>
+                    </div>
+                    <div class="card-body">
+                        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+                            <jhi-alert-error></jhi-alert-error>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.event.name' | translate }}" type="text"
+                                               class="form-control" name="name" id="field_name" formControlName="name">
+                                        <div *ngIf="editForm.get('name').invalid && (editForm.get('name').dirty || editForm.get('name').touched)">
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('name').errors.required" jhiTranslate="entity.validation.required">
+                                                This field is required.
+                                            </small>
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('name').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 50 }">
+                                                This field cannot be longer than 50 characters.
+                                            </small>
+                                        </div>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.event.description' | translate }}" type="text"
+                                               class="form-control" name="description" id="field_description" formControlName="description">
+                                        <div *ngIf="editForm.get('description').invalid && (editForm.get('description').dirty || editForm.get('description').touched)">
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('name').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
+                                                This field cannot be longer than 100 characters.
+                                            </small>
+                                        </div>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div>
+                                <button mat-raised-button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                                </button>
+                                <button mat-raised-button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                                </button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

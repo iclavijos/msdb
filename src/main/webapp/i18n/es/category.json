@@ -1,24 +1,25 @@
 {
-    "motorsportsDatabaseApp": {
-        "category" : {
-            "home": {
-                "title": "Categorías",
-                "createLabel": "Crear nueva categoría",
-                "createOrEditLabel": "Crear o editar categoría",
-                "search": "Buscar categorías"
-            },
-            "created": "Se ha creado la categoría {{ param }}",
-            "updated": "Se ha actualizado la categoría {{ param }}",
-            "deleted": "Se ha eliminado la categoría {{ param }}",
-            "delete": {
-                "question": "¿Seguro que quiere eliminar la categoría {{ id }}?"
-            },
-            "detail": {
-                "title": "Categoría"
-            },
-            "name": "Nombre",
-            "shortname": "Nombre corto",
-            "logo": "Logo"
-        }
+  "motorsportsDatabaseApp": {
+    "category": {
+      "home": {
+        "title": "Categorías",
+        "createLabel": "Crear nueva categoría",
+        "createOrEditLabel": "Crear o editar categoría",
+        "search": "Buscar categorías",
+        "notFound": "Ninguna categoría encontrada"
+      },
+      "created": "Se ha creado la categoría {{ param }}",
+      "updated": "Se ha actualizado la categoría {{ param }}",
+      "deleted": "Se ha eliminado la categoría {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar la categoría {{ id }}?"
+      },
+      "detail": {
+        "title": "Categoría"
+      },
+      "name": "Nombre",
+      "shortname": "Nombre corto",
+      "logo": "Logo"
     }
+  }
 }

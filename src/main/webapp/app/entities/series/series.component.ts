@@ -1,160 +1,176 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Response } from '@angular/http';
+import { Component, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiParseLinks, JhiPaginationUtil, JhiLanguageService, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
+import { merge, of as observableOf, Subscription } from 'rxjs';
+import { catchError, map, startWith, switchMap } from 'rxjs/operators';
+import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { Series } from './series.model';
-
+import { ISeries } from 'app/shared/model/series.model';
 import { SeriesService } from './series.service';
-import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
+
+import { MatPaginator, MatSort } from '@angular/material';
 
 @Component({
-    selector: 'jhi-series',
-    templateUrl: './series.component.html'
+  selector: 'jhi-series',
+  templateUrl: './series.component.html'
 })
-export class SeriesComponent implements OnInit, OnDestroy {
+export class SeriesComponent implements OnDestroy, AfterViewInit {
+  currentAccount: any;
+  series: ISeries[];
+  error: any;
+  success: any;
+  eventSubscriber: Subscription;
+  currentSearch: string;
+  routeData: any;
+  links: any;
+  totalItems: any;
+  itemsPerPage: any;
+  page: any;
+  predicate: any;
+  previousPage: any;
+  reverse: any;
 
-currentAccount: any;
-    series: Series[];
-    error: any;
-    success: any;
-    eventSubscriber: Subscription;
-    currentSearch: string;
-    routeData: any;
-    links: any;
-    totalItems: any;
-    queryCount: any;
-    itemsPerPage: any;
-    page: any;
-    predicate: any;
-    previousPage: any;
-    reverse: any;
+  displayedColumns: string[] = ['name', 'shortname', 'organizer', 'logo', 'buttons'];
 
-    constructor(
-        private jhiLanguageService: JhiLanguageService,
-        private seriesService: SeriesService,
-        private parseLinks: JhiParseLinks,
-        private jhiAlertService: JhiAlertService,
-        private principal: Principal,
-        private activatedRoute: ActivatedRoute,
-        private dataUtils: JhiDataUtils,
-        private router: Router,
-        private eventManager: JhiEventManager
-    ) {
-        this.itemsPerPage = ITEMS_PER_PAGE;
-        this.routeData = this.activatedRoute.data.subscribe((data) => {
-            this.page = data['pagingParams'].page;
-            this.previousPage = data['pagingParams'].page;
-            this.reverse = data['pagingParams'].ascending;
-            this.predicate = data['pagingParams'].predicate;
-        });
-        this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
-    }
+  resultsLength = 0;
+  isLoadingResults = true;
 
-    loadAll() {
-        if (this.currentSearch) {
-            this.seriesService.search({
-                page: this.page - 1,
-                query: this.currentSearch,
-                size: this.itemsPerPage,
-                sort: this.sort()}).subscribe(
-                    (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
-                    (res: ResponseWrapper) => this.onError(res.json)
-                );
-            return;
-        }
-        this.seriesService.query({
-            page: this.page - 1,
-            size: this.itemsPerPage,
-            sort: this.sort()}).subscribe(
-            (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
-            (res: ResponseWrapper) => this.onError(res.json)
-        );
-    }
-    loadPage(page: number) {
-        if (page !== this.previousPage) {
-            this.previousPage = page;
-            this.transition();
-        }
-    }
-    transition() {
-        this.router.navigate(['/series'], {queryParams:
-            {
-                page: this.page,
-                size: this.itemsPerPage,
-                search: this.currentSearch,
-                sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-            }
-        });
-        this.loadAll();
-    }
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-    clear() {
-        this.page = 0;
-        this.currentSearch = '';
-        this.router.navigate(['/series', {
-            page: this.page,
-            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-        }]);
-        this.loadAll();
-    }
-    search(query) {
-        if (!query) {
-            return this.clear();
-        }
-        this.page = 0;
-        this.currentSearch = query;
-        this.router.navigate(['/series', {
-            search: this.currentSearch,
-            page: this.page,
-            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-        }]);
-        this.loadAll();
-    }
-    ngOnInit() {
-        this.loadAll();
-        this.principal.identity().then((account) => {
-            this.currentAccount = account;
-        });
-        this.registerChangeInSeries();
-    }
+  constructor(
+    protected seriesService: SeriesService,
+    protected parseLinks: JhiParseLinks,
+    protected activatedRoute: ActivatedRoute,
+    protected dataUtils: JhiDataUtils,
+    protected router: Router,
+    protected eventManager: JhiEventManager
+  ) {
+    this.routeData = this.activatedRoute.data.subscribe(data => {
+      this.page = data.pagingParams.page;
+      this.previousPage = data.pagingParams.page;
+      this.reverse = data.pagingParams.ascending;
+      this.predicate = data.pagingParams.predicate;
+    });
+    this.currentSearch =
+      this.activatedRoute.snapshot && this.activatedRoute.snapshot.queryParams['search']
+        ? this.activatedRoute.snapshot.queryParams['search']
+        : '';
+  }
 
-    ngOnDestroy() {
-        this.eventManager.destroy(this.eventSubscriber);
-    }
+  ngAfterViewInit() {
+    this.registerChangeInSeries();
+    // If the user changes the sort order, reset back to the first page.
+    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
-    trackId(index: number, item: Series) {
-        return item.id;
-    }
+    merge(this.sort.sortChange, this.paginator.page, this.paginator.pageSize)
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.isLoadingResults = true;
+          return this.loadAll();
+        }),
+        map((data: HttpResponse<ISeries[]>) => {
+          this.isLoadingResults = false;
+          return this.processSeriesResponse(data);
+        }),
+        catchError(() => {
+          this.isLoadingResults = false;
+          return observableOf([]);
+        })
+      )
+      .subscribe(data => (this.series = data));
+  }
 
-    byteSize(field) {
-        return this.dataUtils.byteSize(field);
-    }
+  private processSeriesResponse(series: HttpResponse<ISeries[]>) {
+    this.resultsLength = parseInt(series.headers.get('X-Total-Count'), 10);
+    this.links = this.parseLinks.parse(series.headers.get('link'));
+    this.totalItems = parseInt(series.headers.get('X-Total-Count'), 10);
+    return series.body;
+  }
 
-    openFile(contentType, field) {
-        return this.dataUtils.openFile(contentType, field);
+  loadAll() {
+    this.series = [];
+    if (this.currentSearch) {
+      return this.seriesService.query({
+        page: this.paginator.pageIndex,
+        query: this.currentSearch,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      });
     }
-    registerChangeInSeries() {
-        this.eventSubscriber = this.eventManager.subscribe('seriesListModification', (response) => this.loadAll());
-    }
+    return this.seriesService.query({
+      page: this.paginator.pageIndex,
+      size: this.paginator.pageSize,
+      sort: this.sorting()
+    });
+  }
 
-    sort() {
-        const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
-        if (this.predicate !== 'id') {
-            result.push('id');
-        }
-        return result;
-    }
+  clear() {
+    this.series = [];
+    this.paginator.pageIndex = 0;
+    this.currentSearch = '';
+    this.isLoadingResults = true;
+    this.seriesService
+      .query({
+        page: this.paginator.pageIndex,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      })
+      .subscribe((data: HttpResponse<ISeries[]>) => {
+        this.isLoadingResults = false;
+        this.series = this.processSeriesResponse(data);
+      });
+  }
 
-    private onSuccess(data, headers) {
-        this.links = this.parseLinks.parse(headers.get('link'));
-        this.totalItems = headers.get('X-Total-Count');
-        this.queryCount = this.totalItems;
-        // this.page = pagingParams.page;
-        this.series = data;
+  search(query) {
+    this.series = [];
+    if (!query) {
+      return this.clear();
     }
-    private onError(error) {
-        this.jhiAlertService.error(error.message, null, null);
+    this.page = 0;
+    this.currentSearch = query;
+    this.isLoadingResults = true;
+    this.seriesService
+      .query({
+        page: this.paginator.pageIndex,
+        query: this.currentSearch,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      })
+      .subscribe((data: HttpResponse<ISeries[]>) => {
+        this.isLoadingResults = false;
+        this.series = this.processSeriesResponse(data);
+      });
+  }
+
+  ngOnDestroy() {
+    this.eventManager.destroy(this.eventSubscriber);
+  }
+
+  trackId(index: number, item: ISeries) {
+    return item.id;
+  }
+
+  byteSize(field) {
+    return this.dataUtils.byteSize(field);
+  }
+
+  openFile(contentType, field) {
+    return this.dataUtils.openFile(contentType, field);
+  }
+
+  registerChangeInSeries() {
+    this.eventSubscriber = this.eventManager.subscribe('seriesListModification', () =>
+      this.loadAll().subscribe((data: HttpResponse<ISeries[]>) => (this.series = this.processSeriesResponse(data)))
+    );
+  }
+
+  sorting() {
+    const result = [this.sort.active + ',' + this.sort.direction];
+    if (this.predicate !== 'id') {
+      result.push('id');
     }
+    return result;
+  }
 }

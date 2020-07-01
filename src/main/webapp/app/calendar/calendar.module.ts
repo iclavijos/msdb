@@ -1,32 +1,14 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
 
-import "fullcalendar";
-import { ScheduleModule, DialogModule } from 'primeng/primeng';
+import { CalendarComponent, EventDialogComponent } from './calendar.component';
 
-import { MotorsportsDatabaseSharedModule } from '../shared';
-
-require('style-loader!fullcalendar/dist/fullcalendar.css');
-
-import {
-    calendarState,
-    Calendar
-} from './';
+import { calendarRoute } from './calendar.route';
 
 @NgModule({
-    imports: [
-        BrowserAnimationsModule,
-        ScheduleModule,
-        DialogModule,
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(calendarState, { useHash: true })
-    ],
-    declarations: [
-        Calendar
-    ],
-    providers: [
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild([calendarRoute])],
+  declarations: [CalendarComponent, EventDialogComponent],
+  entryComponents: [EventDialogComponent]
 })
 export class MotorsportsDatabaseCalendarModule {}

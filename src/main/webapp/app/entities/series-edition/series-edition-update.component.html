@@ -1,0 +1,111 @@
+<h1 mat-dialog-title>{{'motorsportsDatabaseApp.series.seriesEdition.home.createOrEditLabel' | translate }}</h1>
+<div mat-dialog-content [formGroup]="editForm">
+    <jhi-alert-error></jhi-alert-error>
+    <div class="row">
+        <div class="col-2">
+            <mat-form-field class="example-full-width">
+                <input matInput type="text" formControlName="period" required maxlength="10"
+                       placeholder="{{ 'motorsportsDatabaseApp.series.seriesEdition.period' | translate }}"/>
+                <mat-error *ngIf="editForm.get('period')?.hasError('required')">
+                    {{ 'entity.validation.required' | translate }}
+                </mat-error>
+                <mat-error *ngIf="editForm.get('period')?.hasError('maxlength')">
+                    {{ 'entity.validation.maxlength' | translate : '{ max: 10 }' }}
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="col-3">
+            <mat-form-field class="example-full-width">
+                <input matInput type="number" formControlName="numEvents" required
+                       placeholder="{{ 'motorsportsDatabaseApp.series.seriesEdition.numEvents' | translate }}"/>
+                <mat-error *ngIf="editForm.get('numEvents')?.hasError('required')">
+                    {{ 'entity.validation.required' | translate }}
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="col-7">
+            <section class="example-full-width">
+                <mat-checkbox formControlName="driversStandings">{{ 'motorsportsDatabaseApp.series.seriesEdition.driversStandings' | translate }}</mat-checkbox>
+                <mat-checkbox formControlName="teamsStandings">{{ 'motorsportsDatabaseApp.series.seriesEdition.teamsStandings' | translate }}</mat-checkbox>
+                <mat-checkbox formControlName="manufacturersStandings">{{ 'motorsportsDatabaseApp.series.seriesEdition.manufacturersStandings' | translate }}</mat-checkbox>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <mat-form-field class="example-full-width">
+                <input matInput type="text" formControlName="editionName" required maxlength="150"
+                       placeholder="{{ 'motorsportsDatabaseApp.series.name' | translate }}"/>
+                <mat-error *ngIf="editForm.get('editionName')?.hasError('required')">
+                    {{ 'entity.validation.required' | translate }}
+                </mat-error>
+                <mat-error *ngIf="editForm.get('editionName')?.hasError('required')">
+                    {{ 'entity.validation.maxlength' | translate : '{ max: 150 }' }}
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="col-4">
+            <section class="example-full-width">
+                <mat-checkbox formControlName="singleChassis">{{ 'motorsportsDatabaseApp.series.seriesEdition.singleChassis' | translate }}</mat-checkbox>
+                <mat-checkbox formControlName="singleEngine">{{ 'motorsportsDatabaseApp.series.seriesEdition.singleEngine' | translate }}</mat-checkbox>
+                <mat-checkbox formControlName="singleTyre">{{ 'motorsportsDatabaseApp.series.seriesEdition.singleTyre' | translate }}</mat-checkbox>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="row">
+                <div class="col-12">
+                    <mat-checkbox formControlName="standingsPerCategory">{{ 'motorsportsDatabaseApp.series.seriesEdition.standingsPerCategory' | translate }}</mat-checkbox>
+                </div>
+                <div class="col-md-6">
+                    <mat-label>{{'motorsportsDatabaseApp.series.seriesEdition.allowedCategories' | translate }}</mat-label>
+                    <cdk-virtual-scroll-viewport itemSize="50" class="selection-list-viewport">
+                        <mat-selection-list [compareWith]="compareCategories" formControlName="allowedCategories">
+                            <mat-list-option *ngFor="let category of categories" [value]="category">
+                                {{ category.name }}
+                            </mat-list-option>
+                        </mat-selection-list>
+                    </cdk-virtual-scroll-viewport>
+                </div>
+                <div class="col-6">
+                    <mat-list>
+                        <mat-list-item *ngFor="let cat of editForm.get('allowedCategories').value">
+                            <p mat-line>{{cat.name}}</p>
+                        </mat-list-item>
+                    </mat-list>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="row">
+                <div class="col-md-6">
+                    <mat-label>{{'motorsportsDatabaseApp.series.seriesEdition.pointsSystems' | translate }}</mat-label>
+                    <cdk-virtual-scroll-viewport itemSize="50" class="selection-list-viewport">
+                        <mat-selection-list [compareWith]="comparePointsSystems" formControlName="pointsSystems">
+                            <mat-list-option *ngFor="let ps of pointsSystems" [value]="ps">
+                                {{ ps.name }}
+                            </mat-list-option>
+                        </mat-selection-list>
+                    </cdk-virtual-scroll-viewport>
+                </div>
+                <div class="col-6">
+                    <mat-list>
+                        <mat-list-item *ngFor="let ps of editForm.get('pointsSystems').value">
+                            <p mat-line>{{ps.name}}</p>
+                        </mat-list-item>
+                    </mat-list>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<mat-dialog-actions align="end">
+    <button mat-button class="btn btn-secondary" (click)="close()">
+        <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+    </button>
+    <button mat-button (click)="save()" [disabled]="editForm.invalid || isSaving" class="btn btn-primary" >
+        <span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+    </button>
+</mat-dialog-actions>

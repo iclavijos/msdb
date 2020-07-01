@@ -1,84 +1,101 @@
-<div>
-    <h2>
-        <span jhiTranslate="motorsportsDatabaseApp.series.home.title">Series</span>
-        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-        	class="btn btn-primary float-right jh-create-entity create-series" [routerLink]="['/', { outlets: { popup: ['series-new'] } }]">
-            <span class="fa fa-plus"></span>
-            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.series.home.createLabel">
-            Create new Series
-            </span>
-        </button>
-    </h2>
-    <jhi-alert></jhi-alert>
-    <div class="row">
-        <div class="col-sm-12">
-            <form name="searchForm" class="form-inline">
-                <div class="input-group w-100 mt-3">
-                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.series.home.search' | translate }}">
-                    <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
-                        <span class="fa fa-search"></span>
-                    </button>
-                    <button class="input-group-addon btn btn-danger" (click)="clear()" *ngIf="currentSearch">
-                        <span class="fa fa-trash-o"></span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <br/>
-    <div class="table-responsive" *ngIf="series">
-        <table class="table table-striped">
-            <thead>
-            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-            <th jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.series.name">Name</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="shortname"><span jhiTranslate="motorsportsDatabaseApp.series.shortname">Shortname</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="organizer"><span jhiTranslate="motorsportsDatabaseApp.series.organizer">Organizer</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="logo"><span jhiTranslate="motorsportsDatabaseApp.series.logo">Logo</span> <span class="fa fa-sort"></span></th>
-            <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let series of series ;trackBy: trackId">
-                <td>{{series.name}}</td>
-                <td>{{series.shortname}}</td>
-                <td>{{series.organizer}}</td>
-                <td>
-                	<div *ngIf="series.logoUrl">
-                		<img [src]="series.logoUrl" style="max-height: 50px;" alt="series image"/>
-                	</div>
-                </td>
-                <td class="text-right">
-                    <div class="btn-group flex-btn-group-container">
-                        <button type="submit"
-                                [routerLink]="['../series', series.id ]"
-                                class="btn btn-info btn-sm">
-                            <span class="fa fa-eye"></span>
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-sm-12">
+                <form name="searchForm" class="form-inline">
+                    <div class="input-group w-100 mt-3">
+                        <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.series.home.search' | translate }}">
+                        <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                            <fa-icon [icon]="'search'"></fa-icon>
                         </button>
-                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                [routerLink]="['/', { outlets: { popup: 'series/'+ series.id + '/edit'} }]"
-                                replaceUrl="true"
-                                class="btn btn-primary btn-sm">
-                            <span class="fa fa-pencil"></span>
+                        <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                            <fa-icon [icon]="'trash-alt'"></fa-icon>
                         </button>
-                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                [routerLink]="['/', { outlets: { popup: 'series/'+ series.id + '/delete'} }]"
-                                replaceUrl="true"
-                                class="btn btn-danger btn-sm">
-                            <span class="fa fa-remove"></span>
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-series" [routerLink]="['/series/new']">
+                            <fa-icon [icon]="'plus'"></fa-icon>
+                            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.series.home.createLabel">
+                                Create a new series
+                            </span>
                         </button>
                     </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-        <!-- Pager is not implemented yet, so this is normal pagination instead -->
-        <div *ngIf="series && series.length">
-            <div class="row justify-content-center">
-                <jhi-item-count [page]="page" [total]="queryCount" [itemsPerPage]="itemsPerPage"></jhi-item-count>
-            </div>
-            <div class="row justify-content-center">
-                <ngb-pagination [collectionSize]="totalItems" [maxSize]="5" [(page)]="page"  (pageChange)="loadPage(page)"></ngb-pagination>
+                </form>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.series.home.title">Categories</span></h4>
+                    </div>
+                    <div class="card-body">
+                        <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
+                        <div class="alert alert-warning" [hidden]="series?.length > 0 || isLoadingResults">
+                            <span jhiTranslate="motorsportsDatabaseApp.series.home.notFound">No series found</span>
+                        </div>
+                        <div class="table-responsive" [hidden]="series?.length === 0">
+                            <table mat-table class="table table-hover" [dataSource]="series"
+                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
+
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.series.name' | translate }}</th>
+                                    <td mat-cell *matCellDef="let series">{{ series.name }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="shortname">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.shortname' | translate }}</th>
+                                    <td mat-cell *matCellDef="let series">{{ series.shortname }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="organizer">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.series.organizer' | translate }}</th>
+                                    <td mat-cell *matCellDef="let series">{{ series.organizer }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="logo">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.logo' | translate }}</th>
+                                    <td mat-cell *matCellDef="let series">
+                                        <img *ngIf="series?.logoUrl" [src]="series.logoUrl" style="max-height: 50px;" alt="series logo"/>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="buttons">
+                                    <th mat-header-cell *matHeaderCellDef></th>
+                                    <td mat-cell *matCellDef="let series">
+                                        <div class="btn-group">
+                                            <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                                    [routerLink]="['/series', series.id, 'edit']"
+                                                    (click)="$event.stopPropagation()"
+                                                    class="btn btn-primary btn-xs">
+                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                            </button>
+                                            <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                                                    [routerLink]="['/series', { outlets: { popup: series.id + '/delete'} }]"
+                                                    (click)="$event.stopPropagation()"
+                                                    replaceUrl="true"
+                                                    queryParamsHandling="merge"
+                                                    class="btn btn-danger btn-xs">
+                                                <fa-icon [icon]="'times'"></fa-icon>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                                    [routerLink]="['/series', row.id, 'view' ]"></tr>
+                            </table>
+                            <mat-paginator [length]="resultsLength"
+                                           [pageSizeOptions]="[5, 10, 20]"
+                                           [pageSize]="10"
+                                           showFirstLastButtons></mat-paginator>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

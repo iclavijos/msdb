@@ -1,168 +1,190 @@
 {
-    "motorsportsDatabaseApp": {
-        "event" : {
-            "home": {
-                "title": "Eventos",
-                "createLabel": "Crear nuevo evento",
-                "createOrEditLabel": "Crear o editar evento",
-                "search": "Buscar eventos"
-            },
-            "created": "Se ha creado el evento {{ param }}",
-            "updated": "Se ha editado el evento {{ param }}",
-            "deleted": "Se ha borrado el evento {{ param }}",
-            "delete": {
-                "question": "¿Seguro que quiere eliminar el evento {{ id }}?"
-            },
-            "detail": {
-                "title": "Evento"
-            },
-            "name": "Nombre",
-            "description": "Descripción",
-            "editions": "Ediciones"
+  "motorsportsDatabaseApp": {
+    "event": {
+      "home": {
+        "title": "Eventos",
+        "createLabel": "Crear nuevo evento",
+        "createOrEditLabel": "Crear o editar evento",
+        "search": "Buscar eventos",
+        "notFound": "Ningún evento encontrado"
+      },
+      "created": "Se ha creado el evento {{ param }}",
+      "updated": "Se ha editado el evento {{ param }}",
+      "deleted": "Se ha borrado el evento {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar el evento '{{ id }}'?"
+      },
+      "detail": {
+        "title": "Evento"
+      },
+      "name": "Nombre",
+      "description": "Descripción",
+      "editions": "Ediciones"
+    },
+    "eventEdition": {
+      "home": {
+        "title": "Ediciones de eventos",
+        "createLabel": "Crear nueva edición de un evento",
+        "createOrEditLabel": "Crear o editar una edición de un evento",
+        "search": "Buscar",
+        "notFound": "Ninguna edición encontrada"
+      },
+      "created": "Se ha creado una nueva edición de un evento",
+      "updated": "Se ha actualizado la edición del evento",
+      "deleted": "Se ha eliminado la edición del evento",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar esta edición del evento?"
+      },
+      "copy": "Seleccione el evento del que copiar los participantes",
+      "detail": {
+        "title": "edición del evento"
+      },
+      "editionYear": "Año",
+      "shortEventName": "Nombre corto",
+      "longEventName": "Nombre largo",
+      "eventDate": "Fecha",
+      "allowedCategories": "Categorías permitidas",
+      "trackLayout": "Trazado",
+      "event": "Evento",
+      "sessions": "Sesiones",
+      "info": "Detalles",
+      "entryList": "Inscritos",
+      "results": "Resultados",
+      "points": "Puntos",
+      "multidriver": "Más de un piloto per participante?",
+      "affiche": "Póster oficial",
+      "yourTime": "Tu hora",
+      "localTime": "Hora local",
+      "driversTimes": "Tiempos de los pilotos",
+      "lapsAnalysis": "Vuelta a vuelta",
+      "status": {
+        "label": "Situación",
+        "ongoing": "Planificado",
+        "suspended": "Suspendido",
+        "cancelled": "Cancelado"
+      },
+      "reschedule": {
+        "reschedule": "Replanifica",
+        "title": "Replanifica un evento",
+        "question": "¿Cuál es la nueva fecha del evento?",
+        "newDate": "Selecciona nueva fecha",
+        "cancel": "Cancela",
+        "confirm": "Confirma"
+      },
+      "session": {
+        "createOrEditLabel": "Crea o edita una sesión",
+        "notFound": "No hay sesiones definidas",
+        "name": "Nombre",
+        "shortname": "Nombre corto",
+        "sessionStartTime": "Día y hora de inicio",
+        "duration": "Duración",
+        "empty": "-",
+        "durationType": "Tipo",
+        "sessionType": "Tipo de sesión",
+        "awardsPoints": "Concede puntos",
+        "additionalLap": "¿Vuelta extra?",
+        "maxDuration": "Duración máxima (horas)",
+        "lap": "vuelta",
+        "created": "Se ha creado una nueva sesión",
+        "updated": "Se ha actualizado la sesión",
+        "deleted": "Se ha borrado la sesión",
+        "delete": {
+          "question": "¿Estás seguro que quieres borrar la sesión '{{id}}'?"
+        }
+      },
+      "entry": {
+        "notFound": "No se han encontrado participantes",
+        "createOrEditLabel": "Añade o edita un participante",
+        "addLabel": "Añadir participante",
+        "raceNumber": "#",
+        "teamName": "Nombre equipo",
+        "team": "Equipo",
+        "rookie": "Debutante?",
+        "operatedBy": "Asociado con",
+        "tyres": "Neumáticos",
+        "fuel": "Combustible",
+        "engine": "Motor",
+        "driver": "Piloto",
+        "drivers": "Pilotos",
+        "chassis": "Chasis",
+        "category": "Categoría",
+        "removeSelected": "Eliminar piloto seleccionado",
+        "delete": {
+          "question": "¿Estás seguro que quieres eliminar al participante '{{id}}'?"
         },
-        "eventEdition" : {
-            "home": {
-                "title": "Ediciones de eventos",
-                "createLabel": "Crear nueva edición de un evento",
-                "createOrEditLabel": "Crear o editar una edición de un evento",
-                "search": "Buscar"
-            },
-            "created": "Se ha creado una nueva edición de un evento",
-            "updated": "Se ha actualizado la edición del evento",
-            "deleted": "Se ha eliminado la edición del evento",
-            "delete": {
-                "question": "¿Seguro que quiere eliminar esta edición del evento?"
-            },
-            "copy": "Seleccione el evento del que copiar los participantes",
-            "detail": {
-                "title": "edición del evento"
-            },
-            "editionYear": "Año",
-            "shortEventName": "Nombre corto",
-            "longEventName": "Nombre largo",
-            "eventDate": "Fecha",
-            "allowedCategories": "Categorías permitidas",
-            "trackLayout": "Trazado",
-            "event": "Evento",
-            "sessions": "Sesiones",
-            "info": "Detalles",
-            "entryList": "Inscritos",
-            "results": "Resultados",
-            "points": "Puntos",
-            "multidriver": "Más de un piloto per participante?",
-            "yourTime": "Tu hora",
-            "localTime": "Hora local",
-			"driversTimes": "Tiempos de los pilotos",
-			"lapsAnalysis": "Vuelta a vuelta",
-            "session": {
-            	"createOrEditLabel": "Crea o edita una sesión",
-            	"name": "Nombre",
-	            "shortname": "Nombre corto",
-	            "sessionStartTime": "Día y hora de inicio",
-	            "duration": "Duración",
-	            "empty": "-",
-	            "durationType": "Tipo",
-	            "sessionType": "Tipo de sesión",
-	            "awardsPoints": "Concede puntos",
-	            "additionalLap": "¿Vuelta extra?",
-	            "maxDuration": "Duración máxima (horas)",
-	            "lap": "vuelta",
-	            "created": "Se ha creado una nueva sesión",
-	            "updated": "Se ha actualizado la sesión",
-	            "deleted": "Se ha borrado la sesión",
-	            "delete": {
-	                "question": "¿Estás seguro que quieres borrar la sesión '{{id}}'?"
-	            }
-            },
-            "entry":{
-            	"createOrEditLabel": "Añade o edita un participante",
-			    "addLabel": "Añadir participante",
-            	"raceNumber": "#",
-            	"teamName": "Nombre equipo",
-            	"team": "Equipo",
-            	"rookie": "Debutante?",
-            	"operatedBy": "Asociado con",
-            	"tyres": "Neumáticos",
-            	"fuel": "Combustible",
-            	"engine": "Motor",
-            	"driver": "Piloto",
-            	"drivers": "Pilotos",
-            	"chassis": "Chasis",
-            	"category": "Categoría",
-            	"removeSelected": "Eliminar piloto seleccionado",
-            	"delete": {
-	                "question": "¿Estás seguro que quieres eliminar al participante '{{id}}'?"
-	            },
-	            "doubleClick": "Haz doble click en un piloto para eliminarlo como participante",
-	            "carImage": "Imagen del vehículo"
-			},
-			"result" : {
-	            "home": {
-	                "title": "Clasificaciones",
-	                "createLabel": "Añadir un nuevo resultado",
-	                "createOrEditLabel": "Crear o editar un resultado"
-	            },
-	            "upload": {
-	            	"uploadLabel": "Importar resultados",
-	            	"lapbylapLabel": "Importar vuelta a vuelta",
-	            	"title": "Importar resultados de sesión",
-	            	"desc": "Importar fichero CSV con los resultados de la sesión",
-	            	"selectFile": "Seleccionar archivo",
-	            	"file": "Archivo",
-                    "lapbylapTitle": "Importar archivo con vuelta a vuelta",
-                    "lapbylapDesc": "Cargar archivo con los tiempos por vuelta de cada participante"
-	            },
-	            "processResults": {
-	            	"label": "Procesar resultados",
-	            	"title": "Procesar resultados de la carrera",
-	            	"desc": "Calcular puntos para cada piloto y actualizar clasificaciones",
-	            	"processing": "Procesando resultados",
-	            	"processed": "Resultados procesados",
-	            	"notProcessed": "No se han podido procesar los resultados"
-	            },
-	            "created": "Se ha añadido un nuevo resultado",
-	            "updated": "Se ha editado el resultado",
-	            "deleted": "Se ha borrado el resultado",
-	            "delete": {
-	                "question": "¿Está seguro que quiere borrar el resultado?"
-	            },
-	            "detail": {
-	                "title": "Resultado"
-	            },
-	            "finalPosition": "Posición final",
-	            "totalTime": "Tiempo total",
-	            "bestLapTime": "Mejor vuelta",
-	            "lapsCompleted": "Vueltas completadas",
-	            "retired": "Retirado",
-	            "dns": "No ha empezado",
-	            "disqualified": "Descalificado",
-	            "nc": "No clasificado",
-	            "retirementCause": "Motivo abandono",
-	            "difference": "Diferencia",
-	            "startingPosition": "Pos. salida",
-	            "lapsLed": "Vueltas lideradas",
-	            "pitlaneStart": "Salida desde pitlane?",
-	            "pitlaneStartDesc": "* Indica que el piloto ha comenzado la carrera desde el pitlane",
-	            "sharedDrive": "Vehículo compartido con?",
-	            "sharedWith": "Compartido con "
-	        },
-	        "copyEntries": {
-	        	"title" : "Copia participantes de otro evento",
-	        	"copyLabel": "Copia participantes"
-	        },
-		    "enumerations": {
-		    	"milliseconds": "Diezmilésimas",
-		    	"seconds": "Segundos",
-			    "minutes": "Minutos",
-			    "hours": "Horas",
-			    "kilometers": "Kilómetros",
-			    "miles": "Millas",
-			    "laps": "Vueltas",
-			    "practice": "Entrenamientos libres",
-			    "qualifying": "Clasificación",
-			    "race": "Carrera",
-			    "qualifying_race": "Carrera de clasificación"
-			}
-		}
+        "doubleClick": "Haz doble click en un piloto para eliminarlo como participante",
+        "carImage": "Imagen del vehículo"
+      },
+      "result": {
+        "home": {
+          "title": "Clasificaciones",
+          "createLabel": "Añadir un nuevo resultado",
+          "createOrEditLabel": "Crear o editar un resultado",
+          "notFound": "No hay resultados"
+        },
+        "upload": {
+          "uploadLabel": "Importar resultados",
+          "lapbylapLabel": "Importar vuelta a vuelta",
+          "title": "Importar resultados de sesión",
+          "desc": "Importar fichero CSV con los resultados de la sesión",
+          "selectFile": "Seleccionar archivo",
+          "file": "Archivo",
+          "lapbylapTitle": "Importar archivo con vuelta a vuelta",
+          "lapbylapDesc": "Cargar archivo con los tiempos por vuelta de cada participante"
+        },
+        "processResults": {
+          "label": "Procesar resultados",
+          "title": "Procesar resultados de la carrera",
+          "desc": "Calcular puntos para cada piloto y actualizar clasificaciones",
+          "processing": "Procesando resultados",
+          "processed": "Resultados procesados",
+          "notProcessed": "No se han podido procesar los resultados"
+        },
+        "created": "Se ha añadido un nuevo resultado",
+        "updated": "Se ha editado el resultado",
+        "deleted": "Se ha borrado el resultado",
+        "delete": {
+          "question": "¿Está seguro que quiere borrar el resultado?"
+        },
+        "detail": {
+          "title": "Resultado"
+        },
+        "finalPosition": "Posición final",
+        "totalTime": "Tiempo total",
+        "bestLapTime": "Mejor vuelta",
+        "lapsCompleted": "Vueltas completadas",
+        "retired": "Retirado",
+        "dns": "No ha empezado",
+        "disqualified": "Descalificado",
+        "nc": "No clasificado",
+        "retirementCause": "Motivo abandono",
+        "difference": "Diferencia",
+        "startingPosition": "Pos. salida",
+        "lapsLed": "Vueltas lideradas",
+        "pitlaneStart": "Salida desde pitlane?",
+        "pitlaneStartDesc": "* Indica que el piloto ha comenzado la carrera desde el pitlane",
+        "sharedDrive": "Vehículo compartido con?",
+        "sharedWith": "Compartido con ",
+        "difference": "Diferencia 1o",
+        "previous": "Diferencia anterior"
+      },
+      "copyEntries": {
+        "title": "Copia participantes de otro evento",
+        "copyLabel": "Copia participantes"
+      },
+      "enumerations": {
+        "milliseconds": "Diezmilésimas",
+        "seconds": "Segundos",
+        "minutes": "Minutos",
+        "hours": "Horas",
+        "kilometers": "Kilómetros",
+        "miles": "Millas",
+        "laps": "Vueltas",
+        "practice": "Entrenamientos libres",
+        "qualifying": "Clasificación",
+        "race": "Carrera",
+        "qualifyingRace": "Carrera de clasificación"
+      }
     }
+  }
 }

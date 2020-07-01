@@ -1,81 +1,101 @@
-<div>
-    <h2>
-        <span jhiTranslate="motorsportsDatabaseApp.team.home.title">Teams</span>
-        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" class="btn btn-primary float-right jh-create-entity create-team" 
-        	[routerLink]="['/', { outlets: { popup: ['team-new'] } }]">
-            <span class="fa fa-plus"></span>
-            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.team.home.createLabel">
-            Create new Team
-            </span>
-        </button>
-    </h2>
-    <jhi-alert></jhi-alert>
-    <div class="row">
-        <div class="col-sm-12">
-            <form name="searchForm" class="form-inline">
-                <div class="input-group w-100 mt-3">
-                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.team.home.search' | translate }}">
-                    <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
-                        <span class="fa fa-search"></span>
-                    </button>
-                    <button class="input-group-addon btn btn-danger" (click)="clear()" *ngIf="currentSearch">
-                        <span class="fa fa-trash-o"></span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <br/>
-    <div class="table-responsive" *ngIf="teams">
-        <table class="table table-striped">
-            <thead>
-            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-            <th><span jhiTranslate="motorsportsDatabaseApp.team.name">Name</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.team.description">Description</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.team.hqLocation">Hq Location</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.team.logo">Logo</span></th>
-            <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let team of teams ;trackBy: trackId">
-                <td>{{team.name}}</td>
-                <td>{{team.description}}</td>
-                <td>{{team.hqLocation}}</td>
-                <td>
-                    <img *ngIf="team.logoUrl" [src]="team.logoUrl" style="max-height: 30px;" alt="team logo"/>
-                </td>
-                <td class="text-right">
-                    <div class="btn-group flex-btn-group-container">
-                        <button type="submit"
-                                [routerLink]="['../team', team.id ]"
-                                class="btn btn-info btn-sm">
-                            <span class="fa fa-eye"></span>
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-sm-12">
+                <form name="searchForm" class="form-inline">
+                    <div class="input-group w-100 mt-3">
+                        <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.team.home.search' | translate }}">
+                        <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                            <fa-icon [icon]="'search'"></fa-icon>
                         </button>
-                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                [routerLink]="['/', { outlets: { popup: 'team/'+ team.id + '/edit'} }]"
-                                replaceUrl="true"
-                                class="btn btn-primary btn-sm">
-                            <span class="fa fa-pencil"></span>
+                        <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                            <fa-icon [icon]="'trash-alt'"></fa-icon>
                         </button>
-                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                [routerLink]="['/', { outlets: { popup: 'team/'+ team.id + '/delete'} }]"
-                                replaceUrl="true"
-                                class="btn btn-danger btn-sm">
-                            <span class="fa fa-remove"></span>
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-team" [routerLink]="['/team/new']">
+                            <fa-icon [icon]="'plus'"></fa-icon>
+                            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.team.home.createLabel">
+                                Create a new team
+                            </span>
                         </button>
                     </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.team.home.title">Teams</span></h4>
+                    </div>
+                    <div class="card-body">
+                        <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
+                        <div class="alert alert-warning" [hidden]="teams?.length > 0 || isLoadingResults">
+                            <span jhiTranslate="motorsportsDatabaseApp.team.home.notFound">No team found</span>
+                        </div>
+                        <div class="table-responsive" [hidden]="teams?.length === 0">
+                            <table mat-table class="table table-hover" [dataSource]="teams"
+                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
+
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.team.name' | translate }}</th>
+                                    <td mat-cell *matCellDef="let team">{{ team.name }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="hqLocation">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.team.hqLocation' | translate }}</th>
+                                    <td mat-cell *matCellDef="let team">{{ team.hqLocation }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="description">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.team.description' | translate }}</th>
+                                    <td mat-cell *matCellDef="let team">{{ team.description }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="logo">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.team.logo' | translate }}</th>
+                                    <td mat-cell *matCellDef="let team">
+                                        <img *ngIf="team?.logoUrl" [src]="team.logoUrl" style="max-height: 30px;" alt="team logo"/>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="buttons">
+                                    <th mat-header-cell *matHeaderCellDef></th>
+                                    <td mat-cell *matCellDef="let team">
+                                        <div class="btn-group">
+                                            <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                                    [routerLink]="['/team', team.id, 'edit']"
+                                                    (click)="$event.stopPropagation()"
+                                                    class="btn btn-primary btn-xs">
+                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                            </button>
+                                            <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                                                    [routerLink]="['/team', { outlets: { popup: team.id + '/delete'} }]"
+                                                    (click)="$event.stopPropagation()"
+                                                    replaceUrl="true"
+                                                    queryParamsHandling="merge"
+                                                    class="btn btn-danger btn-xs">
+                                                <fa-icon [icon]="'times'"></fa-icon>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                                    [routerLink]="['/team', row.id, 'view' ]"></tr>
+                            </table>
+                            <mat-paginator [length]="resultsLength"
+                                           [pageSizeOptions]="[5, 10, 20]"
+                                           [pageSize]="10"
+                                           showFirstLastButtons></mat-paginator>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div *ngIf="teams && teams.length">
-        <div class="row justify-content-center">
-            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
-        </div>
-        <div class="row justify-content-center">
-            <ngb-pagination [collectionSize]="totalItems" [maxSize]="5" [pageSize]="itemsPerPage" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
-        </div>
-    </div>                                                                                                             
 </div>

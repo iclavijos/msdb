@@ -1,51 +1,24 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
-import {
-    RacetrackService,
-    RacetrackPopupService,
-    RacetrackComponent,
-    RacetrackDetailComponent,
-    RacetrackDialogComponent,
-    RacetrackPopupComponent,
-    RacetrackDeletePopupComponent,
-    RacetrackDeleteDialogComponent,
-    racetrackRoute,
-    racetrackPopupRoute,
-    RacetrackResolvePagingParams,
-} from './';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { RacetrackComponent } from './racetrack.component';
+import { RacetrackDetailComponent } from './racetrack-detail.component';
+import { RacetrackUpdateComponent } from './racetrack-update.component';
+import { RacetrackDeletePopupComponent, RacetrackDeleteDialogComponent } from './racetrack-delete-dialog.component';
+import { racetrackRoute, racetrackPopupRoute } from './racetrack.route';
 
-const ENTITY_STATES = [
-    ...racetrackRoute,
-    ...racetrackPopupRoute,
-];
+const ENTITY_STATES = [...racetrackRoute, ...racetrackPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
-    declarations: [
-        RacetrackComponent,
-        RacetrackDetailComponent,
-        RacetrackDialogComponent,
-        RacetrackDeleteDialogComponent,
-        RacetrackPopupComponent,
-        RacetrackDeletePopupComponent,
-    ],
-    entryComponents: [
-        RacetrackComponent,
-        RacetrackDialogComponent,
-        RacetrackPopupComponent,
-        RacetrackDeleteDialogComponent,
-        RacetrackDeletePopupComponent,
-    ],
-    providers: [
-        RacetrackService,
-        RacetrackPopupService,
-        RacetrackResolvePagingParams,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [
+    RacetrackComponent,
+    RacetrackDetailComponent,
+    RacetrackUpdateComponent,
+    RacetrackDeleteDialogComponent,
+    RacetrackDeletePopupComponent
+  ],
+  entryComponents: [RacetrackDeleteDialogComponent]
 })
 export class MotorsportsDatabaseRacetrackModule {}

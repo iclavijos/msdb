@@ -1,87 +1,185 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { Response } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
+import { MatTableDataSource } from '@angular/material/table';
+import { Subscription } from 'rxjs';
+import { JhiEventManager, JhiParseLinks, JhiDataUtils, JhiAlertService } from 'ng-jhipster';
 
-import { EventEdition } from '../event-edition';
-import { EventSession } from '../event-session';
-import { EventEntryResult } from './event-entry-result.model';
+import { EventEdition } from 'app/shared/model/event-edition.model';
+import { EventSession } from 'app/shared/model/event-session.model';
+import { EventEntry } from 'app/shared/model/event-entry.model';
+import { IEventEntryResult, EventEntryResult } from 'app/shared/model/event-entry-result.model';
 import { EventEntryResultService } from './event-entry-result.service';
-import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
+import { EventEntryResultUpdateComponent } from './event-entry-result-update.component';
+import { EventEntryUploadResultsComponent } from './event-entry-result-upload.component';
+import { EventEntryResultDeleteDialogComponent } from './event-entry-result-delete-dialog.component';
 
-import { SessionType } from '../../shared/enumerations/sessionType.enum';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-    selector: 'jhi-event-entry-result',
-    templateUrl: './event-entry-result.component.html'
+  selector: 'jhi-event-entry-result',
+  templateUrl: './event-entry-result.component.html'
 })
 export class EventEntryResultComponent implements OnInit, OnDestroy {
+  @Input() eventEdition: EventEdition;
+  @Input() eventSession: EventSession;
+  @Input() eventEntries: EventEntry[];
+  eventEntryResults: IEventEntryResult[];
+  currentAccount: any;
+  eventSubscriber: Subscription;
+  dataSource: MatTableDataSource<IEventEntryResult>;
+  categoryToFilter: string;
 
-    @Input() session: EventSession;
-    @Input() edition: EventEdition;
-    sessionTypes = SessionType;
-    eventEntryResults: EventEntryResult[];
-    currentAccount: any;
-    eventSubscriber: Subscription;
-    filterCategory: string;
+  displayedColumns: string[];
 
-    constructor(
-        private eventEntryResultService: EventEntryResultService,
-        private jhiAlertService: JhiAlertService,
-        private eventManager: JhiEventManager,
-        private activatedRoute: ActivatedRoute,
-        private principal: Principal
-    ) {
+  resultsLength = 0;
+  isLoadingResults = true;
+
+  constructor(
+    protected eventEntryResultService: EventEntryResultService,
+    protected parseLinks: JhiParseLinks,
+    protected jhiAlertService: JhiAlertService,
+    protected activatedRoute: ActivatedRoute,
+    protected dataUtils: JhiDataUtils,
+    protected router: Router,
+    protected eventManager: JhiEventManager,
+    protected dialog: MatDialog
+  ) {}
+
+  ngOnInit() {
+    this.registerChangeInEventEntryResults();
+    this.loadAll();
+    this.displayedColumns = ['position', 'tyres', 'driver', 'team'];
+
+    if (this.eventEdition.allowedCategories.length > 1) {
+      this.displayedColumns.push('category');
+    }
+    if (this.eventSession.sessionTypeValue === 2) {
+      this.displayedColumns.push('totalTime');
+    }
+    this.displayedColumns.push('bestLapTime');
+    if (this.eventSession.sessionTypeValue !== 2) {
+      this.displayedColumns.push('difference', 'previous');
+    }
+    this.displayedColumns.push('lapsCompleted');
+    if (this.eventSession.sessionTypeValue === 2) {
+      this.displayedColumns.push('lapsLed', 'retired', 'retirementCause');
+    }
+    this.displayedColumns.push('buttons');
+  }
+
+  loadAll() {
+    this.eventEntryResults = [];
+    this.eventEntryResultService.query(this.eventEdition.id, this.eventSession.id).subscribe(res => {
+      this.eventEntryResults = res.body;
+      this.dataSource = new MatTableDataSource(res.body);
+      this.dataSource.filterPredicate = function(data, filter: string): boolean {
+        return data.entry.category.shortname.toLowerCase().includes(filter);
+      };
+    });
+  }
+
+  classifiedNotRetired(eventEntryResult: IEventEntryResult) {
+    return eventEntryResult.finalPosition > 1 && eventEntryResult.finalPosition <= 800 && !eventEntryResult.retired;
+  }
+
+  gap(currentLapTime: number, index: number) {
+    let result: number;
+
+    if (!this.categoryToFilter) {
+      result = currentLapTime - this.dataSource.data[index].bestLapTime;
+    } else {
+      const filteredResults = this.dataSource.data.filter(res => res.entry.category.shortname.includes(this.categoryToFilter));
+      result = currentLapTime - filteredResults[index].bestLapTime;
     }
 
-    loadAll() {
-        this.session.eventEdition = this.edition;
-        this.eventEntryResultService.query(this.session).subscribe(
-            (res: ResponseWrapper) => this.eventEntryResults = res.json,
-            (res: ResponseWrapper) => this.onError(res.json)
-        );
-    }
+    return result;
+  }
 
-    clear() {
+  processResults() {
+    this.jhiAlertService.info('motorsportsDatabaseApp.eventEdition.result.processResults.processing', null, null);
+    this.eventEntryResultService
+      .processSessionResults(this.eventSession.id)
+      .subscribe(
+        () => this.jhiAlertService.success('motorsportsDatabaseApp.eventEdition.result.processResults.processed', null, null),
+        () => this.jhiAlertService.error('motorsportsDatabaseApp.eventEdition.result.processResults.notProcessed', null, null)
+      );
+  }
+
+  filterCategory() {
+    if (this.categoryToFilter) {
+      this.dataSource.filter = this.categoryToFilter.trim().toLowerCase();
+    } else {
+      this.dataSource.filter = '';
+    }
+  }
+
+  addResult() {
+    const dialogRef = this.dialog.open(EventEntryResultUpdateComponent, {
+      data: {
+        eventEntryResult: new EventEntryResult(),
+        eventSession: this.eventSession,
+        eventEntries: this.eventEntries,
+        eventEdition: this.eventEdition
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
         this.loadAll();
-    }
-    ngOnInit() {
+      }
+    });
+  }
+
+  editResult(result: EventEntryResult) {
+    const dialogRef = this.dialog.open(EventEntryResultUpdateComponent, {
+      data: {
+        eventEntryResult: result,
+        eventSession: this.eventSession,
+        eventEntries: this.eventEntries,
+        eventEdition: this.eventEdition
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
         this.loadAll();
-        this.principal.identity().then((account) => {
-            this.currentAccount = account;
-        });
-        this.registerChangeInEventEntryResults();
-    }
+      }
+    });
+  }
 
-    ngOnDestroy() {
-        this.eventManager.destroy(this.eventSubscriber);
-    }
+  deleteResult(result: EventEntryResult) {
+    const dialogRef = this.dialog.open(EventEntryResultDeleteDialogComponent, {
+      data: {
+        eventEntryResult: result
+      }
+    });
 
-    trackId(index: number, item: EventEntryResult) {
-        return item.id;
-    }
-    
-    classifiedNotRetired(eventEntryResult: EventEntryResult) {
-        return eventEntryResult.finalPosition > 1 && eventEntryResult.finalPosition <= 800 && !eventEntryResult.retired;
-    }
-    
-    gap(currentLapTime: number) {
-        return currentLapTime - this.eventEntryResults[0].bestLapTime;
-    }
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadAll();
+      }
+    });
+  }
 
-    processResults() {
-        this.jhiAlertService.info('motorsportsDatabaseApp.eventEdition.result.processResults.processing', null, null);
-        this.eventEntryResultService.processSessionResults(this.session.id).subscribe(
-                () => this.jhiAlertService.success('motorsportsDatabaseApp.eventEdition.result.processResults.processed', null, null),
-                () => this.jhiAlertService.error('motorsportsDatabaseApp.eventEdition.result.processResults.notProcessed', null, null));
-    }
+  uploadResults() {
+    const dialogRef = this.dialog.open(EventEntryUploadResultsComponent, {
+      data: {
+        eventSession: this.eventSession
+      }
+    });
 
-    registerChangeInEventEntryResults() {
-        this.eventSubscriber = this.eventManager.subscribe('eventEntryResultListModification', (response) => this.loadAll());
-    }
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadAll();
+      }
+    });
+  }
 
-    private onError(error) {
-        this.jhiAlertService.error(error.message, null, null);
-    }
+  ngOnDestroy() {
+    this.eventManager.destroy(this.eventSubscriber);
+  }
+
+  registerChangeInEventEntryResults() {
+    this.eventSubscriber = this.eventManager.subscribe('eventEntryResultListModification', () => this.loadAll());
+  }
 }

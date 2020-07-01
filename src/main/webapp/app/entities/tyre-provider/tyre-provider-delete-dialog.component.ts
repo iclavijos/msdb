@@ -1,64 +1,69 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { TyreProvider } from './tyre-provider.model';
-import { TyreProviderPopupService } from './tyre-provider-popup.service';
+import { ITyreProvider } from 'app/shared/model/tyre-provider.model';
 import { TyreProviderService } from './tyre-provider.service';
 
 @Component({
-    selector: 'jhi-tyre-provider-delete-dialog',
-    templateUrl: './tyre-provider-delete-dialog.component.html'
+  selector: 'jhi-tyre-provider-delete-dialog',
+  templateUrl: './tyre-provider-delete-dialog.component.html'
 })
 export class TyreProviderDeleteDialogComponent {
+  tyreProvider: ITyreProvider;
 
-    tyreProvider: TyreProvider;
+  constructor(
+    protected tyreProviderService: TyreProviderService,
+    public activeModal: NgbActiveModal,
+    protected eventManager: JhiEventManager
+  ) {}
 
-    constructor(
-        private tyreProviderService: TyreProviderService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+  clear() {
+    this.activeModal.dismiss('cancel');
+  }
 
-    clear() {
-        this.activeModal.dismiss('cancel');
-    }
-
-    confirmDelete(id: number) {
-        this.tyreProviderService.delete(id).subscribe((response) => {
-            this.eventManager.broadcast({
-                name: 'tyreProviderListModification',
-                content: 'Deleted an tyreProvider'
-            });
-            this.activeModal.dismiss(true);
-        });
-    }
+  confirmDelete(id: number) {
+    this.tyreProviderService.delete(id).subscribe(() => {
+      this.eventManager.broadcast({
+        name: 'tyreProviderListModification',
+        content: 'Deleted an tyreProvider'
+      });
+      this.activeModal.dismiss(true);
+    });
+  }
 }
 
 @Component({
-    selector: 'jhi-tyre-provider-delete-popup',
-    template: ''
+  selector: 'jhi-tyre-provider-delete-popup',
+  template: ''
 })
 export class TyreProviderDeletePopupComponent implements OnInit, OnDestroy {
+  protected ngbModalRef: NgbModalRef;
 
-    routeSub: any;
+  constructor(protected activatedRoute: ActivatedRoute, protected router: Router, protected modalService: NgbModal) {}
 
-    constructor(
-        private route: ActivatedRoute,
-        private tyreProviderPopupService: TyreProviderPopupService
-    ) {}
+  ngOnInit() {
+    this.activatedRoute.data.subscribe(({ tyreProvider }) => {
+      setTimeout(() => {
+        this.ngbModalRef = this.modalService.open(TyreProviderDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
+        this.ngbModalRef.componentInstance.tyreProvider = tyreProvider;
+        this.ngbModalRef.result.then(
+          () => {
+            this.router.navigate(['/tyre-provider', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          },
+          () => {
+            this.router.navigate(['/tyre-provider', { outlets: { popup: null } }]);
+            this.ngbModalRef = null;
+          }
+        );
+      }, 0);
+    });
+  }
 
-    ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.tyreProviderPopupService
-                .open(TyreProviderDeleteDialogComponent as Component, params['id']);
-        });
-    }
-
-    ngOnDestroy() {
-        this.routeSub.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.ngbModalRef = null;
+  }
 }

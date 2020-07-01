@@ -3,18 +3,27 @@ package com.icesoft.msdb.service.impl;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.icesoft.msdb.MSDBException;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.EventEditionEntry;
@@ -51,13 +60,15 @@ import com.icesoft.msdb.repository.search.TeamSearchRepository;
 import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.Assert;
 
 @Service
 @Transactional(readOnly=true)
 public class SearchServiceImpl implements SearchService {
-	
+
 	private final Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);
-	
+
 	@Autowired private DriverRepository driverRepo;
 	@Autowired private DriverSearchRepository driverSearchRepo;
 	@Autowired private TeamRepository teamRepo;
@@ -87,47 +98,110 @@ public class SearchServiceImpl implements SearchService {
 	@Autowired private RacetrackSearchRepository racetrackSearchRepo;
 	@Autowired private RacetrackLayoutRepository racetrackLayoutRepo;
 	@Autowired private RacetrackLayoutSearchRepository racetrackLayoutSearchRepo;
-		
+
+	@Autowired @Qualifier("taskExecutor") private Executor executor;
+	@Autowired TransactionTemplate txTemplate;
+
 	@Override
-	@Transactional(readOnly=false)
+	@Transactional()
 	public void rebuildIndexes() {
 		log.debug("Rebuilding search indexes");
-		updateSearchIndex(engineRepo.readAllByIdNotNull(), engineSearchRepo);
-		log.debug("Engines index done");
-		updateSearchIndex(driverRepo.streamAll(), driverSearchRepo);
-		log.debug("Drivers index done");
-		updateSearchIndex(teamRepo.streamAll(), teamSearchRepo);
-		log.debug("Teams index done");
-		updateSearchIndex(chassisRepo.streamAllByIdNotNull(), chassisSearchRepo);
-		log.debug("Chassis index done");
-		updateSearchIndex(categoryRepo.streamAll(), categorySearchRepo);
-		log.debug("Categories index done");
-		updateSearchIndex(fuelRepo.streamAll(), fuelSearchRepo);
-		log.debug("Fuel supliers index done");
-		updateSearchIndex(tyreRepo.streamAll(), tyreSearchRepo);
-		log.debug("Tyre suppliers index done");
-		updateSearchIndex(pointsRepo.streamAll(), pointsSearchRepo);
-		log.debug("Points system index done");
-		updateSearchIndex(eventRepo.readAllByIdNotNull(), eventSearchRepo);
-		log.debug("Events index done");
-		updateSearchIndex(seriesRepo.streamAll(), seriesSearchRepo);
-		log.debug("Series index done");
-		updateSearchIndex(eventEditionRepo.streamAllByIdNotNull(), eventEditionSearchRepo);
-		log.debug("Event editions index done");
-		updateSearchIndex(eventEntryRepo.streamAllByIdNotNull(), eventEntrySearchRepo);
-		log.debug("Event entries index done");
-		updateSearchIndex(racetrackRepo.streamAll(), racetrackSearchRepo);
-		log.debug("Racetracks index done");
-		updateSearchIndex(racetrackLayoutRepo.streamAll(), racetrackLayoutSearchRepo);
-		log.debug("Rebuilding search indexes completed");
+        List<Runnable> tasks = new ArrayList<>();
+        tasks.add(() -> {
+            log.debug("Building Drivers index");
+            txTemplate.execute(status -> updateSearchIndex(driverRepo.streamAll(), driverSearchRepo));
+            log.debug("Building Drivers index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Engines index");
+            txTemplate.execute(status -> updateSearchIndex(engineRepo.readAllByIdNotNull(), engineSearchRepo));
+            log.debug("Building Engines index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Teams index");
+            txTemplate.execute(status -> updateSearchIndex(teamRepo.streamAll(), teamSearchRepo));
+            log.debug("Building Teams index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Chassis index");
+            txTemplate.execute(status -> updateSearchIndex(chassisRepo.streamAllByIdNotNull(), chassisSearchRepo));
+            log.debug("Building Chassis index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Categories index");
+            txTemplate.execute(status -> updateSearchIndex(categoryRepo.streamAll(), categorySearchRepo));
+            log.debug("Building Categories index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Fuel suppliers index");
+            txTemplate.execute(status -> updateSearchIndex(fuelRepo.streamAll(), fuelSearchRepo));
+            log.debug("Building Fuel suppliers index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Tyre suppliers index");
+            txTemplate.execute(status -> updateSearchIndex(tyreRepo.streamAll(), tyreSearchRepo));
+            log.debug("Building Tyre suppliers index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Points systems index");
+            txTemplate.execute(status -> updateSearchIndex(pointsRepo.streamAll(), pointsSearchRepo));
+            log.debug("Building Points systems index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Events index");
+            txTemplate.execute(status -> updateSearchIndex(eventRepo.readAllByIdNotNull(), eventSearchRepo));
+            log.debug("Building Events index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Series index");
+            txTemplate.execute(status -> updateSearchIndex(seriesRepo.streamAll(), seriesSearchRepo));
+            log.debug("Building Series index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Event Editions index");
+            txTemplate.execute(status -> updateSearchIndex(eventEditionRepo.streamAllByIdNotNull(), eventEditionSearchRepo));
+            log.debug("Building Event Editions index done");
+        });
+        tasks.add(() -> {
+            log.debug("Building Racetracks & layouts index");
+            txTemplate.execute(status -> {
+                updateSearchIndex(racetrackRepo.streamAll(), racetrackSearchRepo);
+                log.debug("Racetracks done. Now layouts");
+                updateSearchIndex(racetrackLayoutRepo.streamAll(), racetrackLayoutSearchRepo);
+                return null;
+            });
+            log.debug("Building Racetracks & layouts index done");
+        });
+
+        tasks.forEach(task -> {
+            executor.execute(task);
+        });
+        log.debug("Rebuilding search indexes completed");
+
+        //log.debug("Building Event Entries index");
+        //updateSearchIndex(eventEntryRepo.streamAllByIdNotNull(), eventEntrySearchRepo);
+
 	}
-	
-	private <T> void updateSearchIndex(final Stream<T> stream, final ElasticsearchRepository<T, Long> searchRepo) {
+
+	private <T> Void updateSearchIndex(final Stream<T> stream, final ElasticsearchRepository<T, Long> searchRepo) {
 		searchRepo.deleteAll();
+		log.trace("Index deleted. Rebuilding...");
 		stream.parallel().forEach(elem -> searchRepo.save(elem));
 		stream.close();
+		return null;
 	}
-	
+
+	@Override
+    public <T> Page<T> performWildcardSearch(final ElasticsearchRepository<T, Long> searchRepo, String query, String[] fields, Pageable pageable) {
+        BoolQueryBuilder queryBuilder = new BoolQueryBuilder();
+        for(String field: fields) {
+            queryBuilder.should(
+                QueryBuilders.wildcardQuery(field, "*" + query + "*"));
+        }
+
+        return searchRepo.search(queryBuilder, pageable);
+    }
+
 	@Override
 	public Page<EventEntrySearchResultDTO> searchEntries(String searchTerms, Pageable pageable) {
 		String searchValue = '*' + searchTerms + '*';
@@ -137,7 +211,7 @@ public class SearchServiceImpl implements SearchService {
 				.collect(Collectors.<EventEntrySearchResultDTO> toList());
 		return new PageImpl<>(aux, pageable, tmp.getTotalElements());
 	}
-	
+
 	private EventEntrySearchResultDTO createDTO(EventEditionEntry entry) {
 		long poleTime;
 		Integer polePosition;
@@ -145,9 +219,9 @@ public class SearchServiceImpl implements SearchService {
 		Integer racePosition;
 		String retirement = "";
 		LocalDate sessionDate;
-		
+
 		List<EventEntryResult> results = resultsRepo.findByEntryId(entry.getId());
-		
+
 		List<EventEntryResult> qResults = results.stream()
 				.filter(r -> r.getSession().getSessionType() == SessionType.QUALIFYING).collect(Collectors.<EventEntryResult> toList());
 		if (qResults != null && !qResults.isEmpty()) {
@@ -157,7 +231,7 @@ public class SearchServiceImpl implements SearchService {
 			poleTime = 0;
 			polePosition = 0;
 		}
-		
+
 		List<EventEntryResult> rResults = results.stream()
 				.filter(r -> r.getSession().getSessionType() == SessionType.RACE).collect(Collectors.<EventEntryResult> toList());
 		if (rResults != null && !rResults.isEmpty()) {
@@ -177,15 +251,15 @@ public class SearchServiceImpl implements SearchService {
 				}
 			}
 			racePosition = result.getFinalPosition();
-			sessionDate = result.getSession().getSessionStartTime().toLocalDate();
+			sessionDate = result.getSession().getSessionStartTimeDate().toLocalDate();
 		} else {
 			raceFastLap = 0;
 			racePosition = 0;
 			sessionDate = null;
 		}
-		
+
 		EventEntrySearchResultDTO dto = new EventEntrySearchResultDTO(entry, sessionDate, poleTime, raceFastLap, polePosition, racePosition, retirement);
-		
+
 		return dto;
 	}
 

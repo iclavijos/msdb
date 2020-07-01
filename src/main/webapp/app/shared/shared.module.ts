@@ -1,57 +1,48 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { DatePipe } from '@angular/common';
-
-import {
-    MotorsportsDatabaseSharedLibsModule,
-    MotorsportsDatabaseSharedCommonModule,
-    CSRFService,
-    AuthServerProvider,
-    AccountService,
-    UserService,
-    StateStorageService,
-    LoginService,
-    LoginModalService,
-    JhiLoginModalComponent,
-    Principal,
-    HasAnyAuthorityDirective,
-    JhiSocialComponent,
-    SocialService,
-    StatisticsComponent
-} from './';
+import { NgModule } from '@angular/core';
+import { MotorsportsDatabaseSharedLibsModule } from './shared-libs.module';
+import { FindLanguageFromKeyPipe } from './language/find-language-from-key.pipe';
+import { JhiAlertComponent } from './alert/alert.component';
+import { JhiAlertErrorComponent } from './alert/alert-error.component';
+import { HasAnyAuthorityDirective } from './auth/has-any-authority.directive';
+import { StatisticsComponent } from './statistics/statistics.component';
+import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
+import { TimeMaskPipe } from './mask/time-mask.pipe';
+import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
+import { EventEntryCategoryFilter } from './filters/entry-category-filter.pipe';
+import { EphemerisYearFilter } from './filters/ephemeris-year-filter.pipe';
+import { MaterialElevationDirective } from './directives/material-elevation.directive';
+import { ImagesService } from './services/images.service';
+import { ImportsService } from './services/imports.service';
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedLibsModule,
-        MotorsportsDatabaseSharedCommonModule
-    ],
-    declarations: [
-        JhiSocialComponent,
-        JhiLoginModalComponent,
-        HasAnyAuthorityDirective,
-        StatisticsComponent
-    ],
-    providers: [
-        LoginService,
-        LoginModalService,
-        AccountService,
-        StateStorageService,
-        Principal,
-        CSRFService,
-        AuthServerProvider,
-        SocialService,
-        UserService,
-        DatePipe
-    ],
-    entryComponents: [JhiLoginModalComponent],
-    exports: [
-        MotorsportsDatabaseSharedCommonModule,
-        JhiSocialComponent,
-        JhiLoginModalComponent,
-        HasAnyAuthorityDirective,
-        DatePipe,
-        StatisticsComponent
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-
+  imports: [MotorsportsDatabaseSharedLibsModule],
+  declarations: [
+    FindLanguageFromKeyPipe,
+    JhiAlertComponent,
+    JhiAlertErrorComponent,
+    HasAnyAuthorityDirective,
+    StatisticsComponent,
+    RacetrackLengthPipe,
+    TimeMaskPipe,
+    LocalizedDatePipe,
+    EventEntryCategoryFilter,
+    EphemerisYearFilter,
+    MaterialElevationDirective
+  ],
+  exports: [
+    MotorsportsDatabaseSharedLibsModule,
+    FindLanguageFromKeyPipe,
+    JhiAlertComponent,
+    JhiAlertErrorComponent,
+    HasAnyAuthorityDirective,
+    StatisticsComponent,
+    RacetrackLengthPipe,
+    TimeMaskPipe,
+    LocalizedDatePipe,
+    EventEntryCategoryFilter,
+    EphemerisYearFilter,
+    MaterialElevationDirective
+  ],
+  providers: [ImagesService, ImportsService, TimeMaskPipe]
 })
 export class MotorsportsDatabaseSharedModule {}

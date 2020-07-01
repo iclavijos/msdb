@@ -1,128 +1,157 @@
-import { Component, OnInit } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
-import { TranslateService } from '@ngx-translate/core';
-
-import { EventEditionService } from '../entities/event-edition';
+import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { EventEditionService } from 'app/entities/event-edition/event-edition.service';
 
 import * as moment from 'moment-timezone';
 
-@Component({
-    templateUrl: './calendar.component.html',
-    styles: [`
-        .ui-grid-row div {
-          padding: 4px 10px
-        }
-        
-        .ui-grid-row div label {
-          font-weight: bold;
-        }
-  `]
-})
+import { FullCalendarComponent } from '@fullcalendar/angular';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import timeLinePlugin from '@fullcalendar/timeline';
+import listPlugin from '@fullcalendar/list';
+import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 
-export class Calendar implements OnInit {
+import esLocale from '@fullcalendar/core/locales/es';
+import caLocale from '@fullcalendar/core/locales/ca';
+import enLocale from '@fullcalendar/core/locales/en-gb';
 
-    events: any[];
-    event: MyEvent;
-    sessions: any;
-    dialogVisible: boolean;
-    currentLocale: string;
-    timezone: string;
-    timezones: any;
-
-    header: any;
-    options: any;
-
-    constructor(private _translateService: TranslateService,
-                private eventEditionService: EventEditionService,
-                private http: Http) { }
-
-    ngOnInit() {
-        this.timezone = moment.tz.guess();
-        if (this.timezone === undefined) {
-            this.timezone = 'Europe/London';
-        }
-        this.http.get('api/timezones').subscribe((res: Response) => {
-            this.timezones = res.json();
-        });
-        this.header = {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'month,agendaWeek,agendaDay,listWeek'
-        };
-        this.options = {
-            eventColor: '#CECECE',
-            timeFormat: 'HH:mm'
-        };
-        if (this._translateService.currentLang) {
-            this.currentLocale = this._translateService.currentLang;
-        } else {
-            this.currentLocale = 'es';
-        }
-    }
-
-    loadEvents(e) {
-        const start = new Date(e.view.start);
-        const end = new Date(e.view.end);
-        start.setDate(start.getDate() - 1);
-
-        this.eventEditionService.findCalendarEvents(start,end).subscribe(events => {this.convertEvents(events, this.timezone);});
-    }
-
-    changeTimezone() {
-        this.convertEvents(this.sessions, this.timezone);
-    }
-
-    eventClick(e) {
-        this.event = new MyEvent();
-        this.event.title = e.calEvent.eventName;
-        this.event.sessionName = e.calEvent.sessionName;
-
-        let start = e.calEvent.start;
-        let end = e.calEvent.end;
-
-        this.event.id = e.calEvent.id;
-        this.event.start = start.locale(this.currentLocale).format("LLLL");
-        this.event.end = end.locale(this.currentLocale).format("LLLL");
-        this.event.allDay = e.calEvent.allDay;
-        this.event.seriesLogoUrl = e.calEvent.seriesLogoUrl;
-        this.dialogVisible = true;
-    }
-
-    private convertEvents(sessions, currentTZ) {
-        this.sessions = sessions;
-        this.events = new Array();
-        for(let session of sessions) {
-            let newEvent = new MyEvent();
-            newEvent.id = session.id;
-            newEvent.title = session.eventName + ' - ' + session.sessionName;
-            newEvent.eventName = session.eventName;
-            newEvent.sessionName = session.sessionName;
-            newEvent.start = moment(session.startTime * 1000).tz(currentTZ);
-            newEvent.end = moment(session.endTime * 1000).tz(currentTZ);
-            newEvent.seriesLogoUrl = session.seriesLogoUrl;
-            if (session.sessionType === 2) {
-            	newEvent.textColor = 'white';
-            	newEvent.color = 'green';
-            }
-            if (session.sessionType === 1 || session.sessionType === 3) {
-            	newEvent.textColor = 'white';
-            	newEvent.color = 'blue';
-            }
-            this.events.push(newEvent);
-        }
-    }
-}
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 export class MyEvent {
-    id: number;
-    title: string;
-    eventName: string;
-    sessionName: string;
-	textColor: string;
-	color: string;
-    start: any;
-    end: any;
-    seriesLogoUrl: string;
-    allDay: boolean = false;
+  id: number;
+  title: string;
+  eventName: string;
+  sessionName: string;
+  textColor: string;
+  color: string;
+  start: any;
+  end: any;
+  seriesLogoUrl: string;
+  allDay = false;
+  status: string;
+  sessionType: string;
+
+  event: any;
+}
+
+@Component({
+  selector: 'jhi-event-dialog',
+  templateUrl: 'event-dialog.component.html'
+})
+export class EventDialogComponent {
+  constructor(
+    public dialogRef: MatDialogRef<EventDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: MyEvent,
+    protected router: Router
+  ) {}
+
+  public close() {
+    this.dialogRef.close();
+  }
+
+  public navigateToEvent(event: IEventEdition) {
+    this.dialogRef.close();
+    this.router.navigate(['/event/edition', event.id, 'view-ed']);
+  }
+}
+
+@Component({
+  templateUrl: './calendar.component.html'
+})
+export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('calendar', { static: false }) calendarComponent: FullCalendarComponent;
+
+  calendarPlugins = [dayGridPlugin, timeGridPlugin, timeLinePlugin, listPlugin, momentTimezonePlugin];
+  calendarLocales = [esLocale, caLocale, enLocale];
+
+  sessions: any;
+  timezone: string;
+  timezones: any[];
+
+  private langChangeSubscription: Subscription;
+
+  constructor(
+    private eventEditionService: EventEditionService,
+    private translateService: TranslateService,
+    private http: HttpClient,
+    private eventDialog: MatDialog
+  ) {}
+
+  events = (dates, callback) => {
+    this.eventEditionService.findCalendarEvents(dates.start, dates.end).subscribe(events => {
+      this.sessions = events;
+      callback(this.convertEvents(events, this.timezone));
+    });
+  };
+
+  ngOnInit() {
+    this.timezone = moment.tz.guess();
+    if (this.timezone === undefined) {
+      this.timezone = 'Europe/London';
+    }
+    this.http.get<any[]>('api/timezones').subscribe(res => (this.timezones = res));
+  }
+
+  ngAfterViewInit() {
+    if (this.translateService.currentLang) {
+      this.calendarComponent.getApi().setOption('locale', this.translateService.currentLang);
+    } else {
+      this.calendarComponent.getApi().setOption('locale', 'es');
+    }
+    this.langChangeSubscription = this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
+      this.calendarComponent.getApi().setOption('locale', langChangeEvent.lang);
+    });
+  }
+
+  ngOnDestroy() {
+    this.langChangeSubscription.unsubscribe();
+  }
+
+  openEventDialog = eventInfo => {
+    this.eventDialog.open(EventDialogComponent, {
+      data: { event: eventInfo }
+    });
+  };
+
+  public convertEvents(sessions, currentTZ, toDate = true) {
+    const result = [];
+    for (const session of sessions) {
+      const newEvent = new MyEvent();
+      newEvent.id = session.id;
+      newEvent.title = session.eventName + ' - ' + session.sessionName;
+      newEvent.eventName = session.eventName;
+      newEvent.sessionName = session.sessionName;
+      newEvent.start = moment(session.startTime * 1000).tz(currentTZ);
+      if (toDate) newEvent.start = newEvent.start.toDate();
+      newEvent.end = moment(session.endTime * 1000).tz(currentTZ);
+      if (toDate) newEvent.end = newEvent.end.toDate();
+      newEvent.seriesLogoUrl = session.seriesLogoUrl;
+      newEvent.textColor = 'white';
+      newEvent.sessionType = session.sessionType;
+      if (session.status === 'C') {
+        newEvent.color = 'red';
+      } else if (session.status === 'S') {
+        newEvent.color = 'orange';
+      } else {
+        if (session.sessionType === 2) {
+          newEvent.color = 'green';
+        } else if (session.sessionType === 1 || session.sessionType === 3) {
+          newEvent.color = 'blue';
+        } else {
+          newEvent.color = 'grey';
+        }
+      }
+      result.push(newEvent);
+    }
+    return result;
+  }
+
+  changeTimezone() {
+    this.convertEvents(this.sessions, this.timezone);
+  }
 }

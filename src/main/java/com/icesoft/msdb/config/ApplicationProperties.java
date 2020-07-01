@@ -5,15 +5,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * Properties specific to Motorsports Database.
  * <p>
- * Properties are configured in the application.yml file.
+ * Properties are configured in the {@code application.yml} file.
  * See {@link io.github.jhipster.config.JHipsterProperties} for a good example.
  */
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 public class ApplicationProperties {
-	
+
 	private final SendGrid sendgrid = new SendGrid();
 	private final Cloudinary cloudinary = new Cloudinary();
-	
+
 	public static class SendGrid {
 		private String key;
 
@@ -25,12 +25,12 @@ public class ApplicationProperties {
 			this.key = key;
 		}
 	}
-	
+
 	public static class Cloudinary {
 		private String name;
 		private String key;
 		private String secret;
-		
+
 		public String getName() {
 			return name;
 		}
@@ -50,11 +50,11 @@ public class ApplicationProperties {
 			this.secret = secret;
 		}
 	}
-	
+
 	public SendGrid getSendgrid() {
 		return sendgrid;
 	}
-	
+
 	public Cloudinary getCloudinary() {
 		return cloudinary;
 	}

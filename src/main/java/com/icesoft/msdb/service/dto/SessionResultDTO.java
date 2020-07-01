@@ -2,13 +2,16 @@ package com.icesoft.msdb.service.dto;
 
 import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.domain.EventEntryResult;
+import net.minidev.json.annotate.JsonIgnore;
 
 public class SessionResultDTO {
 
 	private Long id;
 	private String raceNumber;
 	private Integer startingPosition;
-	private String finalPosition;
+	private Integer finalPosition;
+	@JsonIgnore
+	private String finalPositionStr;
     private String totalTime;
     private String bestLapTime;
     private Integer lapsCompleted;
@@ -21,16 +24,16 @@ public class SessionResultDTO {
     private String sharedWithNumber;
     private EventEditionEntry sharedWith;
     private EventEditionEntry entry;
-    
+
     public SessionResultDTO() {
     	super();
     }
-    
+
     public SessionResultDTO(EventEntryResult result) {
     	this.id = result.getId();
     	this.raceNumber = result.getEntry().getRaceNumber();
     	this.startingPosition = result.getStartingPosition();
-    	this.finalPosition = result.getFinalPosition().toString();
+    	this.finalPosition = result.getFinalPosition();
     	this.totalTime = result.getTotalTime() != null ? result.getTotalTime().toString() : "";
     	this.bestLapTime = result.getBestLapTime() != null ? result.getBestLapTime().toString() : "";
     	this.lapsCompleted = result.getLapsCompleted();
@@ -39,14 +42,14 @@ public class SessionResultDTO {
     	this.cause = result.getCause();
     	this.difference = result.getDifference() != null ? result.getDifference().toString() : "";
     	this.pitlaneStart = result.isPitlaneStart();
-    	this.sharedWith = result.getSharedDriveWith();
-    	this.sharedWithNumber = result.getSharedDriveWith() != null ? result.getSharedDriveWith().getRaceNumber() : "";
+    	this.sharedWith = result.getSharedWith();
+    	this.sharedWithNumber = result.getSharedWith() != null ? result.getSharedWith().getRaceNumber() : "";
     	this.differenceType = result.getDifferenceType();
     	this.entry = result.getEntry();
     	this.entry.setEventEdition(null);
     	this.entry.engine(null).chassis(null).fuel(null).team(null);
     }
-    
+
 	public Long getId() {
 		return id;
 	}
@@ -73,12 +76,14 @@ public class SessionResultDTO {
 	public void setStartingPosition(Integer startingPosition) {
 		this.startingPosition = startingPosition;
 	}
-	public String getFinalPosition() {
+	public Integer getFinalPosition() {
 		return finalPosition;
 	}
-	public void setFinalPosition(String finalPosition) {
+	public void setFinalPosition(Integer finalPosition) {
 		this.finalPosition = finalPosition;
 	}
+	public String getFinalPositionStr() { return finalPositionStr; }
+	public void setFinalPositionStr(String finalPositionStr) { this.finalPositionStr = finalPositionStr; }
 	public String getTotalTime() {
 		return totalTime;
 	}
@@ -145,5 +150,5 @@ public class SessionResultDTO {
 	public void setSharedWith(EventEditionEntry sharedWith) {
 		this.sharedWith = sharedWith;
 	}
-    
+
 }

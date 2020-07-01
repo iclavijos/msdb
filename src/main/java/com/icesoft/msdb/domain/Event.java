@@ -1,34 +1,24 @@
 package com.icesoft.msdb.domain;
 
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A Event.
  */
 @Entity
 @Table(name = "event")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "event")
 @NamedEntityGraph(name="EventWithoutRelations", attributeNodes= {
 		@NamedAttributeNode(value="id"),
@@ -41,20 +31,23 @@ public class Event extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
+    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
     private String name;
 
     @Size(max = 100)
     @Column(name = "description", length = 100)
+    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
     private String description;
 
     @OneToMany(mappedBy = "event")
     @JsonIgnore
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<EventEdition> editions = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -123,14 +116,10 @@ public class Event extends AbstractAuditingEntity implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Event)) {
             return false;
         }
-        Event event = (Event) o;
-        if (event.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), event.getId());
+        return id != null && id.equals(((Event) o).id);
     }
 
     @Override

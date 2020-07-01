@@ -1,5 +1,6 @@
 package com.icesoft.msdb.service.impl;
 
+import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import org.slf4j.Logger;
@@ -22,9 +23,9 @@ public class CacheHandler {
 	@Autowired private SeriesEditionRepository seriesEditionRepo;
 
 	public void resetSeriesEditionCaches(SeriesEdition seriesEdition) {
+        cacheManager.getCache("winnersCache").evict(seriesEdition.getId());
         seriesEdition.getAllowedCategories().forEach(cat -> {
             SimpleKey key = new SimpleKey(seriesEdition.getId(), cat.getShortname());
-            cacheManager.getCache("winnersCache").evict(seriesEdition.getId());
             cacheManager.getCache("pointRaceByRace").evict(key);
             cacheManager.getCache("resultsRaceByRace").evict(key);
             cacheManager.getCache("driversStandingsCache").evict(seriesEdition.getId());
@@ -35,13 +36,15 @@ public class CacheHandler {
 	//@CacheEvict(cacheNames={"driversStandingsCache","teamsStandingsCache", "manufacturersStandingsCache"})
 	public void resetDriversStandingsCache(Long seriesEditionId) {
 		log.debug("Reseting drivers standings cache for series edition {}", seriesEditionId);
-        resetSeriesEditionCaches(seriesEditionRepo.findOne(seriesEditionId));
+        resetSeriesEditionCaches(seriesEditionRepo.findById(seriesEditionId)
+            .orElseThrow(() ->new MSDBException("Invalid series edition id " + seriesEditionId)));
 	}
 
 	//@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, allEntries = true)
 	public void resetWinnersCache(Long seriesEditionId) {
 		log.debug("Reseting winners cache for series edition {}", seriesEditionId);
-        resetSeriesEditionCaches(seriesEditionRepo.findOne(seriesEditionId));
+        resetSeriesEditionCaches(seriesEditionRepo.findById(seriesEditionId)
+            .orElseThrow(() ->new MSDBException("Invalid series edition id " + seriesEditionId)));
 	}
 
 	@CacheEvict(cacheNames="driversChampions")

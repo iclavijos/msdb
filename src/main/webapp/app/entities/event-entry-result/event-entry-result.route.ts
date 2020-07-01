@@ -1,86 +1,92 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
+import { HttpResponse } from '@angular/common/http';
+import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { EventEntryResult } from 'app/shared/model/event-entry-result.model';
+import { EventEntryResultService } from './event-entry-result.service';
+// import { EventEntryResultComponent } from './event-entry-result.component';
+// import { EventEntryResultDetailComponent } from './event-entry-result-detail.component';
+// import { EventEntryResultUpdateComponent } from './event-entry-result-update.component';
+// import { EventEntryResultDeletePopupComponent } from './event-entry-result-delete-dialog.component';
+import { IEventEntryResult } from 'app/shared/model/event-entry-result.model';
 
-import { UserRouteAccessService } from '../../shared';
+@Injectable({ providedIn: 'root' })
+export class EventEntryResultResolve implements Resolve<IEventEntryResult> {
+  constructor(private service: EventEntryResultService) {}
 
-import { EventEntryResultComponent } from './event-entry-result.component';
-import { EventEntryResultDetailComponent } from './event-entry-result-detail.component';
-import { EventEntryResultPopupComponent } from './event-entry-result-dialog.component';
-import { EventEntryUploadResultsPopupComponent } from './event-entry-upload-results-dialog.component';
-import { EventEntryUploadLapByLapPopupComponent } from './event-entry-upload-lapbylap-dialog.component';
-import { EventEntryResultDeletePopupComponent } from './event-entry-result-delete-dialog.component';
-
-import { Principal } from '../../shared';
+  resolve(route: ActivatedRouteSnapshot): Observable<IEventEntryResult> {
+    const id = route.params['id'];
+    if (id) {
+      return this.service.find(id).pipe(
+        filter((response: HttpResponse<EventEntryResult>) => response.ok),
+        map((eventEntryResult: HttpResponse<EventEntryResult>) => eventEntryResult.body)
+      );
+    }
+    return of(new EventEntryResult());
+  }
+}
 
 export const eventEntryResultRoute: Routes = [
-  {
-    path: 'event-entry-result',
-    component: EventEntryResultComponent,
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
-    },
-        canActivate: [UserRouteAccessService]
-  }, {
-    path: 'event-entry-result/:id',
-    component: EventEntryResultDetailComponent,
-    data: {
-        authorities: ['ROLE_USER'],
-        pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
-    },
-        canActivate: [UserRouteAccessService]
-  }
+  //   {
+  //     path: '',
+  //     component: EventEntryResultComponent,
+  //     data: {
+  //       authorities: ['ROLE_USER'],
+  //       pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
+  //     },
+  //     canActivate: [UserRouteAccessService]
+  //   },
+  //   {
+  //     path: ':id/view',
+  //     component: EventEntryResultDetailComponent,
+  //     resolve: {
+  //       eventEntryResult: EventEntryResultResolve
+  //     },
+  //     data: {
+  //       authorities: ['ROLE_USER'],
+  //       pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
+  //     },
+  //     canActivate: [UserRouteAccessService]
+  //   },
+  //   {
+  //     path: 'new',
+  //     component: EventEntryResultUpdateComponent,
+  //     resolve: {
+  //       eventEntryResult: EventEntryResultResolve
+  //     },
+  //     data: {
+  //       authorities: ['ROLE_USER'],
+  //       pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
+  //     },
+  //     canActivate: [UserRouteAccessService]
+  //   },
+  //   {
+  //     path: ':id/edit',
+  //     component: EventEntryResultUpdateComponent,
+  //     resolve: {
+  //       eventEntryResult: EventEntryResultResolve
+  //     },
+  //     data: {
+  //       authorities: ['ROLE_USER'],
+  //       pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
+  //     },
+  //     canActivate: [UserRouteAccessService]
+  //   }
 ];
 
 export const eventEntryResultPopupRoute: Routes = [
-  {
-    path: ':idSession/event-entry-result-new',
-    component: EventEntryResultPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
-    },
-        canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  },
-  {
-      path: ':id/upload-results',
-      component: EventEntryUploadResultsPopupComponent,
-      data: {
-          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-          pageTitle: 'motorsportsDatabaseApp.eventEntryResult.copy.title'
-      },
-        canActivate: [UserRouteAccessService],
-      outlet: 'popup'
-  },
-  {
-      path: ':id/upload-lapbylap',
-      component: EventEntryUploadLapByLapPopupComponent,
-      data: {
-          authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-          pageTitle: 'motorsportsDatabaseApp.eventEntryResult.copy.title'
-      },
-        canActivate: [UserRouteAccessService],
-      outlet: 'popup'
-  },
-  {
-    path: 'event-entry-result/:id/edit',
-    component: EventEntryResultPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
-    },
-        canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  },
-  {
-    path: 'event-entry-result/:id/delete',
-    component: EventEntryResultDeletePopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
-    },
-        canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  }
+  //   {
+  //     path: ':id/delete',
+  //     component: EventEntryResultDeletePopupComponent,
+  //     resolve: {
+  //       eventEntryResult: EventEntryResultResolve
+  //     },
+  //     data: {
+  //       authorities: ['ROLE_USER'],
+  //       pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title'
+  //     },
+  //     canActivate: [UserRouteAccessService],
+  //     outlet: 'popup'
+  //   }
 ];

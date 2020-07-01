@@ -1,177 +1,152 @@
-<div class="row">
-	<div class="col-sm-10"></div>
-	<div class="col-sm-2">
-		<select class="form-control" id="field_jumpToEdition"
-			name="jumpToYear" (change)="jumpToYear($event.target.value)">
-			<option></option>
-			<option *ngFor="let year of yearsStats" [value]="year">{{year}}</option>
-		</select>
-	</div>
-</div>
-<div class="card" *ngFor="let categoryStats of stats">
-	<div class="card-header">
-		<h3>{{categoryStats.category}}</h3>
-	</div>
-	<div class="card-block">
-		<div class="row">
-			<div class="col-sm-3">
-				<dl class="row-md jh-entity-details">
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.participations">Participations</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.participations}} <a
-							*ngIf="categoryStats.stats.participations > 0"><i
-								class="fa fa-search" aria-hidden="true"
-								(click)="getParticipations(categoryStats.category)"></i></a></span>
-					</dd>
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.starts">Starts</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.starts}}</span>
-					</dd>
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.finished">Finished</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.finished}}
-							({{((categoryStats.stats.finished / categoryStats.stats.starts) *
-							100).toFixed(2)}}%)</span>
-					</dd>
-					<dt>
-						<span
-							jhiTranslate="motorsportsDatabaseApp.stats.bestFinalPosition">Best
-							final position</span>
-					</dt>
-					<dd>
-						<span>{{finishingPosition(categoryStats.stats.bestFinishingPosR)}}
-							({{categoryStats.stats.bestFinishingPosTimesR}} </span> <span
-							*ngIf="categoryStats.stats.bestFinishingPosTimesR == 1"
-							jhiTranslate="motorsportsDatabaseApp.stats.time">time</span> <span
-							*ngIf="categoryStats.stats.bestFinishingPosTimesR > 1"
-							jhiTranslate="motorsportsDatabaseApp.stats.times">times</span>)
-					</dd>
-				</dl>
-			</div>
-			<div class="col-sm-3">
-				<dl class="row-md jh-entity-details">
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.championships">Championships</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.championships}}</span>
-					</dd>
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.wins">Wins</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.wins}}
-							({{((categoryStats.stats.wins / categoryStats.stats.starts) *
-							100).toFixed(2)}}%) <a *ngIf="categoryStats.stats.wins > 0"><i
-								class="fa fa-search" aria-hidden="true"
-								(click)="getWins(categoryStats.category)"></i></a>
-						</span>
-					</dd>
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.poles">Poles</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.poles}}
-							({{((categoryStats.stats.poles /
-							categoryStats.stats.participations) * 100).toFixed(2)}}%)</span>
-					</dd>
-					<dt>
-						<span
-							jhiTranslate="motorsportsDatabaseApp.stats.bestStartingPosition">Best
-							starting position</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.bestFinishingPosQ}}
-							({{categoryStats.stats.bestFinishingPosTimesQ}} </span> <span
-							*ngIf="categoryStats.stats.bestFinishingPosTimesQ == 1"
-							jhiTranslate="motorsportsDatabaseApp.stats.time">time</span> <span
-							*ngIf="categoryStats.stats.bestFinishingPosTimesQ > 1"
-							jhiTranslate="motorsportsDatabaseApp.stats.times">times</span>)
-					</dd>
-				</dl>
-			</div>
-			<div class="col-sm-3">
-				<dl class="row-md jh-entity-details">
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.podiums">Podiums</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.top3}}</span>
-					</dd>
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.top5">Top
-							5</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.top5}}</span>
-					</dd>
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.top10">Top
-							10</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.top10}}</span>
-					</dd>
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.fastLaps">Fast
-							laps</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.fastLaps}}</span>
-					</dd>
-				</dl>
-			</div>
-			<div class="col-sm-3">
-				<dl class="row-md jh-entity-details">
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.points">Points</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.points}}</span>
-					</dd>
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.grandChelems">Grand
-							Chelems</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.grandChelems}}</span>
-					</dd>
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.lapsCompleted">Laps
-							Completed</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.lapsCompleted}}</span>
-					</dd>
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.kmsCompleted">Kms.
-							Completed</span>
-					</dt>
-					<dd>
-						<span>{{categoryStats.stats.kmsCompleted |
-							racetrackLengthMask}}</span>
-					</dd>
-				</dl>
-			</div>
-		</div>
-		<div *ngIf="categoryStats.stats.championships > 0" class="row">
-			<div class="col-sm-12">
-				<dl class="row-md jh-entity-details">
-					<dt>
-						<span jhiTranslate="motorsportsDatabaseApp.stats.titles">Titles</span>
-					</dt>
-					<dd>
-						<div *ngFor="let title of categoryStats.stats.championshipsData">
-							<a class="deco-none" [routerLink]="['/series/series-edition', title.id]">{{ title.name }}</a>
-	                    </div>
-					</dd>
-			</div>
-		</div>
-	</div>
+<div *ngIf="stats?.length > 0">
+    <div class="row">
+        <div class="col-sm-10"></div>
+        <div class="col-sm-2">
+            <select class="form-control" id="field_jumpToEdition"
+                    name="jumpToYear" (change)="jumpToYear($event.target.value)">
+                <option value="">{{ 'motorsportsDatabaseApp.stats.overall' | translate }}</option>
+                <option *ngFor="let aYear of yearsStats" [value]="aYear">{{aYear}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <mat-tab-group>
+                <mat-tab *ngFor="let categoryStats of stats" label="{{categoryStats.category}}">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <dl class="row-md jh-entity-details">
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.participations">Participations</span>
+                                    </dt>
+                                    <dd>
+                                    <span>{{categoryStats.stats.participations}}
+                                        <a *ngIf="categoryStats.stats.participations > 0"><i class="fa fa-search" aria-hidden="true" (click)="getParticipations(categoryStats.category)"></i></a>
+                                    </span>
+                                    </dd>
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.starts">Starts</span>
+                                    </dt>
+                                    <dd>
+                                        <span>{{categoryStats.stats.starts}}</span>
+                                    </dd>
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.finished">Finished</span>
+                                    </dt>
+                                    <dd>
+                                        <span>{{categoryStats.stats.finished}} ({{((categoryStats.stats.finished / categoryStats.stats.starts) * 100).toFixed(2)}}%)</span>
+                                    </dd>
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.bestFinalPosition">Best final position</span>
+                                    </dt>
+                                    <dd>
+                                        <span>{{finishingPosition(categoryStats.stats.bestFinishingPosR)}} ({{categoryStats.stats.bestFinishingPosTimesR}} </span>
+                                        <span *ngIf="categoryStats.stats.bestFinishingPosTimesR == 1" jhiTranslate="motorsportsDatabaseApp.stats.time">time</span>
+                                        <span *ngIf="categoryStats.stats.bestFinishingPosTimesR > 1" jhiTranslate="motorsportsDatabaseApp.stats.times">times</span>)
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="col-sm-3">
+                                <dl class="row-md jh-entity-details">
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.championships">Championships</span>
+                                    </dt>
+                                    <dd>
+                                        <span>{{categoryStats.stats.championships}}</span>
+                                    </dd>
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.wins">Wins</span>
+                                    </dt>
+                                    <dd>
+                                    <span>{{categoryStats.stats.wins}} ({{((categoryStats.stats.wins / categoryStats.stats.starts) * 100).toFixed(2)}}%)
+                                        <a *ngIf="categoryStats.stats.wins > 0"><i class="fa fa-search" aria-hidden="true" (click)="getWins(categoryStats.category)"></i></a>
+                                    </span>
+                                    </dd>
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.poles">Poles</span>
+                                    </dt>
+                                    <dd>
+                                        <span>{{categoryStats.stats.poles}} ({{((categoryStats.stats.poles / categoryStats.stats.participations) * 100).toFixed(2)}}%)</span>
+                                    </dd>
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.bestStartingPosition">Best starting position</span>
+                                    </dt>
+                                    <dd>
+                                        <span>{{categoryStats.stats.bestFinishingPosQ}} ({{categoryStats.stats.bestFinishingPosTimesQ}} </span>
+                                        <span *ngIf="categoryStats.stats.bestFinishingPosTimesQ == 1" jhiTranslate="motorsportsDatabaseApp.stats.time">time</span>
+                                        <span *ngIf="categoryStats.stats.bestFinishingPosTimesQ > 1" jhiTranslate="motorsportsDatabaseApp.stats.times">times</span>)
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="col-sm-3">
+                                <dl class="row-md jh-entity-details">
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.podiums">Podiums</span>
+                                    </dt>
+                                    <dd>
+                                        <span>{{categoryStats.stats.top3}}</span>
+                                    </dd>
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.top5">Top 5</span>
+                                    </dt>
+                                    <dd>
+                                        <span>{{categoryStats.stats.top5}}</span>
+                                    </dd>
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.top10">Top 10</span>
+                                    </dt>
+                                    <dd>
+                                        <span>{{categoryStats.stats.top10}}</span>
+                                    </dd>
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.fastLaps">Fast laps</span>
+                                    </dt>
+                                    <dd>
+                                        <span>{{categoryStats.stats.fastLaps}}</span>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="col-sm-3">
+                                <dl class="row-md jh-entity-details">
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.points">Points</span>
+                                    </dt>
+                                    <dd>
+                                        <span>{{categoryStats.stats.points}}</span>
+                                    </dd>
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.grandChelems">Grand Chelems</span>
+                                    </dt>
+                                    <dd>
+                                        <span>{{categoryStats.stats.grandChelems}}</span>
+                                    </dd>
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.lapsCompleted">Laps Completed</span>
+                                    </dt>
+                                    <dd>
+                                        <span>{{categoryStats.stats.lapsCompleted}}</span>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div *ngIf="categoryStats.stats.championships > 0" class="row">
+                            <div class="col-sm-12">
+                                <dl class="row-md jh-entity-details">
+                                    <dt>
+                                        <span jhiTranslate="motorsportsDatabaseApp.stats.titles">Titles</span>
+                                    </dt>
+                                    <dd>
+                                        <div *ngFor="let title of categoryStats.stats.championshipsData">
+                                            <a class="deco-none" [routerLink]="['/series/series-edition', title.id]">{{ title.name }}</a>
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
 </div>

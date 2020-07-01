@@ -1,79 +1,96 @@
-<div>
-    <h2>
-        <span jhiTranslate="motorsportsDatabaseApp.racetrack.home.title">Racetracks</span>
-        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
-        	class="btn btn-primary float-right jh-create-entity create-racetrack" [routerLink]="['/', { outlets: { popup: ['racetrack-new'] } }]">
-            <span class="fa fa-plus"></span>
-            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.racetrack.home.createLabel">
-            Create new Racetrack
-            </span>
-        </button>
-    </h2>
-    <jhi-alert></jhi-alert>
-    <div class="row">
-        <div class="col-sm-12">
-            <form name="searchForm" class="form-inline">
-                <div class="input-group w-100 mt-3">
-                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.racetrack.home.search' | translate }}">
-                    <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
-                        <span class="fa fa-search"></span>
-                    </button>
-                    <button class="input-group-addon btn btn-danger" (click)="clear()" *ngIf="currentSearch">
-                        <span class="fa fa-trash-o"></span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <br/>
-    <div class="table-responsive" *ngIf="racetracks">
-        <table class="table table-striped">
-            <thead>
-            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-            <th jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.racetrack.name">Name</span><span class="fa fa-sort"></span></th>
-            <th jhiSortBy="location"><span jhiTranslate="motorsportsDatabaseApp.racetrack.location">Location</span><span class="fa fa-sort"></span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.racetrack.logo">Logo</span></th>
-            <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let racetrack of racetracks ;trackBy: trackId">
-                <td>{{racetrack.name}}</td>
-                <td>{{racetrack.location}} <img *ngIf="racetrack?.countryCode" src="/images/flags/{{racetrack.countryCode}}.png"/></td>
-                <td>
-                    <img *ngIf="racetrack.logoUrl" [src]="racetrack.logoUrl" style="max-height: 30px;" alt="racetrack logo"/>
-                </td>
-                <td class="text-right">
-                    <div class="btn-group flex-btn-group-container">
-                        <button type="submit"
-                                [routerLink]="['../racetrack', racetrack.id ]"
-                                class="btn btn-info btn-sm">
-                            <span class="fa fa-eye"></span>
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-sm-12">
+                <form name="searchForm" class="form-inline">
+                    <div class="input-group w-100 mt-3">
+                        <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.racetrack.home.search' | translate }}">
+                        <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                            <fa-icon [icon]="'search'"></fa-icon>
                         </button>
-                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                [routerLink]="['/', { outlets: { popup: 'racetrack/'+ racetrack.id + '/edit'} }]"
-                                replaceUrl="true"
-                                class="btn btn-primary btn-sm">
-                            <span class="fa fa-pencil"></span>
+                        <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                            <fa-icon [icon]="'trash-alt'"></fa-icon>
                         </button>
-                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                [routerLink]="['/', { outlets: { popup: 'racetrack/'+ racetrack.id + '/delete'} }]"
-                                replaceUrl="true"
-                                class="btn btn-danger btn-sm">
-                            <span class="fa fa-remove"></span>
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-racetrack" [routerLink]="['/racetrack/new']">
+                            <fa-icon [icon]="'plus'"></fa-icon>
+                            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.racetrack.home.createLabel">
+                                Create a new fuel provider
+                            </span>
                         </button>
                     </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-        <div *ngIf="racetracks && racetracks.length">
-            <div class="row justify-content-center">
-                <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
-            </div>
-            <div class="row justify-content-center">
-                <ngb-pagination [collectionSize]="totalItems" [maxSize]="5" [pageSize]="itemsPerPage" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
+                </form>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.racetrack.home.title">Racetrack</span></h4>
+                    </div>
+                    <div class="card-body">
+                        <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
+                        <div class="alert alert-warning" [hidden]="racetracks?.length > 0 || isLoadingResults">
+                            <span jhiTranslate="motorsportsDatabaseApp.racetrack.home.notFound">No racetracks found</span>
+                        </div>
+                        <div class="table-responsive" [hidden]="racetracks?.length === 0">
+                            <table mat-table class="table table-hover" [dataSource]="racetracks"
+                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
+
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.racetrack.name' | translate }}</th>
+                                    <td mat-cell *matCellDef="let racetrack">{{ racetrack.name }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="location">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.racetrack.location' | translate }}</th>
+                                    <td mat-cell *matCellDef="let racetrack">{{ racetrack.location }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="logo">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.racetrack.logo' | translate }}</th>
+                                    <td mat-cell *matCellDef="let racetrack">
+                                        <img *ngIf="racetrack?.logoUrl" [src]="racetrack.logoUrl" style="max-height: 30px;" alt="racetrack logo"/>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="buttons">
+                                    <th mat-header-cell *matHeaderCellDef></th>
+                                    <td mat-cell *matCellDef="let racetrack">
+                                        <div class="btn-group">
+                                            <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                                    [routerLink]="['/racetrack', racetrack.id, 'edit']"
+                                                    (click)="$event.stopPropagation()"
+                                                    class="btn btn-primary btn-xs">
+                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                            </button>
+                                            <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                                                    [routerLink]="['/racetrack', { outlets: { popup: racetrack.id + '/delete'} }]"
+                                                    (click)="$event.stopPropagation()"
+                                                    replaceUrl="true"
+                                                    queryParamsHandling="merge"
+                                                    class="btn btn-danger btn-xs">
+                                                <fa-icon [icon]="'times'"></fa-icon>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                                    [routerLink]="['/racetrack', row.id, 'view' ]"></tr>
+                            </table>
+                            <mat-paginator [length]="resultsLength"
+                                           [pageSizeOptions]="[5, 10, 20]"
+                                           [pageSize]="10"
+                                           showFirstLastButtons></mat-paginator>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

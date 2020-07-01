@@ -1,49 +1,51 @@
 {
-    "motorsportsDatabaseApp": {
-        "racetrack" : {
-            "home": {
-                "title": "Circuits",
-                "createLabel": "Afegir un nou circuit",
-                "createOrEditLabel": "Afegir o editar un circuit",
-                "search": "Cercar circuits"
-            },
-            "created": "S'ha afegit un circuit amb identificador {{ param }}",
-            "updated": "S'ha modificat el circuit amb identificador {{ param }}",
-            "deleted": "S'ha esborrat el circuit amb identificador {{ param }}",
-            "delete": {
-                "question": "Esteu segur que voleu esborrar el circuit amb identificador {{ id }}?"
-            },
-            "detail": {
-                "title": "Circuit"
-            },
-            "name": "Nom",
-            "location": "Localització",
-            "country": "Pais",
-            "logo": "Logo",
-            "layouts": "Traçats"
-        },
-        "racetrackLayout" : {
-            "home": {
-                "title": "Traçats",
-                "createLabel": "Afegir un nou traçat",
-                "createOrEditLabel": "Afegir o modificar un traçat",
-                "search": "Cercar traçats"
-            },
-            "created": "S'ha afegit el traçat {{ param }}",
-            "updated": "S'ha modificat el traçat {{ param }}",
-            "deleted": "S'ha esborrat el traçat {{ param }}",
-            "delete": {
-                "question": "Esteu segur que voleu esborrar el traçat '{{ id }}?'"
-            },
-            "detail": {
-                "title": "Traçat"
-            },
-            "name": "Nom",
-            "length": "Longitut",
-            "yearFirstUse": "Any primer us",
-            "layoutImage": "Imatge",
-            "racetrack": "Circuit",
-            "active": "En actiu?"
-        }
+  "motorsportsDatabaseApp": {
+    "racetrack": {
+      "home": {
+        "title": "Circuits",
+        "createLabel": "Afegir un nou circuit",
+        "createOrEditLabel": "Afegir o editar un circuit",
+        "search": "Cercar circuits",
+        "notFound": "No s'ha trobat cap circuit"
+      },
+      "created": "S'ha afegit un circuit amb identificador {{ param }}",
+      "updated": "S'ha modificat el circuit amb identificador {{ param }}",
+      "deleted": "S'ha esborrat el circuit amb identificador {{ param }}",
+      "delete": {
+        "question": "Esteu segur que voleu esborrar el circuit amb identificador {{ id }}?"
+      },
+      "detail": {
+        "title": "Circuit"
+      },
+      "name": "Nom",
+      "location": "Localització",
+      "country": "Pais",
+      "logo": "Logo",
+      "layouts": "Traçats"
+    },
+    "racetrackLayout": {
+      "home": {
+        "title": "Traçats",
+        "createLabel": "Afegir un nou traçat",
+        "createOrEditLabel": "Afegir o modificar un traçat",
+        "search": "Cercar traçats",
+        "notFound": "No s'ha trobat cap traçat"
+      },
+      "created": "S'ha afegit el traçat {{ param }}",
+      "updated": "S'ha modificat el traçat {{ param }}",
+      "deleted": "S'ha esborrat el traçat {{ param }}",
+      "delete": {
+        "question": "Esteu segur que voleu esborrar el traçat '{{ id }}?'"
+      },
+      "detail": {
+        "title": "Traçat"
+      },
+      "name": "Nom",
+      "length": "Longitut",
+      "yearFirstUse": "Any primer us",
+      "layoutImage": "Imatge",
+      "racetrack": "Circuit",
+      "active": "En actiu?"
     }
+  }
 }

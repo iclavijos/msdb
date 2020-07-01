@@ -1,209 +1,157 @@
-
-<div *ngIf="eventEdition">
-	<div class="row">
-		<div class="col-lg-10 col-md-10">
-    		<h2>{{eventEdition.longEventName}}</h2>
-    	</div>
-    	<div class="col-lg-2 col-md-2">
-    		<h2>
-    			<div class="row">
-   				<a class="deco-none" *ngIf="eventEdition.previousEditionId" [routerLink]="['/event-edition', eventEdition.previousEditionId]"><i  class="fa fa-fw fa-angle-double-left" aria-hidden="true"></i></a>
-   				<div class="col-xs-2">
-   				<select class="form-control" id="field_jumpToEdition" name="jumpToEdition" (change)="jumpToEdition($event.target.value)">
-   					<option></option>
-	            	<option *ngFor="let edition of editions" [value]="edition.id">{{edition.editionYear}}</option>
-	            </select>
-	            </div>
-   				<a class="deco-none" *ngIf="eventEdition.nextEditionId" [routerLink]="['/event-edition', eventEdition.nextEditionId]"><i  class="fa fa-fw fa-angle-double-right" aria-hidden="true"></i></a>
-   				</div>
-    		</h2>
-    	</div>
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h3 class="card-title">{{eventEdition.longEventName}}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <mat-tab-group dynamicHeight mat-stretch-tabs [(selectedIndex)]="index">
+                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.info' | translate }}">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-md-4">
+                                                <dl class="row-md jh-entity-details">
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-md-6">
+                                                            <dd *ngIf="eventEdition.status === 'SUSPENDED'">
+                                                                <h1><span class="badge badge-warning">
+                                                                    {{ 'motorsportsDatabaseApp.eventEdition.status.suspended' | translate }}
+                                                                </span></h1>
+                                                            </dd>
+                                                            <dd *ngIf="eventEdition.status === 'CANCELLED'">
+                                                                <h1><span class="badge badge-danger">
+                                                                    {{ 'motorsportsDatabaseApp.eventEdition.status.cancelled' | translate }}
+                                                                </span></h1>
+                                                            </dd>
+                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate">Event Date</span></dt>
+                                                            <dd>
+                                                                <span>{{eventEdition.eventDate | date:'mediumDate'}}</span>
+                                                            </dd>
+                                                            <div *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
+                                                                <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.shortEventName">Short Event Name</span></dt>
+                                                                <dd>
+                                                                    <span>{{eventEdition.shortEventName}}</span>
+                                                                </dd>
+                                                            </div>
+                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.event">Event</span></dt>
+                                                            <dd>
+                                                                <div *ngIf="eventEdition.event">
+                                                                    <a [routerLink]="['/event', eventEdition.event?.id, 'view']">{{eventEdition.event?.name}}</a>
+                                                                </div>
+                                                            </dd>
+                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.allowedCategories">Allowed Categories</span></dt>
+                                                            <dd>
+                                                                <ul class="list-unstyled">
+                                                                    <li *ngFor="let category of eventEdition.allowedCategories">
+                                                                        <span>{{category.name}} ({{category.shortname}})</span>
+                                                                    </li>
+                                                                </ul>
+                                                            </dd>
+                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout">Track Layout</span></dt>
+                                                            <dd>
+                                                                <div *ngIf="eventEdition.trackLayout">
+                                                                    <a [routerLink]="['/racetrack-layout', eventEdition.trackLayout?.id, 'view' ]" >
+                                                                        {{eventEdition.trackLayout?.racetrack.name}} - {{eventEdition.trackLayout?.name}}
+                                                                    </a>
+                                                                    <div *ngIf="eventEdition.trackLayout.layoutImageUrl">
+                                                                        <img #layoutImg [src]="eventEdition.trackLayout.layoutImageUrl" class="img-fluid"  alt="layout image"
+                                                                             (click)="openLayout()"
+                                                                             (mouseover)="zoomIn(layoutImg)" (mouseleave)="zoomOut(layoutImg)"/>
+                                                                    </div>
+                                                                </div>
+                                                            </dd>
+                                                        </div>
+                                                        <div class="col-lg-6 col-md-6" *ngIf="eventEdition.posterUrl">
+                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.affiche">Official poster</span></dt>
+                                                            <dd>
+                                                                <img #afficheImg [src]="lightboxAlbum[1].thumb" alt="affiche official poster"
+                                                                     (click)="openAffiche()"
+                                                                     (mouseover)="zoomIn(afficheImg)" (mouseleave)="zoomOut(afficheImg)"/>
+                                                            </dd>
+                                                        </div>
+                                                    </div>
+                                                </dl>
+                                            </div>
+                                            <div class="col-lg-8 col-md-8">
+                                                <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.sessions">Sessions</span></dt>
+                                                <dd>
+                                                    <jhi-event-session [eventEdition]="eventEdition" (showPoints)="showPoints" (sessions)="updateSessions($event)"></jhi-event-session>
+                                                </dd>
+                                            </div>
+                                        </div>
+                                    </mat-tab>
+                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.entryList' | translate }}">
+                                        <div>
+                                            <jhi-event-entry [eventEdition]="eventEdition" (entries)="updateEntries($event)"></jhi-event-entry>
+                                        </div>
+                                    </mat-tab>
+                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.results' | translate }}">
+                                        <div>
+                                            <mat-tab-group dynamicHeight mat-stretch-tabs *ngIf="index == 2" [selectedIndex]="0">
+                                                <mat-tab *ngFor="let eventSession of eventSessions" label="{{ eventSession.name }}">
+                                                    <ng-template matTabContent>
+                                                        <jhi-event-entry-result [eventSession]="eventSession" [eventEdition]="eventEdition" [eventEntries]="eventEntries">Result...</jhi-event-entry-result>
+                                                    </ng-template>
+                                                </mat-tab>
+                                            </mat-tab-group>
+                                        </div>
+                                    </mat-tab>
+                                    <mat-tab label="{{'motorsportsDatabaseApp.eventEdition.driversTimes' | translate }}">
+                                        <div class="table-responsive">
+                                            <table mat-table class="table table-hover" [dataSource]="driversBestTimes">
+                                                <ng-container *ngFor="let column of bestTimesColumns; let i = index" matColumnDef="{{ column }}">
+                                                    <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+                                                    <td mat-cell *matCellDef="let row">
+                                                        <div *ngIf="i === 0">
+                                                            {{  row[i] }}
+                                                        </div>
+                                                        <div *ngIf="i !== 0">
+                                                            {{  row[i] | timeMaskPipe }}
+                                                        </div>
+                                                    </td>
+                                                </ng-container>
+                                                <tr mat-header-row *matHeaderRowDef="bestTimesColumns; sticky: true"></tr>
+                                                <tr mat-row *matRowDef="let row; columns: bestTimesColumns;"></tr>
+                                            </table>
+                                        </div>
+                                    </mat-tab>
+                                    <!-- mat-tab label="{{'motorsportsDatabaseApp.eventEdition.info' | translate }}">
+                                        <div>
+                                            Large content
+                                        </div>
+                                    </mat-tab -->
+                                </mat-tab-group>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                [routerLink]="['/event/edition', eventEdition.id, 'edit-ed']"
+                class="btn btn-primary">
+            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+        </button>
+        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                (click)="rescheduleEventDialog()"
+                class="btn btn-primary">
+            <fa-icon [icon]="'calendar'"></fa-icon>&nbsp;<span jhiTranslate="motorsportsDatabaseApp.eventEdition.reschedule.reschedule"> Reschedule</span>
+        </button>
+        <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                class="btn btn-primary" (click)="copyEntries()">
+            <fa-icon [icon]="'clone'"></fa-icon>&nbsp;<span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.copyEntries.copyLabel">
+            Clone entries
+            </span>
+        </button>
+        <button type="submit"
+                (click)="previousState()"
+                class="btn btn-info">
+            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+        </button>
     </div>
-    <hr>
-    <jhi-alert></jhi-alert>
-    <div class="row">
-    	<div class="col-lg-6 col-md-6">
-    		<ng-template ngFor let-item [ngForOf]="eventEdition.seriesId" let-currentIndex="index">
-		   		<a class="deco-none" *ngIf="eventEdition.seriesId" [routerLink]="['/series/series-edition', item]">
-		   			<i  class="fa fa-fw fa-angle-double-left" aria-hidden="true"></i> {{eventEdition.seriesName[currentIndex]}}
-		   		</a><br/>
-		    </ng-template>
-    	</div>
-    	<div class="col-lg-6 col-md-6">
-    		<div *ngIf="navigationIds !== null">
-    			<ng-template ngFor let-item [ngForOf]="navigationIds" let-currentIndex="index">
-    				<div>
-			   		<a class="deco-none" *ngIf="item.prevId" [routerLink]="['/event-edition', item.prevId]">
-				    	<i  class="fa fa-fw fa-angle-double-left" aria-hidden="true"></i> {{item.prevName}}
-				    </a>
-				    <span *ngIf="item.prevId && item.nextId">&nbsp;|&nbsp;</span>
-				    <a class="deco-none" *ngIf="item.nextId" [routerLink]="['/event-edition', item.nextId]">
-				    	{{item.nextName}} <i  class="fa fa-fw fa-angle-double-right" aria-hidden="true"></i>
-				    </a>
-				    </div>
-			    </ng-template>
-		    </div>
-    	</div>
-    </div>
-
-    <ngb-tabset>
-	  <ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.info' | translate}}">
-	    <ng-template ngbTabContent>
-		    <div class="row">
-				<div class="col-lg-4 col-md-4">
-				    <dl class="row-md jh-entity-details">
-				        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.editionYear">Edition Year</span></dt>
-				        <dd>
-				            <span>{{eventEdition.editionYear}}</span>
-				        </dd>
-				        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.shortEventName">Short Event Name</span></dt>
-				        <dd>
-				            <span>{{eventEdition.shortEventName}}</span>
-				        </dd>
-				        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate">Event Date</span></dt>
-				        <dd>
-				            <span>{{eventEdition.eventDate | date:'mediumDate'}}</span>
-				        </dd>
-				        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout">Track Layout</span></dt>
-				        <dd>
-				            <div *ngIf="eventEdition.trackLayout">
-				                <a [routerLink]="['/racetrack', eventEdition.trackLayout.racetrack.id, 'racetrack-layout', eventEdition.trackLayout?.id ]" >
-				                	{{eventEdition.trackLayout?.racetrack.name}} - {{eventEdition.trackLayout?.name}}
-								</a>
-								<div *ngIf="eventEdition.trackLayout.layoutImageUrl">
-					            	<img [src]="eventEdition.trackLayout.layoutImageUrl" class="img-fluid" alt="layout image"/>
-					            </div>
-				            </div>
-				        </dd>
-				        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.event">Event</span></dt>
-				        <dd>
-				            <div *ngIf="eventEdition.event">
-				                <a [routerLink]="['/event', eventEdition.event?.id]">{{eventEdition.event?.name}}</a>
-				            </div>
-				        </dd>
-				    </dl>
-				</div>
-				<div class="col-lg-8 col-md-8">
-					<dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.allowedCategories">Allowed Categories</span></dt>
-					<dd>
-			            <ul class="list-unstyled">
-			                <li *ngFor="let category of eventEdition.allowedCategories">
-			                    <span>{{category.name}} ({{category.shortname}})</span>
-			                </li>
-			            </ul>
-			        </dd>
-			        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.sessions">Sessions</span></dt>
-					<dd>
-			            <div class="table-responsive" *ngIf="eventEdition.sessions">
-					        <table class="table table-striped">
-					            <thead>
-					            <tr>
-					            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.session.sessionStartTime">Session Start Time</span></th>
-					            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.session.shortname">Shortname</span></th>
-					            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.session.duration">Duration</span></th>
-					            <th></th>
-					            </tr>
-					            </thead>
-					            <tbody>
-					            <tr *ngFor="let eventSession of eventEdition.sessions ;trackBy: trackId">
-					                <td>{{eventSession.sessionStartTime.format("DD/MM/YYYY, HH:mm:ss")}}</td>
-					                <td>{{eventSession.name}}</td>
-					                <td>{{eventSession.duration}} {{'motorsportsDatabaseApp.eventEdition.enumerations.' + durationTypes[eventSession.durationType] | translate}}
-					                	<span *ngIf="eventSession.additionalLap">+ 1 {{'motorsportsDatabaseApp.eventEdition.session.lap' | translate}}</span>
-					                </td>
-					                <td class="text-right">
-					                    <div class="btn-group flex-btn-group-container">
-					                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-					                                [routerLink]="['/', { outlets: { popup: eventEdition.id + '/event-session/'+ eventSession.id + '/edit'} }]"
-					                                replaceUrl="true"
-					                                class="btn btn-primary btn-sm">
-					                            <span class="fa fa-pencil"></span>
-					                        </button>
-					                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
-					                                [routerLink]="['/', { outlets: { popup: eventEdition.id + '/event-session/'+ eventSession.id + '/delete'} }]"
-					                                replaceUrl="true"
-					                                class="btn btn-danger btn-sm">
-					                            <span class="fa fa-remove"></span>
-					                        </button>
-					                    </div>
-					                </td>
-					            </tr>
-					            </tbody>
-					        </table>
-					    </div>
-				        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-				        	class="btn btn-primary float-right create-event-session" [routerLink]="['/', { outlets: { popup: eventEdition.id + '/event-session-new' } }]">
-				            <span class="fa fa-plus"></span>
-				        </button>&nbsp;
-				        <button type="button" *ngIf="!convertedTime && eventEdition.sessions"
-				        	class="btn btn-outline-primary float-right create-event-session" (click)="convertToCurrentTZ()">
-				            <span jhiTranslate="motorsportsDatabaseApp.eventEdition.yourTime">Your Time</span>
-				        </button>
-				        <button type="button" *ngIf="convertedTime && eventEdition.sessions"
-				        	class="btn btn-outline-primary float-right create-event-session" (click)="convertToLocalTZ()">
-				            <span jhiTranslate="motorsportsDatabaseApp.eventEdition.localTime">Local Time</span>
-				        </button>
-			        </dd>
-				</div>
-			</div>
-		    <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-		            [routerLink]="['/', { outlets: { popup: 'event-edition/'+ eventEdition.id + '/edit'} }]"
-		            replaceUrl="true"
-		            class="btn btn-primary">
-		        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-		    </button>
-		</ng-template>
-	</ngb-tab>
-	<ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.entryList' | translate}}">
-	    <ng-template ngbTabContent>
-	    	<jhi-event-entry [eventEdition]="eventEdition">Entries...</jhi-event-entry>
-	    </ng-template>
-	</ngb-tab>
-	<ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.results' | translate}}">
-	    <ng-template ngbTabContent>
-	    	<ng-container *ngTemplateOutlet="innerTabsetResults"></ng-container>
-	    </ng-template>
-	</ngb-tab>
-	<ngb-tab title="{{'motorsportsDatabaseApp.eventEdition.driversTimes' | translate}}">
-	    <ng-template ngbTabContent>
-			<table class="table table-sm">
-				<thead>
-					<tr>
-						<th *ngFor="let sessionName of driversBestTimes[0]">{{sessionName}}</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr *ngFor="let row of driversBestTimes | slice:1; let isOdd=odd; let isEven=even" [class.odd]="isOdd">
-				        <td *ngFor="let value of row">{{value | timeMaskPipe}}</td>
-				    </tr>
-				</tbody>
-			</table>
-	    </ng-template>
-	</ngb-tab>
-	<ngb-tab *ngIf="showPoints" title="{{'motorsportsDatabaseApp.eventEdition.points' | translate}}">
-		<ng-template ngbTabContent>
-		    <jhi-standings [eventEditionId]="eventEdition.id" [seriesEditionIds]="eventEdition.seriesId" [seriesEditionNames]="eventEdition.seriesName">Standings...</jhi-standings>
-	    </ng-template>
-	</ngb-tab>
-	<ngb-tab *ngIf="hasLapsData" title="{{'motorsportsDatabaseApp.eventEdition.lapsAnalysis' | translate}}">
-	    <ng-template ngbTabContent>
-	    	<jhi-laps-analysis [eventEditionId]="eventEdition.id">Laps analysis..</jhi-laps-analysis>
-	    </ng-template>
-	</ngb-tab>
-	</ngb-tabset>
-	<button type="submit"
-            (click)="previousState()"
-            class="btn btn-info">
-        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-    </button>
 </div>
-
-<ng-template #innerTabsetResults>
-  <ngb-tabset>
-  <ngb-tab *ngFor="let eventSession of eventEdition.sessions" title="{{eventSession.name}}">
-    <ng-template ngbTabContent>
-    	<jhi-event-entry-result [session]="eventSession" [edition]="eventEdition">Result...</jhi-event-entry-result>
-    </ng-template>
-  </ngb-tab>
-</ngb-tabset>
-</ng-template>

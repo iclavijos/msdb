@@ -1,65 +1,24 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { EventEntryResultComponent } from './event-entry-result.component';
+import { EventEntryResultUpdateComponent } from './event-entry-result-update.component';
+import { EventEntryUploadResultsComponent } from './event-entry-result-upload.component';
+import { EventEntryResultDeleteDialogComponent } from './event-entry-result-delete-dialog.component';
+import { eventEntryResultRoute, eventEntryResultPopupRoute } from './event-entry-result.route';
 
-import {
-    EventEntryResultService,
-    EventEntryResultPopupService,
-    EventEntryResultComponent,
-    EventEntryResultDetailComponent,
-    EventEntryResultDialogComponent,
-    EventEntryResultPopupComponent,
-    EventEntryResultDeletePopupComponent,
-    EventEntryResultDeleteDialogComponent,
-    EventEntryUploadResultsPopupComponent,
-    EventEntryUploadResultsDialogComponent,
-    EventEntryUploadLapByLapPopupComponent,
-    EventEntryUploadLapByLapDialogComponent,
-    eventEntryResultRoute,
-    eventEntryResultPopupRoute,
-} from './';
-
-let ENTITY_STATES = [
-    ...eventEntryResultRoute,
-    ...eventEntryResultPopupRoute,
-];
+const ENTITY_STATES = [...eventEntryResultRoute, ...eventEntryResultPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
-    exports: [
-        EventEntryResultComponent
-    ],
-    declarations: [
-        EventEntryResultComponent,
-        EventEntryResultDetailComponent,
-        EventEntryResultDialogComponent,
-        EventEntryResultDeleteDialogComponent,
-        EventEntryResultPopupComponent,
-        EventEntryResultDeletePopupComponent,
-        EventEntryUploadResultsPopupComponent,
-        EventEntryUploadResultsDialogComponent,
-        EventEntryUploadLapByLapPopupComponent,
-        EventEntryUploadLapByLapDialogComponent,
-    ],
-    entryComponents: [
-        EventEntryResultComponent,
-        EventEntryResultDialogComponent,
-        EventEntryResultPopupComponent,
-        EventEntryResultDeleteDialogComponent,
-        EventEntryResultDeletePopupComponent,
-        EventEntryUploadResultsPopupComponent,
-        EventEntryUploadResultsDialogComponent,
-        EventEntryUploadLapByLapPopupComponent,
-        EventEntryUploadLapByLapDialogComponent,
-    ],
-    providers: [
-        EventEntryResultService,
-        EventEntryResultPopupService,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [
+    EventEntryResultComponent,
+    EventEntryResultUpdateComponent,
+    EventEntryUploadResultsComponent,
+    EventEntryResultDeleteDialogComponent
+  ],
+  exports: [EventEntryResultComponent],
+  entryComponents: [EventEntryResultUpdateComponent, EventEntryUploadResultsComponent, EventEntryResultDeleteDialogComponent]
 })
 export class MotorsportsDatabaseEventEntryResultModule {}

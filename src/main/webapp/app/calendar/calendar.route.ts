@@ -1,23 +1,11 @@
-import { Route, Routes, CanActivate } from '@angular/router';
+import { Route } from '@angular/router';
 
-import { UserRouteAccessService } from '../shared';
+import { CalendarComponent } from './calendar.component';
 
-import { Calendar } from './calendar.component';
-
-export const CalendarRoute: Route = {
-    path: 'calendar',
-    component: Calendar,
-    data: {
-        pageTitle: 'motorsportsDatabaseApp.calendar.title'
-    },
-    canActivate: [UserRouteAccessService]
+export const calendarRoute: Route = {
+  path: '',
+  component: CalendarComponent,
+  data: {
+    pageTitle: 'motorsportsDatabaseApp.calendar.title'
+  }
 };
-
-let CALENDAR_ROUTES = [
-   CalendarRoute
-];
-
-export const calendarState: Routes = [{
-    path: '',
-    children: CALENDAR_ROUTES
-}];

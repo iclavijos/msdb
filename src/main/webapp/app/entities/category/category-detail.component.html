@@ -1,29 +1,41 @@
-
-<div *ngIf="category">
-    <h2><span jhiTranslate="motorsportsDatabaseApp.category.detail.title">Category</span> {{category.id}}</h2>
-    <hr>
-    <jhi-alert-error></jhi-alert-error>
-    <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="motorsportsDatabaseApp.category.name">Name</span></dt>
-        <dd>
-            <span>{{category.name}}</span>
-        </dd>
-        <dt><span jhiTranslate="motorsportsDatabaseApp.category.shortname">Shortname</span></dt>
-        <dd>
-            <span>{{category.shortname}}</span>
-        </dd>
-    </dl>
-
-    <button type="submit"
-            (click)="previousState()"
-            class="btn btn-info">
-        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-    </button>
-
-    <button type="button"
-            [routerLink]="['/', { outlets: { popup: 'category/'+ category.id + '/edit'} }]"
-            replaceUrl="true"
-            class="btn btn-primary">
-        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-    </button>
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-profile">
+                    <div class="card-header card-header-danger">
+                        <h3 class="card-title">{{category.name}}</h3>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title"></h4>
+                        <dl>
+                            <dd>
+                                <div *ngIf="category.logoUrl">
+                                    <img [src]="category.logoUrl" class="img-fluid" alt="category logo"/>
+                                </div>
+                            </dd>
+                        </dl>
+                        <dl class="row-md jh-entity-details">
+                            <dt><span jhiTranslate="motorsportsDatabaseApp.category.shortname">Shortname</span></dt>
+                            <dd>
+                                <span>{{category.shortname}}</span>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                [routerLink]="['/category', category.id, 'edit']"
+                class="btn btn-primary">
+            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+        </button>
+        <button type="submit"
+                (click)="previousState()"
+                class="btn btn-info">
+            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+        </button>
+    </div>
 </div>

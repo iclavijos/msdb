@@ -1,91 +1,139 @@
-<div>
-    <h2>
-        <span jhiTranslate="motorsportsDatabaseApp.engine.home.title">Engines</span>
-        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
-        	class="btn btn-primary float-right jh-create-entity create-engine" [routerLink]="['/', { outlets: { popup: ['engine-new'] } }]">
-            <span class="fa fa-plus"></span>
-            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.engine.home.createLabel">
-            Create new Engine
-            </span>
-        </button>
-    </h2>
-    <jhi-alert></jhi-alert>
-    <div class="row">
-        <div class="col-sm-12">
-            <form name="searchForm" class="form-inline">
-                <div class="input-group w-100 mt-3">
-                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.engine.home.search' | translate }}">
-                    <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
-                        <span class="fa fa-search"></span>
-                    </button>
-                    <button class="input-group-addon btn btn-danger" (click)="clear()" *ngIf="currentSearch">
-                        <span class="fa fa-trash-o"></span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <br/>
-    <div class="table-responsive" *ngIf="engines">
-        <table class="table table-striped">
-            <thead>
-            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-            <th jhiSortBy="name"><span jhiTranslate="motorsportsDatabaseApp.engine.name">Name</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="manufacturer"><span jhiTranslate="motorsportsDatabaseApp.engine.manufacturer">Manufacturer</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="capacity"><span jhiTranslate="motorsportsDatabaseApp.engine.capacity">Capacity</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="architecture"><span jhiTranslate="motorsportsDatabaseApp.engine.architecture">Architecture</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="debutYear"><span jhiTranslate="motorsportsDatabaseApp.engine.debutYear">Debut Year</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="petrolEngine"><span jhiTranslate="motorsportsDatabaseApp.engine.petrolEngine">Petrol Engine</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="dieselEngine"><span jhiTranslate="motorsportsDatabaseApp.engine.dieselEngine">Diesel Engine</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="electricEngine"><span jhiTranslate="motorsportsDatabaseApp.engine.electricEngine">Electric Engine</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="otherEngine"><span jhiTranslate="motorsportsDatabaseApp.engine.otherEngine">Other Engine</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="turbo"><span jhiTranslate="motorsportsDatabaseApp.engine.turbo">Turbo</span> <span class="fa fa-sort"></span></th>
-            <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let engine of engines ;trackBy: trackId">
-                <td>{{engine.name}}</td>
-                <td>{{engine.manufacturer}}</td>
-                <td>{{engine.capacity}}</td>
-                <td>{{engine.architecture}}</td>
-                <td>{{engine.debutYear}}</td>
-                <td><i [ngClass]="engine.petrolEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></td>
-                <td><i [ngClass]="engine.dieselEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></td>
-                <td><i [ngClass]="engine.electricEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></td>
-                <td><i [ngClass]="engine.otherEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></td>
-                <td><i [ngClass]="engine.turbo ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></td>
-                <td class="text-right">
-                    <div class="btn-group flex-btn-group-container">
-                        <button type="submit"
-                                [routerLink]="['../engine', engine.id ]"
-                                class="btn btn-info btn-sm">
-                            <span class="fa fa-eye"></span>
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-sm-12">
+                <form name="searchForm" class="form-inline">
+                    <div class="input-group w-100 mt-3">
+                        <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.engine.home.search' | translate }}">
+                        <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                            <fa-icon [icon]="'search'"></fa-icon>
                         </button>
-                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                [routerLink]="['/', { outlets: { popup: 'engine/'+ engine.id + '/edit'} }]"
-                                replaceUrl="true"
-                                class="btn btn-primary btn-sm">
-                            <span class="fa fa-pencil"></span>
+                        <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                            <fa-icon [icon]="'trash-alt'"></fa-icon>
                         </button>
-                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                [routerLink]="['/', { outlets: { popup: 'engine/'+ engine.id + '/delete'} }]"
-                                replaceUrl="true"
-                                class="btn btn-danger btn-sm">
-                            <span class="fa fa-remove"></span>
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-engine" [routerLink]="['/engine/new']">
+                            <fa-icon [icon]="'plus'"></fa-icon>
+                            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.engine.home.createLabel">
+                            Create a new engine
+                            </span>
                         </button>
                     </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-        <div *ngIf="engines && engines.length">
-            <div class="row justify-content-center">
-                <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
-            </div>
-            <div class="row justify-content-center">
-                <ngb-pagination [collectionSize]="totalItems" [maxSize]="5" [pageSize]="itemsPerPage" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
+                </form>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.engine.home.title">Engines</span></h4>
+                    </div>
+                    <div class="card-body">
+                        <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
+                        <div class="alert alert-warning" [hidden]="engines?.length > 0 || isLoadingResults">
+                            <span jhiTranslate="motorsportsDatabaseApp.engine.home.notFound">No engines found</span>
+                        </div>
+                        <div class="table-responsive" [hidden]="engines?.length === 0">
+                            <table mat-table class="table table-hover" [dataSource]="engines"
+                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
+
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.engine.name' | translate }}</th>
+                                    <td mat-cell *matCellDef="let engine">{{ engine.name }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="manufacturer">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.manufacturer' | translate }}</th>
+                                    <td mat-cell *matCellDef="let engine">{{ engine.manufacturer }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="capacity">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.capacity' | translate }}</th>
+                                    <td mat-cell *matCellDef="let engine">{{ engine.capacity }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="architecture">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.architecture' | translate }}</th>
+                                    <td mat-cell *matCellDef="let engine">{{ engine.architecture }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="debutYear">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.debutYear' | translate }}</th>
+                                    <td mat-cell *matCellDef="let engine">{{ engine.debutYear }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="petrolEngine">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.petrolEngine' | translate }}</th>
+                                    <td mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.petrolEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="dieselEngine">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.dieselEngine' | translate }}</th>
+                                    <td mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.dieselEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="electricEngine">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.electricEngine' | translate }}</th>
+                                    <td mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.electricEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="otherEngine">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.otherEngine' | translate }}</th>
+                                    <td mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.otherEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="turbo">
+                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.turbo' | translate }}</th>
+                                    <td mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.turbo ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="buttons">
+                                    <th mat-header-cell *matHeaderCellDef></th>
+                                    <td mat-cell *matCellDef="let engine">
+                                        <div class="btn-group">
+                                            <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                                    [routerLink]="['/engine', engine.id, 'edit']"
+                                                    (click)="$event.stopPropagation()"
+                                                    class="btn btn-primary btn-xs">
+                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                            </button>
+                                            <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                                                    [routerLink]="['/engine', { outlets: { popup: engine.id + '/delete'} }]"
+                                                    (click)="$event.stopPropagation()"
+                                                    replaceUrl="true"
+                                                    queryParamsHandling="merge"
+                                                    class="btn btn-danger btn-xs">
+                                                <fa-icon [icon]="'times'"></fa-icon>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                                    [routerLink]="['/engine', row.id, 'view' ]"></tr>
+                            </table>
+                            <mat-paginator [length]="resultsLength"
+                                           [pageSizeOptions]="[5, 10, 20]"
+                                           [pageSize]="10"
+                                           showFirstLastButtons></mat-paginator>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

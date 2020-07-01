@@ -1,64 +1,29 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, Inject } from '@angular/core';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager } from 'ng-jhipster';
-
-import { EventEntryResult } from './event-entry-result.model';
-import { EventEntryResultPopupService } from './event-entry-result-popup.service';
+import { IEventEntryResult } from 'app/shared/model/event-entry-result.model';
 import { EventEntryResultService } from './event-entry-result.service';
 
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
 @Component({
-    selector: 'jhi-event-entry-result-delete-dialog',
-    templateUrl: './event-entry-result-delete-dialog.component.html'
+  templateUrl: './event-entry-result-delete-dialog.component.html'
 })
 export class EventEntryResultDeleteDialogComponent {
+  result: IEventEntryResult;
 
-    eventEntryResult: EventEntryResult;
+  constructor(
+    private eventEntryResultService: EventEntryResultService,
+    public dialogRef: MatDialogRef<EventEntryResultDeleteDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.result = data.eventEntryResult;
+  }
 
-    constructor(
-        private eventEntryResultService: EventEntryResultService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+  cancel(): void {
+    this.dialogRef.close();
+  }
 
-    clear() {
-        this.activeModal.dismiss('cancel');
-    }
-
-    confirmDelete(id: number) {
-        this.eventEntryResultService.delete(id).subscribe((response) => {
-            this.eventManager.broadcast({
-                name: 'eventEntryResultListModification',
-                content: 'Deleted an eventEntryResult'
-            });
-            this.activeModal.dismiss(true);
-        });
-    }
-}
-
-@Component({
-    selector: 'jhi-event-entry-result-delete-popup',
-    template: ''
-})
-export class EventEntryResultDeletePopupComponent implements OnInit, OnDestroy {
-
-    routeSub: any;
-
-    constructor(
-        private route: ActivatedRoute,
-        private eventEntryResultPopupService: EventEntryResultPopupService
-    ) {}
-
-    ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.eventEntryResultPopupService
-                .open(EventEntryResultDeleteDialogComponent as Component, null, params['id']);
-        });
-    }
-
-    ngOnDestroy() {
-        this.routeSub.unsubscribe();
-    }
+  confirmDelete(): void {
+    this.eventEntryResultService.delete(this.result.id).subscribe(() => this.dialogRef.close(this.result.id));
+  }
 }

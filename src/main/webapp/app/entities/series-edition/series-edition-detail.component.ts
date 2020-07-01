@@ -1,151 +1,181 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiAlertService  } from 'ng-jhipster';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
-import { SeriesEdition } from './series-edition.model';
+import { JhiAlertService } from 'ng-jhipster';
+
 import { SeriesEditionService } from './series-edition.service';
-import { EventEditionService } from '../event-edition/event-edition.service';
-import { Driver } from '../driver';
+import { ISeriesEdition } from 'app/shared/model/series-edition.model';
+import { SeriesEditionCalendarDialogComponent } from './series-edition-calendar-dialog.component';
+import { SeriesEditionCalendarRemoveDialogComponent } from './series-edition-calendar-remove-dialog.component';
+import { SeriesEditionCloneDialogComponent } from './series-edition-clone-dialog.component';
+
+import { ImagesService } from 'app/shared/services/images.service';
+
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-    selector: 'jhi-series-edition-detail',
-    templateUrl: './series-edition-detail.component.html'
+  selector: 'jhi-series-edition-detail',
+  templateUrl: './series-edition-detail.component.html',
+  styleUrls: ['series-edition.scss']
 })
-export class SeriesEditionDetailComponent implements OnInit, OnDestroy {
+export class SeriesEditionDetailComponent implements OnInit {
+  seriesEdition: ISeriesEdition;
+  isActive = false;
+  genericPosterUrl: string;
 
-    seriesEdition: SeriesEdition;
-    private subscription: Subscription;
-    private eventSubscriber: Subscription;
-    driversStandings: any;
-    teamsStandings: any;
-    manufacturersStandings: any;
-    driversChampions: any[];
-	teamsChampions: any[];
+  displayedColumns: string[] = ['date', 'name', 'poster', 'winners', 'buttons'];
 
-    private numEvents = 0;
-    private eventsProcessed = 0;
-    private displayEvents = false;
-    private colsChampsDriver = 'col-md-3';
-    private colsChampsTeam = 'col-md-3';
+  driversStandings: any;
+  teamsStandings: any;
+  manufacturersStandings: any;
+  driversChampions: any[];
+  teamsChampions: any[];
+  numEvents = 0;
+  eventsProcessed = 0;
+  displayEvents = false;
+  colsChampsDriver = 'col-md-3';
+  colsChampsTeam = 'col-md-3';
 
-    constructor(
-        private seriesEditionService: SeriesEditionService,
-        private eventEditionService: EventEditionService,
-        private alertService: JhiAlertService,
-        private eventManager: JhiEventManager,
-        private route: ActivatedRoute,
-        private router: Router
-    ) {
-    }
+  constructor(
+    protected activatedRoute: ActivatedRoute,
+    protected alertService: JhiAlertService,
+    protected seriesEditionService: SeriesEditionService,
+    protected imagesService: ImagesService,
+    private dialog: MatDialog
+  ) {
+    this.genericPosterUrl = imagesService.getGenericRacePoster();
+  }
 
-    ngOnInit() {
-        this.subscription = this.route.params.subscribe((params) => {
-            this.load(params['id']);
-        });
-        this.registerChangeInSeriesEditions();
-    }
+  ngOnInit() {
+    this.activatedRoute.data.subscribe(({ seriesEdition }) => {
+      this.seriesEdition = seriesEdition;
+      this.loadSeriesEvents();
+    });
+  }
 
-    load(id) {
-        this.seriesEditionService.find(id).subscribe((seriesEdition) => {
-            this.seriesEdition = seriesEdition;
-            this.loadEvents(id);
-            this.loadDriversChampions(id);
-            if (this.seriesEdition.teamsStandings) {
-                this.loadTeamsChampions(id);
-            }
-            if (this.seriesEdition.manufacturersStandings) {
+  loadSeriesEvents() {
+    this.seriesEditionService.findEvents(this.seriesEdition.id).subscribe(events => {
+      this.seriesEdition.events = events.body;
+      if (events.body.filter(event => event.status !== 'ONGOING').length > 0) {
+        this.displayedColumns.unshift('status');
+      }
+    });
+  }
 
-            }
-        });
-    }
+  previousState() {
+    window.history.back();
+  }
 
-    loadEvents(id) {
-        this.seriesEditionService.findEvents(id).subscribe((events) => {
-           this.seriesEdition.events = events.json();
-        });
-    }
+  public getPosterUrl(posterUrl: string): string {
+    if (posterUrl) return posterUrl;
 
-    loadDriversStandings(id) {
-        this.seriesEditionService.findDriversStandings(id).subscribe((standings) => {
-           this.driversStandings = standings.json();
-        });
-    }
+    return this.genericPosterUrl;
+  }
 
-    loadTeamsStandings(id) {
-        this.seriesEditionService.findTeamsStandings(id).subscribe((standings) => {
-           this.teamsStandings = standings.json();
-        });
-    }
+  public getFaceUrl(faceUrl: string, numDrivers: number, thumbSize: number): string {
+    return this.imagesService.getFaceUrl(faceUrl, thumbSize, thumbSize);
+  }
 
-    loadDriversChampions(id) {
-        this.seriesEditionService.findDriversChampions(id).subscribe((champions) => {
-            this.driversChampions = champions.json();
-            if (this.driversChampions.length > 0) {
-                this.colsChampsDriver = 'col-md-' + Math.floor(12 / this.driversChampions.length);
-            }
-        });
-    }
-    
-    loadTeamsChampions(id) {
-        this.seriesEditionService.findTeamsChampions(id).subscribe((champions) => {
-            this.teamsChampions = champions.json();
-            if (this.teamsChampions.length > 0) {
-                this.colsChampsTeam = 'col-md-' + Math.floor(12 / this.teamsChampions.length);
-            }
-        });
-    }
+  public concatDriverNames(drivers: any[]): string {
+    return drivers.map(d => d.driverName).join(', ');
+  }
 
-    removeEvent(eventId) {
-        for(let i = 0; i < this.seriesEdition.events.length; i++) {
-            const event = this.seriesEdition.events[i];
-            if (event.eventEditionId === eventId) {
-                this.seriesEdition.events.splice(i, 1);
-                this.seriesEditionService.removeEventFromSeries(this.seriesEdition.id, eventId)
-                    .subscribe((res: any) => true, (res: any) => this.onRemoveError(res));
-                break;
-            }
-        }
-    }
+  addEventToCalendar() {
+    const dialogRef = this.dialog.open(SeriesEditionCalendarDialogComponent, {
+      data: {
+        seriesEdition: this.seriesEdition
+      }
+    });
 
-    updateStandings() {
-        this.alertService.info('motorsportsDatabaseApp.series.seriesEdition.updatingStandings', null, null);
-        this.seriesEditionService.updateStandings(this.seriesEdition.id).subscribe(
-                (res: any) => this.standingsUpdated(),
-                (res: any) => this.alertService.error('motorsportsDatabaseApp.series.seriesEdition.standingsNotUpdated', null, null));
-    }
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadSeriesEvents();
+      }
+    });
+  }
 
-    standingsUpdated() {
-        this.alertService.success('motorsportsDatabaseApp.series.seriesEdition.standingsUpdated', null, null);
-        this.loadDriversStandings(this.seriesEdition.id);
-        this.loadTeamsStandings(this.seriesEdition.id);
-    }
+  editEventAssignment(event) {
+    const dialogRef = this.dialog.open(SeriesEditionCalendarDialogComponent, {
+      data: {
+        seriesEdition: this.seriesEdition,
+        eventEdition: event
+      }
+    });
 
-    previousState() {
-        window.history.back();
-    }
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadSeriesEvents();
+      }
+    });
+  }
 
-    ngOnDestroy() {
-        this.subscription.unsubscribe();
-        this.eventManager.destroy(this.eventSubscriber);
-    }
+  removeEventFromSeries(event) {
+    const dialogRef = this.dialog.open(SeriesEditionCalendarRemoveDialogComponent, {
+      data: {
+        seriesEditionId: this.seriesEdition.id,
+        eventEditionId: event.id,
+        eventName: event.eventEditionName
+      }
+    });
 
-    private onRemoveError(error) {
-        this.alertService.error(error.message, null, null);
-    }
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadSeriesEvents();
+      }
+    });
+  }
 
-    registerChangeInSeriesEditions() {
-        this.eventSubscriber = this.eventManager.subscribe(
-            'seriesEditionListModification',
-            (response) => this.load(this.seriesEdition.id));
-        this.eventSubscriber.add(this.eventManager.subscribe(
-            'seriesEditionEventsListModification',
-            (response) => this.loadEvents(this.seriesEdition.id)));
-        this.eventSubscriber.add(this.eventManager.subscribe(
-        	'driversChampionsModification',
-        	(response) => this.loadDriversChampions(this.seriesEdition.id)));
-        this.eventSubscriber.add(this.eventManager.subscribe(
-        	'teamsChampionsModification',
-        	(response) => this.loadTeamsChampions(this.seriesEdition.id)));
-    }
+  cloneSeries() {
+    this.dialog.open(SeriesEditionCloneDialogComponent, {
+      data: {
+        seriesEdition: this.seriesEdition
+      }
+    });
+  }
+
+  updateStandings() {
+    this.alertService.info('motorsportsDatabaseApp.series.seriesEdition.updatingStandings', null, null);
+    this.seriesEditionService
+      .updateStandings(this.seriesEdition.id)
+      .subscribe(
+        () => this.standingsUpdated(),
+        () => this.alertService.error('motorsportsDatabaseApp.series.seriesEdition.standingsNotUpdated', null, null)
+      );
+  }
+
+  loadDriversStandings(id) {
+    this.seriesEditionService.findDriversStandings(id).subscribe(standings => {
+      this.driversStandings = standings.body;
+    });
+  }
+
+  loadTeamsStandings(id) {
+    this.seriesEditionService.findTeamsStandings(id).subscribe(standings => {
+      this.teamsStandings = standings.body;
+    });
+  }
+
+  standingsUpdated() {
+    this.alertService.success('motorsportsDatabaseApp.series.seriesEdition.standingsUpdated', null, null);
+    this.loadDriversStandings(this.seriesEdition.id);
+    this.loadTeamsStandings(this.seriesEdition.id);
+  }
+
+  loadDriversChampions(id) {
+    this.seriesEditionService.findDriversChampions(id).subscribe(champions => {
+      this.driversChampions = champions.body;
+      if (this.driversChampions.length > 0) {
+        this.colsChampsDriver = 'col-' + Math.floor(12 / this.driversChampions.length);
+      }
+    });
+  }
+
+  loadTeamsChampions(id) {
+    this.seriesEditionService.findTeamsChampions(id).subscribe(champions => {
+      this.teamsChampions = champions.body;
+      if (this.teamsChampions.length > 0) {
+        this.colsChampsTeam = 'col-' + Math.floor(12 / this.teamsChampions.length);
+      }
+    });
+  }
 }

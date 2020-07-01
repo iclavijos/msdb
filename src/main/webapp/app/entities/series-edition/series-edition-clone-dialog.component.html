@@ -1,33 +1,23 @@
-<form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
-
-    <div class="modal-header">
-        <h4 class="modal-title" id="cloneSeriesLabel" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.clone.title">Clone series edition</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="clear()">&times;</button>
-    </div>
-    <div class="modal-body">
-        <jhi-alert-error></jhi-alert-error>
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.clone.period" for="field_period">Series edition new period</label>
-            <input type="text" class="form-control" name="period" id="field_name" [(ngModel)]="newPeriod" required maxlength="20" />
-            <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.period?.invalid)">
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.period?.errors?.required" jhiTranslate="entity.validation.required">
-                   This field is required.
-                </small>
-                <small class="form-text text-danger"
-                   [hidden]="!editForm.controls.period?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 20 }">
-                   This field cannot be longer than 20 characters.
-                </small>
-            </div>
+<h1 mat-dialog-title>{{'motorsportsDatabaseApp.series.seriesEdition.clone.title' | translate }}</h1>
+<div mat-dialog-content [formGroup]="editForm">
+    <jhi-alert-error></jhi-alert-error>
+    <div class="row">
+        <div class="col-12">
+            <mat-form-field class="example-full-width">
+                <input matInput type="text" formControlName="period" required maxlength="20"
+                       placeholder="{{ 'motorsportsDatabaseApp.series.seriesEdition.clone.period' | translate }}"/>
+            </mat-form-field>
+            <mat-error *ngIf="editForm.get('period')?.hasError('maxlength')">
+                {{ 'entity.validation.maxlength' | translate : '{ max: 20 }' }}
+            </mat-error>
         </div>
-
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
-            <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
-        </button>
-        <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
-            <span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
-        </button>
-    </div>
-</form>
+</div>
+<mat-dialog-actions align="end">
+    <button mat-button class="btn btn-secondary" (click)="close()">
+        <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+    </button>
+    <button mat-button (click)="clone()" [disabled]="editForm.invalid || isSaving" class="btn btn-primary" >
+        <span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+    </button>
+</mat-dialog-actions>

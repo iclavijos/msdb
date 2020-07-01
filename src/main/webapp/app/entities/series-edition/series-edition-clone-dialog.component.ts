@@ -1,90 +1,60 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Response } from '@angular/http';
+import { Component, OnInit, Inject } from '@angular/core';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { FormBuilder, Validators, FormGroup, FormControl, ValidationErrors, FormArray } from '@angular/forms';
+import { JhiAlertService } from 'ng-jhipster';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { JhiEventManager, JhiAlertService, JhiLanguageService } from 'ng-jhipster';
-
-import { Observable } from 'rxjs/Rx';
-
-import { SeriesEditionPopupService } from './series-edition-popup.service';
+import { ISeriesEdition } from 'app/shared/model/series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
 
 @Component({
-    selector: 'jhi-series-edition-calendar-dialog',
-    templateUrl: './series-edition-clone-dialog.component.html'
+  selector: 'jhi-series-edition-calendar-dialog',
+  templateUrl: './series-edition-clone-dialog.component.html'
 })
 export class SeriesEditionCloneDialogComponent implements OnInit {
+  seriesEdition: ISeriesEdition;
+  isSaving: boolean;
 
-    newPeriod: string;
-	seriesEditionId: number;
-    authorities: any[];
-    isSaving: boolean;
+  public editForm: FormGroup;
 
-    constructor(
-        public activeModal: NgbActiveModal,
-        private jhiLanguageService: JhiLanguageService,
-        private jhiAlertService: JhiAlertService,
-        private seriesEditionService: SeriesEditionService,
-        private eventManager: JhiEventManager
-    ) {
-    }
+  constructor(
+    private _fb: FormBuilder,
+    private jhiAlertService: JhiAlertService,
+    private seriesEditionService: SeriesEditionService,
+    private dialogRef: MatDialogRef<SeriesEditionCloneDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) data: any
+  ) {
+    this.seriesEdition = data.seriesEdition;
 
-    ngOnInit() {
-        this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
-    }
-    
-    clear() {
-        this.activeModal.dismiss('cancel');
-    }
+    this.editForm = this._fb.group({
+      period: [null, [Validators.required, Validators.maxLength(20)]]
+    });
+  }
 
-    save() {
-        this.isSaving = true;
-        this.subscribeToSaveResponse(this.seriesEditionService.clone(this.seriesEditionId, this.newPeriod));
-    }
+  ngOnInit() {
+    this.isSaving = false;
+  }
 
-    private subscribeToSaveResponse(result: Observable<any>) {
-        result.subscribe((res: any) =>
-            this.onSaveSuccess(res), (res: Response) => this.onSaveError());
-    }
+  close() {
+    this.dialogRef.close();
+  }
 
-    private onSaveSuccess(result: any) {
-        this.isSaving = false;
-        this.activeModal.dismiss(result);
-    }
+  clone() {
+    this.isSaving = true;
+    this.seriesEditionService
+      .clone(this.seriesEdition.id, this.editForm.get('period').value)
+      .subscribe(() => this.onSaveSuccess(), () => this.onSaveError());
+  }
 
-    private onSaveError() {
-        this.isSaving = false;
-    }
+  private onSaveSuccess() {
+    this.isSaving = false;
+    this.dialogRef.close('ok');
+  }
 
-    private onError(error: any) {
-        this.jhiAlertService.error(error.message, null, null);
-    }
-}
-
-@Component({
-    selector: 'jhi-series-edition-clone-popup',
-    template: ''
-})
-export class SeriesEditionClonePopupComponent implements OnInit, OnDestroy {
-
-    routeSub: any;
-
-    constructor (
-        private route: ActivatedRoute,
-        private seriesEditionPopupService: SeriesEditionPopupService
-    ) {}
-
-    ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.seriesEditionPopupService
-                .openClone(SeriesEditionCloneDialogComponent as Component, params['id']);
-        });
-    }
-
-    ngOnDestroy() {
-        this.routeSub.unsubscribe();
-    }
+  private onSaveError() {
+    this.isSaving = false;
+  }
 }

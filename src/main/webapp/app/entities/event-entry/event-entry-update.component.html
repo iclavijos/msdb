@@ -1,0 +1,168 @@
+<h1 mat-dialog-title>{{'motorsportsDatabaseApp.eventEdition.entry.createOrEditLabel' | translate }}</h1>
+<div mat-dialog-content [formGroup]="editForm">
+    <jhi-alert-error></jhi-alert-error>
+    <div class="row">
+        <div class="col-3">
+            <mat-form-field class="example-full-width">
+                <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.entry.raceNumber' | translate }}" type="text"
+                       class="form-control" formControlName="raceNumber" required>
+                <mat-error *ngIf="editForm.get('raceNumber')?.hasError('required')">
+                    {{ 'entity.validation.required' | translate }}
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="col-9">
+            <div class="row">
+                <div class="col-12">
+                    <mat-form-field class="example-full-width">
+                        <mat-autocomplete #autoDriver="matAutocomplete" (optionSelected)="selectedDriver($event)">
+                            <mat-option *ngFor="let driver of (driversOptions | async)" [value]="driver">
+                                <span>{{ driver.fullName }}</span>
+                            </mat-option>
+                        </mat-autocomplete>
+                        <input matInput #driverInput class="form-control"
+                               [formControl]="driverCtrl"
+                               [matAutocomplete]="autoDriver"
+                               [matChipInputFor]="driversChipList"
+                               placeholder="{{ 'motorsportsDatabaseApp.eventEdition.entry.driver' | translate }}"/>
+
+                    </mat-form-field>
+                    <mat-chip-list #driversChipList>
+                        <mat-chip *ngFor="let driver of selectedDrivers" (removed)="removeDriver(driver)">
+                            {{driver.fullName}}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip>
+                    </mat-chip-list>
+                </div>
+                <!-- div class="col-5">
+                    <mat-checkbox formControlName="rookie">
+                        {{ 'motorsportsDatabaseApp.eventEdition.entry.rookie' | translate }}
+                    </mat-checkbox>
+                </div -->
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <mat-form-field class="example-full-width">
+                <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.entry.teamName' | translate }}" type="text"
+                       class="form-control" formControlName="entryName" required maxlength="100">
+                <mat-error *ngIf="editForm.get('entryName')?.hasError('required')">
+                    {{ 'entity.validation.required' | translate }}
+                </mat-error>
+                <mat-error *ngIf="editForm.get('entryName')?.hasError('maxlength')">
+                    {{ 'entity.validation.maxlength' | translate : '{ max: 100 }' }}
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <mat-form-field class="example-full-width">
+                <input matInput type="text" [matAutocomplete]="autoTeam" formControlName="team"
+                       placeholder="{{ 'motorsportsDatabaseApp.eventEdition.entry.team' | translate }}"/>
+                <mat-autocomplete #autoTeam="matAutocomplete" [displayWith]="displayFnTeams">
+                    <mat-option *ngFor="let team of teamsOptions | async" [value]="team">
+                        <span>{{ team.name }}</span>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+        <div class="col-6">
+            <mat-form-field class="example-full-width">
+                <input matInput type="text" [matAutocomplete]="autoOperatedBy" formControlName="operatedBy"
+                       placeholder="{{ 'motorsportsDatabaseApp.eventEdition.entry.operatedBy' | translate }}"/>
+                <mat-autocomplete #autoOperatedBy="matAutocomplete" [displayWith]="displayFnTeams">
+                    <mat-option *ngFor="let team of operatedByOptions | async" [value]="team">
+                        <span>{{ team.name }}</span>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <mat-form-field class="example-full-width">
+                <input matInput type="text" [matAutocomplete]="autoChassis" formControlName="chassis"
+                       placeholder="{{ 'motorsportsDatabaseApp.eventEdition.entry.chassis' | translate }}" required/>
+                <mat-autocomplete #autoChassis="matAutocomplete" [displayWith]="displayFnChassis">
+                    <mat-option *ngFor="let chassis of chassisOptions | async" [value]="chassis">
+                        <span>{{ chassis.manufacturer }} {{ chassis.name }}</span>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+        <div class="col-6">
+            <mat-form-field class="example-full-width">
+                <input matInput type="text" [matAutocomplete]="autoEngine" formControlName="engine"
+                       placeholder="{{ 'motorsportsDatabaseApp.eventEdition.entry.engine' | translate }}"/>
+                <mat-autocomplete #autoEngine="matAutocomplete" [displayWith]="displayFnEngines">
+                    <mat-option *ngFor="let engine of engineOptions | async" [value]="engine">
+                        <span>{{ engine.manufacturer }} {{ engine.name }}</span>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <mat-form-field class="example-full-width">
+                <input matInput type="text" [matAutocomplete]="autoTyres" formControlName="tyres"
+                       placeholder="{{ 'motorsportsDatabaseApp.eventEdition.entry.tyres' | translate }}"/>
+                <mat-autocomplete #autoTyres="matAutocomplete" [displayWith]="displayFnTyres">
+                    <mat-option *ngFor="let tyres of tyresOptions | async" [value]="tyres">
+                        <span>{{ tyres.name }}</span>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+        <div class="col-6">
+            <mat-form-field class="example-full-width">
+                <input matInput type="text" [matAutocomplete]="autoFuel" formControlName="fuel"
+                       placeholder="{{ 'motorsportsDatabaseApp.eventEdition.entry.fuel' | translate }}"/>
+                <mat-autocomplete #autoFuel="matAutocomplete" [displayWith]="displayFnFuel">
+                    <mat-option *ngFor="let fuel of fuelOptions | async" [value]="fuel">
+                        <span>{{ fuel.name }}</span>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row" *ngIf="eventEntry.eventEdition.allowedCategories.length > 1">
+        <div class="col-12">
+            <div class="form-group">
+                <label class="form-control-label">Difference type</label><br/>
+                <mat-radio-group formControlName="category">
+                    <mat-radio-button *ngFor="let category of eventEntry.eventEdition.allowedCategories" [value]="category">
+                        {{ category.name }}
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5">
+            <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.carImage" for="field_carImage">Portrait</label>
+            <div>
+                <img [src]="editForm.get('carImageUrl').value" style="max-height: 100px;" *ngIf="!editForm.get('carImage').value && editForm.get('carImageUrl').value != null" alt="car image"/>
+                <img [src]="'data:' + editForm.get('carImageContentType').value + ';base64,' + editForm.get('carImage').value" style="max-height: 100px;" *ngIf="editForm.get('carImage').value" alt="car image"/>
+                <div *ngIf="editForm.get('carImage').value" class="form-text text-danger clearfix">
+                    <button type="button" (click)="clearInputImage('carImage', 'carImageContentType', 'fileImage')" class="btn btn-secondary btn-xs pull-right">
+                        <span class="fa fa-times"></span>
+                    </button>
+                </div>
+                <input type="file" id="file_carImage" (change)="setFileData($event, 'carImage', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+            </div>
+            <input type="hidden" class="form-control" name="carImage" id="field_carImage" formControlName="carImage"/>
+            <input type="hidden" class="form-control" name="carImageContentType" id="field_carImageContentType" formControlName="carImageContentType" />
+        </div>
+    </div>
+</div>
+<mat-dialog-actions align="end">
+    <button mat-button class="btn btn-secondary" (click)="close()">
+        <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+    </button>
+    <button mat-button (click)="save()" [disabled]="editForm.invalid || isSaving" class="btn btn-primary" >
+        <span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+    </button>
+</mat-dialog-actions>

@@ -16,11 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.domain.Category;
 
 /**
- * Spring Data JPA repository for the Category entity.
+ * Spring Data  repository for the Category entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface CategoryRepository extends JpaRepository<Category,Long> {
-	
+
 	List<Category> findByNameIn(String[] names);
 
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))

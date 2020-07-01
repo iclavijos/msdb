@@ -18,20 +18,26 @@ import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.SeriesEdition;
 
 /**
- * Spring Data JPA repository for the Driver entity.
+ * Spring Data  repository for the Driver entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface DriverRepository extends JpaRepository<Driver,Long> {
-	
+
 	List<Driver> findByNameAndSurnameAndBirthDateAllIgnoreCase(String name, String surname, LocalDate date);
-	
+
 	List<Driver> findByIdIn(List<Long> ids);
-	
+
 	@Query("SELECT DISTINCT eee.drivers FROM EventEditionEntry eee WHERE ?1 MEMBER OF eee.eventEdition.seriesEditions")
 	List<Driver> findDriversInSeries(SeriesEdition seriesEdition);
-	
+
+	@Query("FROM Driver d WHERE day(d.birthDate) = ?1 AND month(d.birthDate) = ?2")
+	List<Driver> findBornOnDay(Integer day, Integer month);
+    @Query("FROM Driver d WHERE day(d.deathDate) = ?1 AND month(d.deathDate) = ?2")
+    List<Driver> findDeadOnDay(Integer day, Integer month);
+
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
-	@Query(value = "select d from Driver d")
+	@Query(value = "select d from Driver d JOIN FETCH d.nationality n")
 	@Transactional(readOnly=true)
 	Stream<Driver> streamAll();
 }

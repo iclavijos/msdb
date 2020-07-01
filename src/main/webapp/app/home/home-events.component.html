@@ -1,52 +1,52 @@
-<h2>
-    <span jhiTranslate="motorsportsDatabaseApp.event.home.title">Events</span>
-</h2>
-<div class="table-responsive" *ngIf="resultEvents">
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th><span jhiTranslate="home.drivers">Drivers</span></th>
-				<th><span jhiTranslate="home.entryName">Entry Name</span></th>
-				<th><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.winner">Winner</span></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr *ngFor="let event of resultEvents">
-				<td>{{event.eventDate | dDate:'mediumDate'}}</td>
-				<td><a [routerLink]="['/event-edition', event.id ]" >
-                        	{{event.longEventName}}
-                        </a></td>
-				<td *ngIf="!event.winners || event.winners[0]?.length === 0">-</td>
-            	<td *ngIf="event.winners && event.winners[0]?.length === 1">
-            		<span *ngIf="event.winners[0][0].winners.length === 1">{{event.winners[0][0].winners[0].drivers}}</span>
-            		<span *ngIf="event.winners[0][0].winners.length > 1">
-            			<div *ngFor="let winner of event.winners[0][0].winners">
-	                        <span class="tag tag-info">{{winner.category}}: {{ winner.drivers }}</span>
-	                    </div>
-            		</span>
-            	</td>
-            	<td *ngIf="event.winners && event.winners[0]?.length > 1">
-            		<div *ngFor="let session of event.winners[0]">
-            			<strong>{{session.session}}:</strong>
-                        <span *ngIf="session.winners.length === 1">{{session.winners[0].drivers}}</span>
-	            		<span *ngIf="session.winners.length > 1">
-	            			<div *ngFor="let winner of session.winners">
-		                        <span class="tag tag-info"><strong>{{winner.category}}:</strong> {{ winner.drivers }}</span>
-		                    </div>
-	            		</span>
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header"><h3>{{ 'home.upcomingEvents' | translate }}</h3></div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-3">
+                                {{ 'home.selectTimeZone' | translate }}
+                            </div>
+                            <div class="col-9">
+                                <mat-select [(ngModel)]="timezone" (selectionChange)="changeTimezone()">
+                                    <mat-option *ngFor="let item of timezones" [value]="item.zoneName">
+                                        {{item.countryName}} ({{item.zoneName}} {{item.gmtOffset}})
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card-block" *ngFor="let day of dates">
+                                    <h5 class="card-title">{{ day }}</h5>
+                                    <div class="card-body">
+                                        <p *ngFor="let session of filteredSessions(day);">
+                                            <strong>{{ session.sessionStartTime.format("HH:mm") }}
+                                                <span *ngIf="session.sessionEndTime"> - {{ session.sessionEndTime.format("HH:mm")}}</span>
+                                                <span *ngIf="session.durationType === 5"> ({{ session.duration}}L)</span>
+                                                <span *ngIf="session.durationType === 3"> ({{ session.duration}}KM)</span>
+                                                <span *ngIf="session.durationType === 4"> ({{ session.duration}}M)</span>: </strong>
+                                            <span>
+                                                <span *ngIf="session.seriesIds">
+                                                    <ng-template ngFor let-item [ngForOf]="session.seriesIds" let-currentIndex="index">
+                                                      <a [routerLink]="['/series/edition', item, 'view' ]" >{{session.seriesNames[currentIndex]}} </a>
+                                                    </ng-template> -
+                                                </span>
+                                                <a [routerLink]="['/event/edition', session.eventEditionId, 'view-ed' ]" >{{ session.eventName }}, {{ session.sessionName }}</a>
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="card-block" *ngIf="noEvents">
+                                    <span jhiTranslate="home.noUpcomingEvents"></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-            	</td>
-			</tr>
-		</tbody>
-	</table>
-</div>
-<div *ngIf="resultEvents && resultEvents.length">
-	<div class="row justify-content-center">
-		<jhi-item-count [page]="page" [total]="queryCount"
-			[itemsPerPage]="itemsPerPage"></jhi-item-count>
-	</div>
-	<div class="row justify-content-center">
-		<ngb-pagination [collectionSize]="totalItems" [(page)]="page"
-			(pageChange)="loadPage(page)"></ngb-pagination>
-	</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

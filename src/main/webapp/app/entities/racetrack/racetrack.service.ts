@@ -1,85 +1,44 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-import { SERVER_API_URL } from '../../app.constants';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { Racetrack } from './racetrack.model';
-import { ResponseWrapper, createRequestOption } from '../../shared';
+import { SERVER_API_URL } from 'app/app.constants';
+import { createRequestOption } from 'app/shared/util/request-util';
+import { IRacetrack } from 'app/shared/model/racetrack.model';
+import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
 
-@Injectable()
+type EntityResponseType = HttpResponse<IRacetrack>;
+type EntityArrayResponseType = HttpResponse<IRacetrack[]>;
+
+@Injectable({ providedIn: 'root' })
 export class RacetrackService {
+  public resourceUrl = SERVER_API_URL + 'api/racetracks';
+  public resourceSearchUrl = SERVER_API_URL + 'api/_search/racetracks';
 
-    private resourceUrl = SERVER_API_URL + 'api/racetracks';
-    private resourceSearchUrl = SERVER_API_URL + 'api/_search/racetracks';
+  constructor(protected http: HttpClient) {}
 
-    constructor(private http: Http) { }
+  create(racetrack: IRacetrack): Observable<EntityResponseType> {
+    return this.http.post<IRacetrack>(this.resourceUrl, racetrack, { observe: 'response' });
+  }
 
-    create(racetrack: Racetrack): Observable<Racetrack> {
-        const copy = this.convert(racetrack);
-        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
-    }
+  update(racetrack: IRacetrack): Observable<EntityResponseType> {
+    return this.http.put<IRacetrack>(this.resourceUrl, racetrack, { observe: 'response' });
+  }
 
-    update(racetrack: Racetrack): Observable<Racetrack> {
-        const copy = this.convert(racetrack);
-        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
-    }
+  find(id: number): Observable<EntityResponseType> {
+    return this.http.get<IRacetrack>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
 
-    find(id: number): Observable<Racetrack> {
-        return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            const jsonResponse = res.json();
-            return this.convertItemFromServer(jsonResponse);
-        });
-    }
+  query(req?: any): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<IRacetrack[]>(this.resourceUrl, { params: options, observe: 'response' });
+  }
 
-    findLayouts(id: number): Observable<ResponseWrapper> {
-        return this.http.get(`${this.resourceUrl}/${id}/layouts`)
-            .map((res: Response) => this.convertResponse(res));
-    }
+  delete(id: number): Observable<HttpResponse<any>> {
+    return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
 
-    query(req?: any): Observable<ResponseWrapper> {
-        const options = createRequestOption(req);
-        return this.http.get(this.resourceUrl, options)
-            .map((res: Response) => this.convertResponse(res));
-    }
-
-    delete(id: number): Observable<Response> {
-        return this.http.delete(`${this.resourceUrl}/${id}`);
-    }
-
-    search(req?: any): Observable<ResponseWrapper> {
-        const options = createRequestOption(req);
-        return this.http.get(this.resourceSearchUrl, options)
-            .map((res: any) => this.convertResponse(res));
-    }
-
-    private convertResponse(res: Response): ResponseWrapper {
-        const jsonResponse = res.json();
-        const result = [];
-        for (let i = 0; i < jsonResponse.length; i++) {
-            result.push(this.convertItemFromServer(jsonResponse[i]));
-        }
-        return new ResponseWrapper(res.headers, result, res.status);
-    }
-
-    /**
-     * Convert a returned JSON object to Racetrack.
-     */
-    private convertItemFromServer(json: any): Racetrack {
-        const entity: Racetrack = Object.assign(new Racetrack(), json);
-        return entity;
-    }
-
-    /**
-     * Convert a Racetrack to a JSON which can be sent to the server.
-     */
-    private convert(racetrack: Racetrack): Racetrack {
-        const copy: Racetrack = Object.assign({}, racetrack);
-        return copy;
-    }
+  findLayouts(id: number): Observable<HttpResponse<IRacetrackLayout[]>> {
+    return this.http.get<IRacetrackLayout[]>(`${this.resourceUrl}/${id}/layouts`, { observe: 'response' });
+  }
 }

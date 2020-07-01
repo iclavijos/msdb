@@ -1,29 +1,29 @@
 package com.icesoft.msdb.domain;
 
-import org.hibernate.annotations.Cache;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import com.icesoft.msdb.MSDBException;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.data.elasticsearch.annotations.Document;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.icesoft.msdb.MSDBException;
 
 /**
  * A SeriesEdition.
  */
 @Entity
 @Table(name = "series_edition")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "seriesedition")
 public class SeriesEdition extends AbstractAuditingEntity implements Serializable {
 
@@ -31,11 +31,13 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
     @Size(max = 150)
     @Column(name = "edition_name", length = 150, nullable = false)
+    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
     private String editionName;
 
 	@NotNull
@@ -79,7 +81,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         joinColumns=@JoinColumn(name="series_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="event_id", referencedColumnName="ID"))
     @OrderBy("eventDate ASC")
-    private List<EventEdition> events;
+    private Set<EventEdition> events = new HashSet<>();
 
 //    @ManyToMany(fetch=FetchType.EAGER)
 //    @Fetch(FetchMode.SELECT)
@@ -255,16 +257,25 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     	this.pointsSystems = pointsSystems;
     }
 
-    public List<EventEdition> getEvents() {
-    	if (events == null) {
-    		events = new ArrayList<>();
-    	}
-		return events;
+    public Set<EventEdition> getEvents() {
+        return Optional.ofNullable(events).orElse(new HashSet<>());
 	}
 
-	public void setEvents(List<EventEdition> events) {
+	public void setEvents(Set<EventEdition> events) {
 		this.events = events;
 	}
+
+	public void addEvent(EventEdition event) {
+        Set<EventEdition> events = getEvents();
+        events.add(event);
+        this.events = events;
+        event.getSeriesEditions().add(this);
+    }
+
+    public void removeEvent(EventEdition event) {
+        this.events.remove(event);
+        event.getSeriesEditions().remove(this);
+    }
 
 	public Series getSeries() {
         return series;
@@ -361,14 +372,10 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof SeriesEdition)) {
             return false;
         }
-        SeriesEdition seriesEdition = (SeriesEdition) o;
-        if (seriesEdition.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), seriesEdition.getId());
+        return id != null && id.equals(((SeriesEdition) o).id);
     }
 
     @Override

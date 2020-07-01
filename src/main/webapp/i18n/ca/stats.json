@@ -1,31 +1,33 @@
 {
-    "motorsportsDatabaseApp": {
-    	"stats": {
-    		"home": {
-    			"title": "Estadístiques",
-    			"init": "S'estàn recalculant les estadístiques... esperi uns segons",
-    			"rebuilt": "Estadístiques recalculades correctament"
-    		},
-    		"participations": "Participacions",
-    		"starts": "Sortides",
-    		"finished": "Finalitzades",
-    		"bestFinalPosition": "Millor posició final",
-    		"championships": "Campionats",
-    		"wins": "Victòries",
-    		"podiums": "Podis",
-    		"poles": "Poles",
-    		"points": "Punts",
-    		"bestStartingPosition": "Millor posició sortida",
-    		"fastLaps": "Voltes ràpides",
-    		"top3": "Top 3",
-    		"top5": "Top 5",
-    		"top10": "Top 10",
-    		"lapsCompleted": "Voltes completades",
-    		"kmsCompleted": "Distància completada",
-    		"grandChelems": "Grand Chelems",
-    		"titles": "Títols",
-    		"time": "vegada",
-    		"times": "vegades"
-    	}
+  "motorsportsDatabaseApp": {
+    "stats": {
+      "home": {
+        "title": "Estadístiques",
+        "init": "S'estàn recalculant les estadístiques... esperi uns segons",
+        "rebuilt": "Estadístiques recalculades correctament"
+      },
+      "participations": "Participacions",
+      "starts": "Sortides",
+      "finished": "Finalitzades",
+      "bestFinalPosition": "Millor posició final",
+      "championships": "Campionats",
+      "wins": "Victòries",
+      "podiums": "Podis",
+      "poles": "Poles",
+      "points": "Punts",
+      "bestStartingPosition": "Millor posició sortida",
+      "fastLaps": "Voltes ràpides",
+      "top3": "Top 3",
+      "top5": "Top 5",
+      "top10": "Top 10",
+      "lapsCompleted": "Voltes completades",
+      "kmsCompleted": "Distància completada",
+      "grandChelems": "Grand Chelems",
+      "titles": "Títols",
+      "time": "vegada",
+      "times": "vegades",
+      "noData": "No hi ha dades estadístiques disponibles",
+      "overall": "Acumulat"
     }
+  }
 }

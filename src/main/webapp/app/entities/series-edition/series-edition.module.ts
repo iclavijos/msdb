@@ -1,87 +1,31 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
 
-import { MotorsportsDatabaseStandingsModule} from '../standings/standings.module';
-import { MotorsportsDatabaseSharedModule } from '../../shared';
-
-import {
-    SeriesEditionService,
-    SeriesEditionPopupService,
-    SeriesEditionComponent,
-    SeriesEditionDetailComponent,
-    SeriesEditionDialogComponent,
-    SeriesEditionPopupComponent,
-    SeriesEditionDeletePopupComponent,
-    SeriesEditionDeleteDialogComponent,
-    SeriesEditionCalendarPopupComponent,
-    SeriesEditionCalendarDialogComponent,
-    SeriesEditionClonePopupComponent,
-    SeriesEditionCloneDialogComponent,
-    SeriesEditionDriversChampionsPopupComponent,
-    SeriesEditionDriversChampionsDialogComponent,
-    SeriesEditionManufacturersChampionsPopupComponent,
-    SeriesEditionManufacturersChampionsDialogComponent,
-    SeriesEditionTeamsChampionsPopupComponent,
-    SeriesEditionTeamsChampionsDialogComponent,
-    seriesEditionRoute,
-    seriesEditionPopupRoute,
-    SeriesEditionResolvePagingParams,
-} from './';
-
-const ENTITY_STATES = [
-    ...seriesEditionRoute,
-    ...seriesEditionPopupRoute,
-];
+import { MotorsportsDatabaseStandingsModule } from '../standings/standings.module';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { SeriesEditionComponent } from './series-edition.component';
+import { SeriesEditionDetailComponent } from './series-edition-detail.component';
+import { SeriesEditionUpdateComponent } from './series-edition-update.component';
+import { SeriesEditionCalendarDialogComponent } from './series-edition-calendar-dialog.component';
+import { SeriesEditionCalendarRemoveDialogComponent } from './series-edition-calendar-remove-dialog.component';
+import { SeriesEditionCloneDialogComponent } from './series-edition-clone-dialog.component';
+import { SeriesEditionRoutingModule } from './series-edition.route';
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseStandingsModule,
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
-    exports: [
-        SeriesEditionComponent
-    ],
-    declarations: [
-        SeriesEditionComponent,
-        SeriesEditionDetailComponent,
-        SeriesEditionDialogComponent,
-        SeriesEditionDeleteDialogComponent,
-        SeriesEditionPopupComponent,
-        SeriesEditionDeletePopupComponent,
-        SeriesEditionCalendarPopupComponent,
-        SeriesEditionCalendarDialogComponent,
-        SeriesEditionClonePopupComponent,
-        SeriesEditionCloneDialogComponent,
-        SeriesEditionDriversChampionsPopupComponent,
-        SeriesEditionDriversChampionsDialogComponent,
-        SeriesEditionManufacturersChampionsPopupComponent,
-        SeriesEditionManufacturersChampionsDialogComponent,
-        SeriesEditionTeamsChampionsPopupComponent,
-        SeriesEditionTeamsChampionsDialogComponent,
-    ],
-    entryComponents: [
-        SeriesEditionComponent,
-        SeriesEditionDialogComponent,
-        SeriesEditionPopupComponent,
-        SeriesEditionDeleteDialogComponent,
-        SeriesEditionDeletePopupComponent,
-        SeriesEditionCalendarPopupComponent,
-        SeriesEditionCalendarDialogComponent,
-        SeriesEditionClonePopupComponent,
-        SeriesEditionCloneDialogComponent,
-        SeriesEditionDriversChampionsPopupComponent,
-        SeriesEditionDriversChampionsDialogComponent,
-        SeriesEditionManufacturersChampionsPopupComponent,
-        SeriesEditionManufacturersChampionsDialogComponent,
-        SeriesEditionTeamsChampionsPopupComponent,
-        SeriesEditionTeamsChampionsDialogComponent,
-    ],
-    providers: [
-        SeriesEditionService,
-        SeriesEditionPopupService,
-        SeriesEditionResolvePagingParams,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseStandingsModule, MotorsportsDatabaseSharedModule, SeriesEditionRoutingModule],
+  declarations: [
+    SeriesEditionComponent,
+    SeriesEditionDetailComponent,
+    SeriesEditionUpdateComponent,
+    SeriesEditionCalendarDialogComponent,
+    SeriesEditionCalendarRemoveDialogComponent,
+    SeriesEditionCloneDialogComponent
+  ],
+  exports: [SeriesEditionComponent],
+  entryComponents: [
+    SeriesEditionUpdateComponent,
+    SeriesEditionCalendarDialogComponent,
+    SeriesEditionCalendarRemoveDialogComponent,
+    SeriesEditionCloneDialogComponent
+  ]
 })
 export class MotorsportsDatabaseSeriesEditionModule {}

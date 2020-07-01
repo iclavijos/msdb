@@ -1,53 +1,65 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager } from 'ng-jhipster';
+import { JhiDataUtils } from 'ng-jhipster';
 
-import { Chassis } from './chassis.model';
+import { FlatTreeControl } from '@angular/cdk/tree';
+import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+
+import { IChassis } from 'app/shared/model/chassis.model';
 import { ChassisService } from './chassis.service';
 
+interface ChassisNode {
+  expandable: boolean;
+  chassis: IChassis;
+  level: number;
+}
+
 @Component({
-    selector: 'jhi-chassis-detail',
-    templateUrl: './chassis-detail.component.html'
+  selector: 'jhi-chassis-detail',
+  templateUrl: './chassis-detail.component.html'
 })
-export class ChassisDetailComponent implements OnInit, OnDestroy {
+export class ChassisDetailComponent implements OnInit {
+  treeControl = new FlatTreeControl<ChassisNode>(node => node.level, node => node.expandable);
 
-    chassis: Chassis;
-    private subscription: Subscription;
-    private eventSubscriber: Subscription;
+  treeFlattener = new MatTreeFlattener(
+    (node: IChassis, nodeLevel: number) => {
+      return {
+        expandable: !!node.evolutions && node.evolutions.length > 0,
+        chassis: node,
+        level: nodeLevel
+      };
+    },
+    node => node.level,
+    node => node.expandable,
+    node => node.evolutions
+  );
 
-    constructor(
-        private eventManager: JhiEventManager,
-        private chassisService: ChassisService,
-        private route: ActivatedRoute
-    ) {
-    }
+  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-    ngOnInit() {
-        this.subscription = this.route.params.subscribe((params) => {
-            this.load(params['id']);
-        });
-        this.registerChangeInChassis();
-    }
+  chassis: IChassis;
 
-    load(id) {
-        this.chassisService.find(id).subscribe((chassis) => {
-            this.chassis = chassis;
-        });
-    }
-    previousState() {
-        window.history.back();
-    }
+  constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute, protected chassisService: ChassisService) {}
 
-    ngOnDestroy() {
-        this.subscription.unsubscribe();
-        this.eventManager.destroy(this.eventSubscriber);
-    }
+  hasChild = (_: number, node: ChassisNode) => node.expandable;
 
-    registerChangeInChassis() {
-        this.eventSubscriber = this.eventManager.subscribe(
-            'chassisListModification',
-            (response) => this.load(this.chassis.id)
-        );
-    }
+  ngOnInit() {
+    this.activatedRoute.data.subscribe(({ chassis }) => {
+      this.chassis = chassis;
+      this.chassisService.getEvolutions(chassis.id).subscribe(evolutions => {
+        this.chassis.evolutions = evolutions.body;
+        this.dataSource.data = this.chassis.evolutions;
+      });
+    });
+  }
+
+  byteSize(field) {
+    return this.dataUtils.byteSize(field);
+  }
+
+  openFile(contentType, field) {
+    return this.dataUtils.openFile(contentType, field);
+  }
+  previousState() {
+    window.history.back();
+  }
 }

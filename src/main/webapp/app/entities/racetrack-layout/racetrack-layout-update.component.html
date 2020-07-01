@@ -1,0 +1,101 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title">{{ editForm.get('name').value }}</h4>
+                        <p class="card-category">{{ 'motorsportsDatabaseApp.racetrack.home.createOrEditLabel' | translate }}</p>
+                    </div>
+                    <div class="card-body">
+                        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+                            <jhi-alert-error></jhi-alert-error>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.racetrackLayout.name' | translate }}" type="text"
+                                               class="form-control" name="name" id="field_name" formControlName="name">
+                                        <div *ngIf="editForm.get('name').invalid && (editForm.get('name').dirty || editForm.get('name').touched)">
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('name').errors.required" jhiTranslate="entity.validation.required">
+                                                This field is required.
+                                            </small>
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('name').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
+                                                This field cannot be longer than 100 characters.
+                                            </small>
+                                        </div>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.racetrackLayout.length' | translate }}" type="number"
+                                               class="form-control" name="length" id="field_length" formControlName="length">
+                                        <div *ngIf="editForm.get('length').invalid && (editForm.get('length').dirty || editForm.get('length').touched)">
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('length').errors.required" jhiTranslate="entity.validation.required">
+                                                This field is required.
+                                            </small>
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('length').errors.number" jhiTranslate="entity.validation.number">
+                                                This field should be a number.
+                                            </small>
+                                        </div>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-3">
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.racetrackLayout.yearFirstUse' | translate }}" type="number"
+                                               class="form-control" name="name" id="field_yearFirstUse" formControlName="yearFirstUse">
+                                        <div *ngIf="editForm.get('yearFirstUse').invalid && (editForm.get('yearFirstUse').dirty || editForm.get('yearFirstUse').touched)">
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('yearFirstUse').errors.required" jhiTranslate="entity.validation.required">
+                                                This field is required.
+                                            </small>
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('yearFirstUse').errors.number" jhiTranslate="entity.validation.number">
+                                                This field should be a number.
+                                            </small>
+                                        </div>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-3">
+                                    <label jhiTranslate="motorsportsDatabaseApp.racetrackLayout.active">Active</label>
+                                    <i [ngClass]="editForm.get('active').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="switchActive()"></i>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrackLayout.layoutImage" for="field_image">Layout Image</label>
+                                    <div>
+                                        <img [src]="editForm.get('layoutImageUrl').value" style="max-height: 100px;" *ngIf="!editForm.get('layoutImage').value && editForm.get('layoutImageUrl').value != null" alt="layout image"/>
+                                        <img [src]="'data:' + editForm.get('layoutImageContentType').value + ';base64,' + editForm.get('layoutImage').value" style="max-height: 100px;" *ngIf="editForm.get('layoutImage').value" alt="layout image"/>
+                                        <div *ngIf="editForm.get('layoutImage').value" class="form-text text-danger clearfix">
+                                            <button type="button" (click)="clearInputImage('layoutImage', 'layoutImageContentType', 'fileImage')" class="btn btn-secondary btn-xs pull-right">
+                                                <span class="fa fa-times"></span>
+                                            </button>
+                                        </div>
+                                        <input type="file" id="file_image" (change)="setFileData($event, 'layoutImage', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                                    </div>
+                                    <input type="hidden" class="form-control" name="image" id="field_image" formControlName="layoutImage"/>
+                                    <input type="hidden" class="form-control" name="imageContentType" id="field_imageContentType" formControlName="layoutImageContentType" />
+                                </div>
+                            </div>
+                            <div>
+                                <button mat-raised-button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                                </button>
+                                <button mat-raised-button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                                </button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

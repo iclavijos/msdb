@@ -1,31 +1,33 @@
 {
-    "motorsportsDatabaseApp": {
-    	"stats": {
-    		"home": {
-    			"title": "Statistics",
-    			"init": "Statistics being rebuilt... wait a few seconds",
-    			"rebuilt": "Statistics successfully rebuilt"
-    		},
-    		"participations": "Participations",
-    		"starts": "Starts",
-    		"finished": "Finished",
-    		"bestFinalPosition": "Best finishing position",
-    		"championships": "Championships",
-    		"wins": "Wins",
-    		"podiums": "Podiums",
-    		"poles": "Poles",
-    		"points": "Points",
-    		"bestStartingPosition": "Best starting position",
-    		"fastLaps": "Fastest laps",
-    		"top3": "Top 3",
-    		"top5": "Top 5",
-    		"top10": "Top 10",
-    		"lapsCompleted": "Laps completed",
-    		"kmsCompleted": "Distance completed",
-    		"grandChelems": "Grand Chelems",
-    		"titles": "Titles",
-    		"time": "time",
-    		"times": "times"
-    	}
+  "motorsportsDatabaseApp": {
+    "stats": {
+      "home": {
+        "title": "Statistics",
+        "init": "Statistics being rebuilt... wait a few seconds",
+        "rebuilt": "Statistics successfully rebuilt"
+      },
+      "participations": "Participations",
+      "starts": "Starts",
+      "finished": "Finished",
+      "bestFinalPosition": "Best finishing position",
+      "championships": "Championships",
+      "wins": "Wins",
+      "podiums": "Podiums",
+      "poles": "Poles",
+      "points": "Points",
+      "bestStartingPosition": "Best starting position",
+      "fastLaps": "Fastest laps",
+      "top3": "Top 3",
+      "top5": "Top 5",
+      "top10": "Top 10",
+      "lapsCompleted": "Laps completed",
+      "kmsCompleted": "Distance completed",
+      "grandChelems": "Grand Chelems",
+      "titles": "Titles",
+      "time": "time",
+      "times": "times",
+      "noData": "No statistics data available",
+      "overall": "Overall"
     }
+  }
 }

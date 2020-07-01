@@ -1,140 +1,202 @@
 <div>
-    <br/>
-    <div class="table-responsive" *ngIf="eventEntryResults">
-    	<div class="float-right" *ngIf="edition.allowedCategories.length > 1">
-			<select class="form-control" id="field_category" name="category" [(ngModel)]="filterCategory">
-				<option value="ALL"></option>
-            	<option *ngFor="let category of edition.allowedCategories" [ngValue]="category.shortname">{{category.name}}</option>
-        	</select>
-        </div>
-        <table class="table table-striped">
-            <thead>
-            <tr>
-            <th></th>
-            <th></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.driver">Driver</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.team">Team</span></th>
-            <th *ngIf="edition.allowedCategories.length > 1"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category">Category</span></th>
-            <th *ngIf="session.sessionTypeValue === 2"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.totalTime">Total Time</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.bestLapTime">Best Lap Time</span></th>
-            <th><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.lapsCompleted">Laps Completed</span></th>
-            <th *ngIf="session.sessionTypeValue === 2"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.lapsLed">Laps Led</span></th>
-            <th *ngIf="session.sessionTypeValue === 2"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.retired">Retired</span></th>
-            <th *ngIf="session.sessionTypeValue === 2"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.retirementCause">Retirement Cause</span></th>
-            <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let eventEntryResult of eventEntryResults | eventEntryCategoryFilter: filterCategory; trackBy: trackId; let i = index;">
-                <td>{{eventEntryResult.finalPosition >= 800 ? 
-                		eventEntryResult.finalPosition == 901 ? 'DNS' : 
-                			eventEntryResult.finalPosition == 902 ? 'DSQ' : 
-                				eventEntryResult.finalPosition == 800 ? 'NC' : '-'
-                	  :	i + 1 }}
-                	<span *ngIf="session.sessionTypeValue === 2 && eventEntryResult.startingPosition && eventEntryResult.finalPosition < 800">
-                		<span *ngIf="eventEntryResult.startingPosition < eventEntryResult.finalPosition" style="color: red">
-                			<i class="fa fa-arrow-down" aria-hidden="true"></i> {{eventEntryResult.startingPosition - eventEntryResult.finalPosition }}
-                		</span>
-                		<span *ngIf="eventEntryResult.startingPosition > eventEntryResult.finalPosition" style="color: green">
-                			<i class="fa fa-arrow-up" aria-hidden="true"></i> +{{eventEntryResult.startingPosition - eventEntryResult.finalPosition }}
-                		</span>
-                		<span *ngIf="eventEntryResult.startingPosition == eventEntryResult.finalPosition">
-                			=
-                		</span>
-                	</span>
-                	<span *ngIf="eventEntryResult.pitlaneStart"><strong>*</strong></span>
-                </td>
-                <td>
-                    <span [style.background]="eventEntryResult.entry.tyres.backgroundColor" [style.color]="eventEntryResult.entry.tyres.letterColor"
-                          style="text-align: center; line-height: 20px; width: 20px; height: 20px;" data-toggle="tooltip" data-placement="bottom" title="{{eventEntryResult.entry.tyres.name}}">
-                        {{eventEntryResult.entry.tyres.name.substring(0,1)}}
-                    </span>
-                </td>
-                <td>
-                	<div>
-                	<div class="row">
-                		<div class="col-1">
-                			#{{eventEntryResult.entry.raceNumber}}
-                		</div>
-                		<div class="col">
-                			{{session.eventEdition.multidriver ? eventEntryResult.entry.driversName : eventEntryResult.entry.drivers[0].fullName}}
-		                 		<span *ngIf="eventEntryResult.entry.rookie"> (R)</span>
-                		</div>
-                	</div>
-                	</div>
-                	<div class="row" *ngIf="eventEntryResult.sharedWith?.id">
-                		<div class="col-1">
-                		</div>
-                		<div class="col">
-                			<span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.sharedWith"></span>{{eventEntryResult.sharedWith.drivers[0].fullName}}
-                		</div>
-                	</div>
-                </td>
-                <td>{{eventEntryResult.entry.entryName}}</td>
-                <td *ngIf="edition.allowedCategories.length > 1">{{eventEntryResult.entry.category.shortname}}</td>
-                <td *ngIf="session.sessionTypeValue === 2">
-                	{{ classifiedNotRetired(eventEntryResult) ?
-                		(eventEntryResult.differenceType == 1 ? '+' + (eventEntryResult.difference | timeMaskPipe) : 
-                			eventEntryResult.difference ? eventEntryResult.difference + 'L' : '')
-                		: eventEntryResult.totalTime | timeMaskPipe : true : true}}
-                </td>
-                <td>{{eventEntryResult.bestLapTime | timeMaskPipe }} 
-                	<span *ngIf="session.sessionTypeValue !== 2 && i !== 0 && eventEntryResult.bestLapTime">(+{{gap(eventEntryResult.bestLapTime) | timeMaskPipe}})</span></td>
-                <td>{{eventEntryResult.lapsCompleted}}</td>
-                <td *ngIf="session.sessionTypeValue === 2">{{eventEntryResult.lapsLed}}</td>
-                <td *ngIf="session.sessionTypeValue === 2"><i [ngClass]="eventEntryResult.retired ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></td>
-                <td *ngIf="session.sessionTypeValue === 2">{{eventEntryResult.cause}}</td>
-                <td class="text-right">
-                    <div class="btn-group flex-btn-group-container">
-                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
-                                [routerLink]="['/', { outlets: { popup: 'event-entry-result/'+ eventEntryResult.id + '/edit'} }]"
-                                replaceUrl="true"
-                                class="btn btn-primary btn-sm">
-                            <span class="fa fa-pencil"></span>
-                        </button>
-                        <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']" 
-                                [routerLink]="['/', { outlets: { popup: 'event-entry-result/'+ eventEntryResult.id + '/delete'} }]"
-                                replaceUrl="true"
-                                class="btn btn-danger btn-sm">
-                            <span class="fa fa-remove"></span>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <span *ngIf="session.sessionTypeValue === 2" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.pitlaneStartDesc">Indicates pitlane start</span>
-    </div>
-    <h2>
-    	<div *ngIf="session.sessionTypeValue === 2">
-	    	<button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" type="button"
-	           	class="btn btn-info float-right" (click)="processResults()">
-	            <span class="fa fa-check-square"></span>
-	            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.processResults.label">
-	            Process race results
+    <div class="row">
+        <div class="col-sm-12" *ngIf="eventEntries?.length > 0">
+            <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                    class="btn btn-primary float-right create-event-entry-result"
+                    (click)="addResult()">
+                <span class="fa fa-plus"></span>
+            </button>
+            <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                    class="btn btn-success float-right"
+                    (click)="uploadResults()">
+                <span class="fa fa-plus"></span>
+                <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.uploadLabel">
+                    Upload session results
+                </span>
+            </button>
+            <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" type="button"
+                    class="btn btn-info float-right" (click)="processResults()">
+                <span class="fa fa-check-square"></span>
+                <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.processResults.label">
+	                Process race results
 	            </span>
-	        </button>
+            </button>
         </div>
-        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-           	class="btn float-right" [routerLink]="['/', { outlets: { popup: session.id + '/upload-lapbylap' } }]">
-            <span class="fa fa-plus"></span>
-            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.lapbylapLabel">
-            Upload lap by lap
-            </span>
-        </button>
-    	<button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-           	class="btn btn-success float-right" [routerLink]="['/', { outlets: { popup: session.id + '/upload-results' } }]">
-            <span class="fa fa-plus"></span>
-            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.uploadLabel">
-            Upload session results
-            </span>
-        </button>
-        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" 
-        	class="btn btn-primary float-right create-event-entry-result" [routerLink]="['/', { outlets: { popup: session.id +  '/event-entry-result-new' } }]">
-            <span class="fa fa-plus"></span>
-            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.result.home.createLabel">
-            Create new Event Entry Result
-            </span>
-        </button>
-    </h2>
+        <div class="col-sm-12">
+            <div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
+                <mat-form-field>
+                    <mat-label>Filter by category</mat-label>
+                    <mat-select [(ngModel)]="categoryToFilter" (ngModelChange)="filterCategory()">
+                        <mat-option></mat-option>
+                        <mat-option *ngFor="let category of eventEdition.allowedCategories" [value]="category.shortname">{{category.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-warning" [hidden]="eventEntryResults && eventEntryResults.length > 0">
+                <span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.home.notFound">No event sessions found</span>
+            </div>
+            <div class="table-responsive" [hidden]="!eventEntryResults || eventEntryResults?.length === 0">
+                <table mat-table class="table table-hover" [dataSource]="dataSource">
+
+                    <ng-container matColumnDef="position">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let result; let i = index">
+                            {{result.finalPosition >= 800 ?
+                            result.finalPosition == 901 ? 'DNS' :
+                            result.finalPosition == 902 ? 'DSQ' :
+                            result.finalPosition == 800 ? 'NC' : '-' :	i + 1 }}
+                            <span *ngIf="eventSession.sessionTypeValue === 2 && result.startingPosition && result.finalPosition < 800">
+                                <span *ngIf="result.startingPosition < result.finalPosition" style="color: red">
+                                    <i class="fa fa-arrow-down" aria-hidden="true"></i> {{ result.startingPosition - result.finalPosition }}
+                                </span>
+                                <span *ngIf="result.startingPosition > result.finalPosition" style="color: green">
+                                    <i class="fa fa-arrow-up" aria-hidden="true"></i> +{{ result.startingPosition - result.finalPosition }}
+                                </span>
+                                <span *ngIf="result.startingPosition == result.finalPosition">
+                                    =
+                                </span>
+                	        </span>
+                            <span *ngIf="result.pitlaneStart"><strong>*</strong></span>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="tyres">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let result">
+                            <span class="badge" [style.background]="result.entry.tyres.backgroundColor" [style.color]="result.entry.tyres.letterColor"
+                                  matTooltip="{{result.entry.tyres.name}}" matTooltipPosition="after">
+                                <h6>{{result.entry.tyres.name.substring(0,1)}}</h6>
+                            </span>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="driver">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.entry.driver' | translate}}</th>
+                        <td mat-cell *matCellDef="let result">
+                            <div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        #{{result.entry.raceNumber}} {{eventEdition.multidriver ? result.entry.driversName : result.entry.drivers[0].fullName}}
+                                        <span *ngIf="result.entry.rookie"> (R)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" *ngIf="result.sharedWith?.id">
+                                <div class="col-1">
+                                </div>
+                                <div class="col">
+                                    <span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.sharedWith"></span>{{result.sharedWith.drivers[0].fullName}}
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="team">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.entry.team' | translate}}</th>
+                        <td mat-cell *matCellDef="let result">
+                            {{result.entry.entryName}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="category">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.entry.category' | translate}}</th>
+                        <td mat-cell *matCellDef="let result">
+                            {{result.entry.category.shortname}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="totalTime">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.result.totalTime' | translate}}</th>
+                        <td mat-cell *matCellDef="let result">
+                            {{ classifiedNotRetired(result) ?
+                            (result.differenceType == 1 ? '+' + (result.difference | timeMaskPipe) :
+                            result.difference ? result.difference + 'L' : '')
+                            : result.totalTime | timeMaskPipe : true : true}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="bestLapTime">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.result.bestLapTime' | translate}}</th>
+                        <td mat-cell *matCellDef="let result">
+                            {{ result.bestLapTime | timeMaskPipe }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="difference">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.result.difference' | translate}}</th>
+                        <td mat-cell *matCellDef="let result; let i = index">
+                            <div *ngIf="eventSession.sessionTypeValue !== 2 && i !== 0 && result.bestLapTime">
+                                <span>+{{gap(result.bestLapTime, 0) | timeMaskPipe}}</span>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="previous">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.result.previous' | translate}}</th>
+                        <td mat-cell *matCellDef="let result; let i = index">
+                            <div *ngIf="eventSession.sessionTypeValue !== 2 && i !== 0 && result.bestLapTime">
+                                <span>+{{gap(result.bestLapTime, i-1) | timeMaskPipe}}</span>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="lapsCompleted">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.result.lapsCompleted' | translate}}</th>
+                        <td mat-cell *matCellDef="let result">
+                            {{result.lapsCompleted}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="lapsLed">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.result.lapsLed' | translate}}</th>
+                        <td mat-cell *matCellDef="let result">
+                            {{result.lapsLed}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="retired">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.result.retired' | translate}}</th>
+                        <td mat-cell *matCellDef="let result">
+                            <i [ngClass]="result.retired ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="retirementCause">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.result.retirementCause' | translate}}</th>
+                        <td mat-cell *matCellDef="let result">
+                            {{result.cause}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="buttons">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let result">
+                            <div class="btn-group">
+                                <button type="submit"
+                                        *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                        (click)="editResult(result)"
+                                        class="btn btn-primary btn-xs">
+                                    <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                </button>
+                                <button type="submit"
+                                        *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                                        (click)="deleteResult(result)"
+                                        queryParamsHandling="merge"
+                                        class="btn btn-danger btn-xs">
+                                    <fa-icon [icon]="'times'"></fa-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

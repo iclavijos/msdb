@@ -1,162 +1,66 @@
-<div class="row mb-3">
-	<div class="col-md-12">
-		<div class="header">
-		  <img src="/images/logo.png" alt="logo">
-		  <h1 class="display-4" jhiTranslate="home.title">Welcome to Motorsports Database</h1>
-		</div>
-	</div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <div class="row mb-3">
-			<div class="col-xl-3 col-sm-6 mb-3">
-				<div class="card text-white bg-primary o-hidden h-100">
-					<div class="card-body rounded">
-						<div class="card-body-icon">
-							<i class="icofont icofont-racer"></i>
-						</div>
-						<div class="mr-5"><h3>{{homeData.drivers}}</h3></div>
-					</div>
-					<a class="card-footer text-white clearfix small z-1" routerLink="driver">
-						<span class="float-left"> {{ 'home.drivers' | translate}}</span>
-						<span class="float-right">
-							<i class="fa fa-angle-right"></i>
-						</span>
-					</a>
-				</div>
-			</div>
-			<div class="col-xl-3 col-sm-6 mb-3">
-				<div class="card text-white bg-warning o-hidden h-100">
-					<div class="card-body rounded">
-						<div class="card-body-icon">
-							<i class="icofont icofont-track"></i>
-						</div>
-						<div class="mr-5"><h3>{{homeData.racetracks}}</h3></div>
-					</div>
-					<a class="card-footer text-white clearfix small z-1" routerLink="racetrack">
-						<span class="float-left"> {{ 'home.racetracks' | translate}}</span>
-						<span class="float-right">
-							<i class="fa fa-angle-right"></i>
-						</span>
-					</a>
-				</div>
-			</div>
-			<div class="col-xl-3 col-sm-6 mb-3">
-				<div class="card text-white bg-success o-hidden h-100">
-					<div class="card-body rounded">
-						<div class="card-body-icon">
-							<i class="icofont icofont-racing-car"></i>
-						</div>
-						<div class="mr-5"><h3>{{homeData.teams}}</h3></div>
-					</div>
-					<a class="card-footer text-white clearfix small z-1" routerLink="team">
-						<span class="float-left"> {{ 'home.teams' | translate}}</span>
-						<span class="float-right">
-							<i class="fa fa-angle-right"></i>
-						</span>
-					</a>
-				</div>
-			</div>
-			<div class="col-xl-3 col-sm-6 mb-3">
-				<div class="card  text-white bg-danger o-hidden h-100">
-					<div class="card-body rounded">
-						<div class="card-body-icon">
-							<i class="icofont icofont-trophy-alt"></i>
-						</div>
-						<div class="mr-5"><h3>{{homeData.events}}</h3></div>
-					</div>
-					<a class="card-footer text-white clearfix small z-1" routerLink="event">
-						<span class="float-left"> {{ 'home.events' | translate}}</span>
-						<span class="float-right">
-							<i class="fa fa-angle-right"></i>
-						</span>
-					</a>
-				</div>
-			</div>
-         </div>
-         <div class="row mb-3">
-         	<div class="col-sm-12" *ngIf="isAuthenticated()">
-				<div class="card">
-					<div class="card-header">{{ 'home.searchDB' | translate }}</div>
-					<div class="card-block">
-						<form name="searchFormEntries" class="form-inline">
-							<div class="input-group w-100 mt-3">
-								<label class="form-control-label col-md-3" jhiTranslate="home.searchEntries" for="searchEntries">Search entries</label>
-								<input type="text" class="form-control col-md-8" [(ngModel)]="searchEntriesStr" id="searchEntries" name="searchEntries"
-									placeholder="Ex: '1951 Fangio', 'Alonso', 'Mercedes 2016', 'Australia'...">
-								<button class="input-group-addon btn btn-info"
-									(click)="searchEntries(searchEntriesStr)">
-									<span class="fa fa-search"></span>
-								</button>
-								<button class="input-group-addon btn btn-danger"
-									(click)="clearEntries()" *ngIf="searchEntriesStr">
-									<span class="fa fa-trash-o"></span>
-								</button>
-							</div>
-						</form>
-						<form name="searchFormEvents" class="form-inline">
-							<div class="input-group w-100 mt-3">
-								<label class="form-control-label col-md-3" jhiTranslate="home.searchEvents" for="searchEvents">Search events</label>
-								<input type="text" class="form-control col-md-8" [(ngModel)]="searchEventsStr" id="searchEvents" name="searchEvents"
-									placeholder="Ex: 'Belgian GP', 'Suzuka 2010', '1997 Spain'...">
-								<button class="input-group-addon btn btn-info"
-									(click)="searchEvents(searchEventsStr)">
-									<span class="fa fa-search"></span>
-								</button>
-								<button class="input-group-addon btn btn-danger"
-									(click)="clearEvents()" *ngIf="searchEventsStr">
-									<span class="fa fa-trash-o"></span>
-								</button>
-							</div>
-						</form>
-						<br/>
-					</div>
-				</div>
-			</div>
-         </div>
-        <div class="row mb-3">
-	        <div class="col-sm-12">
-				<div class="card">
-					<div class="card-header">{{ 'home.upcomingEvents' | translate }}</div>
-					<div class="row">
-						<div class="col-xl-3 col-sm-3 mb-3">
-							{{ 'home.selectTimeZone' | translate }}
-						</div>
-						<div class="col-xl-8 col-sm-8 mb-8">
-							<select class="form-control" [(ngModel)]="timezone" id="field_timezone" name="switchTimezone" (change)="changeTimezone()">
-								<ng-template ngFor let-item [ngForOf]="timezones" let-currentIndex="index">
-									<option [value]="item.zoneName">{{item.countryName}} ({{item.zoneName}} {{item.gmtOffset}})</option>
-								</ng-template>
-							</select>
-						</div>
-					</div>
-					<div class="cardScroll">
-						<div class="card-block" *ngFor="let day of dates">
-							<h5 class="card-title">{{ day }}</h5>
-							<div class="card-body">
-								<p *ngFor="let session of filteredSessions(day);">
-		                    		<strong>{{ session.sessionStartTime.format("HH:mm") }}
-	                    			<span *ngIf="session.sessionEndTime"> - {{ session.sessionEndTime.format("HH:mm")}}</span>
-	                    			<span *ngIf="session.durationType === 5"> ({{ session.duration}}L)</span>
-	                    			<span *ngIf="session.durationType === 3"> ({{ session.duration}}KM)</span>
-	                    			<span *ngIf="session.durationType === 4"> ({{ session.duration}}M)</span>: </strong>
-                    				<span>
-	                    				<span *ngIf="session.seriesIds">
-	                    					<ng-template ngFor let-item [ngForOf]="session.seriesIds" let-currentIndex="index">
-										      <a [routerLink]="['/series/series-edition', item ]" >{{session.seriesNames[currentIndex]}} </a>
-										    </ng-template>
-	                    				</span>
-                    					- <a [routerLink]="['/event-edition', session.eventEditionId ]" >{{ session.eventName }}, {{ session.sessionName }}</a>
-                    				</span>
-		                    	</p>
-							</div>
-						</div>
-						<div class="card-block" *ngIf="noEvents">
-							<span jhiTranslate="home.noUpcomingEvents"></span>
-						</div>
-					</div>
-				</div>
-	        </div>
-         </div>
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-header card-header-warning card-header-icon">
+                        <div class="card-icon">
+                            <i class="icofont icofont-racer"></i>
+                        </div>
+                        <p class="card-category">{{ 'home.drivers' | translate }}</p>
+                        <h3 class="card-title">{{ homeData.drivers }}</h3>
+                    </div>
+                    <div class="card-footer">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-header card-header-success card-header-icon">
+                        <div class="card-icon">
+                            <i class="icofont icofont-whistle"></i>
+                        </div>
+                        <p class="card-category">{{ 'home.racetracks' | translate }}</p>
+                        <h3 class="card-title">{{ homeData.racetracks }}</h3>
+                    </div>
+                    <div class="card-footer">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-header card-header-danger card-header-icon">
+                        <div class="card-icon">
+                            <i class="icofont icofont-racing-car"></i>
+                        </div>
+                        <p class="card-category">{{ 'home.teams' | translate}}</p>
+                        <h3 class="card-title">{{ homeData.teams }}</h3>
+                    </div>
+                    <div class="card-footer">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-header card-header-info card-header-icon">
+                        <div class="card-icon">
+                            <i class="icofont icofont-trophy-alt"></i>
+                        </div>
+                        <p class="card-category">{{ 'home.events' | translate }}</p>
+                        <h3 class="card-title">{{ homeData.events }}</h3>
+                    </div>
+                    <div class="card-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <jhi-home-events></jhi-home-events>
+            </div>
+            <div class="col-6">
+                <jhi-home-ephemeris></jhi-home-ephemeris>
+            </div>
+        </div>
     </div>
 </div>

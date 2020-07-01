@@ -1,104 +1,108 @@
 {
-    "motorsportsDatabaseApp": {
-        "series" : {
-            "home": {
-                "title": "Campionats",
-                "createLabel": "Afegeix un nou campionat",
-                "createOrEditLabel": "Afegeix o edita un campionat",
-                "search": "Cerca campionats"
-            },
-            "created": "S'ha afegit un nou campionat",
-            "updated": "S'ha actualitzat el campionat",
-            "deleted": "S'ha esborrat el campionat",
-            "delete": {
-                "question": "Estàs segur que vols esborrar el campionat?"
-            },
-            "detail": {
-                "title": "Campionat"
-            },
-            "name": "Nom",
-            "shortname": "Abreviatura",
-            "organizer": "Organitzador",
-            "logo": "Logo",
-            "editions": "Edicions",
-            "seriesEdition" : {
-	            "home": {
-	                "title": "Edicions",
-	                "createLabel": "Afegeix una nova edició",
-	                "createOrEditLabel": "Afegeix o edita una edició",
-	                "search": "Cerca edicions"
-	            },
-	            "created": "S'ha afegit una nova edició",
-	            "updated": "S'ha actualitzat l'edició' ",
-	            "deleted": "S'ha esborrat l'edició' ",
-	            "delete": {
-	                "question": "Estàs segur que vols esborrar aquesta edició?"
-	            },
-	            "detail": {
-	                "title": "Edició",
-	                "info": "Info",
-	                "editions": "Edicions",
-	                "standings": "Classificacions",
-	                "driversStandings": "Classificació de pilots",
-	                "teamsStandings": "Classificació d'equips",
-	                "manufacturersStandings": "Classificació de constructors",
-	                "driver": "Pilot",
-	                "team": "Equip",
-	                "manufacturer": "Constructor",
-	                "points": "Punts",
-	                "pointsPerRace": "Punts per cursa",
-	                "resultsPerRace": "Resultats per cursa",
-	                "graphics": "Gràfiques"
-	            },
-	            "calendar": {
-	            	"title": "Calendari",
-	            	"editLabel": "Edita el calendari del campionat",
-	            	"searchEvent": "Cercar l'event",
-	            	"assignPoints": "Assigna sistema de puntuació per cada sessió putuable de l'event"
-	            },
-	            "champions": "Campions",
-	            "period": "Periòde",
-	            "singleChassis": "Xassís únic",
-	            "singleEngine": "Motor únic",
-	            "singleTyre": "Neumàtics únics",
-	            "allowedCategories": "Categories",
-	            "pointsSystems": "Sistemes de puntuació",
-	            "series": "Campionat",
-	            "numEvents": "Número de cites",
-	            "driverChamp": "Pilot campió",
-	            "teamChamp": "Equip campió",
-	            "manufacturerChamp": "Fabricant campió",
-	            "eventDate": "Data",
-	            "event": "Cita",
-	            "winner": "Guanyador",
-	            "updateStandings": "Actualitza classificacions",
-	            "updatingStandings": "Actualitzant classificacions. Espera uns segons...",
-	            "standingsNotUpdated": "No s'han pogut actualitzar les classificacions",
-	            "standingsUpdated": "Classificacions actualitzades",
-	            "driversChampions": {
-	            	"edit": "Edita pilots campions",
-	            	"selectDrivers": "Selecciona els pilots campions d'aquesta edició"
-	            },
-	            "teamsChampions": {
-	            	"edit": "Edita equips campions",
-	            	"selectDrivers": "Selecciona els equips campions d'aquesta edició"
-	            },
-	            "manufacturersChampions": {
-	            	"edit": "Edita constructors campions",
-	            	"selectDrivers": "Selecciona els constructors campions d'aquesta edició"
-	            },
-	            "clone": {
-	            	"clone": "Copia campionat",
-	            	"title": "Crea una nova edició d'aquest campionat copiant l'actual",
-	            	"period": "Periode del nou campionat"
-	            },
-	            "updateTeamsChampions": "Edita equips campions",
-	            "updateManufacturersChampions": "Edita fabricants campions",
-	            "driversStandings": "Classificació de pilots?",
-	            "teamsStandings": "Classificació d'equips?",
-	            "manufacturersStandings": "Classificació de constructors?",
-	            "standingsPerCategory": "Clasificacions per categoria?"
-	        }
-        }
+  "motorsportsDatabaseApp": {
+    "series": {
+      "home": {
+        "title": "Campionats",
+        "createLabel": "Afegeix un nou campionat",
+        "createOrEditLabel": "Afegeix o edita un campionat",
+        "search": "Cerca campionats",
+        "notFound": "No s'ha trobat cap campionat"
+      },
+      "created": "S'ha afegit un nou campionat",
+      "updated": "S'ha actualitzat el campionat",
+      "deleted": "S'ha esborrat el campionat",
+      "delete": {
+        "question": "Estàs segur que vols esborrar el campionat?"
+      },
+      "detail": {
+        "title": "Campionat"
+      },
+      "name": "Nom",
+      "shortname": "Abreviatura",
+      "organizer": "Organitzador",
+      "logo": "Logo",
+      "relevance": "Rellevància",
+      "editions": "Edicions",
+      "seriesEdition": {
+        "home": {
+          "title": "Edicions",
+          "createLabel": "Afegeix una nova edició",
+          "createOrEditLabel": "Afegeix o edita una edició",
+          "search": "Cerca edicions",
+          "notFound": "No s'ha trobat cap edició"
+        },
+        "created": "S'ha afegit una nova edició",
+        "updated": "S'ha actualitzat l'edició' ",
+        "deleted": "S'ha esborrat l'edició' ",
+        "delete": {
+          "question": "Estàs segur que vols esborrar aquesta edició?"
+        },
+        "detail": {
+          "title": "Edició",
+          "info": "Info",
+          "editions": "Edicions",
+          "standings": "Classificacions",
+          "driversStandings": "Classificació de pilots",
+          "teamsStandings": "Classificació d'equips",
+          "manufacturersStandings": "Classificació de constructors",
+          "driver": "Pilot",
+          "team": "Equip",
+          "manufacturer": "Constructor",
+          "points": "Punts",
+          "pointsPerRace": "Punts per cursa",
+          "resultsPerRace": "Resultats per cursa",
+          "graphics": "Gràfiques"
+        },
+        "calendar": {
+          "title": "Calendari",
+          "editLabel": "Edita el calendari del campionat",
+          "searchEvent": "Cercar l'event",
+          "assignPoints": "Assigna sistema de puntuació per cada sessió putuable de l'event",
+          "remove": "Estàs segur que vols eliminar la prova '{{ event }}' del campionat?"
+        },
+        "champions": "Campions",
+        "period": "Periòde",
+        "singleChassis": "Xassís únic",
+        "singleEngine": "Motor únic",
+        "singleTyre": "Neumàtics únics",
+        "allowedCategories": "Categories",
+        "pointsSystems": "Sistemes de puntuació",
+        "series": "Campionat",
+        "numEvents": "Número de cites",
+        "driverChamp": "Pilot campió",
+        "teamChamp": "Equip campió",
+        "manufacturerChamp": "Fabricant campió",
+        "eventDate": "Data",
+        "event": "Cita",
+        "winner": "Guanyador",
+        "updateStandings": "Actualitza classificacions",
+        "updatingStandings": "Actualitzant classificacions. Espera uns segons...",
+        "standingsNotUpdated": "No s'han pogut actualitzar les classificacions",
+        "standingsUpdated": "Classificacions actualitzades",
+        "driversChampions": {
+          "edit": "Edita pilots campions",
+          "selectDrivers": "Selecciona els pilots campions d'aquesta edició"
+        },
+        "teamsChampions": {
+          "edit": "Edita equips campions",
+          "selectDrivers": "Selecciona els equips campions d'aquesta edició"
+        },
+        "manufacturersChampions": {
+          "edit": "Edita constructors campions",
+          "selectDrivers": "Selecciona els constructors campions d'aquesta edició"
+        },
+        "clone": {
+          "clone": "Copia campionat",
+          "title": "Crea una nova edició d'aquest campionat copiant l'actual",
+          "period": "Periode del nou campionat"
+        },
+        "updateTeamsChampions": "Edita equips campions",
+        "updateManufacturersChampions": "Edita fabricants campions",
+        "driversStandings": "Classificació de pilots?",
+        "teamsStandings": "Classificació d'equips?",
+        "manufacturersStandings": "Classificació de constructors?",
+        "standingsPerCategory": "Clasificacions per categoria?"
+      }
     }
+  }
 }

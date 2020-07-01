@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.service.dto.DriverPointsDTO;
+import org.apache.commons.lang3.StringUtils;
 
 public class PointsRaceByRace {
 
@@ -108,7 +109,7 @@ public class PointsRaceByRace {
 			numRaces += ep.getPoints().size();
 		}
         List<DriverPointsDTO> driversWithPoints;
-		if (standings.size() > 0 && standings.get(0).getCategory() != null) {
+		if (standings.size() > 0 && standings.get(0).getCategory() != null && StringUtils.isNotBlank(category)) {
             driversWithPoints = standings.stream().filter(s -> s.getCategory().equals(category)).collect(Collectors.toList());
         } else {
             driversWithPoints = standings;

@@ -1,28 +1,23 @@
 package com.icesoft.msdb.domain;
 
-import java.io.Serializable;
-import java.util.Objects;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A Series.
  */
 @Entity
 @Table(name = "series")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "series")
 public class Series extends AbstractAuditingEntity implements Serializable {
 
@@ -30,16 +25,19 @@ public class Series extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
     @Size(max = 100)
     @Column(name = "name", length = 100, nullable = false)
+    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
     private String name;
 
     @NotNull
     @Size(max = 10)
     @Column(name = "shortname", length = 10, nullable = false)
+    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
     private String shortname;
 
     @Size(max = 50)
@@ -51,6 +49,9 @@ public class Series extends AbstractAuditingEntity implements Serializable {
 
     @Column(name = "logo_url")
     private String logoUrl;
+
+    @Column
+    private Integer relevance;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -125,6 +126,15 @@ public class Series extends AbstractAuditingEntity implements Serializable {
     public void setLogoUrl(String logoUrl) {
         this.logoUrl = logoUrl;
     }
+
+    public Integer getRelevance() {
+        return relevance;
+    }
+
+    public void setRelevance(Integer relevance) {
+        this.relevance = relevance;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -132,14 +142,10 @@ public class Series extends AbstractAuditingEntity implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Series)) {
             return false;
         }
-        Series series = (Series) o;
-        if (series.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), series.getId());
+        return id != null && id.equals(((Series) o).id);
     }
 
     @Override
@@ -155,6 +161,7 @@ public class Series extends AbstractAuditingEntity implements Serializable {
             ", shortname='" + getShortname() + "'" +
             ", organizer='" + getOrganizer() + "'" +
             ", logoUrl='" + getLogoUrl() + "'" +
+            ", relevance='" + getRelevance() + "'" +
             '}';
     }
 }

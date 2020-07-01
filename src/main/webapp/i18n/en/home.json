@@ -1,30 +1,38 @@
 {
-    "home": {
-        "title": "Welcome to Motorsports Database!",
-        "logged": {
-            "message": "You are logged in as user \"{{username}}\"."
-        },
-        "link": {
-            "follow": "follow @iclavijos on Twitter"
-        },
-        "searchEntries": "Search entries:",
-        "searchEvents": "Search events:",
-        "entriesResult": "Entries found",
-        "drivers": "Drivers",
-        "teams": "Teams",
-        "racetracks": "Racetracks",
-        "events": "Events",
-        "entryName": "Entry",
-        "date": "Date",
-        "eventName": "Event",
-        "car": "Chassis/Engine",
-        "fastestLap": "Fastest Lap",
-        "qualyLap": "Q Fastest Time",
-        "raceLap": "Race Fastest Time",
-        "racePosition": "Race Pos.",
-        "upcomingEvents": "Upcoming events",
-        "noUpcomingEvents": "No upcoming events scheduled in next two weeks",
-        "searchDB": "Search database",
-        "selectTimeZone": "Choose the time zone"
-    }
+  "home": {
+    "title": "Welcome to Motorsports Database!",
+    "logged": {
+      "message": "You are logged in as user \"{{username}}\"."
+    },
+    "link": {
+      "follow": "follow @iclavijos on Twitter"
+    },
+    "searchEntries": "Search entries:",
+    "searchEvents": "Search events:",
+    "entriesResult": "Entries found",
+    "drivers": "Drivers",
+    "teams": "Teams",
+    "racetracks": "Racetracks",
+    "events": "Events",
+    "entryName": "Entry",
+    "date": "Date",
+    "eventName": "Event",
+    "car": "Chassis/Engine",
+    "fastestLap": "Fastest Lap",
+    "qualyLap": "Q Fastest Time",
+    "raceLap": "Race Fastest Time",
+    "racePosition": "Race Pos.",
+    "upcomingEvents": "Upcoming events",
+    "noUpcomingEvents": "No upcoming events scheduled in next two weeks",
+    "searchDB": "Search database",
+    "selectTimeZone": "Choose the time zone",
+    "thisDayIn": "On this day in...",
+    "born": "was born",
+    "died": "died",
+    "in": "in",
+    "at": "at",
+    "yearsOld": "years old",
+    "eventTookPlace": "The {{ event }} took place",
+    "eventRaceTookPlace": "The {{ race }} belonging to {{ event }} took place"
+  }
 }

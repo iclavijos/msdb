@@ -1,27 +1,40 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { HttpClient } from '@angular/common/http';
+import { map, shareReplay } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
-import { SERVER_API_URL } from '../../app.constants';
+import { SERVER_API_URL } from 'app/app.constants';
 import { ProfileInfo } from './profile-info.model';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ProfileService {
+  private infoUrl = SERVER_API_URL + 'management/info';
+  private profileInfo$: Observable<ProfileInfo>;
 
-    private profileInfoUrl = SERVER_API_URL + 'api/profile-info';
+  constructor(private http: HttpClient) {}
 
-    constructor(private http: Http) { }
-
-    getProfileInfo(): Observable<ProfileInfo> {
-        return this.http.get(this.profileInfoUrl)
-            .map((res: Response) => {
-                const data = res.json();
-                const pi = new ProfileInfo();
-                pi.activeProfiles = data.activeProfiles;
-                pi.ribbonEnv = data.ribbonEnv;
-                pi.inProduction = data.activeProfiles.indexOf('prod') !== -1;
-                pi.swaggerEnabled = data.activeProfiles.indexOf('swagger') !== -1;
-                return pi;
-            });
+  getProfileInfo(): Observable<ProfileInfo> {
+    if (this.profileInfo$) {
+      return this.profileInfo$;
     }
+
+    this.profileInfo$ = this.http.get<ProfileInfo>(this.infoUrl).pipe(
+      map((profileInfo: ProfileInfo) => {
+        const pi = new ProfileInfo();
+        pi.activeProfiles = profileInfo.activeProfiles;
+        const displayRibbonOnProfiles = profileInfo['display-ribbon-on-profiles'].split(',');
+        if (pi.activeProfiles) {
+          const ribbonProfiles = displayRibbonOnProfiles.filter(profile => pi.activeProfiles.includes(profile));
+          if (ribbonProfiles.length !== 0) {
+            pi.ribbonEnv = ribbonProfiles[0];
+          }
+          pi.inProduction = pi.activeProfiles.includes('prod');
+          pi.swaggerEnabled = pi.activeProfiles.includes('swagger');
+        }
+        return pi;
+      }),
+      shareReplay()
+    );
+    return this.profileInfo$;
+  }
 }

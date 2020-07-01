@@ -1,0 +1,11 @@
+<button mat-flat-button *ngFor="let menuItem of menuItems" [routerLink]="[menuItem.path]">
+    <i class="{{ menuItem.iconClass }}">{{menuItem.icon}}</i>
+    <span>{{ menuItem.title | translate }}</span>
+</button>
+<ng-container *ngFor="let menuItem of restrictedMenuItems">
+    <button mat-flat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+       [routerLink]="[menuItem.path]">
+        <i class="{{ menuItem.iconClass }}">{{menuItem.icon}}</i>
+        <span>{{ menuItem.title | translate }}</span>
+    </button>
+</ng-container>

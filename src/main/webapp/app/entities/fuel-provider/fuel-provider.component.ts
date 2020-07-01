@@ -1,157 +1,176 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiParseLinks, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
+import { merge, of as observableOf, Subscription } from 'rxjs';
+import { catchError, map, startWith, switchMap } from 'rxjs/operators';
+import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { FuelProvider } from './fuel-provider.model';
+import { IFuelProvider } from 'app/shared/model/fuel-provider.model';
 import { FuelProviderService } from './fuel-provider.service';
-import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
+
+import { MatPaginator, MatSort } from '@angular/material';
 
 @Component({
-    selector: 'jhi-fuel-provider',
-    templateUrl: './fuel-provider.component.html'
+  selector: 'jhi-fuel-provider',
+  templateUrl: './fuel-provider.component.html'
 })
-export class FuelProviderComponent implements OnInit, OnDestroy {
+export class FuelProviderComponent implements AfterViewInit, OnDestroy {
+  currentAccount: any;
+  fuelProviders: IFuelProvider[];
+  error: any;
+  success: any;
+  eventSubscriber: Subscription;
+  currentSearch: string;
+  routeData: any;
+  links: any;
+  totalItems: any;
+  itemsPerPage: any;
+  page: any;
+  predicate: any;
+  previousPage: any;
+  reverse: any;
 
-currentAccount: any;
-    fuelProviders: FuelProvider[];
-    error: any;
-    success: any;
-    eventSubscriber: Subscription;
-    currentSearch: string;
-    routeData: any;
-    links: any;
-    totalItems: any;
-    queryCount: any;
-    itemsPerPage: any;
-    page: any;
-    predicate: any;
-    previousPage: any;
-    reverse: any;
+  displayedColumns: string[] = ['name', 'logo', 'buttons'];
 
-    constructor(
-        private fuelProviderService: FuelProviderService,
-        private parseLinks: JhiParseLinks,
-        private jhiAlertService: JhiAlertService,
-        private principal: Principal,
-        private activatedRoute: ActivatedRoute,
-        private dataUtils: JhiDataUtils,
-        private router: Router,
-        private eventManager: JhiEventManager
-    ) {
-        this.itemsPerPage = ITEMS_PER_PAGE;
-        this.routeData = this.activatedRoute.data.subscribe((data) => {
-            this.page = data['pagingParams'].page;
-            this.previousPage = data['pagingParams'].page;
-            this.reverse = data['pagingParams'].ascending;
-            this.predicate = data['pagingParams'].predicate;
-        });
-        this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
-    }
+  resultsLength = 0;
+  isLoadingResults = true;
 
-    loadAll() {
-        if (this.currentSearch) {
-            this.fuelProviderService.search({
-                page: this.page - 1,
-                query: this.currentSearch,
-                size: this.itemsPerPage,
-                sort: this.sort()}).subscribe(
-                    (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
-                    (res: ResponseWrapper) => this.onError(res.json)
-                );
-            return;
-        }
-        this.fuelProviderService.query({
-            page: this.page - 1,
-            size: this.itemsPerPage,
-            sort: this.sort()}).subscribe(
-            (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
-            (res: ResponseWrapper) => this.onError(res.json)
-        );
-    }
-    loadPage(page: number) {
-        if (page !== this.previousPage) {
-            this.previousPage = page;
-            this.transition();
-        }
-    }
-    transition() {
-        this.router.navigate(['/fuel-provider'], {queryParams:
-            {
-                page: this.page,
-                size: this.itemsPerPage,
-                search: this.currentSearch,
-                sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-            }
-        });
-        this.loadAll();
-    }
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-    clear() {
-        this.page = 0;
-        this.currentSearch = '';
-        this.router.navigate(['/fuel-provider', {
-            page: this.page,
-            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-        }]);
-        this.loadAll();
-    }
-    search(query) {
-        if (!query) {
-            return this.clear();
-        }
-        this.page = 0;
-        this.currentSearch = query;
-        this.router.navigate(['/fuel-provider', {
-            search: this.currentSearch,
-            page: this.page,
-            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-        }]);
-        this.loadAll();
-    }
-    ngOnInit() {
-        this.loadAll();
-        this.principal.identity().then((account) => {
-            this.currentAccount = account;
-        });
-        this.registerChangeInFuelProviders();
-    }
+  constructor(
+    protected fuelProviderService: FuelProviderService,
+    protected parseLinks: JhiParseLinks,
+    protected activatedRoute: ActivatedRoute,
+    protected dataUtils: JhiDataUtils,
+    protected router: Router,
+    protected eventManager: JhiEventManager
+  ) {
+    this.routeData = this.activatedRoute.data.subscribe(data => {
+      this.page = data.pagingParams.page;
+      this.previousPage = data.pagingParams.page;
+      this.reverse = data.pagingParams.ascending;
+      this.predicate = data.pagingParams.predicate;
+    });
+    this.currentSearch =
+      this.activatedRoute.snapshot && this.activatedRoute.snapshot.queryParams['search']
+        ? this.activatedRoute.snapshot.queryParams['search']
+        : '';
+  }
 
-    ngOnDestroy() {
-        this.eventManager.destroy(this.eventSubscriber);
-    }
+  ngAfterViewInit() {
+    this.registerChangeInFuelProviders();
+    // If the user changes the sort order, reset back to the first page.
+    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
-    trackId(index: number, item: FuelProvider) {
-        return item.id;
-    }
+    merge(this.sort.sortChange, this.paginator.page, this.paginator.pageSize)
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.isLoadingResults = true;
+          return this.loadAll();
+        }),
+        map((data: HttpResponse<IFuelProvider[]>) => {
+          this.isLoadingResults = false;
+          return this.processFuelProvidersResponse(data);
+        }),
+        catchError(() => {
+          this.isLoadingResults = false;
+          return observableOf([]);
+        })
+      )
+      .subscribe(data => (this.fuelProviders = data));
+  }
 
-    byteSize(field) {
-        return this.dataUtils.byteSize(field);
-    }
+  private processFuelProvidersResponse(fuelProviders: HttpResponse<IFuelProvider[]>) {
+    this.resultsLength = parseInt(fuelProviders.headers.get('X-Total-Count'), 10);
+    this.links = this.parseLinks.parse(fuelProviders.headers.get('link'));
+    this.totalItems = parseInt(fuelProviders.headers.get('X-Total-Count'), 10);
+    return fuelProviders.body;
+  }
 
-    openFile(contentType, field) {
-        return this.dataUtils.openFile(contentType, field);
+  loadAll() {
+    this.fuelProviders = [];
+    if (this.currentSearch) {
+      return this.fuelProviderService.query({
+        page: this.paginator.pageIndex,
+        query: this.currentSearch,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      });
     }
-    registerChangeInFuelProviders() {
-        this.eventSubscriber = this.eventManager.subscribe('fuelProviderListModification', (response) => this.loadAll());
-    }
+    return this.fuelProviderService.query({
+      page: this.paginator.pageIndex,
+      size: this.paginator.pageSize,
+      sort: this.sorting()
+    });
+  }
 
-    sort() {
-        const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
-        if (this.predicate !== 'id') {
-            result.push('id');
-        }
-        return result;
-    }
+  clear() {
+    this.fuelProviders = [];
+    this.paginator.pageIndex = 0;
+    this.currentSearch = '';
+    this.isLoadingResults = true;
+    this.fuelProviderService
+      .query({
+        page: this.paginator.pageIndex,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      })
+      .subscribe((data: HttpResponse<IFuelProvider[]>) => {
+        this.isLoadingResults = false;
+        this.fuelProviders = this.processFuelProvidersResponse(data);
+      });
+  }
 
-    private onSuccess(data, headers) {
-        this.links = this.parseLinks.parse(headers.get('link'));
-        this.totalItems = headers.get('X-Total-Count');
-        this.queryCount = this.totalItems;
-        // this.page = pagingParams.page;
-        this.fuelProviders = data;
+  search(query) {
+    this.fuelProviders = [];
+    if (!query) {
+      return this.clear();
     }
-    private onError(error) {
-        this.jhiAlertService.error(error.message, null, null);
+    this.page = 0;
+    this.currentSearch = query;
+    this.isLoadingResults = true;
+    this.fuelProviderService
+      .query({
+        page: this.paginator.pageIndex,
+        query: this.currentSearch,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      })
+      .subscribe((data: HttpResponse<IFuelProvider[]>) => {
+        this.isLoadingResults = false;
+        this.fuelProviders = this.processFuelProvidersResponse(data);
+      });
+  }
+
+  ngOnDestroy() {
+    this.eventManager.destroy(this.eventSubscriber);
+  }
+
+  trackId(index: number, item: IFuelProvider) {
+    return item.id;
+  }
+
+  byteSize(field) {
+    return this.dataUtils.byteSize(field);
+  }
+
+  openFile(contentType, field) {
+    return this.dataUtils.openFile(contentType, field);
+  }
+
+  registerChangeInFuelProviders() {
+    this.eventSubscriber = this.eventManager.subscribe('fuelProvidersListModification', () =>
+      this.loadAll().subscribe((data: HttpResponse<IFuelProvider[]>) => (this.fuelProviders = this.processFuelProvidersResponse(data)))
+    );
+  }
+
+  sorting() {
+    const result = [this.sort.active + ',' + this.sort.direction];
+    if (this.predicate !== 'id') {
+      result.push('id');
     }
+    return result;
+  }
 }

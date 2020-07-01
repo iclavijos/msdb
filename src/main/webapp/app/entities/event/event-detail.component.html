@@ -1,35 +1,43 @@
-
-<div *ngIf="event">
-    <h2>{{event.name}}</h2>
-    <hr>
-    <jhi-alert-error></jhi-alert-error>
-    
-    <div class="row">
-       	<div class="col-lg-2 col-md-2">
-       		<dl class="row-md jh-entity-details">
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.event.name">Name</span></dt>
-		        <dd>
-		            <span>{{event.name}}</span>
-		        </dd>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.event.description">Description</span></dt>
-		        <dd>
-		            <span>{{event.description}}</span>
-		        </dd>
-		    </dl>
-
-		    <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-		            [routerLink]="['/', { outlets: { popup: 'event/'+ event.id + '/edit'} }]"
-		            replaceUrl="true"
-		            class="btn btn-primary">
-		        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-		    </button>
-       	</div>
-       	<div class="col-lg-10 col-md-10">
-       		<jhi-event-edition [event]="event">Event editions...</jhi-event-edition>
-       	</div>
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h3 class="card-title">{{event.name}}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div *ngIf="event.description" class="col-md-3">
+                                <dl class="row-md jh-entity-details">
+                                    <dt><span jhiTranslate="motorsportsDatabaseApp.event.description">Description</span></dt>
+                                    <dd>
+                                        <span>{{event.description}}</span>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div *ngIf="event.description" class="col-md-9">
+                                <jhi-event-edition [event]="event">Event editions...</jhi-event-edition>
+                            </div>
+                            <div *ngIf="!event.description" class="col-md-12">
+                                <jhi-event-edition [event]="event">Event editions...</jhi-event-edition>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                [routerLink]="['/event', event.id, 'edit']"
+                class="btn btn-primary">
+            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+        </button>
+        <button type="submit"
+                (click)="previousState()"
+                class="btn btn-info">
+            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+        </button>
     </div>
-    
-	<button type="submit" (click)="previousState()" class="btn btn-info">
-        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-    </button>
 </div>

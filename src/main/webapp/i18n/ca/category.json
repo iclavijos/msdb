@@ -1,24 +1,25 @@
 {
-    "motorsportsDatabaseApp": {
-        "category" : {
-            "home": {
-                "title": "Categories",
-                "createLabel": "Afegir nova categoria",
-                "createOrEditLabel": "Afegir o editar una categoria",
-                "search": "Cercar categories"
-            },
-            "created": "S'ha afegit la categoria {{ param }}",
-            "updated": "S'ha actualitzat la categoria {{ param }}",
-            "deleted": "S'ha esborrat la categoria {{ param }}",
-            "delete": {
-                "question": "Estàs segur que vols esborrar la categoria {{ id }}?"
-            },
-            "detail": {
-                "title": "Categoria"
-            },
-            "name": "Nom",
-            "shortname": "Nom curt",
-            "logo": "Logo"
-        }
+  "motorsportsDatabaseApp": {
+    "category": {
+      "home": {
+        "title": "Categories",
+        "createLabel": "Afegir nova categoria",
+        "createOrEditLabel": "Afegir o editar una categoria",
+        "search": "Cercar categories",
+        "notFound": "No Categories found"
+      },
+      "created": "S'ha afegit la categoria {{ param }}",
+      "updated": "S'ha actualitzat la categoria {{ param }}",
+      "deleted": "S'ha esborrat la categoria {{ param }}",
+      "delete": {
+        "question": "Estàs segur que vols esborrar la categoria {{ id }}?"
+      },
+      "detail": {
+        "title": "Categoria"
+      },
+      "name": "Nom",
+      "shortname": "Nom curt",
+      "logo": "Logo"
     }
+  }
 }

@@ -1,51 +1,24 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSharedModule } from '../../shared';
-import {
-    PointsSystemService,
-    PointsSystemPopupService,
-    PointsSystemComponent,
-    PointsSystemDetailComponent,
-    PointsSystemDialogComponent,
-    PointsSystemPopupComponent,
-    PointsSystemDeletePopupComponent,
-    PointsSystemDeleteDialogComponent,
-    pointsSystemRoute,
-    pointsSystemPopupRoute,
-    PointsSystemResolvePagingParams,
-} from './';
+import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { PointsSystemComponent } from './points-system.component';
+import { PointsSystemDetailComponent } from './points-system-detail.component';
+import { PointsSystemUpdateComponent } from './points-system-update.component';
+import { PointsSystemDeletePopupComponent, PointsSystemDeleteDialogComponent } from './points-system-delete-dialog.component';
+import { pointsSystemRoute, pointsSystemPopupRoute } from './points-system.route';
 
-const ENTITY_STATES = [
-    ...pointsSystemRoute,
-    ...pointsSystemPopupRoute,
-];
+const ENTITY_STATES = [...pointsSystemRoute, ...pointsSystemPopupRoute];
 
 @NgModule({
-    imports: [
-        MotorsportsDatabaseSharedModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
-    declarations: [
-        PointsSystemComponent,
-        PointsSystemDetailComponent,
-        PointsSystemDialogComponent,
-        PointsSystemDeleteDialogComponent,
-        PointsSystemPopupComponent,
-        PointsSystemDeletePopupComponent,
-    ],
-    entryComponents: [
-        PointsSystemComponent,
-        PointsSystemDialogComponent,
-        PointsSystemPopupComponent,
-        PointsSystemDeleteDialogComponent,
-        PointsSystemDeletePopupComponent,
-    ],
-    providers: [
-        PointsSystemService,
-        PointsSystemPopupService,
-        PointsSystemResolvePagingParams,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [
+    PointsSystemComponent,
+    PointsSystemDetailComponent,
+    PointsSystemUpdateComponent,
+    PointsSystemDeleteDialogComponent,
+    PointsSystemDeletePopupComponent
+  ],
+  entryComponents: [PointsSystemDeleteDialogComponent]
 })
 export class MotorsportsDatabasePointsSystemModule {}

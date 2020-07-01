@@ -1,39 +1,48 @@
-
-<div *ngIf="series">
-    <h2>{{series.name}}</h2>
-    <hr>
-    <jhi-alert></jhi-alert>
-
-    <div class="row">
-       	<div class="col-lg-3 col-md-3">
-	       	<dl class="row-md jh-entity-details">
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.series.name">Name</span></dt>
-		        <dd>
-		            <span>{{series.name}}</span>
-		        </dd>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.series.shortname">Shortname</span></dt>
-		        <dd>
-		            <span>{{series.shortname}}</span>
-		        </dd>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.series.organizer">Organizer</span></dt>
-		        <dd>
-		            <span>{{series.organizer}}</span>
-		        </dd>
-		        <dt><span jhiTranslate="motorsportsDatabaseApp.series.logo">Logo</span></dt>
-		        <dd>
-					<img *ngIf="series.logoUrl" [src]="series.logoUrl" class="img-fluid" alt="series logo"/>
-				</dd>
-
-			    <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-			            [routerLink]="['/', { outlets: { popup: 'series/'+ series.id + '/edit'} }]"
-			            replaceUrl="true"
-			            class="btn btn-primary">
-			        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-			    </button>
-		    </dl>
-       	</div>
-       	<div class="col-lg-9 col-md-9">
-       		<jhi-series-edition [series]="series">Editions...</jhi-series-edition>
-       	</div>
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h3 class="card-title">{{ series.name }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <dl class="row-md jh-entity-details">
+                                    <dt><span jhiTranslate="motorsportsDatabaseApp.series.shortname">Shortname</span></dt>
+                                    <dd>
+                                        <span>{{series.shortname}}</span>
+                                    </dd>
+                                    <dt><span jhiTranslate="motorsportsDatabaseApp.series.organizer">Organizer</span></dt>
+                                    <dd>
+                                        <span>{{series.organizer}}</span>
+                                    </dd>
+                                    <dt><span jhiTranslate="motorsportsDatabaseApp.series.logo">Logo</span></dt>
+                                    <dd>
+                                        <img *ngIf="series?.logoUrl" [src]="series.logoUrl" class="img-fluid" alt="series logo"/>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-9">
+                                <jhi-series-edition [series]="series">Series editions...</jhi-series-edition>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                [routerLink]="['/series', series.id, 'edit']"
+                class="btn btn-primary">
+            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+        </button>
+        <button type="submit"
+                (click)="previousState()"
+                class="btn btn-info">
+            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+        </button>
     </div>
 </div>

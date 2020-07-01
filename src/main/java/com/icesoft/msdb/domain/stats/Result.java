@@ -31,15 +31,15 @@ public class Result {
 	Long poleLapTime;
 	Long raceFastLapTime;
 	Float points;
-	
+
 	public Result() {
 		super();
 	}
-	
+
 	public Result(EventEntryResult result, Boolean grandChelem, Integer finalPosition, Integer gridPosition, Long poleLapTime, Boolean raceFastLap, Float points) {
 		this.entryResult = result;
 		this.multidriver = result.getEntry().getEventEdition().isMultidriver();
-		this.setEventDate(result.getSession().getSessionStartTime().toLocalDate());
+		this.setEventDate(result.getSession().getSessionStartTimeDate().toLocalDate());
 		this.setEventEditionId(result.getEntry().getEventEdition().getId());
 		this.setEntryId(result.getEntry().getId());
 		this.setEventName(result.getEntry().getEventEdition().getLongEventName());
@@ -61,11 +61,11 @@ public class Result {
 		this.setRaceFastLap(raceFastLap);
 		this.points = points;
 	}
-	
+
 	public EventEntryResult getEntryResult() {
 		return entryResult;
 	}
-	
+
 	public Long getEventEditionId() {
 		return eventEditionId;
 	}
@@ -149,7 +149,7 @@ public class Result {
 	}
 	public void setPitlaneStart(Boolean pitlaneStart) {
 		this.pitlaneStart = pitlaneStart;
-	}	
+	}
 	public String getRetirementCause() {
 		return retirementCause;
 	}
@@ -167,7 +167,7 @@ public class Result {
 	}
 	public void setRaceFastLapTime(Long raceFastLapTime) {
 		this.raceFastLapTime = raceFastLapTime;
-	}	
+	}
 	public Boolean getRaceFastLap() {
 		return raceFastLap;
 	}

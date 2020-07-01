@@ -1,29 +1,30 @@
 {
-    "health": {
-        "title": "Revisions de salud",
-        "refresh.button": "Actualitzar",
-        "stacktrace": "Traça d'error",
-        "details": {
-            "details": "Detalls",
-            "properties": "Propietats",
-            "name": "Nom",
-            "value": "Valor",
-            "error": "Error"
-        },
-        "indicator": {
-            "diskSpace": "Espai al disc",
-            "mail": "Compte de correu electrònic",
-            "elasticsearch": "Elasticsearch",
-            "db": "Base de dades",
-            "mongo": "MongoDB"
-        },
-        "table": {
-            "service": "Nom del servei",
-            "status": "Estat"
-        },
-        "status": {
-            "UP": "ACTIU",
-            "DOWN": "INACTIU"
-        }
+  "health": {
+    "title": "Revisions de salud",
+    "refresh.button": "Actualitzar",
+    "stacktrace": "Traça d'error",
+    "details": {
+      "details": "Detalls",
+      "properties": "Propietats",
+      "name": "Nom",
+      "value": "Valor",
+      "error": "Error"
+    },
+    "indicator": {
+      "diskSpace": "Espai al disc",
+      "mail": "Compte de correu electrònic",
+      "elasticsearch": "Elasticsearch",
+      "db": "Base de dades",
+      "mongo": "MongoDB"
+    },
+    "table": {
+      "service": "Nom del servei",
+      "status": "Estat"
+    },
+    "status": {
+      "UNKNOWN": "UNKNOWN",
+      "UP": "ACTIU",
+      "DOWN": "INACTIU"
     }
+  }
 }

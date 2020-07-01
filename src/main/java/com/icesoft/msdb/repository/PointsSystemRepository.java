@@ -17,18 +17,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.domain.PointsSystem;
 
 /**
- * Spring Data JPA repository for the PointsSystem entity.
+ * Spring Data  repository for the PointsSystem entity.
  */
+@SuppressWarnings("unused")
 @Repository
 public interface PointsSystemRepository extends JpaRepository<PointsSystem,Long> {
-	
+
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
 	@Query(value = "select ps from PointsSystem ps")
 	@Transactional(readOnly=true)
 	Stream<PointsSystem> streamAll();
-	
+
 	PointsSystem findByName(String name);
-	
+
 	Page<PointsSystem> findByOrderByNameAsc(Pageable pageable);
 
 	Page<PointsSystem> findByNameContainsIgnoreCase(String query, Pageable pageable);

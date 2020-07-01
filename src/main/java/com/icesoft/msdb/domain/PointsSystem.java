@@ -1,12 +1,13 @@
 package com.icesoft.msdb.domain;
 
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
-
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -15,7 +16,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "points_system")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "pointssystem")
 public class PointsSystem extends AbstractAuditingEntity implements Serializable {
 
@@ -23,15 +24,18 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
     @Size(max = 50)
     @Column(name = "name", length = 50, nullable = false)
+    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
     private String name;
 
     @Size(max = 100)
     @Column(name = "description", length = 100)
+    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
     private String description;
 
     @Column(name = "points")
@@ -45,35 +49,35 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 
     @Column(name = "points_lead_lap")
     private Integer pointsLeadLap;
-    
+
     @Column(name = "points_fast_lap")
     private Integer pointsFastLap;
-    
+
     //Maximum finishing position to get points for fast lap
     @Column(name = "max_pos_fast_lap")
     private Integer maxPosFastLap = 9999;
-    
+
     //Minimum percentage of the race to be completed to award points for fast lap
     @Column(name = "pct_completed_fl")
     private Integer pctCompletedFL = 0;
-        
+
     //If started from pitlane, award points for fast lap?
     @Column(name = "pitlane_start_allowed")
     private Boolean pitlaneStartAllowed = false;
-    
+
     @Column(name = "race_pct_completed_total_points")
     private Integer racePctCompleted;
-    
+
     @Column(name = "pct_total_points")
     private Integer pctTotalPoints;
-    
+
     @Column(name="active")
     private Boolean active;
 
     public Boolean isActive() {
 		return active;
 	}
-    
+
     public PointsSystem active(Boolean active) {
     	this.active = active;
     	return this;
@@ -121,7 +125,7 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     public String getPoints() {
         return points;
     }
-    
+
     @Transient
     public float[] disclosePoints() {
     	String[] tmp = StringUtils.remove(points, " ").split(",");
@@ -157,7 +161,7 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     public Integer getPointsPole() {
         return pointsPole;
     }
-    
+
     public PointsSystem pointsPole(Integer pointsPole) {
         this.pointsPole = pointsPole;
         return this;
@@ -166,15 +170,15 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     public void setPointsPole(Integer pointsPole) {
         this.pointsPole = pointsPole;
     }
-    
+
     public Integer getPointsFastLap() {
 		return pointsFastLap;
 	}
-    
+
     public void setPointsFastLap(Integer pointsFastLap) {
         this.pointsFastLap = pointsFastLap;
     }
-    
+
     public PointsSystem pointsFastLap(Integer pointsFastLap) {
     	this.pointsFastLap = pointsFastLap;
     	return this;
@@ -183,7 +187,7 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 	public Integer getMaxPosFastLap() {
 		return maxPosFastLap;
 	}
-	
+
 	public PointsSystem maxPosFastLap(Integer maxPosFastLap) {
 		this.maxPosFastLap = maxPosFastLap;
 		return this;
@@ -196,7 +200,7 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 	public Integer getPctCompletedFL() {
 		return pctCompletedFL;
 	}
-    
+
     public PointsSystem pctCompletedFL(Integer pctCompleted) {
     	this.pctCompletedFL = pctCompleted;
     	return this;
@@ -209,7 +213,7 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 	public Boolean isPitlaneStartAllowed() {
 		return pitlaneStartAllowed;
 	}
-	
+
 	public PointsSystem pitlaneStartAllowed(Boolean pitlaneStartAllowed) {
 		this.pitlaneStartAllowed = pitlaneStartAllowed;
 		return this;
@@ -241,7 +245,7 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 		this.racePctCompleted = racePctCompleted;
 		return this;
 	}
-    
+
 	public void setRacePctCompleted(Integer racePctCompleted) {
 		this.racePctCompleted = racePctCompleted;
 	}
@@ -249,7 +253,7 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 	public Integer getPctTotalPoints() {
 		return pctTotalPoints;
 	}
-	
+
 	public PointsSystem pctTotalPoints(Integer pctTotalPoints) {
 		this.pctTotalPoints = pctTotalPoints;
 		return this;
@@ -264,14 +268,10 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof PointsSystem)) {
             return false;
         }
-        PointsSystem pointsSystem = (PointsSystem) o;
-        if (pointsSystem.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), pointsSystem.getId());
+        return id != null && id.equals(((PointsSystem) o).id);
     }
 
     @Override
@@ -286,10 +286,10 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
             ", name='" + getName() + "'" +
             ", description='" + getDescription() + "'" +
             ", points='" + getPoints() + "'" +
-            ", pointsMostLeadLaps='" + getPointsMostLeadLaps() + "'" +
-            ", pointsFastLap='" + getPointsFastLap() + "'" +
-            ", pointsPole='" + getPointsPole() + "'" +
-            ", pointsLeadLap='" + getPointsLeadLap() + "'" +
+            ", pointsMostLeadLaps=" + getPointsMostLeadLaps() +
+            ", pointsFastLap=" + getPointsFastLap() +
+            ", pointsPole=" + getPointsPole() +
+            ", pointsLeadLap=" + getPointsLeadLap() +
             "}";
     }
 }

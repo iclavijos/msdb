@@ -1,82 +1,95 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
+import { HttpResponse } from '@angular/common/http';
+import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
+import { JhiResolvePagingParams } from 'ng-jhipster';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Driver } from 'app/shared/model/driver.model';
+import { DriverService } from './driver.service';
 import { DriverComponent } from './driver.component';
 import { DriverDetailComponent } from './driver-detail.component';
-import { DriverPopupComponent } from './driver-dialog.component';
+import { DriverUpdateComponent } from './driver-update.component';
 import { DriverDeletePopupComponent } from './driver-delete-dialog.component';
+import { IDriver } from 'app/shared/model/driver.model';
 
-@Injectable()
-export class DriverResolvePagingParams implements Resolve<any> {
+@Injectable({ providedIn: 'root' })
+export class DriverResolve implements Resolve<IDriver> {
+  constructor(private service: DriverService) {}
 
-    constructor(private paginationUtil: JhiPaginationUtil) {}
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'surname,asc';
-        return {
-            page: this.paginationUtil.parsePage(page),
-            predicate: this.paginationUtil.parsePredicate(sort),
-            ascending: this.paginationUtil.parseAscending(sort)
-      };
+  resolve(route: ActivatedRouteSnapshot): Observable<IDriver> {
+    const id = route.params['id'];
+    if (id) {
+      return this.service.find(id).pipe(map((driver: HttpResponse<IDriver>) => driver.body));
     }
+    return of(new Driver());
+  }
 }
 
 export const driverRoute: Routes = [
-    {
-        path: 'driver',
-        component: DriverComponent,
-        resolve: {
-            'pagingParams': DriverResolvePagingParams
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.driver.home.title'
-        },
-        canActivate: [UserRouteAccessService]
-    }, {
-        path: 'driver/:id',
-        component: DriverDetailComponent,
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'motorsportsDatabaseApp.driver.home.title'
-        },
-        canActivate: [UserRouteAccessService]
-    }
+  {
+    path: '',
+    component: DriverComponent,
+    resolve: {
+      pagingParams: JhiResolvePagingParams
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      defaultSort: 'surname,asc',
+      pageTitle: 'motorsportsDatabaseApp.driver.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id/view',
+    component: DriverDetailComponent,
+    resolve: {
+      driver: DriverResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.driver.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'new',
+    component: DriverUpdateComponent,
+    resolve: {
+      driver: DriverResolve
+    },
+    data: {
+      authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+      pageTitle: 'motorsportsDatabaseApp.driver.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id/edit',
+    component: DriverUpdateComponent,
+    resolve: {
+      driver: DriverResolve
+    },
+    data: {
+      authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
+      pageTitle: 'motorsportsDatabaseApp.driver.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  }
 ];
 
 export const driverPopupRoute: Routes = [
-    {
-        path: 'driver-new',
-        component: DriverPopupComponent,
-        data: {
-            authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-            pageTitle: 'motorsportsDatabaseApp.driver.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
+  {
+    path: ':id/delete',
+    component: DriverDeletePopupComponent,
+    resolve: {
+      driver: DriverResolve
     },
-    {
-        path: 'driver/:id/edit',
-        component: DriverPopupComponent,
-        data: {
-            authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-            pageTitle: 'motorsportsDatabaseApp.driver.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
+    data: {
+      authorities: ['ROLE_ADMIN'],
+      pageTitle: 'motorsportsDatabaseApp.driver.home.title'
     },
-    {
-        path: 'driver/:id/delete',
-        component: DriverDeletePopupComponent,
-        data: {
-            authorities: ['ROLE_ADMIN'],
-            pageTitle: 'motorsportsDatabaseApp.driver.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    }
+    canActivate: [UserRouteAccessService],
+    outlet: 'popup'
+  }
 ];

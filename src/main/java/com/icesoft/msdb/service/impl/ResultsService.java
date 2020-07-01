@@ -48,7 +48,7 @@ public class ResultsService {
 
 	@Transactional(readOnly = false)
 	public void processSessionResults(Long sessionId) {
-		EventSession session = sessionRepo.findOne(sessionId);
+		EventSession session = sessionRepo.findById(sessionId).get();
 
 		for(PointsSystemSession pss: session.getPointsSystemsSession()) {
 			List<DriverEventPoints> drivers = new ArrayList<>();
@@ -101,7 +101,7 @@ public class ResultsService {
 
 	    for(int i = 0; i < results.size(); i++) {
             EventEntryResult result = results.get(i);
-            Boolean sharedDrive = result.getSharedDriveWith() != null;
+            Boolean sharedDrive = result.getSharedWith() != null;
 
             float calculatedPoints = 0f;
             if (points != null) {
@@ -139,7 +139,7 @@ public class ResultsService {
                     }
                 }
                 if (sharedDrive) {
-                    for(Driver d: result.getSharedDriveWith().getDrivers()) {
+                    for(Driver d: result.getSharedWith().getDrivers()) {
                         DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), session.getName());
                         dep.setCategory(category);
                         dep.addPoints(calculatedPoints);
@@ -344,7 +344,7 @@ public class ResultsService {
 	}
 
 	public String[][] getResultsRaceByRace(Long seriesEditionId, String category) {
-		SeriesEdition seriesEdition = seriesEdRepository.findOne(seriesEditionId);
+		SeriesEdition seriesEdition = seriesEdRepository.findById(seriesEditionId).get();
 		List<EventSession> races = sessionRepo.findRacesInSeries(seriesEdition);
 		List<DriverPointsDTO> dpd = getDriversStandings(seriesEditionId); //We use this as returned data is ordered by scored points
         dpd = dpd.stream().filter(d -> d.getCategory() == null ? true : d.getCategory().equals(category)).collect(Collectors.toList());
@@ -396,6 +396,7 @@ public class ResultsService {
 		List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(eventEditionId);
 		List<EventSession> sessions = sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventEditionId);
 		String[][] data = new String[entries.size() + 1][sessions.size() + 1];
+		data[0][0] = "-";
 
 		for(int i = 1; i <= sessions.size(); i++) {
 			data[0][i] = sessions.get(i - 1).getName();
@@ -413,7 +414,7 @@ public class ResultsService {
                     }
                 }
 				if (result != null) {
-					data[i][j] = Optional.ofNullable(result.getBestLapTime()).map(laptime -> laptime.toString()).orElse("");
+					data[i][j] = Optional.ofNullable(result.getBestLapTime()).map(laptime -> laptime.toString()).orElse("-");
 				} else {
 					data[i][j] = "-";
 				}

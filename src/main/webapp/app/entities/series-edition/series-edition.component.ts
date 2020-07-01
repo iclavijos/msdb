@@ -1,142 +1,163 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ViewChild, Input } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiParseLinks, JhiPaginationUtil, JhiLanguageService, JhiAlertService } from 'ng-jhipster';
+import { merge, of as observableOf, Subscription } from 'rxjs';
+import { catchError, map, startWith, switchMap } from 'rxjs/operators';
+import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { Series } from '../series/';
-import { SeriesEdition } from './series-edition.model';
+import { Series } from 'app/shared/model/series.model';
+import { ISeriesEdition, SeriesEdition } from 'app/shared/model/series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
-import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
-import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
+import { SeriesEditionUpdateComponent } from './series-edition-update.component';
+
+import { MatPaginator, MatSort } from '@angular/material';
+
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-    selector: 'jhi-series-edition',
-    templateUrl: './series-edition.component.html'
+  selector: 'jhi-series-edition',
+  templateUrl: './series-edition.component.html'
 })
-export class SeriesEditionComponent implements OnInit, OnDestroy {
+export class SeriesEditionComponent implements AfterViewInit, OnDestroy {
+  @Input() series: Series;
+  currentAccount: any;
+  seriesEditions: ISeriesEdition[];
+  error: any;
+  success: any;
+  eventSubscriber: Subscription;
+  links: any;
+  totalItems: any;
+  itemsPerPage: any;
+  page: any;
+  predicate: any;
+  previousPage: any;
+  reverse: any;
 
-    @Input() series: Series;
-    currentAccount: any;
-    seriesEditions: SeriesEdition[];
-    error: any;
-    success: any;
-    eventSubscriber: Subscription;
-    currentSearch: string;
-    routeData: any;
-    links: any;
-    totalItems: any;
-    queryCount: any;
-    itemsPerPage: any;
-    page: any;
-    predicate: any;
-    previousPage: any;
-    reverse: any;
+  displayedColumns: string[] = ['period', 'name', 'singleChassis', 'singleEngine', 'singleTyres', 'allowedCategories', 'buttons'];
 
-    constructor(
-        private seriesEditionService: SeriesEditionService,
-        private parseLinks: JhiParseLinks,
-        private jhiAlertService: JhiAlertService,
-        private principal: Principal,
-        private activatedRoute: ActivatedRoute,
-        private router: Router,
-        private eventManager: JhiEventManager,
-        private paginationUtil: JhiPaginationUtil,
-        private paginationConfig: PaginationConfig
-    ) {
-        this.itemsPerPage = ITEMS_PER_PAGE;
-        this.routeData = this.activatedRoute.data.subscribe((data) => {
-            this.page = data['pagingParams'].page;
-            this.previousPage = data['pagingParams'].page;
-            this.reverse = data['pagingParams'].ascending;
-            this.predicate = data['pagingParams'].predicate;
-        });
-        this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
-    }
+  resultsLength = 0;
+  isLoadingResults = true;
 
-    loadAll(seriesId: number) {
-        this.seriesEditionService.query(seriesId, {
-            page: this.page - 1,
-            size: this.itemsPerPage,
-            sort: this.sort()}).subscribe(
-                (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
-                (res: ResponseWrapper) => this.onError(res.json)
-        );
-    }
-    loadPage(page: number) {
-        if (page !== this.previousPage) {
-            this.previousPage = page;
-            this.transition();
-        }
-    }
-    transition() {
-        this.router.navigate(['/series-edition'], {queryParams:
-            {
-                page: this.page,
-                size: this.itemsPerPage,
-                search: this.currentSearch,
-                sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-            }
-        });
-        this.loadAll(this.series.id);
-    }
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-    clear() {
-        this.page = 0;
-        this.currentSearch = '';
-        this.router.navigate(['/series-edition', {
-            page: this.page,
-            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-        }]);
-        this.loadAll(this.series.id);
-    }
-    search(query) {
-        if (!query) {
-            return this.clear();
-        }
-        this.page = 0;
-        this.currentSearch = query;
-        this.router.navigate(['/series-edition', {
-            search: this.currentSearch,
-            page: this.page,
-            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
-        }]);
-        this.loadAll(this.series.id);
-    }
-    ngOnInit() {
-        this.loadAll(this.series.id);
-        this.principal.identity().then((account) => {
-            this.currentAccount = account;
-        });
-        this.registerChangeInSeriesEditions();
-    }
+  constructor(
+    protected seriesEditionService: SeriesEditionService,
+    protected parseLinks: JhiParseLinks,
+    protected activatedRoute: ActivatedRoute,
+    protected dataUtils: JhiDataUtils,
+    protected router: Router,
+    protected eventManager: JhiEventManager,
+    protected dialog: MatDialog
+  ) {}
 
-    ngOnDestroy() {
-        this.eventManager.destroy(this.eventSubscriber);
-    }
+  ngAfterViewInit() {
+    this.registerChangeInSeriesEditions();
+    // If the user changes the sort order, reset back to the first page.
+    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
-    trackId(index: number, item: SeriesEdition) {
-        return item.id;
-    }
-    registerChangeInSeriesEditions() {
-        this.eventSubscriber = this.eventManager.subscribe('seriesEditionListModification', (response) => this.loadAll(this.series.id));
-    }
+    merge(this.sort.sortChange, this.paginator.page, this.paginator.pageSize)
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.isLoadingResults = true;
+          return this.loadAll();
+        }),
+        map((data: HttpResponse<ISeriesEdition[]>) => {
+          this.isLoadingResults = false;
+          return this.processSeriesEditionsResponse(data);
+        }),
+        catchError(() => {
+          this.isLoadingResults = false;
+          return observableOf([]);
+        })
+      )
+      .subscribe(data => (this.seriesEditions = data));
+  }
 
-    sort() {
-        const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
-        if (this.predicate !== 'id') {
-            result.push('id');
-        }
-        return result;
-    }
+  private processSeriesEditionsResponse(seriesEditions: HttpResponse<ISeriesEdition[]>) {
+    this.resultsLength = parseInt(seriesEditions.headers.get('X-Total-Count'), 10);
+    this.links = this.parseLinks.parse(seriesEditions.headers.get('link'));
+    this.totalItems = parseInt(seriesEditions.headers.get('X-Total-Count'), 10);
 
-    private onSuccess(data, headers) {
-        this.links = this.parseLinks.parse(headers.get('link'));
-        this.totalItems = headers.get('X-Total-Count');
-        this.queryCount = this.totalItems;
-        // this.page = pagingParams.page;
-        this.seriesEditions = data;
+    return seriesEditions.body;
+  }
+
+  loadAll() {
+    this.seriesEditions = [];
+    return this.seriesEditionService.findSeriesEditions(this.series.id, {
+      page: this.paginator.pageIndex,
+      size: this.paginator.pageSize,
+      sort: this.sorting()
+    });
+  }
+
+  clear() {
+    this.seriesEditions = [];
+    this.paginator.pageIndex = 0;
+    this.isLoadingResults = true;
+    this.seriesEditionService
+      .findSeriesEditions(this.series.id, {
+        page: this.paginator.pageIndex,
+        size: this.paginator.pageSize,
+        sort: this.sorting()
+      })
+      .subscribe((data: HttpResponse<ISeriesEdition[]>) => {
+        this.isLoadingResults = false;
+        this.seriesEditions = this.processSeriesEditionsResponse(data);
+      });
+  }
+
+  ngOnDestroy() {
+    this.eventManager.destroy(this.eventSubscriber);
+  }
+
+  trackId(index: number, item: ISeriesEdition) {
+    return item.id;
+  }
+
+  registerChangeInSeriesEditions() {
+    this.eventSubscriber = this.eventManager.subscribe('seriesEditionsListModification', () =>
+      this.loadAll().subscribe((data: HttpResponse<ISeriesEdition[]>) => (this.seriesEditions = this.processSeriesEditionsResponse(data)))
+    );
+  }
+
+  sorting() {
+    const result = [this.sort.active + ',' + this.sort.direction];
+    if (this.predicate !== 'id') {
+      result.push('id');
     }
-    private onError(error) {
-        this.jhiAlertService.error(error.message, null, null);
-    }
+    return result;
+  }
+
+  createSeriesEdition() {
+    const dialogRef = this.dialog.open(SeriesEditionUpdateComponent, {
+      data: {
+        series: this.series,
+        seriesEdition: new SeriesEdition()
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadAll().subscribe(data => (this.seriesEditions = data.body));
+      }
+    });
+  }
+
+  editSeriesEdition(seriesEdition: ISeriesEdition, $event) {
+    $event.stopPropagation();
+    const dialogRef = this.dialog.open(SeriesEditionUpdateComponent, {
+      data: {
+        series: this.series,
+        seriesEdition
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadAll().subscribe(data => (this.seriesEditions = data.body));
+      }
+    });
+  }
 }

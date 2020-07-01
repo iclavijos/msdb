@@ -1,94 +1,102 @@
-import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-
-import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
+import { NgModule, Injectable } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
+import { Resolve, ActivatedRouteSnapshot, Routes, RouterModule } from '@angular/router';
+import { JhiResolvePagingParams } from 'ng-jhipster';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { SeriesService } from './series.service';
 import { SeriesComponent } from './series.component';
 import { SeriesDetailComponent } from './series-detail.component';
-import { SeriesPopupComponent } from './series-dialog.component';
+import { SeriesUpdateComponent } from './series-update.component';
 import { SeriesDeletePopupComponent } from './series-delete-dialog.component';
+import { ISeries, Series } from 'app/shared/model/series.model';
 
-@Injectable()
-export class SeriesResolvePagingParams implements Resolve<any> {
+@Injectable({ providedIn: 'root' })
+export class SeriesResolve implements Resolve<ISeries> {
+  constructor(private service: SeriesService) {}
 
-  constructor(private paginationUtil: JhiPaginationUtil) {}
-
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-      let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
-      return {
-          page: this.paginationUtil.parsePage(page),
-          predicate: this.paginationUtil.parsePredicate(sort),
-          ascending: this.paginationUtil.parseAscending(sort)
-    };
+  resolve(route: ActivatedRouteSnapshot): Observable<ISeries> {
+    const id = route.params['id'];
+    if (id) {
+      return this.service.find(id).pipe(
+        filter((response: HttpResponse<ISeries>) => response.ok),
+        map((series: HttpResponse<ISeries>) => series.body)
+      );
+    }
+    return of(new Series());
   }
 }
 
-@Injectable()
-export class SeriesEditionResolvePagingParams implements Resolve<any> {
-
-  constructor(private paginationUtil: JhiPaginationUtil) {}
-
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-      let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-      let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
-      return {
-          page: this.paginationUtil.parsePage(page),
-          predicate: this.paginationUtil.parsePredicate(sort),
-          ascending: this.paginationUtil.parseAscending(sort)
-    };
-  }
-}
-
-export const seriesRoute: Routes = [
+const seriesRoute: Routes = [
   {
-    path: 'series',
+    path: '',
     component: SeriesComponent,
     resolve: {
-      'pagingParams': SeriesResolvePagingParams
+      pagingParams: JhiResolvePagingParams
     },
     data: {
-        pageTitle: 'motorsportsDatabaseApp.series.home.title'
-    }
-  }, {
-    path: 'series/:id',
+      defaultSort: 'id,asc',
+      pageTitle: 'motorsportsDatabaseApp.series.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id/view',
     component: SeriesDetailComponent,
     resolve: {
-        'pagingParams': SeriesEditionResolvePagingParams
+      series: SeriesResolve
     },
     data: {
-        pageTitle: 'motorsportsDatabaseApp.series.home.title'
-    }
+      pageTitle: 'motorsportsDatabaseApp.series.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'new',
+    component: SeriesUpdateComponent,
+    resolve: {
+      series: SeriesResolve
+    },
+    data: {
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
+      pageTitle: 'motorsportsDatabaseApp.series.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id/edit',
+    component: SeriesUpdateComponent,
+    resolve: {
+      series: SeriesResolve
+    },
+    data: {
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
+      pageTitle: 'motorsportsDatabaseApp.series.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id/delete',
+    component: SeriesDeletePopupComponent,
+    resolve: {
+      series: SeriesResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'motorsportsDatabaseApp.series.home.title'
+    },
+    canActivate: [UserRouteAccessService],
+    outlet: 'popup'
+  },
+  {
+    path: 'edition',
+    loadChildren: () => import('../series-edition/series-edition.module').then(m => m.MotorsportsDatabaseSeriesEditionModule)
   }
 ];
 
-export const seriesPopupRoute: Routes = [
-  {
-    path: 'series-new',
-    component: SeriesPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.series.home.title'
-    },
-    outlet: 'popup'
-  },
-  {
-    path: 'series/:id/edit',
-    component: SeriesPopupComponent,
-    data: {
-        authorities: ['ROLE_EDITOR', 'ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.series.home.title'
-    },
-    outlet: 'popup'
-  },
-  {
-    path: 'series/:id/delete',
-    component: SeriesDeletePopupComponent,
-    data: {
-        authorities: ['ROLE_ADMIN'],
-        pageTitle: 'motorsportsDatabaseApp.series.home.title'
-    },
-    outlet: 'popup'
-  }
-];
+@NgModule({
+  imports: [RouterModule.forChild(seriesRoute)],
+  exports: [RouterModule]
+})
+export class SeriesRoutingModule {}

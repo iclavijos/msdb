@@ -1,171 +1,177 @@
 {
-    "global": {
-        "title": "Motorsports Database",
-        "browsehappy": "Està usant un navegador <strong>des-actualitzat</strong>. Si us plau <a href=\"http://browsehappy.com/?locale=en\">actualitzi el seu navegador</a> per millorar l'experiencia.",
-        "menu": {
-            "home": "Inici",
-            "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
-            "entities": {
-                "main": "Entitats",
-                "racetrack": "Circuits",
-                "racetrackLayout": "Traçats",
-                "driver": "Pilots",
-                "pointsSystem": "Sistemes puntuació",
-                "tyreProvider": "Proveïdors neumàtics",
-                "fuelProvider": "Proveïdors combustible",
-                "category": "Categories",
-                "chassis": "Xassís",
-                "engine": "Motors",
-                "team": "Equips",
-                "series": "Campionats",
-                "seriesEdition": "Campionat - Edicions",
-                "event": "Events",
-                "eventSession": "Event - Sessions",
-                "eventEdition": "Event - Edicions",
-                "eventEntry": "Event - Participants",
-                "eventEntryResult": "Event - Resultats",
-                "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
-            },
-            "account": {
-                "main": "Compte",
-                "settings": "Ajustos",
-                "password": "Contrasenya",
-                "sessions": "Sessions",
-                "login": "Autenticar",
-                "logout": "Finalitzar la sessió",
-                "register": "Registre"
-            },
-            "admin": {
-                "main": "Administració",
-                "userManagement": "Administració d'usuaris",
-                "tracker": "Seguidor d'usuaris",
-                "metrics": "Mètriques",
-                "health": "Salud",
-                "configuration": "Configuració",
-                "logs": "Registres",
-                "audits": "Auditories",
-                "apidocs": "API",
-                "database": "Base de dades",
-                "rebuildIndexes": "Reconstruir índexs de cerca",
-                "rebuildStatistics": "Recalcular estadístiques",
-                "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
-            },
-            "imports" : {
-            	"main": "Importar",
-            	"drivers": "Pilots",
-            	"racetracks": "Circuits",
-            	"teams": "Equips",
-            	"engines": "Motors",
-            	"events": "Cites"
-            },
-            "language": "Idioma",
-            "calendar": "Calendari",
-            "browseDB": "Explora base de dades"
-        },
-        "form": {
-            "username": "Iniciar sessió",
-            "username.placeholder": "Nom d'usuari",
-            "newpassword": "Nova Contrassenya",
-            "newpassword.placeholder": "Nova Contrassenya",
-            "confirmpassword": "Confirmació de la nova contrasenya",
-            "confirmpassword.placeholder": "Confirmació de la nova contrasenya",
-            "email": "Correu electrònic",
-            "email.placeholder": "Correu electrònic"
-        },
-        "messages": {
-            "info": {
-                "authenticated": {
-                    "prefix": "Si vol ",
-                    "link": "autenticar-se",
-                    "suffix": ", pot usar els comptes per defect:<br/>- Administrador (nom d'usuari=\"admin\" i contrasenya=\"admin\") <br/>- Usuari (nom d'usuari=\"user\" i contrasenya=\"user\")."
-                },
-                "register": {
-                    "noaccount": "No disposa d'un compte encara?",
-                    "link": "Registri un nou compte"
-                },
-            	"imports": {
-            		"success": "El fitxer ha estat pujat correctament i està essent processat.",
-            		"fail": "Hi ha hagut algun problema i el fitxer no s'ha progut processar."
-            	}
-            },
-            "error": {
-                "dontmatch" : "La contrasenya i la confirmació no coincideixen!"
-            },
-            "validate": {
-                "newpassword": {
-                    "required": "La seva contrasenya és necessaria.",
-                    "minlength": "La seva contrasenya ha de tenir, com a mínim, 5 caràcters",
-                    "maxlength": "La seva contrasenya no pot tenir més de 50 caràcters",
-                    "strength": "Fortalesa de la contrasenya:"
-                },
-                "confirmpassword": {
-                    "required": "És necessari confirmar la seva contrasenya.",
-                    "minlength": "La confirmació de la seva contrasenya ha de tenir, com a mínim, 5 caràcters",
-                    "maxlength": "La confirmació de la seva contrasenya no pot tenir més de 50 caràcters"
-                },
-                "email": {
-                    "required": "És necessari el seu compte de correu electrònic.",
-                    "invalid": "El seu compte de correu electrònic és invàlid.",
-                    "minlength": "El seu compte de correu electrònic ha de tenir, com a mínim, 5 caràcters",
-                    "maxlength": "El seu compte de correu electrònic no pot tenir més de 50 caràcters"
-                }
-            }
-        },
-        "field": {
-            "id" : "ID"
-        },
-        "ribbon": {
-            "dev":"Development"
-        },
-        "item-count": "Visualitzant {{first}} - {{second}} de {{total}} elements"
+  "global": {
+    "title": "Motorsports Database",
+    "browsehappy": "Està usant un navegador <strong>des-actualitzat</strong>. Si us plau <a href=\"http://browsehappy.com/?locale=en\">actualitzi el seu navegador</a> per millorar l'experiencia.",
+    "menu": {
+      "home": "Inici",
+      "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
+      "entities": {
+        "main": "Entitats",
+        "racetrack": "Circuits",
+        "racetrackLayout": "Traçats",
+        "driver": "Pilots",
+        "pointsSystem": "Sistemes puntuació",
+        "tyreProvider": "Proveïdors neumàtics",
+        "fuelProvider": "Proveïdors combustible",
+        "category": "Categories",
+        "chassis": "Xassís",
+        "engine": "Motors",
+        "team": "Equips",
+        "series": "Campionats",
+        "seriesEdition": "Campionat - Edicions",
+        "event": "Events",
+        "eventSession": "Event - Sessions",
+        "eventEdition": "Event - Edicions",
+        "eventEntry": "Event - Participants",
+        "eventEntryResult": "Event - Resultats",
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
+      },
+      "account": {
+        "main": "Compte",
+        "settings": "Ajustos",
+        "password": "Contrasenya",
+        "sessions": "Sessions",
+        "login": "Autenticar",
+        "logout": "Finalitzar la sessió",
+        "register": "Registre"
+      },
+      "admin": {
+        "main": "Administració",
+        "userManagement": "Administració d'usuaris",
+        "tracker": "Seguidor d'usuaris",
+        "metrics": "Mètriques",
+        "health": "Salud",
+        "configuration": "Configuració",
+        "logs": "Registres",
+        "audits": "Auditories",
+        "apidocs": "API",
+        "database": "Base de dades",
+        "rebuildIndexes": "Reconstruir índexs de cerca",
+        "rebuildStatistics": "Recalcular estadístiques",
+        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
+      },
+      "imports": {
+        "main": "Importar",
+        "drivers": "Pilots",
+        "racetracks": "Circuits",
+        "teams": "Equips",
+        "engines": "Motors",
+        "events": "Cites"
+      },
+      "language": "Idioma",
+      "calendar": "Calendari",
+      "agenda": "Agenda",
+      "browseDB": "Explora base de dades"
     },
-    "entity": {
-        "action": {
-            "addblob": "Afegir blob",
-            "addimage": "Afegir imatge",
-            "back": "Enrera",
-            "cancel": "Anul.la",
-            "delete": "Elimina",
-            "edit": "Edita",
-            "open": "Open",
-            "save": "Desa",
-            "view": "Visualitza",
-            "copy": "Copia",
-            "add": "Afegeix"
+    "form": {
+      "username.label": "Iniciar sessió",
+      "username.placeholder": "Nom d'usuari",
+      "currentpassword.label": "Current password",
+      "currentpassword.placeholder": "Current password",
+      "newpassword.label": "Nova Contrassenya",
+      "newpassword.placeholder": "Nova Contrassenya",
+      "confirmpassword.label": "Confirmació de la nova contrasenya",
+      "confirmpassword.placeholder": "Confirmació de la nova contrasenya",
+      "email.label": "Correu electrònic",
+      "email.placeholder": "Correu electrònic"
+    },
+    "messages": {
+      "info": {
+        "authenticated": {
+          "prefix": "Si vol ",
+          "link": "autenticar-se",
+          "suffix": ", pot usar els comptes per defect:<br/>- Administrador (nom d'usuari=\"admin\" i contrasenya=\"admin\") <br/>- Usuari (nom d'usuari=\"user\" i contrasenya=\"user\")."
         },
-        "detail": {
-            "field": "Camp",
-            "value": "Valor",
-            "info": "Detall",
-            "statistics": "Estadístiques"
+        "register": {
+          "noaccount": "No disposa d'un compte encara?",
+          "link": "Registri un nou compte"
         },
-        "delete": {
-            "title": "Confirma eliminació"
-        },
-        "validation": {
-            "required": "Aquest camp és obligatori.",
-            "minlength": "Aquest camp ha de tenir, com a mínim {{min}} caràcters.",
-            "maxlength": "Aquest camp no pot tenir més de {{max}} caràcters.",
-            "min": "Aquest camp ha de ser major que {{min}}.",
-            "max": "Aquest camp no pot ser major que {{max}}.",
-            "minbytes": "Aquest camp ha de tenir més de {{min}} bytes.",
-            "maxbytes": "Aquest camp no pot tenir més de {{max}} bytes.",
-            "pattern": "Aquest camp ha de tenir el seguent patró {{pattern}}.",
-            "number": "Aquest camp ha de ser numèric.",
-            "datetimelocal": "Aquest camp ha de ser una data/hora."
+        "imports": {
+          "success": "El fitxer ha estat pujat correctament i està essent processat.",
+          "fail": "Hi ha hagut algun problema i el fitxer no s'ha progut processar."
         }
+      },
+      "error": {
+        "dontmatch": "La contrasenya i la confirmació no coincideixen!"
+      },
+      "validate": {
+        "newpassword": {
+          "required": "La seva contrasenya és necessaria.",
+          "minlength": "La seva contrasenya ha de tenir, com a mínim, 5 caràcters",
+          "maxlength": "La seva contrasenya no pot tenir més de 50 caràcters",
+          "strength": "Fortalesa de la contrasenya:"
+        },
+        "confirmpassword": {
+          "required": "És necessari confirmar la seva contrasenya.",
+          "minlength": "La confirmació de la seva contrasenya ha de tenir, com a mínim, 5 caràcters",
+          "maxlength": "La confirmació de la seva contrasenya no pot tenir més de 50 caràcters"
+        },
+        "email": {
+          "required": "És necessari el seu compte de correu electrònic.",
+          "invalid": "El seu compte de correu electrònic és invàlid.",
+          "minlength": "El seu compte de correu electrònic ha de tenir, com a mínim, 5 caràcters",
+          "maxlength": "El seu compte de correu electrònic no pot tenir més de 50 caràcters"
+        }
+      }
     },
-    "error": {
-        "internalServerError": "Internal server error",
-        "server.not.reachable": "Servidor no accesible",
-        "url.not.found": "No s'ha trobat",
-        "NotNull": "El camp {{fieldName}} no pot ser buit!",
-        "Size": "El camp {{fieldName}} no compleix els requeriments de tamany mínim/màxim!",
-        "userexists": "Nom d'usuari ja en ús!",
-        "emailexists": "E-mail ja en ús!",
-        "idexists": "Una nova {{entityName}} no pot ja tenir un ID"
+    "field": {
+      "id": "ID"
     },
-    "footer": {
-    	"license": "Aquesta obra està sota una <a rel='license' href='http://creativecommons.org/licenses/by-nc/4.0/'>llicència de Creative Commons Reconeixement-NoComercial 4.0 Internacional</a>."
+    "ribbon": {
+      "dev": "Development"
+    },
+    "item-count": "Visualitzant {{first}} - {{second}} de {{total}} elements",
+    "yes": "Sí",
+    "no": "No"
+  },
+  "entity": {
+    "action": {
+      "addblob": "Afegir blob",
+      "addimage": "Afegir imatge",
+      "back": "Enrera",
+      "cancel": "Anul.la",
+      "delete": "Elimina",
+      "edit": "Edita",
+      "open": "Open",
+      "save": "Desa",
+      "view": "Visualitza",
+      "copy": "Copia",
+      "add": "Afegeix",
+      "detail": "Detall"
+    },
+    "detail": {
+      "field": "Camp",
+      "value": "Valor",
+      "info": "Detall",
+      "statistics": "Estadístiques"
+    },
+    "delete": {
+      "title": "Confirma eliminació"
+    },
+    "validation": {
+      "required": "Aquest camp és obligatori.",
+      "minlength": "Aquest camp ha de tenir, com a mínim {{min}} caràcters.",
+      "maxlength": "Aquest camp no pot tenir més de {{max}} caràcters.",
+      "min": "Aquest camp ha de ser major que {{min}}.",
+      "max": "Aquest camp no pot ser major que {{max}}.",
+      "minbytes": "Aquest camp ha de tenir més de {{min}} bytes.",
+      "maxbytes": "Aquest camp no pot tenir més de {{max}} bytes.",
+      "pattern": "Aquest camp ha de tenir el seguent patró {{pattern}}.",
+      "number": "Aquest camp ha de ser numèric.",
+      "datetimelocal": "Aquest camp ha de ser una data/hora."
     }
+  },
+  "error": {
+    "internalServerError": "Internal server error",
+    "server.not.reachable": "Servidor no accesible",
+    "url.not.found": "No s'ha trobat",
+    "NotNull": "El camp {{fieldName}} no pot ser buit!",
+    "Size": "El camp {{fieldName}} no compleix els requeriments de tamany mínim/màxim!",
+    "userexists": "Nom d'usuari ja en ús!",
+    "emailexists": "E-mail ja en ús!",
+    "idexists": "Una nova {{entityName}} no pot ja tenir un ID"
+  },
+  "footer": {
+    "license": "Aquesta obra està sota una <a rel='license' href='http://creativecommons.org/licenses/by-nc/4.0/'>llicència de Creative Commons Reconeixement-NoComercial 4.0 Internacional</a>."
+  }
 }
