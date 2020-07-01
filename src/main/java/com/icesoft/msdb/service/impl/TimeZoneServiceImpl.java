@@ -36,5 +36,4 @@ public class TimeZoneServiceImpl implements TimeZoneService {
             throw new MSDBException("Problems trying to retrieve geolocation information");
         }
     }
-
 }
