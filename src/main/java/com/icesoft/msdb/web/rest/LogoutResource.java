@@ -39,17 +39,17 @@ public class LogoutResource {
 
         String logoutUrl = optLogoutUrl.orElse(this.registration.getProviderDetails()
             .getConfigurationMetadata().get("issuer").toString() + "v2/logout?returnTo=" +
-                getBaseUrl(request)).toString();
+                getBaseUrl(request)).toString() + "&client_id=" + registration.getClientId();
 
         Map<String, String> logoutDetails = new HashMap<>();
         logoutDetails.put("logoutUrl", logoutUrl);
-        logoutDetails.put("idToken", idToken.getTokenValue());
+        // logoutDetails.put("idToken", idToken.getTokenValue());
         request.getSession().invalidate();
         return ResponseEntity.ok().body(logoutDetails);
     }
 
     private String getBaseUrl(HttpServletRequest request) {
-        String scheme = request.getScheme() + "://";
+        String scheme = request.getScheme() + (request.getServerName().contains("localhost") ? "://" : "s://");
         String serverName = request.getServerName();
         String serverPort = (request.getServerPort() == 80) ? "" : ":" + request.getServerPort();
         String contextPath = request.getContextPath();
