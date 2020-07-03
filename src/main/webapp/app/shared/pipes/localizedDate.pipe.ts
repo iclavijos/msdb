@@ -16,7 +16,7 @@ export class LocalizedDatePipe implements PipeTransform {
     if (!value.lang) {
       let valueCopy: any;
       if (Array.isArray(value)) {
-        Object.assign([], value);
+        valueCopy = Object.assign([], value);
         valueCopy[1] = value[1] - 1;
       } else {
         valueCopy = value;
