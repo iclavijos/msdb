@@ -14,18 +14,7 @@ export class LoginService {
 
   logout() {
     this.authServerProvider.logout().subscribe(response => {
-      const data = response.body;
-      let logoutUrl = data.logoutUrl;
-      const redirectUri = `${location.origin}${this.location.prepareExternalUrl('/')}`;
-
-      // if Keycloak, uri has protocol/openid-connect/token
-      if (logoutUrl.indexOf('/protocol') > -1) {
-        logoutUrl = logoutUrl + '?redirect_uri=' + redirectUri;
-      } else {
-        // Okta
-        logoutUrl = logoutUrl + '?id_token_hint=' + data.idToken + '&post_logout_redirect_uri=' + redirectUri;
-      }
-      window.location.href = logoutUrl;
+      window.location.href = response.body.logoutUrl;
     });
   }
 }
