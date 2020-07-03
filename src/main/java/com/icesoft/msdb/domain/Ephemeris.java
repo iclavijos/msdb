@@ -2,6 +2,7 @@ package com.icesoft.msdb.domain;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Ephemeris {
@@ -28,7 +29,7 @@ public class Ephemeris {
             if (type == EphemerisEnum.BORN) {
                 this.date = driver.getBirthDate();
                 this.place = driver.getBirthPlace();
-                this.age = driver.getAge();
+                this.age = LocalDate.now().getYear() - driver.getBirthDate().getYear();
             } else if (type == EphemerisEnum.DEAD) {
                 this.date = driver.getDeathDate();
                 this.place = driver.getDeathPlace();
