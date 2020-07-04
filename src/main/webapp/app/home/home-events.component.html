@@ -6,10 +6,10 @@
                     <div class="card-header"><h3>{{ 'home.upcomingEvents' | translate }}</h3></div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-3">
+                            <div class="col-md-3 col-xs-12">
                                 {{ 'home.selectTimeZone' | translate }}
                             </div>
-                            <div class="col-9">
+                            <div class="col-md-9 col-xs-12">
                                 <mat-select [(ngModel)]="timezone" (selectionChange)="changeTimezone()">
                                     <mat-option *ngFor="let item of timezones" [value]="item.zoneName">
                                         {{item.countryName}} ({{item.zoneName}} {{item.gmtOffset}})
