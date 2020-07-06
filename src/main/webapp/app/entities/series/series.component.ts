@@ -92,7 +92,7 @@ export class SeriesComponent implements OnDestroy, AfterViewInit {
   loadAll() {
     this.series = [];
     if (this.currentSearch) {
-      return this.seriesService.query({
+      return this.seriesService.search({
         page: this.paginator.pageIndex,
         query: this.currentSearch,
         size: this.paginator.pageSize,
@@ -132,7 +132,7 @@ export class SeriesComponent implements OnDestroy, AfterViewInit {
     this.currentSearch = query;
     this.isLoadingResults = true;
     this.seriesService
-      .query({
+      .search({
         page: this.paginator.pageIndex,
         query: this.currentSearch,
         size: this.paginator.pageSize,
