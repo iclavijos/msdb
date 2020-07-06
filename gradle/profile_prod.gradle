@@ -16,6 +16,10 @@ bootRun {
     args = []
 }
 
+bootJar {
+    launchScript()
+}
+
 processResources {
     inputs.property('version', version)
     inputs.property('springProfiles', profiles)
