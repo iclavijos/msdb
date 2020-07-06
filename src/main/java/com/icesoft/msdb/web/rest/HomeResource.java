@@ -118,7 +118,11 @@ public class HomeResource {
         List<Driver> deadDrivers = driversRepository.findDeadOnDay(day, month);
         List<EventSession> events = eventSessionRepository.findRacesOnDay(day, month);
         Ephemeris result = new Ephemeris(bornDrivers, deadDrivers, events);
-        return ResponseEntity.ok(result.getEphemerisItems());
+        return ResponseEntity.ok(
+            result.getEphemerisItems().parallelStream().filter(
+                e -> e.getDate().getYear() != LocalDate.now().getYear())
+                .collect(Collectors.toList())
+            );
     }
 
 	@GetMapping("/timezones")
