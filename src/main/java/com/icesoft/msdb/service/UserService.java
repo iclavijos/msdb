@@ -1,8 +1,10 @@
 package com.icesoft.msdb.service;
 
+import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.config.Constants;
 import com.icesoft.msdb.domain.Authority;
 import com.icesoft.msdb.domain.User;
+import com.icesoft.msdb.domain.UserSubscription;
 import com.icesoft.msdb.repository.AuthorityRepository;
 import com.icesoft.msdb.repository.UserRepository;
 import com.icesoft.msdb.repository.search.UserSearchRepository;
@@ -15,13 +17,11 @@ import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -214,6 +214,14 @@ public class UserService {
             })
             .collect(Collectors.toSet()));
         return new UserDTO(syncUserWithIdP(attributes, user));
+    }
+
+    public Set<UserSubscription> getUserSuscriptions(String userEmail) {
+        User user = userRepository.findOneByEmailIgnoreCase(userEmail).orElseThrow(
+            () -> new MSDBException("User not found") // Should never happen
+        );
+        user.getSuscriptions().size();
+        return user.getSuscriptions();
     }
 
     private static User getUser(Map<String, Object> details) {

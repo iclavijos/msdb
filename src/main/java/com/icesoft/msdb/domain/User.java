@@ -1,7 +1,5 @@
 package com.icesoft.msdb.domain;
 
-import com.icesoft.msdb.config.Constants;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
@@ -12,7 +10,6 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -74,6 +71,10 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    Set<UserSubscription> suscriptions;
 
     public String getId() {
         return id;
@@ -146,6 +147,14 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public Set<UserSubscription> getSuscriptions() {
+        return suscriptions;
+    }
+
+    public void setSuscriptions(Set<UserSubscription> suscriptions) {
+        this.suscriptions = suscriptions;
     }
 
     @Override
