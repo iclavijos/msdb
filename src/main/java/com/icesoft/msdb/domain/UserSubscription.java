@@ -24,22 +24,14 @@ public class UserSubscription implements Serializable {
     @Column(name = "quali_sessions")
     private Boolean qualiSessions = Boolean.FALSE;
     @Column(name = "races")
-    private Boolean races = Boolean.TRUE;
+    private Boolean races = Boolean.FALSE;
 
-    @Column(name = "5m_warning")
-    private Boolean fiveMinWarning = Boolean.FALSE;
     @Column(name = "15m_warning")
     private Boolean fifteenMinWarning = Boolean.FALSE;
-    @Column(name = "30m_warning")
-    private Boolean thirtyMinWarning = Boolean.FALSE;
     @Column(name = "1h_warning")
-    private Boolean OneHourWarning = Boolean.TRUE;
+    private Boolean OneHourWarning = Boolean.FALSE;
     @Column(name = "3h_warning")
     private Boolean ThreeHoursWarning = Boolean.FALSE;
-    @Column(name = "12h_warning")
-    private Boolean TwelveHoursWarning = Boolean.FALSE;
-    @Column(name = "1d_warning")
-    private Boolean OneDayWarning = Boolean.FALSE;
 
     public UserSubscriptionPK getId() {
         return id;
@@ -89,28 +81,12 @@ public class UserSubscription implements Serializable {
         this.races = races;
     }
 
-    public Boolean getFiveMinWarning() {
-        return fiveMinWarning;
-    }
-
-    public void setFiveMinWarning(Boolean fiveMinWarning) {
-        this.fiveMinWarning = fiveMinWarning;
-    }
-
     public Boolean getFifteenMinWarning() {
         return fifteenMinWarning;
     }
 
     public void setFifteenMinWarning(Boolean fifteenMinWarning) {
         this.fifteenMinWarning = fifteenMinWarning;
-    }
-
-    public Boolean getThirtyMinWarning() {
-        return thirtyMinWarning;
-    }
-
-    public void setThirtyMinWarning(Boolean thirtyMinWarning) {
-        this.thirtyMinWarning = thirtyMinWarning;
     }
 
     public Boolean getOneHourWarning() {
@@ -129,19 +105,4 @@ public class UserSubscription implements Serializable {
         ThreeHoursWarning = threeHoursWarning;
     }
 
-    public Boolean getTwelveHoursWarning() {
-        return TwelveHoursWarning;
-    }
-
-    public void setTwelveHoursWarning(Boolean twelveHoursWarning) {
-        TwelveHoursWarning = twelveHoursWarning;
-    }
-
-    public Boolean getOneDayWarning() {
-        return OneDayWarning;
-    }
-
-    public void setOneDayWarning(Boolean oneDayWarning) {
-        OneDayWarning = oneDayWarning;
-    }
 }

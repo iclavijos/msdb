@@ -8,13 +8,9 @@ public class UserSubscriptionDTO {
     private Boolean practiceSessions = Boolean.FALSE;
     private Boolean qualiSessions = Boolean.FALSE;
     private Boolean races = Boolean.TRUE;
-    private Boolean fiveMinWarning = Boolean.FALSE;
     private Boolean fifteenMinWarning = Boolean.FALSE;
-    private Boolean thirtyMinWarning = Boolean.FALSE;
     private Boolean OneHourWarning = Boolean.TRUE;
     private Boolean ThreeHoursWarning = Boolean.FALSE;
-    private Boolean TwelveHoursWarning = Boolean.FALSE;
-    private Boolean OneDayWarning = Boolean.FALSE;
 
     public UserSubscriptionDTO() {
 
@@ -57,28 +53,12 @@ public class UserSubscriptionDTO {
         this.races = races;
     }
 
-    public Boolean getFiveMinWarning() {
-        return fiveMinWarning;
-    }
-
-    public void setFiveMinWarning(Boolean fiveMinWarning) {
-        this.fiveMinWarning = fiveMinWarning;
-    }
-
     public Boolean getFifteenMinWarning() {
         return fifteenMinWarning;
     }
 
     public void setFifteenMinWarning(Boolean fifteenMinWarning) {
         this.fifteenMinWarning = fifteenMinWarning;
-    }
-
-    public Boolean getThirtyMinWarning() {
-        return thirtyMinWarning;
-    }
-
-    public void setThirtyMinWarning(Boolean thirtyMinWarning) {
-        this.thirtyMinWarning = thirtyMinWarning;
     }
 
     public Boolean getOneHourWarning() {
@@ -97,19 +77,4 @@ public class UserSubscriptionDTO {
         ThreeHoursWarning = threeHoursWarning;
     }
 
-    public Boolean getTwelveHoursWarning() {
-        return TwelveHoursWarning;
-    }
-
-    public void setTwelveHoursWarning(Boolean twelveHoursWarning) {
-        TwelveHoursWarning = twelveHoursWarning;
-    }
-
-    public Boolean getOneDayWarning() {
-        return OneDayWarning;
-    }
-
-    public void setOneDayWarning(Boolean oneDayWarning) {
-        OneDayWarning = oneDayWarning;
-    }
 }
