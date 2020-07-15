@@ -4,7 +4,6 @@ import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
-import com.icesoft.msdb.repository.search.SeriesEditionSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
@@ -37,14 +36,13 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link com.icesoft.msdb.domain.SeriesEdition}.
@@ -295,7 +293,7 @@ public class SeriesEditionResource {
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
-    public ResponseEntity<Void> updateSeriesTeamssChampions(@PathVariable Long seriesEditionId, @RequestBody List<Long> selectedTeamsId) {
+    public ResponseEntity<Void> updateSeriesTeamsChampions(@PathVariable Long seriesEditionId, @RequestBody List<Long> selectedTeamsId) {
     	seriesEditionService.setSeriesTeamsChampions(seriesEditionId, selectedTeamsId);
     	return ResponseEntity.ok().headers(
     	    HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, seriesEditionId.toString())).build();
@@ -329,5 +327,12 @@ public class SeriesEditionResource {
     	seriesEditionService.cloneSeriesEdition(seriesEditionId, newPeriod);
     	return ResponseEntity.ok().headers(
     	    HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, seriesEditionId.toString())).build();
+    }
+
+    @GetMapping("/series-editions/active")
+    @Timed
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<SeriesEdition>> getActiveSeriesEditions() {
+        return ResponseEntity.ok(seriesEditionRepository.findDistinctSeriesEditionByEventsEventDateAfter(LocalDate.now(ZoneId.of("UTC"))));
     }
 }

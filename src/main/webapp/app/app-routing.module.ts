@@ -31,6 +31,11 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
           loadChildren: () => import('./agenda/agenda.module').then(m => m.MotorsportsDatabaseAgendaModule)
         },
         {
+          path: 'subscriptions',
+          canActivate: [UserRouteAccessService],
+          loadChildren: () => import('./subscriptions/subscriptions.module').then(m => m.MotorsportsDatabaseSubscriptionsModule)
+        },
+        {
           path: 'legal',
           loadChildren: () => import('./legal/legal.module').then(m => m.MotorsportsDatabaseLegalModule)
         },

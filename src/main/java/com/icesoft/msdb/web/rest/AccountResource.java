@@ -1,17 +1,20 @@
 package com.icesoft.msdb.web.rest;
 
+import com.icesoft.msdb.domain.UserSubscription;
 import com.icesoft.msdb.service.UserService;
 import com.icesoft.msdb.service.dto.UserDTO;
 
 import com.icesoft.msdb.service.dto.UserSubscriptionDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -83,5 +86,27 @@ public class AccountResource {
         } else {
             throw new AccountResourceException("User could not be found");
         }
+    }
+
+    /**
+     * {@code POST  /account/subscriptions} : sets the current user's subscriptions.
+     *
+     * @param principal the current user; resolves to {@code null} if not authenticated.
+     * @return operation result
+     * @throws AccountResourceException {@code 500 (Internal Server Error)} if the user's subscriptions couldn't be returned.
+     */
+    @PostMapping("/account/subscriptions")
+    @Transactional
+    public ResponseEntity<Void> updateSubscriptions(
+        Principal principal,
+        @RequestBody Set<UserSubscriptionDTO> subscriptions) throws URISyntaxException {
+        if (principal instanceof AbstractAuthenticationToken) {
+            UserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
+
+            userService.setUserSuscriptions(user, subscriptions);
+        } else {
+            throw new AccountResourceException("User could not be found");
+        }
+        return ResponseEntity.created(new URI("/api/account/subscriptions")).build();
     }
 }

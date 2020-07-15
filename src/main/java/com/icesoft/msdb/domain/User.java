@@ -73,8 +73,8 @@ public class User extends AbstractAuditingEntity implements Serializable {
     private Set<Authority> authorities = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user")
-    Set<UserSubscription> suscriptions;
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    Set<UserSubscription> subscriptions;
 
     public String getId() {
         return id;
@@ -149,12 +149,22 @@ public class User extends AbstractAuditingEntity implements Serializable {
         this.authorities = authorities;
     }
 
-    public Set<UserSubscription> getSuscriptions() {
-        return suscriptions;
+    public Set<UserSubscription> getSubscriptions() {
+        return subscriptions;
     }
 
-    public void setSuscriptions(Set<UserSubscription> suscriptions) {
-        this.suscriptions = suscriptions;
+    public void setSubscriptions(Set<UserSubscription> suscriptions) {
+        this.subscriptions = suscriptions;
+    }
+
+    public void addSubscription(UserSubscription userSub) {
+        getSubscriptions().add(userSub);
+    }
+
+    public void removeSubscription(UserSubscription userSub) {
+        getSubscriptions().removeIf(s -> s.getId().equals(userSub.getId()));
+        userSub.setUser(null);
+        userSub.setSeriesEdition(null);
     }
 
     @Override

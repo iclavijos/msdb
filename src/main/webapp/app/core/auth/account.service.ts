@@ -25,6 +25,14 @@ export class AccountService {
     return this.http.post<Account>(SERVER_API_URL + 'api/account', account);
   }
 
+  subscriptions(): Observable<any> {
+    return this.http.get<any>(SERVER_API_URL + 'api/account/subscriptions');
+  }
+
+  updateSubscriptions(subscriptions: any): Observable<any> {
+    return this.http.post<any>(SERVER_API_URL + 'api/account/subscriptions', subscriptions, { observe: 'response' });
+  }
+
   authenticate(identity) {
     this.userIdentity = identity;
     this.authenticated = identity !== null;

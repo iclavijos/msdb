@@ -1,5 +1,7 @@
 package com.icesoft.msdb.domain;
 
+import com.icesoft.msdb.service.dto.UserSubscriptionDTO;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -14,7 +16,7 @@ public class UserSubscription implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("series_edition_id")
     @JoinColumn(name = "series_edition_id")
     private SeriesEdition seriesEdition;
@@ -29,9 +31,22 @@ public class UserSubscription implements Serializable {
     @Column(name = "15m_warning")
     private Boolean fifteenMinWarning = Boolean.FALSE;
     @Column(name = "1h_warning")
-    private Boolean OneHourWarning = Boolean.FALSE;
+    private Boolean oneHourWarning = Boolean.FALSE;
     @Column(name = "3h_warning")
-    private Boolean ThreeHoursWarning = Boolean.FALSE;
+    private Boolean threeHoursWarning = Boolean.FALSE;
+
+    public UserSubscription() {
+    }
+
+    public UserSubscription(String userId, UserSubscriptionDTO dto) {
+        this.id = new UserSubscriptionPK(userId, dto.getSeriesEditionId());
+        this.practiceSessions = dto.getPracticeSessions();
+        this.qualiSessions = dto.getQualiSessions();
+        this.races = dto.getRaces();
+        this.fifteenMinWarning = dto.getFifteenMinWarning();
+        this.oneHourWarning = dto.getOneHourWarning();
+        this.threeHoursWarning = dto.getThreeHoursWarning();
+    }
 
     public UserSubscriptionPK getId() {
         return id;
@@ -90,19 +105,19 @@ public class UserSubscription implements Serializable {
     }
 
     public Boolean getOneHourWarning() {
-        return OneHourWarning;
+        return oneHourWarning;
     }
 
     public void setOneHourWarning(Boolean oneHourWarning) {
-        OneHourWarning = oneHourWarning;
+        this.oneHourWarning = oneHourWarning;
     }
 
     public Boolean getThreeHoursWarning() {
-        return ThreeHoursWarning;
+        return threeHoursWarning;
     }
 
     public void setThreeHoursWarning(Boolean threeHoursWarning) {
-        ThreeHoursWarning = threeHoursWarning;
+        this.threeHoursWarning = threeHoursWarning;
     }
 
 }

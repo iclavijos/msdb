@@ -1,0 +1,58 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h3 class="card-title">{{'motorsportsDatabaseApp.subscriptions.title' | translate }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <h4>
+                                    Gestiona cuando recibir notificaciones de aviso antes del inicio de las distintas sesiones
+                                    de aquellos campeonatos de tu interés
+                                </h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-10">
+                                <mat-form-field>
+                                    <input matInput (keyup)="filterSeries($event.target.value)" placeholder="Filter">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-2">
+                                <button mat-button (click)="save()" class="btn btn-info float-right">
+                                    <fa-icon [icon]="'save'"></fa-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row" [formGroup]="editForm">
+                            <div class="col-12 form-group" formArrayName="seriesSubscriptions">
+                                <mat-list>
+                                    <ng-container *ngFor="let subscription of editForm.get('seriesSubscriptions')['controls']; let i=index">
+                                        <mat-list-item [formGroupName]="i" *ngIf="isShown(subscription.value.editionName)">
+                                            <div class="col-3">
+                                                {{ subscription.value.editionName }}
+                                            </div>
+                                            <div class="col-4">
+                                                <mat-slide-toggle formControlName="practiceSessions">Free practices</mat-slide-toggle>
+                                                <mat-slide-toggle formControlName="qualiSessions">Qualifying</mat-slide-toggle>
+                                                <mat-slide-toggle formControlName="races">Races</mat-slide-toggle>
+                                            </div>
+                                            <div class="col-4">
+                                                <mat-slide-toggle formControlName="fifteenMinWarning">15m warning</mat-slide-toggle>
+                                                <mat-slide-toggle formControlName="oneHourWarning">1h warning</mat-slide-toggle>
+                                                <mat-slide-toggle formControlName="threeHoursWarning">3h warning</mat-slide-toggle>
+                                            </div>
+                                        </mat-list-item>
+                                    </ng-container>
+                                </mat-list>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
