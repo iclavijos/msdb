@@ -8,7 +8,7 @@ CREATE TABLE `user_suscription` (
   `1h_warning` BIT(1) NULL,
   `3h_warning` BIT(1) NULL,
   PRIMARY KEY (`user_id`, `series_edition_id`),
-  INDEX `fk_series_suscription_idx` (`user_id` ASC, `series_edition_id` ASC) VISIBLE,
+  INDEX `fk_series_suscription_idx` (`user_id` ASC, `series_edition_id` ASC),
   CONSTRAINT `fk_series_suscription`
     FOREIGN KEY (`series_edition_id`)
     REFERENCES `msdb`.`series_edition` (`id`)
