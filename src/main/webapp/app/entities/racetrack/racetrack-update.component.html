@@ -29,7 +29,9 @@
                                                 </div>
                                             </mat-form-field>
                                         </div>
-                                        <div class="col-md-12">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-7">
                                             <mat-form-field class="example-full-width">
                                                 <input matInput placeholder="{{ 'motorsportsDatabaseApp.racetrack.location' | translate }}" type="text"
                                                        class="form-control" name="location" id="field_location" formControlName="location">
@@ -43,6 +45,19 @@
                                                         This field cannot be longer than 100 characters.
                                                     </small>
                                                 </div>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-5">
+                                            <mat-form-field class="example-full-width">
+                                                <input matInput class="form-control"
+                                                       [matAutocomplete]="auto" formControlName="countryCode"
+                                                       placeholder="{{ 'motorsportsDatabaseApp.racetrack.country' | translate }}"/>
+                                                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                                                    <mat-option *ngFor="let country of (options | async)" [value]="country">
+                                                        <img aria-hidden src="/images/flags/{{country.countryCode}}.png">
+                                                        <span>{{ country.countryName }}</span>
+                                                    </mat-option>
+                                                </mat-autocomplete>
                                             </mat-form-field>
                                         </div>
                                     </div>
