@@ -65,7 +65,11 @@ export class SeriesEditionUpdateComponent implements OnInit {
     this.updateForm(this.seriesEdition);
 
     this.categoryService
-      .query()
+      .query({
+        page: 0,
+        query: '',
+        size: 100
+      })
       .pipe(
         filter((mayBeOk: HttpResponse<ICategory[]>) => mayBeOk.ok),
         map((response: HttpResponse<ICategory[]>) => response.body)
@@ -73,7 +77,11 @@ export class SeriesEditionUpdateComponent implements OnInit {
       .subscribe((res: ICategory[]) => (this.categories = res.sort((e1, e2) => (e1.name > e2.name ? 1 : -1))));
 
     this.pointsSystemService
-      .query()
+      .query({
+        page: 0,
+        query: '',
+        size: 100
+      })
       .pipe(
         filter((mayBeOk: HttpResponse<ISeries[]>) => mayBeOk.ok),
         map((response: HttpResponse<ISeries[]>) => response.body)

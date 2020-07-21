@@ -58,7 +58,7 @@
                 <div class="col-12">
                     <mat-checkbox formControlName="standingsPerCategory">{{ 'motorsportsDatabaseApp.series.seriesEdition.standingsPerCategory' | translate }}</mat-checkbox>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-8">
                     <mat-label>{{'motorsportsDatabaseApp.series.seriesEdition.allowedCategories' | translate }}</mat-label>
                     <cdk-virtual-scroll-viewport itemSize="50" class="selection-list-viewport">
                         <mat-selection-list [compareWith]="compareCategories" formControlName="allowedCategories">
@@ -68,7 +68,7 @@
                         </mat-selection-list>
                     </cdk-virtual-scroll-viewport>
                 </div>
-                <div class="col-6">
+                <div class="col-4">
                     <mat-list>
                         <mat-list-item *ngFor="let cat of editForm.get('allowedCategories').value">
                             <p mat-line>{{cat.name}}</p>
@@ -79,7 +79,7 @@
         </div>
         <div class="col-6">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-7">
                     <mat-label>{{'motorsportsDatabaseApp.series.seriesEdition.pointsSystems' | translate }}</mat-label>
                     <cdk-virtual-scroll-viewport itemSize="50" class="selection-list-viewport">
                         <mat-selection-list [compareWith]="comparePointsSystems" formControlName="pointsSystems">
@@ -89,7 +89,7 @@
                         </mat-selection-list>
                     </cdk-virtual-scroll-viewport>
                 </div>
-                <div class="col-6">
+                <div class="col-5">
                     <mat-list>
                         <mat-list-item *ngFor="let ps of editForm.get('pointsSystems').value">
                             <p mat-line>{{ps.name}}</p>
