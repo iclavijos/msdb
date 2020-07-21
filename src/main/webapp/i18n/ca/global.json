@@ -33,7 +33,8 @@
         "sessions": "Sessions",
         "login": "Autenticar",
         "logout": "Finalitzar la sessió",
-        "register": "Registre"
+        "register": "Registre",
+        "subscriptions": "Subscripcions"
       },
       "admin": {
         "main": "Administració",

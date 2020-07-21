@@ -49,10 +49,10 @@ public class LogoutResource {
     }
 
     private String getBaseUrl(HttpServletRequest request) {
-        String scheme = request.getScheme() + (request.getServerName().contains("localhost") ? "://" : "s://");
+        String scheme = request.getScheme() + "://"; // + (request.getServerName().contains("localhost") ? "://" : "s://");
         String serverName = request.getServerName();
-        String serverPort = (request.getServerPort() == 80) ? "" : ":" + request.getServerPort();
+        // String serverPort = request.getServerPort(); // (request.getServerPort() == 80) ? "" : ":" +
         String contextPath = request.getContextPath();
-        return scheme + serverName + serverPort + contextPath;
+        return scheme + serverName + contextPath;
     }
 }

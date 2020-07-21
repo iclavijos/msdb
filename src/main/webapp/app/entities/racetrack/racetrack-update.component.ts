@@ -5,7 +5,10 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
+import { switchMap, debounceTime, map } from 'rxjs/operators';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
+import { ICountry } from 'app/shared/country/country.model';
+import { CountryService } from 'app/shared/country/country.service';
 import { IRacetrack, Racetrack } from 'app/shared/model/racetrack.model';
 import { RacetrackService } from './racetrack.service';
 
@@ -15,6 +18,8 @@ import { RacetrackService } from './racetrack.service';
 })
 export class RacetrackUpdateComponent implements OnInit {
   isSaving: boolean;
+
+  options: Observable<ICountry[]>;
 
   editForm = this.fb.group({
     id: [],
@@ -31,6 +36,7 @@ export class RacetrackUpdateComponent implements OnInit {
     protected dataUtils: JhiDataUtils,
     protected jhiAlertService: JhiAlertService,
     protected racetrackService: RacetrackService,
+    protected countryService: CountryService,
     protected elementRef: ElementRef,
     protected activatedRoute: ActivatedRoute,
     private fb: FormBuilder
@@ -38,6 +44,17 @@ export class RacetrackUpdateComponent implements OnInit {
 
   ngOnInit() {
     this.isSaving = false;
+
+    this.options = this.editForm.get('countryCode').valueChanges.pipe(
+      debounceTime(300),
+      switchMap(value => {
+        if (typeof value !== 'object' && value !== null) {
+          return this.countryService.searchCountries(value);
+        }
+      }),
+      map(response => response.body)
+    );
+
     this.activatedRoute.data.subscribe(({ racetrack }) => {
       this.updateForm(racetrack);
     });
@@ -54,6 +71,10 @@ export class RacetrackUpdateComponent implements OnInit {
       logoUrl: racetrack.logoUrl,
       logoContentType: racetrack.logoContentType
     });
+  }
+
+  displayFn(country?: ICountry): string | undefined {
+    return country ? country.countryName : undefined;
   }
 
   byteSize(field) {
@@ -119,7 +140,7 @@ export class RacetrackUpdateComponent implements OnInit {
       id: this.editForm.get(['id']).value,
       name: this.editForm.get(['name']).value,
       location: this.editForm.get(['location']).value,
-      countryCode: this.editForm.get(['countryCode']).value,
+      countryCode: this.editForm.get(['countryCode']).value.countryCode,
       timeZone: this.editForm.get(['timeZone']).value,
       logoContentType: this.editForm.get(['logoContentType']).value,
       logo: this.editForm.get(['logo']).value,
