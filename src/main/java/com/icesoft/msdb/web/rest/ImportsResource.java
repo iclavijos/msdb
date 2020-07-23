@@ -9,6 +9,7 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.xml.bind.DatatypeConverter;
@@ -140,7 +141,7 @@ public class ImportsResource {
     }
 
     private <T> MappingIterator<T> initializeIterator(Class<T> type, String data) {
-    	CsvSchema bootstrapSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator(',');
+    	CsvSchema bootstrapSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator(';');
         CsvMapper mapper = new CsvMapper();
         try {
         	JavaTimeModule javaTimeModule=new JavaTimeModule();
@@ -363,25 +364,27 @@ public class ImportsResource {
         		result.setEntry(entries.get(0));
 
         		result.setStartingPosition(tmp.getStartingPosition());
-	        	try {
-	        		result.setFinalPosition(Integer.parseInt(tmp.getFinalPositionStr()));
-	        	} catch (NumberFormatException e) {
-	        		String pos = tmp.getFinalPositionStr();
-	        		if (pos.equals("DNF")) {
-	        			result.setFinalPosition(900);
-	        		} else if (pos.equals("DNS")) {
-	        			result.setFinalPosition(901);
-	        		} else if (pos.equals("DSQ")) {
-	        			result.setFinalPosition(902);
-	        		} else if (pos.equals("NC")) {
-	        			result.setFinalPosition(800);
-	        		} else {
-	        			log.warn("Informed final position ({}) not recognized for entry number {}. Skipping...",
-	        					tmp.getFinalPosition(),
-	        					tmp.getRaceNumber());
-	        			ignore = true;
-	        		}
-	        	}
+                Optional<Integer> finalPos = Optional.ofNullable(tmp.getFinalPosition());
+        		if (finalPos.isPresent()) {
+                    result.setFinalPosition(finalPos.get());
+                } else {
+                    String pos = tmp.getFinalPositionStr();
+                    if (pos.equals("DNF")) {
+                        result.setFinalPosition(900);
+                    } else if (pos.equals("DNS")) {
+                        result.setFinalPosition(901);
+                    } else if (pos.equals("DSQ")) {
+                        result.setFinalPosition(902);
+                    } else if (pos.equals("NC")) {
+                        result.setFinalPosition(800);
+                    } else {
+                        log.warn("Informed final position ({}) not recognized for entry number {}. Skipping...",
+                            tmp.getFinalPosition(),
+                            tmp.getRaceNumber());
+                        ignore = true;
+                    }
+                }
+
 	        	if (!ignore) {
 		        	result.setBestLapTime(timeToMillis(tmp.getBestLapTime()));
 		        	result.setStartingPosition(tmp.getStartingPosition());
