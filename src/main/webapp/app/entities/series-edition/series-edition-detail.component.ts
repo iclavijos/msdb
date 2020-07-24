@@ -5,6 +5,7 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { SeriesEditionService } from './series-edition.service';
 import { ISeriesEdition } from 'app/shared/model/series-edition.model';
+import { SeriesEditionUpdateComponent } from './series-edition-update.component';
 import { SeriesEditionCalendarDialogComponent } from './series-edition-calendar-dialog.component';
 import { SeriesEditionCalendarRemoveDialogComponent } from './series-edition-calendar-remove-dialog.component';
 import { SeriesEditionCloneDialogComponent } from './series-edition-clone-dialog.component';
@@ -78,6 +79,17 @@ export class SeriesEditionDetailComponent implements OnInit {
 
   public concatDriverNames(drivers: any[]): string {
     return drivers.map(d => d.driverName).join(', ');
+  }
+
+  editSeriesEdition() {
+    const dialogRef = this.dialog.open(SeriesEditionUpdateComponent, {
+      data: {
+        series: this.seriesEdition.series,
+        seriesEdition: this.seriesEdition
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(() => {});
   }
 
   addEventToCalendar() {

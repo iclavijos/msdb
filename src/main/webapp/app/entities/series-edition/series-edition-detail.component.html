@@ -162,7 +162,7 @@
             </div>
         </div>
         <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                [routerLink]="['/event', seriesEdition.id, 'edit']"
+                (click)="editSeriesEdition()"
                 class="btn btn-primary">
             <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
         </button>
