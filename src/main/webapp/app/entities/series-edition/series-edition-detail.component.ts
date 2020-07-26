@@ -24,7 +24,7 @@ export class SeriesEditionDetailComponent implements OnInit {
   isActive = false;
   genericPosterUrl: string;
 
-  displayedColumns: string[] = ['date', 'name', 'poster', 'winners', 'buttons'];
+  displayedColumns: string[] = ['date', 'name', 'winners', 'buttons'];
 
   driversStandings: any;
   teamsStandings: any;

@@ -296,7 +296,7 @@
 
                 <ng-container matColumnDef="date">
                     <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.eventDate' | translate }}</th>
-                    <td mat-cell *matCellDef="let event">{{ event.eventEditionDate | localizedDate }}</td>
+                    <td mat-cell *matCellDef="let event">{{ event.eventEditionDate | localizedDate : 'LL' }}</td>
                 </ng-container>
 
                 <ng-container matColumnDef="status">
@@ -318,13 +318,6 @@
                 <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.event' | translate }}</th>
                     <td mat-cell *matCellDef="let event">{{ event.eventEditionName }}</td>
-                </ng-container>
-
-                <ng-container matColumnDef="poster">
-                    <th mat-header-cell *matHeaderCellDef></th>
-                    <td mat-cell *matCellDef="let event">
-                        <img [src]="getPosterUrl(event.eventEditionPosterUrl)" class="poster-table img-fluid">
-                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="winners">
