@@ -277,6 +277,9 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 			newEvent.setEventDate(ev.getEventDate().withYear(year));
 			newEvent.setLongEventName(year + " " + ev.getEvent().getName());
 			newEvent.setShortEventName(year + " " + ev.getEvent().getName());
+			if (newEvent.getShortEventName().length() > 40) {
+			    newEvent.setShortEventName(newEvent.getShortEventName().substring(0, 40));
+            }
 
 			final EventEdition evCopy = eventRepo.save(newEvent);
 			eventEdSearchRepo.save(evCopy);

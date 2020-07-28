@@ -4,15 +4,15 @@ public class EventsSeriesNavigationDTO {
 
 	private final Long prevId;
 	private final Long nextId;
-	private final String prev_name;
-	private final String next_name;
-	
-	public EventsSeriesNavigationDTO(Long prevId, Long nextId, String prev_name, String next_name) {
+	private final String prevName;
+	private final String nextName;
+
+	public EventsSeriesNavigationDTO(Long prevId, Long nextId, String prevName, String nextName) {
 		super();
 		this.prevId = prevId;
 		this.nextId = nextId;
-		this.prev_name = prev_name;
-		this.next_name = next_name;
+		this.prevName = prevName;
+		this.nextName = nextName;
 	}
 
 	public Long getPrevId() {
@@ -24,11 +24,11 @@ public class EventsSeriesNavigationDTO {
 	}
 
 	public String getPrevName() {
-		return prev_name;
+		return prevName;
 	}
 
 	public String getNextName() {
-		return next_name;
+		return nextName;
 	}
-	
+
 }

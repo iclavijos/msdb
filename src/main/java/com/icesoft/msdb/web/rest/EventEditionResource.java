@@ -272,14 +272,16 @@ public class EventEditionResource {
         );
     	List<EventsSeriesNavigationDTO> result = new ArrayList<>();
     	for(SeriesEdition se: event.getSeriesEditions()) {
-//    		int index = se.getEvents().indexOf(event);
-//    		EventEdition next = (index < se.getEvents().size() - 1) ? se.getEvents().get(index + 1) : null;
-//            EventEdition prev = (index > 0) ? se.getEvents().get(index - 1) : null;
-//            result.add(new EventsSeriesNavigationDTO(
-//            		Optional.ofNullable(prev).map(ee -> ee.getId()).orElse(null),
-//            		Optional.ofNullable(next).map(ee -> ee.getId()).orElse(null),
-//            		Optional.ofNullable(prev).map(ee -> ee.getLongEventName()).orElse(null),
-//            		Optional.ofNullable(next).map(ee -> ee.getLongEventName()).orElse(null)));
+    		List<EventEdition> events = se.getEvents().parallelStream().sorted(Comparator.comparing(EventEdition::getEventDate))
+                .collect(Collectors.toList());
+    		int index = events.indexOf(event);
+    		EventEdition next = (index < se.getEvents().size() - 1) ? events.get(index + 1) : null;
+            EventEdition prev = (index > 0) ? events.get(index - 1) : null;
+            result.add(new EventsSeriesNavigationDTO(
+            		Optional.ofNullable(prev).map(ee -> ee.getId()).orElse(null),
+            		Optional.ofNullable(next).map(ee -> ee.getId()).orElse(null),
+            		Optional.ofNullable(prev).map(ee -> ee.getLongEventName()).orElse(null),
+            		Optional.ofNullable(next).map(ee -> ee.getLongEventName()).orElse(null)));
     	}
 
     	return result;

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
@@ -23,7 +23,7 @@ import { MatDialog } from '@angular/material/dialog';
     ])
   ]
 })
-export class EventEntryComponent implements OnInit, OnDestroy {
+export class EventEntryComponent implements OnInit, OnDestroy, OnChanges {
   private expandedElement: IEventEntry | null;
 
   @Input() eventEdition: EventEdition;
@@ -70,6 +70,10 @@ export class EventEntryComponent implements OnInit, OnDestroy {
       return url;
     }
     return null;
+  }
+
+  ngOnChanges() {
+    this.loadAll();
   }
 
   loadAll() {

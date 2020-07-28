@@ -6,9 +6,52 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-danger">
-                        <h3 class="card-title">{{eventEdition.longEventName}}</h3>
+                        <div class="row">
+                            <div class="col-9">
+                                <h3 class="card-title">{{eventEdition.longEventName}}</h3>
+                            </div>
+                            <div class="col-md-auto">
+                                <div class="row" *ngIf="editions.length > 1">
+                                    <fa-icon class="navigation-arrows" *ngIf="previousEditionId >= 0" [icon]="'angle-double-left'" size="2x" (click)="gotoPrevious()"></fa-icon>
+                                    <div class="select-year-panel">
+                                        <mat-select (selectionChange)="jumpToEdition($event.value)">
+                                            <mat-option></mat-option>
+                                            <mat-option *ngFor="let edition of editions" [value]="edition.id">{{edition.editionYear}}</mat-option>
+                                        </mat-select>
+                                    </div>
+                                    <fa-icon class="navigation-arrows" *ngIf="nextEditionId >= 0" [icon]="'angle-double-right'" size="2x" (click)="gotoNext()"></fa-icon>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6">
+                                <ng-template ngFor let-item [ngForOf]="eventEdition.seriesId" let-currentIndex="index">
+                                    <span class="navigation-arrows" *ngIf="eventEdition.seriesId" [routerLink]="['/series/edition', item, 'view']">
+                                        <fa-icon [icon]="'angle-double-left'"></fa-icon> {{eventEdition.seriesName[currentIndex]}}
+                                    </span>
+                                </ng-template>
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <div class="row" *ngIf="navigationIds !== null">
+                                    <ng-template ngFor let-item [ngForOf]="navigationIds" let-currentIndex="index">
+                                        <div class="col-md-auto" *ngIf="item.prevId">
+                                            <span class="navigation-arrows" [routerLink]="['/event/edition', item.prevId, 'view-ed']">
+                                                <fa-icon [icon]="'angle-double-left'"></fa-icon> {{item.prevName}}
+                                            </span>
+                                        </div>
+                                        <div class="col"></div>
+                                        <div class="col-md-auto" *ngIf="item.nextId">
+                                            <span class="navigation-arrows" [routerLink]="['/event/edition', item.nextId, 'view-ed']">
+                                                {{item.nextName}}
+                                                <fa-icon [icon]="'angle-double-right'" (click)="gotoNext()"></fa-icon>
+                                            </span>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <mat-tab-group dynamicHeight mat-stretch-tabs [(selectedIndex)]="index">
