@@ -18,7 +18,7 @@
                         <div class="row">
                             <div class="col-10">
                                 <mat-form-field>
-                                    <input matInput (keyup)="currentFilter = $event.target.value" placeholder="Filter">
+                                    <input matInput [(ngModel)]="currentFilter" placeholder="Filter">
                                 </mat-form-field>
                             </div>
                             <div class="col-2">
