@@ -90,7 +90,7 @@ export class EventEditionDetailComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ eventEdition }) => {
       this.eventEdition = eventEdition;
-      if (eventEdition.seriesId) {
+      if (eventEdition.seriesEditions) {
         this.eventEditionService.findPrevNextInSeries(eventEdition.id).subscribe(res => (this.navigationIds = res));
       }
       this.eventEditionService.hasLapsData(eventEdition.id).subscribe(res => (this.hasLapsData = res));

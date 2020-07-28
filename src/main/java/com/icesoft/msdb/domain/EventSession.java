@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * A EventSession.
@@ -233,14 +234,16 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 
 	public List<Long> getSeriesIds() {
 		if (eventEdition!= null && eventEdition.getSeriesEditions() != null) {
-			return eventEdition.getSeriesId();
+			return eventEdition.getSeriesEditions().stream()
+                .map(se -> se.getId()).collect(Collectors.toList());
 		}
 		return null;
 	}
 
 	public List<String> getSeriesNames() {
 		if (eventEdition!= null && eventEdition.getSeriesEditions() != null) {
-			return eventEdition.getSeriesName();
+			return eventEdition.getSeriesEditions().stream()
+                .map(se -> se.getEditionName()).collect(Collectors.toList());
 		}
 		return null;
 	}

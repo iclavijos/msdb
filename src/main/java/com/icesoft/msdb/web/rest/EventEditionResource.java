@@ -141,7 +141,7 @@ public class EventEditionResource {
         }
         eventEditionSearchRepo.save(result);
         if (result.getSeriesEditions() != null) {
-        	result.getSeriesId().forEach(id -> cacheHandler.resetWinnersCache(id));
+        	result.getSeriesEditions().forEach(se -> cacheHandler.resetWinnersCache(se.getId()));
         }
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -191,7 +191,7 @@ public class EventEditionResource {
         eventEditionSearchRepo.save(result);
 
         if (result.getSeriesEditions() != null) {
-        	result.getSeriesId().stream().forEach(cacheHandler::resetWinnersCache);
+        	result.getSeriesEditions().stream().map(se -> se.getId()).forEach(cacheHandler::resetWinnersCache);
         }
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, eventEdition.getId().toString()))
@@ -240,9 +240,9 @@ public class EventEditionResource {
         EventEdition eventEd = eventEditionRepository.getOne(id);
 
         if (eventEd.getSeriesEditions() != null) {
-            eventEd.getSeriesId().forEach(sId -> {
-                seriesEditionService.removeEventFromSeries(sId, id);
-                cacheHandler.resetWinnersCache(sId);
+            eventEd.getSeriesEditions().stream().forEach(se -> {
+                seriesEditionService.removeEventFromSeries(se.getId(), id);
+                cacheHandler.resetWinnersCache(se.getId());
             });
         }
 
