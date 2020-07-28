@@ -6,7 +6,23 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-danger">
-                        <h3 class="card-title">{{eventEdition.longEventName}}</h3>
+                        <div class="row">
+                            <div class="col-9">
+                                <h3 class="card-title">{{eventEdition.longEventName}}</h3>
+                            </div>
+                            <div class="col-3">
+                                <div class="row">
+                                    <fa-icon class="navigation-arrows" *ngIf="previousEditionId >= 0" [icon]="'angle-double-left'" size="2x" (click)="gotoPrevious()"></fa-icon>
+                                    <div class="select-year-panel">
+                                        <mat-select (selectionChange)="jumpToEdition($event.value)">
+                                            <mat-option></mat-option>
+                                            <mat-option *ngFor="let edition of editions" [value]="edition.id">{{edition.editionYear}}</mat-option>
+                                        </mat-select>
+                                    </div>
+                                    <fa-icon class="navigation-arrows" *ngIf="nextEditionId >= 0"[icon]="'angle-double-right'" size="2x" (click)="gotoNext()"></fa-icon>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row">

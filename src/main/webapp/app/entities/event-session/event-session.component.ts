@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
@@ -20,7 +20,7 @@ import * as moment from 'moment-timezone';
   selector: 'jhi-event-session',
   templateUrl: './event-session.component.html'
 })
-export class EventSessionComponent implements OnInit {
+export class EventSessionComponent implements OnInit, OnChanges {
   @Input() eventEdition: EventEdition;
   eventSessions: IEventSession[];
   currentAccount: any;
@@ -50,6 +50,10 @@ export class EventSessionComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loadAll();
+  }
+
+  ngOnChanges() {
     this.loadAll();
   }
 
