@@ -24,6 +24,7 @@ import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.model.property.XProperty;
 import net.fortuna.ical4j.util.RandomUidGenerator;
 import net.fortuna.ical4j.util.UidGenerator;
 import org.slf4j.Logger;
@@ -88,6 +89,7 @@ public class ICalendarResource {
         calendar.getProperties().add(new ProdId("-//Motorsports Database//MSDB 4.1.0//EN"));
         calendar.getProperties().add(Version.VERSION_2_0);
         calendar.getProperties().add(CalScale.GREGORIAN);
+        calendar.getProperties().add(new XProperty("X-WR-CALNAME", edition.getEditionName()));
 
         UidGenerator uidGenerator = new RandomUidGenerator();
 
