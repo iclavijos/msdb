@@ -13,8 +13,13 @@
                             <div class="col-md-12">
                                 <mat-tab-group dynamicHeight mat-stretch-tabs>
                                     <mat-tab label="{{'global.menu.calendar' | translate }}">
-                                        <div class="row" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
-                                            <div class="col-12 text-right">
+                                        <div class="row">
+                                            <div class="col-2 text-left">
+                                                <span style="cursor: pointer;">
+                                                    <a href="/api/icalendar/{{ seriesEdition.id }}"><img src="/images/ics.png" style="width: 32px;"/> ICS Calendar</a>
+                                                </span>
+                                            </div>
+                                            <div class="col-10 text-right" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
                                                 <button mat-button (click)="updateStandings()" class="btn btn-info float-right">
                                                     <fa-icon [icon]="'list-ol'"></fa-icon>
                                                     <span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.updateStandings">Update standings</span>

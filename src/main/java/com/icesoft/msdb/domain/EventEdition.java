@@ -366,22 +366,6 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 		this.nextEditionId = nextEditionId;
 	}
 
-	@JsonProperty("seriesId")
-	public List<Long> getSeriesId() {
-		if (seriesEditions != null) {
-			return seriesEditions.stream().map(s -> s.getId()).collect(Collectors.toList());
-		}
-		return null;
-	}
-
-	@JsonProperty("seriesName")
-	public List<String> getSeriesName() {
-		if (seriesEditions != null) {
-			return seriesEditions.stream().map(s -> s.getEditionName()).collect(Collectors.toList());
-		}
-		return null;
-	}
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

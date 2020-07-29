@@ -121,7 +121,8 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		EventEdition eventEd = eventRepo.findById(eventId)
             .orElseThrow(() ->new MSDBException("Invalid event edition id " + eventId));
 
-		if (!eventEd.getSeriesId().contains(seriesId)) {
+		if (!eventEd.getSeriesEditions().stream()
+            .filter(se -> se.getId().equals(seriesId)).findFirst().isPresent()) {
 			throw new MSDBException("Provided series id does not match an already assigned one");
 		}
 		SeriesEdition sEdition = seriesRepo.findById(seriesId).get();

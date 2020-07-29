@@ -1,5 +1,6 @@
 import { ICategory } from 'app/shared/model/category.model';
 import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
+import { ISeriesEdition } from 'app/shared/model/series-edition.model';
 import { IEvent } from 'app/shared/model/event.model';
 import { IEventSession } from 'app/shared/model/event-session.model';
 
@@ -27,6 +28,7 @@ export interface IEventEdition {
   poster?: any;
   posterUrl?: string;
   status?: string;
+  seriesEditions?: ISeriesEdition[];
 }
 
 export class EventEdition implements IEventEdition {
@@ -51,6 +53,7 @@ export class EventEdition implements IEventEdition {
     public posterContentType?: string,
     public poster?: any,
     public posterUrl?: string,
-    public string?: string
+    public string?: string,
+    public seriesEditions?: ISeriesEdition[]
   ) {}
 }
