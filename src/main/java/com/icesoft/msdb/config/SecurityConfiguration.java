@@ -94,6 +94,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
             .antMatchers(HttpMethod.GET, "/api/events/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/event-editions/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/icalendar/**").permitAll()
             //End of "public" access
 
             .antMatchers("/api/**").authenticated()
