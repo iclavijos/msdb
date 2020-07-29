@@ -226,7 +226,7 @@ dependencies {
     implementation "mysql:mysql-connector-java"
 
     implementation 'com.sendgrid:sendgrid-java:3.0.9'
-    implementation 'com.cloudinary:cloudinary-http44:1.8.1'
+    implementation 'com.cloudinary:cloudinary-http44:1.26.0'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.8.7'
 
     implementation 'com.google.maps:google-maps-services:0.1.20'
