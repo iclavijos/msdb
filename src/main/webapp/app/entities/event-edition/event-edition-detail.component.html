@@ -14,7 +14,7 @@
                                 <div class="row" *ngIf="editions.length > 1">
                                     <fa-icon class="navigation-arrows" *ngIf="previousEditionId >= 0" [icon]="'angle-double-left'" size="2x" (click)="gotoPrevious()"></fa-icon>
                                     <div class="select-year-panel">
-                                        <mat-select (selectionChange)="jumpToEdition($event.value)">
+                                        <mat-select id="yearSelect" (selectionChange)="jumpToEdition($event.value)">
                                             <mat-option></mat-option>
                                             <mat-option *ngFor="let edition of editions" [value]="edition.id">{{edition.editionYear}}</mat-option>
                                         </mat-select>
