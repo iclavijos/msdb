@@ -64,7 +64,7 @@ export class AgendaComponent implements OnInit {
       )
       .subscribe(events => {
         this.backgroundColorIndex = -1;
-        this.events = this.calendarComponent.convertEvents(events, this.timezone, false);
+        this.events = this.calendarComponent.convertEvents(events.filter(e => e.status === 'O'), this.timezone, false);
         this.uniqueSeries = this.events.map(e => (e.seriesLogoUrl ? e.seriesLogoUrl[0] : '')).filter(this.onlyUnique);
       });
   }
