@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.Category;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.SeriesEdition;
+import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.repository.CategoryRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
@@ -21,10 +22,7 @@ import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.*;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VTimeZone;
-import net.fortuna.ical4j.model.property.CalScale;
-import net.fortuna.ical4j.model.property.ProdId;
-import net.fortuna.ical4j.model.property.Version;
-import net.fortuna.ical4j.model.property.XProperty;
+import net.fortuna.ical4j.model.property.*;
 import net.fortuna.ical4j.util.RandomUidGenerator;
 import net.fortuna.ical4j.util.UidGenerator;
 import org.slf4j.Logger;
@@ -86,12 +84,10 @@ public class ICalendarResource {
         List<EventEdition> events = seriesEditionService.findSeriesEvents(seriesEditionId);
 
         Calendar calendar = new Calendar();
-        calendar.getProperties().add(new ProdId("-//Motorsports Database//MSDB 4.1.0//EN"));
         calendar.getProperties().add(Version.VERSION_2_0);
-        calendar.getProperties().add(CalScale.GREGORIAN);
+        calendar.getProperties().add(new ProdId("-//Motorsports Database//MSDB 4.1.0//EN"));
         calendar.getProperties().add(new XProperty("X-WR-CALNAME", edition.getEditionName()));
-
-        UidGenerator uidGenerator = new RandomUidGenerator();
+        calendar.getProperties().add(CalScale.GREGORIAN);
 
         TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
         TimeZone timezone = registry.getTimeZone("UTC");
@@ -106,7 +102,20 @@ public class ICalendarResource {
                     event.getLongEventName() + " - " + session.getName()
                 );
                 vEvent.getProperties().add(tz.getTimeZoneId());
-                vEvent.getProperties().add(uidGenerator.generateUid());
+                Uid uid = new Uid(session.getId().toString());
+                vEvent.getProperties().add(uid);
+                if (event.getStatus().equals(EventStatusType.CANCELLED)) {
+                    vEvent.getProperties().add(Status.VEVENT_CANCELLED);
+                } else if (event.getStatus().equals(EventStatusType.SUSPENDED)) {
+                    vEvent.getProperties().add(Status.VEVENT_TENTATIVE);
+                } else {
+                    vEvent.getProperties().add(Status.VEVENT_CONFIRMED);
+                }
+                vEvent.getProperties().add(Method.PUBLISH);
+                vEvent.getProperties().add(new XProperty("X-MICROSOFT-CDO-BUSYSTATUS", "FREE"));
+                vEvent.getProperties().add(Transp.TRANSPARENT);
+                vEvent.getProperties().add(new Location(event.getTrackLayout().getRacetrack().getName()));
+                vEvent.getProperties().add(new Sequence("0"));
 
                 calendar.getComponents().add(vEvent);
             });
