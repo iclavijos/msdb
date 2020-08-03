@@ -133,6 +133,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       newEvent.seriesLogoUrl = session.seriesLogoUrl;
       newEvent.textColor = 'white';
       newEvent.sessionType = session.sessionType;
+      newEvent.status = session.status;
       if (session.status === 'C') {
         newEvent.color = 'red';
       } else if (session.status === 'S') {
