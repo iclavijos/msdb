@@ -16,7 +16,10 @@
                                         <div class="row">
                                             <div class="col-2 text-left">
                                                 <span style="cursor: pointer;">
-                                                    <a href="/api/icalendar/{{ seriesEdition.id }}"><img src="/images/ics.png" style="width: 32px;"/> ICS Calendar</a>
+                                                    <button mat-button (click)="showCalendarSubscriptionDialog()">
+                                                        <img src="/images/ics.png" style="width: 32px;"/>
+                                                        <span jhiTranslate="motorsportsDatabaseApp.calendar.subscription.title">Import calendar</span>
+                                                    </button>
                                                 </span>
                                             </div>
                                             <div class="col-10 text-right" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">

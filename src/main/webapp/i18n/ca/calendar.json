@@ -1,11 +1,16 @@
 {
-    "motorsportsDatabaseApp": {
-        "calendar" : {
-            "title": "Calendari",
-            "session": "Sessió",
-            "start": "Inici",
-            "end": "Fi",
-            "details": "Detall"
-        }
+  "motorsportsDatabaseApp": {
+    "calendar": {
+      "title": "Calendari",
+      "session": "Sessió",
+      "start": "Inici",
+      "end": "Fi",
+      "details": "Detall",
+      "subscription": {
+        "title": "Subscriure's al calendari",
+        "copyUrl": "Copia URL al porta-retalls",
+        "importToGoogle": "Importar a Google"
+      }
     }
+  }
 }

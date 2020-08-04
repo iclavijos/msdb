@@ -1,11 +1,16 @@
 {
-    "motorsportsDatabaseApp": {
-        "calendar" : {
-            "title": "Calendar",
-            "session": "Session",
-            "start": "Start",
-            "end": "End",
-            "details": "Details"
-        }
+  "motorsportsDatabaseApp": {
+    "calendar": {
+      "title": "Calendar",
+      "session": "Session",
+      "start": "Start",
+      "end": "End",
+      "details": "Details",
+      "subscription": {
+        "title": "Subscribe to calendar",
+        "copyUrl": "Copy URL to clipboard",
+        "importToGoogle": "Import to Google"
+      }
     }
+  }
 }

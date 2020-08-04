@@ -9,6 +9,7 @@ import { SeriesEditionUpdateComponent } from './series-edition-update.component'
 import { SeriesEditionCalendarDialogComponent } from './series-edition-calendar-dialog.component';
 import { SeriesEditionCalendarRemoveDialogComponent } from './series-edition-calendar-remove-dialog.component';
 import { SeriesEditionCloneDialogComponent } from './series-edition-clone-dialog.component';
+import { SeriesEditionCalendarSubscriptionDialogComponent } from './series-edition-calendar-subscription-dialog.component';
 
 import { ImagesService } from 'app/shared/services/images.service';
 
@@ -141,6 +142,14 @@ export class SeriesEditionDetailComponent implements OnInit {
     this.dialog.open(SeriesEditionCloneDialogComponent, {
       data: {
         seriesEdition: this.seriesEdition
+      }
+    });
+  }
+
+  showCalendarSubscriptionDialog() {
+    this.dialog.open(SeriesEditionCalendarSubscriptionDialogComponent, {
+      data: {
+        seriesId: this.seriesEdition.id
       }
     });
   }

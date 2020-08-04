@@ -8,7 +8,6 @@ import { StatisticsComponent } from './statistics/statistics.component';
 import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
 import { TimeMaskPipe } from './mask/time-mask.pipe';
 import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
-import { TranslateExtPipe } from './pipes/translateExt.pipe';
 import { EventEntryCategoryFilter } from './filters/entry-category-filter.pipe';
 import { EphemerisYearFilter } from './filters/ephemeris-year-filter.pipe';
 import { MaterialElevationDirective } from './directives/material-elevation.directive';
@@ -26,7 +25,6 @@ import { ImportsService } from './services/imports.service';
     RacetrackLengthPipe,
     TimeMaskPipe,
     LocalizedDatePipe,
-    TranslateExtPipe,
     EventEntryCategoryFilter,
     EphemerisYearFilter,
     MaterialElevationDirective
@@ -41,7 +39,6 @@ import { ImportsService } from './services/imports.service';
     RacetrackLengthPipe,
     TimeMaskPipe,
     LocalizedDatePipe,
-    TranslateExtPipe,
     EventEntryCategoryFilter,
     EphemerisYearFilter,
     MaterialElevationDirective
