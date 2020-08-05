@@ -27,7 +27,7 @@ export class DriverUpdateComponent implements OnInit {
     id: [],
     name: [null, [Validators.required, Validators.maxLength(40)]],
     surname: [null, [Validators.required, Validators.maxLength(60)]],
-    birthDate: [null, [Validators.required]],
+    birthDate: [],
     birthPlace: [null, [Validators.maxLength(75)]],
     deathDate: [],
     deathPlace: [null, [Validators.maxLength(75)]],
