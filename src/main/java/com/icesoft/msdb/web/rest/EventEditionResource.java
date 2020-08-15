@@ -645,6 +645,7 @@ public class EventEditionResource {
     	return tmp.parallelStream().map(session -> {
     		String[] logoUrl = null;
             Integer seriesRelevance = null;
+            String seriesName = null;
     		if (session.getEventEdition().getSeriesEditions() != null) {
     			logoUrl = session.getEventEdition().getSeriesEditions().stream()
     					.map(sEd -> sEd.getSeries().getLogoUrl())
@@ -652,8 +653,12 @@ public class EventEditionResource {
     			seriesRelevance = session.getEventEdition().getSeriesEditions().stream()
                         .map(sEd -> sEd.getSeries().getRelevance())
                         .max(Integer::compareTo).orElse(1000);
+    			seriesName = session.getEventEdition().getSeriesEditions().parallelStream()
+                        .map(sEd -> sEd.getSeries().getName())
+                        .findFirst().orElse(null);
     		}
     		return new SessionCalendarDTO(session.getEventEdition().getId(),
+    				seriesName,
     				session.getEventEdition().getLongEventName(),
     				session.getName(),
     				session.getSessionTypeValue(),

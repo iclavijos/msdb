@@ -10,7 +10,8 @@
         "title": "Subscriure's al calendari",
         "copyUrl": "Copia URL al porta-retalls",
         "importToGoogle": "Importar a Google"
-      }
+      },
+      "filterSeries": "Selecciona campionats a mostrar"
     }
   }
 }

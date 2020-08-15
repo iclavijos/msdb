@@ -10,7 +10,8 @@
         "title": "Subscribe to calendar",
         "copyUrl": "Copy URL to clipboard",
         "importToGoogle": "Import to Google"
-      }
+      },
+      "filterSeries": "Pick series to display"
     }
   }
 }

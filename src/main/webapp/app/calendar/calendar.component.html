@@ -1,15 +1,28 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-xl-3 col-sm-3 mb-3">
-                {{ 'home.selectTimeZone' | translate }}
+            <div class="col-6">
+                <mat-form-field>
+                    <mat-select placeholder="{{ 'home.selectTimeZone' | translate }}" [(ngModel)]="timezone" (change)="changeTimezone()">
+                        <mat-option *ngFor="let item of timezones" [value]="item.zoneName">
+                            {{item.countryName}} ({{item.zoneName}} {{item.gmtOffset}})
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
             </div>
-            <div class="col-xl-8 col-sm-8 mb-8">
-                <select class="form-control" [(ngModel)]="timezone" id="field_timezone" name="switchTimezone" (change)="changeTimezone()">
-                    <ng-template ngFor let-item [ngForOf]="timezones" let-currentIndex="index">
-                        <option [value]="item.zoneName">{{item.countryName}} ({{item.zoneName}} {{item.gmtOffset}})</option>
-                    </ng-template>
-                </select>
+            <div class="col-3">
+                <mat-form-field>
+                    <mat-select placeholder="{{ 'motorsportsDatabaseApp.calendar.filterSeries' | translate }}" [formControl]="filter" multiple (selectionChange)="filterSessions()">
+                        <mat-select-trigger>
+                            {{filter.value ? filter.value[0] : ''}}
+                            <span *ngIf="filter.value?.length > 1">
+                                (+{{filter.value.length - 1}} {{filter.value?.length === 2 ? 'other' : 'others'}})
+                              </span>
+                        </mat-select-trigger>
+                        <mat-option *ngFor="let aSeries of series" [value]="aSeries">{{aSeries}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
             </div>
         </div>
         <div class="row">
