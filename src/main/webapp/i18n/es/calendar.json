@@ -10,7 +10,8 @@
         "title": "Suscribirse al calendario",
         "copyUrl": "Copia URL al portapapeles",
         "importToGoogle": "Importar a Google"
-      }
+      },
+      "filterSeries": "Selecciona campeonatos a mostrar"
     }
   }
 }
