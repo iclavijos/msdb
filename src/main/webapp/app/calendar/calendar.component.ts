@@ -107,26 +107,6 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   };
 
-  events_ok = (dates, callback) => {
-    let sessions: any[];
-    this.eventEditionService.findCalendarEvents(dates.start, dates.end).subscribe(events => {
-      this.sessionsSrc = events;
-      this.series = [...new Set(events.map(s => s.seriesName))].sort();
-      if (this.filterModified) {
-        if (this.filter.value.length > 0) {
-          sessions = this.sessionsSrc.filter(item => this.filter.value.includes(item.seriesName));
-        } else {
-          sessions = this.sessionsSrc;
-          this.filter = new FormControl();
-        }
-        this.filterModified = false;
-      } else {
-        sessions = this.sessionsSrc;
-      }
-      callback(this.convertEvents(sessions, this.timezone));
-    });
-  };
-
   ngOnInit() {
     this.timezone = moment.tz.guess();
     if (this.timezone === undefined) {
