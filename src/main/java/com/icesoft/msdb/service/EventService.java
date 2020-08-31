@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.icesoft.msdb.domain.Event;
 import com.icesoft.msdb.domain.EventEdition;
-import com.icesoft.msdb.service.dto.EventEditionIdYearDTO;
+import com.icesoft.msdb.service.dto.EditionIdYearDTO;
 
 /**
  * Service Interface for managing Event.
@@ -51,7 +51,7 @@ public interface EventService {
 
     Page<EventEdition> findEventEditions(Long idEvent, Pageable pageable);
 
-    List<EventEditionIdYearDTO> findEventEditionsIdYear(Long idEvent);
+    List<EditionIdYearDTO> findEventEditionsIdYear(Long idEvent);
 
     EventEdition rescheduleEvent(EventEdition event, LocalDate newDate);
 }

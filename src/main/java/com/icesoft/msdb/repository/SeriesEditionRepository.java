@@ -40,4 +40,7 @@ public interface SeriesEditionRepository extends JpaRepository<SeriesEdition,Lon
 
 	List<SeriesEdition> findDistinctSeriesEditionByEventsEventDateAfter(LocalDate date);
 
+    @Query("select e.id, e.period from SeriesEdition e where e.series.id = ?1")
+	List<Object[]> findSeriesEditionsIdYear(Long seriesId);
+
 }

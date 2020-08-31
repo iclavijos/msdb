@@ -16,8 +16,24 @@ mat-card {
   flex: 0 0 50%;
 }
 
-.row {
+.row-margin {
   margin-top: 20px;
+}
+
+#yearSelect .mat-select-value,
+#yearSelect .mat-select-arrow {
+  color: white;
+  font-size: large;
+}
+
+.select-year-panel {
+  width: 200px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.navigation-arrows {
+  cursor: pointer;
 }
 
 .poster-table {

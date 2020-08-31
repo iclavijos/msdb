@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { JhiAlertService } from 'ng-jhipster';
 
+import { SeriesService } from '../series/series.service';
 import { SeriesEditionService } from './series-edition.service';
 import { ISeriesEdition } from 'app/shared/model/series-edition.model';
 import { SeriesEditionUpdateComponent } from './series-edition-update.component';
@@ -14,6 +15,13 @@ import { SeriesEditionCalendarSubscriptionDialogComponent } from './series-editi
 import { ImagesService } from 'app/shared/services/images.service';
 
 import { MatDialog } from '@angular/material/dialog';
+
+export class NavigationIds {
+  prevId: number;
+  nextId: number;
+  prevName: string;
+  nextName: string;
+}
 
 @Component({
   selector: 'jhi-series-edition-detail',
@@ -37,10 +45,17 @@ export class SeriesEditionDetailComponent implements OnInit {
   displayEvents = false;
   colsChampsDriver = 'col-md-3';
   colsChampsTeam = 'col-md-3';
+  navigationIds = new NavigationIds();
+  previousEditionId: number;
+  nextEditionId: number;
+  editions = [];
+  currentEdPos: number;
 
   constructor(
     protected activatedRoute: ActivatedRoute,
+    private router: Router,
     protected alertService: JhiAlertService,
+    protected seriesService: SeriesService,
     protected seriesEditionService: SeriesEditionService,
     protected imagesService: ImagesService,
     private dialog: MatDialog
@@ -51,6 +66,16 @@ export class SeriesEditionDetailComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ seriesEdition }) => {
       this.seriesEdition = seriesEdition;
+      this.seriesService.findSeriesEditionIds(seriesEdition.series.id).subscribe(res => {
+        this.editions = res.sort((e1, e2) => (e1.editionYear > e2.editionYear ? 1 : e1.editionYear < e2.editionYear ? -1 : 0));
+        const currentEdPos = this.editions.map(e => e.id).indexOf(seriesEdition.id);
+        this.previousEditionId = currentEdPos > 0 ? this.editions[currentEdPos - 1].id : -1;
+        this.nextEditionId = currentEdPos < this.editions.length - 1 ? this.editions[currentEdPos + 1].id : -1;
+      });
+      //       this.seriesEditionService.findPrevNextInSeries(this.seriesEdition.id).subscribe(res => {
+      //         this.navigationIds = res;
+      //         this.editions = [seriesEdition.period];
+      //       });
       this.loadSeriesEvents();
     });
   }
@@ -198,5 +223,20 @@ export class SeriesEditionDetailComponent implements OnInit {
         this.colsChampsTeam = 'col-' + Math.floor(12 / this.teamsChampions.length);
       }
     });
+  }
+
+  jumpToEdition(id) {
+    if (!id) {
+      return false;
+    }
+    this.router.navigate(['/series/edition', id, 'view']);
+  }
+
+  gotoPrevious() {
+    this.router.navigate(['/series/edition', this.previousEditionId, 'view']);
+  }
+
+  gotoNext() {
+    this.router.navigate(['/series/edition', this.nextEditionId, 'view']);
   }
 }

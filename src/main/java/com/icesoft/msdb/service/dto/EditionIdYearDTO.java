@@ -1,20 +1,20 @@
 package com.icesoft.msdb.service.dto;
 
-public class EventEditionIdYearDTO {
+public class EditionIdYearDTO {
 
 	private final Long id;
-	private final Integer editionYear;
-	
-	public EventEditionIdYearDTO(Long id, Integer editionYear) {
+	private final Object editionYear;
+
+	public EditionIdYearDTO(Long id, Object editionYear) {
 		this.id = id;
 		this.editionYear = editionYear;
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
-	
-	public Integer getEditionYear() {
+
+	public Object getEditionYear() {
 		return editionYear;
 	}
 }
