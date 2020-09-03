@@ -45,7 +45,6 @@ export class SeriesEditionDetailComponent implements OnInit {
   displayEvents = false;
   colsChampsDriver = 'col-md-3';
   colsChampsTeam = 'col-md-3';
-  navigationIds = new NavigationIds();
   previousEditionId: number;
   nextEditionId: number;
   editions = [];
@@ -69,13 +68,9 @@ export class SeriesEditionDetailComponent implements OnInit {
       this.seriesService.findSeriesEditionIds(seriesEdition.series.id).subscribe(res => {
         this.editions = res.sort((e1, e2) => (e1.editionYear > e2.editionYear ? 1 : e1.editionYear < e2.editionYear ? -1 : 0));
         const currentEdPos = this.editions.map(e => e.id).indexOf(seriesEdition.id);
-        this.previousEditionId = currentEdPos > 0 ? this.editions[currentEdPos - 1].id : -1;
-        this.nextEditionId = currentEdPos < this.editions.length - 1 ? this.editions[currentEdPos + 1].id : -1;
+        this.previousEditionId = currentEdPos > 0 ? this.editions[currentEdPos - 1].id : null;
+        this.nextEditionId = currentEdPos < this.editions.length - 1 ? this.editions[currentEdPos + 1].id : null;
       });
-      //       this.seriesEditionService.findPrevNextInSeries(this.seriesEdition.id).subscribe(res => {
-      //         this.navigationIds = res;
-      //         this.editions = [seriesEdition.period];
-      //       });
       this.loadSeriesEvents();
     });
   }
