@@ -100,7 +100,7 @@ export class EventEntryResultUpdateComponent implements OnInit {
       retired: this.editForm.get(['retired']).value,
       differenceType: this.editForm.get(['differenceType']).value,
       difference:
-        this.editForm.get(['differenceType']).value === 1
+        this.editForm.get(['differenceType']).value === '1'
           ? this.toMillis(this.editForm.get(['difference']).value)
           : this.editForm.get(['difference']).value,
       lapsLed: this.editForm.get(['lapsLed']).value,
