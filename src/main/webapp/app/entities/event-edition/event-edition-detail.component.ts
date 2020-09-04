@@ -110,13 +110,13 @@ export class EventEditionDetailComponent implements OnInit {
         const layout = {
           src: this.eventEdition.trackLayout.layoutImageUrl,
           caption: '',
-          thumb: this.eventEdition.trackLayout.layoutImageUrl.replace('/upload', '/upload/c_thumb,w_200,g_face')
+          thumb: this.eventEdition.trackLayout.layoutImageUrl.replace('/upload', '/upload/c_thumb,w_200')
         };
         this.posLayout = this.lightboxAlbum.push(layout);
       }
 
       if (this.eventEdition.posterUrl) {
-        const afficheThumb = this.eventEdition.posterUrl.replace('/upload', '/upload/c_thumb,w_200,g_face');
+        const afficheThumb = this.eventEdition.posterUrl.replace('/upload', '/upload/c_thumb,w_200');
         const affiche = {
           src: this.eventEdition.posterUrl,
           caption: '',
