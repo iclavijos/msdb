@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Inject } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -69,9 +70,13 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
   calendarPlugins = [dayGridPlugin, timeGridPlugin, timeLinePlugin, listPlugin, momentTimezonePlugin];
   calendarLocales = [esLocale, caLocale, enLocale];
 
-  sessions: any;
+  sessionsSrc: any;
+  filterModified = false;
   timezone: string;
   timezones: any[];
+
+  filter = new FormControl();
+  series = [];
 
   private langChangeSubscription: Subscription;
 
@@ -83,10 +88,23 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   events = (dates, callback) => {
-    this.eventEditionService.findCalendarEvents(dates.start, dates.end).subscribe(events => {
-      this.sessions = events;
-      callback(this.convertEvents(events, this.timezone));
-    });
+    let sessions: any[];
+    if (this.filterModified) {
+      if (this.filter.value.length > 0) {
+        sessions = this.sessionsSrc.filter(item => this.filter.value.includes(item.seriesName));
+      } else {
+        sessions = this.sessionsSrc;
+      }
+      this.filterModified = false;
+      callback(this.convertEvents(sessions, this.timezone));
+    } else {
+      this.eventEditionService.findCalendarEvents(dates.start, dates.end).subscribe(events => {
+        this.filter = new FormControl();
+        this.sessionsSrc = events;
+        this.series = [...new Set(events.map(s => s.seriesName))].sort();
+        callback(this.convertEvents(this.sessionsSrc, this.timezone));
+      });
+    }
   };
 
   ngOnInit() {
@@ -106,6 +124,15 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.langChangeSubscription = this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
       this.calendarComponent.getApi().setOption('locale', langChangeEvent.lang);
     });
+  }
+
+  changeTimezone() {
+    this.convertEvents(this.sessionsSrc, this.timezone);
+  }
+
+  filterSessions() {
+    this.filterModified = true;
+    this.calendarComponent.getApi().refetchEvents();
   }
 
   ngOnDestroy() {
@@ -133,6 +160,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       newEvent.seriesLogoUrl = session.seriesLogoUrl;
       newEvent.textColor = 'white';
       newEvent.sessionType = session.sessionType;
+      newEvent.status = session.status;
       if (session.status === 'C') {
         newEvent.color = 'red';
       } else if (session.status === 'S') {
@@ -149,9 +177,5 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       result.push(newEvent);
     }
     return result;
-  }
-
-  changeTimezone() {
-    this.convertEvents(this.sessions, this.timezone);
   }
 }

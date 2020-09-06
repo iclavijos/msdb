@@ -25,16 +25,12 @@ public class CloudinaryService implements CDNService {
 	@Override
 	public String uploadImage(String imageId, byte[] imageData, String folder) throws MSDBException {
 		Map params = ObjectUtils.asMap("public_id", folder + "/" + imageId);
-        File file = new File("drivers_" + imageId);
         try {
-	        FileUtils.writeByteArrayToFile(file, imageData);
-			Map<String, String> imgUpload = cloudinary.uploader().upload(file, params);
+			Map<String, String> imgUpload = cloudinary.uploader().upload(imageData, params);
 			return imgUpload.get("secure_url");
         } catch (IOException e) {
         	log.error("Image could not be uploaded to CDN", e);
         	throw new MSDBException(e);
-        } finally {
-        	if (file != null) file.delete();
         }
 	}
 

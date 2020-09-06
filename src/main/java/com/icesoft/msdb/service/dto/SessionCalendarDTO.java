@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 public class SessionCalendarDTO {
 
 	private final Long id;
+	private final String seriesName;
 	private final String eventName;
 	private final String sessionName;
 	private final int sessionType;
@@ -15,8 +16,9 @@ public class SessionCalendarDTO {
 	private final String status;
     private final Integer seriesRelevance;
 
-	public SessionCalendarDTO(Long id, String eventName, String sessionName, int sessionType, ZonedDateTime startTime, ZonedDateTime endTime, String status, Integer seriesRelevance, String... seriesLogoUrl) {
+	public SessionCalendarDTO(Long id, String seriesName, String eventName, String sessionName, int sessionType, ZonedDateTime startTime, ZonedDateTime endTime, String status, Integer seriesRelevance, String... seriesLogoUrl) {
 		this.id = id;
+		this.seriesName = seriesName;
 		this.eventName = eventName;
 		this.sessionName = sessionName;
 		this.sessionType = sessionType;
@@ -30,6 +32,8 @@ public class SessionCalendarDTO {
 	public Long getId() {
 		return id;
 	}
+
+	public String getSeriesName() { return seriesName; }
 
 	public String getEventName() {
 		return eventName;

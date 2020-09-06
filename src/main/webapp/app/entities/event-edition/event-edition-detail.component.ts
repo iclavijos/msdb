@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, Inject } from '@angular/core';
+import { Component, OnInit, Renderer2, Inject, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs/Rx';
@@ -41,7 +41,9 @@ export class RescheduleDialogComponent {
 
 @Component({
   selector: 'jhi-event-edition-detail',
-  templateUrl: './event-edition-detail.component.html'
+  templateUrl: './event-edition-detail.component.html',
+  styleUrls: ['event-edition.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class EventEditionDetailComponent implements OnInit {
   eventEdition: IEventEdition;
@@ -61,6 +63,9 @@ export class EventEditionDetailComponent implements OnInit {
   lapTimes: any[] = [];
   maxLaps = -1;
   index = 0;
+
+  previousEditionId: number;
+  nextEditionId: number;
 
   posAffiche: number;
   posLayout: number;
@@ -85,28 +90,33 @@ export class EventEditionDetailComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ eventEdition }) => {
       this.eventEdition = eventEdition;
-      // this.loadSessions(id);
-      if (eventEdition.seriesId) {
+      if (eventEdition.seriesEditions) {
         this.eventEditionService.findPrevNextInSeries(eventEdition.id).subscribe(res => (this.navigationIds = res));
       }
       this.eventEditionService.hasLapsData(eventEdition.id).subscribe(res => (this.hasLapsData = res));
-      this.eventService.findEventEditionIds(eventEdition.event.id).subscribe(res => (this.editions = res));
+      this.eventService.findEventEditionIds(eventEdition.event.id).subscribe(res => {
+        this.editions = res.sort((e1, e2) => (e1.editionYear > e2.editionYear ? 1 : e1.editionYear < e2.editionYear ? -1 : 0));
+        const currentEdPos = this.editions.map(e => e.id).indexOf(eventEdition.id);
+        this.previousEditionId = currentEdPos > 0 ? this.editions[currentEdPos - 1].id : -1;
+        this.nextEditionId = currentEdPos < this.editions.length - 1 ? this.editions[currentEdPos + 1].id : -1;
+      });
       this.eventEditionService.findDriversBestTimes(eventEdition.id).subscribe(res => {
         this.driversBestTimes = res.slice(1);
         this.bestTimesColumns = res[0];
       });
 
+      this.lightboxAlbum = [];
       if (this.eventEdition.trackLayout.layoutImageUrl) {
         const layout = {
           src: this.eventEdition.trackLayout.layoutImageUrl,
           caption: '',
-          thumb: this.eventEdition.trackLayout.layoutImageUrl.replace('/upload', '/upload/c_thumb,w_200,g_face')
+          thumb: this.eventEdition.trackLayout.layoutImageUrl.replace('/upload', '/upload/c_thumb,w_200')
         };
         this.posLayout = this.lightboxAlbum.push(layout);
       }
 
       if (this.eventEdition.posterUrl) {
-        const afficheThumb = this.eventEdition.posterUrl.replace('/upload', '/upload/c_thumb,w_200,g_face');
+        const afficheThumb = this.eventEdition.posterUrl.replace('/upload', '/upload/c_thumb,w_200');
         const affiche = {
           src: this.eventEdition.posterUrl,
           caption: '',
@@ -149,7 +159,15 @@ export class EventEditionDetailComponent implements OnInit {
     if (!id) {
       return false;
     }
-    this.router.navigate(['/event-edition', id]);
+    this.router.navigate(['/event/edition', id, 'view-ed']);
+  }
+
+  gotoPrevious() {
+    this.router.navigate(['/event/edition', this.previousEditionId, 'view-ed']);
+  }
+
+  gotoNext() {
+    this.router.navigate(['/event/edition', this.nextEditionId, 'view-ed']);
   }
 
   previousState() {

@@ -28,6 +28,7 @@
       "pointsFastLapAwardedIf": "Award fast lap points if: ",
       "maxFinishinPositionFL": "Maximum finishing position",
       "pitlaneStartAllowed": "Award points if started from pitlane?",
+      "alwaysAssignFastLap": "Grant to another driver if fastest one does not meet criteria?",
       "racePctCompletion": "If less than {{racePct}}% of the laps are completed, award only {{pointsPct}}% of the points",
       "pointsRacePctCompletion1": "If less than ",
       "pointsRacePctCompletion2": "% of the laps are completed, award only ",

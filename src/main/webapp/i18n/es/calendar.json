@@ -1,11 +1,17 @@
 {
-    "motorsportsDatabaseApp": {
-        "calendar" : {
-            "title": "Calendario",
-            "session": "Sesión",
-            "start": "Inicio",
-            "end": "Fin",
-            "details": "Detalle"
-        }
+  "motorsportsDatabaseApp": {
+    "calendar": {
+      "title": "Calendario",
+      "session": "Sesión",
+      "start": "Inicio",
+      "end": "Fin",
+      "details": "Detalle",
+      "subscription": {
+        "title": "Suscribirse al calendario",
+        "copyUrl": "Copia URL al portapapeles",
+        "importToGoogle": "Importar a Google"
+      },
+      "filterSeries": "Selecciona campeonatos a mostrar"
     }
+  }
 }

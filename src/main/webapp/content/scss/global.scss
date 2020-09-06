@@ -15,6 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 
 @import 'core/variables';
@@ -60,4 +61,20 @@
 .selection-list-viewport {
   height: 300px;
   width: 100%;
+}
+
+#yearSelect .mat-select-value,
+#yearSelect .mat-select-arrow {
+  color: white;
+  font-size: large;
+}
+
+.navigation-arrows {
+  cursor: pointer;
+}
+
+.select-year-panel {
+  width: 100px;
+  margin-left: 10px;
+  margin-right: 10px;
 }

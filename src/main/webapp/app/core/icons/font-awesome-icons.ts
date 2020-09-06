@@ -35,6 +35,8 @@ import {
   faHome
 } from '@fortawesome/free-solid-svg-icons';
 
+import { faGoogle, faMicrosoft, faApple } from '@fortawesome/free-brands-svg-icons';
+
 export const fontAwesomeIcons = [
   faUser,
   faSort,
@@ -69,5 +71,8 @@ export const fontAwesomeIcons = [
   faCalendarAlt,
   faSearch,
   faTrashAlt,
-  faAsterisk
+  faAsterisk,
+  faGoogle,
+  faMicrosoft,
+  faApple
 ];

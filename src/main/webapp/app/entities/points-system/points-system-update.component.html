@@ -129,7 +129,7 @@
                                         <div class="card-body">
                                             <div class="container-fluid">
                                                 <div class="row">
-                                                    <div class="form-group col-lg-6 col-md-6">
+                                                    <div class="form-group col-lg-4 col-md-4">
                                                         <mat-form-field class="example-full-width">
                                                             <input matInput placeholder="{{ 'motorsportsDatabaseApp.pointsSystem.maxFinishinPositionFL' | translate }}" type="number"
                                                                    class="form-control" name="maxPosFastLap" id="field_maxPosFastLap" formControlName="maxPosFastLap">
@@ -149,6 +149,11 @@
                                                         <label jhiTranslate="motorsportsDatabaseApp.pointsSystem.pitlaneStartAllowed">Pitlane start allowed</label>
                                                         <i [ngClass]="editForm.get('pitlaneStartAllowed').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"
                                                            (click)="switchPitlaneStart()"></i>
+                                                    </div>
+                                                    <div class="form-group col-lg-4 col-md-4">
+                                                        <label jhiTranslate="motorsportsDatabaseApp.pointsSystem.alwaysAssignFastLap">Assign fast lap points to any driver</label>
+                                                        <i [ngClass]="editForm.get('alwaysAssignFastLap').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"
+                                                           (click)="switchAlwaysAssignFastLap()"></i>
                                                     </div>
                                                 </div>
                                             </div>

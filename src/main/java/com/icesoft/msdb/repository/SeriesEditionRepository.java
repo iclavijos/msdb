@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.QueryHint;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
@@ -35,5 +37,10 @@ public interface SeriesEditionRepository extends JpaRepository<SeriesEdition,Lon
 	Page<SeriesEdition> search(Long id, String period, Pageable pageable);
 
 	Page<SeriesEdition> findBySeriesId(Long seriesId, Pageable pageable);
+
+	List<SeriesEdition> findDistinctSeriesEditionByEventsEventDateAfter(LocalDate date);
+
+    @Query("select e.id, e.period from SeriesEdition e where e.series.id = ?1")
+	List<Object[]> findSeriesEditionsIdYear(Long seriesId);
 
 }

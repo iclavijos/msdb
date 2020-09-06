@@ -35,7 +35,8 @@
         "sessions": "Sesiones",
         "login": "Iniciar sesión",
         "logout": "Cerrar la sesión",
-        "register": "Crear una cuenta"
+        "register": "Crear una cuenta",
+        "subscriptions": "Suscripciones"
       },
       "admin": {
         "main": "Administración",

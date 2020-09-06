@@ -7,8 +7,8 @@ import com.icesoft.msdb.repository.SeriesRepository;
 import com.icesoft.msdb.repository.search.SeriesSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.service.dto.EditionIdYearDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -20,22 +20,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 /**
  * REST controller for managing {@link com.icesoft.msdb.domain.Series}.
@@ -210,4 +208,14 @@ public class SeriesResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    @GetMapping("/series/{id}/editionIds")
+    @Timed
+    public ResponseEntity<List<EditionIdYearDTO>> findEventEditionsIds(@PathVariable Long id) {
+        return new ResponseEntity<>(
+            seriesEditionRepository.findSeriesEditionsIdYear(id)
+                .stream()
+                .map(e -> new EditionIdYearDTO((Long)e[0], (String)e[1]))
+                .collect(Collectors.<EditionIdYearDTO> toList()),
+            HttpStatus.OK);
+    }
 }

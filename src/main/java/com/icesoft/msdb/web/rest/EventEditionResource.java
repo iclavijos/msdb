@@ -141,7 +141,7 @@ public class EventEditionResource {
         }
         eventEditionSearchRepo.save(result);
         if (result.getSeriesEditions() != null) {
-        	result.getSeriesId().forEach(id -> cacheHandler.resetWinnersCache(id));
+        	result.getSeriesEditions().forEach(se -> cacheHandler.resetWinnersCache(se.getId()));
         }
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -191,7 +191,7 @@ public class EventEditionResource {
         eventEditionSearchRepo.save(result);
 
         if (result.getSeriesEditions() != null) {
-        	result.getSeriesId().stream().forEach(cacheHandler::resetWinnersCache);
+        	result.getSeriesEditions().stream().map(se -> se.getId()).forEach(cacheHandler::resetWinnersCache);
         }
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, eventEdition.getId().toString()))
@@ -240,9 +240,9 @@ public class EventEditionResource {
         EventEdition eventEd = eventEditionRepository.getOne(id);
 
         if (eventEd.getSeriesEditions() != null) {
-            eventEd.getSeriesId().forEach(sId -> {
-                seriesEditionService.removeEventFromSeries(sId, id);
-                cacheHandler.resetWinnersCache(sId);
+            eventEd.getSeriesEditions().stream().forEach(se -> {
+                seriesEditionService.removeEventFromSeries(se.getId(), id);
+                cacheHandler.resetWinnersCache(se.getId());
             });
         }
 
@@ -272,14 +272,16 @@ public class EventEditionResource {
         );
     	List<EventsSeriesNavigationDTO> result = new ArrayList<>();
     	for(SeriesEdition se: event.getSeriesEditions()) {
-//    		int index = se.getEvents().indexOf(event);
-//    		EventEdition next = (index < se.getEvents().size() - 1) ? se.getEvents().get(index + 1) : null;
-//            EventEdition prev = (index > 0) ? se.getEvents().get(index - 1) : null;
-//            result.add(new EventsSeriesNavigationDTO(
-//            		Optional.ofNullable(prev).map(ee -> ee.getId()).orElse(null),
-//            		Optional.ofNullable(next).map(ee -> ee.getId()).orElse(null),
-//            		Optional.ofNullable(prev).map(ee -> ee.getLongEventName()).orElse(null),
-//            		Optional.ofNullable(next).map(ee -> ee.getLongEventName()).orElse(null)));
+    		List<EventEdition> events = se.getEvents().parallelStream().sorted(Comparator.comparing(EventEdition::getEventDate))
+                .collect(Collectors.toList());
+    		int index = events.indexOf(event);
+    		EventEdition next = (index < se.getEvents().size() - 1) ? events.get(index + 1) : null;
+            EventEdition prev = (index > 0) ? events.get(index - 1) : null;
+            result.add(new EventsSeriesNavigationDTO(
+            		Optional.ofNullable(prev).map(ee -> ee.getId()).orElse(null),
+            		Optional.ofNullable(next).map(ee -> ee.getId()).orElse(null),
+            		Optional.ofNullable(prev).map(ee -> ee.getLongEventName()).orElse(null),
+            		Optional.ofNullable(next).map(ee -> ee.getLongEventName()).orElse(null)));
     	}
 
     	return result;
@@ -643,6 +645,7 @@ public class EventEditionResource {
     	return tmp.parallelStream().map(session -> {
     		String[] logoUrl = null;
             Integer seriesRelevance = null;
+            String seriesName = null;
     		if (session.getEventEdition().getSeriesEditions() != null) {
     			logoUrl = session.getEventEdition().getSeriesEditions().stream()
     					.map(sEd -> sEd.getSeries().getLogoUrl())
@@ -650,8 +653,12 @@ public class EventEditionResource {
     			seriesRelevance = session.getEventEdition().getSeriesEditions().stream()
                         .map(sEd -> sEd.getSeries().getRelevance())
                         .max(Integer::compareTo).orElse(1000);
+    			seriesName = session.getEventEdition().getSeriesEditions().parallelStream()
+                        .map(sEd -> sEd.getSeries().getName())
+                        .findFirst().orElse(null);
     		}
     		return new SessionCalendarDTO(session.getEventEdition().getId(),
+    				seriesName,
     				session.getEventEdition().getLongEventName(),
     				session.getName(),
     				session.getSessionTypeValue(),

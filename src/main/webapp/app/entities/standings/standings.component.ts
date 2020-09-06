@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -11,7 +11,7 @@ import { SeriesEdition } from 'app/shared/model/series-edition.model';
   templateUrl: './standings.component.html',
   styleUrls: ['standings.scss']
 })
-export class StandingsComponent implements OnInit {
+export class StandingsComponent implements OnInit, OnChanges {
   drivers: any;
   teams: any;
   manufacturers: any;
@@ -39,6 +39,10 @@ export class StandingsComponent implements OnInit {
     private http: HttpClient,
     private router: Router
   ) {}
+
+  ngOnChanges() {
+    this.ngOnInit();
+  }
 
   ngOnInit() {
     if (this.eventEditionId) {

@@ -4,7 +4,6 @@ import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
-import com.icesoft.msdb.repository.search.SeriesEditionSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
@@ -12,7 +11,6 @@ import com.icesoft.msdb.service.dto.*;
 import com.icesoft.msdb.service.impl.CacheHandler;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -27,24 +25,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link com.icesoft.msdb.domain.SeriesEdition}.
@@ -295,7 +291,7 @@ public class SeriesEditionResource {
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
-    public ResponseEntity<Void> updateSeriesTeamssChampions(@PathVariable Long seriesEditionId, @RequestBody List<Long> selectedTeamsId) {
+    public ResponseEntity<Void> updateSeriesTeamsChampions(@PathVariable Long seriesEditionId, @RequestBody List<Long> selectedTeamsId) {
     	seriesEditionService.setSeriesTeamsChampions(seriesEditionId, selectedTeamsId);
     	return ResponseEntity.ok().headers(
     	    HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, seriesEditionId.toString())).build();
@@ -329,5 +325,36 @@ public class SeriesEditionResource {
     	seriesEditionService.cloneSeriesEdition(seriesEditionId, newPeriod);
     	return ResponseEntity.ok().headers(
     	    HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, seriesEditionId.toString())).build();
+    }
+
+    @GetMapping("/series-editions/active")
+    @Timed
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<SeriesEdition>> getActiveSeriesEditions() {
+        return ResponseEntity.ok(seriesEditionRepository.findDistinctSeriesEditionByEventsEventDateAfter(LocalDate.now(ZoneId.of("UTC"))));
+    }
+
+    @GetMapping("/series-editions/{id}/prevNextEdition")
+    @Timed
+    @Transactional(readOnly=true)
+    public EventsSeriesNavigationDTO getPrevNextEditionIds(@PathVariable Long id) {
+        SeriesEdition seriesEdition = seriesEditionRepository.findById(id).orElseThrow(
+            () -> new MSDBException("Invalid series edition id")
+        );
+        List<SeriesEdition> tmpList = seriesEditionRepository.findBySeriesId(seriesEdition.getSeries().getId(), Pageable.unpaged()).getContent();
+
+        int pos = tmpList.indexOf(
+            tmpList.stream().filter(se -> se.getId().equals(seriesEdition.getId())).findFirst().get()
+        );
+        Optional<SeriesEdition> prev = Optional.ofNullable(pos > 0 ? tmpList.get(pos - 1) : null);
+        Optional<SeriesEdition> next = Optional.ofNullable(pos < tmpList.size() - 1 ? tmpList.get(pos + 1) : null);
+
+        EventsSeriesNavigationDTO result = new EventsSeriesNavigationDTO(
+            prev.map(se -> se.getId()).orElse(null),
+            next.map(se -> se.getId()).orElse(null),
+            prev.map(se -> se.getEditionName()).orElse(null),
+            next.map(se -> se.getEditionName()).orElse(null)
+        );
+        return result;
     }
 }

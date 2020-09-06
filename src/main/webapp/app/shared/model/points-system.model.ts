@@ -8,6 +8,7 @@ export interface IPointsSystem {
   maxPosFastLap?: number;
   dnfFastLap?: boolean;
   pitlaneStartAllowed?: boolean;
+  alwaysAssignFastLap?: boolean;
   pctCompletedFastLap?: number;
   pointsPole?: number;
   pointsLeadLap?: number;
@@ -27,6 +28,7 @@ export class PointsSystem implements IPointsSystem {
     public maxPosFastLap = 0,
     public dnfFastLap = false,
     public pitlaneStartAllowed = false,
+    public alwaysAssignFastLap = true,
     public pctCompletedFastLap = 0,
     public pointsPole = 0,
     public pointsLeadLap = 0,

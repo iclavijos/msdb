@@ -41,4 +41,8 @@ export class SeriesService {
     const options = createRequestOption(req);
     return this.http.get<ISeries[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
   }
+
+  findSeriesEditionIds(seriesId: number): Observable<any> {
+    return this.http.get(`${this.resourceUrl}/${seriesId}/editionIds`);
+  }
 }

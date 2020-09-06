@@ -84,7 +84,7 @@
                                             <div class="col-xs-12 col-lg-4">
                                                 <h4>{{ event }}</h4>
                                             </div>
-                                            <div class="col-xs-12 col-lg-8">
+                                            <div class="col-xs-12 col-lg-8" *ngIf="eventStatus(event) === 'O'">
                                                 <div class="row" *ngFor="let session of sessionsEvent(event)"
                                                      [ngStyle]="{
                                                         'color': (session.sessionType === 2) ? 'white' : 'black',
@@ -101,6 +101,16 @@
                                                         {{ formatDate(session.end, 'LLLL') }}
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="col-xs-12 col-lg-8" *ngIf="eventStatus(event) === 'S'">
+                                                <h1><span class="badge badge-warning">
+                                                    {{ 'motorsportsDatabaseApp.eventEdition.status.suspended' | translate }}
+                                                </span></h1>
+                                            </div>
+                                            <div class="col-xs-12 col-lg-8" *ngIf="eventStatus(event) === 'C'">
+                                                <h1><span class="badge badge-danger">
+                                                    {{ 'motorsportsDatabaseApp.eventEdition.status.cancelled' | translate }}
+                                                </span></h1>
                                             </div>
                                         </div>
                                     </div>

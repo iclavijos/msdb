@@ -1,27 +1,29 @@
 package com.icesoft.msdb.service;
 
+import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.config.Constants;
 import com.icesoft.msdb.domain.Authority;
 import com.icesoft.msdb.domain.User;
+import com.icesoft.msdb.domain.UserSubscription;
 import com.icesoft.msdb.repository.AuthorityRepository;
 import com.icesoft.msdb.repository.UserRepository;
+import com.icesoft.msdb.repository.UserSubscriptionRepository;
 import com.icesoft.msdb.repository.search.UserSearchRepository;
 import com.icesoft.msdb.security.SecurityUtils;
 import com.icesoft.msdb.service.dto.UserDTO;
 
+import com.icesoft.msdb.service.dto.UserSubscriptionDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -42,12 +44,17 @@ public class UserService {
 
     private final AuthorityRepository authorityRepository;
 
+    private final UserSubscriptionRepository userSubscriptionRepository;
+
     private final CacheManager cacheManager;
 
-    public UserService(UserRepository userRepository, UserSearchRepository userSearchRepository, AuthorityRepository authorityRepository, CacheManager cacheManager) {
+    public UserService(
+        UserRepository userRepository, UserSearchRepository userSearchRepository, AuthorityRepository authorityRepository,
+        UserSubscriptionRepository userSubscriptionRepository, CacheManager cacheManager) {
         this.userRepository = userRepository;
         this.userSearchRepository = userSearchRepository;
         this.authorityRepository = authorityRepository;
+        this.userSubscriptionRepository = userSubscriptionRepository;
         this.cacheManager = cacheManager;
     }
 
@@ -214,6 +221,38 @@ public class UserService {
             })
             .collect(Collectors.toSet()));
         return new UserDTO(syncUserWithIdP(attributes, user));
+    }
+
+    public Set<UserSubscription> getUserSuscriptions(String userEmail) {
+        User user = userRepository.findOneByEmailIgnoreCase(userEmail).orElseThrow(
+            () -> new MSDBException("User not found") // Should never happen
+        );
+        user.getSubscriptions().size();
+        return user.getSubscriptions();
+    }
+
+    public void setUserSuscriptions(UserDTO userDTO, Set<UserSubscriptionDTO> subscriptions) {
+        User user = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).orElseThrow(
+            () -> new MSDBException("User not found") // Should never happen
+        );
+
+        subscriptions.parallelStream().forEach(dto -> {
+            UserSubscription userSub = new UserSubscription(user.getId(), dto);
+            if (dto.getPracticeSessions() || dto.getQualiSessions() || dto.getRaces()) {
+                userSubscriptionRepository.save(userSub);
+                if (!user.getSubscriptions().contains(userSub)) {
+                    user.addSubscription(userSub);
+                }
+            } else {
+                if (user.getSubscriptions().parallelStream()
+                    .filter(s -> s.getId().getSeriesEditionId().equals(dto.getSeriesEditionId()))
+                    .findFirst().isPresent()) {
+                    user.getSubscriptions().remove(userSub);
+                    userSubscriptionRepository.delete(userSub);
+                }
+            }
+        });
+        // userRepository.save(user);
     }
 
     private static User getUser(Map<String, Object> details) {

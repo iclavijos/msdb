@@ -39,7 +39,8 @@ import {
   MatMenuModule,
   MatGridListModule,
   MatCardModule,
-  MatChipsModule
+  MatChipsModule,
+  MatSlideToggleModule
 } from '@angular/material';
 
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
@@ -90,6 +91,7 @@ import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateMod
     MatGridListModule,
     MatCardModule,
     MatChipsModule,
+    MatSlideToggleModule,
     ColorPickerModule,
     LightboxModule,
     FullCalendarModule,
