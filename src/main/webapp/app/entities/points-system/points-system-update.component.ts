@@ -30,6 +30,7 @@ export class PointsSystemUpdateComponent implements OnInit {
     racePctCompleted: [null, [Validators.min(0), Validators.max(100)]],
     pctTotalPoints: [null, [Validators.min(0), Validators.max(100)]],
     maxPosFastLap: [null, [Validators.min(0), Validators.max(100)]],
+    alwaysAssignFastLap: [true],
     active: []
   });
 
@@ -58,6 +59,7 @@ export class PointsSystemUpdateComponent implements OnInit {
       racePctCompleted: pointsSystem.racePctCompleted,
       pctTotalPoints: pointsSystem.pctTotalPoints,
       maxPosFastLap: pointsSystem.maxPosFastLap,
+      alwaysAssignFastLap: pointsSystem.alwaysAssignFastLap,
       active: pointsSystem.active
     });
   }
@@ -93,6 +95,7 @@ export class PointsSystemUpdateComponent implements OnInit {
       racePctCompleted: this.editForm.get(['racePctCompleted']).value,
       pctTotalPoints: this.editForm.get(['pctTotalPoints']).value,
       maxPosFastLap: this.editForm.get(['maxPosFastLap']).value,
+      alwaysAssignFastLap: this.editForm.get(['alwaysAssignFastLap']).value,
       active: this.editForm.get(['active']).value
     };
   }
@@ -116,5 +119,9 @@ export class PointsSystemUpdateComponent implements OnInit {
 
   switchPitlaneStart() {
     this.editForm.patchValue({ pitlaneStartAllowed: !this.editForm.get('pitlaneStartAllowed').value });
+  }
+
+  switchAlwaysAssignFastLap() {
+    this.editForm.patchValue({ alwaysAssignFastLap: !this.editForm.get('alwaysAssignFastLap').value });
   }
 }

@@ -59,7 +59,10 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 
     //Minimum percentage of the race to be completed to award points for fast lap
     @Column(name = "pct_completed_fl")
-    private Integer pctCompletedFL = 0;
+    private Integer pctCompletedFastLap = 0;
+
+    @Column(name = "always_assign_fl")
+    private Boolean alwaysAssignFastLap = true;
 
     //If started from pitlane, award points for fast lap?
     @Column(name = "pitlane_start_allowed")
@@ -197,17 +200,30 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 		this.maxPosFastLap = maxPosFastLap;
 	}
 
-	public Integer getPctCompletedFL() {
-		return pctCompletedFL;
+	public Integer getPctCompletedFastLap() {
+		return pctCompletedFastLap;
 	}
 
     public PointsSystem pctCompletedFL(Integer pctCompleted) {
-    	this.pctCompletedFL = pctCompleted;
+    	this.pctCompletedFastLap = pctCompleted;
     	return this;
     }
 
-	public void setPctCompletedFL(Integer pctCompleted) {
-		this.pctCompletedFL = pctCompleted;
+    public Boolean isAlwaysAssignFastLap() {
+        return alwaysAssignFastLap;
+    }
+
+    public void setAlwaysAssignFastLap(Boolean alwaysAssignFastLap) {
+        this.alwaysAssignFastLap = alwaysAssignFastLap;
+    }
+
+    public PointsSystem alwaysAssignFL(Boolean alwaysAssignFL) {
+        this.alwaysAssignFastLap = alwaysAssignFL;
+        return this;
+    }
+
+    public void setPctCompletedFastLap(Integer pctCompleted) {
+		this.pctCompletedFastLap = pctCompleted;
 	}
 
 	public Boolean isPitlaneStartAllowed() {

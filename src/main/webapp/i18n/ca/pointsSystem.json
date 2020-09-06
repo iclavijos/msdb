@@ -28,6 +28,7 @@
       "pointsFastLapAwardedIf": "Otorgar punts per volta ràpida si: ",
       "maxFinishinPositionFL": "Posició final màxima",
       "pitlaneStartAllowed": "S''otorgan si ha començat des del pitlane?",
+      "alwaysAssignFastLap": "Assignar a un altre pilot si el primer no compleix els criteris?",
       "racePctCompletion": "Si es completa menys del {{racePct}}% de les voltes, otorgar només el {{pointsPct}}% dels punts",
       "pointsRacePctCompletion1": "Si es completa menys del ",
       "pointsRacePctCompletion2": "% de les voltes, otorgar només el ",
