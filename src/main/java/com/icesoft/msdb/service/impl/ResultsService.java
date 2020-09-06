@@ -162,33 +162,31 @@ public class ResultsService {
                 if (fastestLapOrder.isEmpty()) {
                     log.warn("No fastest lap recorded... skipping");
                 } else {
-                    if (ps.isAlwaysAssignFastLap()) {
-                        fastestEntry = fastestLapOrder.get(0);
-                    } else {
-                        Stream<EventEntryResult> filtered = fastestLapOrder.parallelStream();
-                        if (ps.getMaxPosFastLap() != 0) {
-                            filtered = filtered.filter(eer -> eer.getFinalPosition() <= ps.getMaxPosFastLap());
-                        }
-                        if (!ps.isPitlaneStartAllowed()) {
-                            filtered = filtered.filter(eer -> !eer.isPitlaneStart());
-                        }
-                        if (ps.getPctCompletedFastLap() != 0) {
-                            //We assume that duration will always be laps if minimum percentage completion needs to be applied
-                            filtered = filtered
-                                .filter(eer -> (eer.getLapsCompleted().floatValue() / eer.getSession().getDuration().floatValue()) * 100f >= ps.getPctCompletedFastLap());
-                        }
-                        Optional<EventEntryResult> optFastestLap = filtered.findFirst();
-                        if (optFastestLap.isPresent()) {
-                            for(Driver d : optFastestLap.get().getEntry().getDrivers()) {
+                    Stream<EventEntryResult> filtered = fastestLapOrder.parallelStream();
+                    if (!ps.isPitlaneStartAllowed()) {
+                        filtered = filtered.filter(eer -> !eer.isPitlaneStart());
+                    }
+                    if (ps.getPctCompletedFastLap() != 0) {
+                        //We assume that duration will always be laps if minimum percentage completion needs to be applied
+                        filtered = filtered
+                            .filter(eer -> (eer.getLapsCompleted().floatValue() / eer.getSession().getDuration().floatValue()) * 100f >= ps.getPctCompletedFastLap());
+                    }
+
+                    Optional<EventEntryResult> optFastestLap = filtered.findFirst();
+                    if (optFastestLap.isPresent()) {
+                        if (!ps.isAlwaysAssignFastLap() && optFastestLap.get().getFinalPosition() > ps.getMaxPosFastLap()) {
+                            log.warn("Driver with fastest lap did not match criteria to get points");
+                        } else {
+                            for (Driver d : optFastestLap.get().getEntry().getDrivers()) {
                                 DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsFastLap");
                                 dep.setCategory(category);
                                 dep.addPoints(ps.getPointsFastLap().floatValue());
                                 log.debug(String.format("Driver %s: %s points for fastest lap", d.getFullName(), ps.getPointsFastLap()));
                                 drivers.add(dep);
                             }
-                        } else {
-                            log.warn("No recorded fast lap complied with all the requirements");
                         }
+                    } else {
+                        log.warn("No recorded fast lap complied with all the requirements");
                     }
                 }
             }
