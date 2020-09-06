@@ -158,7 +158,6 @@ public class ResultsService {
                     .sorted(Comparator.comparing(EventEntryResult::getBestLapTime))
                     .collect(Collectors.toList());
 
-                EventEntryResult fastestEntry;
                 if (fastestLapOrder.isEmpty()) {
                     log.warn("No fastest lap recorded... skipping");
                 } else {
@@ -172,18 +171,24 @@ public class ResultsService {
                             .filter(eer -> (eer.getLapsCompleted().floatValue() / eer.getSession().getDuration().floatValue()) * 100f >= ps.getPctCompletedFastLap());
                     }
 
-                    Optional<EventEntryResult> optFastestLap = filtered.findFirst();
+                    if (ps.getMaxPosFastLap() != 0) {
+                        filtered = filtered.filter(r -> r.getFinalPosition() <= ps.getMaxPosFastLap());
+                    }
+
+                    Optional<EventEntryResult> optFastestLap;
+                    if (ps.isAlwaysAssignFastLap()) {
+                        optFastestLap = filtered.findFirst();
+                    } else {
+                        optFastestLap = Optional.empty();
+                    }
+
                     if (optFastestLap.isPresent()) {
-                        if (!ps.isAlwaysAssignFastLap() && optFastestLap.get().getFinalPosition() > ps.getMaxPosFastLap()) {
-                            log.warn("Driver with fastest lap did not match criteria to get points");
-                        } else {
-                            for (Driver d : optFastestLap.get().getEntry().getDrivers()) {
-                                DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsFastLap");
-                                dep.setCategory(category);
-                                dep.addPoints(ps.getPointsFastLap().floatValue());
-                                log.debug(String.format("Driver %s: %s points for fastest lap", d.getFullName(), ps.getPointsFastLap()));
-                                drivers.add(dep);
-                            }
+                        for (Driver d : optFastestLap.get().getEntry().getDrivers()) {
+                            DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsFastLap");
+                            dep.setCategory(category);
+                            dep.addPoints(ps.getPointsFastLap().floatValue());
+                            log.debug(String.format("Driver %s: %s points for fastest lap", d.getFullName(), ps.getPointsFastLap()));
+                            drivers.add(dep);
                         }
                     } else {
                         log.warn("No recorded fast lap complied with all the requirements");
