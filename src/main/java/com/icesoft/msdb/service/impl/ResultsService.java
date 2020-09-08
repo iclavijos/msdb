@@ -171,15 +171,16 @@ public class ResultsService {
                             .filter(eer -> (eer.getLapsCompleted().floatValue() / eer.getSession().getDuration().floatValue()) * 100f >= ps.getPctCompletedFastLap());
                     }
 
-                    if (ps.getMaxPosFastLap() != 0) {
-                        filtered = filtered.filter(r -> r.getFinalPosition() <= ps.getMaxPosFastLap());
-                    }
-
-                    Optional<EventEntryResult> optFastestLap;
+                    Optional<EventEntryResult> optFastestLap = filtered.findFirst();
                     if (ps.isAlwaysAssignFastLap()) {
-                        optFastestLap = filtered.findFirst();
+                        optFastestLap = filtered.filter(r -> r.getFinalPosition() <= ps.getMaxPosFastLap()).findFirst();
                     } else {
-                        optFastestLap = Optional.empty();
+                        if (optFastestLap.isPresent()) {
+                            if (optFastestLap.get().getFinalPosition() > ps.getMaxPosFastLap()) {
+                                optFastestLap = Optional.empty();
+                                log.warn("Driver with fastest lap does not match criteria to be awarded points");
+                            }
+                        }
                     }
 
                     if (optFastestLap.isPresent()) {
