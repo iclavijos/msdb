@@ -131,12 +131,15 @@
     <div class="row" *ngIf="eventEntry.eventEdition.allowedCategories.length > 1">
         <div class="col-12">
             <div class="form-group">
-                <label class="form-control-label">Difference type</label><br/>
-                <mat-radio-group formControlName="category">
-                    <mat-radio-button *ngFor="let category of eventEntry.eventEdition.allowedCategories" [value]="category">
+                <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category">Category</label>
+                <mat-radio-group class="categories-radio-group" formControlName="category">
+                    <mat-radio-button *ngFor="let category of eventEntry.eventEdition.allowedCategories" [value]="category" [checked]="category.id === eventEntry.category?.id">
                         {{ category.name }}
                     </mat-radio-button>
                 </mat-radio-group>
+                <mat-error *ngIf="editForm.get('category')?.hasError('required')">
+                    {{ 'entity.validation.required' | translate }}
+                </mat-error>
             </div>
         </div>
     </div>

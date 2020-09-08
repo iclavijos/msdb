@@ -26,7 +26,8 @@ import { MatAutocompleteSelectedEvent } from '@angular/material';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
-  templateUrl: './event-entry-update.component.html'
+  templateUrl: './event-entry-update.component.html',
+  styleUrls: ['event-entry.scss']
 })
 export class EventEntryUpdateComponent implements OnInit {
   editForm: FormGroup;
@@ -64,6 +65,7 @@ export class EventEntryUpdateComponent implements OnInit {
   ) {
     this.eventEntry = data.eventEntry;
     this.eventEntry.eventEdition = data.eventEdition;
+    this.eventEntry.eventEdition.allowedCategories = data.eventEdition.allowedCategories.sort((a, b) => a.name.localeCompare(b.name));
     this.editForm = this.fb.group({
       id: [],
       raceNumber: [null, [Validators.required]],
@@ -200,7 +202,7 @@ export class EventEntryUpdateComponent implements OnInit {
   }
 
   updateForm(eventEntry: IEventEntry) {
-    this.selectedDrivers = eventEntry.drivers;
+    this.selectedDrivers = eventEntry.drivers === undefined ? [] : eventEntry.drivers;
     this.editForm.patchValue({
       id: eventEntry.id,
       raceNumber: eventEntry.raceNumber,
@@ -214,7 +216,7 @@ export class EventEntryUpdateComponent implements OnInit {
       carImage: eventEntry.carImage,
       carImageContentType: eventEntry.carImageContentType,
       carImageUrl: eventEntry.carImageUrl,
-      category: eventEntry.eventEdition.allowedCategories.length === 1 ? eventEntry.eventEdition.allowedCategories[0] : null
+      category: eventEntry.eventEdition.allowedCategories.length === 1 ? eventEntry.eventEdition.allowedCategories[0] : eventEntry.category
     });
   }
 
