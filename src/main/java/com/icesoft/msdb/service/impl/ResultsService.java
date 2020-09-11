@@ -26,9 +26,8 @@ import com.icesoft.msdb.repository.ManufacturerEventPointsRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.repository.TeamEventPointsRepository;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
-import com.icesoft.msdb.service.dto.DriverPointsDTO;
+import com.icesoft.msdb.service.dto.ParticipantPointsDTO;
 import com.icesoft.msdb.service.dto.ManufacturerPointsDTO;
-import com.icesoft.msdb.service.dto.TeamPointsDTO;
 
 @Service
 @Transactional(readOnly = true)
@@ -293,16 +292,16 @@ public class ResultsService {
         }
     }
 
-	public List<DriverPointsDTO> getDriversStandings(Long seriesId) {
-		List<DriverPointsDTO> standings = viewsRepo.getDriversStandings(seriesId);
+	public List<ParticipantPointsDTO> getDriversStandings(Long seriesId) {
+		List<ParticipantPointsDTO> standings = viewsRepo.getDriversStandings(seriesId);
 		Map<Long, List<Object[]>> positions = viewsRepo.getDriversResultsInSeries(seriesId);
 
-		Comparator<DriverPointsDTO> c = (o1, o2) -> {
+		Comparator<ParticipantPointsDTO> c = (o1, o2) -> {
 			if (o1.getPoints().floatValue() != o2.getPoints().floatValue()) {
 				return o1.getPoints().compareTo(o2.getPoints());
 			} else {
-				List<Object[]> positionsD1 = positions.get(o1.getDriverId());
-				List<Object[]> positionsD2 = positions.get(o2.getDriverId());
+				List<Object[]> positionsD1 = positions.get(o1.getParticipantId());
+				List<Object[]> positionsD2 = positions.get(o2.getParticipantId());
 
 				return sortPositions(positionsD1, positionsD2);
 			}
@@ -312,11 +311,11 @@ public class ResultsService {
 		return standings;
 	}
 
-	public List<DriverPointsDTO> getDriversPointsEvent(Long eventId) {
+	public List<ParticipantPointsDTO> getDriversPointsEvent(Long eventId) {
 		return getDriversPointsEvent(null, eventId);
 	}
 
-	public List<DriverPointsDTO> getDriversPointsEvent(Long seriesId, Long eventId) {
+	public List<ParticipantPointsDTO> getDriversPointsEvent(Long seriesId, Long eventId) {
 		List<Object[]> pointsEvent;
 		if (seriesId == null) {
 			pointsEvent = driverPointsRepo.getDriversPointsInEvent(eventId);
@@ -324,7 +323,7 @@ public class ResultsService {
 			pointsEvent = driverPointsRepo.getDriversPointsInEvent(seriesId, eventId);
 		}
 
-		return pointsEvent.parallelStream().map(dep -> new DriverPointsDTO(
+		return pointsEvent.parallelStream().map(dep -> new ParticipantPointsDTO(
 				null,
 				(Long)dep[0],
 				(String)dep[1] + " " + (String)dep[2],
@@ -332,13 +331,38 @@ public class ResultsService {
 				((Long)dep[4]).intValue(), null, "")).collect(Collectors.toList());
 	}
 
-	public List<DriverPointsDTO> getDriverPointsEvent(Long eventId, Long driverId) {
+	public List<ParticipantPointsDTO> getDriverPointsEvent(Long eventId, Long driverId) {
 		List<Object[]> pointsEvent = driverPointsRepo.getDriverPointsInEvent(eventId, driverId);
 
-		return pointsEvent.parallelStream().map(dep -> new DriverPointsDTO(
+		return pointsEvent.parallelStream().map(dep -> new ParticipantPointsDTO(
 				(Long)dep[0], (String)dep[1] + " " + (String)dep[2],
 				(Float)dep[3], (String)dep[4], null)).collect(Collectors.toList());
 	}
+
+    public List<ParticipantPointsDTO> getTeamsPointsEvent(Long eventId) {
+        return getTeamsPointsEvent(null, eventId);
+    }
+
+    public List<ParticipantPointsDTO> getTeamsPointsEvent(Long seriesId, Long eventId) {
+        List<Object[]> pointsEvent = Optional.ofNullable(seriesId)
+            .map(id -> teamPointsRepo.getTeamsPointsInEvent(seriesId, eventId))
+            .orElseGet(() -> teamPointsRepo.getTeamsPointsInEvent(eventId));
+
+        return pointsEvent.parallelStream().map(tep -> new ParticipantPointsDTO(
+            null,
+            (Long)tep[0],
+            (String)tep[1],
+            ((Double)tep[2]).floatValue(),
+            ((Long)tep[3]).intValue(), null, "")).collect(Collectors.toList());
+    }
+
+    public List<ParticipantPointsDTO> getTeamPointsEvent(Long eventId, Long teamId) {
+        List<Object[]> pointsEvent = teamPointsRepo.getTeamPointsInEvent(eventId, teamId);
+
+        return pointsEvent.parallelStream().map(tep -> new ParticipantPointsDTO(
+            (Long)tep[0], (String)tep[1],
+            (Float)tep[2], (String)tep[3], null)).collect(Collectors.toList());
+    }
 
 	public PointsRaceByRace getPointsRaceByRace(Long seriesEditionId) {
 		List<Object[]> pointsSeries = driverPointsRepo.getDriversPointsInSeries(seriesEditionId);
@@ -354,9 +378,9 @@ public class ResultsService {
 	public String[][] getResultsRaceByRace(Long seriesEditionId, String category) {
 		SeriesEdition seriesEdition = seriesEdRepository.findById(seriesEditionId).get();
 		List<EventSession> races = sessionRepo.findRacesInSeries(seriesEdition);
-		List<DriverPointsDTO> dpd = getDriversStandings(seriesEditionId); //We use this as returned data is ordered by scored points
+		List<ParticipantPointsDTO> dpd = getDriversStandings(seriesEditionId); //We use this as returned data is ordered by scored points
         dpd = dpd.stream().filter(d -> d.getCategory() == null ? true : d.getCategory().equals(category)).collect(Collectors.toList());
-		List<String> driverNames = dpd.stream().map(driver -> driver.getDriverName()).collect(Collectors.toList());
+		List<String> driverNames = dpd.stream().map(driver -> driver.getParticipantName()).collect(Collectors.toList());
 
 		String[][] data = new String[driverNames.size() + 1][races.size() + 1];
 		for(int i = 1; i <= driverNames.size(); i++) {
@@ -432,16 +456,16 @@ public class ResultsService {
 		return data;
 	}
 
-	public List<TeamPointsDTO> getTeamsStandings(Long seriesId) {
-		List<TeamPointsDTO> standings = viewsRepo.getTeamsStandings(seriesId);
+	public List<ParticipantPointsDTO> getTeamsStandings(Long seriesId) {
+		List<ParticipantPointsDTO> standings = viewsRepo.getTeamsStandings(seriesId);
 		Map<Long, List<Object[]>> positions = viewsRepo.getTeamsResultsInSeries(seriesId);
 
-		Comparator<TeamPointsDTO> c = (o1, o2) -> {
+		Comparator<ParticipantPointsDTO> c = (o1, o2) -> {
 			if (o1.getPoints().floatValue() != o2.getPoints().floatValue()) {
 				return o1.getPoints().compareTo(o2.getPoints());
 			} else {
-				List<Object[]> positionsT1 = positions.get(o1.getTeamId());
-				List<Object[]> positionsT2 = positions.get(o2.getTeamId());
+				List<Object[]> positionsT1 = positions.get(o1.getParticipantId());
+				List<Object[]> positionsT2 = positions.get(o2.getParticipantId());
 
 				return sortPositions(positionsT1, positionsT2);
 			}

@@ -155,6 +155,10 @@ export class EventEditionDetailComponent implements OnInit {
     this.eventEntries = newEntries;
   }
 
+  updateShowPoints(showPoints) {
+    this.showPoints = showPoints;
+  }
+
   jumpToEdition(id) {
     if (!id) {
       return false;
@@ -185,29 +189,16 @@ export class EventEditionDetailComponent implements OnInit {
       if (newDate) {
         this.eventEditionService
           .rescheduleEvent(this.eventEdition.id, moment.tz(newDate, this.eventEdition.trackLayout.racetrack.timeZone))
-          .subscribe(event => {
-            //             const diffDays = event.body.eventDate.diff(this.eventEdition.eventDate, 'days');
-            //             const clonedSessions = [];
-            //             this.eventSessionsComponent.eventSessions.forEach(val => clonedSessions.push(Object.assign({}, val)));
-            //             for (const session of clonedSessions) {
-            //               session.sessionStartTime = session.sessionStartTime.add(diffDays, 'days');
-            //             }
-            //             this.eventSessionsComponent.eventSessions = clonedSessions;
-            this.eventEdition = event.body;
-          });
+          .subscribe(event => (this.eventEdition = event.body));
       }
     });
   }
 
   copyEntries() {
-    const dialogRef = this.dialog.open(EventEditionCopyEntriesDialogComponent, {
+    this.dialog.open(EventEditionCopyEntriesDialogComponent, {
       data: {
         targetEvent: this.eventEdition
       }
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      // TODO: How to force reload of entries?
     });
   }
 }

@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { EventEditionService } from 'app/entities/event-edition/event-edition.service';
 import { SeriesEditionService } from 'app/entities/series-edition/series-edition.service';
+import { EventEdition } from 'app/shared/model/event-edition.model';
 import { SeriesEdition } from 'app/shared/model/series-edition.model';
 
 @Component({
@@ -22,7 +23,7 @@ export class StandingsComponent implements OnInit, OnChanges {
   pointsByRace = [];
   resultsByRace = [];
   numRaces: number;
-  @Input() eventEditionId: number;
+  @Input() eventEdition: EventEdition;
   @Input() seriesEdition: SeriesEdition;
   @Input() seriesEditionIds: number[];
   @Input() seriesEditionNames: string[];
@@ -45,15 +46,22 @@ export class StandingsComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    if (this.eventEditionId) {
+    let getTeamsStandings = false;
+    if (this.eventEdition) {
       let seriesId = null;
-      if (this.seriesEditionIds !== undefined) {
-        seriesId = this.seriesEditionIds[0];
-        this.selectSeriesEditions = this.seriesEditionIds.length > 1;
+      if (this.eventEdition.seriesEditions !== undefined) {
+        seriesId = this.eventEdition.seriesEditions[0].id;
+        getTeamsStandings = this.eventEdition.seriesEditions[0].teamsStandings;
+        this.selectSeriesEditions = this.eventEdition.seriesEditions.length > 1;
       }
-      this.eventEditionService.loadDriversPoints(this.eventEditionId, seriesId).subscribe(driversPoints => {
+      this.eventEditionService.loadDriversPoints(this.eventEdition.id, seriesId).subscribe(driversPoints => {
         this.drivers = driversPoints;
       });
+      if (getTeamsStandings) {
+        this.eventEditionService.loadTeamsPoints(this.eventEdition.id, seriesId).subscribe(teamsPoints => {
+          this.teams = teamsPoints;
+        });
+      }
     } else if (this.seriesEdition) {
       this.showExtendedStandings = true;
 
@@ -206,11 +214,11 @@ export class StandingsComponent implements OnInit, OnChanges {
   }
 
   getPointsDetail(driverId: number) {
-    if (this.eventEditionId !== undefined) {
+    if (this.eventEdition !== undefined) {
       this.router.navigate([
         '/driver-points-details',
         {
-          eventEditionId: this.eventEditionId,
+          eventEditionId: this.eventEdition.id,
           driverId,
           seriesEditionIds: this.seriesEditionIds
         }
@@ -231,7 +239,7 @@ export class StandingsComponent implements OnInit, OnChanges {
     if (!id) {
       return false;
     }
-    this.eventEditionService.loadDriversPoints(this.eventEditionId, id).subscribe(driversPoints => {
+    this.eventEditionService.loadDriversPoints(this.eventEdition.id, id).subscribe(driversPoints => {
       this.drivers = driversPoints;
     });
   }

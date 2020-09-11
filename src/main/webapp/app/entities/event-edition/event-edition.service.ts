@@ -74,12 +74,22 @@ export class EventEditionService {
     return this.http.put<IEventEdition>(`${this.resourceUrl}/${eventId}/reschedule`, newDate, { observe: 'response' });
   }
 
-  loadDriversPoints(id: number, seriesId: number) {
+  loadDriversPoints(eventId: number, seriesId: number) {
     let endpoint: string;
     if (seriesId !== undefined) {
-      endpoint = `${this.resourceUrl}/${seriesId}/${id}/points`;
+      endpoint = `${this.resourceUrl}/${seriesId}/${eventId}/points/drivers`;
     } else {
-      endpoint = `${this.resourceUrl}/${id}/points`;
+      endpoint = `${this.resourceUrl}/${eventId}/points/drivers`;
+    }
+    return this.http.get<any>(endpoint);
+  }
+
+  loadTeamsPoints(eventId: number, seriesId: number) {
+    let endpoint: string;
+    if (seriesId !== undefined) {
+      endpoint = `${this.resourceUrl}/${seriesId}/${eventId}/points/teams`;
+    } else {
+      endpoint = `${this.resourceUrl}/${eventId}/points/teams`;
     }
     return this.http.get<any>(endpoint);
   }

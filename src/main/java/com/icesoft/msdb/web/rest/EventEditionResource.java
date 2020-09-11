@@ -12,7 +12,7 @@ import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.EventService;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
-import com.icesoft.msdb.service.dto.DriverPointsDTO;
+import com.icesoft.msdb.service.dto.ParticipantPointsDTO;
 import com.icesoft.msdb.service.dto.EventsSeriesNavigationDTO;
 import com.icesoft.msdb.service.dto.SessionCalendarDTO;
 import com.icesoft.msdb.service.dto.SessionResultDTO;
@@ -51,9 +51,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link com.icesoft.msdb.domain.EventEdition}.
@@ -427,32 +424,60 @@ public class EventEditionResource {
     	return result;
     }
 
-    @GetMapping("/event-editions/{eventId}/points/{driverId}")
+    @GetMapping("/event-editions/{eventId}/points/drivers/{driverId}")
     @Timed
     @Transactional(readOnly = true)
-    @JsonView(ResponseViews.DriverPointsDetailView.class)
-    public ResponseEntity<List<DriverPointsDTO>> getEventPointsDriver(@PathVariable Long eventId, @PathVariable Long driverId) {
-    	List<DriverPointsDTO> result = resultsService.getDriverPointsEvent(eventId, driverId);
+    @JsonView(ResponseViews.ParticipantPointsDetailView.class)
+    public ResponseEntity<List<ParticipantPointsDTO>> getDriverEventPoints(@PathVariable Long eventId, @PathVariable Long driverId) {
+    	List<ParticipantPointsDTO> result = resultsService.getDriverPointsEvent(eventId, driverId);
 
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/event-editions/{eventId}/points")
+    @GetMapping("/event-editions/{eventId}/points/drivers")
     @Timed
     @Transactional(readOnly = true)
-    public ResponseEntity<List<DriverPointsDTO>> getEventPoints(@PathVariable Long eventId) {
-    	List<DriverPointsDTO> result = resultsService.getDriversPointsEvent(eventId);
+    public ResponseEntity<List<ParticipantPointsDTO>> getDriversEventPoints(@PathVariable Long eventId) {
+    	List<ParticipantPointsDTO> result = resultsService.getDriversPointsEvent(eventId);
 
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/event-editions/{seriesId}/{eventId}/points")
+    @GetMapping("/event-editions/{seriesId}/{eventId}/points/drivers")
     @Timed
     @Transactional(readOnly = true)
-    public ResponseEntity<List<DriverPointsDTO>> getEventPointsInSeries(@PathVariable Long seriesId, @PathVariable Long eventId) {
-    	List<DriverPointsDTO> result = resultsService.getDriversPointsEvent(seriesId, eventId);
+    public ResponseEntity<List<ParticipantPointsDTO>> getDriversEventPointsInSeries(@PathVariable Long seriesId, @PathVariable Long eventId) {
+    	List<ParticipantPointsDTO> result = resultsService.getDriversPointsEvent(seriesId, eventId);
 
     	return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/event-editions/{eventId}/points/teams/{teamId}")
+    @Timed
+    @Transactional(readOnly = true)
+    @JsonView(ResponseViews.ParticipantPointsDetailView.class)
+    public ResponseEntity<List<ParticipantPointsDTO>> getTeamEventPoints(@PathVariable Long eventId, @PathVariable Long teamId) {
+        List<ParticipantPointsDTO> result = resultsService.getTeamPointsEvent(eventId, teamId);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/event-editions/{eventId}/points/teams")
+    @Timed
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<ParticipantPointsDTO>> getTeamsEventPoints(@PathVariable Long eventId) {
+        List<ParticipantPointsDTO> result = resultsService.getTeamsPointsEvent(eventId);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/event-editions/{seriesId}/{eventId}/points/teams")
+    @Timed
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<ParticipantPointsDTO>> getTeamsEventPointsInSeries(@PathVariable Long seriesId, @PathVariable Long eventId) {
+        List<ParticipantPointsDTO> result = resultsService.getTeamsPointsEvent(seriesId, eventId);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping("/event-editions/{idTarget}/entries/{idSource}")

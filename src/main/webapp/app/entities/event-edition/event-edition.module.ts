@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { MotorsportsDatabaseStandingsModule } from '../standings/standings.module';
 import { EventEditionComponent } from './event-edition.component';
 import { EventEditionDetailComponent, RescheduleDialogComponent } from './event-edition-detail.component';
 import { EventEditionCopyEntriesDialogComponent } from './event-edition-copy-entries-dialog.component';
@@ -18,6 +19,7 @@ const ENTITY_STATES = [...eventEditionRoute, ...eventEditionPopupRoute];
 @NgModule({
   imports: [
     MotorsportsDatabaseSharedModule,
+    MotorsportsDatabaseStandingsModule,
     MotorsportsDatabaseEventSessionModule,
     MotorsportsDatabaseEventEntryModule,
     MotorsportsDatabaseEventEntryResultModule,

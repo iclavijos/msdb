@@ -40,6 +40,9 @@ public class TeamEventPoints implements Serializable {
     @ManyToOne
     private Category category;
 
+    @Column
+    private String reason;
+
 	public Team getTeam() {
 		return team;
 	}
@@ -82,6 +85,14 @@ public class TeamEventPoints implements Serializable {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
     @Override

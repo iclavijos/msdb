@@ -173,8 +173,8 @@ public class SeriesEditionResource {
     @GetMapping("/series-editions/{id}/standings/drivers")
     @Timed
     @Cacheable(cacheNames="driversStandingsCache", key="#id")
-    public ResponseEntity<List<DriverPointsDTO>> getSeriesDriversStandings(@PathVariable Long id) {
-    	List<DriverPointsDTO> result = resultsService.getDriversStandings(id);
+    public ResponseEntity<List<ParticipantPointsDTO>> getSeriesDriversStandings(@PathVariable Long id) {
+    	List<ParticipantPointsDTO> result = resultsService.getDriversStandings(id);
 
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -182,8 +182,8 @@ public class SeriesEditionResource {
     @GetMapping("/series-editions/{id}/standings/teams")
     @Timed
     @Cacheable(cacheNames="teamsStandingsCache", key="#id")
-    public ResponseEntity<List<TeamPointsDTO>> getSeriesTeamsStandings(@PathVariable Long id) {
-    	List<TeamPointsDTO> result = resultsService.getTeamsStandings(id);
+    public ResponseEntity<List<ParticipantPointsDTO>> getSeriesTeamsStandings(@PathVariable Long id) {
+    	List<ParticipantPointsDTO> result = resultsService.getTeamsStandings(id);
 
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -202,7 +202,7 @@ public class SeriesEditionResource {
     @Cacheable(cacheNames="pointRaceByRace")
     public ResponseEntity<Object[][]> getSeriesPointsRaceByRace(@PathVariable Long id, @PathVariable(required = false) String category) {
     	PointsRaceByRace points = resultsService.getPointsRaceByRace(id);
-    	List<DriverPointsDTO> standings = resultsService.getDriversStandings(id);
+    	List<ParticipantPointsDTO> standings = resultsService.getDriversStandings(id);
     	return new ResponseEntity<>(points.getResultsMatrix(standings, category), HttpStatus.OK);
     }
 
