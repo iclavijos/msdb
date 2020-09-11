@@ -96,7 +96,7 @@
                                     <th></th>
                                     <th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.driver' | translate}}</th>
                                     <th>{{'motorsportsDatabaseApp.series.seriesEdition.detail.points' | translate}}</th>
-                                    <th *ngIf="eventEditionId"></th>
+                                    <th *ngIf="eventEdition"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -104,7 +104,7 @@
                                     <td>{{i + 1}}</td>
                                     <td><a [routerLink]="['/driver', driver.participantId]">{{driver.participantName}}</a></td>
                                     <td>{{driver.points}}</td>
-                                    <td *ngIf="eventEditionId"><div (click)="getPointsDetail(driver.participantId)"><i class="fa fa-search" aria-hidden="true"></i></div></td>
+                                    <td *ngIf="eventEdition"><div (click)="getPointsDetail(driver.participantId)"><i class="fa fa-search" aria-hidden="true"></i></div></td>
                                 </tr>
                                 </tbody>
                             </table>
