@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -41,8 +41,13 @@ export class StandingsComponent implements OnInit, OnChanges {
     private router: Router
   ) {}
 
-  ngOnChanges() {
-    this.ngOnInit();
+  ngOnChanges(changes: SimpleChanges) {
+    const changeEventEdition = changes['eventEdition'];
+    const changeSeriesEdition = changes['seriesEdition'];
+
+    if ((changeEventEdition && changeEventEdition.previousValue) || (changeSeriesEdition && changeSeriesEdition.previousValue)) {
+      this.ngOnInit();
+    }
   }
 
   ngOnInit() {

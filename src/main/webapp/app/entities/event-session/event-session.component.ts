@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
@@ -53,8 +53,12 @@ export class EventSessionComponent implements OnInit, OnChanges {
     this.loadAll();
   }
 
-  ngOnChanges() {
-    this.loadAll();
+  ngOnChanges(changes: SimpleChanges) {
+    const change = changes['eventEdition'];
+
+    if (change.previousValue) {
+      this.loadAll();
+    }
   }
 
   loadAll() {
