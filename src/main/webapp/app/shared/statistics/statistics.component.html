@@ -138,7 +138,7 @@
                                     </dt>
                                     <dd>
                                         <div *ngFor="let title of categoryStats.stats.championshipsData">
-                                            <a class="deco-none" [routerLink]="['/series/series-edition', title.id]">{{ title.name }}</a>
+                                            <a class="deco-none" [routerLink]="['/series/edition', title.id, 'view']">{{ title.name }}</a>
                                         </div>
                                     </dd>
                                 </dl>
