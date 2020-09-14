@@ -48,6 +48,7 @@
                             {{result.finalPosition >= 800 ?
                             result.finalPosition == 901 ? 'DNS' :
                             result.finalPosition == 902 ? 'DSQ' :
+                            result.finalPosition == 903 ? 'DNQ' :
                             result.finalPosition == 800 ? 'NC' : '-' :	i + 1 }}
                             <span *ngIf="eventSession.sessionTypeValue === 2 && result.startingPosition && result.finalPosition < 800">
                                 <span *ngIf="result.startingPosition < result.finalPosition" style="color: red">

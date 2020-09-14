@@ -8,8 +8,9 @@ public enum ResultType {
 	DNF(900),
 	DNS(901),
 	DSQ(902),
+    DNQ(903),
 	NC(800);
-	
+
 	private int value;
     private static Map<Integer, ResultType> map = new HashMap<>();
 
@@ -33,6 +34,7 @@ public enum ResultType {
         case 900: return "DNF";
         case 901: return "DNS";
         case 902: return "DSQ";
+        case 903: return "DNQ";
         default: return Integer.toString(value);
         }
     }

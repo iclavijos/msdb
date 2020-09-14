@@ -158,6 +158,7 @@
         "dns": "Did not start",
         "disqualified": "Disqualified",
         "nc": "Not classified",
+        "dnq": "Did not qualify",
         "retirementCause": "Retirement cause",
         "difference": "Difference",
         "startingPosition": "Starting Pos.",
