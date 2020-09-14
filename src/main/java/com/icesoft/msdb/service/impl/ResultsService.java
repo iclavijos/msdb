@@ -243,8 +243,8 @@ public class ResultsService {
             List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(session.getEventEdition().getId());
             for(EventEditionEntry entry: entries) {
                 Driver driver = entry.getDrivers().get(0); //We will only deal with the first one so multidriver entries are handled just once
-                double dPoints = drivers.stream().filter(dp -> dp.getDriver().getId().equals(driver.getId())).mapToDouble(dp -> dp.getPoints()).sum();
-                if (dPoints > 0 && entry.getTeam() != null) {
+                if (entry.getTeam() != null) {
+                    double dPoints = drivers.stream().filter(dp -> dp.getDriver().getId().equals(driver.getId())).mapToDouble(dp -> dp.getPoints()).sum();
                     TeamEventPoints tep = teams.get(entry.getTeam().getId());
                     if (tep == null) {
                         tep = new TeamEventPoints();
