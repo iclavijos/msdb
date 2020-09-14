@@ -271,7 +271,7 @@ public class SeriesEditionResource {
     			log.debug("Statistics updated");
     	});
 
-        statsService.updateSeriesChamps(seriesEdition);
+        statsService.updateSeriesDriversChampions(seriesEdition);
 
         return CompletableFuture.completedFuture(ResponseEntity.ok().headers(
             HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, id.toString())).build());

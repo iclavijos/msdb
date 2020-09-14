@@ -402,10 +402,10 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 
 	@Override
-	public void updateSeriesChamps(SeriesEdition seriesEd) {
+	public void updateSeriesDriversChampions(SeriesEdition seriesEd) {
+	    List<Driver> currentChamps = seriesCategoryDriverChampionRepo.getDriversChampions(seriesEd.getId());
         updateSeriesDriversChampions(seriesEd,
-            seriesCategoryDriverChampionRepo.getDriversChampions(seriesEd.getId()),
-            seriesCategoryDriverChampionRepo.getDriversChampions(seriesEd.getId()),
+            currentChamps, currentChamps,
             seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());
         updateSeriesTeamsChampions(seriesEd, seriesEd.getTeamsChampions(), seriesEd.getTeamsChampions(),
             seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());
