@@ -1,3 +1,4 @@
+import { Title } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { JhiDataUtils } from 'ng-jhipster';
@@ -38,13 +39,19 @@ export class ChassisDetailComponent implements OnInit {
 
   chassis: IChassis;
 
-  constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute, protected chassisService: ChassisService) {}
+  constructor(
+    protected dataUtils: JhiDataUtils,
+    protected activatedRoute: ActivatedRoute,
+    protected chassisService: ChassisService,
+    private titleService: Title
+  ) {}
 
   hasChild = (_: number, node: ChassisNode) => node.expandable;
 
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ chassis }) => {
       this.chassis = chassis;
+      this.titleService.setTitle(chassis.manufacturer + ' ' + chassis.name);
       this.chassisService.getEvolutions(chassis.id).subscribe(evolutions => {
         this.chassis.evolutions = evolutions.body;
         this.dataSource.data = this.chassis.evolutions;

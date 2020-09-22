@@ -1,3 +1,4 @@
+import { Title } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
@@ -26,13 +27,15 @@ export class RacetrackDetailComponent implements OnInit {
     protected activatedRoute: ActivatedRoute,
     private racetrackService: RacetrackService,
     private racetrackLayoutService: RacetrackLayoutService,
-    private sessionStorage: SessionStorageService
+    private sessionStorage: SessionStorageService,
+    private titleService: Title
   ) {}
 
   ngOnInit() {
     this.locale = this.sessionStorage.retrieve('locale');
     this.activatedRoute.data.subscribe(({ racetrack }) => {
       this.racetrack = racetrack;
+      this.titleService.setTitle(racetrack.name);
       this.loadLayouts(racetrack.id);
     });
   }

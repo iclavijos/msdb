@@ -1,3 +1,4 @@
+import { Title } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { JhiDataUtils } from 'ng-jhipster';
@@ -11,11 +12,12 @@ import { ITeam } from 'app/shared/model/team.model';
 export class TeamDetailComponent implements OnInit {
   team: ITeam;
 
-  constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute) {}
+  constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute, private titleService: Title) {}
 
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ team }) => {
       this.team = team;
+      this.titleService.setTitle(team.name);
     });
   }
 

@@ -1,3 +1,4 @@
+import { Title } from '@angular/platform-browser';
 import { Component, OnInit, Renderer2, Inject, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -84,12 +85,14 @@ export class EventEditionDetailComponent implements OnInit {
     private router: Router,
     private lightbox: Lightbox,
     private renderer: Renderer2,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private titleService: Title
   ) {}
 
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ eventEdition }) => {
       this.eventEdition = eventEdition;
+      this.titleService.setTitle(eventEdition.longEventName);
       if (eventEdition.seriesEditions) {
         this.eventEditionService.findPrevNextInSeries(eventEdition.id).subscribe(res => (this.navigationIds = res));
       }

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -43,6 +43,7 @@ import { ErrorComponent } from './layouts/error/error.component';
     ActiveMenuDirective,
     FooterComponent
   ],
+  providers: [Title],
   bootstrap: [JhiMainComponent]
 })
 export class MotorsportsDatabaseAppModule {}
