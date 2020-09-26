@@ -14,6 +14,9 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.xml.bind.DatatypeConverter;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.micrometer.core.annotation.Timed;
 import org.apache.commons.lang3.StringUtils;
@@ -141,12 +144,22 @@ public class ImportsResource {
     }
 
     private <T> MappingIterator<T> initializeIterator(Class<T> type, String data) {
+        return initializeIterator(type, data, false);
+    }
+
+    private <T> MappingIterator<T> initializeIterator(Class<T> type, String data, boolean ignoreUnknownFields) {
     	CsvSchema bootstrapSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator(';');
+
         CsvMapper mapper = new CsvMapper();
         try {
         	JavaTimeModule javaTimeModule=new JavaTimeModule();
             javaTimeModule.addDeserializer(LocalDate.class, new ParseDeserializer());
             mapper.registerModule(javaTimeModule);
+            if (ignoreUnknownFields) {
+                mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+                // mapper.enable(JsonGenerator.Feature.IGNORE_UNKNOWN);
+            }
+            mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
 	        return mapper.readerFor(type).with(bootstrapSchema).readValues(data);
 
         } catch (Exception e) {
@@ -325,18 +338,21 @@ public class ImportsResource {
     }
 
     private void importLapByLap(Long sessionId, String data) {
+        EventSession session = eventSessionRepository.findById(sessionId)
+            .orElseThrow(() -> new MSDBException("Invalid session id"));
+
     	if (sessionLapDataRepo.existsById(sessionId.toString())) {
     		sessionLapDataRepo.deleteById(sessionId.toString());
     	}
         cacheHandler.resetLapByLapCaches(sessionId);
-       	MappingIterator<LapInfo> readValues = initializeIterator(LapInfo.class, data);
+       	MappingIterator<LapInfo> readValues = initializeIterator(LapInfo.class, data, true);
        	SessionLapData sessionLapData = new SessionLapData();
        	sessionLapData.setSessionId(sessionId.toString());
-
+        List<EventEditionEntry> entries = entryRepository.findEventEditionEntries(session.getEventEdition().getId());
        	while (readValues.hasNext()) {
        		sessionLapData.addLapData(readValues.next());
        	}
-       	sessionLapData.processData();
+       	sessionLapData.processData(entries);
        	sessionLapDataRepo.save(sessionLapData);
     }
 

@@ -2,7 +2,6 @@ package com.icesoft.msdb.domain;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.icesoft.msdb.service.dto.RacePositionsDTO;
 import org.springframework.data.annotation.Id;
@@ -22,12 +21,19 @@ public class SessionLapData {
    		laps.add(lapData);
 	}
 
-	public void processData() {
+	public void processData(List<EventEditionEntry> entries) {
 		Map<Integer, List<LapInfo>> dataPerLap = new HashMap<>();
+		Map<String, String> entryCategory = new HashMap<>();
+
+		entries.forEach(entry -> entryCategory.put(
+		        entry.getRaceNumber(),
+                entry.getCategory().getShortname())
+        );
 
 		LapInfo fastestLap = null;
 
-		laps.parallelStream().forEach(lapData -> {
+		laps.stream().forEach(lapData -> {
+		    lapData.setCategory(entryCategory.get(lapData.getRaceNumber()));
 	   		if (!dataPerLap.containsKey(lapData.getLapNumber())) {
 				dataPerLap.put(lapData.getLapNumber(), new ArrayList<>());
 			}
@@ -37,7 +43,7 @@ public class SessionLapData {
 		for(Integer lapNumber : dataPerLap.keySet()) {
 			if (lapNumber > 1) {
 				List<LapInfo> lapTimes = dataPerLap.get(lapNumber);
-				LapInfo fastLap = lapTimes.parallelStream()
+				LapInfo fastLap = lapTimes.stream().filter(Objects::nonNull)
                     .sorted(Comparator.comparing(LapInfo::getLapTime)).findFirst().get();
 				if (fastestLap == null) {
 					fastestLap = fastLap;
@@ -52,11 +58,9 @@ public class SessionLapData {
 			}
 		}
 
-		laps = laps.stream().sorted((l1, l2) -> {
-		    int comp = l1.getRaceNumber().compareTo(l2.getRaceNumber());
-		    if (comp != 0) return comp;
-		    return l1.getLapNumber().compareTo(l2.getLapNumber());
-        }).collect(Collectors.toList());
+		laps = laps.parallelStream()
+            .sorted(Comparator.comparing(LapInfo::getLapNumber))
+            .collect(Collectors.toList());
 		LapInfo personalBest = null;
 		for(LapInfo lap: laps) {
 			if (lap.getLapNumber() == 1) {
