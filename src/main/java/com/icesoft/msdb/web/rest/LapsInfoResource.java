@@ -43,9 +43,20 @@ public class LapsInfoResource {
     @Cacheable(cacheNames = "lapsDriversCache")
 	public ResponseEntity<List<LapsInfoDriversDTO>> getDriversWithData(@PathVariable Long sessionId) {
 		List<LapsInfoDriversDTO> result;
-		//TODO: Retrieve data from ES repository (do not show entries names that have no data
-		result = resultsRepo.findSessionEntries(sessionId).stream()
-				.map(LapsInfoDriversDTO::new).collect(Collectors.toList());
+
+        Map<String, List<LapInfo>> driversPerRaceNumber = repo.findById(sessionId.toString())
+            .orElseThrow(() -> new MSDBException("Invalid session id " + sessionId))
+            .getLaps().stream()
+            .collect(Collectors.groupingBy(LapInfo::getRaceNumber));
+
+        result = driversPerRaceNumber.keySet().stream()
+            .sorted(Comparator.comparing(Integer::new))
+            .map(raceNumber -> {
+                String names = driversPerRaceNumber.get(raceNumber).stream()
+                    .map(d -> d.getDriverName()).distinct().collect(Collectors.joining(", "));
+                return new LapsInfoDriversDTO(raceNumber, names);
+            }).collect(Collectors.toList());
+
 		return ResponseEntity.ok(result);
 	}
 

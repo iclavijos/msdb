@@ -27,7 +27,9 @@ public class DriverRaceStatisticsDTO {
     }
 
     private List<LapInfo> laps;
+    private String raceNumber;
     private String driverName;
+    private String category;
     private Long best5Avg;
     private Long best10Avg;
     private Long best20Avg;
@@ -42,7 +44,9 @@ public class DriverRaceStatisticsDTO {
 
     public DriverRaceStatisticsDTO(List<LapInfo> driverLaps) {
         this.laps = driverLaps;
+        this.raceNumber = driverLaps.get(0).getRaceNumber();
         this.driverName = driverLaps.get(0).getDriverName();
+        this.category = driverLaps.get(0).getCategory();
         this.best5Avg = calculateAverage(5);
         this.best10Avg = calculateAverage(10);
         this.best20Avg = calculateAverage(20);
@@ -52,9 +56,13 @@ public class DriverRaceStatisticsDTO {
         calculateAverage110();
     }
 
+    public String getRaceNumber() { return raceNumber; }
+
     public String getDriverName() {
         return driverName;
     }
+
+    public String getCategory() { return category; }
 
     public Long getBest5Avg() {
         return best5Avg;

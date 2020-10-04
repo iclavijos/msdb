@@ -1,26 +1,27 @@
 {
-    "motorsportsDatabaseApp": {
-        "lapbylap" : {
-            "lapCharts": "Lap charts",
-            "lapsRange": "Select laps range to draw",
-            "lapTimes": "Lap times",
-            "lapTime": "Lap time",
-            "lap": "Lap",
-            "legend": "Legend",
-            "fastestLap": "Fastest race lap",
-            "fastLap": "Fast lap",
-            "personalBest": "Personal best",
-            "averages": "Averages",
-            "average": "Average",
-            "avgPerDriver": "Averages per driver",
-            "best5": "Best 5 laps",
-            "best10": "Best 10 laps",
-            "best20": "Best 20 laps",
-            "perfectLap": "Perfect fastest lap",
-            "driverName": "Driver",
-            "stints": "Stints",
-            "stint": "Stint",
-            "raceHistory": "Race history chart"
-        }
+  "motorsportsDatabaseApp": {
+    "lapbylap": {
+      "lapCharts": "Lap charts",
+      "lapsRange": "Select laps range to draw",
+      "lapTimes": "Lap times",
+      "lapTime": "Lap time",
+      "lap": "Lap",
+      "legend": "Legend",
+      "fastestLap": "Fastest race lap",
+      "fastLap": "Fast lap",
+      "personalBest": "Personal best",
+      "averages": "Averages",
+      "average": "Average",
+      "avgPerDriver": "Averages per driver",
+      "best5": "Best 5 laps",
+      "best10": "Best 10 laps",
+      "best20": "Best 20 laps",
+      "best50": "Best 50 laps",
+      "perfectLap": "Perfect fastest lap",
+      "driverName": "Driver",
+      "stints": "Stints",
+      "stint": "Stint",
+      "raceHistory": "Race history chart"
     }
+  }
 }

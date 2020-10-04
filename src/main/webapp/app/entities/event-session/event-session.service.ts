@@ -11,6 +11,9 @@ import { IEventSession } from 'app/shared/model/event-session.model';
 
 import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 
+import { IDriverAverages } from 'app/shared/model/driver-averages.model';
+import { ILapPositions } from 'app/shared/model/lap-positions.model';
+
 type EntityResponseType = HttpResponse<IEventSession>;
 type EntityArrayResponseType = HttpResponse<IEventSession[]>;
 
@@ -93,6 +96,26 @@ export class EventSessionService {
     return this.http
       .get<IEventSession[]>(`${this.resourceEventEditionUrl}/${id}/sessions`, { observe: 'response' })
       .pipe(map((res: EntityArrayResponseType) => this.transformDateTime(res, timeZone)));
+  }
+
+  findSessionDriverNames(id: number): Observable<string[]> {
+    return this.http.get<any>(`${this.resourceUrl}/${id}/laps/drivers`);
+  }
+
+  findSessionAverages(id: number): Observable<IDriverAverages[]> {
+    return this.http.get<IDriverAverages[]>(`${this.resourceUrl}/${id}/laps/averages`);
+  }
+
+  findFastestTime(id: number): Observable<number> {
+    return this.http.get<number>(`${this.resourceUrl}/${id}/fastestLap`);
+  }
+
+  findMaxLaps(id: number): Observable<number> {
+    return this.http.get<number>(`${this.resourceUrl}/${id}/maxLaps`);
+  }
+
+  findRaceChartData(id: number): Observable<ILapPositions[]> {
+    return this.http.get<ILapPositions[]>(`${this.resourceUrl}/${id}/positions`);
   }
 
   private transformDateTime(res: EntityArrayResponseType, timeZone: string): EntityArrayResponseType {

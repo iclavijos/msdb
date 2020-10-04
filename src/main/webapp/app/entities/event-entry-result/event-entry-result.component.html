@@ -21,6 +21,13 @@
 	                Process race results
 	            </span>
             </button>
+            <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                    class="btn float-right" (click)="uploadLapByLap()">
+                <span class="material-icons">reorder</span>
+                <span class="hidden-sm-down" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.lapbylapLabel">
+                    Upload lap by lap
+                </span>
+            </button>
         </div>
         <div class="col-sm-12">
             <div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">

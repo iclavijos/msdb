@@ -56,7 +56,7 @@ export class EventEditionDetailComponent implements OnInit {
   sessionTypes = SessionType;
   durationTypes = DurationType;
   filterCategory: string;
-  editions: any[];
+  editions = [];
   navigationIds = null;
   showPoints = false;
   driversBestTimes: any;

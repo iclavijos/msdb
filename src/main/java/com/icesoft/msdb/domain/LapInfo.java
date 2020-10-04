@@ -1,7 +1,12 @@
 package com.icesoft.msdb.domain;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class LapInfo {
 
@@ -26,7 +31,7 @@ public class LapInfo {
 
 	public LapInfo(String raceNumber, String driverName, Integer lapNumber, Long lapTime, Boolean pitstop) {
 		this.raceNumber = raceNumber;
-		this.driverName = driverName;
+		this.driverName = camelCaseDriverName(driverName);
 		this.lapNumber = lapNumber;
 		this.lapTime = lapTime;
 		this.pitstop = pitstop;
@@ -45,7 +50,7 @@ public class LapInfo {
 	}
 
 	public void setDriverName(String driverName) {
-		this.driverName = driverName;
+		this.driverName = camelCaseDriverName(driverName);
 	}
 
 	public Long getLapTime() {
@@ -182,6 +187,14 @@ public class LapInfo {
 
     public void setS3(Long s3) {
         this.s3 = s3;
+    }
+
+    private String camelCaseDriverName(String driverName) {
+	    List<String> items = Arrays.asList(StringUtils.split(driverName, " "));
+	    String result = items.get(0).substring(0, 1).toUpperCase();
+	    return result + ". " + items.subList(1, items.size()).stream()
+            .map(name -> name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase())
+            .collect(Collectors.joining(" "));
     }
 
 }

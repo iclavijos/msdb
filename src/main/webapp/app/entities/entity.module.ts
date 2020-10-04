@@ -54,6 +54,10 @@ import { MotorsportsDatabaseStandingsModule } from './standings/standings.module
       {
         path: 'series',
         loadChildren: () => import('./series/series.module').then(m => m.MotorsportsDatabaseSeriesModule)
+      },
+      {
+        path: 'laps-analysis',
+        loadChildren: () => import('./laps-analysis/laps-analysis.module').then(m => m.MotorsportsDatabaseLapsAnalysisModule)
       }
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ])

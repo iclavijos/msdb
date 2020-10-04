@@ -1,0 +1,264 @@
+<mat-tab-group dynamicHeight mat-stretch-tabs [(selectedIndex)]="index">
+    <mat-tab label="{{'motorsportsDatabaseApp.lapbylap.lapCharts' | translate }}">
+        <div *ngFor="let t of temp(math.ceil(drivers.length/4)).fill(); let i = index" class="row">
+            <div *ngFor="let item of drivers.slice(4*i,4*i + 4);" class="col-md-3">
+                <p-checkbox  name="groupDrivers" [value]="item.raceNumber" [label]="item.driversNames"
+                             [(ngModel)]="selectedDrivers" (onChange)="refreshLapTimesTable(item.raceNumber)">
+                </p-checkbox>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">{{'motorsportsDatabaseApp.lapbylap.lapsRange' | translate}}</label>
+            <div class="col-sm-10">
+                <!-- ion-range-slider #sliderElement
+                    type="integer"
+                    min="1"
+                    [max]="maxLaps"
+                    [from]="lapsRangeFrom"
+                    [to]="lapsRangeTo"
+                    grid="true"
+                    grid_num="5"
+                    decorate_both="false"
+                    (onFinish)="changeLapsRange($event)"></ion-range-slider -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <!-- p-chart type="line" [data]="data" [options]="options"></p-chart -->
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab label="{{'motorsportsDatabaseApp.lapbylap.lapTimes' | translate }}">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
+                    <mat-form-field>
+                        <mat-label>Filter by category</mat-label>
+                        <mat-select [(ngModel)]="categoryToFilter" (ngModelChange)="resetCategoryLapTimes()">
+                            <mat-option></mat-option>
+                            <mat-option *ngFor="let category of eventEdition.allowedCategories" [value]="category.shortname">{{category.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div *ngFor="let t of temp(math.ceil(getFilteredDrivers().length/5)).fill(); let i = index" class="row">
+            <div *ngFor="let item of getFilteredDrivers().slice(4*i,4*(i + 1));" class="col-md-3">
+                <mat-checkbox [value]="item.raceNumber"
+                    (change)="refreshLapTimesTable(item.raceNumber, $event)">#{{ item.raceNumber }} {{ item.driversNames }}
+                </mat-checkbox>
+            </div>
+        </div>
+
+        <table *ngIf="lapNumbers" class="table table-sm">
+            <thead>
+            <tr>
+                <th>{{'motorsportsDatabaseApp.lapbylap.lap' | translate}}</th>
+                <th *ngFor="let header of headers">{{header}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let number of lapNumbers; let isOdd=odd; let isEven=even" [class.even]="isEven">
+                <td>{{number + 1}}</td>
+                <td *ngFor="let piloto of lapTimes">
+                    <div *ngIf="(number + 1) <= piloto.laps.length">
+                        <span matTooltip="{{ piloto.laps[number].driverName }}">{{piloto.laps[number].lapTime | timeMaskPipe : true : false}}</span> <span *ngIf="piloto.laps[number].pitstop">P</span>&nbsp;
+                        <i class="fa fa-circle" *ngIf="piloto.laps[number].personalBest || piloto.laps[number].fastLap || piloto.laps[number].fastestLap"
+                           [class.personalBest]="piloto.laps[number].personalBest"
+                           [class.fastLap]="piloto.laps[number].fastLap"
+                           [class.fastestLap]="piloto.laps[number].fastestLap"></i>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="col-md-12">
+                <span>{{'motorsportsDatabaseApp.lapbylap.legend' | translate}}</span>
+                <i class="fa fa-circle fastestLap"></i>{{'motorsportsDatabaseApp.lapbylap.fastestLap' | translate}}&nbsp;
+                <i class="fa fa-circle fastLap"></i>{{'motorsportsDatabaseApp.lapbylap.fastLap' | translate}}&nbsp;
+                <i class="fa fa-circle personalBest"></i>{{'motorsportsDatabaseApp.lapbylap.personalBest' | translate}}
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab label="{{'motorsportsDatabaseApp.lapbylap.averages' | translate }}">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
+                    <mat-form-field>
+                        <mat-label>Filter by category</mat-label>
+                        <mat-select [(ngModel)]="categoryToFilter" (ngModelChange)="refreshAverages()">
+                            <mat-option></mat-option>
+                            <mat-option *ngFor="let category of eventEdition.allowedCategories" [value]="category.shortname">{{category.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+                <div class="row">
+                    <div class="card-deck col-md-12">
+                        <div class="card col-md-3">
+                            <div class="card-block">
+                                <h4 class="card-title">{{'motorsportsDatabaseApp.lapbylap.best5' | translate}}</h4>
+                                <div class="card-text">
+                                    <table class="table table-sm">
+                                        <thead>
+                                        <tr>
+                                            <th>{{'motorsportsDatabaseApp.lapbylap.driverName'	| translate}}</th>
+                                            <th>{{'motorsportsDatabaseApp.lapbylap.average' | translate}}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let avg of getTopTen5BestLaps()" [class.even]="isEven">
+                                            <td>{{avg.driverName}}</td><td>{{avg.best5Avg | timeMaskPipe : true : false }}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card col-md-3">
+                            <div class="card-block">
+                                <h4 class="card-title">{{'motorsportsDatabaseApp.lapbylap.best10' | translate}}</h4>
+                                <div class="card-text">
+                                    <table class="table table-sm">
+                                        <thead>
+                                        <tr>
+                                            <th>{{'motorsportsDatabaseApp.lapbylap.driverName'	| translate}}</th>
+                                            <th>{{'motorsportsDatabaseApp.lapbylap.average' | translate}}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let avg of getTopTen10BestLaps()" [class.even]="isEven">
+                                            <td>{{avg.driverName}}</td><td>{{avg.best10Avg | timeMaskPipe : true : false }}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card col-md-3">
+                            <div class="card-block">
+                                <h4 class="card-title">{{'motorsportsDatabaseApp.lapbylap.best20' | translate}}</h4>
+                                <div class="card-text">
+                                    <table class="table table-sm">
+                                        <thead>
+                                        <tr>
+                                            <th>{{'motorsportsDatabaseApp.lapbylap.driverName'	| translate}}</th>
+                                            <th>{{'motorsportsDatabaseApp.lapbylap.average' | translate}}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let avg of getTopTen20BestLaps()" [class.even]="isEven">
+                                            <td>{{avg.driverName}}</td><td>{{avg.best20Avg | timeMaskPipe : true : false }}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card col-md-3">
+                            <div class="card-block">
+                                <h4 class="card-title">{{'motorsportsDatabaseApp.lapbylap.best50' | translate}}</h4>
+                                <div class="card-text">
+                                    <table class="table table-sm">
+                                        <thead>
+                                        <tr>
+                                            <th>{{'motorsportsDatabaseApp.lapbylap.driverName'	| translate}}</th>
+                                            <th>{{'motorsportsDatabaseApp.lapbylap.average' | translate}}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let avg of getTopTen50BestLaps()" [class.even]="isEven">
+                                            <td>{{avg.driverName}}</td><td>{{avg.best50Avg | timeMaskPipe : true : false }}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12"><h4>{{'motorsportsDatabaseApp.lapbylap.avgPerDriver' | translate}}</h4></div>
+                    <div *ngFor="let t of temp(math.ceil(selectedDriversAvg.selectedOptions.selected.length/5)).fill(); let i = index" class="card-deck col-md-12">
+                        <div *ngFor="let item of selectedDriversAvg.selectedOptions.selected.slice(5*i,5*(i + 1));" class="col-md-2">
+                            <ng-container
+                                *ngTemplateOutlet="driverAveragesBlock;context:{driver: getDriverDataByDriverName(item)}">
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <mat-selection-list #selectedDriversAvg>
+                    <mat-list-option *ngFor="let item of driversAverages" checkboxPosition="before" [value]="item">
+                        {{ item.driverName }}
+                    </mat-list-option>
+                </mat-selection-list>
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab label="{{'motorsportsDatabaseApp.lapbylap.raceHistory' | translate }}">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- p-chart type="line" [data]="dataRaceChart" [options]="optionsRaceChart">Race chart</p-chart -->
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>
+
+<ng-template #driverAveragesBlock let-driver="driver">
+<div class="card-block">
+    <h5 class="card-title">{{driver.driverName}}</h5>
+    <div class="card-text">
+        <dl class="row-md jh-entity-details">
+            <dt><span jhiTranslate="motorsportsDatabaseApp.lapbylap.best5">Best 5</span></dt>
+            <dd>
+                <span>{{driver.best5Avg | timeMaskPipe : true : false }}</span>
+            </dd>
+            <dt><span jhiTranslate="motorsportsDatabaseApp.lapbylap.best10">Best 10</span></dt>
+            <dd>
+                <span>{{driver.best10Avg | timeMaskPipe : true : false }}</span>
+            </dd>
+            <dt><span jhiTranslate="motorsportsDatabaseApp.lapbylap.best20">Best 20</span></dt>
+            <dd>
+                <span>{{driver.best20Avg | timeMaskPipe : true : false }}</span>
+            </dd>
+            <dt><span jhiTranslate="motorsportsDatabaseApp.lapbylap.best50">Best 50</span></dt>
+            <dd>
+                <span>{{driver.best50Avg | timeMaskPipe : true : false }}</span>
+            </dd>
+            <dt><span jhiTranslate="motorsportsDatabaseApp.lapbylap.stints">Stints</span></dt>
+            <dd>
+                <span *ngFor="let stint of driver.lapsStint; let i = index">
+                    {{'motorsportsDatabaseApp.lapbylap.stint' | translate}} {{i + 1}}: [{{stint}}]: {{driver.averagePerStint[i] | timeMaskPipe : true : false }}<br/>
+                </span>
+            </dd>
+            <dt *ngIf="driver.bestS1"><span jhiTranslate="motorsportsDatabaseApp.lapbylap.perfectLap">Perfect Lap</span></dt>
+            <dd *ngIf="driver.bestS1">
+                <span>{{driver.bestS1 + driver.bestS2 + driver.bestS3 | timeMaskPipe : true : false }}<br/>
+                    S1: {{driver.bestS1 | timeMaskPipe : true : false }}<br/>
+                    S2: {{driver.bestS2 | timeMaskPipe : true : false }}<br/>
+                    S3: {{driver.bestS3 | timeMaskPipe : true : false }}</span>
+            </dd>
+            <dt><span jhiTranslate="motorsportsDatabaseApp.lapbylap.best20">Best Laps</span></dt>
+            <dd>
+                <span>
+                    <table class="table table-sm">
+                        <tbody>
+                            <tr *ngFor="let t of temp(math.ceil(driver.bestLaps.length/2)).fill(); let i = index" [class.even]="isEven">
+                                <td>{{driver.bestLaps[i * 2].lapNumber}} - {{driver.bestLaps[i * 2].lapTime | timeMaskPipe : true : false }}</td>
+                                <td *ngIf="(i*2) + 1 < driver.bestLaps.length">
+                                    {{driver.bestLaps[(i * 2) + 1].lapNumber}} - {{driver.bestLaps[(i * 2) + 1].lapTime | timeMaskPipe : true : false }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </span>
+            </dd>
+        </dl>
+    </div>
+</div>
+</ng-template>

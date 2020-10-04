@@ -1,6 +1,7 @@
 package com.icesoft.msdb.domain;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import com.icesoft.msdb.service.dto.RacePositionsDTO;
@@ -58,22 +59,24 @@ public class SessionLapData {
 			}
 		}
 
-		laps = laps.parallelStream()
-            .sorted(Comparator.comparing(LapInfo::getLapNumber))
-            .collect(Collectors.toList());
-		LapInfo personalBest = null;
-		for(LapInfo lap: laps) {
-			if (lap.getLapNumber() == 1) {
-				personalBest = lap;
-			} else {
-				if (personalBest == null || lap.getLapTime() < personalBest.getLapTime()) {
-					personalBest = lap;
-					if (!personalBest.getFastestLap() && !personalBest.getFastLap()) {
-						personalBest.setPersonalBest(true);
-					}
-				}
-			}
-		}
+        laps.stream().map(li -> li.getRaceNumber()).distinct().forEach(raceNumber -> {
+            AtomicReference<LapInfo> personalBest = new AtomicReference<>();
+            AtomicReference<Integer> lapCounter = new AtomicReference<>(1);
+            laps.stream().filter(li -> li.getRaceNumber().equals(raceNumber))
+                .sorted(Comparator.comparing(LapInfo::getLapNumber))
+                .forEach(lap -> {
+                    if (lapCounter.get().intValue() == 1) {
+                        personalBest.set(lap);
+                    }
+                    if (lap.getLapTime() < personalBest.get().getLapTime()) {
+                        personalBest.set(lap);
+                        if (!personalBest.get().getFastestLap() && !personalBest.get().getFastLap()) {
+                            personalBest.get().setPersonalBest(true);
+                        }
+                    }
+                    lapCounter.set(lapCounter.get().intValue() + 1);
+                });
+        });
 	}
 
 	@JsonIgnore
