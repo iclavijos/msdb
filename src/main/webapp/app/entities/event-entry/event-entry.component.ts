@@ -33,6 +33,8 @@ export class EventEntryComponent implements OnInit, OnDestroy, OnChanges {
   // displayedColumns: string[] = ['raceNumber', 'tyres', 'drivers', 'entryName', 'category', 'carImage', 'buttons'];
   displayedColumns: string[] = ['raceNumber', 'tyres', 'drivers', 'buttons'];
   @Output() entries = new EventEmitter<IEventEntry[]>();
+  categoryToFilter: string;
+  filteredEntries: IEventEntry[];
 
   constructor(
     private eventEntryService: EventEntryService,
@@ -83,8 +85,15 @@ export class EventEntryComponent implements OnInit, OnDestroy, OnChanges {
   loadAll() {
     this.eventEntryService.findEntries(this.eventEdition.id).subscribe(entries => {
       this.eventEntries = entries.body;
+      this.filterCategories();
       this.entries.emit(entries.body);
     });
+  }
+
+  filterCategories() {
+    this.filteredEntries = this.categoryToFilter
+      ? this.eventEntries.filter(entry => entry.category.shortname === this.categoryToFilter)
+      : this.eventEntries;
   }
 
   addEntry() {
