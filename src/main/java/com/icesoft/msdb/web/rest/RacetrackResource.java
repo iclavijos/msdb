@@ -1,5 +1,6 @@
 package com.icesoft.msdb.web.rest;
 
+import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.security.AuthoritiesConstants;
@@ -269,6 +270,19 @@ public class RacetrackResource {
         log.debug("REST request to get all RacetrackLayouts");
         List<RacetrackLayout> racetrackLayouts = racetrackService.findRacetrackLayouts(id);
         return racetrackLayouts;
+    }
+
+    /**
+     * GET  /events : get next events.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of events in body
+     */
+    @GetMapping("/racetracks/{id}/events")
+    @Timed
+    public List<EventEdition> getRacetrackEventss(@PathVariable Long id) {
+        log.debug("REST request to get next events to happen at this racetrack");
+        List<EventEdition> eventsEditions = racetrackService.findNextEvents(id);
+        return eventsEditions;
     }
 
     @GetMapping("/_search/racetrack-layouts")

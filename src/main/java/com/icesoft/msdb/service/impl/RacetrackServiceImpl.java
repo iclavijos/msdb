@@ -3,10 +3,16 @@ package com.icesoft.msdb.service.impl;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
 
+import com.icesoft.msdb.domain.EventEdition;
+import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.TimeZoneService;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -50,6 +56,8 @@ public class RacetrackServiceImpl implements RacetrackService {
     private final RacetrackLayoutSearchRepository racetrackLayoutSearchRepo;
     private final SearchService searchService;
 
+    private final EventEditionRepository eventEditionRepository;
+
     private final CDNService cdnService;
     private final TimeZoneService timeZoneService;
 
@@ -57,11 +65,13 @@ public class RacetrackServiceImpl implements RacetrackService {
     		RacetrackSearchRepository racetrackSearchRepo,
     		RacetrackLayoutRepository racetrackLayoutRepository,
     		RacetrackLayoutSearchRepository racetrackLayoutSearchRepo,
+    		EventEditionRepository eventEditionRepository,
     		CDNService cdnService, TimeZoneService timeZoneService, SearchService searchService) {
         this.racetrackRepository = racetrackRepository;
         this.racetrackSearchRepo = racetrackSearchRepo;
         this.racetrackLayoutRepository = racetrackLayoutRepository;
         this.racetrackLayoutSearchRepo = racetrackLayoutSearchRepo;
+        this.eventEditionRepository = eventEditionRepository;
         this.cdnService = cdnService;
         this.timeZoneService = timeZoneService;
         this.searchService = searchService;
@@ -208,5 +218,13 @@ public class RacetrackServiceImpl implements RacetrackService {
     @Override
     public List<RacetrackLayout> findRacetrackLayouts(Long id) {
     	return racetrackLayoutRepository.findByRacetrackIdOrderByActiveDescYearFirstUseDescNameAsc(id);
+    }
+
+    @Override
+    public List<EventEdition> findNextEvents(Long id) {
+        LocalDate today = LocalDate.now();
+        LocalDate plusOneYear = today.plusYears(1);
+
+        return eventEditionRepository.findEventsAtRacetrack(id, today, plusOneYear);
     }
 }

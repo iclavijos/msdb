@@ -10,6 +10,7 @@ import { IRacetrack } from 'app/shared/model/racetrack.model';
 import { RacetrackService } from './racetrack.service';
 import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
 import { RacetrackLayoutService } from '../racetrack-layout/racetrack-layout.service';
+import { IEventEdition } from 'app/shared/model/event-edition.model';
 
 @Component({
   selector: 'jhi-racetrack-detail',
@@ -18,9 +19,11 @@ import { RacetrackLayoutService } from '../racetrack-layout/racetrack-layout.ser
 export class RacetrackDetailComponent implements OnInit {
   racetrack: IRacetrack;
   racetrackLayouts: IRacetrackLayout[];
+  eventsEditions: IEventEdition[];
   locale: string;
 
   displayedColumns: string[] = ['name', 'length', 'yearFirstUse', 'layoutImage', 'active', 'buttons'];
+  eventsDisplayedColumns: string[] = ['date', 'eventName', 'layout', 'layoutImage'];
 
   constructor(
     protected dataUtils: JhiDataUtils,
@@ -43,6 +46,9 @@ export class RacetrackDetailComponent implements OnInit {
   loadLayouts(id) {
     this.racetrackService.findLayouts(id).subscribe((res: HttpResponse<IRacetrackLayout[]>) => {
       this.racetrackLayouts = res.body;
+    });
+    this.racetrackService.findNextEvents(id).subscribe((res: HttpResponse<IEventEdition[]>) => {
+      this.eventsEditions = res.body;
     });
   }
 
