@@ -331,7 +331,11 @@ export class RaceDataComponent implements OnInit {
     for (let i = 0; i < json.length; i++) {
       result.push(Object.assign(new DriverAverages(), json[i]));
     }
-    this.driversAverages = result;
+    this.driversAverages = result.sort((da1, da2) => {
+      const n1 = da1.driverName.substring(da1.driverName.indexOf(' '));
+      const n2 = da2.driverName.substring(da2.driverName.indexOf(' '));
+      return n1 > n2 ? 1 : -1;
+    });
     return result;
   }
 
