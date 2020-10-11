@@ -61,6 +61,40 @@
                                             </mat-form-field>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <mat-form-field class="example-full-width">
+                                                <input matInput placeholder="{{ 'motorsportsDatabaseApp.racetrackLayout.latitude' | translate }}" type="number"
+                                                       class="form-control" name="latitude" id="field_latitude" formControlName="latitude">
+                                                <div *ngIf="editForm.get('latitude').invalid && (editForm.get('latitude').dirty || editForm.get('latitude').touched)">
+                                                    <small class="form-text text-danger"
+                                                           *ngIf="editForm.get('latitude').errors.required" jhiTranslate="entity.validation.required">
+                                                        This field is required.
+                                                    </small>
+                                                    <small class="form-text text-danger"
+                                                           *ngIf="editForm.get('latitude').errors.number" jhiTranslate="entity.validation.number">
+                                                        This field should be a number.
+                                                    </small>
+                                                </div>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-6">
+                                            <mat-form-field class="example-full-width">
+                                                <input matInput placeholder="{{ 'motorsportsDatabaseApp.racetrackLayout.longitude' | translate }}" type="number"
+                                                       class="form-control" name="longitude" id="field_longitude" formControlName="longitude">
+                                                <div *ngIf="editForm.get('longitude').invalid && (editForm.get('longitude').dirty || editForm.get('longitude').touched)">
+                                                    <small class="form-text text-danger"
+                                                           *ngIf="editForm.get('longitude').errors.required" jhiTranslate="entity.validation.required">
+                                                        This field is required.
+                                                    </small>
+                                                    <small class="form-text text-danger"
+                                                           *ngIf="editForm.get('longitude').errors.number" jhiTranslate="entity.validation.number">
+                                                        This field should be a number.
+                                                    </small>
+                                                </div>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-7">
                                     <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrack.logo" for="field_logo">Logo</label>

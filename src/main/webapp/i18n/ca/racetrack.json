@@ -6,7 +6,9 @@
         "createLabel": "Afegir un nou circuit",
         "createOrEditLabel": "Afegir o editar un circuit",
         "search": "Cercar circuits",
-        "notFound": "No s'ha trobat cap circuit"
+        "notFound": "No s'ha trobat cap circuit",
+        "map": "Mapa",
+        "list": "Llistat"
       },
       "created": "S'ha afegit un circuit amb identificador {{ param }}",
       "updated": "S'ha modificat el circuit amb identificador {{ param }}",

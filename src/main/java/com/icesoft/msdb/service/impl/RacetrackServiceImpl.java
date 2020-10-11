@@ -2,19 +2,15 @@ package com.icesoft.msdb.service.impl;
 
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
-import java.io.IOException;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Optional;
-import java.util.TimeZone;
 
+import com.google.maps.model.Geometry;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.service.SearchService;
-import com.icesoft.msdb.service.TimeZoneService;
+import com.icesoft.msdb.service.GeoLocationService;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +21,6 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.maps.GeoApiContext;
-import com.google.maps.GeocodingApi;
-import com.google.maps.TimeZoneApi;
-import com.google.maps.errors.ApiException;
-import com.google.maps.model.GeocodingResult;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
@@ -59,21 +50,21 @@ public class RacetrackServiceImpl implements RacetrackService {
     private final EventEditionRepository eventEditionRepository;
 
     private final CDNService cdnService;
-    private final TimeZoneService timeZoneService;
+    private final GeoLocationService geoLocationService;
 
     public RacetrackServiceImpl(RacetrackRepository racetrackRepository,
-    		RacetrackSearchRepository racetrackSearchRepo,
-    		RacetrackLayoutRepository racetrackLayoutRepository,
-    		RacetrackLayoutSearchRepository racetrackLayoutSearchRepo,
-    		EventEditionRepository eventEditionRepository,
-    		CDNService cdnService, TimeZoneService timeZoneService, SearchService searchService) {
+                                RacetrackSearchRepository racetrackSearchRepo,
+                                RacetrackLayoutRepository racetrackLayoutRepository,
+                                RacetrackLayoutSearchRepository racetrackLayoutSearchRepo,
+                                EventEditionRepository eventEditionRepository,
+                                CDNService cdnService, GeoLocationService geoLocationService, SearchService searchService) {
         this.racetrackRepository = racetrackRepository;
         this.racetrackSearchRepo = racetrackSearchRepo;
         this.racetrackLayoutRepository = racetrackLayoutRepository;
         this.racetrackLayoutSearchRepo = racetrackLayoutSearchRepo;
         this.eventEditionRepository = eventEditionRepository;
         this.cdnService = cdnService;
-        this.timeZoneService = timeZoneService;
+        this.geoLocationService = geoLocationService;
         this.searchService = searchService;
     }
 
@@ -87,7 +78,12 @@ public class RacetrackServiceImpl implements RacetrackService {
     public Racetrack save(Racetrack racetrack) {
         log.debug("Request to save Racetrack : {}", racetrack);
 
-        racetrack.setTimeZone(timeZoneService.getTimeZone(racetrack.getLocation(), racetrack.getCountryCode()));
+        if (racetrack.getLongitude() == null || racetrack.getLongitude() == null || racetrack.getTimeZone() == null) {
+            Geometry geometry = geoLocationService.getGeolocationInformation(racetrack);
+            racetrack.setLatitude(geometry.location.lat);
+            racetrack.setLongitude(geometry.location.lng);
+            racetrack.setTimeZone(geoLocationService.getTimeZone(geometry));
+        }
 
         if (racetrack.getLogo() != null) {
             byte[] logo = racetrack.getLogo();

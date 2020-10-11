@@ -12,6 +12,8 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { FullCalendarModule } from '@fullcalendar/angular';
 
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+
 import {
   MatButtonModule,
   MatInputModule,
@@ -98,7 +100,8 @@ import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateMod
     ScrollingModule,
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
-    NgxMatNativeDateModule
+    NgxMatNativeDateModule,
+    LeafletModule
   ]
 })
 export class MotorsportsDatabaseSharedLibsModule {}

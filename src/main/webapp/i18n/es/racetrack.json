@@ -6,7 +6,9 @@
         "createLabel": "Crear nuevo circuito",
         "createOrEditLabel": "Crear o editar un circuito",
         "search": "Buscar circuitos",
-        "notFound": "Ningún circuito encontrado"
+        "notFound": "Ningún circuito encontrado",
+        "map": "Mapa",
+        "list": "Listado"
       },
       "created": "Un nuevo circuito ha sido creado con el identificador {{ param }}",
       "updated": "Un circuito ha sido actualizado con el identificador {{ param }}",

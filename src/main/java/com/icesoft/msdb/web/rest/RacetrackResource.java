@@ -279,7 +279,7 @@ public class RacetrackResource {
      */
     @GetMapping("/racetracks/{id}/events")
     @Timed
-    public List<EventEdition> getRacetrackEventss(@PathVariable Long id) {
+    public List<EventEdition> getRacetrackEvents(@PathVariable Long id) {
         log.debug("REST request to get next events to happen at this racetrack");
         List<EventEdition> eventsEditions = racetrackService.findNextEvents(id);
         return eventsEditions;

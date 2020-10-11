@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef, NgZone } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { merge, of as observableOf, Subscription } from 'rxjs';
@@ -10,9 +10,13 @@ import { RacetrackService } from './racetrack.service';
 
 import { MatPaginator, MatSort } from '@angular/material';
 
+import { icon, latLng, Marker, tileLayer } from 'leaflet';
+import * as L from 'leaflet';
+
 @Component({
   selector: 'jhi-racetrack',
-  templateUrl: './racetrack.component.html'
+  templateUrl: './racetrack.component.html',
+  styleUrls: ['./racetrack.component.scss']
 })
 export class RacetrackComponent implements AfterViewInit, OnDestroy {
   currentAccount: any;
@@ -38,13 +42,42 @@ export class RacetrackComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
+  streetMaps = tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    detectRetina: true,
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  });
+  wMaps = tileLayer('http://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png', {
+    detectRetina: true,
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  });
+
+  layersControl = {
+    baseLayers: {
+      'Street Maps': this.streetMaps,
+      'Wikimedia Maps': this.wMaps
+    }
+  };
+
+  map: L.Map;
+  mapOptions = {
+    maxBounds: [[-90, -180], [90, 180]],
+    worldCopyJump: true,
+    center: latLng(0, 0),
+    zoom: 2,
+    layers: [this.streetMaps]
+  };
+
   constructor(
     protected racetrackService: RacetrackService,
     protected parseLinks: JhiParseLinks,
     protected activatedRoute: ActivatedRoute,
     protected dataUtils: JhiDataUtils,
     protected router: Router,
-    protected eventManager: JhiEventManager
+    protected eventManager: JhiEventManager,
+    protected ngZone: NgZone,
+    protected elementRef: ElementRef
   ) {
     this.routeData = this.activatedRoute.data.subscribe(data => {
       this.page = data.pagingParams.page;
@@ -80,6 +113,50 @@ export class RacetrackComponent implements AfterViewInit, OnDestroy {
         })
       )
       .subscribe(data => (this.racetracks = data));
+  }
+
+  onMapReady(newMap: L.Map) {
+    setTimeout(() => {
+      this.map.invalidateSize();
+    });
+    this.map = newMap;
+    this.addMapMarkers();
+  }
+
+  private addMapMarkers() {
+    this.racetrackService
+      .query({
+        page: 0,
+        size: 500
+      })
+      .subscribe(data =>
+        data.body.forEach(rt => {
+          const racetrackLocation = new Marker([rt.latitude, rt.longitude])
+            .setIcon(
+              icon({
+                iconSize: [25, 41],
+                iconAnchor: [13, 41],
+                iconUrl: 'assets/marker-icon.png'
+              })
+            )
+            .on('popupopen', $event => {
+              this.navigateFromPopup($event.target.options.trackId, this.elementRef);
+            });
+          L.Util.setOptions(racetrackLocation, { trackId: rt.id });
+          const logo = rt.logoUrl ? `<img src=${rt.logoUrl} style="max-height: 200px; max-width: 200px"><br/>` : '';
+          let popup = `<p align="center">${logo}<h4>${rt.name}</h4><br/>${rt.location}, ${rt.countryCode}<br/></p>`;
+          popup = popup + `<a id="mapLink" href="javascript:void">Link</a>`;
+          racetrackLocation.addTo(this.map).bindPopup(popup, { minWidth: 220 });
+        })
+      );
+  }
+
+  private navigateFromPopup(trackId, elementRef: ElementRef) {
+    elementRef.nativeElement.querySelector('#mapLink').addEventListener('click', () => {
+      this.ngZone.run(() => {
+        this.router.navigate(['/racetrack', trackId, 'view']);
+      });
+    });
   }
 
   private processRacetracksResponse(racetracks: HttpResponse<IRacetrack[]>) {
