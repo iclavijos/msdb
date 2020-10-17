@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class TimeMaskPipe implements PipeTransform {
   constructor() {}
 
-  transform(value: any, includeMillis = true, tensOfMillis = true, handleHours?: boolean): string {
+  transform(value: any, includeMillis = true, tensOfMillis = true, handleHours = true): string {
     if (!value) {
       return;
     }
