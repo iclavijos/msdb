@@ -1,4 +1,4 @@
-<mat-tab-group dynamicHeight mat-stretch-tabs [(selectedIndex)]="index">
+<mat-tab-group dynamicHeight mat-stretch-tabs>
     <mat-tab label="{{'motorsportsDatabaseApp.lapbylap.lapTimes' | translate }}">
         <div class="row">
             <div class="col-md-12">
@@ -13,7 +13,7 @@
                 </div>
             </div>
         </div>
-        <div *ngFor="let t of temp(math.ceil(getFilteredDrivers().length/5)).fill(); let i = index" class="row">
+        <div *ngFor="let t of temp(math.ceil(getFilteredDrivers().length/5)).fill(); index as i" class="row">
             <div *ngFor="let item of getFilteredDrivers().slice(4*i,4*(i + 1));" class="col-md-3">
                 <mat-checkbox [value]="item.raceNumber"
                     (change)="refreshLapTimesTable(item.raceNumber, $event)">#{{ item.raceNumber }} {{ item.driversNames }}
@@ -82,7 +82,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr *ngFor="let avg of getTopTen5BestLaps()" [class.even]="isEven">
+                                        <tr *ngFor="let avg of getTopTen5BestLaps()"> <!-- [class.even]="isEven" -->
                                             <td>{{avg.driverName}}</td><td>{{avg.best5Avg | timeMaskPipe : true : false }}</td>
                                         </tr>
                                         </tbody>
@@ -102,7 +102,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr *ngFor="let avg of getTopTen10BestLaps()" [class.even]="isEven">
+                                        <tr *ngFor="let avg of getTopTen10BestLaps()"> <!-- [class.even]="isEven" -->>
                                             <td>{{avg.driverName}}</td><td>{{avg.best10Avg | timeMaskPipe : true : false }}</td>
                                         </tr>
                                         </tbody>
@@ -122,7 +122,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr *ngFor="let avg of getTopTen20BestLaps()" [class.even]="isEven">
+                                        <tr *ngFor="let avg of getTopTen20BestLaps()"> <!-- [class.even]="isEven" -->
                                             <td>{{avg.driverName}}</td><td>{{avg.best20Avg | timeMaskPipe : true : false }}</td>
                                         </tr>
                                         </tbody>
@@ -142,7 +142,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr *ngFor="let avg of getTopTen50BestLaps()" [class.even]="isEven">
+                                        <tr *ngFor="let avg of getTopTen50BestLaps()"> <!-- [class.even]="isEven" -->
                                             <td>{{avg.driverName}}</td><td>{{avg.best50Avg | timeMaskPipe : true : false }}</td>
                                         </tr>
                                         </tbody>
@@ -154,7 +154,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12"><h4>{{'motorsportsDatabaseApp.lapbylap.avgPerDriver' | translate}}</h4></div>
-                    <div *ngFor="let t of temp(math.ceil(selectedDriversAvg.selectedOptions.selected.length/5)).fill(); let i = index" class="card-deck col-md-12">
+                    <div *ngFor="let t of temp(math.ceil(selectedDriversAvg.selectedOptions.selected.length/5)).fill(); index as i" class="card-deck col-md-12">
                         <div *ngFor="let item of selectedDriversAvg.selectedOptions.selected.slice(5*i,5*(i + 1));" class="col-md-2">
                             <ng-container
                                 *ngTemplateOutlet="driverAveragesBlock;context:{driver: getDriverDataByDriverName(item)}">
@@ -173,7 +173,7 @@
         </div>
     </mat-tab>
     <mat-tab label="{{'motorsportsDatabaseApp.lapbylap.lapCharts' | translate }}">
-        <div *ngFor="let t of temp(math.ceil(drivers.length/4)).fill(); let i = index" class="row">
+        <div *ngFor="let t of temp(math.ceil(drivers.length/4)).fill(); index as i" class="row">
             <div *ngFor="let item of drivers.slice(4*i,4*i + 4);" class="col-md-3">
                 <p-checkbox  name="groupDrivers" [value]="item.raceNumber" [label]="item.driversNames"
                              [(ngModel)]="selectedDrivers" (onChange)="refreshLapTimesTable(item.raceNumber)">
@@ -233,7 +233,7 @@
             </dd>
             <dt><span jhiTranslate="motorsportsDatabaseApp.lapbylap.stints">Stints</span></dt>
             <dd>
-                <span *ngFor="let stint of driver.lapsStint; let i = index">
+                <span *ngFor="let stint of driver.lapsStint; index as i">
                     {{'motorsportsDatabaseApp.lapbylap.stint' | translate}} {{i + 1}}: [{{stint}}]: {{driver.averagePerStint[i] | timeMaskPipe : true : false }}<br/>
                 </span>
             </dd>
@@ -249,7 +249,7 @@
                 <span>
                     <table class="table table-sm">
                         <tbody>
-                            <tr *ngFor="let t of temp(math.ceil(driver.bestLaps.length/2)).fill(); let i = index" [class.even]="isEven">
+                            <tr *ngFor="let t of temp(math.ceil(driver.bestLaps.length/2)).fill(); index as i"> <!-- [class.even]="isEven" -->
                                 <td>{{driver.bestLaps[i * 2].lapNumber}} - {{driver.bestLaps[i * 2].lapTime | timeMaskPipe : true : false }}</td>
                                 <td *ngIf="(i*2) + 1 < driver.bestLaps.length">
                                     {{driver.bestLaps[(i * 2) + 1].lapNumber}} - {{driver.bestLaps[(i * 2) + 1].lapTime | timeMaskPipe : true : false }}</td>
