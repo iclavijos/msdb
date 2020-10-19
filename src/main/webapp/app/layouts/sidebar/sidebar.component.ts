@@ -10,14 +10,14 @@ declare interface RouteInfo {
 }
 export const ROUTES: RouteInfo[] = [
   { path: '/driver', title: 'global.menu.entities.driver', icon: '', iconClass: 'icofont icofont-racer', class: '' },
+  { path: '/event', title: 'global.menu.entities.event', icon: '', iconClass: 'icofont icofont-racing-flag-alt', class: '' },
+  { path: '/series', title: 'global.menu.entities.series', icon: '', iconClass: 'icofont icofont-trophy', class: '' },
   { path: '/racetrack', title: 'global.menu.entities.racetrack', icon: '', iconClass: 'icofont icofont-whistle', class: '' },
   { path: '/team', title: 'global.menu.entities.team', icon: '', iconClass: 'icofont icofont-workers-group', class: '' },
-  { path: '/engine', title: 'global.menu.entities.engine', icon: '', iconClass: 'mdi mdi-piston', class: '' },
   { path: '/chassis', title: 'global.menu.entities.chassis', icon: '', iconClass: 'icofont icofont-racing-car', class: '' },
+  { path: '/engine', title: 'global.menu.entities.engine', icon: '', iconClass: 'mdi mdi-piston', class: '' },
   { path: '/tyre-provider', title: 'global.menu.entities.tyreProvider', icon: '', iconClass: 'icofont icofont-lemon-alt', class: '' },
-  { path: '/fuel-provider', title: 'global.menu.entities.fuelProvider', icon: '', iconClass: 'mdi mdi-fuel', class: '' },
-  { path: '/event', title: 'global.menu.entities.event', icon: '', iconClass: 'icofont icofont-racing-flag-alt', class: '' },
-  { path: '/series', title: 'global.menu.entities.series', icon: '', iconClass: 'icofont icofont-trophy', class: '' }
+  { path: '/fuel-provider', title: 'global.menu.entities.fuelProvider', icon: '', iconClass: 'mdi mdi-fuel', class: '' }
 ];
 
 export const RESTRICTED_ROUTES: RouteInfo[] = [
