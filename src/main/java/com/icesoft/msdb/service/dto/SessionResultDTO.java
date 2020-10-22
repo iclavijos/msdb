@@ -85,12 +85,14 @@ public class SessionResultDTO {
 	public void setFinalPosition(String finalPosition) {
         try {
             this.finalPosition = Integer.parseInt(finalPosition);
-        } catch (NumberFormatException e) {
+        } finally {
             this.finalPositionStr = finalPosition;
         }
     }
 	public String getFinalPositionStr() { return finalPositionStr; }
-	public void setFinalPositionStr(String finalPositionStr) { this.finalPositionStr = finalPositionStr; }
+	public void setFinalPositionStr(String finalPositionStr) {
+        this.finalPositionStr = finalPositionStr;
+    }
 	public String getTotalTime() {
 		return totalTime;
 	}
