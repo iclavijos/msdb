@@ -13,7 +13,7 @@
                 </div>
             </div>
         </div>
-        <div *ngFor="let t of temp(math.ceil(getFilteredDrivers().length/5)).fill(); index as i" class="row">
+        <div *ngFor="let t of temp(math.ceil(getFilteredDrivers().length/5)).fill(0); index as i" class="row">
             <div *ngFor="let item of getFilteredDrivers().slice(4*i,4*(i + 1));" class="col-md-3">
                 <mat-checkbox [value]="item.raceNumber"
                     (change)="refreshLapTimesTable(item.raceNumber, $event)">#{{ item.raceNumber }} {{ item.driversNames }}
@@ -154,7 +154,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12"><h4>{{'motorsportsDatabaseApp.lapbylap.avgPerDriver' | translate}}</h4></div>
-                    <div *ngFor="let t of temp(math.ceil(selectedDriversAvg.selectedOptions.selected.length/5)).fill(); index as i" class="card-deck col-md-12">
+                    <div *ngFor="let t of temp(math.ceil(selectedDriversAvg.selectedOptions.selected.length/5)).fill(0); index as i" class="card-deck col-md-12">
                         <div *ngFor="let item of selectedDriversAvg.selectedOptions.selected.slice(5*i,5*(i + 1));" class="col-md-2">
                             <ng-container
                                 *ngTemplateOutlet="driverAveragesBlock;context:{driver: getDriverDataByDriverName(item)}">
@@ -173,10 +173,10 @@
         </div>
     </mat-tab>
     <mat-tab label="{{'motorsportsDatabaseApp.lapbylap.lapCharts' | translate }}">
-        <div *ngFor="let t of temp(math.ceil(drivers.length/4)).fill(); index as i" class="row">
+        <div *ngFor="let t of temp(math.ceil(drivers.length/4)).fill(0); index as i" class="row">
             <div *ngFor="let item of drivers.slice(4*i,4*i + 4);" class="col-md-3">
                 <p-checkbox  name="groupDrivers" [value]="item.raceNumber" [label]="item.driversNames"
-                             [(ngModel)]="selectedDrivers" (onChange)="refreshLapTimesTable(item.raceNumber)">
+                             [(ngModel)]="selectedDrivers" (onChange)="refreshLapTimesTable(item.raceNumber, $event)">
                 </p-checkbox>
             </div>
         </div>
@@ -249,7 +249,7 @@
                 <span>
                     <table class="table table-sm">
                         <tbody>
-                            <tr *ngFor="let t of temp(math.ceil(driver.bestLaps.length/2)).fill(); index as i"> <!-- [class.even]="isEven" -->
+                            <tr *ngFor="let t of temp(math.ceil(driver.bestLaps.length/2)).fill(0); index as i"> <!-- [class.even]="isEven" -->
                                 <td>{{driver.bestLaps[i * 2].lapNumber}} - {{driver.bestLaps[i * 2].lapTime | timeMaskPipe : true : false }}</td>
                                 <td *ngIf="(i*2) + 1 < driver.bestLaps.length">
                                     {{driver.bestLaps[(i * 2) + 1].lapNumber}} - {{driver.bestLaps[(i * 2) + 1].lapTime | timeMaskPipe : true : false }}</td>
