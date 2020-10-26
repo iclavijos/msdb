@@ -692,6 +692,8 @@ public class EventEditionResource {
     				session.getSessionStartTimeDate(), session.getSessionEndTime(),
     				session.getEventEdition().getStatus().getCode(),
                     seriesRelevance,
+    				session.getEventEdition().getTrackLayout().getRacetrack().getName(),
+    				session.getEventEdition().getTrackLayout().getLayoutImageUrl(),
     				logoUrl);
     	})
             .sorted(Comparator.comparing(SessionCalendarDTO::getSeriesRelevance))

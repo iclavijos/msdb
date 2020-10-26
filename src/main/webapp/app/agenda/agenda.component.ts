@@ -65,23 +65,33 @@ export class AgendaComponent implements OnInit {
       .subscribe(events => {
         this.backgroundColorIndex = -1;
         this.events = this.calendarComponent.convertEvents(events, this.timezone, false); // .filter(e => e.status === 'O'), this.timezone, false);
-        this.uniqueSeries = this.events.map(e => (e.seriesLogoUrl ? e.seriesLogoUrl[0] : '')).filter(this.onlyUnique);
+        this.uniqueSeries = this.events.map(e => (e.seriesLogoUrl ? e.seriesLogoUrl[0] : '')).filter(this.onlyUniqueSeries);
       });
   }
 
-  private onlyUnique(value, index, self) {
+  private onlyUniqueSeries(value, index, self) {
     return self.indexOf(value) === index;
+  }
+
+  private onlyUniqueEvents(value, index, self) {
+    return self.map(x => x.name).indexOf(value.name) === index;
   }
 
   uniqueEventsInSeries(series: string) {
     return this.events
       .filter(item => (item.seriesLogoUrl ? item.seriesLogoUrl[0] : '') === series)
-      .map(item => item.eventName)
-      .filter(this.onlyUnique);
+      .map(item => {
+        return {
+          name: item.eventName,
+          racetrack: item.racetrack,
+          layoutUrl: item.racetrackLayoutUrl
+        };
+      })
+      .filter(this.onlyUniqueEvents);
   }
 
-  sessionsEvent(event: string) {
-    return this.events.filter(item => item.eventName === event);
+  sessionsEvent(event: any) {
+    return this.events.filter(item => item.eventName === event.name);
   }
 
   formatDate(date: Moment, pattern: string) {
@@ -99,7 +109,7 @@ export class AgendaComponent implements OnInit {
     }
   }
 
-  eventStatus(eventName: string) {
-    return this.events.filter(item => item.eventName === eventName)[0].status;
+  eventStatus(event: any) {
+    return this.events.filter(item => item.eventName === event.name)[0].status;
   }
 }
