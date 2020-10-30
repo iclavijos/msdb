@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { EventEdition } from 'app/shared/model/event-edition.model';
@@ -14,13 +14,19 @@ import { EventSessionService } from '../event-session/event-session.service';
 
 import { TimeMaskPipe } from 'app/shared/mask/time-mask.pipe';
 
+import * as Highcharts from 'highcharts';
+import HCExporting from 'highcharts/modules/exporting';
+import HCMore from 'highcharts/highcharts-more';
+HCExporting(Highcharts);
+HCMore(Highcharts);
+
 @Component({
   selector: 'jhi-race-data',
   templateUrl: './race-data.component.html',
   styleUrls: ['lapsAnalysis.scss'],
   providers: [TimeMaskPipe]
 })
-export class RaceDataComponent implements OnInit {
+export class RaceDataComponent implements OnInit, AfterViewInit {
   @Input() eventEdition: EventEdition;
   @Input() session: EventSession;
   @Input() entries: IEventEntry[];
@@ -45,6 +51,12 @@ export class RaceDataComponent implements OnInit {
   lapsRangeTo = 65;
   fastestTime: number;
   categoryToFilter: string;
+  driversPerformance: any[];
+  filteredDriversPerformance: any[];
+
+  Highcharts: typeof Highcharts = Highcharts;
+  chartOptions: Highcharts.Options;
+  chart: Highcharts.Chart;
 
   constructor(private router: Router, private eventEditionService: EventEditionService, private eventSessionService: EventSessionService) {}
 
@@ -172,6 +184,90 @@ export class RaceDataComponent implements OnInit {
 
       this.dataRaceChart = Object.assign({}, data);
     });
+
+    this.eventSessionService.findDriversPerformance(this.session.id).subscribe(res => {
+      this.driversPerformance = res;
+      this.categoryToFilter = this.eventEdition.allowedCategories[0].shortname;
+      this.filterCategories();
+      this.chartOptions = {
+        chart: {
+          inverted: true
+        },
+        title: {
+          text: 'Best 20 laps performance'
+        },
+
+        legend: {
+          enabled: false
+        },
+
+        xAxis: {
+          categories: this.filteredDriversPerformance.map(dp => dp.driverName),
+          title: {
+            text: 'Drivers'
+          }
+        },
+
+        yAxis: {
+          title: {
+            text: 'Lap time'
+          },
+          labels: {
+            formatter() {
+              const timeMask = new TimeMaskPipe();
+              return timeMask.transform(this.value, true, false);
+            }
+          }
+        },
+        series: [
+          {
+            name: 'Lap times',
+            type: 'boxplot',
+            data: this.filteredDriversPerformance.map(dp => [dp.min, dp.q1, dp.mean, dp.q3, dp.max]),
+            tooltip: {
+              headerFormat: '<em>{point.key}</em><br/>',
+              pointFormatter() {
+                const timeMask = new TimeMaskPipe();
+                // eslint-disable-next-line
+                const point: any = this;
+                return (
+                  '<br/>' +
+                  'Fastest lap: ' +
+                  timeMask.transform(this.low, true, false) +
+                  '<br/>' +
+                  'Median lap: ' +
+                  timeMask.transform(point.median, true, false) +
+                  '<br/>' +
+                  'Slowest lap: ' +
+                  timeMask.transform(this.high, true, false) +
+                  '<br/>'
+                );
+              }
+            }
+          }
+        ]
+      };
+    });
+  }
+
+  ngAfterViewInit() {
+    if (this.chart) this.chart.reflow();
+  }
+
+  saveChartInstance(chart: Highcharts.Chart) {
+    this.chart = chart;
+  }
+
+  filterCategories(redraw = false) {
+    this.filteredDriversPerformance = this.driversPerformance
+      .filter(dp => dp.category === this.categoryToFilter)
+      .sort((a, b) => (a.mean > b.mean ? 1 : 0));
+
+    if (redraw) {
+      this.chart.series[0].setData(this.filteredDriversPerformance.map(dp => [dp.min, dp.q1, dp.mean, dp.q3, dp.max]));
+      this.chart.xAxis[0].setCategories(this.filteredDriversPerformance.map(dp => dp.driverName));
+      this.chart.redraw();
+    }
   }
 
   refreshLapTimesTable(raceNumber: string, event: any) {

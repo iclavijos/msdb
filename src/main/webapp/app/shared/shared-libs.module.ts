@@ -8,11 +8,12 @@ import { NgJhipsterModule } from 'ng-jhipster';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
-// import { MomentTimezoneModule } from 'angular-moment-timezone';
 
 import { FullCalendarModule } from '@fullcalendar/angular';
 
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+
+import { HighchartsChartModule } from 'highcharts-angular';
 
 import {
   MatButtonModule,
@@ -101,7 +102,8 @@ import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateMod
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
     NgxMatNativeDateModule,
-    LeafletModule
+    LeafletModule,
+    HighchartsChartModule
   ]
 })
 export class MotorsportsDatabaseSharedLibsModule {}

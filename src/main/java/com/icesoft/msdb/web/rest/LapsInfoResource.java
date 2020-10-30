@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.icesoft.msdb.MSDBException;
+import com.icesoft.msdb.domain.DriverPerformance;
 import com.icesoft.msdb.domain.LapInfo;
 import com.icesoft.msdb.repository.SessionLapDataRepository;
 import com.icesoft.msdb.service.dto.DriverRaceStatisticsDTO;
@@ -83,5 +84,16 @@ public class LapsInfoResource {
         result.add(dataLap0);
         result.addAll(sld.getPositionsPerLap());
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/event-sessions/{sessionId}/driversPerformance")
+    public ResponseEntity<List<DriverPerformance>> getDriversPerformance(@PathVariable Long sessionId) {
+        SessionLapData sld = repo.findById(sessionId.toString())
+            .orElseThrow(() -> new MSDBException("Invalid event session id " + sessionId));
+        return ResponseEntity.ok(
+            sld.getDriversPerformance().entrySet().stream()
+                .map(entry -> entry.getValue())
+                .collect(Collectors.toList())
+        );
     }
 }

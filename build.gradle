@@ -184,6 +184,7 @@ dependencies {
     implementation "org.hibernate:hibernate-core"
     implementation "com.zaxxer:HikariCP"
     implementation "org.apache.commons:commons-lang3"
+    implementation "org.apache.commons:commons-math3:3.6.1"
     implementation "commons-io:commons-io"
     implementation "javax.transaction:javax.transaction-api"
     implementation "org.ehcache:ehcache"

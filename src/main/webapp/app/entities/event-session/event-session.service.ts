@@ -118,6 +118,10 @@ export class EventSessionService {
     return this.http.get<ILapPositions[]>(`${this.resourceUrl}/${id}/positions`);
   }
 
+  findDriversPerformance(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.resourceUrl}/${id}/driversPerformance`);
+  }
+
   private transformDateTime(res: EntityArrayResponseType, timeZone: string): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((eventSession: IEventSession) => {

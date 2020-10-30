@@ -15,6 +15,8 @@ export interface IDriverAverages {
   bestS1?: number;
   bestS2?: number;
   bestS3?: number;
+  q1?: number;
+  q3?: number;
 }
 
 export class DriverAverages implements IDriverAverages {
@@ -32,6 +34,8 @@ export class DriverAverages implements IDriverAverages {
     public lapsStint?: number[],
     public bestS1?: number,
     public bestS2?: number,
-    public bestS3?: number
+    public bestS3?: number,
+    public q1?: number,
+    public q3?: number
   ) {}
 }

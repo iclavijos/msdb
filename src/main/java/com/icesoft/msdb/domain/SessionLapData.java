@@ -4,7 +4,11 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.service.dto.RacePositionsDTO;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.util.MathUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,6 +22,8 @@ public class SessionLapData {
 
 	private List<LapInfo> laps = new ArrayList<>();
 
+	private Map<String, DriverPerformance> driversPerformance = new HashMap<>();
+
 	public void addLapData(LapInfo lapData) {
    		laps.add(lapData);
 	}
@@ -27,14 +33,29 @@ public class SessionLapData {
 		Map<String, String> entryCategory = new HashMap<>();
 
 		entries.forEach(entry -> entryCategory.put(
-		        entry.getRaceNumber(),
-                entry.getCategory().getShortname())
+            entry.getRaceNumber(),
+            entry.getCategory().getShortname())
         );
 
 		LapInfo fastestLap = null;
 
 		laps.stream().forEach(lapData -> {
 		    lapData.setCategory(entryCategory.get(lapData.getRaceNumber()));
+		    // Replace driver names with those used in entries
+            Optional<EventEditionEntry> entry = entries.stream()
+                .filter(e -> e.getRaceNumber().equals(lapData.getRaceNumber()))
+                .findFirst();
+            if (entry.isPresent()) {
+                String[] importedName = lapData.getDriverName().split(" ");
+                String importedLastName = importedName[importedName.length - 1];
+                String fullName = entry.get().getDrivers().stream()
+                    .filter(d ->
+                        StringUtils.stripAccents(d.getFullName().toLowerCase()).endsWith(
+                            StringUtils.stripAccents(importedLastName.toLowerCase())))
+                    .findFirst().orElseThrow(() -> new MSDBException("No entry found for driver " + lapData.getDriverName()))
+                    .getFullName();
+                lapData.setDriverName(fullName);
+            }
 	   		if (!dataPerLap.containsKey(lapData.getLapNumber())) {
 				dataPerLap.put(lapData.getLapNumber(), new ArrayList<>());
 			}
@@ -77,7 +98,46 @@ public class SessionLapData {
                     lapCounter.set(lapCounter.get().intValue() + 1);
                 });
         });
+
+
+		laps.stream().map(li -> li.getDriverName()).distinct().forEach(driver -> {
+            DriverPerformance dp = new DriverPerformance(driver);
+            DescriptiveStatistics stats = new DescriptiveStatistics();
+		    List<Double> lapTimes = laps.stream().filter(li -> li.getDriverName().equals(driver))
+                .peek(li -> dp.setCategory(li.getCategory()))
+                .map(li -> li.getLapTime().doubleValue())
+                .sorted(Comparator.naturalOrder())
+                .limit(20)
+                .peek(li -> stats.addValue(li))
+                .collect(Collectors.toList());
+
+		    lapTimes = eliminateOutliers(lapTimes, stats, 1.5f);
+            if (lapTimes.size() >= 15) {
+                //If driver did not complete at least 15 valid laps, it is discarded
+                stats.clear();
+                lapTimes.stream().forEach(lt -> stats.addValue(lt));
+                dp.setMax(stats.getMax());
+                dp.setMean(stats.getMean());
+                dp.setMin(stats.getMin());
+                dp.setQ1(stats.getPercentile(25));
+                dp.setQ3(stats.getPercentile(75));
+                driversPerformance.put(driver, dp);
+            }
+        });
 	}
+
+    private List<Double> eliminateOutliers(List<Double> lapTimes, DescriptiveStatistics stats, float scaleOfElimination) {
+        double mean = stats.getMean();
+        double stdDev = stats.getStandardDeviation();
+
+        return lapTimes.stream()
+            .filter(lt -> !isOutOfBounds(lt, mean, stdDev, scaleOfElimination))
+            .collect(Collectors.toList());
+    }
+
+    private boolean isOutOfBounds(Double value, Double mean, Double stdDev, float scaleOfElimination) {
+        return value > mean + stdDev * scaleOfElimination; // Only too slow laps are removed || value < mean - stdDev * scaleOfElimination;
+    }
 
 	@JsonIgnore
     public List<List<LapInfo>> getLapsPerDriver() {
@@ -133,6 +193,9 @@ public class SessionLapData {
 	public void setSessionId(String id) {
 		this.sessionId = id;
 	}
+
+	@JsonIgnore
+    public Map<String, DriverPerformance> getDriversPerformance() { return this.driversPerformance; }
 
 
 }
