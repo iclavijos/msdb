@@ -85,6 +85,7 @@ public class SessionResultDTO {
 	public void setFinalPosition(String finalPosition) {
         try {
             this.finalPosition = Integer.parseInt(finalPosition);
+        } catch (NumberFormatException e) {
         } finally {
             this.finalPositionStr = finalPosition;
         }
