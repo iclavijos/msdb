@@ -147,7 +147,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   };
 
-  public convertEvents(sessions, currentTZ, toDate = true) {
+  public convertEvents(sessions, currentTZ, toDate = true, includeCancelled = false) {
     const result = [];
     for (const session of sessions) {
       const newEvent = new MyEvent();
@@ -178,7 +178,9 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
           newEvent.color = 'grey';
         }
       }
-      result.push(newEvent);
+      if (includeCancelled || session.status === 'O') {
+        result.push(newEvent);
+      }
     }
     return result;
   }
