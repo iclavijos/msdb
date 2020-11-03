@@ -48,4 +48,9 @@ public interface EventEditionRepository extends JpaRepository<EventEdition, Long
         "order by e.eventDate ASC")
     List<EventEdition> findEventsAtRacetrack(Long racetrackId, LocalDate start, LocalDate end);
 
+    @Query("select e from EventEdition e " +
+        "where e.trackLayout.racetrack.id = ?1 and e.eventDate <= ?2 " +
+        "order by e.eventDate DESC")
+    Page<EventEdition> findPreviousEventsAtRacetrack(Long racetrackId, LocalDate start, Pageable page);
+
 }

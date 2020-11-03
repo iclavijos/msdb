@@ -1,8 +1,10 @@
 import { Title } from '@angular/platform-browser';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { JhiDataUtils } from 'ng-jhipster';
+import { JhiDataUtils, JhiParseLinks } from 'ng-jhipster';
+import { merge, of as observableOf, Subscription } from 'rxjs';
+import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 
 import { SessionStorageService } from 'ngx-webstorage';
 
@@ -12,21 +14,34 @@ import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
 import { RacetrackLayoutService } from '../racetrack-layout/racetrack-layout.service';
 import { IEventEdition } from 'app/shared/model/event-edition.model';
 
+import { MatPaginator } from '@angular/material';
+
 @Component({
   selector: 'jhi-racetrack-detail',
-  templateUrl: './racetrack-detail.component.html'
+  templateUrl: './racetrack-detail.component.html',
+  styleUrls: ['racetrack.component.scss']
 })
-export class RacetrackDetailComponent implements OnInit {
+export class RacetrackDetailComponent implements OnInit, AfterViewInit {
   racetrack: IRacetrack;
   racetrackLayouts: IRacetrackLayout[];
-  eventsEditions: IEventEdition[];
+  nextEventsEditions: IEventEdition[];
+  prevEventsEditions: IEventEdition[] = [];
   locale: string;
+  currentScreenWidth: string;
+  flexMediaWatcher: Subscription;
+  links: any;
+  totalItems: any;
+  resultsLength = 0;
 
   displayedColumns: string[] = ['name', 'length', 'yearFirstUse', 'layoutImage', 'active', 'buttons'];
-  eventsDisplayedColumns: string[] = ['date', 'eventName', 'layout', 'layoutImage'];
+  nextEventsDisplayedColumns: string[] = ['date', 'eventName', 'layout', 'layoutImage'];
+  prevEventsDisplayedColumns: string[] = ['date', 'eventName', 'winners'];
+
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   constructor(
     protected dataUtils: JhiDataUtils,
+    protected parseLinks: JhiParseLinks,
     protected activatedRoute: ActivatedRoute,
     private racetrackService: RacetrackService,
     private racetrackLayoutService: RacetrackLayoutService,
@@ -43,12 +58,39 @@ export class RacetrackDetailComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit() {
+    merge(this.paginator.page, this.paginator.pageSize)
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          return this.loadPreviousEvents(this.racetrack.id);
+        }),
+        map((data: HttpResponse<IEventEdition[]>) => {
+          this.resultsLength = parseInt(data.headers.get('X-Total-Count'), 10);
+          this.links = this.parseLinks.parse(data.headers.get('link'));
+          this.totalItems = parseInt(data.headers.get('X-Total-Count'), 10);
+          return data.body;
+        }),
+        catchError(() => {
+          return observableOf([]);
+        })
+      )
+      .subscribe(data => (this.prevEventsEditions = data));
+  }
+
   loadLayouts(id) {
     this.racetrackService.findLayouts(id).subscribe((res: HttpResponse<IRacetrackLayout[]>) => {
       this.racetrackLayouts = res.body;
     });
     this.racetrackService.findNextEvents(id).subscribe((res: HttpResponse<IEventEdition[]>) => {
-      this.eventsEditions = res.body;
+      this.nextEventsEditions = res.body;
+    });
+  }
+
+  private loadPreviousEvents(id: number) {
+    return this.racetrackService.findPrevEvents(id, {
+      page: this.paginator.pageIndex,
+      size: this.paginator.pageSize
     });
   }
 
@@ -62,5 +104,9 @@ export class RacetrackDetailComponent implements OnInit {
 
   previousState() {
     window.history.back();
+  }
+
+  public concatDriverNames(drivers: any[]): string {
+    return drivers.map(d => d.driverName).join(', ');
   }
 }

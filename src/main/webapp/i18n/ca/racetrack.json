@@ -23,7 +23,9 @@
       "location": "Localització",
       "country": "Pais",
       "logo": "Logo",
-      "layouts": "Traçats"
+      "layouts": "Traçats",
+      "nextEvents": "Properes cites",
+      "prevEvents": "Cites anteriors"
     },
     "racetrackLayout": {
       "home": {

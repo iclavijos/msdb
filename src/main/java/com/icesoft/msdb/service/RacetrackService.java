@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.icesoft.msdb.domain.EventEdition;
+import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -59,4 +60,6 @@ public interface RacetrackService {
     List<RacetrackLayout> findRacetrackLayouts(Long id);
 
     List<EventEdition> findNextEvents(Long id);
+
+    Page<EventEditionWinnersDTO> findPreviousEvents(Long id, Pageable pageable);
 }

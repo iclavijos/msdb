@@ -44,6 +44,11 @@ export class RacetrackService {
   }
 
   findNextEvents(id: number): Observable<HttpResponse<IEventEdition[]>> {
-    return this.http.get<IEventEdition[]>(`${this.resourceUrl}/${id}/events`, { observe: 'response' });
+    return this.http.get<IEventEdition[]>(`${this.resourceUrl}/${id}/events?type=future`, { observe: 'response' });
+  }
+
+  findPrevEvents(id: number, req?: any): Observable<HttpResponse<IEventEdition[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<IEventEdition[]>(`${this.resourceUrl}/${id}/events?type=past`, { params: options, observe: 'response' });
   }
 }

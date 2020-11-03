@@ -19,7 +19,8 @@
       },
       "name": "Nom",
       "description": "Descripció",
-      "editions": "Edicions"
+      "editions": "Edicions",
+      "winners": "Guanyadors"
     },
     "eventEdition": {
       "home": {
@@ -57,6 +58,7 @@
       "localTime": "Hora local",
       "driversTimes": "Temps dels pilots",
       "lapsAnalysis": "Volta a volta",
+      "poster": "Pòster",
       "status": {
         "label": "Situació",
         "ongoing": "Planificat",

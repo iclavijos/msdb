@@ -23,7 +23,9 @@
       "location": "Localización",
       "country": "País",
       "logo": "Logo",
-      "layouts": "Trazados"
+      "layouts": "Trazados",
+      "nextEvents": "Próximos eventos",
+      "prevEvents": "Anteriores eventos"
     },
     "racetrackLayout": {
       "home": {
