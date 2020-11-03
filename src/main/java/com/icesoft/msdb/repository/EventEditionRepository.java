@@ -45,6 +45,7 @@ public interface EventEditionRepository extends JpaRepository<EventEdition, Long
 
 	@Query("select e from EventEdition e " +
         "where e.trackLayout.racetrack.id = ?1 and e.eventDate >= ?2 and e.eventDate <= ?3 " +
+        "and e.status = com.icesoft.msdb.domain.enums.EventStatusType.ONGOING " +
         "order by e.eventDate ASC")
     List<EventEdition> findEventsAtRacetrack(Long racetrackId, LocalDate start, LocalDate end);
 
