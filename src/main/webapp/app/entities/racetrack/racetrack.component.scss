@@ -2,3 +2,8 @@
   height: 100%;
   padding: 20px;
 }
+
+.layouts-container {
+  max-height: 375px;
+  overflow: auto;
+}
