@@ -1,3 +1,4 @@
+import { Title } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -57,7 +58,8 @@ export class SeriesEditionDetailComponent implements OnInit {
     protected seriesService: SeriesService,
     protected seriesEditionService: SeriesEditionService,
     protected imagesService: ImagesService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private titleService: Title
   ) {
     this.genericPosterUrl = imagesService.getGenericRacePoster();
   }
@@ -65,6 +67,7 @@ export class SeriesEditionDetailComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ seriesEdition }) => {
       this.seriesEdition = seriesEdition;
+      this.titleService.setTitle(seriesEdition.editionName);
       this.seriesService.findSeriesEditionIds(seriesEdition.series.id).subscribe(res => {
         this.editions = res.sort((e1, e2) => (e1.editionYear > e2.editionYear ? 1 : e1.editionYear < e2.editionYear ? -1 : 0));
         const currentEdPos = this.editions.map(e => e.id).indexOf(seriesEdition.id);

@@ -5,6 +5,7 @@ import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
 import { EventEntryResultComponent } from './event-entry-result.component';
 import { EventEntryResultUpdateComponent } from './event-entry-result-update.component';
 import { EventEntryUploadResultsComponent } from './event-entry-result-upload.component';
+import { EventEntryResultUploadLapByLapComponent } from './event-entry-result-upload-lapbylap.component';
 import { EventEntryResultDeleteDialogComponent } from './event-entry-result-delete-dialog.component';
 import { eventEntryResultRoute, eventEntryResultPopupRoute } from './event-entry-result.route';
 
@@ -16,9 +17,15 @@ const ENTITY_STATES = [...eventEntryResultRoute, ...eventEntryResultPopupRoute];
     EventEntryResultComponent,
     EventEntryResultUpdateComponent,
     EventEntryUploadResultsComponent,
+    EventEntryResultUploadLapByLapComponent,
     EventEntryResultDeleteDialogComponent
   ],
   exports: [EventEntryResultComponent],
-  entryComponents: [EventEntryResultUpdateComponent, EventEntryUploadResultsComponent, EventEntryResultDeleteDialogComponent]
+  entryComponents: [
+    EventEntryResultUpdateComponent,
+    EventEntryUploadResultsComponent,
+    EventEntryResultUploadLapByLapComponent,
+    EventEntryResultDeleteDialogComponent
+  ]
 })
 export class MotorsportsDatabaseEventEntryResultModule {}

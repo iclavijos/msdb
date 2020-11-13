@@ -6,6 +6,7 @@ import { DatePipe } from '@angular/common';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { IDriverLap } from 'app/shared/model/driver-lap.model';
 
 type EntityResponseType = HttpResponse<IEventEdition>;
 type EntityArrayResponseType = HttpResponse<IEventEdition[]>;
@@ -61,6 +62,10 @@ export class EventEditionService {
 
   hasLapsData(eventId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.resourceUrl}/${eventId}/laps`);
+  }
+
+  loadLapTimes(eventId: number, raceNumber: string): Observable<IDriverLap[]> {
+    return this.http.get<IDriverLap[]>(`${this.resourceUrl}/${eventId}/laps/${raceNumber}`);
   }
 
   findCalendarEvents(startDate: Date, endDate: Date) {

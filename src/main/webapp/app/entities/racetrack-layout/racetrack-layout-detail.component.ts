@@ -1,3 +1,4 @@
+import { Title } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { JhiDataUtils } from 'ng-jhipster';
@@ -11,11 +12,12 @@ import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
 export class RacetrackLayoutDetailComponent implements OnInit {
   racetrackLayout: IRacetrackLayout;
 
-  constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute) {}
+  constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute, private titleService: Title) {}
 
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ racetrackLayout }) => {
       this.racetrackLayout = racetrackLayout;
+      this.titleService.setTitle(racetrackLayout.racetrack.name + ' - ' + racetrackLayout.name);
     });
   }
 

@@ -36,6 +36,8 @@ export class MyEvent {
   allDay = false;
   status: string;
   sessionType: string;
+  racetrack: string;
+  racetrackLayoutUrl: string;
 
   event: any;
 }
@@ -145,7 +147,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   };
 
-  public convertEvents(sessions, currentTZ, toDate = true) {
+  public convertEvents(sessions, currentTZ, toDate = true, includeCancelled = false) {
     const result = [];
     for (const session of sessions) {
       const newEvent = new MyEvent();
@@ -161,6 +163,8 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       newEvent.textColor = 'white';
       newEvent.sessionType = session.sessionType;
       newEvent.status = session.status;
+      newEvent.racetrack = session.racetrack;
+      newEvent.racetrackLayoutUrl = session.racetrackLayoutUrl;
       if (session.status === 'C') {
         newEvent.color = 'red';
       } else if (session.status === 'S') {
@@ -174,7 +178,9 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
           newEvent.color = 'grey';
         }
       }
-      result.push(newEvent);
+      if (includeCancelled || session.status === 'O') {
+        result.push(newEvent);
+      }
     }
     return result;
   }

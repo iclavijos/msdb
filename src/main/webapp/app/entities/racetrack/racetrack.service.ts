@@ -6,6 +6,7 @@ import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { IRacetrack } from 'app/shared/model/racetrack.model';
 import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
+import { IEventEdition } from 'app/shared/model/event-edition.model';
 
 type EntityResponseType = HttpResponse<IRacetrack>;
 type EntityArrayResponseType = HttpResponse<IRacetrack[]>;
@@ -40,5 +41,14 @@ export class RacetrackService {
 
   findLayouts(id: number): Observable<HttpResponse<IRacetrackLayout[]>> {
     return this.http.get<IRacetrackLayout[]>(`${this.resourceUrl}/${id}/layouts`, { observe: 'response' });
+  }
+
+  findNextEvents(id: number): Observable<HttpResponse<IEventEdition[]>> {
+    return this.http.get<IEventEdition[]>(`${this.resourceUrl}/${id}/events?type=future`, { observe: 'response' });
+  }
+
+  findPrevEvents(id: number, req?: any): Observable<HttpResponse<IEventEdition[]>> {
+    const options = createRequestOption(req);
+    return this.http.get<IEventEdition[]>(`${this.resourceUrl}/${id}/events?type=past`, { params: options, observe: 'response' });
   }
 }

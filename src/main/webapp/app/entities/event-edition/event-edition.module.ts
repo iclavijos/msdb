@@ -13,6 +13,7 @@ import { eventEditionRoute, eventEditionPopupRoute } from './event-edition.route
 import { MotorsportsDatabaseEventSessionModule } from '../event-session/event-session.module';
 import { MotorsportsDatabaseEventEntryModule } from '../event-entry/event-entry.module';
 import { MotorsportsDatabaseEventEntryResultModule } from '../event-entry-result/event-entry-result.module';
+import { MotorsportsDatabaseLapsAnalysisModule } from '../laps-analysis/laps-analysis.module';
 
 const ENTITY_STATES = [...eventEditionRoute, ...eventEditionPopupRoute];
 
@@ -23,6 +24,7 @@ const ENTITY_STATES = [...eventEditionRoute, ...eventEditionPopupRoute];
     MotorsportsDatabaseEventSessionModule,
     MotorsportsDatabaseEventEntryModule,
     MotorsportsDatabaseEventEntryResultModule,
+    MotorsportsDatabaseLapsAnalysisModule,
     RouterModule.forChild(ENTITY_STATES)
   ],
   declarations: [

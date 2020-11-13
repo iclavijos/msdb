@@ -8,13 +8,26 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-sm-12">
+            <div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
+                <mat-form-field>
+                    <mat-label>Filter by category</mat-label>
+                    <mat-select [(ngModel)]="categoryToFilter" (ngModelChange)="filterCategories()">
+                        <mat-option></mat-option>
+                        <mat-option *ngFor="let category of eventEdition.allowedCategories" [value]="category.shortname">{{category.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12">
             <div class="alert alert-warning" [hidden]="eventEntries && eventEntries.length > 0">
                 <span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.notFound">No event entries found</span>
             </div>
             <div class="table-responsive" [hidden]="!eventEntries || eventEntries?.length === 0">
                 <mat-accordion>
-                    <mat-expansion-panel *ngFor="let entry of eventEntries">
+                    <mat-expansion-panel *ngFor="let entry of filteredEntries">
                         <mat-expansion-panel-header [collapsedHeight]="'100%'" [expandedHeight]="'100%'">
                             <div class="media-body row">
                                 <div class="col-md-2">

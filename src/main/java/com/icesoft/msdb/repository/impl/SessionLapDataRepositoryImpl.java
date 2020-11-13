@@ -47,12 +47,4 @@ public class SessionLapDataRepositoryImpl implements SessionLapDataCustomReposit
 	    return mongoOps.aggregate(agg, SessionLapData.class, SessionLapData.class).getMappedResults();
 	}
 
-	@Override
-	public List<String> getDriverNamesWithData(String sessionId) {
-		List<AggregationOperation> list = new ArrayList<>();
-		list.add(Aggregation.match(Criteria.where("_id").is(sessionId)));
-
-		return null;
-	}
-
 }

@@ -1,0 +1,22 @@
+.personalBest {
+  color: #00ff00;
+}
+
+.fastestLap {
+  color: #000000;
+}
+
+.fastLap {
+  color: #ff33cc;
+}
+
+.odd {
+  background-color: none;
+}
+.even {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}

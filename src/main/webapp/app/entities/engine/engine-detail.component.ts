@@ -1,3 +1,4 @@
+import { Title } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { JhiDataUtils } from 'ng-jhipster';
@@ -38,13 +39,19 @@ export class EngineDetailComponent implements OnInit {
 
   engine: IEngine;
 
-  constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute, protected engineService: EngineService) {}
+  constructor(
+    protected dataUtils: JhiDataUtils,
+    protected activatedRoute: ActivatedRoute,
+    protected engineService: EngineService,
+    private titleService: Title
+  ) {}
 
   hasChild = (_: number, node: EngineNode) => node.expandable;
 
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ engine }) => {
       this.engine = engine;
+      this.titleService.setTitle(engine.manufacturer + ' ' + engine.name);
       this.engineService.getEvolutions(engine.id).subscribe(evolutions => {
         this.engine.evolutions = evolutions.body;
         this.dataSource.data = evolutions.body;

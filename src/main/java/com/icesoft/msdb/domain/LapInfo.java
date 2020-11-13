@@ -1,6 +1,16 @@
 package com.icesoft.msdb.domain;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 public class LapInfo {
+
+    private static final Pattern LAPTIME_REGEX = Pattern.compile("(([0-9]+)(:|'))?(([0-9]+)(:|'))?([0-9]+)\\.([0-9]+)");
 
 	private String raceNumber;
 	private String driverName;
@@ -13,6 +23,7 @@ public class LapInfo {
 	private Long s1;
 	private Long s2;
 	private Long s3;
+	private String category;
 
 	public LapInfo() {
 
@@ -20,7 +31,7 @@ public class LapInfo {
 
 	public LapInfo(String raceNumber, String driverName, Integer lapNumber, Long lapTime, Boolean pitstop) {
 		this.raceNumber = raceNumber;
-		this.driverName = driverName;
+		this.driverName = camelCaseDriverName(driverName);
 		this.lapNumber = lapNumber;
 		this.lapTime = lapTime;
 		this.pitstop = pitstop;
@@ -39,7 +50,7 @@ public class LapInfo {
 	}
 
 	public void setDriverName(String driverName) {
-		this.driverName = driverName;
+		this.driverName = camelCaseDriverName(driverName);
 	}
 
 	public Long getLapTime() {
@@ -62,8 +73,8 @@ public class LapInfo {
 		this.lapTime = lapTime;
 	}
 
-	public void setPitstop(Boolean pitstop) {
-		this.pitstop = pitstop;
+	public void setPitstop(String pitstop) {
+	    this.pitstop = pitstop != null && pitstop.equalsIgnoreCase("b");
 	}
 
 	public Boolean getPersonalBest() {
@@ -90,6 +101,52 @@ public class LapInfo {
 		this.fastestLap = fastestLap;
 	}
 
+	public void setLapTime(String lapTime) {
+        this.lapTime = lapTimeStrToLong(lapTime);
+    }
+
+    public void setS1(String s1) {
+	    this.s1 = lapTimeStrToLong(s1);
+    }
+
+    public void setS2(String s2) {
+        this.s2 = lapTimeStrToLong(s2);
+    }
+
+    public void setS3(String s3) {
+        this.s3 = lapTimeStrToLong(s3);
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    private Long lapTimeStrToLong(String lapTime) {
+        Matcher m = LAPTIME_REGEX.matcher(lapTime);
+        long timeMillis = 0;
+        if (!m.matches()) {
+            System.out.println("Ignoring laptime " + lapTime);
+        } else {
+            timeMillis += Long.parseLong(m.group(8));
+            timeMillis += Long.parseLong(m.group(7)) * 1000;
+            if (m.group(5) != null) {
+                // Time has hours
+                timeMillis += Long.parseLong(m.group(5)) * 60 * 1000;
+                timeMillis += Long.parseLong(m.group(2)) * 60 * 60 * 1000;
+            } else {
+                if (m.group(2) != null) {
+                    timeMillis += Long.parseLong(m.group(2)) * 60 * 1000;
+                }
+            }
+        }
+
+        return timeMillis;
+    }
+
     @Override
     public String toString() {
         return "LapInfo{" +
@@ -104,6 +161,7 @@ public class LapInfo {
             ", s1=" + s1 +
             ", s2=" + s2 +
             ", s3=" + s3 +
+            ", category=" + category +
             '}';
     }
 
@@ -129,6 +187,14 @@ public class LapInfo {
 
     public void setS3(Long s3) {
         this.s3 = s3;
+    }
+
+    private String camelCaseDriverName(String driverName) {
+	    List<String> items = Arrays.asList(StringUtils.split(driverName, " "));
+	    String result = items.get(0).substring(0, 1).toUpperCase();
+	    return result + ". " + items.subList(1, items.size()).stream()
+            .map(name -> name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase())
+            .collect(Collectors.joining(" "));
     }
 
 }

@@ -163,6 +163,12 @@
                                             </table>
                                         </div>
                                     </mat-tab>
+                                    <mat-tab *ngIf="hasLapsData" label="{{'motorsportsDatabaseApp.eventEdition.lapsAnalysis' | translate}}">
+                                        <ng-template matTabContent>
+                                            <jhi-laps-analysis [eventEdition]="eventEdition" [eventSessions]="eventSessions"
+                                                [eventEntries]="eventEntries">Laps analysis..</jhi-laps-analysis>
+                                        </ng-template>
+                                    </mat-tab>
                                     <mat-tab *ngIf="showPoints" label="{{'motorsportsDatabaseApp.eventEdition.points' | translate}}">
                                         <div>
                                             <jhi-standings [eventEdition]="eventEdition">Standings...</jhi-standings>

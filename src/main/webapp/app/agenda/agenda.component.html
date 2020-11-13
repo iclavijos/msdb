@@ -82,7 +82,21 @@
                                         <div class="row event-row" *ngFor="let event of uniqueEventsInSeries(series)"
                                              [style.background-color]="backgroundColor()">
                                             <div class="col-xs-12 col-lg-4">
-                                                <h4>{{ event }}</h4>
+                                                <div class="row event-detail-row">
+                                                    <div class="col-*-12">
+                                                        <h4>{{ event.name }}</h4>
+                                                    </div>
+                                                </div>
+                                                <div class="row event-detail-row">
+                                                    <div class="col-*-12">
+                                                        {{ event.racetrack }}
+                                                    </div>
+                                                </div>
+                                                <div class="row event-detail-row">
+                                                    <div class="col-*-12">
+                                                        <img [src]="event.layoutUrl" style="max-height: 100px"/>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-xs-12 col-lg-8" *ngIf="eventStatus(event) === 'O'">
                                                 <div class="row" *ngFor="let session of sessionsEvent(event)"

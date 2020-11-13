@@ -326,15 +326,17 @@ public class EventEditionResource {
     	result.parallelStream().forEach(session -> session.setEventEdition(null));
     	return result;
     }
-
-    @GetMapping("/event-editions/{id}/sessions/races")
-    @Timed
-    public List<EventSession> getEventEditionRacesSessions(@PathVariable Long id) {
-    	log.debug("REST request to get all EventEditions {} races sessions", id);
-    	List<EventSession> result = eventSessionRepository.findRacesSessions(id);
-    	result.parallelStream().forEach(session -> session.setEventEdition(null));
-    	return result;
-    }
+//
+//    @GetMapping("/event-editions/{id}/sessions/races")
+//    @Timed
+//    @Transactional(readOnly = true)
+//    public List<EventSession> getEventEditionRacesSessions(@PathVariable Long id) {
+//    	log.debug("REST request to get all races of event edition ", id);
+//    	List<EventSession> sessions = eventSessionRepository.findRacesSessions(id);
+//    	return sessions.parallelStream()
+//            .map(session -> new EventSession(session.getId(), session.getName(), session.getSessionType()))
+//            .collect(Collectors.toList());
+//    }
 
     @PostMapping("/event-editions/event-sessions")
     @Timed
@@ -690,6 +692,8 @@ public class EventEditionResource {
     				session.getSessionStartTimeDate(), session.getSessionEndTime(),
     				session.getEventEdition().getStatus().getCode(),
                     seriesRelevance,
+    				session.getEventEdition().getTrackLayout().getRacetrack().getName(),
+    				session.getEventEdition().getTrackLayout().getLayoutImageUrl(),
     				logoUrl);
     	})
             .sorted(Comparator.comparing(SessionCalendarDTO::getSeriesRelevance))

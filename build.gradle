@@ -178,12 +178,13 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5"
     implementation "com.fasterxml.jackson.core:jackson-annotations"
-    implementation "com.fasterxml.jackson.core:jackson-databind"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.11.2"
     implementation "com.fasterxml.jackson.module:jackson-module-afterburner"
     implementation "javax.cache:cache-api"
     implementation "org.hibernate:hibernate-core"
     implementation "com.zaxxer:HikariCP"
     implementation "org.apache.commons:commons-lang3"
+    implementation "org.apache.commons:commons-math3:3.6.1"
     implementation "commons-io:commons-io"
     implementation "javax.transaction:javax.transaction-api"
     implementation "org.ehcache:ehcache"
@@ -229,9 +230,11 @@ dependencies {
     implementation 'com.cloudinary:cloudinary-http44:1.26.0'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.8.7'
 
-    implementation 'com.google.maps:google-maps-services:0.1.20'
+    implementation 'com.google.maps:google-maps-services:0.15.0'
 
     implementation 'org.mnode.ical4j:ical4j:3.0.19'
+
+    implementation 'io.vavr:vavr:0.10.3'
 
     implementation "org.mapstruct:mapstruct:${mapstruct_version}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstruct_version}"

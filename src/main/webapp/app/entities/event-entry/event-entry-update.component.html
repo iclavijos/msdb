@@ -108,12 +108,15 @@
         <div class="col-6">
             <mat-form-field class="example-full-width">
                 <input matInput type="text" [matAutocomplete]="autoTyres" formControlName="tyres"
-                       placeholder="{{ 'motorsportsDatabaseApp.eventEdition.entry.tyres' | translate }}"/>
+                       placeholder="{{ 'motorsportsDatabaseApp.eventEdition.entry.tyres' | translate }}" required/>
                 <mat-autocomplete #autoTyres="matAutocomplete" [displayWith]="displayFnTyres">
                     <mat-option *ngFor="let tyres of tyresOptions | async" [value]="tyres">
                         <span>{{ tyres.name }}</span>
                     </mat-option>
                 </mat-autocomplete>
+                <mat-error *ngIf="editForm.get('tyres')?.hasError('required')">
+                    {{ 'entity.validation.required' | translate }}
+                </mat-error>
             </mat-form-field>
         </div>
         <div class="col-6">
@@ -132,7 +135,7 @@
         <div class="col-12">
             <div class="form-group">
                 <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category">Category</label>
-                <mat-radio-group class="categories-radio-group" formControlName="category">
+                <mat-radio-group class="categories-radio-group" formControlName="category" required>
                     <mat-radio-button *ngFor="let category of eventEntry.eventEdition.allowedCategories" [value]="category" [checked]="category.id === eventEntry.category?.id">
                         {{ category.name }}
                     </mat-radio-button>
