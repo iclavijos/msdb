@@ -98,8 +98,8 @@ export class EventEntryUpdateComponent implements OnInit {
       switchMap(value => {
         if (typeof value === 'string') {
           return this.driverService.query({
-            query: value,
-            sort: ['surname,asc', 'name,asc']
+            query: value
+            // sort: ['surname,asc', 'name,asc']
           });
         } else {
           return of(null);
@@ -113,8 +113,8 @@ export class EventEntryUpdateComponent implements OnInit {
       switchMap(value => {
         if (typeof value === 'string') {
           return this.teamService.query({
-            query: value,
-            sort: ['name,asc']
+            query: value
+            // sort: ['name,asc']
           });
         } else {
           return of(null);
@@ -128,8 +128,8 @@ export class EventEntryUpdateComponent implements OnInit {
       switchMap(value => {
         if (typeof value === 'string') {
           return this.teamService.query({
-            query: value,
-            sort: ['name,asc']
+            query: value
+            // sort: ['name,asc']
           });
         } else {
           return of(null);
@@ -143,8 +143,8 @@ export class EventEntryUpdateComponent implements OnInit {
       switchMap(value => {
         if (typeof value === 'string') {
           return this.engineService.query({
-            query: value,
-            sort: ['name,asc', 'manufacturer,asc']
+            query: value
+            // sort: ['name,asc', 'manufacturer,asc']
           });
         } else {
           return of(null);
@@ -158,8 +158,8 @@ export class EventEntryUpdateComponent implements OnInit {
       switchMap(value => {
         if (typeof value === 'string') {
           return this.chassisService.query({
-            query: value,
-            sort: ['name,asc', 'manufacturer,asc']
+            query: value
+            // sort: ['name,asc', 'manufacturer,asc']
           });
         } else {
           return of(null);
