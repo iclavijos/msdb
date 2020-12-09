@@ -264,6 +264,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		seriesEd.getEvents().stream().forEach(ev -> {
 			EventEdition newEvent = SerializationUtils.clone(ev); // new EventEdition();
             newEvent.setId(null);
+            newEvent.setPosterUrl(null);
 			newEvent.setSeriesEditions(series);
 			Integer year;
 			try {
