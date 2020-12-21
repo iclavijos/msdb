@@ -50,10 +50,10 @@ public class SessionLapData {
                 String importedLastName = importedName[importedName.length - 1];
                 String fullName = entry.get().getDrivers().stream()
                     .filter(d ->
-                        StringUtils.stripAccents(d.getFullName().toLowerCase()).endsWith(
+                        StringUtils.stripAccents(d.getDriver().getFullName().toLowerCase()).endsWith(
                             StringUtils.stripAccents(importedLastName.toLowerCase())))
                     .findFirst().orElseThrow(() -> new MSDBException("No entry found for driver " + lapData.getDriverName()))
-                    .getFullName();
+                    .getDriver().getFullName();
                 lapData.setDriverName(fullName);
             }
 	   		if (!dataPerLap.containsKey(lapData.getLapNumber())) {

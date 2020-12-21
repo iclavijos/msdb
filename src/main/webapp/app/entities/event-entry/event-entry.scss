@@ -3,3 +3,34 @@
   flex-direction: column;
   margin: 15px 0;
 }
+
+.fixed-width {
+  max-width: 56px;
+}
+
+%circle {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.platinum {
+  @extend %circle;
+  background-color: #e5e4e2;
+}
+
+.gold {
+  @extend %circle;
+  background-color: #ffd700;
+}
+
+.silver {
+  @extend %circle;
+  background-color: #c0c0c0;
+}
+
+.bronze {
+  @extend %circle;
+  background-color: #cd7f32;
+}

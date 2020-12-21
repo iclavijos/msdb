@@ -112,16 +112,16 @@ public class ResultsService {
                     calculatedPoints = calculatedPoints * pointsPct;
                 }
 
-                for(Driver d : result.getEntry().getDrivers()) {
-                    log.debug(result.getFinalPosition() + "-" + d.getFullName() + ": " +
+                for(DriverEntry d : result.getEntry().getDrivers()) {
+                    log.debug(result.getFinalPosition() + "-" + d.getDriver().getFullName() + ": " +
                         (points.length > (i+1) ? points[i] : 0));
 
-                    DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), session.getName());
+                    DriverEventPoints dep = new DriverEventPoints(d.getDriver(), session, pss.getSeriesEdition(), session.getName());
                     dep.setCategory(category);
                     if (result.getFinalPosition() < 800 && points.length > i && (i < points.length)) {
                         dep.addPoints(calculatedPoints);
                         log.debug(String.format("Driver %s: %s(x%s) points for position %s",
-                            d.getFullName(), (float)points[i], pss.getPsMultiplier(), i+1));
+                            d.getDriver().getFullName(), (float)points[i], pss.getPsMultiplier(), i+1));
                     } else {
                         dep.addPoints(0f);
                     }
@@ -129,17 +129,17 @@ public class ResultsService {
 
                     if (result.getStartingPosition() != null &&  result.getStartingPosition() == 1) {
                         if (ps.getPointsPole() != 0) {
-                            dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsPole");
+                            dep = new DriverEventPoints(d.getDriver(), session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsPole");
                             dep.setCategory(category);
                             dep.addPoints(ps.getPointsPole().floatValue());
-                            log.debug(String.format("Driver %s: %s points for pole", d.getFullName(), ps.getPointsPole()));
+                            log.debug(String.format("Driver %s: %s points for pole", d.getDriver().getFullName(), ps.getPointsPole()));
                             drivers.add(dep);
                         }
                     }
                 }
                 if (sharedDrive) {
-                    for(Driver d: result.getSharedWith().getDrivers()) {
-                        DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), session.getName());
+                    for(DriverEntry d: result.getSharedWith().getDrivers()) {
+                        DriverEventPoints dep = new DriverEventPoints(d.getDriver(), session, pss.getSeriesEdition(), session.getName());
                         dep.setCategory(category);
                         dep.addPoints(calculatedPoints);
                         drivers.add(dep);
@@ -183,11 +183,11 @@ public class ResultsService {
                     }
 
                     if (optFastestLap.isPresent()) {
-                        for (Driver d : optFastestLap.get().getEntry().getDrivers()) {
-                            DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsFastLap");
+                        for (DriverEntry d : optFastestLap.get().getEntry().getDrivers()) {
+                            DriverEventPoints dep = new DriverEventPoints(d.getDriver(), session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsFastLap");
                             dep.setCategory(category);
                             dep.addPoints(ps.getPointsFastLap().floatValue());
-                            log.debug(String.format("Driver %s: %s points for fastest lap", d.getFullName(), ps.getPointsFastLap()));
+                            log.debug(String.format("Driver %s: %s points for fastest lap", d.getDriver().getFullName(), ps.getPointsFastLap()));
                             drivers.add(dep);
                         }
                     } else {
@@ -216,21 +216,21 @@ public class ResultsService {
                         maxLedLaps = r.getLapsLed();
                         addPointsMostLeadLaps = true;
                     }
-                    for(Driver d : r.getEntry().getDrivers()) {
-                        DriverEventPoints dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsLeadLap");
+                    for(DriverEntry d : r.getEntry().getDrivers()) {
+                        DriverEventPoints dep = new DriverEventPoints(d.getDriver(), session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsLeadLap");
                         if (category != null) {
                             dep.setCategory(category);
                         }
                         dep.addPoints(ps.getPointsLeadLap().floatValue());
-                        log.debug(String.format("Driver %s: %s points for leading %s laps", d.getFullName(), ps.getPointsLeadLap(), r.getLapsLed()));
+                        log.debug(String.format("Driver %s: %s points for leading %s laps", d.getDriver().getFullName(), ps.getPointsLeadLap(), r.getLapsLed()));
                         drivers.add(dep);
                         if (addPointsMostLeadLaps) {
-                            dep = new DriverEventPoints(d, session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps");
+                            dep = new DriverEventPoints(d.getDriver(), session, pss.getSeriesEdition(), "motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps");
                             if (category != null) {
                                 dep.setCategory(category);
                             }
                             dep.addPoints(ps.getPointsMostLeadLaps().floatValue());
-                            log.debug(String.format("Driver %s: %s points for most led laps", d.getFullName(), ps.getPointsMostLeadLaps()));
+                            log.debug(String.format("Driver %s: %s points for most led laps", d.getDriver().getFullName(), ps.getPointsMostLeadLaps()));
                             drivers.add(dep);
                         }
                     }
@@ -242,7 +242,7 @@ public class ResultsService {
         if (pss.getSeriesEdition().getTeamsStandings()) {
             List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(session.getEventEdition().getId());
             for(EventEditionEntry entry: entries) {
-                Driver driver = entry.getDrivers().get(0); //We will only deal with the first one so multidriver entries are handled just once
+                Driver driver = entry.getDrivers().stream().findFirst().get().getDriver(); //We will only deal with the first one so multidriver entries are handled just once
                 if (entry.getTeam() != null) {
                     double dPoints = drivers.stream().filter(dp -> dp.getDriver().getId().equals(driver.getId())).mapToDouble(dp -> dp.getPoints()).sum();
                     TeamEventPoints tep = teams.get(entry.getTeam().getId());
@@ -269,7 +269,7 @@ public class ResultsService {
                     double mPoints = results.parallelStream()
                         .filter(r -> r.getEntry().getManufacturer().equals(manufacturer)).limit(2)
                         .mapToDouble(r -> drivers.stream().filter(
-                            dp -> dp.getDriver().getId().equals(r.getEntry().getDrivers().get(0).getId())).mapToDouble(dp -> dp.getPoints()).sum())
+                            dp -> dp.getDriver().getId().equals(r.getEntry().getDrivers().stream().findFirst().get().getId())).mapToDouble(dp -> dp.getPoints()).sum())
                         .sum();
 
 
@@ -410,10 +410,10 @@ public class ResultsService {
                         }
                     }
 
-                    for (Driver driver : result.getEntry().getDrivers()) {
-                        int pos = driverNames.indexOf(driver.getFullName());
+                    for (DriverEntry driver : result.getEntry().getDrivers()) {
+                        int pos = driverNames.indexOf(driver.getDriver().getFullName());
                         if (pos == -1) {
-                            log.warn("Driver not found: " + driver.getFullName());
+                            log.warn("Driver not found: " + driver.getDriver().getFullName());
                         }
                         data[pos + 1][i] = res;
                     }

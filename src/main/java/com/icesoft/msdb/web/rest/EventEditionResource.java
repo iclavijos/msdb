@@ -46,10 +46,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.time.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -74,6 +71,7 @@ public class EventEditionResource {
     private final EventEditionSearchRepository eventEditionSearchRepo;
     private final EventSessionRepository eventSessionRepository;
     private final EventEntryRepository eventEntryRepository;
+    private final DriverEntryRepository driverEntryRepository;
     private final EventEntrySearchRepository eventEntrySearchRepo;
     private final EventEntryResultRepository eventResultRepository;
     private final RacetrackLayoutRepository racetrackLayoutRepo;
@@ -89,7 +87,7 @@ public class EventEditionResource {
     		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository,
     		RacetrackLayoutRepository racetrackLayoutRepo, ResultsService resultsService,
     		CDNService cdnService, StatisticsService statsService, CacheHandler cacheHandler,
-            EventService eventService, SeriesEditionService seriesEditionService) {
+            EventService eventService, SeriesEditionService seriesEditionService, DriverEntryRepository driverEntryRepository) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventEditionSearchRepo = eventEditionSearchRepo;
         this.eventSessionRepository = eventSessionRepository;
@@ -103,6 +101,7 @@ public class EventEditionResource {
         this.cacheHandler = cacheHandler;
         this.eventService = eventService;
         this.seriesEditionService = seriesEditionService;
+        this.driverEntryRepository = driverEntryRepository;
     }
 
     /**
@@ -503,12 +502,16 @@ public class EventEditionResource {
     			.tyres(entry.getTyres())
     			.team(entry.getTeam())
     			.operatedBy(entry.getOperatedBy())
-    			.rookie(entry.getRookie())
     			.setCarImageUrl(entry.getCarImageUrl());
 
-    		List<Driver> copiedList = new ArrayList<>();
-    		for(Driver driver: entry.getDrivers()) {
-    			copiedList.add(driver);
+    		Set<DriverEntry> copiedList = new HashSet<>();
+    		for(DriverEntry driverEntry: entry.getDrivers()) {
+    		    DriverEntry de = new DriverEntry();
+    		    de.setDriver(driverEntry.getDriver());
+    		    de.setEventEntry(copiedEntry);
+    		    de.setCategory(driverEntry.getCategory());
+    		    de.setRookie(driverEntry.getRookie());
+    			copiedList.add(de);
     		}
     		copiedEntry.drivers(copiedList);
 
@@ -533,11 +536,13 @@ public class EventEditionResource {
         );
         eventEntry.setEventEdition(eventEdition);
         EventEditionEntry result = eventEntryRepository.save(eventEntry);
+        eventEntry.getDrivers().forEach(de -> de.setEventEntry(result));
+        driverEntryRepository.saveAll(eventEntry.getDrivers());
         if (result.getCarImage() != null) {
 	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getCarImage(), ENTITY_NAME_ENTRY);
 			result.setCarImageUrl(cdnUrl);
 
-			result = eventEntryRepository.save(result);
+			eventEntryRepository.save(result);
         }
         eventEntrySearchRepo.save(result);
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/entries"))
@@ -562,6 +567,9 @@ public class EventEditionResource {
 	        String cdnUrl = cdnService.uploadImage(eventEntry.getId().toString(), eventEntry.getCarImage(), ENTITY_NAME_ENTRY);
 	        eventEntry.setCarImageUrl(cdnUrl);
         }
+        driverEntryRepository.deleteByEventEntry(eventEntry);
+        eventEntry.getDrivers().forEach(de -> de.setEventEntry(eventEntry));
+        driverEntryRepository.saveAll(eventEntry.getDrivers());
         EventEditionEntry result = eventEntryRepository.save(eventEntry);
         eventEntrySearchRepo.save(result);
         return ResponseEntity.ok()
@@ -588,6 +596,11 @@ public class EventEditionResource {
     @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteEventEntry(@PathVariable Long id) {
         log.debug("REST request to delete EventEntry : {}", id);
+        eventEntryRepository.findById(id).orElseThrow(
+            () -> new MSDBException("Invalid entry id provided: " + id)
+        );
+        eventResultRepository.deleteByEntryId(id);
+        driverEntryRepository.deleteByIdEntryId(id);
         eventEntryRepository.deleteById(id);
         eventEntrySearchRepo.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil

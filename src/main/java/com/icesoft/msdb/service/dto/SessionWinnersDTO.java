@@ -68,7 +68,7 @@ public class SessionWinnersDTO {
 		    new CategoryWinner(
 		        category,
                 entry.getDrivers().stream()
-                    .map(d -> new DriverInfo(d.getFullName(), d.getPortraitUrl())).collect(Collectors.toList())));
+                    .map(d -> new DriverInfo(d.getDriver().getFullName(), d.getDriver().getPortraitUrl())).collect(Collectors.toList())));
 	}
 
 	public String getSession() {

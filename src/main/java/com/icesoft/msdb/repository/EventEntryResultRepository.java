@@ -43,4 +43,6 @@ public interface EventEntryResultRepository extends JpaRepository<EventEntryResu
 
     void deleteBySession(EventSession eventSession);
 
+    void deleteByEntryId(Long entryId);
+
 }

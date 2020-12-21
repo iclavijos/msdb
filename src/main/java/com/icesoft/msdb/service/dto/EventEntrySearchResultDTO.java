@@ -25,7 +25,7 @@ public class EventEntrySearchResultDTO {
 	private String session;
 	private String raceStatus;
 
-	public EventEntrySearchResultDTO(EventEditionEntry entry, LocalDate sessionDate, Long poleTime, Long raceFastLap, Integer polePosition, 
+	public EventEntrySearchResultDTO(EventEditionEntry entry, LocalDate sessionDate, Long poleTime, Long raceFastLap, Integer polePosition,
 			Integer racePosition, String retirement) {
 		this.raceNumber = entry.getRaceNumber();
 		this.entryName = entry.getEntryName();
@@ -34,22 +34,22 @@ public class EventEntrySearchResultDTO {
 		this.editionYear = entry.getEventEdition().getEditionYear();
 		this.eventName = entry.getEventEdition().getLongEventName();
 		if (!entry.getEventEdition().isMultidriver()) {
-			this.driverId = entry.getDrivers().get(0).getId();
+			this.driverId = entry.getDrivers().stream().findFirst().get().getDriver().getId();
 		}
 		this.driverName = entry.getDriversName();
-		chassisEngine = String.format("%s %s", 
+		chassisEngine = String.format("%s %s",
 				entry.getChassis().getManufacturer(),
 				entry.getChassis().getName());
 		if (entry.getEngine() != null) {
 			Double capacity = new java.math.BigDecimal(Optional.ofNullable(entry.getEngine()).orElse(new Engine()).getCapacity() / 1000d)
 					.setScale(1, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
-			chassisEngine.concat(String.format("/%s %s %s %s", 
+			chassisEngine.concat(String.format("/%s %s %s %s",
 					entry.getEngine().getManufacturer(),
 					entry.getEngine().getName(),
 					capacity,
 					entry.getEngine().getArchitecture()));
 		}
-		
+
 		this.poleTime = poleTime;
 		this.polePosition = polePosition;
 		this.raceFastLap = raceFastLap;
@@ -62,7 +62,7 @@ public class EventEntrySearchResultDTO {
 				this.raceStatus = "DNS";
 			} else if (racePosition == 902){
 				this.raceStatus = "DSQ";
-			} 
+			}
 		}
 		if (racePosition == 800) {
 			this.raceStatus = "NC";
