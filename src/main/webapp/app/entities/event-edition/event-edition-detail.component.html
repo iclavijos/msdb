@@ -102,7 +102,7 @@
                                                                         {{eventEdition.trackLayout?.racetrack.name}} - {{eventEdition.trackLayout?.name}}
                                                                     </a>
                                                                     <div *ngIf="eventEdition.trackLayout.layoutImageUrl">
-                                                                        <img #layoutImg [src]="eventEdition.trackLayout.layoutImageUrl" class="img-fluid"  alt="layout image"
+                                                                        <img #layoutImg [src]="eventEdition.trackLayout.layoutImageUrl" class="img-fluid" alt="layout image"
                                                                              (click)="openLayout()"
                                                                              (mouseover)="zoomIn(layoutImg)" (mouseleave)="zoomOut(layoutImg)"/>
                                                                     </div>
@@ -112,7 +112,7 @@
                                                         <div class="col-lg-6 col-md-6" *ngIf="eventEdition.posterUrl">
                                                             <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.affiche">Official poster</span></dt>
                                                             <dd>
-                                                                <img #afficheImg [src]="lightboxAlbum[1].thumb" alt="affiche official poster"
+                                                                <img #afficheImg [src]="lightboxAlbum[1].thumb" alt="affiche official poster" class="img-fluid"
                                                                      (click)="openAffiche()"
                                                                      (mouseover)="zoomIn(afficheImg)" (mouseleave)="zoomOut(afficheImg)"/>
                                                             </dd>
