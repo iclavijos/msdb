@@ -416,7 +416,7 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
       const driversNames = new DriversNames();
       driversNames.raceNumber = entry.raceNumber;
       driversNames.category = entry.category.shortname;
-      driversNames.driversNames = entry.drivers.map(driver => driver.surname).join(', ');
+      driversNames.driversNames = entry.drivers.map(driverEntry => driverEntry.driver.surname).join(', ');
       result.push(driversNames);
     });
     return result;

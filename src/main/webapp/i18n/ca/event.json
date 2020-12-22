@@ -115,7 +115,8 @@
           "question": "Esteu segurs que voleu esborrar el participant '{{id}}'?"
         },
         "doubleClick": "Fes doble click en un pilot per eliminar-lo com a participant",
-        "carImage": "Imatge del vehicle"
+        "carImage": "Imatge del vehicle",
+        "driverCategory": "Categoria del pilot"
       },
       "result": {
         "home": {
@@ -186,7 +187,13 @@
         "practice": "Entrenaments lliures",
         "qualifying": "Classificació",
         "race": "Cursa",
-        "qualifyingRace": "Cursa de classificació"
+        "qualifyingRace": "Cursa de classificació",
+        "pro": "Pro",
+        "am": "Amater",
+        "platinum": "Platí",
+        "gold": "Or",
+        "silver": "Plata",
+        "bronze": "Bronze"
       }
     }
   }

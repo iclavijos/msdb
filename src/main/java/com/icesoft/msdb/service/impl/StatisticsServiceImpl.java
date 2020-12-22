@@ -287,7 +287,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 			//Points
 			Float points = Optional.ofNullable(driverPointsRepo.getDriverPointsInSession(
 					result.getSession().getId(),
-					entry.getDrivers().get(0).getId())).orElse(new Float(0));
+					entry.getDrivers().stream().findFirst().get().getDriver().getId())).orElse(new Float(0));
 
 			result.getEntry().getEventEdition().setTrackLayout(layout);
 			Result r = new Result(result, grandChelem, posInClass, startPosInClass, poleLapTime, posFL == 1, points);

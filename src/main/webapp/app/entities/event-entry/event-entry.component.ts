@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'jhi-event-entry',
   templateUrl: './event-entry.component.html',
+  styleUrls: ['event-entry.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({ height: '0px', minHeight: '0' })),

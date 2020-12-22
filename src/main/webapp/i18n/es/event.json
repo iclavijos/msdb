@@ -115,7 +115,8 @@
           "question": "¿Estás seguro que quieres eliminar al participante '{{id}}'?"
         },
         "doubleClick": "Haz doble click en un piloto para eliminarlo como participante",
-        "carImage": "Imagen del vehículo"
+        "carImage": "Imagen del vehículo",
+        "driverCategory": "Categoría del piloto"
       },
       "result": {
         "home": {
@@ -186,7 +187,13 @@
         "practice": "Entrenamientos libres",
         "qualifying": "Clasificación",
         "race": "Carrera",
-        "qualifyingRace": "Carrera de clasificación"
+        "qualifyingRace": "Carrera de clasificación",
+        "pro": "Pro",
+        "am": "Amater",
+        "platinum": "Platino",
+        "gold": "Oro",
+        "silver": "Plata",
+        "bronze": "Bronce"
       }
     }
   }
