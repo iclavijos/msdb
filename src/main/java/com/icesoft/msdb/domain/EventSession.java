@@ -260,7 +260,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 		int maxDuration = Optional.ofNullable(getMaxDuration()).orElse(new Integer(0));
 
 		if (maxDuration > 0) {
-			return getSessionStartTimeDate().plus(maxDuration, ChronoUnit.HOURS);
+			return getSessionStartTimeDate().plus(maxDuration, ChronoUnit.MINUTES);
 		}
 
 		if (!getSessionType().equals(SessionType.RACE)) {

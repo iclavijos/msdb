@@ -1,26 +1,27 @@
 {
-    "motorsportsDatabaseApp": {
-        "lapbylap" : {
-            "lapCharts": "Gráficos",
-            "lapsRange": "Escoge el rango de vueltas a mostrar",
-            "lapTimes": "Tiempos por vuelta",
-            "lapTime": "Tiempo",
-            "lap": "Vuelta",
-            "legend": "Leyenda",
-            "fastestLap": "Vuelta rápida de carrera",
-            "fastLap": "Vuelta rápida",
-            "personalBest": "Mejor vuelta personal",
-            "averages": "Promedios",
-            "average": "Promedio",
-            "avgPerDriver": "Promedios por piloto",
-            "best5": "Mejores 5 vueltas",
-            "best10": "Mejores 10 vueltas",
-            "best20": "Mejores 20 vueltas",
-            "perfectLap": "Vuelta rápida ideal",
-            "driverName": "Piloto",
-            "stints": "Relevos",
-            "stint": "Relevo",
-            "raceHistory": "Gráfico de evolución de carrera"
-        }
+  "motorsportsDatabaseApp": {
+    "lapbylap": {
+      "lapCharts": "Gráficos",
+      "lapsRange": "Escoge el rango de vueltas a mostrar",
+      "lapTimes": "Tiempos por vuelta",
+      "lapTime": "Tiempo",
+      "lap": "Vuelta",
+      "legend": "Leyenda",
+      "fastestLap": "Vuelta rápida de carrera",
+      "fastLap": "Vuelta rápida",
+      "personalBest": "Mejor vuelta personal",
+      "averages": "Promedios",
+      "average": "Promedio",
+      "avgPerDriver": "Promedios por piloto",
+      "best5": "Mejores 5 vueltas",
+      "best10": "Mejores 10 vueltas",
+      "best20": "Mejores 20 vueltas",
+      "best50": "Mejores 50 vueltas",
+      "perfectLap": "Vuelta rápida ideal",
+      "driverName": "Piloto",
+      "stints": "Relevos",
+      "stint": "Relevo",
+      "raceHistory": "Gráfico de evolución de carrera"
     }
+  }
 }

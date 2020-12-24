@@ -71,7 +71,7 @@ export class EventEntryResultUpdateComponent implements OnInit {
       id: eventEntryResult.id,
       startingPosition: eventEntryResult.startingPosition,
       finalPosition: eventEntryResult.finalPosition,
-      totalTime: eventEntryResult.totalTime ? this.timeMaskPipe.transform(eventEntryResult.totalTime, true, true) : null,
+      totalTime: eventEntryResult.totalTime ? this.timeMaskPipe.transform(eventEntryResult.totalTime, true, true, true) : null,
       bestLapTime: eventEntryResult.bestLapTime ? this.timeMaskPipe.transform(eventEntryResult.bestLapTime) : null,
       lapsCompleted: eventEntryResult.lapsCompleted,
       retired: eventEntryResult.retired,
@@ -100,7 +100,7 @@ export class EventEntryResultUpdateComponent implements OnInit {
       retired: this.editForm.get(['retired']).value,
       differenceType: this.editForm.get(['differenceType']).value,
       difference:
-        this.editForm.get(['differenceType']).value === 1
+        this.editForm.get(['differenceType']).value === '1'
           ? this.toMillis(this.editForm.get(['difference']).value)
           : this.editForm.get(['difference']).value,
       lapsLed: this.editForm.get(['lapsLed']).value,

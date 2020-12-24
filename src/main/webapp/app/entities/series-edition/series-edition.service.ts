@@ -49,6 +49,10 @@ export class SeriesEditionService {
     return this.http.get<ISeriesEdition[]>(`${this.seriesResourceUrl}/${idSeries}/editions`, { params: options, observe: 'response' });
   }
 
+  findPrevNextInSeries(id: number): Observable<any> {
+    return this.http.get<any>(`${this.resourceUrl}/${id}/prevNextEdition`);
+  }
+
   findEvents(id: number): Observable<HttpResponse<IEventEdition[]>> {
     return this.http.get<IEventEdition[]>(`${this.resourceUrl}/${id}/events`, { observe: 'response' });
   }

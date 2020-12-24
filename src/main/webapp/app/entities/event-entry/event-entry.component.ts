@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'jhi-event-entry',
   templateUrl: './event-entry.component.html',
+  styleUrls: ['event-entry.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({ height: '0px', minHeight: '0' })),
@@ -33,6 +34,8 @@ export class EventEntryComponent implements OnInit, OnDestroy, OnChanges {
   // displayedColumns: string[] = ['raceNumber', 'tyres', 'drivers', 'entryName', 'category', 'carImage', 'buttons'];
   displayedColumns: string[] = ['raceNumber', 'tyres', 'drivers', 'buttons'];
   @Output() entries = new EventEmitter<IEventEntry[]>();
+  categoryToFilter: string;
+  filteredEntries: IEventEntry[];
 
   constructor(
     private eventEntryService: EventEntryService,
@@ -72,15 +75,26 @@ export class EventEntryComponent implements OnInit, OnDestroy, OnChanges {
     return null;
   }
 
-  ngOnChanges() {
-    this.loadAll();
+  ngOnChanges(changes: SimpleChanges) {
+    const change = changes['eventEdition'];
+
+    if (change.previousValue) {
+      this.loadAll();
+    }
   }
 
   loadAll() {
     this.eventEntryService.findEntries(this.eventEdition.id).subscribe(entries => {
       this.eventEntries = entries.body;
+      this.filterCategories();
       this.entries.emit(entries.body);
     });
+  }
+
+  filterCategories() {
+    this.filteredEntries = this.categoryToFilter
+      ? this.eventEntries.filter(entry => entry.category.shortname === this.categoryToFilter)
+      : this.eventEntries;
   }
 
   addEntry() {

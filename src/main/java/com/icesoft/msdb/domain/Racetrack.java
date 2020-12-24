@@ -55,6 +55,12 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
     @Column(name = "logo_url")
     private String logoUrl;
 
+    @Column
+    private Double latitude;
+
+    @Column
+    private Double longitude;
+
     @OneToMany(mappedBy = "racetrack")
     @JsonIgnore
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -142,6 +148,22 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
     	this.logoUrl = logoUrl;
     }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
     public Set<RacetrackLayout> getLayouts() {
         return layouts;
     }
@@ -191,6 +213,8 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
             ", name='" + getName() + "'" +
             ", location='" + getLocation() + "'" +
             ", countryCode='" + getCountryCode() + "'" +
+            ", latitude='" + getLatitude() + "'" +
+            ", longitude='" + getLongitude() + "'" +
             ", logoUrl='" + getLogoUrl() + "'" +
             '}';
     }

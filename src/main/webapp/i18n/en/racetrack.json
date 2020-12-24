@@ -6,7 +6,9 @@
         "createLabel": "Create a new Racetrack",
         "createOrEditLabel": "Create or edit a Racetrack",
         "search": "Search for Racetrack",
-        "notFound": "No racetracks found"
+        "notFound": "No racetracks found",
+        "map": "Map",
+        "list": "List"
       },
       "created": "A new Racetrack is created with identifier {{ param }}",
       "updated": "A Racetrack is updated with identifier {{ param }}",
@@ -21,7 +23,9 @@
       "location": "Location",
       "country": "Country",
       "logo": "Logo",
-      "layouts": "Layouts"
+      "layouts": "Layouts",
+      "nextEvents": "Next events",
+      "prevEvents": "Previous events"
     },
     "racetrackLayout": {
       "home": {

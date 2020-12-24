@@ -9,9 +9,9 @@ import com.icesoft.msdb.domain.enums.EventStatusType;
 public class SeriesEventsAndWinnersDTO {
 
 	private final EventEdition eventEdition;
-	private final List<EventEditionWinnersDTO> winners;
+	private final List<SessionWinnersDTO> winners;
 
-	public SeriesEventsAndWinnersDTO(EventEdition eventEdition, List<EventEditionWinnersDTO> winners) {
+	public SeriesEventsAndWinnersDTO(EventEdition eventEdition, List<SessionWinnersDTO> winners) {
 		this.eventEdition = eventEdition;
 		this.winners = winners;
 	}
@@ -26,7 +26,7 @@ public class SeriesEventsAndWinnersDTO {
 	public LocalDate getEventEditionDate() {
 		return eventEdition.getEventDate();
 	}
-	public List<EventEditionWinnersDTO> getWinners() {
+	public List<SessionWinnersDTO> getWinners() {
 		return winners;
 	}
 	public String getEventEditionPosterUrl() { return eventEdition.getPosterUrl(); }

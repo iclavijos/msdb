@@ -1,7 +1,5 @@
 package com.icesoft.msdb.service.impl;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -14,13 +12,11 @@ import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.service.SearchService;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +26,7 @@ import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventRepository;
 import com.icesoft.msdb.repository.search.EventSearchRepository;
 import com.icesoft.msdb.service.EventService;
-import com.icesoft.msdb.service.dto.EventEditionIdYearDTO;
+import com.icesoft.msdb.service.dto.EditionIdYearDTO;
 
 /**
  * Service Implementation for managing Events.
@@ -136,11 +132,11 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<EventEditionIdYearDTO> findEventEditionsIdYear(Long idEvent) {
+	public List<EditionIdYearDTO> findEventEditionsIdYear(Long idEvent) {
 		return eventEditionRepository.findEventEditionsIdYear(idEvent)
 				.stream()
-				.map(e -> new EventEditionIdYearDTO((Long)e[0], (Integer)e[1]))
-				.collect(Collectors.<EventEditionIdYearDTO> toList());
+				.map(e -> new EditionIdYearDTO((Long)e[0], (Integer)e[1]))
+				.collect(Collectors.<EditionIdYearDTO> toList());
 	}
 
 	@Override

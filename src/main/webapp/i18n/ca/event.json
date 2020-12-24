@@ -19,7 +19,8 @@
       },
       "name": "Nom",
       "description": "Descripció",
-      "editions": "Edicions"
+      "editions": "Edicions",
+      "winners": "Guanyadors"
     },
     "eventEdition": {
       "home": {
@@ -57,6 +58,7 @@
       "localTime": "Hora local",
       "driversTimes": "Temps dels pilots",
       "lapsAnalysis": "Volta a volta",
+      "poster": "Pòster",
       "status": {
         "label": "Situació",
         "ongoing": "Planificat",
@@ -83,7 +85,7 @@
         "sessionType": "Tipus de sessió",
         "awardsPoints": "Concedeix punts",
         "additionalLap": "Volta extra?",
-        "maxDuration": "Duració màxima (hores)",
+        "maxDuration": "Duració màxima (minuts)",
         "lap": "volta",
         "created": "S'ha creat una nova sessió",
         "updated": "S'ha actualitzat la sessió",
@@ -113,7 +115,8 @@
           "question": "Esteu segurs que voleu esborrar el participant '{{id}}'?"
         },
         "doubleClick": "Fes doble click en un pilot per eliminar-lo com a participant",
-        "carImage": "Imatge del vehicle"
+        "carImage": "Imatge del vehicle",
+        "driverCategory": "Categoria del pilot"
       },
       "result": {
         "home": {
@@ -157,6 +160,7 @@
         "dns": "No ha començat",
         "disqualified": "Descalificat",
         "nc": "No classificat",
+        "dnq": "No es va classificar",
         "retirementCause": "Motiu abandonament",
         "difference": "Diferència",
         "startingPosition": "Pos. sortida",
@@ -183,7 +187,13 @@
         "practice": "Entrenaments lliures",
         "qualifying": "Classificació",
         "race": "Cursa",
-        "qualifyingRace": "Cursa de classificació"
+        "qualifyingRace": "Cursa de classificació",
+        "pro": "Pro",
+        "am": "Amater",
+        "platinum": "Platí",
+        "gold": "Or",
+        "silver": "Plata",
+        "bronze": "Bronze"
       }
     }
   }

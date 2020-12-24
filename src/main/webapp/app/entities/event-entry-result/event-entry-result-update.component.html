@@ -8,6 +8,7 @@
                     {{'motorsportsDatabaseApp.eventEdition.result.startingPosition' | translate}}
                 </mat-label>
                 <mat-select formControlName="startingPosition">
+                    <mat-option value="0"> </mat-option>
                     <mat-option *ngFor="let position of positions" [value]="position">
                         {{ position }}
                     </mat-option>
@@ -26,6 +27,7 @@
                     <mat-option value="900">{{ 'motorsportsDatabaseApp.eventEdition.result.retired' | translate}}</mat-option>
                     <mat-option value="901">{{ 'motorsportsDatabaseApp.eventEdition.result.dns' | translate}}</mat-option>
                     <mat-option value="902">{{ 'motorsportsDatabaseApp.eventEdition.result.disqualified' | translate}}</mat-option>
+                    <mat-option value="903">{{ 'motorsportsDatabaseApp.eventEdition.result.dnq' | translate}}</mat-option>
                     <mat-option value="800">{{ 'motorsportsDatabaseApp.eventEdition.result.nc' | translate}}</mat-option>
                 </mat-select>
             </mat-form-field>

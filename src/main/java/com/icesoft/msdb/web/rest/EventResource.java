@@ -4,7 +4,7 @@ import com.icesoft.msdb.domain.Event;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.EventService;
-import com.icesoft.msdb.service.dto.EventEditionIdYearDTO;
+import com.icesoft.msdb.service.dto.EditionIdYearDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -31,9 +31,6 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link com.icesoft.msdb.domain.Event}.
@@ -186,7 +183,7 @@ public class EventResource {
 
     @GetMapping("/events/{id}/editionIds")
     @Timed
-    public ResponseEntity<List<EventEditionIdYearDTO>> findEventEditionsIds(@PathVariable Long id) {
+    public ResponseEntity<List<EditionIdYearDTO>> findEventEditionsIds(@PathVariable Long id) {
     	return new ResponseEntity<>(eventService.findEventEditionsIdYear(id), HttpStatus.OK);
     }
 }

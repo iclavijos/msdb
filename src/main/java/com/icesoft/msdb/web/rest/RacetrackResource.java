@@ -1,9 +1,11 @@
 package com.icesoft.msdb.web.rest;
 
+import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.RacetrackService;
+import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.dto.RacetrackLayoutSearchResultDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +32,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -269,6 +273,28 @@ public class RacetrackResource {
         log.debug("REST request to get all RacetrackLayouts");
         List<RacetrackLayout> racetrackLayouts = racetrackService.findRacetrackLayouts(id);
         return racetrackLayouts;
+    }
+
+    /**
+     * GET  /events : get next or previous events.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of events in body
+     */
+    @GetMapping("/racetracks/{id}/events")
+    @Timed
+    public ResponseEntity<List<EventEditionWinnersDTO>> getRacetrackEvents(@PathVariable Long id, @RequestParam String type, Pageable page) {
+        log.debug("REST request to get {} events to happen at racetrack {}", type, id);
+        Page<EventEditionWinnersDTO> eventsEditions = null;
+        if (type.equals("future")) {
+            eventsEditions = new PageImpl<>(racetrackService.findNextEvents(id).stream()
+                .map(eventEdition -> new EventEditionWinnersDTO(eventEdition))
+                .collect(Collectors.toList()));
+        } else {
+            eventsEditions = racetrackService.findPreviousEvents(id, page);
+        }
+
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), eventsEditions);
+        return ResponseEntity.ok().headers(headers).body(eventsEditions.getContent());
     }
 
     @GetMapping("/_search/racetrack-layouts")

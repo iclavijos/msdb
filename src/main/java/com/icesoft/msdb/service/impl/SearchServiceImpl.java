@@ -4,15 +4,14 @@ import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.icesoft.msdb.MSDBException;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -193,13 +192,26 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
     public <T> Page<T> performWildcardSearch(final ElasticsearchRepository<T, Long> searchRepo, String query, String[] fields, Pageable pageable) {
-        BoolQueryBuilder queryBuilder = new BoolQueryBuilder();
-        for(String field: fields) {
-            queryBuilder.should(
-                QueryBuilders.wildcardQuery(field, "*" + query + "*"));
-        }
+	    String[] queryTerms = query.split(" ");
+        BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+        Arrays.stream(fields).forEach(field -> {
+            Arrays.stream(queryTerms).forEach(queryTerm -> {
+                boolQueryBuilder.should(
+                    QueryBuilders.wildcardQuery(field, "*" + queryTerm + "*"));
+                boolQueryBuilder.should(
+                    QueryBuilders.matchQuery(field, queryTerm));
+            });
+        });
 
-        return searchRepo.search(queryBuilder, pageable);
+	    String queryString = Arrays.stream(queryTerms)
+            .map(value -> value + "*")
+            .collect(Collectors.joining("~2 | "));
+        SimpleQueryStringBuilder queryBuilder = new SimpleQueryStringBuilder(queryString + "~2");
+        Arrays.asList(fields).parallelStream().forEach(field -> queryBuilder.field(field));
+
+        boolQueryBuilder.should(queryBuilder);
+
+        return searchRepo.search(boolQueryBuilder, pageable);
     }
 
 	@Override

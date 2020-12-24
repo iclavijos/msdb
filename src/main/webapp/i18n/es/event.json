@@ -19,7 +19,8 @@
       },
       "name": "Nombre",
       "description": "Descripción",
-      "editions": "Ediciones"
+      "editions": "Ediciones",
+      "winners": "Ganadores"
     },
     "eventEdition": {
       "home": {
@@ -57,6 +58,7 @@
       "localTime": "Hora local",
       "driversTimes": "Tiempos de los pilotos",
       "lapsAnalysis": "Vuelta a vuelta",
+      "poster": "Póster",
       "status": {
         "label": "Situación",
         "ongoing": "Planificado",
@@ -83,7 +85,7 @@
         "sessionType": "Tipo de sesión",
         "awardsPoints": "Concede puntos",
         "additionalLap": "¿Vuelta extra?",
-        "maxDuration": "Duración máxima (horas)",
+        "maxDuration": "Duración máxima (minutos)",
         "lap": "vuelta",
         "created": "Se ha creado una nueva sesión",
         "updated": "Se ha actualizado la sesión",
@@ -113,7 +115,8 @@
           "question": "¿Estás seguro que quieres eliminar al participante '{{id}}'?"
         },
         "doubleClick": "Haz doble click en un piloto para eliminarlo como participante",
-        "carImage": "Imagen del vehículo"
+        "carImage": "Imagen del vehículo",
+        "driverCategory": "Categoría del piloto"
       },
       "result": {
         "home": {
@@ -157,6 +160,7 @@
         "dns": "No ha empezado",
         "disqualified": "Descalificado",
         "nc": "No clasificado",
+        "dnq": "No se clasificó",
         "retirementCause": "Motivo abandono",
         "difference": "Diferencia",
         "startingPosition": "Pos. salida",
@@ -183,7 +187,13 @@
         "practice": "Entrenamientos libres",
         "qualifying": "Clasificación",
         "race": "Carrera",
-        "qualifyingRace": "Carrera de clasificación"
+        "qualifyingRace": "Carrera de clasificación",
+        "pro": "Pro",
+        "am": "Amater",
+        "platinum": "Platino",
+        "gold": "Oro",
+        "silver": "Plata",
+        "bronze": "Bronce"
       }
     }
   }

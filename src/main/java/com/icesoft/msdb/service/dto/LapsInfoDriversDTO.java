@@ -11,6 +11,11 @@ public class LapsInfoDriversDTO {
         this.raceNumber = entry.getRaceNumber();
     }
 
+    public LapsInfoDriversDTO(String raceNumber, String driversNames) {
+        this.raceNumber = raceNumber;
+        this.driversNames = driversNames;
+    }
+
     public String getDriversNames() {
         return driversNames;
     }

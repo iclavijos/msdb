@@ -65,10 +65,12 @@ module.exports = (options) => ({
             }
         }),
         new CopyWebpackPlugin([
-            { from: './node_modules/swagger-ui/dist/swagger-ui.js', to: 'swagger-ui/dist/swagger-ui.js' },
+            { from: './node_modules/swagger-ui-dist/*.{js,css,html,png}', to: 'swagger-ui', flatten: true, globOptions: { ignore: ['**/index.html'] }},
+            { from: './node_modules/axios/dist/axios.min.js', to: 'swagger-ui' },
             { from: './src/main/webapp/swagger-ui/', to: 'swagger-ui' },
             { from: './src/main/webapp/content/', to: 'content' },
             { from: './src/main/webapp/content/images', to: 'images' },
+            { from: './node_modules/leaflet/dist/images', to: 'assets'},
             { from: './src/main/webapp/content/html', to: 'html' },
             { from: './src/main/webapp/favicon.ico', to: 'favicon.ico' },
             { from: './src/main/webapp/manifest.webapp', to: 'manifest.webapp' },

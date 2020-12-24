@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class TimeMaskPipe implements PipeTransform {
   constructor() {}
 
-  transform(value: any, includeMillis = true, handleHours?: boolean): string {
+  transform(value: any, includeMillis = true, tensOfMillis = true, handleHours = true): string {
     if (!value) {
       return;
     }
@@ -15,8 +15,10 @@ export class TimeMaskPipe implements PipeTransform {
 
     const timeMillis = Number(value);
 
-    const millis = timeMillis % 10000;
-    let seconds = Math.floor(timeMillis / 10000);
+    const millisDivider = tensOfMillis ? 10000 : 1000;
+
+    const millis = timeMillis % millisDivider;
+    let seconds = Math.floor(timeMillis / millisDivider);
     let minutes = Math.floor(seconds / 60);
     seconds = seconds % 60;
 
@@ -49,10 +51,10 @@ export class TimeMaskPipe implements PipeTransform {
     if (includeMillis) {
       if (millis > 0) {
         result += '.';
-        const pad = '0000';
+        const pad = tensOfMillis ? '0000' : '000';
         result += pad.substring(0, pad.length - millis.toFixed(0).length) + millis.toFixed(0);
       } else {
-        result += '.0000';
+        result += tensOfMillis ? '.0000' : '.000';
       }
     }
     return result;

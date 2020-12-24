@@ -1,3 +1,4 @@
+import { Title } from '@angular/platform-browser';
 import { Component, OnInit, Renderer2, Inject, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -55,7 +56,7 @@ export class EventEditionDetailComponent implements OnInit {
   sessionTypes = SessionType;
   durationTypes = DurationType;
   filterCategory: string;
-  editions: any[];
+  editions = [];
   navigationIds = null;
   showPoints = false;
   driversBestTimes: any;
@@ -84,12 +85,14 @@ export class EventEditionDetailComponent implements OnInit {
     private router: Router,
     private lightbox: Lightbox,
     private renderer: Renderer2,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private titleService: Title
   ) {}
 
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ eventEdition }) => {
       this.eventEdition = eventEdition;
+      this.titleService.setTitle(eventEdition.longEventName);
       if (eventEdition.seriesEditions) {
         this.eventEditionService.findPrevNextInSeries(eventEdition.id).subscribe(res => (this.navigationIds = res));
       }
@@ -110,13 +113,13 @@ export class EventEditionDetailComponent implements OnInit {
         const layout = {
           src: this.eventEdition.trackLayout.layoutImageUrl,
           caption: '',
-          thumb: this.eventEdition.trackLayout.layoutImageUrl.replace('/upload', '/upload/c_thumb,w_200,g_face')
+          thumb: this.eventEdition.trackLayout.layoutImageUrl.replace('/upload', '/upload/c_thumb,w_200')
         };
         this.posLayout = this.lightboxAlbum.push(layout);
       }
 
       if (this.eventEdition.posterUrl) {
-        const afficheThumb = this.eventEdition.posterUrl.replace('/upload', '/upload/c_thumb,w_200,g_face');
+        const afficheThumb = this.eventEdition.posterUrl.replace('/upload', '/upload/c_thumb,w_200');
         const affiche = {
           src: this.eventEdition.posterUrl,
           caption: '',
@@ -155,6 +158,10 @@ export class EventEditionDetailComponent implements OnInit {
     this.eventEntries = newEntries;
   }
 
+  updateShowPoints(showPoints) {
+    this.showPoints = showPoints;
+  }
+
   jumpToEdition(id) {
     if (!id) {
       return false;
@@ -185,29 +192,16 @@ export class EventEditionDetailComponent implements OnInit {
       if (newDate) {
         this.eventEditionService
           .rescheduleEvent(this.eventEdition.id, moment.tz(newDate, this.eventEdition.trackLayout.racetrack.timeZone))
-          .subscribe(event => {
-            //             const diffDays = event.body.eventDate.diff(this.eventEdition.eventDate, 'days');
-            //             const clonedSessions = [];
-            //             this.eventSessionsComponent.eventSessions.forEach(val => clonedSessions.push(Object.assign({}, val)));
-            //             for (const session of clonedSessions) {
-            //               session.sessionStartTime = session.sessionStartTime.add(diffDays, 'days');
-            //             }
-            //             this.eventSessionsComponent.eventSessions = clonedSessions;
-            this.eventEdition = event.body;
-          });
+          .subscribe(event => (this.eventEdition = event.body));
       }
     });
   }
 
   copyEntries() {
-    const dialogRef = this.dialog.open(EventEditionCopyEntriesDialogComponent, {
+    this.dialog.open(EventEditionCopyEntriesDialogComponent, {
       data: {
         targetEvent: this.eventEdition
       }
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      // TODO: How to force reload of entries?
     });
   }
 }

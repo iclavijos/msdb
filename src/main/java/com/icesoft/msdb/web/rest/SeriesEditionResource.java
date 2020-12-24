@@ -11,7 +11,6 @@ import com.icesoft.msdb.service.dto.*;
 import com.icesoft.msdb.service.impl.CacheHandler;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -26,16 +25,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -175,8 +173,8 @@ public class SeriesEditionResource {
     @GetMapping("/series-editions/{id}/standings/drivers")
     @Timed
     @Cacheable(cacheNames="driversStandingsCache", key="#id")
-    public ResponseEntity<List<DriverPointsDTO>> getSeriesDriversStandings(@PathVariable Long id) {
-    	List<DriverPointsDTO> result = resultsService.getDriversStandings(id);
+    public ResponseEntity<List<ParticipantPointsDTO>> getSeriesDriversStandings(@PathVariable Long id) {
+    	List<ParticipantPointsDTO> result = resultsService.getDriversStandings(id);
 
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -184,8 +182,8 @@ public class SeriesEditionResource {
     @GetMapping("/series-editions/{id}/standings/teams")
     @Timed
     @Cacheable(cacheNames="teamsStandingsCache", key="#id")
-    public ResponseEntity<List<TeamPointsDTO>> getSeriesTeamsStandings(@PathVariable Long id) {
-    	List<TeamPointsDTO> result = resultsService.getTeamsStandings(id);
+    public ResponseEntity<List<ParticipantPointsDTO>> getSeriesTeamsStandings(@PathVariable Long id) {
+    	List<ParticipantPointsDTO> result = resultsService.getTeamsStandings(id);
 
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -202,18 +200,19 @@ public class SeriesEditionResource {
     @GetMapping({"/series-editions/{id}/points", "/series-editions/{id}/points/{category}"})
     @Timed
     @Cacheable(cacheNames="pointRaceByRace")
-    public ResponseEntity<Object[][]> getSeriesPointsRaceByRace(@PathVariable Long id, @PathVariable(required = false) String category) {
-    	PointsRaceByRace points = resultsService.getPointsRaceByRace(id);
-    	List<DriverPointsDTO> standings = resultsService.getDriversStandings(id);
-    	return new ResponseEntity<>(points.getResultsMatrix(standings, category), HttpStatus.OK);
+    public ResponseEntity<List<List<?>>> getSeriesPointsRaceByRace(@PathVariable Long id, @PathVariable(required = false) String category) {
+        return new ResponseEntity<>(
+            resultsService.getPointsRaceByRace(id, category),
+            HttpStatus.OK);
     }
 
     @GetMapping({"/series-editions/{id}/results", "/series-editions/{id}/results/{category}"})
     @Timed
     @Cacheable(cacheNames="resultsRaceByRace")
-    public ResponseEntity<String[][]> getSeriesResultsRaceByRace(@PathVariable Long id, @PathVariable(required = false) String category) {
-    	String[][] result = resultsService.getResultsRaceByRace(id, category);
-    	return new ResponseEntity<>(result, HttpStatus.OK);
+    public ResponseEntity<List<List<?>>> getSeriesResultsRaceByRace(@PathVariable Long id, @PathVariable(required = false) String category) {
+    	return new ResponseEntity<>(
+    	    resultsService.getResultsRaceByRace(id, category),
+            HttpStatus.OK);
     }
 
     @GetMapping("/series-editions/{id}/events")
@@ -273,7 +272,7 @@ public class SeriesEditionResource {
     			log.debug("Statistics updated");
     	});
 
-        statsService.updateSeriesChamps(seriesEdition);
+        statsService.updateSeriesDriversChampions(seriesEdition);
 
         return CompletableFuture.completedFuture(ResponseEntity.ok().headers(
             HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, id.toString())).build());
@@ -334,5 +333,29 @@ public class SeriesEditionResource {
     @Transactional(readOnly = true)
     public ResponseEntity<List<SeriesEdition>> getActiveSeriesEditions() {
         return ResponseEntity.ok(seriesEditionRepository.findDistinctSeriesEditionByEventsEventDateAfter(LocalDate.now(ZoneId.of("UTC"))));
+    }
+
+    @GetMapping("/series-editions/{id}/prevNextEdition")
+    @Timed
+    @Transactional(readOnly=true)
+    public EventsSeriesNavigationDTO getPrevNextEditionIds(@PathVariable Long id) {
+        SeriesEdition seriesEdition = seriesEditionRepository.findById(id).orElseThrow(
+            () -> new MSDBException("Invalid series edition id")
+        );
+        List<SeriesEdition> tmpList = seriesEditionRepository.findBySeriesId(seriesEdition.getSeries().getId(), Pageable.unpaged()).getContent();
+
+        int pos = tmpList.indexOf(
+            tmpList.stream().filter(se -> se.getId().equals(seriesEdition.getId())).findFirst().get()
+        );
+        Optional<SeriesEdition> prev = Optional.ofNullable(pos > 0 ? tmpList.get(pos - 1) : null);
+        Optional<SeriesEdition> next = Optional.ofNullable(pos < tmpList.size() - 1 ? tmpList.get(pos + 1) : null);
+
+        EventsSeriesNavigationDTO result = new EventsSeriesNavigationDTO(
+            prev.map(se -> se.getId()).orElse(null),
+            next.map(se -> se.getId()).orElse(null),
+            prev.map(se -> se.getEditionName()).orElse(null),
+            next.map(se -> se.getEditionName()).orElse(null)
+        );
+        return result;
     }
 }

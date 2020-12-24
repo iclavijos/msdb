@@ -27,10 +27,13 @@ public class DriverRaceStatisticsDTO {
     }
 
     private List<LapInfo> laps;
+    private String raceNumber;
     private String driverName;
+    private String category;
     private Long best5Avg;
     private Long best10Avg;
     private Long best20Avg;
+    private Long best50Avg;
     private Long average110;
     private Long bestS1;
     private Long bestS2;
@@ -41,18 +44,25 @@ public class DriverRaceStatisticsDTO {
 
     public DriverRaceStatisticsDTO(List<LapInfo> driverLaps) {
         this.laps = driverLaps;
+        this.raceNumber = driverLaps.get(0).getRaceNumber();
         this.driverName = driverLaps.get(0).getDriverName();
+        this.category = driverLaps.get(0).getCategory();
         this.best5Avg = calculateAverage(5);
         this.best10Avg = calculateAverage(10);
         this.best20Avg = calculateAverage(20);
+        this.best50Avg = calculateAverage(50);
         calculateBestSectors();
         calculateAverageStints();
         calculateAverage110();
     }
 
+    public String getRaceNumber() { return raceNumber; }
+
     public String getDriverName() {
         return driverName;
     }
+
+    public String getCategory() { return category; }
 
     public Long getBest5Avg() {
         return best5Avg;
@@ -65,6 +75,8 @@ public class DriverRaceStatisticsDTO {
     public Long getBest20Avg() {
         return best20Avg;
     }
+
+    public Long getBest50Avg() { return best50Avg; }
 
     public List<Long> getAveragePerStint() {
         return averagePerStint;
@@ -107,6 +119,9 @@ public class DriverRaceStatisticsDTO {
     }
 
     private Long calculateAverage(int numberOfLaps) {
+        if (laps.size() < numberOfLaps) {
+            return 0L;
+        }
         OptionalDouble average = laps.parallelStream().limit(numberOfLaps).mapToLong(li -> li.getLapTime()).average();
         Double res = average.getAsDouble();
         return res.longValue();

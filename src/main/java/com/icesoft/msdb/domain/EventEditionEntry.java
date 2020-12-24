@@ -4,21 +4,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -69,16 +57,8 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
     @Column(name = "team_name", length = 100, nullable = false)
     private String entryName;
 
-    @ManyToMany(fetch=FetchType.EAGER)
-    @Fetch(FetchMode.SELECT)
-    @JoinTable(
-        name="DRIVERS_ENTRY",
-        joinColumns=@JoinColumn(name="entry_id", referencedColumnName="ID"),
-        inverseJoinColumns=@JoinColumn(name="driver_id", referencedColumnName="ID"))
-    private List<Driver> drivers;
-
-    @Column(name = "rookie")
-    private Boolean rookie = false;
+    @OneToMany(mappedBy = "eventEntry", fetch = FetchType.EAGER)
+    private Set<DriverEntry> drivers;
 
     @ManyToOne
     private Team team;
@@ -144,24 +124,11 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
         this.entryName = entryName;
     }
 
-    public Boolean getRookie() {
-		return rookie;
-	}
-
-	public void setRookie(Boolean rookie) {
-		this.rookie = rookie;
-	}
-
-	public EventEditionEntry rookie(Boolean rookie) {
-		this.rookie = rookie;
-		return this;
-	}
-
-    public List<Driver> getDrivers() {
+    public Set<DriverEntry> getDrivers() {
         return drivers;
     }
 
-    public EventEditionEntry drivers(List<Driver> drivers) {
+    public EventEditionEntry drivers(Set<DriverEntry> drivers) {
     	if (this.drivers == null) {
     		this.drivers = drivers;
     		return this;
@@ -173,7 +140,7 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
         return this;
     }
 
-    public void setDrivers(List<Driver> drivers) {
+    public void setDrivers(Set<DriverEntry> drivers) {
     	if (this.drivers == null) {
     		this.drivers = drivers;
     		return;
@@ -305,9 +272,9 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
 		StringBuilder builder = new StringBuilder();
 		int i = 0;
 		if (drivers != null) {
-			for(Driver driver: drivers) {
-				builder.append(driver.getName().toUpperCase().charAt(0))
-					.append(". ").append(driver.getSurname());
+			for(DriverEntry driver: drivers) {
+				builder.append(driver.getDriver().getName().toUpperCase().charAt(0))
+					.append(". ").append(driver.getDriver().getSurname());
 				if (++i < drivers.size()) {
 					builder.append(" / ");
 				}
@@ -369,8 +336,8 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
 
     private String driversToString() {
     	StringBuffer buff = new StringBuffer();
-    	for(Driver driver: drivers) {
-    		buff.append(driver.getFullName()).append(", ");
+    	for(DriverEntry driver: drivers) {
+    		buff.append(driver.getDriver().getFullName()).append(", ");
     	}
     	return buff.toString();
     }

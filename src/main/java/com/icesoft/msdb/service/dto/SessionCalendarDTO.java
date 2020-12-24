@@ -15,8 +15,14 @@ public class SessionCalendarDTO {
 	private final String[] seriesLogoUrl;
 	private final String status;
     private final Integer seriesRelevance;
+    private final String racetrack;
+    private final String racetrackLayoutUrl;
 
-	public SessionCalendarDTO(Long id, String seriesName, String eventName, String sessionName, int sessionType, ZonedDateTime startTime, ZonedDateTime endTime, String status, Integer seriesRelevance, String... seriesLogoUrl) {
+	public SessionCalendarDTO(
+	    Long id, String seriesName, String eventName, String sessionName, int sessionType,
+        ZonedDateTime startTime, ZonedDateTime endTime, String status, Integer seriesRelevance,
+        String racetrack, String racetrackLayoutUrl,
+        String... seriesLogoUrl) {
 		this.id = id;
 		this.seriesName = seriesName;
 		this.eventName = eventName;
@@ -27,6 +33,8 @@ public class SessionCalendarDTO {
 		this.seriesLogoUrl = seriesLogoUrl;
 		this.status = status;
 		this.seriesRelevance = seriesRelevance;
+		this.racetrack = racetrack;
+		this.racetrackLayoutUrl = racetrackLayoutUrl;
 	}
 
 	public Long getId() {
@@ -64,4 +72,8 @@ public class SessionCalendarDTO {
     }
 
     public Integer getSeriesRelevance() { return seriesRelevance; }
+
+    public String getRacetrack() { return racetrack; }
+
+    public String getRacetrackLayoutUrl() { return racetrackLayoutUrl; }
 }

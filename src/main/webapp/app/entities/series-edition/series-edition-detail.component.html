@@ -6,14 +6,30 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-danger">
-                        <h3 class="card-title">{{ seriesEdition.editionName }}</h3>
+                        <div class="row">
+                            <div class="col-9">
+                                <h3 class="card-title">{{ seriesEdition.editionName }}</h3>
+                            </div>
+                            <div class="col-md-auto">
+                                <div class="row">
+                                    <fa-icon class="navigation-arrows" *ngIf="previousEditionId" [icon]="'angle-double-left'" size="2x" (click)="gotoPrevious()"></fa-icon>
+                                    <div class="select-year-panel">
+                                        <mat-select id="yearSelect" (selectionChange)="jumpToEdition($event.value)">
+                                            <mat-option></mat-option>
+                                            <mat-option *ngFor="let edition of editions" [value]="edition.id">{{ edition.editionYear }}</mat-option>
+                                        </mat-select>
+                                    </div>
+                                    <fa-icon class="navigation-arrows" *ngIf="nextEditionId" [icon]="'angle-double-right'" size="2x" (click)="gotoNext()"></fa-icon>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
                                 <mat-tab-group dynamicHeight mat-stretch-tabs>
                                     <mat-tab label="{{'global.menu.calendar' | translate }}">
-                                        <div class="row">
+                                        <div class="row row-margin">
                                             <div class="col-2 text-left">
                                                 <span style="cursor: pointer;">
                                                     <button mat-button (click)="showCalendarSubscriptionDialog()">
@@ -37,7 +53,7 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row row-margin">
                                             <div class="col-12 text-right">
                                                 <mat-button-toggle-group #viewType="matButtonToggleGroup" value="grid">
                                                     <mat-button-toggle value="grid" aria-label="Grid view">
@@ -52,13 +68,13 @@
                                                 </mat-button-toggle-group>
                                             </div>
                                         </div>
-                                        <div class="row" *ngIf="viewType.value === 'grid'">
+                                        <div class="row row-margin" *ngIf="viewType.value === 'grid'">
                                             <div *ngTemplateOutlet="gridViewTemplate"></div>
                                         </div>
-                                        <div class="row" *ngIf="viewType.value === 'gridInfo'">
+                                        <div class="row row-margin" *ngIf="viewType.value === 'gridInfo'">
                                             <div *ngTemplateOutlet="gridInfoViewTemplate"></div>
                                         </div>
-                                        <div class="row" *ngIf="viewType.value === 'list'">
+                                        <div class="row row-margin" *ngIf="viewType.value === 'list'">
                                             <div *ngTemplateOutlet="listViewTemplate"></div>
                                         </div>
                                     </mat-tab>

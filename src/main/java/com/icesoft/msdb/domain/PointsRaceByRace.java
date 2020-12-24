@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.icesoft.msdb.domain.enums.SessionType;
-import com.icesoft.msdb.service.dto.DriverPointsDTO;
+import com.icesoft.msdb.service.dto.ParticipantPointsDTO;
 import org.apache.commons.lang3.StringUtils;
 
+@Deprecated
 public class PointsRaceByRace {
 
 	private class DriverPoints {
@@ -103,12 +103,12 @@ public class PointsRaceByRace {
 		sessionPoints.addDriverPoints(driverPoints);
 	}
 
-	public Object[][] getResultsMatrix(List<DriverPointsDTO> standings, String category) {
+	public Object[][] getResultsMatrix(List<ParticipantPointsDTO> standings, String category) {
 		int numRaces = 0;
 		for(EventPoints ep: seriesPoints) {
 			numRaces += ep.getPoints().size();
 		}
-        List<DriverPointsDTO> driversWithPoints;
+        List<ParticipantPointsDTO> driversWithPoints;
 		if (standings.size() > 0 && standings.get(0).getCategory() != null && StringUtils.isNotBlank(category)) {
             driversWithPoints = standings.stream().filter(s -> s.getCategory().equals(category)).collect(Collectors.toList());
         } else {
@@ -131,8 +131,8 @@ public class PointsRaceByRace {
 		}
 
 		int indexDrivers = 1;
-		for(DriverPointsDTO driver: driversWithPoints) {
-			result[indexDrivers][0] = driver.getDriverName();
+		for(ParticipantPointsDTO driver: driversWithPoints) {
+			result[indexDrivers][0] = driver.getParticipantName();
 			result[indexDrivers][numRaces + 1] = driver.getPoints();
 
 			int eventIndex = 1;
@@ -140,7 +140,7 @@ public class PointsRaceByRace {
 				for(SessionPoints sp: ep.getPoints()) {
 					Optional<DriverPoints> driverPoints = sp.getPoints().stream()
                         .filter(dp -> dp.getCategory() == null ? true : dp.getCategory().equals(category))
-                        .filter(dp -> dp.getDriverName().equals(driver.getDriverName())).findFirst();
+                        .filter(dp -> dp.getDriverName().equals(driver.getParticipantName())).findFirst();
 					if (driverPoints.isPresent()) {
 						Float points = driverPoints.get().getPoints();
 						if (points % 1.0 != 0) {

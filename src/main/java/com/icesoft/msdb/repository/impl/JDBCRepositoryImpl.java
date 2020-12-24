@@ -10,9 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.icesoft.msdb.service.dto.DriverPointsDTO;
+import com.icesoft.msdb.service.dto.ParticipantPointsDTO;
 import com.icesoft.msdb.service.dto.ManufacturerPointsDTO;
-import com.icesoft.msdb.service.dto.TeamPointsDTO;
 
 @Repository
 public class JDBCRepositoryImpl {
@@ -77,21 +76,21 @@ public class JDBCRepositoryImpl {
         }
     }
 
-	public List<DriverPointsDTO> getDriversStandings(Long seriesId) {
+	public List<ParticipantPointsDTO> getDriversStandings(Long seriesId) {
 
-		List<DriverPointsDTO> result = jdbcTemplate.query("select d.id driverId, concat(d.name, ' ', d.surname) driverName, coalesce(dcs.points, 0) points, dcs.category category " +
+		List<ParticipantPointsDTO> result = jdbcTemplate.query("select d.id driverId, concat(d.name, ' ', d.surname) driverName, coalesce(dcs.points, 0) points, dcs.category category " +
                 "from drivers_classification_series dcs join driver d on d.id = dcs.driverId " +
                 "where dcs.seriesId = ?",
-				new Object[] {seriesId}, (rs, rowNum) -> new DriverPointsDTO(null, rs.getLong("driverId"), rs.getString("driverName"), rs.getFloat("points"), rs.getString("category")));
+				new Object[] {seriesId}, (rs, rowNum) -> new ParticipantPointsDTO(null, rs.getLong("driverId"), rs.getString("driverName"), rs.getFloat("points"), rs.getString("category")));
 
 		return result;
 	}
 
-	public List<TeamPointsDTO> getTeamsStandings(Long seriesId) {
-		List<TeamPointsDTO> result = jdbcTemplate.query("select t.id teamId, t.name teamName, coalesce(tcs.points, 0) points, tcs.category category " +
+	public List<ParticipantPointsDTO> getTeamsStandings(Long seriesId) {
+		List<ParticipantPointsDTO> result = jdbcTemplate.query("select t.id teamId, t.name teamName, coalesce(tcs.points, 0) points, tcs.category category " +
                 "from team t left join teams_classification_series tcs on t.id = tcs.teamId " +
                 "where tcs.series_edition_id = ?",
-				new Object[] {seriesId}, (rs, rowNum) -> new TeamPointsDTO(rs.getLong("teamId"), rs.getString("teamName"), rs.getFloat("points"), rs.getString("category")));
+				new Object[] {seriesId}, (rs, rowNum) -> new ParticipantPointsDTO(rs.getLong("teamId"), rs.getString("teamName"), rs.getFloat("points"), rs.getString("category")));
 
 		return result;
 	}

@@ -2,33 +2,32 @@ package com.icesoft.msdb.service.impl;
 
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
-import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.TimeZone;
+import java.util.stream.Collectors;
 
+import com.google.maps.model.Geometry;
+import com.icesoft.msdb.domain.*;
+import com.icesoft.msdb.repository.*;
 import com.icesoft.msdb.service.SearchService;
-import com.icesoft.msdb.service.TimeZoneService;
+import com.icesoft.msdb.service.GeoLocationService;
+import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
+import com.icesoft.msdb.service.dto.SessionWinnersDTO;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.maps.GeoApiContext;
-import com.google.maps.GeocodingApi;
-import com.google.maps.TimeZoneApi;
-import com.google.maps.errors.ApiException;
-import com.google.maps.model.GeocodingResult;
 import com.icesoft.msdb.MSDBException;
-import com.icesoft.msdb.domain.Racetrack;
-import com.icesoft.msdb.domain.RacetrackLayout;
-import com.icesoft.msdb.repository.RacetrackLayoutRepository;
-import com.icesoft.msdb.repository.RacetrackRepository;
 import com.icesoft.msdb.repository.search.RacetrackLayoutSearchRepository;
 import com.icesoft.msdb.repository.search.RacetrackSearchRepository;
 import com.icesoft.msdb.service.CDNService;
@@ -50,20 +49,30 @@ public class RacetrackServiceImpl implements RacetrackService {
     private final RacetrackLayoutSearchRepository racetrackLayoutSearchRepo;
     private final SearchService searchService;
 
+    private final EventEditionRepository eventEditionRepository;
+    private final EventSessionRepository eventSessionRepository;
+    private final EventEntryResultRepository eventEntryResultRepository;
+
     private final CDNService cdnService;
-    private final TimeZoneService timeZoneService;
+    private final GeoLocationService geoLocationService;
 
     public RacetrackServiceImpl(RacetrackRepository racetrackRepository,
-    		RacetrackSearchRepository racetrackSearchRepo,
-    		RacetrackLayoutRepository racetrackLayoutRepository,
-    		RacetrackLayoutSearchRepository racetrackLayoutSearchRepo,
-    		CDNService cdnService, TimeZoneService timeZoneService, SearchService searchService) {
+                                RacetrackSearchRepository racetrackSearchRepo,
+                                RacetrackLayoutRepository racetrackLayoutRepository,
+                                RacetrackLayoutSearchRepository racetrackLayoutSearchRepo,
+                                EventEditionRepository eventEditionRepository,
+                                EventSessionRepository eventSessionRepository,
+                                EventEntryResultRepository eventEntryResultRepository,
+                                CDNService cdnService, GeoLocationService geoLocationService, SearchService searchService) {
         this.racetrackRepository = racetrackRepository;
         this.racetrackSearchRepo = racetrackSearchRepo;
         this.racetrackLayoutRepository = racetrackLayoutRepository;
         this.racetrackLayoutSearchRepo = racetrackLayoutSearchRepo;
+        this.eventEditionRepository = eventEditionRepository;
+        this.eventSessionRepository = eventSessionRepository;
+        this.eventEntryResultRepository = eventEntryResultRepository;
         this.cdnService = cdnService;
-        this.timeZoneService = timeZoneService;
+        this.geoLocationService = geoLocationService;
         this.searchService = searchService;
     }
 
@@ -77,7 +86,12 @@ public class RacetrackServiceImpl implements RacetrackService {
     public Racetrack save(Racetrack racetrack) {
         log.debug("Request to save Racetrack : {}", racetrack);
 
-        racetrack.setTimeZone(timeZoneService.getTimeZone(racetrack.getLocation(), racetrack.getCountryCode()));
+        if (racetrack.getLongitude() == null || racetrack.getLongitude() == null || racetrack.getTimeZone() == null) {
+            Geometry geometry = geoLocationService.getGeolocationInformation(racetrack);
+            racetrack.setLatitude(geometry.location.lat);
+            racetrack.setLongitude(geometry.location.lng);
+            racetrack.setTimeZone(geoLocationService.getTimeZone(geometry));
+        }
 
         if (racetrack.getLogo() != null) {
             byte[] logo = racetrack.getLogo();
@@ -208,5 +222,44 @@ public class RacetrackServiceImpl implements RacetrackService {
     @Override
     public List<RacetrackLayout> findRacetrackLayouts(Long id) {
     	return racetrackLayoutRepository.findByRacetrackIdOrderByActiveDescYearFirstUseDescNameAsc(id);
+    }
+
+    @Override
+    public List<EventEdition> findNextEvents(Long id) {
+        LocalDate today = LocalDate.now().plusDays(1);
+        LocalDate plusOneYear = today.plusYears(1);
+
+        return eventEditionRepository.findEventsAtRacetrack(id, today, plusOneYear);
+    }
+
+    @Override
+    public Page<EventEditionWinnersDTO> findPreviousEvents(Long id, Pageable pageable) {
+        LocalDate today = LocalDate.now();
+
+        Page<EventEdition> events = eventEditionRepository.findPreviousEventsAtRacetrack(id, today, pageable);
+        List<EventEditionWinnersDTO> eventsWinners = events.stream()
+            .map(event -> {
+                EventEditionWinnersDTO eventWinners = new EventEditionWinnersDTO(event);
+                eventSessionRepository.findRacesInEvent(event).stream().forEach(eventSession -> {
+                    List<EventEntryResult> results = eventEntryResultRepository.findBySessionIdOrderByFinalPositionAsc(eventSession.getId());
+                    SessionWinnersDTO winnersDTO = new SessionWinnersDTO(eventSession.getName());
+                    if (results.size() > 0) {
+                        Map<Category, List<EventEntryResult>> resultsPerCategory = results.stream()
+                            .collect(Collectors.groupingBy(result -> result.getEntry().getCategory()));
+
+                        resultsPerCategory.keySet().stream()
+                            .map(cat -> resultsPerCategory.get(cat).stream()
+                                .sorted(Comparator.comparing(EventEntryResult::getFinalPosition))
+                                .findFirst().get()
+                            ).sorted(Comparator.comparing(EventEntryResult::getFinalPosition))
+                            .forEach(result -> winnersDTO.addWinners(result.getEntry().getCategory().getShortname(), result.getEntry()));
+                    }
+                    eventWinners.addSessionWinners(winnersDTO);
+                });
+                return eventWinners;
+            })
+            .collect(Collectors.toList());
+
+        return new PageImpl<>(eventsWinners, pageable, events.getTotalElements());
     }
 }

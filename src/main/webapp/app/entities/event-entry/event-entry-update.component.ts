@@ -1,10 +1,10 @@
-import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Inject, ElementRef } from '@angular/core';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FormBuilder, Validators, FormGroup, FormControl, ValidationErrors } from '@angular/forms';
+import { FormBuilder, Validators, FormGroup, FormControl, FormArray, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { switchMap, debounceTime, map } from 'rxjs/operators';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 import { IEventEntry } from 'app/shared/model/event-entry.model';
@@ -21,12 +21,14 @@ import { ITyreProvider } from 'app/shared/model/tyre-provider.model';
 import { TyreProviderService } from 'app/entities/tyre-provider/tyre-provider.service';
 import { IFuelProvider } from 'app/shared/model/fuel-provider.model';
 import { FuelProviderService } from 'app/entities/fuel-provider/fuel-provider.service';
+import { DriverCategory } from 'app/shared/enumerations/driverCategory.enum';
 
 import { MatAutocompleteSelectedEvent } from '@angular/material';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
-  templateUrl: './event-entry-update.component.html'
+  templateUrl: './event-entry-update.component.html',
+  styleUrls: ['event-entry.scss']
 })
 export class EventEntryUpdateComponent implements OnInit {
   editForm: FormGroup;
@@ -41,10 +43,10 @@ export class EventEntryUpdateComponent implements OnInit {
   tyresOptions: Observable<ITyreProvider[]>;
   fuelOptions: Observable<IFuelProvider[]>;
 
-  selectedDrivers: IDriver[] = [];
+  driversSearchTextChanged = new Subject<string>();
 
-  @ViewChild('driverInput', { static: false }) driversInput: ElementRef;
-  driverCtrl = new FormControl();
+  categoryTypes = DriverCategory;
+  categoryValues = DriverCategory;
 
   constructor(
     protected dataUtils: JhiDataUtils,
@@ -64,10 +66,18 @@ export class EventEntryUpdateComponent implements OnInit {
   ) {
     this.eventEntry = data.eventEntry;
     this.eventEntry.eventEdition = data.eventEdition;
+    this.eventEntry.eventEdition.allowedCategories = data.eventEdition.allowedCategories.sort((a, b) => a.name.localeCompare(b.name));
     this.editForm = this.fb.group({
       id: [],
       raceNumber: [null, [Validators.required]],
       entryName: [null, [Validators.required, Validators.maxLength(100)]],
+      driversEntry: this.fb.array([
+        this.fb.group({
+          driver: '',
+          rookie: false,
+          category: 0
+        })
+      ]),
       team: [],
       operatedBy: [],
       chassis: [null, [Validators.required]],
@@ -85,19 +95,19 @@ export class EventEntryUpdateComponent implements OnInit {
   ngOnInit() {
     this.isSaving = false;
 
+    this.displayFnDrivers = this.displayFnDrivers.bind(this);
     this.displayFnTeams = this.displayFnTeams.bind(this);
     this.displayFnChassis = this.displayFnChassis.bind(this);
     this.displayFnEngines = this.displayFnEngines.bind(this);
     this.displayFnTyres = this.displayFnTyres.bind(this);
     this.displayFnFuel = this.displayFnFuel.bind(this);
 
-    this.driversOptions = this.driverCtrl.valueChanges.pipe(
+    this.driversOptions = this.driversSearchTextChanged.pipe(
       debounceTime(300),
       switchMap(value => {
         if (typeof value === 'string') {
           return this.driverService.query({
-            query: value,
-            sort: ['surname,asc', 'name,asc']
+            query: value
           });
         } else {
           return of(null);
@@ -111,8 +121,7 @@ export class EventEntryUpdateComponent implements OnInit {
       switchMap(value => {
         if (typeof value === 'string') {
           return this.teamService.query({
-            query: value,
-            sort: ['name,asc']
+            query: value
           });
         } else {
           return of(null);
@@ -126,8 +135,7 @@ export class EventEntryUpdateComponent implements OnInit {
       switchMap(value => {
         if (typeof value === 'string') {
           return this.teamService.query({
-            query: value,
-            sort: ['name,asc']
+            query: value
           });
         } else {
           return of(null);
@@ -141,8 +149,7 @@ export class EventEntryUpdateComponent implements OnInit {
       switchMap(value => {
         if (typeof value === 'string') {
           return this.engineService.query({
-            query: value,
-            sort: ['name,asc', 'manufacturer,asc']
+            query: value
           });
         } else {
           return of(null);
@@ -156,8 +163,7 @@ export class EventEntryUpdateComponent implements OnInit {
       switchMap(value => {
         if (typeof value === 'string') {
           return this.chassisService.query({
-            query: value,
-            sort: ['name,asc', 'manufacturer,asc']
+            query: value
           });
         } else {
           return of(null);
@@ -200,7 +206,6 @@ export class EventEntryUpdateComponent implements OnInit {
   }
 
   updateForm(eventEntry: IEventEntry) {
-    this.selectedDrivers = eventEntry.drivers;
     this.editForm.patchValue({
       id: eventEntry.id,
       raceNumber: eventEntry.raceNumber,
@@ -214,8 +219,22 @@ export class EventEntryUpdateComponent implements OnInit {
       carImage: eventEntry.carImage,
       carImageContentType: eventEntry.carImageContentType,
       carImageUrl: eventEntry.carImageUrl,
-      category: eventEntry.eventEdition.allowedCategories.length === 1 ? eventEntry.eventEdition.allowedCategories[0] : null
+      category: eventEntry.eventEdition.allowedCategories.length === 1 ? eventEntry.eventEdition.allowedCategories[0] : eventEntry.category
     });
+    this.driversEntry.removeAt(0);
+    eventEntry.drivers.forEach(driverEntry =>
+      this.driversEntry.push(
+        this.fb.group({
+          driver: driverEntry.driver,
+          rookie: driverEntry.rookie,
+          category: DriverCategory[driverEntry.category]
+        })
+      )
+    );
+  }
+
+  categoryKeys(): Array<string> {
+    return Object.keys(this.categoryTypes);
   }
 
   private createFromForm(): IEventEntry {
@@ -224,7 +243,7 @@ export class EventEntryUpdateComponent implements OnInit {
       id: this.editForm.get(['id']).value,
       raceNumber: this.editForm.get(['raceNumber']).value,
       entryName: this.editForm.get(['entryName']).value,
-      drivers: this.selectedDrivers,
+      drivers: this.editForm.get(['driversEntry']).value,
       team: this.editForm.get(['team']).value,
       operatedBy: this.editForm.get(['operatedBy']).value,
       chassis: this.editForm.get(['chassis']).value,
@@ -250,6 +269,10 @@ export class EventEntryUpdateComponent implements OnInit {
 
   close() {
     this.dialogRef.close();
+  }
+
+  displayFnDrivers(driver?: any): string | undefined {
+    return driver ? driver.fullName : undefined;
   }
 
   displayFnTeams(team?: any): string | undefined {
@@ -289,23 +312,35 @@ export class EventEntryUpdateComponent implements OnInit {
     this.jhiAlertService.error(errorMessage, null, null);
   }
 
-  removeDriver(driver: IDriver): void {
-    const index = this.selectedDrivers.indexOf(driver);
+  get driversEntry() {
+    return this.editForm.get('driversEntry') as FormArray;
+  }
 
-    if (index >= 0) {
-      this.selectedDrivers.splice(index, 1);
+  addDriverEntry() {
+    this.driversEntry.push(
+      this.fb.group({
+        driver: '',
+        rookie: false,
+        category: 0
+      })
+    );
+  }
+
+  public searchDrivers(driverIndex) {
+    const searchText = this.editForm.controls.driversEntry.value[driverIndex].driver;
+
+    if (searchText && searchText.length >= 3) {
+      this.driversSearchTextChanged.next(searchText);
     }
   }
 
-  selectedDriver(event: MatAutocompleteSelectedEvent): void {
-    if (this.eventEntry.eventEdition.multidriver) {
-      this.selectedDrivers.push(event.option.value);
-    } else {
-      this.selectedDrivers = [event.option.value];
-    }
+  removeDriverEntry(index) {
+    if (this.driversEntry.length === 1) return;
+    this.driversEntry.removeAt(index);
+  }
 
-    this.driversInput.nativeElement.value = null;
-    this.driverCtrl.setValue(null);
+  selectedDriver(event: MatAutocompleteSelectedEvent, index): void {
+    this.editForm.controls.driversEntry.value[index].driver = event.option.value;
   }
 
   setFileData(event, field: string, isImage) {

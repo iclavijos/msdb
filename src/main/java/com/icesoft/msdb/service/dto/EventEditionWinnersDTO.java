@@ -1,87 +1,29 @@
 package com.icesoft.msdb.service.dto;
 
-import com.icesoft.msdb.domain.EventEditionEntry;
+import com.icesoft.msdb.domain.EventEdition;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class EventEditionWinnersDTO {
 
-	private final String session;
-	private final List<CategoryWinner> winners;
+    private final EventEdition eventEdition;
+    private final List<SessionWinnersDTO> sessionsWinners;
 
-	public class DriverInfo {
-	    private String driverName;
-	    private String portraitUrl;
-
-	    public DriverInfo(String driverName, String portraitUrl) {
-	        this.driverName = driverName;
-	        this.portraitUrl = portraitUrl;
-        }
-
-        public String getDriverName() {
-            return driverName;
-        }
-
-        public String getPortraitUrl() {
-            return portraitUrl;
-        }
+    public EventEditionWinnersDTO(EventEdition eventEdition) {
+        this.eventEdition = eventEdition;
+        this.sessionsWinners = new ArrayList<>();
     }
 
-	public class CategoryWinner implements Comparable<CategoryWinner> {
-		private final String category;
-		private final List<DriverInfo> drivers;
+    public EventEdition getEventEdition() {
+        return eventEdition;
+    }
 
-		CategoryWinner(String category, List<DriverInfo> drivers) {
-			this.category = category;
-			this.drivers = drivers;
-		}
+    public List<SessionWinnersDTO> getSessionsWinners() {
+        return sessionsWinners;
+    }
 
-		public String getCategory() {
-			return category;
-		}
-
-		public List<DriverInfo> getDrivers() {
-			return drivers;
-		}
-
-		@Override
-		public int compareTo(CategoryWinner o) {
-			if (this.category.equals("Overall")) {
-				return -1;
-			}
-			if (o != null && o.category.equals("Overall")) {
-				return 1;
-			}
-			return this.getCategory().compareTo(o.getCategory());
-		}
-	}
-
-	public EventEditionWinnersDTO(String session) {
-		this.session = session;
-		winners = new ArrayList<>();
-	}
-
-	public void addWinners(String category, EventEditionEntry entry) {
-		winners.add(
-		    new CategoryWinner(
-		        category,
-                entry.getDrivers().stream()
-                    .map(d -> new DriverInfo(d.getFullName(), d.getPortraitUrl())).collect(Collectors.toList())));
-	}
-
-	public String getSession() {
-		return session;
-	}
-
-	public List<CategoryWinner> getWinners() {
-		return winners;
-	}
-
-	public int getNumberOfCategories() {
-		if (winners == null) return 0;
-		return winners.size();
-	}
-
+    public void addSessionWinners(SessionWinnersDTO winnersDTO) {
+        this.sessionsWinners.add(winnersDTO);
+    }
 }

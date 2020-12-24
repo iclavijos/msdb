@@ -81,6 +81,7 @@ export class EventSessionUpdateComponent implements OnInit {
       sessionType: eventSession.sessionType,
       maxDuration: eventSession.maxDuration
     });
+    this.isRaceAndLaps = eventSession.sessionType >= 2 && eventSession.durationType === 5;
   }
 
   previousState() {

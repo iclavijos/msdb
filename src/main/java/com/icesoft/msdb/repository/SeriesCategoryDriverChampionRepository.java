@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface SeriesCategoryDriverChampionRepository extends JpaRepository<SeriesCategoryDriverChampion, Long> {
 
-    @Query("select d from Driver d, SeriesCategoryDriverChampion scdc where scdc.seriesEdition.id = ?1")
+    @Query("select scdc.driver from SeriesCategoryDriverChampion scdc where scdc.seriesEdition.id = ?1")
     List<Driver> getDriversChampions(Long seriesId);
 
-    @Query("select d from Driver d, SeriesCategoryDriverChampion scdc where scdc.seriesEdition.id = ?1 and scdc.category.id = ?2")
+    @Query("select scdc.driver from SeriesCategoryDriverChampion scdc where scdc.seriesEdition.id = ?1 and scdc.category.id = ?2")
     List<Driver> getDriversChampionsInCategory(Long seriesId, Long categoryId);
 }

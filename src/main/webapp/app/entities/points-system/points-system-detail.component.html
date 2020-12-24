@@ -66,7 +66,7 @@
                                     <div class="card-body">
                                         <div class="container-fluid">
                                             <div class="row">
-                                                <div class="form-group col-lg-6 col-md-6">
+                                                <div class="form-group col-lg-4 col-md-4">
                                                     <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.maxFinishinPositionFL">Max Finishing position for Fast Lap Point</span></dt>
                                                     <dd>
                                                         <span>{{pointsSystem.maxPosFastLap}}</span>
@@ -76,6 +76,12 @@
                                                     <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.pitlaneStartAllowed">Points awarded if starting from pitlane</span></dt>
                                                     <dd>
                                                         <span><i [ngClass]="pointsSystem.pitlaneStartAllowed ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
+                                                    </dd>
+                                                </div>
+                                                <div class="form-group col-lg-4 col-md-4">
+                                                    <dt><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.alwaysAssignFastLap">Assign fast lap points to any driver</span></dt>
+                                                    <dd>
+                                                        <span><i [ngClass]="pointsSystem.alwaysAssignFastLap ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i></span>
                                                     </dd>
                                                 </div>
                                             </div>

@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { IEventEntry } from 'app/shared/model/event-entry.model';
+import { DriverCategory } from 'app/shared/enumerations/driverCategory.enum';
 
 type EntityResponseType = HttpResponse<IEventEntry>;
 type EntityArrayResponseType = HttpResponse<IEventEntry[]>;
@@ -14,6 +16,8 @@ export class EventEntryService {
   public resourceUrlOld = SERVER_API_URL + 'api/event-entries';
   public resourceUrl = SERVER_API_URL + 'api/event-editions/entries';
   public resourceSearchUrl = SERVER_API_URL + 'api/_search/event-entries';
+
+  private driverCategories = DriverCategory;
 
   constructor(protected http: HttpClient) {}
 
@@ -48,6 +52,17 @@ export class EventEntryService {
   }
 
   findEntries(id: number): Observable<EntityArrayResponseType> {
-    return this.http.get<IEventEntry[]>(`api/event-editions/${id}/entries`, { observe: 'response' });
+    return this.http
+      .get<any[]>(`api/event-editions/${id}/entries`, { observe: 'response' })
+      .pipe(map((res: EntityArrayResponseType) => this.transformDriverCategory(res)));
+  }
+
+  private transformDriverCategory(res: EntityArrayResponseType): EntityArrayResponseType {
+    if (res.body) {
+      res.body.forEach((entry: any) => {
+        entry.drivers.forEach((driver: any) => (driver.category = driver.category ? driver.category.toLowerCase() : null));
+      });
+    }
+    return res;
   }
 }

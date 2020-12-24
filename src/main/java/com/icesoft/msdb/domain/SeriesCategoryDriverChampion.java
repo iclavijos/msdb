@@ -5,7 +5,7 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name="series_drivers_champion")
+@Table(name="series_drivers_champions")
 public class SeriesCategoryDriverChampion {
 
     @Id
@@ -39,5 +39,5 @@ public class SeriesCategoryDriverChampion {
 	public void setDriver(Driver driver) {
 		this.driver = driver;
 	}
-	
+
 }

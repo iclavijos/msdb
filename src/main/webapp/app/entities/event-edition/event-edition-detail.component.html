@@ -102,7 +102,7 @@
                                                                         {{eventEdition.trackLayout?.racetrack.name}} - {{eventEdition.trackLayout?.name}}
                                                                     </a>
                                                                     <div *ngIf="eventEdition.trackLayout.layoutImageUrl">
-                                                                        <img #layoutImg [src]="eventEdition.trackLayout.layoutImageUrl" class="img-fluid"  alt="layout image"
+                                                                        <img #layoutImg [src]="eventEdition.trackLayout.layoutImageUrl" class="img-fluid" alt="layout image"
                                                                              (click)="openLayout()"
                                                                              (mouseover)="zoomIn(layoutImg)" (mouseleave)="zoomOut(layoutImg)"/>
                                                                     </div>
@@ -112,7 +112,7 @@
                                                         <div class="col-lg-6 col-md-6" *ngIf="eventEdition.posterUrl">
                                                             <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.affiche">Official poster</span></dt>
                                                             <dd>
-                                                                <img #afficheImg [src]="lightboxAlbum[1].thumb" alt="affiche official poster"
+                                                                <img #afficheImg [src]="lightboxAlbum[1].thumb" alt="affiche official poster" class="img-fluid"
                                                                      (click)="openAffiche()"
                                                                      (mouseover)="zoomIn(afficheImg)" (mouseleave)="zoomOut(afficheImg)"/>
                                                             </dd>
@@ -123,7 +123,7 @@
                                             <div class="col-lg-8 col-md-8">
                                                 <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.sessions">Sessions</span></dt>
                                                 <dd>
-                                                    <jhi-event-session [eventEdition]="eventEdition" (showPoints)="showPoints" (sessions)="updateSessions($event)"></jhi-event-session>
+                                                    <jhi-event-session [eventEdition]="eventEdition" (showPoints)="updateShowPoints($event)" (sessions)="updateSessions($event)"></jhi-event-session>
                                                 </dd>
                                             </div>
                                         </div>
@@ -163,11 +163,17 @@
                                             </table>
                                         </div>
                                     </mat-tab>
-                                    <!-- mat-tab label="{{'motorsportsDatabaseApp.eventEdition.info' | translate }}">
+                                    <mat-tab *ngIf="hasLapsData" label="{{'motorsportsDatabaseApp.eventEdition.lapsAnalysis' | translate}}">
+                                        <ng-template matTabContent>
+                                            <jhi-laps-analysis [eventEdition]="eventEdition" [eventSessions]="eventSessions"
+                                                [eventEntries]="eventEntries">Laps analysis..</jhi-laps-analysis>
+                                        </ng-template>
+                                    </mat-tab>
+                                    <mat-tab *ngIf="showPoints" label="{{'motorsportsDatabaseApp.eventEdition.points' | translate}}">
                                         <div>
-                                            Large content
+                                            <jhi-standings [eventEdition]="eventEdition">Standings...</jhi-standings>
                                         </div>
-                                    </mat-tab -->
+                                    </mat-tab>
                                 </mat-tab-group>
                             </div>
                         </div>

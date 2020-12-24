@@ -1,7 +1,5 @@
 package com.icesoft.msdb.service.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.MSDBException;
-import com.icesoft.msdb.domain.Category;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.EventEditionEntry;
@@ -28,7 +25,7 @@ import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverCategoryChampionDTO;
-import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
+import com.icesoft.msdb.service.dto.SessionWinnersDTO;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
 import com.icesoft.msdb.service.dto.SeriesEventsAndWinnersDTO;
 
@@ -218,12 +215,12 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	public List<SeriesEventsAndWinnersDTO> getSeriesEditionsEventsAndWinners(Long seriesEditionId) {
 		List<EventEdition> events = findSeriesEvents(seriesEditionId);
 		return events.parallelStream().map(e -> {
-			List<EventEditionWinnersDTO> winners = new ArrayList<>();
+			List<SessionWinnersDTO> winners = new ArrayList<>();
 
 	    	List<Object[]> tmpWinners = jdbcRepo.getEventWinners(e.getId());
 	    	List<String> sessions = tmpWinners.stream().map(w -> (String)w[2]).distinct().collect(Collectors.toList());
 	    	for(String session : sessions) {
-	    		EventEditionWinnersDTO catWinners = new EventEditionWinnersDTO(session);
+	    		SessionWinnersDTO catWinners = new SessionWinnersDTO(session);
 	    		EventEditionEntry overallWinner = null;
 	    		for(Object[] winner : tmpWinners) {
 	    			if (winner[2].equals(session)) {
@@ -267,6 +264,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		seriesEd.getEvents().stream().forEach(ev -> {
 			EventEdition newEvent = SerializationUtils.clone(ev); // new EventEdition();
             newEvent.setId(null);
+            newEvent.setPosterUrl(null);
 			newEvent.setSeriesEditions(series);
 			Integer year;
 			try {

@@ -29,7 +29,11 @@ public class Ephemeris {
             if (type == EphemerisEnum.BORN) {
                 this.date = driver.getBirthDate();
                 this.place = driver.getBirthPlace();
-                this.age = LocalDate.now().getYear() - driver.getBirthDate().getYear();
+                if (driver.getDeathDate() != null) {
+                    this.age = driver.getAge();
+                } else {
+                    this.age = LocalDate.now().getYear() - driver.getBirthDate().getYear();
+                }
             } else if (type == EphemerisEnum.DEAD) {
                 this.date = driver.getDeathDate();
                 this.place = driver.getDeathPlace();

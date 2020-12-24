@@ -1,3 +1,4 @@
+import { Title } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { JhiDataUtils } from 'ng-jhipster';
@@ -11,11 +12,12 @@ import { ITyreProvider } from 'app/shared/model/tyre-provider.model';
 export class TyreProviderDetailComponent implements OnInit {
   tyreProvider: ITyreProvider;
 
-  constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute) {}
+  constructor(protected dataUtils: JhiDataUtils, protected activatedRoute: ActivatedRoute, private titleService: Title) {}
 
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ tyreProvider }) => {
       this.tyreProvider = tyreProvider;
+      this.titleService.setTitle(tyreProvider.name);
     });
   }
 

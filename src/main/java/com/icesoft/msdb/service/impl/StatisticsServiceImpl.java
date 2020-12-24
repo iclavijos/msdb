@@ -287,7 +287,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 			//Points
 			Float points = Optional.ofNullable(driverPointsRepo.getDriverPointsInSession(
 					result.getSession().getId(),
-					entry.getDrivers().get(0).getId())).orElse(new Float(0));
+					entry.getDrivers().stream().findFirst().get().getDriver().getId())).orElse(new Float(0));
 
 			result.getEntry().getEventEdition().setTrackLayout(layout);
 			Result r = new Result(result, grandChelem, posInClass, startPosInClass, poleLapTime, posFL == 1, points);
@@ -402,10 +402,10 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 
 	@Override
-	public void updateSeriesChamps(SeriesEdition seriesEd) {
+	public void updateSeriesDriversChampions(SeriesEdition seriesEd) {
+	    List<Driver> currentChamps = seriesCategoryDriverChampionRepo.getDriversChampions(seriesEd.getId());
         updateSeriesDriversChampions(seriesEd,
-            seriesCategoryDriverChampionRepo.getDriversChampions(seriesEd.getId()),
-            seriesCategoryDriverChampionRepo.getDriversChampions(seriesEd.getId()),
+            currentChamps, currentChamps,
             seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());
         updateSeriesTeamsChampions(seriesEd, seriesEd.getTeamsChampions(), seriesEd.getTeamsChampions(),
             seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());

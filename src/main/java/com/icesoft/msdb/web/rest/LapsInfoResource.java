@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.icesoft.msdb.MSDBException;
+import com.icesoft.msdb.domain.DriverPerformance;
 import com.icesoft.msdb.domain.LapInfo;
 import com.icesoft.msdb.repository.SessionLapDataRepository;
 import com.icesoft.msdb.service.dto.DriverRaceStatisticsDTO;
@@ -43,9 +44,20 @@ public class LapsInfoResource {
     @Cacheable(cacheNames = "lapsDriversCache")
 	public ResponseEntity<List<LapsInfoDriversDTO>> getDriversWithData(@PathVariable Long sessionId) {
 		List<LapsInfoDriversDTO> result;
-		//TODO: Retrieve data from ES repository (do not show entries names that have no data
-		result = resultsRepo.findSessionEntries(sessionId).stream()
-				.map(LapsInfoDriversDTO::new).collect(Collectors.toList());
+
+        Map<String, List<LapInfo>> driversPerRaceNumber = repo.findById(sessionId.toString())
+            .orElseThrow(() -> new MSDBException("Invalid session id " + sessionId))
+            .getLaps().stream()
+            .collect(Collectors.groupingBy(LapInfo::getRaceNumber));
+
+        result = driversPerRaceNumber.keySet().stream()
+            .sorted(Comparator.comparing(Integer::new))
+            .map(raceNumber -> {
+                String names = driversPerRaceNumber.get(raceNumber).stream()
+                    .map(d -> d.getDriverName()).distinct().collect(Collectors.joining(", "));
+                return new LapsInfoDriversDTO(raceNumber, names);
+            }).collect(Collectors.toList());
+
 		return ResponseEntity.ok(result);
 	}
 
@@ -72,5 +84,16 @@ public class LapsInfoResource {
         result.add(dataLap0);
         result.addAll(sld.getPositionsPerLap());
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/event-sessions/{sessionId}/driversPerformance")
+    public ResponseEntity<List<DriverPerformance>> getDriversPerformance(@PathVariable Long sessionId) {
+        SessionLapData sld = repo.findById(sessionId.toString())
+            .orElseThrow(() -> new MSDBException("Invalid event session id " + sessionId));
+        return ResponseEntity.ok(
+            sld.getDriversPerformance().entrySet().stream()
+                .map(entry -> entry.getValue())
+                .collect(Collectors.toList())
+        );
     }
 }

@@ -8,8 +8,11 @@ import com.icesoft.msdb.repository.*;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
-import com.icesoft.msdb.service.*;
-import com.icesoft.msdb.service.dto.DriverPointsDTO;
+import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.service.EventService;
+import com.icesoft.msdb.service.SeriesEditionService;
+import com.icesoft.msdb.service.StatisticsService;
+import com.icesoft.msdb.service.dto.ParticipantPointsDTO;
 import com.icesoft.msdb.service.dto.EventsSeriesNavigationDTO;
 import com.icesoft.msdb.service.dto.SessionCalendarDTO;
 import com.icesoft.msdb.service.dto.SessionResultDTO;
@@ -43,14 +46,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.time.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link com.icesoft.msdb.domain.EventEdition}.
@@ -74,6 +71,7 @@ public class EventEditionResource {
     private final EventEditionSearchRepository eventEditionSearchRepo;
     private final EventSessionRepository eventSessionRepository;
     private final EventEntryRepository eventEntryRepository;
+    private final DriverEntryRepository driverEntryRepository;
     private final EventEntrySearchRepository eventEntrySearchRepo;
     private final EventEntryResultRepository eventResultRepository;
     private final RacetrackLayoutRepository racetrackLayoutRepo;
@@ -93,6 +91,7 @@ public class EventEditionResource {
     		CDNService cdnService, StatisticsService statsService, CacheHandler cacheHandler,
             EventService eventService, SeriesEditionService seriesEditionService,
             SubscriptionsService subscriptionsService) {
+            EventService eventService, SeriesEditionService seriesEditionService, DriverEntryRepository driverEntryRepository) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventEditionSearchRepo = eventEditionSearchRepo;
         this.eventSessionRepository = eventSessionRepository;
@@ -106,6 +105,7 @@ public class EventEditionResource {
         this.cacheHandler = cacheHandler;
         this.eventService = eventService;
         this.seriesEditionService = seriesEditionService;
+        this.driverEntryRepository = driverEntryRepository;
         this.subscriptionsService = subscriptionsService;
     }
 
@@ -330,15 +330,17 @@ public class EventEditionResource {
     	result.parallelStream().forEach(session -> session.setEventEdition(null));
     	return result;
     }
-
-    @GetMapping("/event-editions/{id}/sessions/races")
-    @Timed
-    public List<EventSession> getEventEditionRacesSessions(@PathVariable Long id) {
-    	log.debug("REST request to get all EventEditions {} races sessions", id);
-    	List<EventSession> result = eventSessionRepository.findRacesSessions(id);
-    	result.parallelStream().forEach(session -> session.setEventEdition(null));
-    	return result;
-    }
+//
+//    @GetMapping("/event-editions/{id}/sessions/races")
+//    @Timed
+//    @Transactional(readOnly = true)
+//    public List<EventSession> getEventEditionRacesSessions(@PathVariable Long id) {
+//    	log.debug("REST request to get all races of event edition ", id);
+//    	List<EventSession> sessions = eventSessionRepository.findRacesSessions(id);
+//    	return sessions.parallelStream()
+//            .map(session -> new EventSession(session.getId(), session.getName(), session.getSessionType()))
+//            .collect(Collectors.toList());
+//    }
 
     @PostMapping("/event-editions/event-sessions")
     @Timed
@@ -444,32 +446,60 @@ public class EventEditionResource {
     	return result;
     }
 
-    @GetMapping("/event-editions/{eventId}/points/{driverId}")
+    @GetMapping("/event-editions/{eventId}/points/drivers/{driverId}")
     @Timed
     @Transactional(readOnly = true)
-    @JsonView(ResponseViews.DriverPointsDetailView.class)
-    public ResponseEntity<List<DriverPointsDTO>> getEventPointsDriver(@PathVariable Long eventId, @PathVariable Long driverId) {
-    	List<DriverPointsDTO> result = resultsService.getDriverPointsEvent(eventId, driverId);
+    @JsonView(ResponseViews.ParticipantPointsDetailView.class)
+    public ResponseEntity<List<ParticipantPointsDTO>> getDriverEventPoints(@PathVariable Long eventId, @PathVariable Long driverId) {
+    	List<ParticipantPointsDTO> result = resultsService.getDriverPointsEvent(eventId, driverId);
 
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/event-editions/{eventId}/points")
+    @GetMapping("/event-editions/{eventId}/points/drivers")
     @Timed
     @Transactional(readOnly = true)
-    public ResponseEntity<List<DriverPointsDTO>> getEventPoints(@PathVariable Long eventId) {
-    	List<DriverPointsDTO> result = resultsService.getDriversPointsEvent(eventId);
+    public ResponseEntity<List<ParticipantPointsDTO>> getDriversEventPoints(@PathVariable Long eventId) {
+    	List<ParticipantPointsDTO> result = resultsService.getDriversPointsEvent(eventId);
 
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/event-editions/{seriesId}/{eventId}/points")
+    @GetMapping("/event-editions/{seriesId}/{eventId}/points/drivers")
     @Timed
     @Transactional(readOnly = true)
-    public ResponseEntity<List<DriverPointsDTO>> getEventPointsInSeries(@PathVariable Long seriesId, @PathVariable Long eventId) {
-    	List<DriverPointsDTO> result = resultsService.getDriversPointsEvent(seriesId, eventId);
+    public ResponseEntity<List<ParticipantPointsDTO>> getDriversEventPointsInSeries(@PathVariable Long seriesId, @PathVariable Long eventId) {
+    	List<ParticipantPointsDTO> result = resultsService.getDriversPointsEvent(seriesId, eventId);
 
     	return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/event-editions/{eventId}/points/teams/{teamId}")
+    @Timed
+    @Transactional(readOnly = true)
+    @JsonView(ResponseViews.ParticipantPointsDetailView.class)
+    public ResponseEntity<List<ParticipantPointsDTO>> getTeamEventPoints(@PathVariable Long eventId, @PathVariable Long teamId) {
+        List<ParticipantPointsDTO> result = resultsService.getTeamPointsEvent(eventId, teamId);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/event-editions/{eventId}/points/teams")
+    @Timed
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<ParticipantPointsDTO>> getTeamsEventPoints(@PathVariable Long eventId) {
+        List<ParticipantPointsDTO> result = resultsService.getTeamsPointsEvent(eventId);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/event-editions/{seriesId}/{eventId}/points/teams")
+    @Timed
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<ParticipantPointsDTO>> getTeamsEventPointsInSeries(@PathVariable Long seriesId, @PathVariable Long eventId) {
+        List<ParticipantPointsDTO> result = resultsService.getTeamsPointsEvent(seriesId, eventId);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping("/event-editions/{idTarget}/entries/{idSource}")
@@ -493,12 +523,16 @@ public class EventEditionResource {
     			.tyres(entry.getTyres())
     			.team(entry.getTeam())
     			.operatedBy(entry.getOperatedBy())
-    			.rookie(entry.getRookie())
     			.setCarImageUrl(entry.getCarImageUrl());
 
-    		List<Driver> copiedList = new ArrayList<>();
-    		for(Driver driver: entry.getDrivers()) {
-    			copiedList.add(driver);
+    		Set<DriverEntry> copiedList = new HashSet<>();
+    		for(DriverEntry driverEntry: entry.getDrivers()) {
+    		    DriverEntry de = new DriverEntry();
+    		    de.setDriver(driverEntry.getDriver());
+    		    de.setEventEntry(copiedEntry);
+    		    de.setCategory(driverEntry.getCategory());
+    		    de.setRookie(driverEntry.getRookie());
+    			copiedList.add(de);
     		}
     		copiedEntry.drivers(copiedList);
 
@@ -523,11 +557,13 @@ public class EventEditionResource {
         );
         eventEntry.setEventEdition(eventEdition);
         EventEditionEntry result = eventEntryRepository.save(eventEntry);
+        eventEntry.getDrivers().forEach(de -> de.setEventEntry(result));
+        driverEntryRepository.saveAll(eventEntry.getDrivers());
         if (result.getCarImage() != null) {
 	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getCarImage(), ENTITY_NAME_ENTRY);
 			result.setCarImageUrl(cdnUrl);
 
-			result = eventEntryRepository.save(result);
+			eventEntryRepository.save(result);
         }
         eventEntrySearchRepo.save(result);
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/entries"))
@@ -552,6 +588,9 @@ public class EventEditionResource {
 	        String cdnUrl = cdnService.uploadImage(eventEntry.getId().toString(), eventEntry.getCarImage(), ENTITY_NAME_ENTRY);
 	        eventEntry.setCarImageUrl(cdnUrl);
         }
+        driverEntryRepository.deleteByEventEntry(eventEntry);
+        eventEntry.getDrivers().forEach(de -> de.setEventEntry(eventEntry));
+        driverEntryRepository.saveAll(eventEntry.getDrivers());
         EventEditionEntry result = eventEntryRepository.save(eventEntry);
         eventEntrySearchRepo.save(result);
         return ResponseEntity.ok()
@@ -578,6 +617,11 @@ public class EventEditionResource {
     @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteEventEntry(@PathVariable Long id) {
         log.debug("REST request to delete EventEntry : {}", id);
+        eventEntryRepository.findById(id).orElseThrow(
+            () -> new MSDBException("Invalid entry id provided: " + id)
+        );
+        eventResultRepository.deleteByEntryId(id);
+        driverEntryRepository.deleteByIdEntryId(id);
         eventEntryRepository.deleteById(id);
         eventEntrySearchRepo.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil
@@ -682,6 +726,8 @@ public class EventEditionResource {
     				session.getSessionStartTimeDate(), session.getSessionEndTime(),
     				session.getEventEdition().getStatus().getCode(),
                     seriesRelevance,
+    				session.getEventEdition().getTrackLayout().getRacetrack().getName(),
+    				session.getEventEdition().getTrackLayout().getLayoutImageUrl(),
     				logoUrl);
     	})
             .sorted(Comparator.comparing(SessionCalendarDTO::getSeriesRelevance))

@@ -6,6 +6,8 @@ export interface IRacetrack {
   location?: string;
   countryCode?: string;
   timeZone?: string;
+  latitude?: number;
+  longitude?: number;
   logoContentType?: string;
   logo?: any;
   logoUrl?: string;
@@ -19,6 +21,8 @@ export class Racetrack implements IRacetrack {
     public location?: string,
     public countryCode?: string,
     public timeZone?: string,
+    public latitude?: number,
+    public longitude?: number,
     public logoContentType?: string,
     public logo?: any,
     public logoUrl?: string,

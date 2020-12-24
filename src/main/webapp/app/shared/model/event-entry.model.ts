@@ -1,4 +1,4 @@
-import { IDriver } from 'app/shared/model/driver.model';
+import { IDriverEntry } from 'app/shared/model/driver-entry.model';
 import { ITeam } from 'app/shared/model/team.model';
 import { IChassis } from 'app/shared/model/chassis.model';
 import { IEngine } from 'app/shared/model/engine.model';
@@ -13,7 +13,7 @@ export interface IEventEntry {
   entryName?: string;
   team?: ITeam;
   operatedBy?: ITeam;
-  drivers?: IDriver[];
+  drivers?: IDriverEntry[];
   chassis?: IChassis;
   engine?: IEngine;
   tyres?: ITyreProvider;
@@ -34,7 +34,7 @@ export class EventEntry implements IEventEntry {
     public entryName?: string,
     public team?: ITeam,
     public operatedBy?: ITeam,
-    public drivers?: IDriver[],
+    public drivers?: IDriverEntry[],
     public chassis?: IChassis,
     public engine?: IEngine,
     public tyres?: ITyreProvider,

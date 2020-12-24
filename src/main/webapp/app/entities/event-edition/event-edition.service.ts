@@ -6,6 +6,7 @@ import { DatePipe } from '@angular/common';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { IDriverLap } from 'app/shared/model/driver-lap.model';
 
 type EntityResponseType = HttpResponse<IEventEdition>;
 type EntityArrayResponseType = HttpResponse<IEventEdition[]>;
@@ -63,6 +64,10 @@ export class EventEditionService {
     return this.http.get<any[]>(`${this.resourceUrl}/${eventId}/laps`);
   }
 
+  loadLapTimes(eventId: number, raceNumber: string): Observable<IDriverLap[]> {
+    return this.http.get<IDriverLap[]>(`${this.resourceUrl}/${eventId}/laps/${raceNumber}`);
+  }
+
   findCalendarEvents(startDate: Date, endDate: Date) {
     const dateFormat = 'yyyy-MM-dd';
     const fromDate = this.datePipe.transform(startDate, dateFormat);
@@ -74,12 +79,22 @@ export class EventEditionService {
     return this.http.put<IEventEdition>(`${this.resourceUrl}/${eventId}/reschedule`, newDate, { observe: 'response' });
   }
 
-  loadDriversPoints(id: number, seriesId: number) {
+  loadDriversPoints(eventId: number, seriesId: number) {
     let endpoint: string;
     if (seriesId !== undefined) {
-      endpoint = `${this.resourceUrl}/${seriesId}/${id}/points`;
+      endpoint = `${this.resourceUrl}/${seriesId}/${eventId}/points/drivers`;
     } else {
-      endpoint = `${this.resourceUrl}/${id}/points`;
+      endpoint = `${this.resourceUrl}/${eventId}/points/drivers`;
+    }
+    return this.http.get<any>(endpoint);
+  }
+
+  loadTeamsPoints(eventId: number, seriesId: number) {
+    let endpoint: string;
+    if (seriesId !== undefined) {
+      endpoint = `${this.resourceUrl}/${seriesId}/${eventId}/points/teams`;
+    } else {
+      endpoint = `${this.resourceUrl}/${eventId}/points/teams`;
     }
     return this.http.get<any>(endpoint);
   }
