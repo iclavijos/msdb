@@ -1,14 +1,11 @@
 package com.icesoft.msdb.service.impl;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -364,65 +361,113 @@ public class ResultsService {
             (Float)tep[2], (String)tep[3], null)).collect(Collectors.toList());
     }
 
-	public PointsRaceByRace getPointsRaceByRace(Long seriesEditionId) {
-		List<Object[]> pointsSeries = driverPointsRepo.getDriversPointsInSeries(seriesEditionId);
-		PointsRaceByRace result = new PointsRaceByRace();
-		pointsSeries.stream().forEach(ps -> {
-            result.addDriverPoints(
-                (String) ps[0], (String) ps[1], (String) ps[5], (String) ps[2] + " " + (String) ps[3], ((Double) ps[4]).floatValue());
-        });
+	public List<List<?>> getResultsRaceByRace(Long seriesEditionId, String category) {
+		SeriesEdition seriesEdition = seriesEdRepository.findById(seriesEditionId).orElseThrow(
+            () -> new MSDBException("Invalid series edition id: " + seriesEditionId)
+        );
+		List<EventSession> races = sessionRepo.findRacesInSeries(seriesEdition);
+        List<String> driversNames = getDriversStandings(seriesEditionId).stream() // We use this as returned data is ordered by scored points
+            .filter(d -> d.getCategory() == null ? true : d.getCategory().equals(category))
+            .map(driver -> driver.getParticipantName()).collect(Collectors.toList());
+
+		List<List<?>> result = new ArrayList<>();
+		List<String> headers = new ArrayList<>();
+		Map<String, List<String>> driversResults = new HashMap<>();
+
+		driversNames.forEach(driver -> driversResults.put(driver, new ArrayList<>(Arrays.asList(driver))));
+		headers.add("");
+
+		races.forEach(race -> {
+            headers.add(race.getShortname().equalsIgnoreCase("R") || race.getShortname().equalsIgnoreCase("Race") ?
+                race.getEventEdition().getEvent().getName() :
+                race.getEventEdition().getEvent().getName() + "-" + race.getName());
+
+            List<EventEntryResult> raceResults = resultsRepo.findBySessionIdOrderByFinalPositionAsc(race.getId());
+            List<String> participantsNames = raceResults.stream()
+                .flatMap(raceResult -> raceResult.getEntry().getDrivers().stream().map(driver -> driver.getDriver().getFullName()))
+                .collect(Collectors.toList());
+            AtomicInteger posInCategory = new AtomicInteger(1);
+            raceResults.stream()
+                .filter(driverResult -> driverResult.getEntry().getCategory().getShortname().equalsIgnoreCase(category))
+                .forEach(driverResult -> {
+                    String res;
+                    if (driverResult.getFinalPosition() >= 800) {
+                        res = ResultType.valueOf(driverResult.getFinalPosition()).getStringValue();
+                    } else {
+                        if (!seriesEdition.getStandingsPerCategory()) {
+                            res = Integer.toString(driverResult.getFinalPosition());
+                        } else {
+                            res = Integer.toString(posInCategory.getAndAdd(1));
+                        }
+                    }
+
+                    driverResult.getEntry().getDrivers().stream()
+                        .map(driverEntry -> driverEntry.getDriver().getFullName())
+                        .filter(driverName -> driversResults.keySet().contains(driverName))
+                        .forEach(driverName -> driversResults.get(driverName).add(res));
+                });
+
+            // Add non results for not participating drivers
+            List<String> nonParticipantNames = new ArrayList<>(driversNames);
+            nonParticipantNames.removeAll(participantsNames);
+            nonParticipantNames.stream()
+                .filter(driverName -> driversResults.keySet().contains(driverName))
+                .forEach(driverName -> driversResults.get(driverName).add("-"));
+
+		});
+
+        result.add(headers);
+        driversNames.forEach(driver -> result.add(driversResults.get(driver)));
 
 		return result;
 	}
 
-	public String[][] getResultsRaceByRace(Long seriesEditionId, String category) {
-		SeriesEdition seriesEdition = seriesEdRepository.findById(seriesEditionId).get();
-		List<EventSession> races = sessionRepo.findRacesInSeries(seriesEdition);
-		List<ParticipantPointsDTO> dpd = getDriversStandings(seriesEditionId); //We use this as returned data is ordered by scored points
-        dpd = dpd.stream().filter(d -> d.getCategory() == null ? true : d.getCategory().equals(category)).collect(Collectors.toList());
-		List<String> driverNames = dpd.stream().map(driver -> driver.getParticipantName()).collect(Collectors.toList());
+    public List<List<?>> getPointsRaceByRace(Long seriesEditionId, String category) {
+        SeriesEdition seriesEdition = seriesEdRepository.findById(seriesEditionId).orElseThrow(
+            () -> new MSDBException("Invalid series edition id: " + seriesEditionId)
+        );
+        List<EventSession> races = sessionRepo.findRacesInSeries(seriesEdition);
+        List<ParticipantPointsDTO> driversStandings = getDriversStandings(seriesEditionId); // We use this as returned data is ordered by scored points
+        List<String> driversNames = driversStandings.stream()
+            .filter(d -> d.getCategory() == null ? true : d.getCategory().equals(category))
+            .map(driver -> driver.getParticipantName()).collect(Collectors.toList());
 
-		String[][] data = new String[driverNames.size() + 1][races.size() + 1];
-		for(int i = 1; i <= driverNames.size(); i++) {
-			data[i][0] = driverNames.get(i - 1);
-			for(int j = 1; j <= races.size(); j++) {
-				data[i][j] = "-";
-			}
-		}
-		for(int i = 1; i <= races.size(); i++) {
-			EventSession session = races.get(i - 1);
-			data[0][i] = session.getShortname().equalsIgnoreCase("R") || session.getShortname().equalsIgnoreCase("Race") ?
-					session.getEventEdition().getEvent().getName() :
-					session.getEventEdition().getEvent().getName() + "-" + session.getName();
+        List<List<?>> result = new ArrayList<>();
+        List<String> headers = new ArrayList<>();
+        Map<String, List<Object>> driversResults = new HashMap<>();
 
-			List<EventEntryResult> results = resultsRepo.findBySessionIdOrderByFinalPositionAsc(session.getId());
-			int posInCategory = 1;
-			for(EventEntryResult result: results) {
-			    if (result.getEntry().getCategory().getShortname().equals(category)) {
-                    String res;
-                    if (result.getFinalPosition() >= 800) {
-                        res = ResultType.valueOf(result.getFinalPosition()).getStringValue();
-                    } else {
-                        if (!seriesEdition.getStandingsPerCategory()) {
-                            res = Integer.toString(result.getFinalPosition());
-                        } else {
-                            res = Integer.toString(posInCategory++);
-                        }
-                    }
+        driversNames.forEach(driver -> driversResults.put(driver, new ArrayList<>(Arrays.asList(driver))));
+        headers.add("");
 
-                    for (DriverEntry driver : result.getEntry().getDrivers()) {
-                        int pos = driverNames.indexOf(driver.getDriver().getFullName());
-                        if (pos == -1) {
-                            log.warn("Driver not found: " + driver.getDriver().getFullName());
-                        }
-                        data[pos + 1][i] = res;
-                    }
-                }
-			}
-		}
+        races.forEach(race -> {
+            headers.add(race.getShortname().equalsIgnoreCase("R") || race.getShortname().equalsIgnoreCase("Race") ?
+                race.getEventEdition().getEvent().getName() :
+                race.getEventEdition().getEvent().getName() + "-" + race.getName());
 
-		return data;
-	}
+            driversStandings.stream()
+                .filter(participant -> driversNames.contains(participant.getParticipantName()))
+                .forEach(participant -> {
+                    Float driverPoints = Optional.ofNullable(
+                        driverPointsRepo.getDriverPointsInSession(race.getId(), participant.getParticipantId())
+                    ).orElse(0f);
+                    driversResults.get(participant.getParticipantName()).add(driverPoints);
+            });
+
+        });
+        headers.add("Total");
+        result.add(headers);
+        driversStandings.stream()
+            .filter(participant -> driversNames.contains(participant.getParticipantName()))
+            .forEach(participant -> {
+                Float total = Optional.ofNullable(
+                    driverPointsRepo.getDriverPointsInSeries(seriesEditionId, participant.getParticipantId())
+                ).orElse(0f);
+                driversResults.get(participant.getParticipantName()).add(total);
+                result.add(driversResults.get(participant.getParticipantName()));
+            });
+
+        return result;
+    }
 
 	public String[][] getDriverEventBestTimes(Long eventEditionId) {
 		List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(eventEditionId);
