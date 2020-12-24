@@ -17,8 +17,8 @@ public interface DriverEventPointsRepository extends JpaRepository<DriverEventPo
 	void deleteSessionPoints(Long sessionId, Long seriesId);
 
 	@Query("SELECT SUM(dep.points) "
-			+ "FROM DriverEventPoints dep, EventSession es "
-			+ "WHERE es.id = ?1 AND dep.session = es AND dep.driver.id = ?2")
+			+ "FROM DriverEventPoints dep "
+			+ "WHERE dep.session.id = ?1 AND dep.driver.id = ?2")
 	Float getDriverPointsInSession(Long sessionId, Long driverId);
 
 	@Query("SELECT dep.driver.id, dep.driver.name, dep.driver.surname, sum(points) as points, count(*) as num_points "
@@ -27,6 +27,11 @@ public interface DriverEventPointsRepository extends JpaRepository<DriverEventPo
 			+ "GROUP BY dep.driver.id "
 			+ "ORDER BY points desc")
 	List<Object[]> getDriversPointsInEvent(Long eventEditionId);
+
+    @Query("SELECT SUM(dep.points) "
+        + "FROM DriverEventPoints dep "
+        + "WHERE dep.seriesEdition.id = ?1 AND dep.driver.id = ?2")
+    Float getDriverPointsInSeries(Long seriesId, Long driverId);
 
 	@Query("SELECT dep.driver.id, dep.driver.name, dep.driver.surname, sum(points) as points, count(*) as num_points "
 			+ "FROM DriverEventPoints dep "
@@ -41,6 +46,7 @@ public interface DriverEventPointsRepository extends JpaRepository<DriverEventPo
 			+ "ORDER BY dep.session.sessionStartTime desc, dep.points desc")
 	List<Object[]> getDriverPointsInEvent(Long eventEditionId, Long driverId);
 
+	@Deprecated
 	@Query(value = "SELECT e.name eventName, es.name sessionName, d.name driverName, d.surname, SUM(dep.points) as points, c.shortname, es.start_time_ts " +
         "FROM series_edition se join driver_event_points dep on dep.series_edition_id = se.id " +
         "join event_session es on dep.session_id = es.id " +

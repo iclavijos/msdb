@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.icesoft.msdb.service.dto.ParticipantPointsDTO;
 import org.apache.commons.lang3.StringUtils;
 
+@Deprecated
 public class PointsRaceByRace {
 
 	private class DriverPoints {
