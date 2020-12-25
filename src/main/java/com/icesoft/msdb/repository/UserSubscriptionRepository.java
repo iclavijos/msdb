@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface UserSubscriptionRepository extends JpaRepository<UserSubscription, UserSubscriptionPK> {
 
-    List<UserSubscription> findAllBySeriesEdition(List<SeriesEdition> series);
+    List<UserSubscription> findAllBySeriesEditionIn(List<SeriesEdition> series);
 
 }

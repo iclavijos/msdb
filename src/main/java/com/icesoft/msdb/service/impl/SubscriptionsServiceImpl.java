@@ -45,6 +45,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     }
 
     @Scheduled(cron = "0 * * * * *")
+    @Transactional(readOnly = true)
     public void generateNotifications() {
         OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
 
@@ -70,7 +71,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             .distinct()
             .collect(Collectors.toList());
 
-        List<UserSubscription> usersSubs = userSubscriptionRepository.findAllBySeriesEdition(seriesEds);
+        List<UserSubscription> usersSubs = userSubscriptionRepository.findAllBySeriesEditionIn(seriesEds);
         usersSubs.forEach(userSubscription -> {
             eventSessions.stream()
                 .filter(eventSession -> eventSession.getEventEdition().getSeriesEditions()
@@ -82,11 +83,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
                         if (userSubscription.getPracticeSessions() && sessionType.equals(SessionType.PRACTICE) ||
                             userSubscription.getQualiSessions() && sessionType.equals(SessionType.QUALIFYING) ||
                             userSubscription.getRaces() && (sessionType.equals(SessionType.QUALIFYING_RACE) || sessionType.equals(SessionType.RACE))) {
-                            log.debug("Sending notification to {} about {} of {} as it will happen at {}",
-                                userSubscription.getUser(),
-                                eventSession.getName(),
-                                eventSession.getEventEdition().getLongEventName(),
-                                eventSession.getSessionStartTimeDate());
+
                             sendNotification(eventSession, userSubscription.getUser());
                         }
                     });
@@ -94,7 +91,17 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     }
 
     private void sendNotification(EventSession session, User user) {
+        log.debug("Sending notification to {} about {} of {} as it will happen at {}",
+            user.getFirstName(),
+            session.getName(),
+            session.getEventEdition().getLongEventName(),
+            session.getSessionStartTimeDate());
+    }
 
+    @Scheduled(cron = "0 0 0/12 * * *")
+    public void removedPassedNotifications() {
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
+        sessionsRepository.deleteByTimestampLessThan(utc.toEpochSecond());
     }
 
     @Override
@@ -137,5 +144,13 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
                 }
             }
         );
+    }
+
+    @Override
+    public void rebuildSessionsData() {
+        sessionsRepository.deleteAll();
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
+        eventSessionRepository.findUpcomingSessions(utc.toEpochSecond())
+            .forEach(eventSession -> saveEventSession(eventSession));
     }
 }
