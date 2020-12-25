@@ -10,7 +10,4 @@ import java.util.List;
 public class SessionData {
     private Long sessionId;
     private String sessionName;
-    private String eventName;
-    private List<Long> subscribedUsers;
-
 }

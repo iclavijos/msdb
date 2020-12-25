@@ -36,12 +36,10 @@ public class Sessions {
 
         if (optSessionData.isPresent()) {
             optSessionData.get().setSessionName(session.getName());
-            optSessionData.get().setEventName(session.getEventEdition().getLongEventName());
         } else {
             SessionData sessionData = SessionData.builder()
                 .sessionId(session.getId())
                 .sessionName(session.getName())
-                .eventName(session.getEventEdition().getLongEventName())
                 .build();
 
             sessions.add(sessionData);

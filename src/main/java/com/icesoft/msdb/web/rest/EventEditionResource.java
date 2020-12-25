@@ -8,10 +8,7 @@ import com.icesoft.msdb.repository.*;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
-import com.icesoft.msdb.service.CDNService;
-import com.icesoft.msdb.service.EventService;
-import com.icesoft.msdb.service.SeriesEditionService;
-import com.icesoft.msdb.service.StatisticsService;
+import com.icesoft.msdb.service.*;
 import com.icesoft.msdb.service.dto.ParticipantPointsDTO;
 import com.icesoft.msdb.service.dto.EventsSeriesNavigationDTO;
 import com.icesoft.msdb.service.dto.SessionCalendarDTO;
@@ -81,7 +78,6 @@ public class EventEditionResource {
     private final CacheHandler cacheHandler;
     private final EventService eventService;
     private final SeriesEditionService seriesEditionService;
-
     private final SubscriptionsService subscriptionsService;
 
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventEditionSearchRepository eventEditionSearchRepo,
@@ -90,8 +86,7 @@ public class EventEditionResource {
     		RacetrackLayoutRepository racetrackLayoutRepo, ResultsService resultsService,
     		CDNService cdnService, StatisticsService statsService, CacheHandler cacheHandler,
             EventService eventService, SeriesEditionService seriesEditionService,
-            SubscriptionsService subscriptionsService) {
-            EventService eventService, SeriesEditionService seriesEditionService, DriverEntryRepository driverEntryRepository) {
+            DriverEntryRepository driverEntryRepository, SubscriptionsService subscriptionsService) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventEditionSearchRepo = eventEditionSearchRepo;
         this.eventSessionRepository = eventSessionRepository;
@@ -330,17 +325,6 @@ public class EventEditionResource {
     	result.parallelStream().forEach(session -> session.setEventEdition(null));
     	return result;
     }
-//
-//    @GetMapping("/event-editions/{id}/sessions/races")
-//    @Timed
-//    @Transactional(readOnly = true)
-//    public List<EventSession> getEventEditionRacesSessions(@PathVariable Long id) {
-//    	log.debug("REST request to get all races of event edition ", id);
-//    	List<EventSession> sessions = eventSessionRepository.findRacesSessions(id);
-//    	return sessions.parallelStream()
-//            .map(session -> new EventSession(session.getId(), session.getName(), session.getSessionType()))
-//            .collect(Collectors.toList());
-//    }
 
     @PostMapping("/event-editions/event-sessions")
     @Timed
@@ -396,18 +380,18 @@ public class EventEditionResource {
         eventSession.setEventEdition(eventEditionRepository.findById(eventSession.getEventEdition().getId()).orElseThrow(
             () -> new MSDBException("Invalid event edition id " + eventSession.getEventEdition().getId())
         ));
-        EventSession prevSession = eventSessionRepository.findById(eventSession.getId())
-            .orElseThrow(() -> new MSDBException("Invalid session id " + eventSession.getId()));
+        Long prevSessionStartTime = eventSessionRepository.findById(eventSession.getId())
+            .orElseThrow(() -> new MSDBException("Invalid session id " + eventSession.getId())).getSessionStartTime();
 
         EventSession result = eventSessionRepository.save(eventSession);
-        if (eventSession.getSessionStartTime().equals(prevSession.getSessionStartTime())) {
-            subscriptionsService.saveEventSession(eventSession);
+        if (result.getSessionStartTime().equals(prevSessionStartTime)) {
+            subscriptionsService.saveEventSession(result);
         } else {
-            subscriptionsService.saveEventSession(eventSession, prevSession.getSessionStartTime());
+            subscriptionsService.saveEventSession(result, prevSessionStartTime);
         }
 
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, eventSession.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
