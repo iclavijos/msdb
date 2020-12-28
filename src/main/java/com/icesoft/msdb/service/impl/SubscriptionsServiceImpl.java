@@ -12,6 +12,7 @@ import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.UserRepository;
 import com.icesoft.msdb.repository.UserSubscriptionRepository;
 import com.icesoft.msdb.repository.subscriptions.SessionsRepository;
+import com.icesoft.msdb.service.MessagingService;
 import com.icesoft.msdb.service.SubscriptionsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -33,15 +34,18 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     private final EventSessionRepository eventSessionRepository;
     private final UserRepository userRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
+    private final MessagingService messagingService;
 
     public SubscriptionsServiceImpl(SessionsRepository sessionsRepository,
                                     EventSessionRepository eventSessionRepository,
                                     UserRepository userRepository,
-                                    UserSubscriptionRepository userSubscriptionRepository) {
+                                    UserSubscriptionRepository userSubscriptionRepository,
+                                    MessagingService messagingService) {
         this.sessionsRepository = sessionsRepository;
         this.eventSessionRepository = eventSessionRepository;
         this.userRepository = userRepository;
         this.userSubscriptionRepository = userSubscriptionRepository;
+        this.messagingService = messagingService;
     }
 
     @Scheduled(cron = "0 * * * * *")
@@ -96,6 +100,8 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             session.getName(),
             session.getEventEdition().getLongEventName(),
             session.getSessionStartTimeDate());
+
+        messagingService.sendNotification(user, "lala");
     }
 
     @Scheduled(cron = "0 0 0/12 * * *")

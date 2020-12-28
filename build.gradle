@@ -34,7 +34,7 @@ plugins {
 }
 
 group = "com.icesoft.msdb"
-version = "4.1.0-SNAPSHOT"
+version = "4.2.0-SNAPSHOT"
 
 description = ""
 
@@ -238,12 +238,15 @@ dependencies {
 
     implementation "org.mapstruct:mapstruct:${mapstruct_version}"
 
+    implementation "com.google.firebase:firebase-admin:7.1.0"
+
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstruct_version}"
     annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernate_version}"
     annotationProcessor "org.glassfish.jaxb:jaxb-runtime:${jaxb_runtime_version}"
     annotationProcessor ("org.springframework.boot:spring-boot-configuration-processor:${spring_boot_version}") {
         exclude group: "com.vaadin.external.google", module: "android-json"
     }
+
     testImplementation "com.jayway.jsonpath:json-path"
     testImplementation ("org.springframework.boot:spring-boot-starter-test") {
         exclude module: "junit"
