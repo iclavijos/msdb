@@ -222,10 +222,10 @@ dependencies {
     implementation "org.springframework.security:spring-security-web"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
-    implementation ("io.springfox:springfox-swagger2") {
-        exclude module: "mapstruct"
-    }
-    implementation "io.springfox:springfox-bean-validators"
+//    implementation ("io.springfox:springfox-swagger2") {
+//        exclude module: "mapstruct"
+//    }
+//    implementation "io.springfox:springfox-bean-validators"
     implementation "mysql:mysql-connector-java"
 
     implementation 'com.sendgrid:sendgrid-java:3.0.9'
