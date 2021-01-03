@@ -4,6 +4,7 @@ import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.TimeZone;
+import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.repository.*;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.domain.Ephemeris;
@@ -91,6 +92,7 @@ public class HomeResource {
 		ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
 		List<SessionDataDTO> filtered =
 				sessions.parallelStream().filter(session -> !session.isFinished(now))
+                    .filter(session -> session.getEventEdition().getStatus().equals(EventStatusType.ONGOING))
 					.map(SessionDataDTO::new)
 					.sorted(Comparator.comparing(SessionDataDTO::getSessionStartTime))
 					.collect(Collectors.toList());
