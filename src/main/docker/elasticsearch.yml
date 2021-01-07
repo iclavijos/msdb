@@ -11,6 +11,7 @@ services:
     environment:
       - 'ES_JAVA_OPTS=-Xms1024m -Xmx1024m'
       - 'discovery.type=single-node'
+      - cluster.routing.allocation.disk.watermark.flood_stage=99%
 
   kibana:
     image: docker.elastic.co/kibana/kibana:6.8.4
