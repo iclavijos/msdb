@@ -21,7 +21,12 @@ public class FirebaseConfiguration {
             .builder()
             .setCredentials(googleCredentials)
             .build();
-        FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "my-app");
+        FirebaseApp app = null;
+        if(FirebaseApp.getApps().isEmpty()) {
+            app = FirebaseApp.initializeApp(firebaseOptions, "com.icesoft.msdb.client");
+        }else {
+            app = FirebaseApp.initializeApp(firebaseOptions);
+        }
         return FirebaseMessaging.getInstance(app);
     }
 }
