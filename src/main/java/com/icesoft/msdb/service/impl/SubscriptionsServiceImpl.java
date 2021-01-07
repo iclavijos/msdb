@@ -48,7 +48,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
         this.messagingService = messagingService;
     }
 
-    @Scheduled(cron = "0 * * * * *")
+    // @Scheduled(cron = "0 * * * * *")
     @Transactional(readOnly = true)
     public void generateNotifications() {
         OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
