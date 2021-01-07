@@ -1,11 +1,12 @@
 package com.icesoft.msdb.service.dto;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 import com.icesoft.msdb.domain.EventSession;
+import lombok.Data;
 
+@Data
 public class SessionDataDTO {
 	private final String sessionName;
 	private final ZonedDateTime sessionStartTime;
@@ -14,6 +15,7 @@ public class SessionDataDTO {
 	private final Integer durationType;
 	private final Long eventEditionId;
 	private final String eventName;
+	private final String racetrack;
 	private final List<Long> seriesIds;
 	private final List<String> seriesNames;
 
@@ -27,41 +29,7 @@ public class SessionDataDTO {
 		this.eventName = session.getEventEdition().getLongEventName();
 		this.seriesIds = session.getSeriesIds();
 		this.seriesNames = session.getSeriesNames();
+		this.racetrack = session.getEventEdition().getTrackLayout().getRacetrack().getName();
 	}
 
-	public ZonedDateTime getSessionStartTime() {
-		return sessionStartTime;
-	}
-
-	public String getSessionName() {
-		return sessionName;
-	}
-
-	public ZonedDateTime getSessionEndTime() {
-		return sessionEndTime;
-	}
-
-	public Integer getDuration() {
-		return duration;
-	}
-
-	public Integer getDurationType() {
-		return durationType;
-	}
-
-	public Long getEventEditionId() {
-		return eventEditionId;
-	}
-
-	public String getEventName() {
-		return eventName;
-	}
-
-	public List<Long> getSeriesIds() {
-		return seriesIds;
-	}
-
-	public List<String> getSeriesNames() {
-		return seriesNames;
-	}
 }
