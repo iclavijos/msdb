@@ -165,6 +165,8 @@ jhipster:
       audience:
         - account
         - api://default
+        - ${mobile_app_audience}
+
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
