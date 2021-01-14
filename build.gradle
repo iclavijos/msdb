@@ -34,7 +34,7 @@ plugins {
 }
 
 group = "com.icesoft.msdb"
-version = "4.1.0-SNAPSHOT"
+version = "4.2.0-SNAPSHOT"
 
 description = ""
 
@@ -222,10 +222,10 @@ dependencies {
     implementation "org.springframework.security:spring-security-web"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
-    implementation ("io.springfox:springfox-swagger2") {
-        exclude module: "mapstruct"
-    }
-    implementation "io.springfox:springfox-bean-validators"
+//    implementation ("io.springfox:springfox-swagger2") {
+//        exclude module: "mapstruct"
+//    }
+//    implementation "io.springfox:springfox-bean-validators"
     implementation "mysql:mysql-connector-java"
 
     implementation 'com.sendgrid:sendgrid-java:3.0.9'
@@ -238,12 +238,15 @@ dependencies {
 
     implementation "org.mapstruct:mapstruct:${mapstruct_version}"
 
+    implementation "com.google.firebase:firebase-admin:7.1.0"
+
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstruct_version}"
     annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernate_version}"
     annotationProcessor "org.glassfish.jaxb:jaxb-runtime:${jaxb_runtime_version}"
     annotationProcessor ("org.springframework.boot:spring-boot-configuration-processor:${spring_boot_version}") {
         exclude group: "com.vaadin.external.google", module: "android-json"
     }
+
     testImplementation "com.jayway.jsonpath:json-path"
     testImplementation ("org.springframework.boot:spring-boot-starter-test") {
         exclude module: "junit"

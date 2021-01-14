@@ -37,6 +37,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -332,7 +333,12 @@ public class SeriesEditionResource {
     @Timed
     @Transactional(readOnly = true)
     public ResponseEntity<List<SeriesEdition>> getActiveSeriesEditions() {
-        return ResponseEntity.ok(seriesEditionRepository.findDistinctSeriesEditionByEventsEventDateAfter(LocalDate.now(ZoneId.of("UTC"))));
+        return ResponseEntity.ok(
+            seriesEditionRepository
+                .findDistinctSeriesEditionByEventsEventDateAfter(LocalDate.now(ZoneId.of("UTC")))
+            .parallelStream()
+            .sorted(Comparator.comparing(s -> s.getSeries().getRelevance()))
+            .collect(Collectors.toList()));
     }
 
     @GetMapping("/series-editions/{id}/prevNextEdition")

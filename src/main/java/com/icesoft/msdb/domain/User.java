@@ -12,9 +12,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A user.
@@ -75,6 +73,9 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     Set<UserSubscription> subscriptions;
+
+    @ElementCollection
+    Set<String> deviceIds;
 
     public String getId() {
         return id;
@@ -161,10 +162,25 @@ public class User extends AbstractAuditingEntity implements Serializable {
         getSubscriptions().add(userSub);
     }
 
-    public void removeSubscription(UserSubscription userSub) {
-        getSubscriptions().removeIf(s -> s.getId().equals(userSub.getId()));
-        userSub.setUser(null);
-        userSub.setSeriesEdition(null);
+    public void removeAllSubscription() {
+        getSubscriptions().clear();
+    }
+
+    public void addDeviceId(String deviceId) {
+        if (this.deviceIds == null) {
+            this.deviceIds = new HashSet<>();
+        }
+        this.deviceIds.add(deviceId);
+    }
+
+    public void removeDeviceId(String deviceId) {
+        if (this.deviceIds != null) {
+            this.deviceIds.remove(deviceId);
+        }
+    }
+
+    public Set<String> getDeviceIds() {
+        return this.deviceIds;
     }
 
     @Override

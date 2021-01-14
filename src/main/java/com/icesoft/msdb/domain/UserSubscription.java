@@ -1,11 +1,13 @@
 package com.icesoft.msdb.domain;
 
 import com.icesoft.msdb.service.dto.UserSubscriptionDTO;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity(name = "USER_SUSCRIPTION")
+@Data
 public class UserSubscription implements Serializable {
 
     @EmbeddedId
@@ -46,78 +48,6 @@ public class UserSubscription implements Serializable {
         this.fifteenMinWarning = dto.getFifteenMinWarning();
         this.oneHourWarning = dto.getOneHourWarning();
         this.threeHoursWarning = dto.getThreeHoursWarning();
-    }
-
-    public UserSubscriptionPK getId() {
-        return id;
-    }
-
-    public void setId(UserSubscriptionPK id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public SeriesEdition getSeriesEdition() {
-        return seriesEdition;
-    }
-
-    public void setSeriesEdition(SeriesEdition seriesEdition) {
-        this.seriesEdition = seriesEdition;
-    }
-
-    public Boolean getPracticeSessions() {
-        return practiceSessions;
-    }
-
-    public void setPracticeSessions(Boolean practiceSessions) {
-        this.practiceSessions = practiceSessions;
-    }
-
-    public Boolean getQualiSessions() {
-        return qualiSessions;
-    }
-
-    public void setQualiSessions(Boolean qualiSessions) {
-        this.qualiSessions = qualiSessions;
-    }
-
-    public Boolean getRaces() {
-        return races;
-    }
-
-    public void setRaces(Boolean races) {
-        this.races = races;
-    }
-
-    public Boolean getFifteenMinWarning() {
-        return fifteenMinWarning;
-    }
-
-    public void setFifteenMinWarning(Boolean fifteenMinWarning) {
-        this.fifteenMinWarning = fifteenMinWarning;
-    }
-
-    public Boolean getOneHourWarning() {
-        return oneHourWarning;
-    }
-
-    public void setOneHourWarning(Boolean oneHourWarning) {
-        this.oneHourWarning = oneHourWarning;
-    }
-
-    public Boolean getThreeHoursWarning() {
-        return threeHoursWarning;
-    }
-
-    public void setThreeHoursWarning(Boolean threeHoursWarning) {
-        this.threeHoursWarning = threeHoursWarning;
     }
 
 }

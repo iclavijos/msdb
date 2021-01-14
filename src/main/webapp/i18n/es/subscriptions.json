@@ -1,0 +1,18 @@
+{
+  "motorsportsDatabaseApp": {
+    "subscriptions": {
+      "title": "Gestiona tus suscripciones",
+      "description": "Indica los campeonatos y sesiones, y con cuanto tiempo de antelación, quieres recibir notificaciones antes de su inicio",
+      "sessions": {
+        "freePractice": "Sesiones libres",
+        "qualifying": "Clasificaciones",
+        "races": "Carreras"
+      },
+      "warnings": {
+        "fifteenMins": "15 minutos antes",
+        "oneHour": "1 hora antes",
+        "threeHours": "3 horas antes"
+      }
+    }
+  }
+}

@@ -91,6 +91,10 @@
         <i class="icofont icofont-chart-bar-graph"></i>
         <span jhiTranslate="global.menu.admin.rebuildStatistics">Rebuild statistics</span>
     </button>
+    <button mat-menu-item (click)="router.navigate(['/admin/rebuildSessionsNotifications']);">
+        <i class="icofont icofont-chart-bar-graph"></i>
+        <span jhiTranslate="global.menu.admin.rebuildNotifSessions">Rebuild notif sessions</span>
+    </button>
 </mat-menu>
 
 <mat-menu #languages="matMenu">

@@ -1,0 +1,18 @@
+{
+  "motorsportsDatabaseApp": {
+    "subscriptions": {
+      "title": "Manage your subscriptions",
+      "description": "Manage which series and sessions and how much time prior to the start you want to be notified about",
+      "sessions": {
+        "freePractice": "Practice sessions",
+        "qualifying": "Qualifying",
+        "races": "Races"
+      },
+      "warnings": {
+        "fifteenMins": "15 minutes warning",
+        "oneHour": "1 hour warning",
+        "threeHours": "3 hours warning"
+      }
+    }
+  }
+}

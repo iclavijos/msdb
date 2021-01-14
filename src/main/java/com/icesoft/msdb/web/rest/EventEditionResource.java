@@ -8,10 +8,7 @@ import com.icesoft.msdb.repository.*;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
-import com.icesoft.msdb.service.CDNService;
-import com.icesoft.msdb.service.EventService;
-import com.icesoft.msdb.service.SeriesEditionService;
-import com.icesoft.msdb.service.StatisticsService;
+import com.icesoft.msdb.service.*;
 import com.icesoft.msdb.service.dto.ParticipantPointsDTO;
 import com.icesoft.msdb.service.dto.EventsSeriesNavigationDTO;
 import com.icesoft.msdb.service.dto.SessionCalendarDTO;
@@ -81,13 +78,15 @@ public class EventEditionResource {
     private final CacheHandler cacheHandler;
     private final EventService eventService;
     private final SeriesEditionService seriesEditionService;
+    private final SubscriptionsService subscriptionsService;
 
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventEditionSearchRepository eventEditionSearchRepo,
     		EventEntrySearchRepository eventEntrySearchRepo, EventSessionRepository eventSessionRepository,
     		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository,
     		RacetrackLayoutRepository racetrackLayoutRepo, ResultsService resultsService,
     		CDNService cdnService, StatisticsService statsService, CacheHandler cacheHandler,
-            EventService eventService, SeriesEditionService seriesEditionService, DriverEntryRepository driverEntryRepository) {
+            EventService eventService, SeriesEditionService seriesEditionService,
+            DriverEntryRepository driverEntryRepository, SubscriptionsService subscriptionsService) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventEditionSearchRepo = eventEditionSearchRepo;
         this.eventSessionRepository = eventSessionRepository;
@@ -102,6 +101,7 @@ public class EventEditionResource {
         this.eventService = eventService;
         this.seriesEditionService = seriesEditionService;
         this.driverEntryRepository = driverEntryRepository;
+        this.subscriptionsService = subscriptionsService;
     }
 
     /**
@@ -325,22 +325,12 @@ public class EventEditionResource {
     	result.parallelStream().forEach(session -> session.setEventEdition(null));
     	return result;
     }
-//
-//    @GetMapping("/event-editions/{id}/sessions/races")
-//    @Timed
-//    @Transactional(readOnly = true)
-//    public List<EventSession> getEventEditionRacesSessions(@PathVariable Long id) {
-//    	log.debug("REST request to get all races of event edition ", id);
-//    	List<EventSession> sessions = eventSessionRepository.findRacesSessions(id);
-//    	return sessions.parallelStream()
-//            .map(session -> new EventSession(session.getId(), session.getName(), session.getSessionType()))
-//            .collect(Collectors.toList());
-//    }
 
     @PostMapping("/event-editions/event-sessions")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict(cacheNames="calendar", allEntries=true)
+    @Transactional
     public ResponseEntity<EventSession> createEventEditionSession(@Valid @RequestBody EventSession eventSession) throws URISyntaxException {
         log.debug("REST request to save EventSession : {}", eventSession);
         if (eventSession.getId() != null) {
@@ -348,6 +338,7 @@ public class EventEditionResource {
             		applicationName, true, ENTITY_NAME_SESSION, "idexists", "A new eventSession cannot already have an ID")).body(null);
         }
         EventSession result = eventSessionRepository.save(eventSession);
+        subscriptionsService.saveEventSession(result);
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/sessions"))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME_SESSION, result.getId().toString()))
             .body(result);
@@ -366,9 +357,13 @@ public class EventEditionResource {
     @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     @CacheEvict(cacheNames="calendar", allEntries=true)
+    @Transactional
     public ResponseEntity<Void> deleteEventSession(@PathVariable Long id) {
         log.debug("REST request to delete EventSession : {}", id);
-        eventSessionRepository.deleteById(id);
+        eventSessionRepository.findById(id).ifPresent(session -> {
+            subscriptionsService.deleteEventSession(session);
+            eventSessionRepository.delete(session);
+        });
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
     }
 
@@ -376,6 +371,7 @@ public class EventEditionResource {
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict(cacheNames="calendar", allEntries=true)
+    @Transactional
     public ResponseEntity<EventSession> updateEventSession(@Valid @RequestBody EventSession eventSession) throws URISyntaxException {
         log.debug("REST request to update EventSession : {}", eventSession);
         if (eventSession.getId() == null) {
@@ -384,15 +380,24 @@ public class EventEditionResource {
         eventSession.setEventEdition(eventEditionRepository.findById(eventSession.getEventEdition().getId()).orElseThrow(
             () -> new MSDBException("Invalid event edition id " + eventSession.getEventEdition().getId())
         ));
+        Long prevSessionStartTime = eventSessionRepository.findById(eventSession.getId())
+            .orElseThrow(() -> new MSDBException("Invalid session id " + eventSession.getId())).getSessionStartTime();
+
         EventSession result = eventSessionRepository.save(eventSession);
+        if (result.getSessionStartTime().equals(prevSessionStartTime)) {
+            subscriptionsService.saveEventSession(result);
+        } else {
+            subscriptionsService.saveEventSession(result, prevSessionStartTime);
+        }
+
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, eventSession.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     @PutMapping("/event-editions/event-sessions/{sessionId}/process-results")
     @Timed
-    //@CacheEvict(cacheNames = {"driversStandingsCache", "teamsStandingsCache", "pointRaceByRace", "winnersCache", "resultsRaceByRace"}) //TODO: Improve to only remove the required key
+    @CacheEvict(cacheNames = {"driversStandingsCache", "teamsStandingsCache", "pointRaceByRace", "winnersCache", "resultsRaceByRace"}) //TODO: Improve to only remove the required key
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
     public ResponseEntity<Void> processSessionResults(@PathVariable Long sessionId) {

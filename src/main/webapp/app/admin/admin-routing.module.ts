@@ -37,6 +37,11 @@ import { RouterModule } from '@angular/router';
       {
         path: 'rebuildStatistics',
         loadChildren: () => import('./rebuildStatistics/rebuildStatistics.module').then(m => m.RebuildStatisticsModule)
+      },
+      {
+        path: 'rebuildSessionsNotifications',
+        loadChildren: () =>
+          import('./rebuildSessionsNotifications/rebuildSessionsNotifications.module').then(m => m.RebuildSessionsNotificationsModule)
       }
       /* jhipster-needle-add-admin-route - JHipster will add admin routes here */
     ])

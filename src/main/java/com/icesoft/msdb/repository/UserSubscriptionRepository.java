@@ -1,11 +1,12 @@
 package com.icesoft.msdb.repository;
 
-import com.icesoft.msdb.domain.PointsSystemSession;
-import com.icesoft.msdb.domain.PointsSystemSessionPK;
-import com.icesoft.msdb.domain.UserSubscription;
-import com.icesoft.msdb.domain.UserSubscriptionPK;
+import com.icesoft.msdb.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface UserSubscriptionRepository extends JpaRepository<UserSubscription, UserSubscriptionPK> {
+
+    List<UserSubscription> findAllBySeriesEditionIn(List<SeriesEdition> series);
 
 }

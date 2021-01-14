@@ -109,4 +109,34 @@ public class AccountResource {
         }
         return ResponseEntity.created(new URI("/api/account/subscriptions")).build();
     }
+
+    @PostMapping("/account/device")
+    @Transactional
+    public ResponseEntity<Void> registerDeviceToken(
+        Principal principal,
+        @RequestBody String deviceId) throws URISyntaxException {
+        if (principal instanceof AbstractAuthenticationToken) {
+            UserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
+
+            userService.registerDevice(user, deviceId);
+        } else {
+            throw new AccountResourceException("User could not be found");
+        }
+        return ResponseEntity.created(new URI("/")).build();
+    }
+
+    @DeleteMapping("/account/device/{deviceId}")
+    @Transactional
+    public ResponseEntity<Void> removeDeviceToken(
+        Principal principal,
+        @PathVariable String deviceId) throws URISyntaxException {
+        if (principal instanceof AbstractAuthenticationToken) {
+            UserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
+
+            userService.removeDevice(user, deviceId);
+        } else {
+            throw new AccountResourceException("User could not be found");
+        }
+        return ResponseEntity.ok().build();
+    }
 }

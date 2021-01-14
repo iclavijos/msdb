@@ -1,0 +1,18 @@
+{
+  "motorsportsDatabaseApp": {
+    "subscriptions": {
+      "title": "Gestiona les teves subscripcions",
+      "description": "Indica de quins campionats i sessions, i amb quin temps de marge abans de l'inic, vols ser notificat",
+      "sessions": {
+        "freePractice": "Sessions lliures",
+        "qualifying": "Classificacions",
+        "races": "Curses"
+      },
+      "warnings": {
+        "fifteenMins": "15 minuts abans",
+        "oneHour": "1 hora abans",
+        "threeHours": "3 hores abans"
+      }
+    }
+  }
+}
