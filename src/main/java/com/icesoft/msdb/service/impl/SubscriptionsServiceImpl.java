@@ -4,6 +4,7 @@ import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.User;
 import com.icesoft.msdb.domain.UserSubscription;
+import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.domain.subscriptions.SessionData;
 import com.icesoft.msdb.domain.subscriptions.Sessions;
@@ -67,7 +68,9 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             .findAllById(sessionsData.stream()
                 .map(session -> session.getSessionId())
                 .collect(Collectors.toList())
-            );
+            )
+            .stream().filter(session -> session.getEventEdition().getStatus().equals(EventStatusType.ONGOING))
+            .collect(Collectors.toList());
 
         List<SeriesEdition> seriesEds = eventSessions.stream()
             .flatMap(session -> session.getEventEdition().getSeriesEditions().stream())
