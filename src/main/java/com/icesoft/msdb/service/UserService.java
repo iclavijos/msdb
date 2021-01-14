@@ -236,23 +236,29 @@ public class UserService {
             () -> new MSDBException("User not found") // Should never happen
         );
 
-        subscriptions.parallelStream().forEach(dto -> {
-            UserSubscription userSub = new UserSubscription(user.getId(), dto);
-            if (dto.getPracticeSessions() || dto.getQualiSessions() || dto.getRaces()) {
-                userSubscriptionRepository.save(userSub);
-                if (!user.getSubscriptions().contains(userSub)) {
-                    user.addSubscription(userSub);
-                }
-            } else {
-                if (user.getSubscriptions().parallelStream()
-                    .filter(s -> s.getId().getSeriesEditionId().equals(dto.getSeriesEditionId()))
-                    .findFirst().isPresent()) {
-                    user.getSubscriptions().remove(userSub);
-                    userSubscriptionRepository.delete(userSub);
-                }
-            }
-        });
-        // userRepository.save(user);
+        // TODO: Remove user from upcoming sessions notifications
+        user.getSubscriptions().forEach(userSubs -> userSubscriptionRepository.delete(userSubs));
+        user.removeAllSubscription();
+        userRepository.save(user);
+        subscriptions.stream()
+            .map(subsDTO -> new UserSubscription(user.getId(), subsDTO))
+            .forEach(subs -> userSubscriptionRepository.save(subs));
+    }
+
+    public void registerDevice(UserDTO userDTO, String deviceId) {
+        User user = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).orElseThrow(
+            () -> new MSDBException("User not found") // Should never happen
+        );
+        user.addDeviceId(deviceId);
+        userRepository.save(user);
+    }
+
+    public void removeDevice(UserDTO userDTO, String deviceId) {
+        User user = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).orElseThrow(
+            () -> new MSDBException("User not found") // Should never happen
+        );
+        user.removeDeviceId(deviceId);
+        userRepository.save(user);
     }
 
     private static User getUser(Map<String, Object> details) {

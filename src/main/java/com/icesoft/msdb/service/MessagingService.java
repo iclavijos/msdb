@@ -1,8 +1,9 @@
 package com.icesoft.msdb.service;
 
+import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.User;
 
 public interface MessagingService {
 
-    void sendNotification(User user, String something);
+    void sendSessionNotification(User user, EventSession session);
 }

@@ -1,6 +1,5 @@
 package com.icesoft.msdb.service.impl;
 
-import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.User;
@@ -48,7 +47,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
         this.messagingService = messagingService;
     }
 
-    // @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional(readOnly = true)
     public void generateNotifications() {
         OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
@@ -101,11 +100,11 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             session.getEventEdition().getLongEventName(),
             session.getSessionStartTimeDate());
 
-        messagingService.sendNotification(user, "lala");
+        messagingService.sendSessionNotification(user, session);
     }
 
     @Scheduled(cron = "0 0 0/12 * * *")
-    public void removedPassedNotifications() {
+    public void removeExpiredNotifications() {
         OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
         sessionsRepository.deleteByTimestampLessThan(utc.toEpochSecond());
     }
