@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.repository.*;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
+import com.icesoft.msdb.service.MessagingService;
 import com.icesoft.msdb.service.dto.SessionDataDTO;
 import com.icesoft.msdb.service.dto.TimeZonesResponse;
 import io.micrometer.core.annotation.Timed;
@@ -12,6 +13,7 @@ import net.minidev.json.JSONObject;
 import org.cloudinary.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +42,11 @@ public class HomeResource {
 	private final TeamRepository teamRepository;
 	private final EventEditionRepository eventsEditionsRepository;
 	private final EventSessionRepository eventSessionRepository;
+
+	@Autowired
+    private UserRepository userRepository;
+	@Autowired
+    private MessagingService messagingService;
 
 	public HomeResource(DriverRepository driverRepo, RacetrackLayoutRepository racetrackRepo,
 			SeriesEditionRepository seriesRepo, TeamRepository teamRepo, EventEditionRepository eventsRepo,
@@ -139,4 +146,11 @@ public class HomeResource {
         timezonesResp.getZones().add(nerdTZ);
         return timezonesResp.getZones();
 	}
+
+	@GetMapping("/home/testNotif")
+    public void testNotif() {
+        User ivan = userRepository.findOneByEmailIgnoreCase("iclavijos@gmail.com").get();
+        EventSession session = eventSessionRepository.findById(7194L).get();
+        messagingService.sendSessionNotification(ivan, session);
+    }
 }

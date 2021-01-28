@@ -52,7 +52,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     @Transactional(readOnly = true)
     public void generateNotifications() {
         OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
-
+        log.trace("Generating notifications at {}", utc);
         List<SessionData> sessionsData = StreamSupport
             .stream(
                 sessionsRepository.findAllById(
@@ -70,6 +70,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
                 .collect(Collectors.toList())
             )
             .stream().filter(session -> session.getEventEdition().getStatus().equals(EventStatusType.ONGOING))
+            .peek(session -> log.trace("Session to notify: {}", session.getName()))
             .collect(Collectors.toList());
 
         List<SeriesEdition> seriesEds = eventSessions.stream()
@@ -79,6 +80,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 
         List<UserSubscription> usersSubs = userSubscriptionRepository.findAllBySeriesEditionIn(seriesEds);
         usersSubs.forEach(userSubscription -> {
+            log.trace("User to be notified: {}", userSubscription.getUser().getId());
             eventSessions.stream()
                 .filter(eventSession -> eventSession.getEventEdition().getSeriesEditions()
                     .stream().map(seriesEdition -> seriesEdition.getId()).collect(Collectors.toList())

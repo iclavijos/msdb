@@ -10,11 +10,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -118,7 +122,14 @@ public class AccountResource {
         if (principal instanceof AbstractAuthenticationToken) {
             UserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
 
-            userService.registerDevice(user, deviceId);
+            // This should be handled better, but it's a bit overkill to define a class for a single attribute
+            Assert.notNull(deviceId, "A deviceId must be provided");
+            try {
+                String token = URLDecoder.decode(deviceId.split("=")[1], StandardCharsets.UTF_8.toString());
+                userService.registerDevice(user, token);
+            } catch (UnsupportedEncodingException e) {
+                log.error("Couldn't decode received device ID", e);
+            }
         } else {
             throw new AccountResourceException("User could not be found");
         }
