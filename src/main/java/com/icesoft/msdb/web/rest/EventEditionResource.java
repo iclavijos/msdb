@@ -509,6 +509,8 @@ public class EventEditionResource {
     			.operatedBy(entry.getOperatedBy())
     			.setCarImageUrl(entry.getCarImageUrl());
 
+            copiedEntry = eventEntryRepository.save(copiedEntry);
+
     		Set<DriverEntry> copiedList = new HashSet<>();
     		for(DriverEntry driverEntry: entry.getDrivers()) {
     		    DriverEntry de = new DriverEntry();
@@ -520,7 +522,7 @@ public class EventEditionResource {
     		}
     		copiedEntry.drivers(copiedList);
 
-    		eventEntryRepository.save(copiedEntry);
+            driverEntryRepository.saveAll(copiedList);
     	}
     	return ResponseEntity.ok().headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, idTarget.toString())).build();
     }
