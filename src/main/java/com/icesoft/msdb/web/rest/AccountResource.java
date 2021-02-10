@@ -1,6 +1,5 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.domain.UserSubscription;
 import com.icesoft.msdb.service.UserService;
 import com.icesoft.msdb.service.dto.UserDTO;
 
@@ -14,11 +13,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -124,12 +120,7 @@ public class AccountResource {
 
             // This should be handled better, but it's a bit overkill to define a class for a single attribute
             Assert.notNull(deviceId, "A deviceId must be provided");
-            try {
-                String token = URLDecoder.decode(deviceId.split("=")[1], StandardCharsets.UTF_8.toString());
-                userService.registerDevice(user, token);
-            } catch (UnsupportedEncodingException e) {
-                log.error("Couldn't decode received device ID", e);
-            }
+            userService.registerDevice(user, deviceId);
         } else {
             throw new AccountResourceException("User could not be found");
         }

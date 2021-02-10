@@ -5,23 +5,29 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.firebase.messaging.*;
 import com.icesoft.msdb.domain.EventSession;
+import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.User;
 import com.icesoft.msdb.service.MessagingService;
+import com.icesoft.msdb.service.UserService;
+import com.icesoft.msdb.service.dto.UserDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 
 @Service
 @Slf4j
 public class FirebaseMessagingServiceImpl implements MessagingService {
 
     private final FirebaseMessaging firebaseMessaging;
+
+    @Autowired
+    private UserService userService;
 
     public FirebaseMessagingServiceImpl(FirebaseMessaging firebaseMessaging) {
         this.firebaseMessaging = firebaseMessaging;
@@ -30,49 +36,20 @@ public class FirebaseMessagingServiceImpl implements MessagingService {
     @Override
     public void sendSessionNotification(User user, EventSession session) {
         log.trace("Sending notification to user {} about session {} of {}", user.getFirstName(), session.getName(), session.getEventEdition().getLongEventName());
-        ResourceBundle messages =
-            ResourceBundle.getBundle("i18n/messages", Locale.forLanguageTag(user.getLangKey()));
-        LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
-        long hoursDiff = ChronoUnit.HOURS.between(now, session.getSessionStartTimeDate());
-        long minsDiff = ChronoUnit.MINUTES.between(now, session.getSessionStartTimeDate());
 
         user.getDeviceIds().forEach(deviceId -> {
             String messageId = null;
             try {
-                AndroidNotification notification = AndroidNotification
-                    .builder()
-                    .setIcon("ic_msdb")
-                    .setTitleLocalizationKey("notification_title")
-                    .setBodyLocalizationKey(
-                        minsDiff < 15 ? "notification_msg_minutes" :
-                            hoursDiff == 0 ? "notification_msg_hour" : "notification_msg_hours"
-                    )
-                    .addAllBodyLocalizationArgs(Lists.newArrayList(
-                        session.getName(),
-                        session.getEventEdition().getLongEventName()
-                    ))
-                    .setTitle(messages.getString("notification.title"))
-                    .setBody(
-                        MessageFormat.format(
-                            messages.getString("notification.message"),
-                            session.getName(),
-                            session.getEventEdition().getLongEventName(),
-                            minsDiff < 15 ? 15 : hoursDiff + 1,
-                            minsDiff < 15 ? messages.getString("notification.minutes") :
-                                hoursDiff == 0 ? messages.getString("notification.hour") :
-                                    messages.getString("notification.hours")
-                        ))
-                    .build();
-
                 Message message = Message
                     .builder()
                     .setToken(deviceId)
-                    .setAndroidConfig(AndroidConfig.builder()
-                        .setNotification(notification)
-                        .build())
+                    .putData("sessionId", session.getId().toString())
                     .putData("eventName", session.getEventEdition().getLongEventName())
                     .putData("sessionName", session.getName())
                     .putData("startTime", session.getSessionStartTime().toString())
+                    .putData("seriesLogoUrl", session.getEventEdition().getSeriesEditions().stream()
+                        .map(series -> series.getSeries().getLogoUrl()).findFirst().orElse(null)
+                    )
                     .build();
 
                 // iOS
@@ -109,6 +86,9 @@ public class FirebaseMessagingServiceImpl implements MessagingService {
                 log.debug("Generated messageId: {}", messageId);
             } catch (FirebaseMessagingException e) {
                 log.error("Couldn't send notification message to device {} of user {} because {}", deviceId, user.getEmail(), e.getMessagingErrorCode());
+                if (e.getMessagingErrorCode().name().equals("UNREGISTERED")) {
+                    userService.removeDevice(user, deviceId);
+                }
             }
         });
     }

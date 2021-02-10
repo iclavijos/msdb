@@ -257,6 +257,10 @@ public class UserService {
         User user = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).orElseThrow(
             () -> new MSDBException("User not found") // Should never happen
         );
+        removeDevice(user, deviceId);
+    }
+
+    public void removeDevice(User user, String deviceId) {
         user.removeDeviceId(deviceId);
         userRepository.save(user);
     }
