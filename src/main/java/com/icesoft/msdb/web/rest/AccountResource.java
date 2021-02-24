@@ -95,7 +95,7 @@ public class AccountResource {
      * @return operation result
      * @throws AccountResourceException {@code 500 (Internal Server Error)} if the user's subscriptions couldn't be returned.
      */
-    @PostMapping("/account/subscriptions")
+    @PutMapping("/account/subscriptions")
     @Transactional
     public ResponseEntity<Void> updateSubscriptions(
         Principal principal,

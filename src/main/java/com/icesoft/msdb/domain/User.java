@@ -1,6 +1,7 @@
 package com.icesoft.msdb.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -175,7 +176,10 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void removeDeviceId(String deviceId) {
         if (this.deviceIds != null) {
-            this.deviceIds.remove(deviceId);
+            Set<String> copy = new HashSet<>();
+            copy.addAll(getDeviceIds());
+            copy.remove(deviceId);
+            this.deviceIds = copy;
         }
     }
 

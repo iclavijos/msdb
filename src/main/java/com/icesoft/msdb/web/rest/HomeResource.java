@@ -150,7 +150,7 @@ public class HomeResource {
 	@GetMapping("/home/testNotif")
     public void testNotif() {
         User ivan = userRepository.findOneByEmailIgnoreCase("iclavijos@gmail.com").get();
-        EventSession session = eventSessionRepository.findById(6897L).get();
+        EventSession session = eventSessionRepository.findById(6964L).get();
         messagingService.sendSessionNotification(ivan, session);
     }
 }

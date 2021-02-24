@@ -22,6 +22,7 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -260,9 +261,10 @@ public class UserService {
         removeDevice(user, deviceId);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void removeDevice(User user, String deviceId) {
         user.removeDeviceId(deviceId);
-        userRepository.save(user);
+        userRepository.deleteDeviceId(deviceId);
     }
 
     private static User getUser(Map<String, Object> details) {

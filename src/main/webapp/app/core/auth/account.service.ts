@@ -30,7 +30,7 @@ export class AccountService {
   }
 
   updateSubscriptions(subscriptions: any): Observable<any> {
-    return this.http.post<any>(SERVER_API_URL + 'api/account/subscriptions', subscriptions, { observe: 'response' });
+    return this.http.put<any>(SERVER_API_URL + 'api/account/subscriptions', subscriptions, { observe: 'response' });
   }
 
   authenticate(identity) {
