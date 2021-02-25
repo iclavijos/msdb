@@ -22,13 +22,18 @@
                                 <div class="card-block" *ngFor="let day of dates">
                                     <h5 class="card-title">{{ day }}</h5>
                                     <div class="card-body">
-                                        <p *ngFor="let session of filteredSessions(day);">
-                                            <strong>{{ session.sessionStartTime.format("HH:mm") }}
-                                                <span *ngIf="session.sessionEndTime"> - {{ session.sessionEndTime.format("HH:mm")}}</span>
-                                                <span *ngIf="session.durationType === 5"> ({{ session.duration}}L)</span>
-                                                <span *ngIf="session.durationType === 3"> ({{ session.duration}}KM)</span>
-                                                <span *ngIf="session.durationType === 4"> ({{ session.duration}}M)</span>: </strong>
-                                            <span>
+                                        <div class="row p-2" *ngFor="let session of filteredSessions(day);">
+                                            <div class="col-2">
+                                                <img #layoutImg [src]="session.seriesLogo" class="img-fluid" alt="series logo" style="max-width: 100px; max-height: 50px">
+                                            </div>
+                                            <div class="col-10">
+                                                <strong>{{ session.sessionStartTime.format("HH:mm") }}
+                                                    <span *ngIf="session.sessionEndTime"> - {{ session.sessionEndTime.format("HH:mm")}}</span>
+                                                    <span *ngIf="session.durationType === 5"> ({{ session.duration}}L)</span>
+                                                    <span *ngIf="session.durationType === 3"> ({{ session.duration}}KM)</span>
+                                                    <span *ngIf="session.durationType === 4"> ({{ session.duration}}M)</span>:
+                                                </strong>
+                                                <span>
                                                 <span *ngIf="session.seriesIds">
                                                     <ng-template ngFor let-item [ngForOf]="session.seriesIds" let-currentIndex="index">
                                                       <a [routerLink]="['/series/edition', item, 'view' ]" >{{session.seriesNames[currentIndex]}} </a>
@@ -36,7 +41,8 @@
                                                 </span>
                                                 <a [routerLink]="['/event/edition', session.eventEditionId, 'view-ed' ]" >{{ session.eventName }}, {{ session.sessionName }}</a>
                                             </span>
-                                        </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="card-block" *ngIf="noEvents">
