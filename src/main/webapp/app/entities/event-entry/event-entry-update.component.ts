@@ -221,7 +221,9 @@ export class EventEntryUpdateComponent implements OnInit {
       carImageUrl: eventEntry.carImageUrl,
       category: eventEntry.eventEdition.allowedCategories.length === 1 ? eventEntry.eventEdition.allowedCategories[0] : eventEntry.category
     });
-    this.driversEntry.removeAt(0);
+    if (eventEntry.drivers.length > 0) {
+      this.driversEntry.removeAt(0);
+    }
     eventEntry.drivers.forEach(driverEntry =>
       this.driversEntry.push(
         this.fb.group({
