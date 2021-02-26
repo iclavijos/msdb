@@ -40,6 +40,12 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
     private String editionName;
 
+    @Transient
+    private byte[] logo;
+
+    @Column(name = "logo_url")
+    private String logoUrl;
+
 	@NotNull
     @Size(max = 10)
     @Column(name = "period", length = 10, nullable = false)
@@ -162,6 +168,33 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 	public void setEditionName(String editionName) {
 		this.editionName = editionName;
 	}
+
+    public byte[] getLogo() {
+        return logo;
+    }
+
+    public SeriesEdition logo(byte[] logo) {
+        this.logo = logo;
+        return this;
+    }
+
+    public void setLogo(byte[] logo) {
+        this.logo = logo;
+    }
+
+    public String getLogoUrl() {
+
+        return logoUrl;
+    }
+
+    public SeriesEdition logoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+        return this;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
 
     public Boolean isSingleChassis() {
         return singleChassis;

@@ -25,6 +25,13 @@
                         <table mat-table class="table table-hover" [dataSource]="seriesEditions"
                                matSort matSortActive="period" matSortDisableClear matSortDirection="desc">
 
+                            <ng-container matColumnDef="logo">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                                <td mat-cell *matCellDef="let seriesEdition">
+                                    <img *ngIf="seriesEdition?.logoUrl" [src]="seriesEdition.logoUrl" style="max-height: 50px;" alt="series logo"/>
+                                </td>
+                            </ng-container>
+
                             <ng-container matColumnDef="period">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.series.seriesEdition.period' | translate }}</th>
                                 <td mat-cell *matCellDef="let seriesEdition">{{ seriesEdition.period }}</td>

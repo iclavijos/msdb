@@ -2,6 +2,7 @@ package com.icesoft.msdb.service.dto;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.icesoft.msdb.domain.EventSession;
@@ -33,7 +34,9 @@ public class SessionDataDTO {
 		this.seriesNames = session.getSeriesNames();
 		this.racetrack = session.getEventEdition().getTrackLayout().getRacetrack().getName();
 		this.seriesLogo = session.getEventEdition().getSeriesEditions().stream()
-            .map(series -> series.getSeries().getLogoUrl()).findFirst().orElse(null);
+            .map(series -> Optional.ofNullable(series.getLogoUrl()).orElse(
+                series.getSeries().getLogoUrl()
+            )).findFirst().orElse(null);
 	}
 
 }

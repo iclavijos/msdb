@@ -24,6 +24,9 @@ export interface ISeriesEdition {
   teamsStandings?: boolean;
   manufacturersStandings?: boolean;
   standingsPerCategory?: boolean;
+  logoContentType?: string;
+  logo?: any;
+  logoUrl?: string;
 }
 
 export class SeriesEdition implements ISeriesEdition {
@@ -45,7 +48,10 @@ export class SeriesEdition implements ISeriesEdition {
     public driversStandings?: boolean,
     public teamsStandings?: boolean,
     public manufacturersStandings?: boolean,
-    public standingsPerCategory?: boolean
+    public standingsPerCategory?: boolean,
+    public logoContentType?: string,
+    public logo?: any,
+    public logoUrl?: string
   ) {
     this.singleChassis = this.singleChassis || false;
     this.singleEngine = this.singleEngine || false;

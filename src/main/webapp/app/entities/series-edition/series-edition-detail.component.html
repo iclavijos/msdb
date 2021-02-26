@@ -30,7 +30,8 @@
                                 <mat-tab-group dynamicHeight mat-stretch-tabs>
                                     <mat-tab label="{{'global.menu.calendar' | translate }}">
                                         <div class="row row-margin">
-                                            <div class="col-2 text-left">
+                                            <div class="col-4 text-left">
+                                                <img *ngIf="seriesEdition?.logoUrl" [src]="seriesEdition.logoUrl" class="img-fluid" alt="series logo" style="max-height: 100px"/>
                                                 <span style="cursor: pointer;">
                                                     <!-- button mat-button (click)="showCalendarSubscriptionDialog()">
                                                         <img src="/images/ics.png" style="width: 32px;"/>
@@ -38,7 +39,7 @@
                                                     </button -->
                                                 </span>
                                             </div>
-                                            <div class="col-10 text-right" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
+                                            <div class="col-8 text-right" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
                                                 <button mat-button (click)="updateStandings()" class="btn btn-info float-right">
                                                     <fa-icon [icon]="'list-ol'"></fa-icon>
                                                     <span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.updateStandings">Update standings</span>

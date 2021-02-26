@@ -33,7 +33,7 @@ export class SeriesEditionComponent implements AfterViewInit, OnDestroy {
   previousPage: any;
   reverse: any;
 
-  displayedColumns: string[] = ['period', 'name', 'singleChassis', 'singleEngine', 'singleTyres', 'allowedCategories', 'buttons'];
+  displayedColumns: string[] = ['logo', 'period', 'name', 'singleChassis', 'singleEngine', 'singleTyres', 'allowedCategories', 'buttons'];
 
   resultsLength = 0;
   isLoadingResults = true;

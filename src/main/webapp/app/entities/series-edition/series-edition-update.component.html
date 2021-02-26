@@ -14,7 +14,7 @@
                 </mat-error>
             </mat-form-field>
         </div>
-        <div class="col-3">
+        <div class="col-2">
             <mat-form-field class="example-full-width">
                 <input matInput type="number" formControlName="numEvents" required
                        placeholder="{{ 'motorsportsDatabaseApp.series.seriesEdition.numEvents' | translate }}"/>
@@ -23,15 +23,6 @@
                 </mat-error>
             </mat-form-field>
         </div>
-        <div class="col-7">
-            <section class="example-full-width">
-                <mat-checkbox formControlName="driversStandings">{{ 'motorsportsDatabaseApp.series.seriesEdition.driversStandings' | translate }}</mat-checkbox>
-                <mat-checkbox formControlName="teamsStandings">{{ 'motorsportsDatabaseApp.series.seriesEdition.teamsStandings' | translate }}</mat-checkbox>
-                <mat-checkbox formControlName="manufacturersStandings">{{ 'motorsportsDatabaseApp.series.seriesEdition.manufacturersStandings' | translate }}</mat-checkbox>
-            </section>
-        </div>
-    </div>
-    <div class="row">
         <div class="col-8">
             <mat-form-field class="example-full-width">
                 <input matInput type="text" formControlName="editionName" required maxlength="150"
@@ -44,20 +35,58 @@
                 </mat-error>
             </mat-form-field>
         </div>
+    </div>
+    <div class="row">
         <div class="col-4">
-            <section class="example-full-width">
-                <mat-checkbox formControlName="singleChassis">{{ 'motorsportsDatabaseApp.series.seriesEdition.singleChassis' | translate }}</mat-checkbox>
-                <mat-checkbox formControlName="singleEngine">{{ 'motorsportsDatabaseApp.series.seriesEdition.singleEngine' | translate }}</mat-checkbox>
-                <mat-checkbox formControlName="singleTyre">{{ 'motorsportsDatabaseApp.series.seriesEdition.singleTyre' | translate }}</mat-checkbox>
-            </section>
+            <mat-list>
+                <mat-list-item>
+                    <mat-checkbox formControlName="driversStandings">{{ 'motorsportsDatabaseApp.series.seriesEdition.driversStandings' | translate }}</mat-checkbox>
+                </mat-list-item>
+                <mat-list-item>
+                    <mat-checkbox formControlName="teamsStandings">{{ 'motorsportsDatabaseApp.series.seriesEdition.teamsStandings' | translate }}</mat-checkbox>
+                </mat-list-item>
+                <mat-list-item>
+                    <mat-checkbox formControlName="manufacturersStandings">{{ 'motorsportsDatabaseApp.series.seriesEdition.manufacturersStandings' | translate }}</mat-checkbox>
+                </mat-list-item>
+                <mat-list-item>
+                    <mat-checkbox formControlName="standingsPerCategory">{{ 'motorsportsDatabaseApp.series.seriesEdition.standingsPerCategory' | translate }}</mat-checkbox>
+                </mat-list-item>
+            </mat-list>
+        </div>
+        <div class="col-4">
+            <mat-list>
+                <mat-list-item>
+                    <mat-checkbox formControlName="singleChassis">{{ 'motorsportsDatabaseApp.series.seriesEdition.singleChassis' | translate }}</mat-checkbox>
+                </mat-list-item>
+                <mat-list-item>
+                    <mat-checkbox formControlName="singleEngine">{{ 'motorsportsDatabaseApp.series.seriesEdition.singleEngine' | translate }}</mat-checkbox>
+                </mat-list-item>
+                <mat-list-item>
+                    <mat-checkbox formControlName="singleTyre">{{ 'motorsportsDatabaseApp.series.seriesEdition.singleTyre' | translate }}</mat-checkbox>
+                </mat-list-item>
+            </mat-list>
+        </div>
+        <div class="col-4">
+            <div class="col-12">
+                <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.logo" for="field_logo">Logo</label>
+                <div>
+                    <img [src]="editForm.get('logoUrl').value" style="max-height: 100px;" *ngIf="!editForm.get('logo').value && editForm.get('logoUrl').value != null" alt="series logo"/>
+                    <img [src]="'data:' + editForm.get('logoContentType').value + ';base64,' + editForm.get('logo').value" style="max-height: 100px;" *ngIf="editForm.get('logo').value" alt="series logo"/>
+                    <div *ngIf="editForm.get('logo').value" class="form-text text-danger clearfix">
+                        <button type="button" (click)="clearInputImage('logo', 'logoContentType', 'fileImage')" class="btn btn-secondary btn-xs pull-right">
+                            <span class="fa fa-times"></span>
+                        </button>
+                    </div>
+                    <input type="file" id="file_logo" (change)="setFileData($event, 'logo', true)" accept="logo/*" jhiTranslate="entity.action.addlogo"/>
+                </div>
+                <input type="hidden" class="form-control" name="logo" id="field_logo" formControlName="logo"/>
+                <input type="hidden" class="form-control" name="logoContentType" id="field_logoContentType" formControlName="logoContentType" />
+            </div>
         </div>
     </div>
     <div class="row">
         <div class="col-6">
             <div class="row">
-                <div class="col-12">
-                    <mat-checkbox formControlName="standingsPerCategory">{{ 'motorsportsDatabaseApp.series.seriesEdition.standingsPerCategory' | translate }}</mat-checkbox>
-                </div>
                 <div class="col-md-8">
                     <mat-label>{{'motorsportsDatabaseApp.series.seriesEdition.allowedCategories' | translate }}</mat-label>
                     <cdk-virtual-scroll-viewport itemSize="50" class="selection-list-viewport">

@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.repository.SeriesEditionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
+import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.*;
@@ -64,17 +65,20 @@ public class SeriesEditionResource {
     private final EventSessionRepository eventSessionRepository;
     private final ResultsService resultsService;
     private final StatisticsService statsService;
+    private final CDNService cdnService;
 
     @Autowired
     private CacheHandler cacheHandler;
 
     public SeriesEditionResource(SeriesEditionService seriesEditionService, SeriesEditionRepository seriesEditionRepository,
-    		EventSessionRepository eventSessionRepository, ResultsService resultsService, StatisticsService statsService) {
+    		EventSessionRepository eventSessionRepository, ResultsService resultsService, StatisticsService statsService,
+            CDNService cdnService) {
         this.seriesEditionService = seriesEditionService;
     	this.seriesEditionRepository = seriesEditionRepository;
     	this.eventSessionRepository = eventSessionRepository;
     	this.resultsService = resultsService;
     	this.statsService = statsService;
+    	this.cdnService = cdnService;
     }
 
     /**
@@ -94,6 +98,12 @@ public class SeriesEditionResource {
             throw new BadRequestAlertException("A new seriesEdition cannot already have an ID", ENTITY_NAME, "idexists");
         }
         SeriesEdition result = seriesEditionRepository.save(seriesEdition);
+        if (result.getLogo() != null) {
+            String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getLogo(), ENTITY_NAME);
+            result.setLogoUrl(cdnUrl);
+
+            result = seriesEditionRepository.save(result);
+        }
         return ResponseEntity.created(new URI("/api/series-editions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -118,6 +128,12 @@ public class SeriesEditionResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         seriesEdition.setEvents(seriesEditionRepository.getOne(seriesEdition.getId()).getEvents());
+        if (seriesEdition.getLogo() != null) {
+            String cdnUrl = cdnService.uploadImage(seriesEdition.getId().toString(), seriesEdition.getLogo(), ENTITY_NAME);
+            seriesEdition.logoUrl(cdnUrl);
+        } else if (seriesEdition.getLogoUrl() == null) {
+            cdnService.deleteImage(seriesEdition.getId().toString(), ENTITY_NAME);
+        }
         SeriesEdition result = seriesEditionRepository.save(seriesEdition);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, seriesEdition.getId().toString()))
@@ -168,6 +184,7 @@ public class SeriesEditionResource {
     public ResponseEntity<Void> deleteSeriesEdition(@PathVariable Long id) {
         log.debug("REST request to delete SeriesEdition : {}", id);
         seriesEditionRepository.deleteById(id);
+        cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 
