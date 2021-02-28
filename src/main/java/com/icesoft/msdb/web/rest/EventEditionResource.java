@@ -695,7 +695,7 @@ public class EventEditionResource {
             String seriesName = null;
     		if (session.getEventEdition().getSeriesEditions() != null) {
     			logoUrl = session.getEventEdition().getSeriesEditions().stream()
-    					.map(sEd -> sEd.getSeries().getLogoUrl())
+    					.map(sEd -> sEd.getLogoUrl())
     					.toArray(String[]::new);
     			seriesRelevance = session.getEventEdition().getSeriesEditions().stream()
                         .map(sEd -> sEd.getSeries().getRelevance())
