@@ -45,6 +45,7 @@ public class FirebaseMessagingServiceImpl implements MessagingService {
                 Message message = Message
                     .builder()
                     .setToken(deviceId)
+                    .putData("eventEditionId", session.getEventEdition().getId().toString())
                     .putData("sessionId", session.getId().toString())
                     .putData("eventName", session.getEventEdition().getLongEventName())
                     .putData("sessionName", session.getName())
