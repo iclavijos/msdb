@@ -33,10 +33,13 @@ public class SessionDataDTO {
 		this.seriesIds = session.getSeriesIds();
 		this.seriesNames = session.getSeriesNames();
 		this.racetrack = session.getEventEdition().getTrackLayout().getRacetrack().getName();
-		this.seriesLogo = session.getEventEdition().getSeriesEditions().stream()
+		Optional<String> seriesLogo = Optional.ofNullable(session.getEventEdition().getSeriesEditions().stream()
             .map(series -> Optional.ofNullable(series.getLogoUrl()).orElse(
                 series.getSeries().getLogoUrl()
-            )).findFirst().orElse(null);
+            )).findFirst().orElse(null));
+
+		this.seriesLogo = seriesLogo.orElse(
+		    Optional.ofNullable(session.getEventEdition().getPosterUrl()).orElse(null));
 	}
 
 }
