@@ -88,7 +88,7 @@
                             <div>
                                 <div class="row">
                                     <div class="col-12">
-                                        #{{result.entry.raceNumber}} {{eventEdition.multidriver ? result.entry.driversName : result.entry.drivers[0].fullName}}
+                                        #{{result.entry.raceNumber}} {{eventEdition.multidriver ? result.entry.driversName : result.entry.drivers[0].driver.fullName}}
                                         <span *ngIf="result.entry.rookie"> (R)</span>
                                     </div>
                                 </div>

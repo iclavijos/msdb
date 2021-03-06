@@ -60,7 +60,7 @@ export class EventEntryService {
   private transformDriverCategory(res: EntityArrayResponseType): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((entry: any) => {
-        entry.drivers.forEach((driver: any) => (driver.category = driver.category ? driver.category.toLowerCase() : null));
+        entry.drivers.forEach((driver: any) => (driver.category = driver.category ? driver.category : null));
       });
     }
     return res;

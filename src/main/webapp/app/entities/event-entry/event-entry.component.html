@@ -56,10 +56,10 @@
                                     </div>
                                     <div *ngIf="entry.eventEdition.multidriver">
                                         <div *ngFor="let entryDriver of entry.drivers">
-                                            <div *ngIf="entryDriver.category === 'platinum'" class="platinum"></div>
-                                            <div *ngIf="entryDriver.category === 'gold'" class="gold"></div>
-                                            <span *ngIf="entryDriver.category === 'silver'" class="silver"></span>
-                                            <span *ngIf="entryDriver.category === 'bronze'" class="bronze"></span>
+                                            <div *ngIf="entryDriver.category === 'PLATINUM'" class="platinum"></div>
+                                            <div *ngIf="entryDriver.category === 'GOLD'" class="gold"></div>
+                                            <span *ngIf="entryDriver.category === 'SILVER'" class="silver"></span>
+                                            <span *ngIf="entryDriver.category === 'BRONZE'" class="bronze"></span>
                                             <img *ngIf="entryDriver.driver.nationality" src="/images/flags16/{{entryDriver.driver.nationality.countryCode}}.png"/>
                                             <a [routerLink]="['/driver', entryDriver.driver.id, 'view' ]" >
                                                 {{entryDriver.driver.fullName}}
