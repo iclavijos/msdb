@@ -323,7 +323,7 @@ export class EventEntryUpdateComponent implements OnInit {
       this.fb.group({
         driver: '',
         rookie: false,
-        category: 0
+        category: null
       })
     );
   }

@@ -25,6 +25,8 @@ public enum DriverCategory {
     }
 
     public static DriverCategory valueOf(int pageType) {
+        if (pageType == 0) return null;
+
         return map.get(pageType);
     }
 

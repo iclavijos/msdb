@@ -30,7 +30,6 @@ public class DriverEntry {
     private Boolean rookie;
 
     @Column(name= "category")
-    @Enumerated(EnumType.ORDINAL)
     private DriverCategory category;
 
     public void setEventEntry(EventEditionEntry entry) {
