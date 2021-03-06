@@ -12,6 +12,7 @@ import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.micrometer.core.annotation.Timed;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -122,14 +123,13 @@ public class PointsSystemResource {
     public ResponseEntity<List<PointsSystem>> getPointsSystems(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of PointsSystems");
         Page<PointsSystem> page;
-        Optional<String> queryOpt = Optional.ofNullable(query);
-        if (queryOpt.isPresent()) {
+        if (StringUtils.isNotEmpty(query)) {
             page = searchService.performWildcardSearch(pointsSystemSearchRepository, query.toLowerCase(), new String[]{"name", "description"}, pageable);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
         } else {
-            page = pointsSystemRepository.findAll(pageable);
+            return ResponseEntity.ok().body(pointsSystemRepository.findAll());
         }
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**

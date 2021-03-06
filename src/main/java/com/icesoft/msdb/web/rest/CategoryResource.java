@@ -13,6 +13,7 @@ import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.micrometer.core.annotation.Timed;
 import io.searchbox.core.Search;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
@@ -125,14 +126,14 @@ public class CategoryResource {
     public ResponseEntity<List<Category>> getCategories(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of Categories");
         Page<Category> page;
-        Optional<String> queryOpt = Optional.ofNullable(query);
-        if (queryOpt.isPresent()) {
+        if (StringUtils.isNotEmpty(query)) {
             page = searchService.performWildcardSearch(categorySearchRepository, query.toLowerCase(), new String[]{"name", "shortname"}, pageable);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
         } else {
-            page = categoryRepository.findAll(pageable);
+            return ResponseEntity.ok().body(categoryRepository.findAll());
         }
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+
     }
 
     /**
