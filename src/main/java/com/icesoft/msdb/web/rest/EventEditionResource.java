@@ -694,9 +694,12 @@ public class EventEditionResource {
             Integer seriesRelevance = null;
             String seriesName = null;
     		if (session.getEventEdition().getSeriesEditions() != null) {
-    			logoUrl = session.getEventEdition().getSeriesEditions().stream()
-    					.map(sEd -> sEd.getLogoUrl())
-    					.toArray(String[]::new);
+                Optional<String> seriesLogo = Optional.ofNullable(session.getEventEdition().getSeriesEditions().stream()
+                    .map(series -> Optional.ofNullable(series.getLogoUrl()).orElse(
+                        series.getSeries().getLogoUrl()
+                    )).findFirst().orElse(null));
+                logoUrl = new String[] {seriesLogo.orElse(
+                    Optional.ofNullable(session.getEventEdition().getPosterUrl()).orElse(null))};
     			seriesRelevance = session.getEventEdition().getSeriesEditions().stream()
                         .map(sEd -> sEd.getSeries().getRelevance())
                         .max(Integer::compareTo).orElse(1000);
