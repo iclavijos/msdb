@@ -62,6 +62,9 @@ public class EventEntryResult implements Serializable {
     @JoinColumn(name = "shared_drive_with_id", referencedColumnName = "id")
     private EventEditionEntry sharedWith;
 
+    @Column(name = "invalid_fastlap")
+    private Boolean invalidFastlap = false;
+
     @ManyToOne
     private EventSession session;
 
@@ -261,6 +264,19 @@ public class EventEntryResult implements Serializable {
 	public void setSharedWith(EventEditionEntry sharedWith) {
 		this.sharedWith = sharedWith;
 	}
+
+	public void setInvalidFastlap(Boolean invalidFastlap) {
+        this.invalidFastlap = invalidFastlap;
+    }
+
+    public EventEntryResult invalidFastlap(Boolean invalidFastlap) {
+        setInvalidFastlap(invalidFastlap);
+        return this;
+    }
+
+    public Boolean isInvalidFastlap() {
+        return invalidFastlap;
+    }
 
 	@Override
     public boolean equals(Object o) {

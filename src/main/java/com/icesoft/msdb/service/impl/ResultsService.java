@@ -150,7 +150,7 @@ public class ResultsService {
             log.debug("Race points calculated... proceeding with extra points");
             if (ps.getPointsFastLap() != 0) {
                 List<EventEntryResult> fastestLapOrder = results.parallelStream()
-                    .filter(r -> r.getBestLapTime() != null)
+                    .filter(r -> r.getBestLapTime() != null && !r.isInvalidFastlap())
                     .sorted(Comparator.comparing(EventEntryResult::getBestLapTime))
                     .collect(Collectors.toList());
 
