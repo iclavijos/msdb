@@ -157,20 +157,27 @@ public class ResultsService {
                 if (fastestLapOrder.isEmpty()) {
                     log.warn("No fastest lap recorded... skipping");
                 } else {
-                    Stream<EventEntryResult> filtered = fastestLapOrder.parallelStream();
+                    List<EventEntryResult> filtered = fastestLapOrder;
                     if (!ps.isPitlaneStartAllowed()) {
-                        filtered = filtered.filter(eer -> !eer.isPitlaneStart());
+                        filtered = filtered.parallelStream()
+                            .filter(eer -> !eer.isPitlaneStart())
+                            .collect(Collectors.toList());
                     }
                     if (ps.getPctCompletedFastLap() != 0) {
                         //We assume that duration will always be laps if minimum percentage completion needs to be applied
-                        filtered = filtered
-                            .filter(eer -> (eer.getLapsCompleted().floatValue() / eer.getSession().getDuration().floatValue()) * 100f >= ps.getPctCompletedFastLap());
+                        filtered = filtered.parallelStream()
+                            .filter(eer -> (eer.getLapsCompleted().floatValue() / eer.getSession().getDuration().floatValue()) * 100f >= ps.getPctCompletedFastLap())
+                            .collect(Collectors.toList());
                     }
 
-                    Optional<EventEntryResult> optFastestLap = filtered.findFirst();
-                    if (ps.isAlwaysAssignFastLap()) {
-                        optFastestLap = filtered.filter(r -> r.getFinalPosition() <= ps.getMaxPosFastLap()).findFirst();
-                    } else {
+                    if (ps.getMaxPosFastLap() > 0) {
+                        filtered = filtered.parallelStream()
+                            .filter(eer -> eer.getFinalPosition() <= ps.getMaxPosFastLap())
+                            .collect(Collectors.toList());
+                    }
+
+                    Optional<EventEntryResult> optFastestLap = filtered.stream().findFirst();
+                    if (!ps.isAlwaysAssignFastLap()) {
                         if (optFastestLap.isPresent()) {
                             if (optFastestLap.get().getFinalPosition() > ps.getMaxPosFastLap()) {
                                 optFastestLap = Optional.empty();

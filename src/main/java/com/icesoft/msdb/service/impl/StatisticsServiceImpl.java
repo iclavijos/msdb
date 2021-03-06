@@ -267,6 +267,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 			}
 
 			//Qualy lap
+            log.trace("Retrieving fastest laps for entry {}", result.getEntry().getEntryName());
 			List<EventEntryResult> qualyLaps = resultsRepo.findEntryFastestLapPerSessionType(result.getEntry().getId(), SessionType.QUALIFYING);
 			Long poleLapTime = 0L;
 			List<EventEntryResult> qResults = qualyLaps.stream()

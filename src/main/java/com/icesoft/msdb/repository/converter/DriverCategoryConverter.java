@@ -16,7 +16,7 @@ public class DriverCategoryConverter implements AttributeConverter<DriverCategor
 
     @Override
     public DriverCategory convertToEntityAttribute(Integer dbData) {
-        if (dbData == 0) return null;
+        if (dbData == null || dbData == 0) return null;
 
         return DriverCategory.valueOf(dbData);
     }
