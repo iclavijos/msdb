@@ -135,7 +135,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-6">
+            <div class="col-3">
                 <mat-form-field class="example-full-width">
                     <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.result.bestLapTime' | translate }}" type="text"
                            class="form-control" formControlName="bestLapTime" pattern="([0-5]?\d[':])?[0-5]\d(\.[0-9]{0,4})?">
@@ -144,6 +144,11 @@
                         Lap Pattern Invalid
                     </mat-error>
                 </mat-form-field>
+            </div>
+            <div class="col-3">
+                <mat-checkbox formControlName="invalidFastlap">
+                    {{ 'motorsportsDatabaseApp.eventEdition.result.invalidFastlap' | translate }}
+                </mat-checkbox>
             </div>
         </div>
         <div class="row">

@@ -17,6 +17,7 @@ export interface IEventEntryResult {
   entry?: IEventEntry;
   session?: IEventSession;
   sharedWith?: IEventEntry;
+  invalidFastlap?: boolean;
 }
 
 export class EventEntryResult implements IEventEntryResult {
@@ -35,8 +36,10 @@ export class EventEntryResult implements IEventEntryResult {
     public pitlaneStart?: boolean,
     public entry?: IEventEntry,
     public session?: IEventSession,
-    public sharedWith?: IEventEntry
+    public sharedWith?: IEventEntry,
+    public invalidFastlap?: boolean
   ) {
     this.retired = this.retired || false;
+    this.invalidFastlap = this.invalidFastlap || false;
   }
 }

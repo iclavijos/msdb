@@ -171,7 +171,8 @@
         "sharedDrive": "Car shared with?",
         "sharedWith": "Shared with ",
         "difference": "Difference to 1st",
-        "previous": "Difference to prev."
+        "previous": "Difference to prev.",
+        "invalidFastlap": "Invalid fast lap"
       },
       "copyEntries": {
         "title": "Copy entries from another event",

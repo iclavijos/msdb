@@ -170,7 +170,8 @@
         "sharedDrive": "Vehicle compartit amb?",
         "sharedWith": "Compartit amb ",
         "difference": "Diferència 1er",
-        "previous": "Diferència anterior"
+        "previous": "Diferència anterior",
+        "invalidFastlap": "Volta ràpida no vàlida"
       },
       "copyEntries": {
         "title": "Copia participants d'un altre event",

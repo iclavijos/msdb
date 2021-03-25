@@ -55,7 +55,8 @@ export class EventEntryResultUpdateComponent implements OnInit {
       sharedDrive: [],
       sharedWith: [],
       cause: [null, Validators.maxLength(100)],
-      pitlaneStart: []
+      pitlaneStart: [],
+      invalidFastlap: []
     });
   }
 
@@ -83,7 +84,8 @@ export class EventEntryResultUpdateComponent implements OnInit {
       sharedWith: eventEntryResult.sharedWith,
       cause: eventEntryResult.cause,
       pitlaneStart: eventEntryResult.pitlaneStart,
-      entry: eventEntryResult.entry
+      entry: eventEntryResult.entry,
+      invalidFastlap: eventEntryResult.invalidFastlap
     });
   }
 
@@ -106,7 +108,8 @@ export class EventEntryResultUpdateComponent implements OnInit {
       lapsLed: this.editForm.get(['lapsLed']).value,
       sharedWith: this.editForm.get(['sharedDrive']).value ? this.editForm.get(['sharedWith']).value : null,
       cause: this.editForm.get(['cause']).value,
-      pitlaneStart: this.editForm.get(['pitlaneStart']).value
+      pitlaneStart: this.editForm.get(['pitlaneStart']).value,
+      invalidFastlap: this.editForm.get(['invalidFastlap']).value
     };
   }
 
