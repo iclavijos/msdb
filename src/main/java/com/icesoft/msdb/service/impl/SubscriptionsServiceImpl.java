@@ -52,6 +52,10 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     @Transactional(readOnly = true)
     public void generateNotifications() {
         OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
+        utc = OffsetDateTime.of(
+            utc.getYear(), utc.getMonthValue(),
+            utc.getDayOfMonth(), utc.getHour(),
+            utc.getMinute(), 0, 0, utc.getOffset());
         log.trace("Generating notifications at {}", utc);
         List<SessionData> sessionsData = StreamSupport
             .stream(
