@@ -147,10 +147,10 @@ public class HomeResource {
         return timezonesResp.getZones();
 	}
 
-	@GetMapping("/home/testNotif")
-    public void testNotif() {
-        User ivan = userRepository.findOneByEmailIgnoreCase("iclavijos@gmail.com").get();
-        EventSession session = eventSessionRepository.findById(6964L).get();
+	@GetMapping("/home/testNotif/{email}/{sessionId}")
+    public void testNotif(@PathVariable String email, @PathVariable Long sessionId) {
+        User ivan = userRepository.findOneByEmailIgnoreCase(email).get();
+        EventSession session = eventSessionRepository.findById(sessionId).get();
         messagingService.sendSessionNotification(ivan, session);
     }
 }
