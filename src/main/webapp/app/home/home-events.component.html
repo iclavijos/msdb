@@ -24,7 +24,7 @@
                                     <div class="card-body">
                                         <div class="row p-2" *ngFor="let session of filteredSessions(day);">
                                             <div class="col-2">
-                                                <img *ngIf="session.seriesLogo" #layoutImg [src]="session.seriesLogo" class="img-fluid" alt="series logo" style="max-width: 100px; max-height: 50px">
+                                                <img *ngIf="session.seriesLogo" #layoutImg [src]="session.seriesLogo" class="img-fluid" alt="series logo" style="text-align: center">
                                             </div>
                                             <div class="col-10">
                                                 <strong>{{ session.sessionStartTime.format("HH:mm") }}
