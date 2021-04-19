@@ -126,13 +126,14 @@ public class CategoryResource {
     public ResponseEntity<List<Category>> getCategories(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of Categories");
         Page<Category> page;
+
         if (StringUtils.isNotEmpty(query)) {
             page = searchService.performWildcardSearch(categorySearchRepository, query.toLowerCase(), new String[]{"name", "shortname"}, pageable);
-            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-            return ResponseEntity.ok().headers(headers).body(page.getContent());
         } else {
-            return ResponseEntity.ok().body(categoryRepository.findAll());
+            page = categoryRepository.findAll(pageable);
         }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
 
     }
 

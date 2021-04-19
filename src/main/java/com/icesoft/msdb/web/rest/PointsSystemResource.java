@@ -123,13 +123,14 @@ public class PointsSystemResource {
     public ResponseEntity<List<PointsSystem>> getPointsSystems(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of PointsSystems");
         Page<PointsSystem> page;
+
         if (StringUtils.isNotEmpty(query)) {
             page = searchService.performWildcardSearch(pointsSystemSearchRepository, query.toLowerCase(), new String[]{"name", "description"}, pageable);
-            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-            return ResponseEntity.ok().headers(headers).body(page.getContent());
         } else {
-            return ResponseEntity.ok().body(pointsSystemRepository.findAll());
+            page = pointsSystemRepository.findAll(pageable);
         }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
