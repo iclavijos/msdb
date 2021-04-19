@@ -115,9 +115,10 @@ public class AccountResource {
     public ResponseEntity<Void> registerDeviceToken(
         Principal principal,
         @RequestBody String deviceId) throws URISyntaxException {
+        log.debug("Registering device {} for user", deviceId);
         if (principal instanceof AbstractAuthenticationToken) {
             UserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
-
+            log.debug("User for device: {} - {} {}", user.getEmail(), user.getFirstName(), user.getLastName());
             // This should be handled better, but it's a bit overkill to define a class for a single attribute
             Assert.notNull(deviceId, "A deviceId must be provided");
             userService.registerDevice(user, deviceId);
@@ -132,9 +133,10 @@ public class AccountResource {
     public ResponseEntity<Void> removeDeviceToken(
         Principal principal,
         @PathVariable String deviceId) throws URISyntaxException {
+        log.debug("Removing device {} for user", deviceId);
         if (principal instanceof AbstractAuthenticationToken) {
             UserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
-
+            log.debug("User for device: {} - {} {}", user.getEmail(), user.getFirstName(), user.getLastName());
             userService.removeDevice(user, deviceId);
         } else {
             throw new AccountResourceException("User could not be found");
