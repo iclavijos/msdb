@@ -153,8 +153,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 			}
 
 			entry.getDrivers().stream().forEach(driver -> {
-				DriverStatistics dStats = driverStatsRepo.findById(driver.getId().toString())
-						.orElse(new DriverStatistics(driver.getId().toString()));
+				DriverStatistics dStats = driverStatsRepo.findById(driver.getDriver().getId().toString())
+						.orElse(new DriverStatistics(driver.getDriver().getId().toString()));
 				categoryName.stream().forEach(cat -> updateStats(cat, year, result, driverStatsRepo, dStats));
 			});
 
