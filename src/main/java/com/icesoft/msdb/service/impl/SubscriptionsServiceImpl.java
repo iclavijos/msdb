@@ -57,16 +57,23 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             utc.getDayOfMonth(), utc.getHour(),
             utc.getMinute(), 0, 0, utc.getOffset());
         log.trace("Generating notifications at {}", utc);
-        List<SessionData> sessionsData = StreamSupport
-            .stream(
-                sessionsRepository.findAllById(
-                    Arrays.asList(
-                        utc.plusMinutes(15).toEpochSecond(),
-                        utc.plusHours(1).toEpochSecond(),
-                        utc.plusHours(3).toEpochSecond())
-                ).spliterator(),false)
-            .flatMap(sessions -> sessions.getSessions().stream())
-            .collect(Collectors.toList());
+        List<SessionData> sessionData15m = sessionsRepository
+            .findById(utc.plusMinutes(15).toEpochSecond())
+            .map(sessions -> sessions.getSessions())
+            .orElse(Collections.emptyList());
+        List<SessionData> sessionData1h = sessionsRepository
+            .findById(utc.plusHours(1).toEpochSecond())
+            .map(sessions -> sessions.getSessions())
+            .orElse(Collections.emptyList());
+        List<SessionData> sessionData3h = sessionsRepository
+            .findById(utc.plusHours(3).toEpochSecond())
+            .map(sessions -> sessions.getSessions())
+            .orElse(Collections.emptyList());
+
+        List<SessionData> sessionsData = new ArrayList<>();
+        sessionsData.addAll(sessionData15m);
+        sessionsData.addAll(sessionData1h);
+        sessionsData.addAll(sessionData3h);
 
         List<EventSession> eventSessions = eventSessionRepository
             .findAllById(sessionsData.stream()
@@ -91,15 +98,37 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
                     .contains(userSubscription.getSeriesEdition().getId()))
                 .forEach(
                     eventSession -> {
-                        SessionType sessionType = eventSession.getSessionType();
-                        if (userSubscription.getPracticeSessions() && sessionType.equals(SessionType.PRACTICE) ||
-                            userSubscription.getQualiSessions() && sessionType.equals(SessionType.QUALIFYING) ||
-                            userSubscription.getRaces() && (sessionType.equals(SessionType.QUALIFYING_RACE) || sessionType.equals(SessionType.RACE))) {
+                        if (userSubscription.getPracticeSessions() && eventSession.getSessionType().equals(SessionType.PRACTICE) ||
+                            userSubscription.getQualiSessions() && eventSession.getSessionType().equals(SessionType.QUALIFYING) ||
+                            userSubscription.getRaces() && (eventSession.getSessionType().equals(SessionType.QUALIFYING_RACE)
+                                || eventSession.getSessionType().equals(SessionType.RACE))) {
 
-                            sendNotification(eventSession, userSubscription.getUser());
+                            if (isUserToBeNotified(userSubscription, eventSession, sessionData15m, sessionData1h, sessionData3h)) {
+                                sendNotification(eventSession, userSubscription.getUser());
+                            }
                         }
                     });
         });
+    }
+
+    private boolean isUserToBeNotified(UserSubscription userSubscription, EventSession eventSession,
+        List<SessionData> sessionData15m, List<SessionData> sessionData1h, List<SessionData> sessionData3h) {
+
+        boolean notify = false;
+        if (userSubscription.getFifteenMinWarning()) {
+            notify = sessionData15m.stream()
+                .anyMatch(sessionData -> sessionData.getSessionId().equals(eventSession.getId()));
+        }
+        if (userSubscription.getOneHourWarning()) {
+            notify = notify || sessionData1h.stream()
+                .anyMatch(sessionData -> sessionData.getSessionId().equals(eventSession.getId()));
+        }
+        if (userSubscription.getThreeHoursWarning()) {
+            notify = notify || sessionData3h.stream()
+                .anyMatch(sessionData -> sessionData.getSessionId().equals(eventSession.getId()));
+        }
+        return notify;
+
     }
 
     private void sendNotification(EventSession session, User user) {
