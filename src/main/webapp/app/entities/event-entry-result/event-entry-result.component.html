@@ -204,6 +204,7 @@
                     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
                 </table>
+                <span *ngIf="eventSession.sessionTypeValue === 2" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.pitlaneStartDesc">Indicates pitlane start</span>
             </div>
         </div>
     </div>
