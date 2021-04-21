@@ -170,12 +170,6 @@ public class ResultsService {
                             .collect(Collectors.toList());
                     }
 
-                    if (ps.getMaxPosFastLap() > 0) {
-                        filtered = filtered.parallelStream()
-                            .filter(eer -> eer.getFinalPosition() <= ps.getMaxPosFastLap())
-                            .collect(Collectors.toList());
-                    }
-
                     Optional<EventEntryResult> optFastestLap = filtered.stream().findFirst();
                     if (!ps.isAlwaysAssignFastLap()) {
                         if (optFastestLap.isPresent()) {
@@ -184,6 +178,13 @@ public class ResultsService {
                                 log.warn("Driver with fastest lap does not match criteria to be awarded points");
                             }
                         }
+                    } else {
+                        if (ps.getMaxPosFastLap() > 0) {
+                            filtered = filtered.parallelStream()
+                                .filter(eer -> eer.getFinalPosition() <= ps.getMaxPosFastLap())
+                                .collect(Collectors.toList());
+                        }
+                        optFastestLap = filtered.stream().findFirst();
                     }
 
                     if (optFastestLap.isPresent()) {
