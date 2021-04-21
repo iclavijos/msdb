@@ -39,7 +39,7 @@
                 </mat-label>
                 <mat-select formControlName="entry" [compareWith]="trackEntryById" required>
                     <mat-option *ngFor="let entry of entries" [value]="entry">
-                        #{{entry.raceNumber}} <span *ngIf="!eventEdition.multidriver">{{entry.drivers[0].fullName}}</span> <span *ngIf="eventEdition.multidriver">{{entry.driversName}}</span>
+                        #{{entry.raceNumber}} <span *ngIf="!eventEdition.multidriver">{{entry.drivers[0].driver.fullName}}</span> <span *ngIf="eventEdition.multidriver">{{entry.driversName}}</span>
                     </mat-option>
                 </mat-select>
             </mat-form-field>
