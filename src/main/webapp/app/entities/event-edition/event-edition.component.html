@@ -29,6 +29,15 @@
                                 <td mat-cell *matCellDef="let eventEdition">{{ eventEdition.editionYear }}</td>
                             </ng-container>
 
+                            <ng-container matColumnDef="affiche">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                                <td mat-cell *matCellDef="let eventEdition">
+                                    <img #afficheImg *ngIf="eventEdition?.posterUrl" [src]="eventEdition.posterUrl" alt="official poster"
+                                         class="img-fluid" style="max-height: 50px;" (click)="$event.stopPropagation();openAffiche(eventEdition.id)"
+                                         (mouseover)="zoomIn(afficheImg)" (mouseleave)="zoomOut(afficheImg)"/>
+                                </td>
+                            </ng-container>
+
                             <ng-container matColumnDef="longEventName">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.eventEdition.longEventName' | translate }}</th>
                                 <td mat-cell *matCellDef="let eventEdition">{{ eventEdition.longEventName }}</td>

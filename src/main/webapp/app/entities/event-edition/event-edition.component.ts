@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, ViewChild, Input } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ViewChild, Input, Renderer2 } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { merge, of as observableOf, Subscription } from 'rxjs';
@@ -10,6 +10,8 @@ import { IEventEdition } from 'app/shared/model/event-edition.model';
 import { EventEditionService } from './event-edition.service';
 
 import { MatPaginator, MatSort } from '@angular/material';
+
+import { Lightbox } from 'ngx-lightbox';
 
 @Component({
   selector: 'jhi-event-edition',
@@ -30,10 +32,12 @@ export class EventEditionComponent implements AfterViewInit, OnDestroy {
   previousPage: any;
   reverse: any;
 
-  displayedColumns: string[] = ['editionYear', 'longEventName', 'eventDate', 'allowedCategories', 'trackLayout', 'buttons'];
+  displayedColumns: string[] = ['editionYear', 'affiche', 'longEventName', 'eventDate', 'allowedCategories', 'trackLayout', 'buttons'];
 
   resultsLength = 0;
   isLoadingResults = true;
+
+  public lightboxAlbum: any[] = [];
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -44,7 +48,9 @@ export class EventEditionComponent implements AfterViewInit, OnDestroy {
     protected activatedRoute: ActivatedRoute,
     protected dataUtils: JhiDataUtils,
     protected router: Router,
-    protected eventManager: JhiEventManager
+    protected eventManager: JhiEventManager,
+    private lightbox: Lightbox,
+    private renderer: Renderer2
   ) {}
 
   ngAfterViewInit() {
@@ -76,6 +82,17 @@ export class EventEditionComponent implements AfterViewInit, OnDestroy {
     this.links = this.parseLinks.parse(eventEditions.headers.get('link'));
     this.totalItems = parseInt(eventEditions.headers.get('X-Total-Count'), 10);
 
+    this.lightboxAlbum = [];
+    eventEditions.body
+      .filter(eventEdition => eventEdition.posterUrl !== null)
+      .forEach(eventEdition => {
+        const poster = {
+          src: eventEdition.posterUrl,
+          caption: '',
+          thumb: eventEdition.posterUrl.replace('/upload', '/upload/c_thumb,w_200')
+        };
+        this.lightboxAlbum.push(poster);
+      });
     return eventEditions.body;
   }
 
@@ -127,5 +144,22 @@ export class EventEditionComponent implements AfterViewInit, OnDestroy {
       result.push('id');
     }
     return result;
+  }
+
+  openAffiche(eventEditionId) {
+    const affiche = this.lightboxAlbum.find(item => item.src.endsWith(eventEditionId + '.jpg'));
+    this.lightbox.open(this.lightboxAlbum, this.lightboxAlbum.indexOf(affiche), { centerVertically: true });
+  }
+
+  closeAffiche() {
+    this.lightbox.close();
+  }
+
+  zoomIn(elementToZoom: HTMLElement) {
+    this.renderer.setStyle(elementToZoom, 'transform', 'scale(1.1)');
+  }
+
+  zoomOut(elementToUnzoom: HTMLElement) {
+    this.renderer.setStyle(elementToUnzoom, 'transform', 'scale(1.0)');
   }
 }
