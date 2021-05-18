@@ -112,7 +112,7 @@
                                                         <div class="col-lg-6 col-md-6" *ngIf="eventEdition.posterUrl">
                                                             <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.affiche">Official poster</span></dt>
                                                             <dd>
-                                                                <img #afficheImg [src]="lightboxAlbum[1].thumb" alt="affiche official poster" class="img-fluid"
+                                                                <img #afficheImg [src]="lightboxAlbum[posAffiche - 1].thumb" alt="affiche official poster" class="img-fluid"
                                                                      (click)="openAffiche()"
                                                                      (mouseover)="zoomIn(afficheImg)" (mouseleave)="zoomOut(afficheImg)"/>
                                                             </dd>
