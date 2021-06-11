@@ -33,7 +33,7 @@ spring:
       #- tls
   devtools:
     restart:
-      enabled: true
+      enabled: false
       exclude: src/main/webapp/**,build/**
     livereload:
       enabled: false # we use Webpack dev server + BrowserSync for livereload
