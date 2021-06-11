@@ -84,7 +84,8 @@ export class AgendaComponent implements OnInit {
         return {
           name: item.eventName,
           racetrack: item.racetrack,
-          layoutUrl: item.racetrackLayoutUrl
+          layoutUrl: item.racetrackLayoutUrl,
+          categories: item.categories
         };
       })
       .filter(this.onlyUniqueEvents);

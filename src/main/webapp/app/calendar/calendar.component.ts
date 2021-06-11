@@ -38,7 +38,7 @@ export class MyEvent {
   sessionType: string;
   racetrack: string;
   racetrackLayoutUrl: string;
-
+  categories: string[];
   event: any;
 }
 
@@ -165,6 +165,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       newEvent.status = session.status;
       newEvent.racetrack = session.racetrack;
       newEvent.racetrackLayoutUrl = session.racetrackLayoutUrl;
+      newEvent.categories = session.categories;
       if (session.status === 'C') {
         newEvent.color = 'red';
       } else if (session.status === 'S') {

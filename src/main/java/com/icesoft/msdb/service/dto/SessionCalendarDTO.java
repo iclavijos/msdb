@@ -1,6 +1,5 @@
 package com.icesoft.msdb.service.dto;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 public class SessionCalendarDTO {
@@ -13,6 +12,7 @@ public class SessionCalendarDTO {
 	private final ZonedDateTime startTime;
 	private final ZonedDateTime endTime;
 	private final String[] seriesLogoUrl;
+	private final String[] categories;
 	private final String status;
     private final Integer seriesRelevance;
     private final String racetrack;
@@ -21,7 +21,7 @@ public class SessionCalendarDTO {
 	public SessionCalendarDTO(
 	    Long id, String seriesName, String eventName, String sessionName, int sessionType,
         ZonedDateTime startTime, ZonedDateTime endTime, String status, Integer seriesRelevance,
-        String racetrack, String racetrackLayoutUrl,
+        String racetrack, String racetrackLayoutUrl, String[] categories,
         String... seriesLogoUrl) {
 		this.id = id;
 		this.seriesName = seriesName;
@@ -35,6 +35,7 @@ public class SessionCalendarDTO {
 		this.seriesRelevance = seriesRelevance;
 		this.racetrack = racetrack;
 		this.racetrackLayoutUrl = racetrackLayoutUrl;
+		this.categories = categories;
 	}
 
 	public Long getId() {
@@ -76,4 +77,6 @@ public class SessionCalendarDTO {
     public String getRacetrack() { return racetrack; }
 
     public String getRacetrackLayoutUrl() { return racetrackLayoutUrl; }
+
+    public String[] getCategories() { return categories; }
 }
