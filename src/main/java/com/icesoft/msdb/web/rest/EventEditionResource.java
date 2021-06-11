@@ -707,6 +707,8 @@ public class EventEditionResource {
                         .map(sEd -> sEd.getSeries().getName())
                         .findFirst().orElse(null);
     		}
+    		String[] categories = new String[session.getEventEdition().getAllowedCategories().size()];
+
     		return new SessionCalendarDTO(session.getEventEdition().getId(),
     				seriesName,
     				session.getEventEdition().getLongEventName(),
@@ -717,6 +719,8 @@ public class EventEditionResource {
                     seriesRelevance,
     				session.getEventEdition().getTrackLayout().getRacetrack().getName(),
     				session.getEventEdition().getTrackLayout().getLayoutImageUrl(),
+                    session.getEventEdition().getAllowedCategories().stream()
+                        .map(category -> category.getShortname()).toArray(size -> new String[size]),
     				logoUrl);
     	})
             .sorted(Comparator.comparing(SessionCalendarDTO::getSeriesRelevance))

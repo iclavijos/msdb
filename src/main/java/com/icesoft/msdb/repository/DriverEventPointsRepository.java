@@ -21,6 +21,11 @@ public interface DriverEventPointsRepository extends JpaRepository<DriverEventPo
 			+ "WHERE dep.session.id = ?1 AND dep.driver.id = ?2")
 	Float getDriverPointsInSession(Long sessionId, Long driverId);
 
+    @Query("SELECT SUM(dep.points) "
+        + "FROM DriverEventPoints dep "
+        + "WHERE dep.session.id IN ?1 AND dep.driver.id = ?2")
+    Float getDriverPointsInSessions(List<Long> sessionIds, Long driverId);
+
 	@Query("SELECT dep.driver.id, dep.driver.name, dep.driver.surname, sum(points) as points, count(*) as num_points "
 			+ "FROM DriverEventPoints dep "
 			+ "WHERE dep.points <> 0 AND dep.session.eventEdition.id = ?1 "

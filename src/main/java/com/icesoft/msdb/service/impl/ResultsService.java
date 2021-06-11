@@ -3,10 +3,12 @@ package com.icesoft.msdb.service.impl;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
+import com.icesoft.msdb.domain.enums.SessionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -448,6 +450,19 @@ public class ResultsService {
         headers.add("");
 
         races.forEach(race -> {
+            List<EventSession> eventSessions = sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(race.getEventEdition().getId());
+
+            int sessionPosition = eventSessions.indexOf(race);
+            List<Long> sessionIds = new ArrayList<>();
+            sessionIds.add(race.getId());
+            while (--sessionPosition > -1 && !(
+                eventSessions.get(sessionPosition).getSessionType().equals(SessionType.RACE) ||
+                eventSessions.get(sessionPosition).getSessionType().equals(SessionType.QUALIFYING_RACE))) {
+                if (eventSessions.get(sessionPosition).getSessionType().equals(SessionType.QUALIFYING)) {
+                    sessionIds.add(eventSessions.get(sessionPosition).getId());
+                }
+            }
+
             headers.add(race.getShortname().equalsIgnoreCase("R") || race.getShortname().equalsIgnoreCase("Race") ?
                 race.getEventEdition().getEvent().getName() :
                 race.getEventEdition().getEvent().getName() + "-" + race.getName());
@@ -456,7 +471,7 @@ public class ResultsService {
                 .filter(participant -> driversNames.contains(participant.getParticipantName()))
                 .forEach(participant -> {
                     Float driverPoints = Optional.ofNullable(
-                        driverPointsRepo.getDriverPointsInSession(race.getId(), participant.getParticipantId())
+                        driverPointsRepo.getDriverPointsInSessions(sessionIds, participant.getParticipantId())
                     ).orElse(0f);
                     driversResults.get(participant.getParticipantName()).add(driverPoints);
             });
