@@ -702,7 +702,7 @@ public class EventEditionResource {
                     Optional.ofNullable(session.getEventEdition().getPosterUrl()).orElse(null))};
     			seriesRelevance = session.getEventEdition().getSeriesEditions().stream()
                         .map(sEd -> sEd.getSeries().getRelevance())
-                        .max(Integer::compareTo).orElse(1000);
+                        .max(Integer::compareTo).orElse(700);
     			seriesName = session.getEventEdition().getSeriesEditions().parallelStream()
                         .map(sEd -> sEd.getSeries().getName())
                         .findFirst().orElse(null);
