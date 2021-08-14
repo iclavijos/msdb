@@ -700,14 +700,17 @@ public class EventEditionResource {
                     )).findFirst().orElse(null));
                 logoUrl = new String[] {seriesLogo.orElse(
                     Optional.ofNullable(session.getEventEdition().getPosterUrl()).orElse(null))};
-    			seriesRelevance = session.getEventEdition().getSeriesEditions().stream()
+                if (isSpecialEvent(session.getEventEdition().getEvent())) {
+                    seriesRelevance = 1;
+                } else {
+                    seriesRelevance = session.getEventEdition().getSeriesEditions().stream()
                         .map(sEd -> sEd.getSeries().getRelevance())
                         .max(Integer::compareTo).orElse(700);
+                }
     			seriesName = session.getEventEdition().getSeriesEditions().parallelStream()
                         .map(sEd -> sEd.getSeries().getName())
                         .findFirst().orElse(null);
     		}
-    		String[] categories = new String[session.getEventEdition().getAllowedCategories().size()];
 
     		return new SessionCalendarDTO(session.getEventEdition().getId(),
     				seriesName,
@@ -812,5 +815,14 @@ public class EventEditionResource {
             }
         }
         return imageUrl;
+    }
+
+    private boolean isSpecialEvent(Event event) {
+        boolean isSpecial =
+            event.getName().equalsIgnoreCase("Indianapolis 500") ||
+            event.getName().equalsIgnoreCase("24 Hours of Le Mans") ||
+            event.getName().equalsIgnoreCase("Bathurst 1000");
+
+        return isSpecial;
     }
 }
