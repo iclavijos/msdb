@@ -21,7 +21,14 @@
       "driverName": "Pilot",
       "stints": "Relleus",
       "stint": "Relleu",
-      "raceHistory": "Gràfic d'evolució de cursa"
+      "raceHistory": "Gràfic d'evolució de cursa",
+      "driverPerformance": "Rendiment dels pilots",
+      "filterCategory": "Filtra per categoria",
+      "filterResults": "Número de resultats",
+      "filterResultsAll": "Tots",
+      "filterResultsBest5": "Els 5 millors",
+      "filterResultsBest10": "Els 10 millors",
+      "filterResultsBest20": "Els 20 millors"
     }
   }
 }

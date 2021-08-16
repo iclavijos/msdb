@@ -20,6 +20,8 @@ import HCMore from 'highcharts/highcharts-more';
 HCExporting(Highcharts);
 HCMore(Highcharts);
 
+import { Options, ChangeContext } from '@angular-slider/ngx-slider';
+
 @Component({
   selector: 'jhi-race-data',
   templateUrl: './race-data.component.html',
@@ -47,16 +49,34 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
   options: any;
   optionsRaceChart: any;
   timeMask: TimeMaskPipe;
-  lapsRangeFrom = 1;
+  lapsRangeFrom = 0;
   lapsRangeTo = 65;
   fastestTime: number;
   categoryToFilter: string;
+  numberOfResults = 0;
   driversPerformance: any[];
   filteredDriversPerformance: any[];
 
   Highcharts: typeof Highcharts = Highcharts;
   chartOptions: Highcharts.Options;
   chart: Highcharts.Chart;
+
+  optionsSlider: Options = {
+    floor: 0,
+    ceil: 70,
+    showTicks: true,
+    tickStep: 5,
+    translate(value: number) {
+      // }, label: LabelType) {
+      if (value === 0) {
+        return 'Grid';
+      }
+      if (value === this.ceil) {
+        return 'Finish';
+      }
+      return 'Lap ' + value;
+    }
+  };
 
   constructor(private router: Router, private eventEditionService: EventEditionService, private eventSessionService: EventSessionService) {}
 
@@ -75,7 +95,7 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
             return (
               data.datasets[tooltipItem.datasetIndex].label +
               ' ' +
-              this.timeMask.transform(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] * 10000, true, false)
+              this.timeMask.transform(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] * 1000, false, false)
             );
           }
         }
@@ -105,7 +125,7 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
                 if (!this.timeMask) {
                   this.timeMask = new TimeMaskPipe();
                 }
-                return this.timeMask.transform(value * 10000, false, false);
+                return this.timeMask.transform(value * 1000, false, false);
               }
             }
           }
@@ -122,11 +142,14 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
     this.eventSessionService.findFastestTime(this.session.id).subscribe(res => {
       this.fastestTime = res;
       this.options.scales.yAxes[0].ticks.min = Math.floor((this.fastestTime - 10000) / 10000);
-      this.refreshGraphic();
+      this.redrawLapTimesChart();
     });
     this.eventSessionService.findMaxLaps(this.session.id).subscribe(res => {
       this.maxLaps = res;
       this.lapsRangeTo = this.maxLaps;
+      const newOptionsSlider: Options = Object.assign({}, this.optionsSlider);
+      newOptionsSlider.ceil = this.maxLaps;
+      this.optionsSlider = newOptionsSlider;
     });
     this.eventSessionService.findRaceChartData(this.session.id).subscribe(res => {
       this.raceChart = this.convertRaceChartData(res);
@@ -261,7 +284,21 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
   filterCategories(redraw = false) {
     this.filteredDriversPerformance = this.driversPerformance
       .filter(dp => dp.category === this.categoryToFilter)
-      .sort((a, b) => (a.mean > b.mean ? 1 : 0));
+      .sort((a, b) => (a.mean > b.mean ? 1 : 0))
+      .slice(0, this.numberOfResults === 0 ? this.driversPerformance.length : this.numberOfResults);
+
+    if (redraw) {
+      this.chart.series[0].setData(this.filteredDriversPerformance.map(dp => [dp.min, dp.q1, dp.mean, dp.q3, dp.max]));
+      this.chart.xAxis[0].setCategories(this.filteredDriversPerformance.map(dp => dp.driverName));
+      this.chart.redraw();
+    }
+  }
+
+  filterResults(redraw = false) {
+    this.filteredDriversPerformance = this.driversPerformance
+      .filter(dp => dp.category === this.categoryToFilter)
+      .sort((a, b) => (a.mean > b.mean ? 1 : 0))
+      .slice(0, this.numberOfResults === 0 ? this.driversPerformance.length : this.numberOfResults);
 
     if (redraw) {
       this.chart.series[0].setData(this.filteredDriversPerformance.map(dp => [dp.min, dp.q1, dp.mean, dp.q3, dp.max]));
@@ -278,27 +315,27 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
         const totalLaps = this.lapTimes.map(lt => lt.laps.length).reduce((p, c) => (p > c ? p : c));
         this.lapNumbers = Array.from(Array(totalLaps), (x, i) => i);
         this.headers.push(this.drivers.find(d => d.raceNumber === raceNumber).driversNames);
-        this.refreshGraphic();
+        this.selectedDrivers.push(raceNumber);
+        this.redrawLapTimesChart();
       });
     } else {
       // Driver deselected
       const driverToRemove = this.lapTimes.find(d => d.raceNumber === raceNumber);
       this.lapTimes.splice(this.lapTimes.indexOf(driverToRemove), 1);
+      this.selectedDrivers.splice(this.selectedDrivers.indexOf(this.selectedDrivers.find(d => d === raceNumber)), 1);
       const removedDriver = this.drivers.find(i => i.raceNumber === raceNumber);
       const pos = this.headers.indexOf(removedDriver.driversNames);
       this.headers.splice(pos, 1);
-      const totalLaps = this.lapTimes.map(lt => lt.laps.length).reduce((p, c) => (p > c ? p : c));
+      const totalLaps = this.lapTimes.length > 0 ? this.lapTimes.map(lt => lt.laps.length).reduce((p, c) => (p > c ? p : c)) : 0;
       this.lapNumbers = this.headers.length > 0 ? Array.from(Array(totalLaps), (x, i) => i) : [];
-      this.refreshGraphic();
+      this.redrawLapTimesChart();
     }
   }
 
-  private refreshGraphic() {
+  private redrawLapTimesChart() {
     const data = {
       labels:
-        this.lapNumbers && this.lapNumbers.length > 0
-          ? this.lapNumbers.slice(this.lapsRangeFrom - 1, this.lapsRangeTo).map(ln => ln + 1)
-          : [],
+        this.lapNumbers && this.lapNumbers.length > 0 ? this.lapNumbers.slice(this.lapsRangeFrom, this.lapsRangeTo).map(ln => ln + 1) : [],
       datasets: []
     };
     let maxLapTime = 0;
@@ -306,8 +343,8 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
       const randomColor = this.randomColor();
       const driverLaps = this.lapTimes
         .find(lt => lt.raceNumber === driver)
-        .laps.slice(this.lapsRangeFrom - 1, this.lapsRangeTo)
-        .map(l => l.lapTime / 10000);
+        .laps.slice(this.lapsRangeFrom, this.lapsRangeTo)
+        .map(l => l.lapTime / 1000);
       driverLaps.forEach(lap => {
         if (lap > maxLapTime) {
           maxLapTime = lap;
@@ -323,8 +360,9 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
       };
       data.datasets.push(dataset);
     }
-    this.options.scales.yAxes[0].ticks.suggestedMax = Math.floor((maxLapTime + 10000) / 10000);
+    this.options.scales.yAxes[0].ticks.suggestedMax = Math.floor((maxLapTime + 1000) / 1000);
     this.data = Object.assign({}, data);
+    this.options = Object.assign({}, this.options);
   }
 
   randomColor(brightness = 3) {
@@ -337,10 +375,10 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
     return 'rgb(' + mixedrgb.join(',') + ')';
   }
 
-  changeLapsRange(event) {
-    this.lapsRangeFrom = event.from;
-    this.lapsRangeTo = event.to;
-    this.refreshGraphic();
+  changeLapsRange(changeContext: ChangeContext) {
+    this.lapsRangeFrom = changeContext.value;
+    this.lapsRangeTo = changeContext.highValue;
+    this.redrawLapTimesChart();
   }
 
   getFilteredDrivers() {
@@ -407,6 +445,10 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
       return avg[0];
     }
     return [];
+  }
+
+  sortedDriversAverages() {
+    return this.driversAverages.sort((a, b) => (a.raceNumber > b.raceNumber ? 1 : 0));
   }
 
   private convertDriversNames() {

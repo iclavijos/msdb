@@ -21,7 +21,14 @@
       "driverName": "Piloto",
       "stints": "Relevos",
       "stint": "Relevo",
-      "raceHistory": "Gráfico de evolución de carrera"
+      "raceHistory": "Gráfico de evolución de carrera",
+      "driverPerformance": "Rendimiento de los pilotos",
+      "filterCategory": "Filtra por categoría",
+      "filterResults": "Número de resultados",
+      "filterResultsAll": "Todos",
+      "filterResultsBest5": "Los 5 mejores",
+      "filterResultsBest10": "Los 10 mejores",
+      "filterResultsBest20": "Los 20 mejores"
     }
   }
 }

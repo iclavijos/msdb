@@ -39,7 +39,7 @@ public class SessionLapData {
 
 		LapInfo fastestLap = null;
 
-		laps.stream().forEach(lapData -> {
+		laps.forEach(lapData -> {
 		    lapData.setCategory(entryCategory.get(lapData.getRaceNumber()));
 		    // Replace driver names with those used in entries
             Optional<EventEditionEntry> entry = entries.stream()

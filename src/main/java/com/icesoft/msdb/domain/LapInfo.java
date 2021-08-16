@@ -1,16 +1,20 @@
 package com.icesoft.msdb.domain;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class LapInfo {
 
     private static final Pattern LAPTIME_REGEX = Pattern.compile("(([0-9]+)(:|'))?(([0-9]+)(:|'))?([0-9]+)\\.([0-9]+)");
+    private static final Pattern LAPTIME_MILLIS_REGEX = Pattern.compile("[0-9]+");
 
 	private String raceNumber;
 	private String driverName;
@@ -58,7 +62,7 @@ public class LapInfo {
 	}
 
 	public Boolean getPitstop() {
-		return pitstop;
+		return Optional.ofNullable(pitstop).orElse(Boolean.FALSE);
 	}
 
 	public void setRaceNumber(String raceNumber) {
@@ -129,7 +133,13 @@ public class LapInfo {
         Matcher m = LAPTIME_REGEX.matcher(lapTime);
         long timeMillis = 0;
         if (!m.matches()) {
-            System.out.println("Ignoring laptime " + lapTime);
+            Matcher mMillis = LAPTIME_MILLIS_REGEX.matcher(lapTime);
+            if (!mMillis.matches()) {
+                log.warn("Ignoring laptime of lapInfo {}", this);
+                System.out.println("Ignoring laptime " + lapTime);
+            } else {
+                return Long.parseLong(lapTime);
+            }
         } else {
             timeMillis += Long.parseLong(m.group(8));
             timeMillis += Long.parseLong(m.group(7)) * 1000;

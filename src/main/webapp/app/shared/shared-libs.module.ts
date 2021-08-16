@@ -15,6 +15,8 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
 import { HighchartsChartModule } from 'highcharts-angular';
 
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
+
 import {
   MatButtonModule,
   MatInputModule,
@@ -103,7 +105,8 @@ import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateMod
     NgxMatTimepickerModule,
     NgxMatNativeDateModule,
     LeafletModule,
-    HighchartsChartModule
+    HighchartsChartModule,
+    NgxSliderModule
   ]
 })
 export class MotorsportsDatabaseSharedLibsModule {}

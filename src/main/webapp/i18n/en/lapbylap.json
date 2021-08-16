@@ -21,7 +21,14 @@
       "driverName": "Driver",
       "stints": "Stints",
       "stint": "Stint",
-      "raceHistory": "Race history chart"
+      "raceHistory": "Race history chart",
+      "driverPerformance": "Driver performance",
+      "filterCategory": "Filter by category",
+      "filterResults": "Number of results",
+      "filterResultsAll": "All",
+      "filterResultsBest5": "Best 5",
+      "filterResultsBest10": "Best 10",
+      "filterResultsBest20": "Best 20"
     }
   }
 }

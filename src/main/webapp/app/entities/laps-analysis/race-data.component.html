@@ -4,9 +4,20 @@
             <div class="col-sm-12">
                 <div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
                     <mat-form-field>
-                        <mat-label>Filter by category</mat-label>
+                        <mat-label>{{'motorsportsDatabaseApp.lapbylap.filterCategory' | translate}}</mat-label>
                         <mat-select [(ngModel)]="categoryToFilter" (ngModelChange)="filterCategories(true)">
                             <mat-option *ngFor="let category of eventEdition.allowedCategories" [value]="category.shortname">{{category.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="float-right">
+                    <mat-form-field>
+                        <mat-label>{{'motorsportsDatabaseApp.lapbylap.filterResults' | translate}}</mat-label>
+                        <mat-select [(ngModel)]="numberOfResults" (ngModelChange)="filterResults(true)">
+                            <mat-option [value]="0">{{'motorsportsDatabaseApp.lapbylap.filterResultsAll' | translate}}</mat-option>
+                            <mat-option [value]="5">{{'motorsportsDatabaseApp.lapbylap.filterResultsBest5' | translate}}</mat-option>
+                            <mat-option [value]="10">{{'motorsportsDatabaseApp.lapbylap.filterResultsBest10' | translate}}</mat-option>
+                            <mat-option [value]="20">{{'motorsportsDatabaseApp.lapbylap.filterResultsBest20' | translate}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
@@ -37,7 +48,7 @@
                 </div>
             </div>
         </div>
-        <div *ngFor="let t of temp(math.ceil(getFilteredDrivers().length/5)).fill(0); index as i" class="row">
+        <div *ngFor="let t of temp(math.ceil(getFilteredDrivers().length/4)).fill(0); index as i" class="row">
             <div *ngFor="let item of getFilteredDrivers().slice(4*i,4*(i + 1));" class="col-md-3">
                 <mat-checkbox [value]="item.raceNumber"
                     (change)="refreshLapTimesTable(item.raceNumber, $event)">#{{ item.raceNumber }} {{ item.driversNames }}
@@ -126,7 +137,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr *ngFor="let avg of getTopTen10BestLaps()"> <!-- [class.even]="isEven" -->>
+                                        <tr *ngFor="let avg of getTopTen10BestLaps()"> <!-- [class.even]="isEven" -->
                                             <td>{{avg.driverName}}</td><td>{{avg.best10Avg | timeMaskPipe : true : false }}</td>
                                         </tr>
                                         </tbody>
@@ -189,7 +200,7 @@
             </div>
             <div class="col-md-2">
                 <mat-selection-list #selectedDriversAvg>
-                    <mat-list-option *ngFor="let item of driversAverages" checkboxPosition="before" [value]="item">
+                    <mat-list-option *ngFor="let item of sortedDriversAverages()" checkboxPosition="before" [value]="item">
                         #{{ item.raceNumber }} {{ item.driverName }}
                     </mat-list-option>
                 </mat-selection-list>
@@ -197,31 +208,44 @@
         </div>
     </mat-tab>
     <mat-tab label="{{'motorsportsDatabaseApp.lapbylap.lapCharts' | translate }}">
-        <div *ngFor="let t of temp(math.ceil(drivers.length/4)).fill(0); index as i" class="row">
-            <div *ngFor="let item of drivers.slice(4*i,4*i + 4);" class="col-md-3">
-                <p-checkbox  name="groupDrivers" [value]="item.raceNumber" [label]="item.driversNames"
-                             [(ngModel)]="selectedDrivers" (onChange)="refreshLapTimesTable(item.raceNumber, $event)">
-                </p-checkbox>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
+                    <mat-form-field>
+                        <mat-label>Filter by category</mat-label>
+                        <mat-select [(ngModel)]="categoryToFilter" (ngModelChange)="resetCategoryLapTimes()">
+                            <mat-option></mat-option>
+                            <mat-option *ngFor="let category of eventEdition.allowedCategories" [value]="category.shortname">{{category.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div *ngFor="let t of temp(math.ceil(getFilteredDrivers().length/4)).fill(0); index as i" class="row">
+                    <div *ngFor="let item of getFilteredDrivers().slice(4*i,4*(i + 1));" class="col-md-3">
+                        <mat-checkbox [value]="item.raceNumber"
+                                      (change)="refreshLapTimesTable(item.raceNumber, $event)">#{{ item.raceNumber }} {{ item.driversNames }}
+                        </mat-checkbox>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">{{'motorsportsDatabaseApp.lapbylap.lapsRange' | translate}}</label>
             <div class="col-sm-10">
-                <!-- ion-range-slider #sliderElement
-                    type="integer"
-                    min="1"
-                    [max]="maxLaps"
-                    [from]="lapsRangeFrom"
-                    [to]="lapsRangeTo"
-                    grid="true"
-                    grid_num="5"
-                    decorate_both="false"
-                    (onFinish)="changeLapsRange($event)"></ion-range-slider -->
+                <ngx-slider
+                    [(value)]="lapsRangeFrom"
+                    [(highValue)]="lapsRangeTo"
+                    [options]="optionsSlider"
+                    (userChagne)="changeLapsRange($event)">
+                </ngx-slider>
             </div>
         </div>
-        <div class="row">
+        <div *ngIf="lapTimes.length > 0" class="row">
             <div class="col-md-12">
-                <!-- p-chart type="line" [data]="data" [options]="options"></p-chart -->
+                <p-chart type="line" [data]="data" [options]="options"></p-chart>
             </div>
         </div>
     </mat-tab>
