@@ -122,6 +122,10 @@ export class EventSessionService {
     return this.http.get<any[]>(`${this.resourceUrl}/${id}/driversPerformance`);
   }
 
+  hasLapsData(id: number): Observable<boolean> {
+    return this.http.get<boolean>(`${this.resourceEventEditionUrl}/session/${id}/laps`);
+  }
+
   private transformDateTime(res: EntityArrayResponseType, timeZone: string): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((eventSession: IEventSession) => {

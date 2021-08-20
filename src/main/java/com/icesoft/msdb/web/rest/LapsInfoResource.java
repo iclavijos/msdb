@@ -30,10 +30,15 @@ public class LapsInfoResource {
 	@Autowired SessionLapDataRepository repo;
 	@Autowired EventEntryResultRepository resultsRepo;
 
-	@GetMapping("/{sessionId}/laps")
-	public ResponseEntity<Boolean> sessionLapDataLoaded(@PathVariable Long sessionId) {
-		return ResponseEntity.ok(repo.sessionLapDataLoaded(sessionId));
+	@GetMapping("/{eventEditionId}/laps")
+	public ResponseEntity<Boolean> anyEventSessionLapDataLoaded(@PathVariable Long eventEditionId) {
+		return ResponseEntity.ok(repo.anyEventSessionHasLapDataLoaded(eventEditionId));
 	}
+
+    @GetMapping("/session/{sessionId}/laps")
+    public ResponseEntity<Boolean> sessionLapDataLoaded(@PathVariable Long sessionId) {
+        return ResponseEntity.ok(repo.sessionHasLapDataLoaded(sessionId));
+    }
 
 	@GetMapping("/{sessionId}/laps/{raceNumber}")
 	public ResponseEntity<List<LapInfo>> getLapsDriver(@PathVariable Long sessionId, @PathVariable String raceNumber) {

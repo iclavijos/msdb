@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 
 public interface SessionLapDataCustomRepository {
 
-	boolean sessionLapDataLoaded(Long sessionId);
+	boolean anyEventSessionHasLapDataLoaded(Long sessionId);
+
+    boolean sessionHasLapDataLoaded(Long eventSessionId);
 
 	List<SessionLapData> getDriverLaps(String id, String raceNumber);
 }

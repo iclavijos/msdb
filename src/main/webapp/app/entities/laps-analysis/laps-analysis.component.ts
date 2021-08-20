@@ -1,10 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { EventEditionService } from '../event-edition/event-edition.service';
+import { EventSessionService } from '../event-session/event-session.service';
 import { EventEdition } from 'app/shared/model/event-edition.model';
 import { IEventSession } from 'app/shared/model/event-session.model';
 import { IEventEntry } from 'app/shared/model/event-entry.model';
-import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 
 @Component({
   selector: 'jhi-laps-analysis',
@@ -15,13 +14,17 @@ export class LapsAnalysisComponent implements OnInit {
   @Input() eventEdition: EventEdition;
   @Input() eventSessions: IEventSession[];
   @Input() eventEntries: IEventEntry[];
-  races: IEventSession[];
+  races: IEventSession[] = [];
 
-  constructor(private eventEditionService: EventEditionService) {}
+  constructor(private eventSessionService: EventSessionService) {}
 
   ngOnInit() {
-    this.races = this.eventSessions.filter(
-      session => session.sessionType === SessionType.race || session.sessionType === SessionType.qualifyingRace
-    );
+    this.eventSessions.forEach(session => {
+      this.eventSessionService.hasLapsData(session.id).subscribe(res => {
+        if (res) {
+          this.races.push(session);
+        }
+      });
+    });
   }
 }

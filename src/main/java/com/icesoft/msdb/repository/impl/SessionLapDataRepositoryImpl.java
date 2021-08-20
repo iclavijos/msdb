@@ -26,8 +26,8 @@ public class SessionLapDataRepositoryImpl implements SessionLapDataCustomReposit
 	@Autowired EventSessionRepository sessionsRepo;
 
     @Override
-	public boolean sessionLapDataLoaded(Long sessionId) {
-		List<String> sessions = sessionsRepo.findByEventEditionIdOrderBySessionStartTimeAsc(sessionId).parallelStream()
+	public boolean anyEventSessionHasLapDataLoaded(Long eventEditionId) {
+		List<String> sessions = sessionsRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventEditionId).parallelStream()
 				.map(es -> es.getId().toString()).collect(Collectors.toList());
 
 		Query query = new Query(Criteria.where("_id").in(sessions));
@@ -35,6 +35,12 @@ public class SessionLapDataRepositoryImpl implements SessionLapDataCustomReposit
 
 		return count > 0;
 	}
+
+	@Override
+	public boolean sessionHasLapDataLoaded(Long eventSessionId) {
+        Query query = new Query(Criteria.where("_id").is(eventSessionId.toString()));
+        return template.exists(query, SessionLapData.class);
+    }
 
 	public List<SessionLapData> getDriverLaps(String id, String raceNumber) {
 		List<AggregationOperation> list = new ArrayList<>();
