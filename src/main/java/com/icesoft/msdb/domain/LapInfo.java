@@ -78,7 +78,8 @@ public class LapInfo {
 	}
 
 	public void setPitstop(String pitstop) {
-	    this.pitstop = pitstop != null && pitstop.equalsIgnoreCase("b");
+	    this.pitstop = pitstop != null &&
+            (pitstop.equalsIgnoreCase("b") || Boolean.parseBoolean(pitstop));
 	}
 
 	public Boolean getPersonalBest() {
