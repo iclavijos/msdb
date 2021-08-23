@@ -45,7 +45,10 @@
 
                                 <ng-container matColumnDef="shortname">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.category.shortname' | translate }}</th>
-                                    <td mat-cell *matCellDef="let category">{{ category.shortname }}</td>
+                                    <td mat-cell *matCellDef="let category">
+                                        <span *ngIf="!category.categoryColor">{{ category.shortname }}</span>
+                                        <span *ngIf="category.categoryColor" class="badge" [style.background]="category.categoryColor" [style.color]="'#FFFFFF'"><h4><strong>{{ category.shortname }}</strong></h4></span>
+                                    </td>
                                 </ng-container>
 
                                 <ng-container matColumnDef="logo">

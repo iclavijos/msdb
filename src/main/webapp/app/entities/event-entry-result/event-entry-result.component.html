@@ -77,7 +77,7 @@
                         <td mat-cell *matCellDef="let result">
                             <span class="badge" [style.background]="result.entry.tyres.backgroundColor" [style.color]="result.entry.tyres.letterColor"
                                   matTooltip="{{result.entry.tyres.name}}" matTooltipPosition="after">
-                                <h6>{{result.entry.tyres.name.substring(0,1)}}</h6>
+                                <h6><strong>{{result.entry.tyres.name.substring(0,1)}}</strong></h6>
                             </span>
                         </td>
                     </ng-container>
@@ -113,7 +113,10 @@
                     <ng-container matColumnDef="category">
                         <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.entry.category' | translate}}</th>
                         <td mat-cell *matCellDef="let result">
-                            {{result.entry.category.shortname}}
+                            <span *ngIf="!result.entry.category.categoryColor">{{ result.entry.category.shortname }}</span>
+                            <span *ngIf="result.entry.category.categoryColor" class="badge" [style.background]="result.entry.category.categoryColor" [style.color]="'#FFFFFF'">
+                                <h5><strong>{{ result.entry.category.shortname }}</strong></h5>
+                            </span>
                         </td>
                     </ng-container>
 

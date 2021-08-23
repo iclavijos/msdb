@@ -75,7 +75,7 @@ public class ResultsService {
 				}
 			}
 			if (!pss.getSeriesEdition().getStandingsPerCategory()) {
-                calculatePoints(pss, ps, pss.getSeriesEdition().getAllowedCategories().get(0), results, session, points, pointsPct, drivers, teams, manufacturers);
+                calculatePoints(pss, ps, pss.getSeriesEdition().getAllowedCategories().first(), results, session, points, pointsPct, drivers, teams, manufacturers);
             } else {
                 for(Category category: pss.getEventSession().getEventEdition().getAllowedCategories()) {
                     List<EventEntryResult> resultsCat = results.stream().filter(r -> r.getEntry().getCategory().equals(category)).collect(Collectors.toList());

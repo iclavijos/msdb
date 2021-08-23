@@ -42,6 +42,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -230,7 +231,7 @@ public class ImportsResource {
         Racetrack racetrack = null;
         RacetrackLayout layout = null;
         SeriesEdition seriesEd = null;
-        List<Category> categories = null;
+        SortedSet<Category> categories = null;
         TimeZone tz = null;
         while (readValues.hasNext()) {
         	EventEditionImportDTO tmp = readValues.next();

@@ -41,6 +41,28 @@
                                             </small>
                                         </div>
                                     </mat-form-field>
+
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput type="number" formControlName="relevance"
+                                               placeholder="{{ 'motorsportsDatabaseApp.series.relevance' | translate }}"/>
+                                        <mat-error *ngIf="editForm.get('relevance')?.hasError('max')">
+                                            {{ 'entity.validation.max' | translate: '{ max: 1000 }' }}
+                                        </mat-error>
+                                        <mat-error *ngIf="editForm.get('relevance')?.hasError('min')">
+                                            {{ 'entity.validation.min' | translate: '{ min: 100 }' }}
+                                        </mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.tyreProvider.symbol.backgroundColor' | translate }}" type="color"
+                                               class="form-control" name="name" id="field_categoryColor" formControlName="categoryColor">
+                                        <div *ngIf="editForm.get('categoryColor').invalid && (editForm.get('categoryColor').dirty || editForm.get('categoryColor').touched)">
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('categoryColor').errors.required" jhiTranslate="entity.validation.required">
+                                                This field is required.
+                                            </small>
+                                        </div>
+                                    </mat-form-field>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-5">

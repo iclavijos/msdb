@@ -5,11 +5,13 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.icesoft.msdb.domain.comparator.CategoryComparator;
 import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.repository.converter.EventStatusTypeConverter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.SortComparator;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -18,6 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.stream.Collectors;
 
 /**
@@ -80,7 +83,8 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
         name="CATEGORIES_EVENT",
         joinColumns=@JoinColumn(name="event_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="ID"))
-    private List<Category> allowedCategories;
+    @SortComparator(CategoryComparator.class)
+    private SortedSet<Category> allowedCategories;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties("eventEditions")
@@ -170,11 +174,11 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
         this.eventDate = eventDate;
     }
 
-    public List<Category> getAllowedCategories() {
+    public SortedSet<Category> getAllowedCategories() {
         return allowedCategories;
     }
 
-    public EventEdition allowedCategories(List<Category> categories) {
+    public EventEdition allowedCategories(SortedSet<Category> categories) {
     	if (allowedCategories == null) {
     		this.allowedCategories = categories;
     		return this;
@@ -186,7 +190,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
         return this;
     }
 
-    public void setAllowedCategories(List<Category> categories) {
+    public void setAllowedCategories(SortedSet<Category> categories) {
     	if (allowedCategories == null) {
     		this.allowedCategories = categories;
     		return;

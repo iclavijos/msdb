@@ -7,9 +7,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.icesoft.msdb.MSDBException;
+import com.icesoft.msdb.domain.comparator.CategoryComparator;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.SortComparator;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -69,7 +71,8 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         name="CATEGORIES_SERIES",
         joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="ID"))
-    private List<Category> allowedCategories;
+    @SortComparator(CategoryComparator.class)
+    private SortedSet<Category> allowedCategories;
 
     @ManyToMany(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
@@ -243,11 +246,11 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 		this.multidriver = multidriver;
 	}
 
-	public List<Category> getAllowedCategories() {
+	public SortedSet<Category> getAllowedCategories() {
         return allowedCategories;
     }
 
-    public SeriesEdition allowedCategories(List<Category> categories) {
+    public SeriesEdition allowedCategories(SortedSet<Category> categories) {
     	if (allowedCategories == null) {
     		this.allowedCategories = categories;
     		return this;
@@ -259,7 +262,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         return this;
     }
 
-    public void setAllowedCategories(List<Category> categories) {
+    public void setAllowedCategories(SortedSet<Category> categories) {
     	if (allowedCategories == null) {
     		this.allowedCategories = categories;
     		return;

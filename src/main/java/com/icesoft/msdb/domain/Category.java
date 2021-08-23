@@ -37,6 +37,12 @@ public class Category extends AbstractAuditingEntity implements Serializable {
     @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
     private String shortname;
 
+    @Column
+    private Integer relevance;
+
+    @Column(name="category_color")
+    private String categoryColor;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -72,7 +78,23 @@ public class Category extends AbstractAuditingEntity implements Serializable {
         this.shortname = shortname;
     }
 
-	@Override
+    public Integer getRelevance() {
+        return relevance;
+    }
+
+    public void setRelevance(Integer relevance) {
+        this.relevance = relevance;
+    }
+
+    public String getCategoryColor() {
+        return categoryColor;
+    }
+
+    public void setCategoryColor(String categoryColor) {
+        this.categoryColor = categoryColor;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -94,6 +116,7 @@ public class Category extends AbstractAuditingEntity implements Serializable {
             "id=" + id +
             ", name='" + name + "'" +
             ", shortname='" + shortname + "'" +
+            ", categoryColor='" + categoryColor + "'" +
             '}';
     }
 }

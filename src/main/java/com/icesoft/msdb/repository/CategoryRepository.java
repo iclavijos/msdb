@@ -3,10 +3,13 @@ package com.icesoft.msdb.repository;
 import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 
 import java.util.List;
+import java.util.SortedSet;
 import java.util.stream.Stream;
 
 import javax.persistence.QueryHint;
 
+import com.icesoft.msdb.domain.comparator.CategoryComparator;
+import org.hibernate.annotations.SortComparator;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -22,7 +25,8 @@ import com.icesoft.msdb.domain.Category;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category,Long> {
 
-	List<Category> findByNameIn(String[] names);
+    @SortComparator(CategoryComparator.class)
+    SortedSet<Category> findByNameIn(String[] names);
 
 	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
 	@Query(value = "select c from Category c")

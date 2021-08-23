@@ -27,16 +27,16 @@
             </div>
             <div class="table-responsive" [hidden]="!eventEntries || eventEntries?.length === 0">
                 <mat-accordion>
-                    <mat-expansion-panel *ngFor="let entry of filteredEntries">
+                    <mat-expansion-panel *ngFor="let entry of filteredEntries" [style.marginTop]="'3px'">
                         <mat-expansion-panel-header [collapsedHeight]="'100%'" [expandedHeight]="'100%'">
-                            <div class="media-body row">
+                            <div class="media-body row"[style.marginTop]="'3px'">
                                 <div class="col fixed-width">
                                     {{entry.raceNumber}}
                                 </div>
                                 <div class="col fixed-width">
                                     <span class="badge" [style.background]="entry.tyres.backgroundColor" [style.color]="entry.tyres.letterColor"
                                           matTooltip="{{entry.tyres.name}}" matTooltipPosition="after">
-                                        {{entry.tyres.name.substring(0,1)}}
+                                        <strong>{{ entry.tyres.name.substring(0,1) }}</strong>
                                     </span>
                                 </div>
                                 <div class="col-md-1" *ngIf="!entry.eventEdition.multidriver">
@@ -50,7 +50,7 @@
                                         <span *ngIf="entry.drivers[0].category === 'BRONZE'">B </span>
                                         <img *ngIf="entry.drivers[0].driver.nationality" src="/images/flags16/{{entry.drivers[0].driver.nationality.countryCode}}.png"/>
                                         <a [routerLink]="['/driver', entry.drivers[0].driver.id, 'view' ]" >
-                                            {{entry.drivers[0].driver.fullName}}
+                                            {{ entry.drivers[0].driver.fullName }}
                                         </a>
                                         <span *ngIf="entry.drivers[0].rookie"> (R)</span>
                                     </div>
@@ -62,7 +62,7 @@
                                             <span *ngIf="entryDriver.category === 'BRONZE'" class="bronze"></span>
                                             <img *ngIf="entryDriver.driver.nationality" src="/images/flags16/{{entryDriver.driver.nationality.countryCode}}.png"/>
                                             <a [routerLink]="['/driver', entryDriver.driver.id, 'view' ]" >
-                                                {{entryDriver.driver.fullName}}
+                                                {{ entryDriver.driver.fullName }}
                                             </a>
                                             <span *ngIf="entryDriver.rookie"> (R)</span>
                                         </div>
@@ -70,7 +70,10 @@
                                 </div>
                                 <div class="col-md-3">{{entry.entryName}}</div>
                                 <div class="col-md-1" *ngIf="eventEdition.allowedCategories.length != 1">
-                                    {{entry.category.shortname}}
+                                        <span *ngIf="!entry.category.categoryColor">{{ entry.category.shortname }}</span>
+                                        <span *ngIf="entry.category.categoryColor" class="badge" [style.background]="entry.category.categoryColor" [style.color]="'#FFFFFF'">
+                                            <h5><strong>{{ entry.category.shortname }}</strong></h5>
+                                        </span>
                                 </div>
                                 <div class="col-md-2"><img *ngIf="entry.carImageUrl" [src]="entry.carImageUrl" class="img-fluid" alt="car image"/></div>
                             </div>
@@ -82,7 +85,7 @@
                                 <div *ngIf="entry.team">
                                     <a [routerLink]="['/team', entry.team?.id, 'view' ]" >
                                         <img *ngIf="entry.team?.logoUrl" [src]="entry.team.logoUrl" class="img-fluid"/>
-                                        <span *ngIf="!entry.team?.logoUrl">{{entry.team?.name}}</span>
+                                        <span *ngIf="!entry.team?.logoUrl">{{ entry.team?.name }}</span>
                                     </a>
                                 </div></br>
                                 <label *ngIf="entry.operatedBy"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.operatedBy">Operated By</span></label>

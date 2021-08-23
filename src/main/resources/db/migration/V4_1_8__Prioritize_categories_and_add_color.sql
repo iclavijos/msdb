@@ -1,0 +1,3 @@
+ALTER TABLE category
+ADD COLUMN relevance INT NOT NULL DEFAULT 1000,
+ADD COLUMN category_color VARCHAR(8) NULL AFTER relevance;
