@@ -7,6 +7,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.util.Assert;
+
 import java.io.Serializable;
 
 /**
@@ -16,7 +18,7 @@ import java.io.Serializable;
 @Table(name = "category")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "category")
-public class Category extends AbstractAuditingEntity implements Serializable {
+public class Category extends AbstractAuditingEntity implements Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -118,5 +120,11 @@ public class Category extends AbstractAuditingEntity implements Serializable {
             ", shortname='" + shortname + "'" +
             ", categoryColor='" + categoryColor + "'" +
             '}';
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Assert.notNull(o, "Category to compare to cannot be null");
+        return this.getRelevance().compareTo(((Category)o).getRelevance());
     }
 }

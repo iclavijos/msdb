@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.icesoft.msdb.MSDBException;
-import com.icesoft.msdb.domain.comparator.CategoryComparator;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -71,8 +70,8 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         name="CATEGORIES_SERIES",
         joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="ID"))
-    @SortComparator(CategoryComparator.class)
-    private SortedSet<Category> allowedCategories;
+    @OrderBy("relevance")
+    private SortedSet<Category> allowedCategories = new TreeSet<>();
 
     @ManyToMany(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
@@ -80,7 +79,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         name="POINTS_SERIES",
         joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="points_id", referencedColumnName="ID"))
-    private List<PointsSystem> pointsSystems;
+    private List<PointsSystem> pointsSystems = new ArrayList<>();
 
     @ManyToMany(fetch=FetchType.LAZY)
     @Fetch(FetchMode.SELECT)
@@ -127,6 +126,31 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     private Boolean standingsPerCategory = Boolean.FALSE;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
+    public SeriesEdition() {
+        super();
+    }
+
+    public SeriesEdition(SeriesEdition source, String period) {
+        this.setId(null);
+        this.setPeriod(period);
+        this.setEditionName(period + " " + source.getSeries().getName());
+        this.setEvents(null);
+        this.setSeries(source.getSeries());
+        this.setSingleTyre(source.isSingleTyre());
+        this.setSingleEngine(source.isSingleEngine());
+        this.setSingleChassis(source.isSingleChassis());
+        this.setStadingsPerCategory(source.getStandingsPerCategory());
+        this.setNumEvents(source.getNumEvents());
+        this.setMultidriver(source.isMultidriver());
+        this.setTeamsStandings(source.getTeamsStandings());
+        this.setManufacturersStandings(source.getManufacturersStandings());
+        this.setDriversStandings(source.getDriversStandings());
+        this.setLogoUrl(source.getLogoUrl());
+        this.getAllowedCategories().addAll(source.getAllowedCategories());
+        this.getPointsSystems().addAll(source.getPointsSystems());
+    }
+
     public Long getId() {
         return id;
     }

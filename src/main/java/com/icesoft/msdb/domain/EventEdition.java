@@ -4,24 +4,19 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.icesoft.msdb.domain.comparator.CategoryComparator;
 import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.repository.converter.EventStatusTypeConverter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.SortComparator;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.stream.Collectors;
 
 /**
  * A EventEdition.
@@ -83,7 +78,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
         name="CATEGORIES_EVENT",
         joinColumns=@JoinColumn(name="event_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="ID"))
-    @SortComparator(CategoryComparator.class)
+    @OrderBy("relevance")
     private SortedSet<Category> allowedCategories;
 
     @ManyToOne(fetch = FetchType.EAGER)
