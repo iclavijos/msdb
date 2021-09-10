@@ -251,11 +251,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 
 		seriesEd.getEvents().isEmpty();
 
-		SeriesEdition newSeriesEd = SerializationUtils.clone(seriesEd); // new SeriesEdition();
-        newSeriesEd.setId(null);
-		newSeriesEd.setPeriod(newPeriod);
-		newSeriesEd.setEditionName(newPeriod + " " + seriesEd.getSeries().getName());
-		newSeriesEd.setEvents(null);
+		SeriesEdition newSeriesEd = new SeriesEdition(seriesEd, newPeriod);
 
 		final SeriesEdition seriesEdCopy = seriesRepo.save(newSeriesEd);
 		Set<SeriesEdition> series = new HashSet<>();
