@@ -33,6 +33,10 @@
     "at": "at",
     "yearsOld": "years old",
     "eventTookPlace": "The {{ event }} took place",
-    "eventRaceTookPlace": "The {{ race }} belonging to {{ event }} took place"
+    "eventRaceTookPlace": "The {{ race }} belonging to {{ event }} took place",
+    "filterSessionTypes": "Which sessions to show?",
+    "races": "Races",
+    "qualiSessions": "Qualifyings",
+    "practiceSessions": "Free practices"
   }
 }

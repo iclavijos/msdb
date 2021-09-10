@@ -33,6 +33,10 @@
     "at": "en",
     "yearsOld": "años",
     "eventTookPlace": "Se disputó el/las {{ event }}",
-    "eventRaceTookPlace": "Se disputó la {{ race }} del/de las {{ event }}"
+    "eventRaceTookPlace": "Se disputó la {{ race }} del/de las {{ event }}",
+    "filterSessionTypes": "Qué sesiones mostrar?",
+    "races": "Carreras",
+    "qualiSessions": "Clasificaciones",
+    "practiceSessions": "Libres"
   }
 }

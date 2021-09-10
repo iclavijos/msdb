@@ -18,6 +18,22 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-md-3 col-xs-12">
+                                {{ 'home.filterSessionTypes' | translate }}
+                            </div>
+                            <div class="col-md-9 col-xs-12">
+                                <mat-checkbox [checked]="showRaces"
+                                              (change)="filterBySessionType('races', $event.checked)">{{ 'home.races' | translate }}
+                                </mat-checkbox>
+                                <mat-checkbox [checked]="showQualiSessions"
+                                              (change)="filterBySessionType('qualiSessions', $event.checked)">{{ 'home.qualiSessions' | translate }}
+                                </mat-checkbox>
+                                <mat-checkbox [checked]="showPracticeSessions"
+                                              (change)="filterBySessionType('practiceSessions', $event.checked)">{{ 'home.practiceSessions' | translate }}
+                                </mat-checkbox>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-12">
                                 <div class="card-block" *ngFor="let day of dates">
                                     <h5 class="card-title">{{ day }}</h5>

@@ -34,6 +34,10 @@
     "at": "a",
     "yearsOld": "anys",
     "eventTookPlace": "Es va disputar el/les {{ event }}",
-    "eventRaceTookPlace": "Es va disputar la {{ race }} del/de les {{ event }}"
+    "eventRaceTookPlace": "Es va disputar la {{ race }} del/de les {{ event }}",
+    "filterSessionTypes": "Quines sessions mostrar?",
+    "races": "Curses",
+    "qualiSessions": "Classificaciones",
+    "practiceSessions": "Lliures"
   }
 }

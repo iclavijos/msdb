@@ -10,10 +10,14 @@ import * as moment from 'moment-timezone';
 })
 export class HomeEventsComponent implements OnInit {
   calendar: any;
+  filteredBySessionTypeCalendar: any;
   timezone: any;
   timezones: any;
   noEvents = false;
   dates = new Set();
+  showRaces = false;
+  showQualiSessions = false;
+  showPracticeSessions = false;
 
   constructor(private http: HttpClient) {}
 
@@ -24,6 +28,7 @@ export class HomeEventsComponent implements OnInit {
     }
     this.http.get<HttpResponse<any>>('api/home/calendar').subscribe(res => {
       this.calendar = this.convertData(res, this.timezone);
+      this.filteredBySessionTypeCalendar = this.calendar;
     });
     this.http.get<HttpResponse<any>>('api/timezones').subscribe(res => {
       this.timezones = res;
@@ -46,10 +51,37 @@ export class HomeEventsComponent implements OnInit {
   }
 
   filteredSessions(day) {
-    return this.calendar.filter(item => item.sessionStartTime.format('LL') === day);
+    return this.filteredBySessionTypeCalendar.filter(item => item.sessionStartTime.format('LL') === day);
   }
 
   changeTimezone() {
     this.calendar = this.convertData(this.calendar, this.timezone);
+    this.filteredBySessionTypeCalendar = this.calendar;
+  }
+
+  filterBySessionType(sessionType, isChecked) {
+    if (sessionType === 'races') {
+      this.showRaces = isChecked;
+    }
+    if (sessionType === 'qualiSessions') {
+      this.showQualiSessions = isChecked;
+    }
+    if (sessionType === 'practiceSessions') {
+      this.showPracticeSessions = isChecked;
+    }
+    if (!(this.showRaces || this.showQualiSessions || this.showPracticeSessions)) {
+      this.filteredBySessionTypeCalendar = this.calendar;
+    } else {
+      this.filteredBySessionTypeCalendar = this.calendar.filter(session => {
+        if (
+          ((session.sessionType === 'RACE' || session.sessionType === 'QUALIFYING_RACE') && this.showRaces) ||
+          (session.sessionType === 'QUALIFYING' && this.showQualiSessions) ||
+          (session.sessionType === 'PRACTICE' && this.showPracticeSessions)
+        ) {
+          return true;
+        }
+        return false;
+      });
+    }
   }
 }
