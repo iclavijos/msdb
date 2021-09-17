@@ -43,6 +43,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -337,6 +338,7 @@ public class EventEditionResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
             		applicationName, true, ENTITY_NAME_SESSION, "idexists", "A new eventSession cannot already have an ID")).body(null);
         }
+        eventSession.setSessionStartTime(resetSessionStartTimeSeconds(eventSession.getSessionStartTimeDate()));
         EventSession result = eventSessionRepository.save(eventSession);
         subscriptionsService.saveEventSession(result);
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/sessions"))
@@ -374,6 +376,7 @@ public class EventEditionResource {
     @Transactional
     public ResponseEntity<EventSession> updateEventSession(@Valid @RequestBody EventSession eventSession) throws URISyntaxException {
         log.debug("REST request to update EventSession : {}", eventSession);
+        eventSession.setSessionStartTime(resetSessionStartTimeSeconds(eventSession.getSessionStartTimeDate()));
         if (eventSession.getId() == null) {
             return createEventEditionSession(eventSession);
         }
@@ -393,6 +396,12 @@ public class EventEditionResource {
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
+    }
+
+    private Long resetSessionStartTimeSeconds(ZonedDateTime eventSessionStartTime) {
+        // Ensuring start time is set to zero seconds
+        ZonedDateTime zeroSeconds = eventSessionStartTime.truncatedTo(ChronoUnit.MINUTES);
+        return zeroSeconds.toEpochSecond();
     }
 
     @PutMapping("/event-editions/event-sessions/{sessionId}/process-results")
