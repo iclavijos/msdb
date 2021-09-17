@@ -71,6 +71,7 @@ public class EventServiceImpl implements EventService {
     public Event save(Event event) {
         log.debug("Request to save Event : {}", event);
         Event result = eventRepository.save(event);
+        eventSearchRepo.deleteById(event.getId());
         eventSearchRepo.save(result);
         return result;
     }
