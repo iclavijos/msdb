@@ -54,16 +54,21 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     if (this.eventEdition.allowedCategories.length > 1) {
       this.displayedColumns.push('category');
     }
-    if (this.eventSession.sessionTypeValue === 2) {
+    if (this.eventSession.sessionTypeValue === 2 || this.eventSession.sessionTypeValue === 4) {
       this.displayedColumns.push('totalTime');
     }
-    this.displayedColumns.push('bestLapTime');
-    if (this.eventSession.sessionTypeValue !== 2) {
+    if (this.eventSession.sessionTypeValue !== 4) {
+      this.displayedColumns.push('bestLapTime');
+    }
+    if (this.eventSession.sessionTypeValue !== 2 && this.eventSession.sessionTypeValue !== 4) {
       this.displayedColumns.push('difference', 'previous');
     }
     this.displayedColumns.push('lapsCompleted');
     if (this.eventSession.sessionTypeValue === 2) {
-      this.displayedColumns.push('lapsLed', 'retired', 'retirementCause');
+      this.displayedColumns.push('lapsLed');
+    }
+    if (this.eventSession.sessionTypeValue === 2 || this.eventSession.sessionTypeValue === 4) {
+      this.displayedColumns.push('retired', 'retirementCause');
     }
     this.displayedColumns.push('buttons');
   }
