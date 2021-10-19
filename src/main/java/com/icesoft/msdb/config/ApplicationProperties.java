@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.sql.Time;
+
 /**
  * Properties specific to Motorsports Database.
  * <p>
@@ -18,6 +20,7 @@ public class ApplicationProperties {
 	private final SendGrid sendgrid = new SendGrid();
 	private final Cloudinary cloudinary = new Cloudinary();
     private final Geolocation geolocation = new Geolocation();
+    private final TimeZone timeZone = new TimeZone();
 
     @Getter @Setter
 	public class SendGrid {
@@ -34,5 +37,15 @@ public class ApplicationProperties {
     @Getter @Setter
     public class Geolocation {
         private String key;
+    }
+
+    @Setter
+    public class TimeZone {
+        private String key;
+        private String url;
+
+        public String getServiceUrl() {
+            return String.format(url, key);
+        }
     }
 }
