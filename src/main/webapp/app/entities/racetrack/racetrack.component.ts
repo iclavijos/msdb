@@ -167,6 +167,7 @@ export class RacetrackComponent implements AfterViewInit, OnDestroy {
   }
 
   loadAll() {
+    this.currentSearch = sessionStorage.getItem('racetrackSearch');
     this.racetracks = [];
     if (this.currentSearch) {
       return this.racetrackService.query({
@@ -184,6 +185,7 @@ export class RacetrackComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
+    sessionStorage.deleteItem('racetrackSearch');
     this.racetracks = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';
@@ -201,6 +203,7 @@ export class RacetrackComponent implements AfterViewInit, OnDestroy {
   }
 
   search(query) {
+    sessionStorage.setItem('racetrackSearch', query);
     this.racetracks = [];
     if (!query) {
       return this.clear();

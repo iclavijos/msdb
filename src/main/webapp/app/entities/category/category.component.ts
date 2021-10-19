@@ -90,6 +90,7 @@ export class CategoryComponent implements AfterViewInit, OnDestroy {
   }
 
   loadAll() {
+    this.currentSearch = sessionStorage.getItem('categorySearch');
     this.categories = [];
     if (this.currentSearch) {
       return this.categoryService.query({
@@ -107,6 +108,7 @@ export class CategoryComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
+    sessionStorage.removeItem('categorySearch');
     this.categories = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';
@@ -124,6 +126,7 @@ export class CategoryComponent implements AfterViewInit, OnDestroy {
   }
 
   search(query) {
+    sessionStorage.setItem('categorySearch', query);
     this.categories = [];
     if (!query) {
       return this.clear();

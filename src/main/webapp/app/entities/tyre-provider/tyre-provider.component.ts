@@ -90,6 +90,7 @@ export class TyreProviderComponent implements AfterViewInit, OnDestroy {
   }
 
   loadAll() {
+    this.currentSearch = sessionStorage.getItem('tyreSearch');
     this.tyreProviders = [];
     if (this.currentSearch) {
       return this.tyreProviderService.query({
@@ -107,6 +108,7 @@ export class TyreProviderComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
+    sessionStorage.deleteItem('tyreSearch');
     this.tyreProviders = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';
@@ -124,6 +126,7 @@ export class TyreProviderComponent implements AfterViewInit, OnDestroy {
   }
 
   search(query) {
+    sessionStorage.setItem('tyreSearch', query);
     this.tyreProviders = [];
     if (!query) {
       return this.clear();

@@ -103,6 +103,7 @@ export class EngineComponent implements AfterViewInit, OnDestroy {
   }
 
   loadAll() {
+    this.currentSearch = sessionStorage.getItem('engineSearch');
     this.engines = [];
     if (this.currentSearch) {
       return this.enginesService.query({
@@ -120,6 +121,7 @@ export class EngineComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
+    sessionStorage.deleteItem('engineSearch');
     this.engines = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';
@@ -137,6 +139,7 @@ export class EngineComponent implements AfterViewInit, OnDestroy {
   }
 
   search(query) {
+    sessionStorage.setItem('engineSearch', query);
     this.engines = [];
     if (!query) {
       return this.clear();
