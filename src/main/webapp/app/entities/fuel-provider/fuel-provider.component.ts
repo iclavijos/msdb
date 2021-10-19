@@ -90,6 +90,7 @@ export class FuelProviderComponent implements AfterViewInit, OnDestroy {
   }
 
   loadAll() {
+    this.currentSearch = sessionStorage.getItem('fuelSearch');
     this.fuelProviders = [];
     if (this.currentSearch) {
       return this.fuelProviderService.query({
@@ -107,6 +108,7 @@ export class FuelProviderComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
+    sessionStorage.deleteItem('fuelSearch');
     this.fuelProviders = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';
@@ -124,6 +126,7 @@ export class FuelProviderComponent implements AfterViewInit, OnDestroy {
   }
 
   search(query) {
+    sessionStorage.setItem('fuelSearch', query);
     this.fuelProviders = [];
     if (!query) {
       return this.clear();

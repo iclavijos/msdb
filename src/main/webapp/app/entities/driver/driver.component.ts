@@ -87,15 +87,10 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
     this.links = this.parseLinks.parse(drivers.headers.get('link'));
     this.totalItems = parseInt(drivers.headers.get('X-Total-Count'), 10);
     return drivers.body;
-    //     return drivers.body.map(driver =>
-    //       Object.assign({}, driver, {
-    //         birthDate: driver.birthDate !== null ? driver.birthDate.month(driver.birthDate.month() - 1) : null,
-    //         deathDate: driver.deathDate !== null ? driver.deathDate.month(driver.deathDate.month() - 1) : null
-    //       })
-    //     );
   }
 
   loadAll() {
+    this.currentSearch = sessionStorage.getItem('driverSearch');
     this.drivers = [];
     if (this.currentSearch) {
       return this.driverService.query({
@@ -113,6 +108,7 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
   }
 
   clear() {
+    sessionStorage.removeItem('driverSearch');
     this.drivers = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';
@@ -130,6 +126,7 @@ export class DriverComponent implements OnDestroy, AfterViewInit {
   }
 
   search(query) {
+    sessionStorage.setItem('driverSearch', query);
     this.drivers = [];
     if (!query) {
       return this.clear();

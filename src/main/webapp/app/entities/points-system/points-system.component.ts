@@ -100,6 +100,7 @@ export class PointsSystemComponent implements AfterViewInit, OnDestroy {
   }
 
   loadAll() {
+    this.currentSearch = sessionStorage.getItem('pointsSearch');
     this.pointsSystems = [];
     if (this.currentSearch) {
       return this.pointsSystemService.query({
@@ -117,6 +118,7 @@ export class PointsSystemComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
+    sessionStorage.deleteItem('pointsSearch');
     this.pointsSystems = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';
@@ -134,6 +136,7 @@ export class PointsSystemComponent implements AfterViewInit, OnDestroy {
   }
 
   search(query) {
+    sessionStorage.setItem('pointsSearch', query);
     this.pointsSystems = [];
     if (!query) {
       return this.clear();

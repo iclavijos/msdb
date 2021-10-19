@@ -90,6 +90,7 @@ export class EventComponent implements AfterViewInit, OnDestroy {
   }
 
   loadAll() {
+    this.currentSearch = sessionStorage.getItem('eventSearch');
     this.events = [];
     if (this.currentSearch) {
       return this.eventService.query({
@@ -107,6 +108,7 @@ export class EventComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
+    sessionStorage.deleteItem('eventSearch');
     this.events = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';
@@ -124,6 +126,7 @@ export class EventComponent implements AfterViewInit, OnDestroy {
   }
 
   search(query) {
+    sessionStorage.setItem('eventSearch', query);
     this.events = [];
     if (!query) {
       return this.clear();
