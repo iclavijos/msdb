@@ -9,6 +9,7 @@ import com.google.maps.model.Geometry;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.service.GeoLocationService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,12 +18,11 @@ import java.io.IOException;
 import java.util.TimeZone;
 
 @Service
+@RequiredArgsConstructor
 public class GeoLocationServiceImpl implements GeoLocationService {
 
     private static final Logger log = LoggerFactory.getLogger(GeoLocationServiceImpl.class);
-    private static final GeoApiContext context = new GeoApiContext.Builder()
-        .apiKey("AIzaSyBrTxr6pxxOtRuZHTZ_AGt0xTPUp8u-3y0")
-        .build();
+    private final GeoApiContext context;
 
     @Override
     public Geometry getGeolocationInformation(Racetrack racetrack) {

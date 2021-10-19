@@ -1,5 +1,8 @@
 package com.icesoft.msdb.config;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -9,53 +12,27 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * See {@link io.github.jhipster.config.JHipsterProperties} for a good example.
  */
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
+@Getter
 public class ApplicationProperties {
 
 	private final SendGrid sendgrid = new SendGrid();
 	private final Cloudinary cloudinary = new Cloudinary();
+    private final Geolocation geolocation = new Geolocation();
 
-	public static class SendGrid {
+    @Getter @Setter
+	public class SendGrid {
 		private String key;
-
-		public String getKey() {
-			return key;
-		}
-
-		public void setKey(String key) {
-			this.key = key;
-		}
 	}
 
-	public static class Cloudinary {
+    @Getter @Setter
+	public class Cloudinary {
 		private String name;
 		private String key;
 		private String secret;
-
-		public String getName() {
-			return name;
-		}
-		public void setName(String name) {
-			this.name = name;
-		}
-		public String getKey() {
-			return key;
-		}
-		public void setKey(String key) {
-			this.key = key;
-		}
-		public String getSecret() {
-			return secret;
-		}
-		public void setSecret(String secret) {
-			this.secret = secret;
-		}
 	}
 
-	public SendGrid getSendgrid() {
-		return sendgrid;
-	}
-
-	public Cloudinary getCloudinary() {
-		return cloudinary;
-	}
+    @Getter @Setter
+    public class Geolocation {
+        private String key;
+    }
 }
