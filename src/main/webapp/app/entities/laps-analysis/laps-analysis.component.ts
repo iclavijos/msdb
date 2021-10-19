@@ -23,6 +23,7 @@ export class LapsAnalysisComponent implements OnInit {
       this.eventSessionService.hasLapsData(session.id).subscribe(res => {
         if (res) {
           this.races.push(session);
+          this.races.sort((a, b) => (a.sessionStartTime > b.sessionStartTime ? 1 : -1));
         }
       });
     });
