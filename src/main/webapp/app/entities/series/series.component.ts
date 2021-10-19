@@ -90,6 +90,7 @@ export class SeriesComponent implements OnDestroy, AfterViewInit {
   }
 
   loadAll() {
+    this.currentSearch = sessionStorage.getItem('seriesSearch');
     this.series = [];
     if (this.currentSearch) {
       return this.seriesService.search({
@@ -107,6 +108,7 @@ export class SeriesComponent implements OnDestroy, AfterViewInit {
   }
 
   clear() {
+    sessionStorage.deleteItem('seriesSearch');
     this.series = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';
@@ -124,6 +126,7 @@ export class SeriesComponent implements OnDestroy, AfterViewInit {
   }
 
   search(query) {
+    sessionStorage.setItem('seriesSearch', query);
     this.series = [];
     if (!query) {
       return this.clear();

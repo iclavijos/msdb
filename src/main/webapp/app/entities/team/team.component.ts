@@ -91,6 +91,7 @@ export class TeamComponent implements AfterViewInit, OnDestroy {
   }
 
   loadAll() {
+    this.currentSearch = sessionStorage.getItem('teamSearch');
     this.teams = [];
     if (this.currentSearch) {
       return this.teamsService.query({
@@ -108,6 +109,7 @@ export class TeamComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
+    sessionStorage.deleteItem('teamSearch');
     this.teams = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';
@@ -125,6 +127,7 @@ export class TeamComponent implements AfterViewInit, OnDestroy {
   }
 
   search(query) {
+    sessionStorage.setItem('teamSearch', query);
     this.teams = [];
     if (!query) {
       return this.clear();
