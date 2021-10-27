@@ -814,6 +814,16 @@ public class EventEditionResource {
             .body(event);
     }
 
+    @PostMapping("/event-editions/{eventEditionId}/clone")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
+    @Transactional
+    public ResponseEntity<Void> cloneSeriesEdition(@PathVariable Long eventEditionId, @RequestBody String newPeriod) {
+        eventService.cloneEventEdition(eventEditionId, newPeriod, Collections.EMPTY_SET);
+        return ResponseEntity.ok().headers(
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, eventEditionId.toString())).build();
+    }
+
     private String updateImage(byte[] image, String imageUrl, String id, String folder) {
         if (image != null) {
             return cdnService.uploadImage(id, image, folder);

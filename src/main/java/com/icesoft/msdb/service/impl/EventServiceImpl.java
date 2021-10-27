@@ -2,17 +2,17 @@ package com.icesoft.msdb.service.impl;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.icesoft.msdb.MSDBException;
-import com.icesoft.msdb.domain.EventSession;
+import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.repository.EventSessionRepository;
+import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.SubscriptionsService;
+import org.apache.commons.lang3.SerializationUtils;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
@@ -23,8 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.icesoft.msdb.domain.Event;
-import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventRepository;
 import com.icesoft.msdb.repository.search.EventSearchRepository;
@@ -46,19 +44,22 @@ public class EventServiceImpl implements EventService {
     private final EventSearchRepository eventSearchRepo;
     private final SearchService searchService;
     private final SubscriptionsService subscriptionsService;
+    private final EventEditionSearchRepository eventEditionSearchRepository;
 
     public EventServiceImpl(EventRepository eventRepository,
     			EventEditionRepository eventEditionRepository,
     			EventSearchRepository eventSearchRepo,
                 EventSessionRepository eventSessionRepository,
                 SearchService searchService,
-                SubscriptionsService subscriptionsService) {
+                SubscriptionsService subscriptionsService,
+                EventEditionSearchRepository eventEditionSearchRepository) {
     	this.eventRepository = eventRepository;
     	this.eventEditionRepository = eventEditionRepository;
     	this.eventSearchRepo = eventSearchRepo;
     	this.eventSessionRepository = eventSessionRepository;
     	this.searchService = searchService;
     	this.subscriptionsService = subscriptionsService;
+        this.eventEditionSearchRepository = eventEditionSearchRepository;
     }
 
     /**
@@ -166,5 +167,62 @@ public class EventServiceImpl implements EventService {
         });
         event.setEventDate(event.getEventDate().plusDays(daysBetween));
         return event;
+    }
+
+    @Override
+    public EventEdition cloneEventEdition(Long eventEditionId, String newPeriod, Set<SeriesEdition> series) {
+        log.debug("Cloning event edition");
+        EventEdition event = eventEditionRepository.findById(eventEditionId)
+            .orElseThrow(() ->  new MSDBException("No event edition with id " + eventEditionId));
+
+        EventEdition newEvent = SerializationUtils.clone(event); // new EventEdition();
+        newEvent.setId(null);
+        newEvent.setPosterUrl(null);
+        newEvent.setSeriesEditions(series);
+        Integer year;
+
+        try {
+            year = Integer.valueOf(newPeriod);
+        } catch (NumberFormatException e) {
+            year = Integer.valueOf(newPeriod.substring(0, newPeriod.indexOf("-")));
+        }
+        newEvent.setEditionYear(year);
+        newEvent.setEventDate(event.getEventDate().withYear(year));
+        newEvent.setLongEventName(year + " " + event.getEvent().getName());
+        newEvent.setShortEventName(year + " " + event.getEvent().getName());
+        if (newEvent.getShortEventName().length() > 40) {
+            newEvent.setShortEventName(newEvent.getShortEventName().substring(0, 40));
+        }
+
+        final EventEdition evCopy = eventEditionRepository.save(newEvent);
+        eventEditionSearchRepository.save(evCopy);
+        final int yearCopy = year;
+
+        eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(event.getId()).stream().forEach(es -> {
+            EventSession newSession = SerializationUtils.clone(es);
+            newSession.setId(null);
+            newSession.setEventEdition(evCopy);
+            newSession.setPointsSystemsSession(null);
+
+            ZonedDateTime zdt = es.getSessionStartTimeDate();
+            newSession.setSessionStartTime(zdt.withYear(yearCopy).toEpochSecond());
+            final EventSession copy = eventSessionRepository.save(newSession);
+
+            if (!series.isEmpty()) {
+                List<PointsSystemSession> pssL = new ArrayList<>();
+                es.getPointsSystemsSession().parallelStream().forEach(pss -> {
+                    PointsSystemSession tmp = new PointsSystemSession(
+                        pss.getPointsSystem(),
+                        series.stream().findFirst().get(),
+                        copy);
+                    tmp.setPsMultiplier(pss.getPsMultiplier());
+                    pssL.add(tmp);
+                });
+                newSession.setPointsSystemsSession(pssL);
+            }
+            eventSessionRepository.save(newSession);
+        });
+
+        return evCopy;
     }
 }

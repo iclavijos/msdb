@@ -8,6 +8,7 @@ import { EventEditionDetailComponent, RescheduleDialogComponent } from './event-
 import { EventEditionCopyEntriesDialogComponent } from './event-edition-copy-entries-dialog.component';
 import { EventEditionUpdateComponent } from './event-edition-update.component';
 import { EventEditionDeletePopupComponent, EventEditionDeleteDialogComponent } from './event-edition-delete-dialog.component';
+import { EventEditionCloneDialogComponent } from './event-edition-clone-dialog.component';
 import { eventEditionRoute, eventEditionPopupRoute } from './event-edition.route';
 
 import { MotorsportsDatabaseEventSessionModule } from '../event-session/event-session.module';
@@ -34,9 +35,15 @@ const ENTITY_STATES = [...eventEditionRoute, ...eventEditionPopupRoute];
     EventEditionCopyEntriesDialogComponent,
     EventEditionDeleteDialogComponent,
     EventEditionDeletePopupComponent,
+    EventEditionCloneDialogComponent,
     RescheduleDialogComponent
   ],
   exports: [EventEditionComponent],
-  entryComponents: [EventEditionDeleteDialogComponent, RescheduleDialogComponent, EventEditionCopyEntriesDialogComponent]
+  entryComponents: [
+    EventEditionDeleteDialogComponent,
+    RescheduleDialogComponent,
+    EventEditionCopyEntriesDialogComponent,
+    EventEditionCloneDialogComponent
+  ]
 })
 export class MotorsportsDatabaseEventEditionModule {}

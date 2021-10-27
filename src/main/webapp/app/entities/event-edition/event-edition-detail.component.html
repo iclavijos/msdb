@@ -197,6 +197,10 @@
             Clone entries
             </span>
         </button>
+        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                class="btn btn-warning" (click)="cloneEvent()">
+            <fa-icon [icon]="'clone'"></fa-icon> <span jhiTranslate="motorsportsDatabaseApp.eventEdition.clone.clone"> Clone</span>
+        </button>
         <button type="submit"
                 (click)="previousState()"
                 class="btn btn-info">

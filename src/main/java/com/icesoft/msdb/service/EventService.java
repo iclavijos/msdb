@@ -3,7 +3,9 @@ package com.icesoft.msdb.service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import com.icesoft.msdb.domain.SeriesEdition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -54,4 +56,6 @@ public interface EventService {
     List<EditionIdYearDTO> findEventEditionsIdYear(Long idEvent);
 
     EventEdition rescheduleEvent(EventEdition event, LocalDate newDate);
+
+    EventEdition cloneEventEdition(Long eventEditionId, String newPeriod, Set<SeriesEdition> series);
 }
