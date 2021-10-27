@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.icesoft.msdb.repository.*;
+import com.icesoft.msdb.service.EventService;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	private final PointsSystemSessionRepository pssRepo;
 	private final EventEditionSearchRepository eventEdSearchRepo;
 	private final SeriesCategoryDriverChampionRepository seriesCategoryDriverChampionRepository;
+    private final EventService eventService;
 
 	public SeriesEditionServiceImpl(EventEditionRepository eventRepo, SeriesEditionRepository seriesRepo,
                                     EventSessionRepository sessionRepo, PointsSystemRepository pointsRepo,
@@ -58,7 +60,8 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
                                     StatisticsService statsService, JDBCRepositoryImpl jdbcRepo,
                                     EventEntryRepository eventEntryRepo, PointsSystemSessionRepository pssRepository,
                                     EventEditionSearchRepository eventEdSearchRepo,
-                                    SeriesCategoryDriverChampionRepository seriesCategoryDriverChampionRepository) {
+                                    SeriesCategoryDriverChampionRepository seriesCategoryDriverChampionRepository,
+                                    EventService eventService) {
 		this.eventRepo = eventRepo;
 		this.seriesRepo = seriesRepo;
 		this.sessionRepo = sessionRepo;
@@ -74,6 +77,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		this.pssRepo = pssRepository;
 		this.eventEdSearchRepo = eventEdSearchRepo;
 		this.seriesCategoryDriverChampionRepository = seriesCategoryDriverChampionRepository;
+        this.eventService = eventService;
 	}
 
 	@Override
@@ -258,50 +262,11 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		series.add(seriesEdCopy);
 
 		seriesEd.getEvents().stream().forEach(ev -> {
-			EventEdition newEvent = SerializationUtils.clone(ev); // new EventEdition();
-            newEvent.setId(null);
-            newEvent.setPosterUrl(null);
-			newEvent.setSeriesEditions(series);
-			Integer year;
-			try {
-				year = Integer.valueOf(newPeriod);
-			} catch (NumberFormatException e) {
-				year = Integer.valueOf(newPeriod.substring(0, newPeriod.indexOf("-")));
-			}
-			newEvent.setEditionYear(year);
-			newEvent.setEventDate(ev.getEventDate().withYear(year));
-			newEvent.setLongEventName(year + " " + ev.getEvent().getName());
-			newEvent.setShortEventName(year + " " + ev.getEvent().getName());
-			if (newEvent.getShortEventName().length() > 40) {
-			    newEvent.setShortEventName(newEvent.getShortEventName().substring(0, 40));
-            }
+            EventEdition newEventEdition = eventService.cloneEventEdition(ev.getId(), newPeriod, series);
+            seriesEdCopy.addEvent(newEventEdition);
+            seriesRepo.save(seriesEdCopy);
+        });
 
-			final EventEdition evCopy = eventRepo.save(newEvent);
-			eventEdSearchRepo.save(evCopy);
-			seriesEdCopy.addEvent(newEvent);
-			seriesRepo.save(seriesEdCopy);
-			final int yearCopy = year;
-
-			sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(ev.getId()).stream().forEach(es -> {
-				EventSession newSession = SerializationUtils.clone(es); // new EventSession();
-                newSession.setId(null);
-				newSession.setEventEdition(evCopy);
-				newSession.setPointsSystemsSession(null);
-
-                ZonedDateTime zdt = es.getSessionStartTimeDate();
-				newSession.setSessionStartTime(zdt.withYear(yearCopy).toEpochSecond());
-				final EventSession copy = sessionRepo.save(newSession);
-
-				List<PointsSystemSession> pssL = new ArrayList<>();
-				es.getPointsSystemsSession().parallelStream().forEach(pss -> {
-					PointsSystemSession tmp = new PointsSystemSession(pss.getPointsSystem(), seriesEdCopy, copy);
-					tmp.setPsMultiplier(pss.getPsMultiplier());
-					pssL.add(tmp);
-				});
-				newSession.setPointsSystemsSession(pssL);
-				sessionRepo.save(newSession);
-			});
-		});
 	}
 
 }

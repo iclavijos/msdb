@@ -73,6 +73,11 @@
         "cancel": "Cancela",
         "confirm": "Confirma"
       },
+      "clone": {
+        "clone": "Copia evento",
+        "title": "Crea una nueva edición copiando el evento actual",
+        "period": "Periodo del nuevo evento"
+      },
       "session": {
         "createOrEditLabel": "Crea o edita una sesión",
         "notFound": "No hay sesiones definidas",

@@ -10,6 +10,7 @@ import { IEventEntry } from 'app/shared/model/event-entry.model';
 import { EventEditionCopyEntriesDialogComponent } from './event-edition-copy-entries-dialog.component';
 import { EventService } from '../event/event.service';
 import { EventEditionService } from './event-edition.service';
+import { EventEditionCloneDialogComponent } from './event-edition-clone-dialog.component';
 
 import { DurationType } from 'app/shared/enumerations/durationType.enum';
 import { SessionType } from 'app/shared/enumerations/sessionType.enum';
@@ -201,6 +202,14 @@ export class EventEditionDetailComponent implements OnInit {
     this.dialog.open(EventEditionCopyEntriesDialogComponent, {
       data: {
         targetEvent: this.eventEdition
+      }
+    });
+  }
+
+  cloneEvent() {
+    this.dialog.open(EventEditionCloneDialogComponent, {
+      data: {
+        eventEdition: this.eventEdition
       }
     });
   }

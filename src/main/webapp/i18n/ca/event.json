@@ -73,6 +73,11 @@
         "cancel": "Cancel.la",
         "confirm": "Confirma"
       },
+      "clone": {
+        "clone": "Copia event",
+        "title": "Crea una nova edició d'aquest event copiant l'actual",
+        "period": "Periode del nou event"
+      },
       "session": {
         "createOrEditLabel": "Crea o edita una sessió",
         "notFound": "No hi ha sessions definides",

@@ -102,4 +102,8 @@ export class EventEditionService {
   copyEntries(idSource: number, idTarget: number) {
     return this.http.post<any>(`${this.resourceUrl}/${idTarget}/entries/${idSource}`, null);
   }
+
+  clone(eventEditionId: number, newPeriod: string) {
+    return this.http.post(`${this.resourceUrl}/${eventEditionId}/clone`, newPeriod);
+  }
 }
