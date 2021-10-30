@@ -3,6 +3,7 @@ package com.icesoft.msdb.domain;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @Table(name = "category")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "category")
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 public class Category extends AbstractAuditingEntity implements Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
@@ -25,18 +27,21 @@ public class Category extends AbstractAuditingEntity implements Serializable, Co
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
     @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
+    @EqualsAndHashCode.Include
     private String name;
 
     @NotNull
     @Size(max = 10)
     @Column(name = "shortname", length = 10, nullable = false)
     @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
+    @EqualsAndHashCode.Include
     private String shortname;
 
     @Column
@@ -97,22 +102,6 @@ public class Category extends AbstractAuditingEntity implements Serializable, Co
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Category)) {
-            return false;
-        }
-        return id != null && id.equals(((Category) o).id);
-    }
-
-    @Override
-    public int hashCode() {
-        return 31;
-    }
-
-    @Override
     public String toString() {
         return "Category{" +
             "id=" + id +
@@ -123,8 +112,18 @@ public class Category extends AbstractAuditingEntity implements Serializable, Co
     }
 
     @Override
-    public int compareTo(Object o) {
-        Assert.notNull(o, "Category to compare to cannot be null");
-        return this.getRelevance().compareTo(((Category)o).getRelevance());
+    public int compareTo(Object other) {
+        Assert.notNull(other, "Category to compare to cannot be null");
+        Category otherCategory = (Category)other;
+        if (relevance != null) {
+            int result =  this.getRelevance().compareTo(otherCategory.getRelevance());
+            if (result == 0) {
+                return this.getId().compareTo(otherCategory.getId());
+            } else {
+                return result;
+            }
+        } else {
+            return this.getId().compareTo(otherCategory.getId());
+        }
     }
 }
