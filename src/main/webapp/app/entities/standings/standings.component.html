@@ -57,9 +57,9 @@
             <div class="col-lg-2 col-md-2">
                 <mat-list>
                     <mat-list-item class="checklist-item" *ngFor="let driver of drivers">
-                        <mat-checkbox [name]="driver.driverName"
-                                      [value]="driver.driverName"
-                                      (change)="refreshGraphic($event)">{{ driver.driverName }}</mat-checkbox>
+                        <mat-checkbox [name]="driver.participantName"
+                                      [value]="driver.participantName"
+                                      (change)="refreshGraphic($event)">{{ driver.participantName }}</mat-checkbox>
                     </mat-list-item>
                 </mat-list>
             </div>
