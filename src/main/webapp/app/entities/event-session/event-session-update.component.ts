@@ -29,6 +29,8 @@ export class EventSessionUpdateComponent implements OnInit {
   durationTypes = DurationType;
   durationValues = DurationType;
 
+  timeZone: any;
+
   editForm = this.fb.group({
     id: [],
     eventEdition: [],
@@ -51,6 +53,12 @@ export class EventSessionUpdateComponent implements OnInit {
   ) {
     this.eventEditionId = data.eventEditionId;
     this.eventSession = data.eventSession;
+
+    if (this.eventSession.eventEdition.event.rally) {
+      this.timeZone = this.eventSession.eventEdition.locationTimeZone;
+    } else {
+      this.timeZone = this.eventSession.eventEdition.trackLayout.racetrack.timeZone;
+    }
   }
 
   ngOnInit() {
@@ -82,6 +90,11 @@ export class EventSessionUpdateComponent implements OnInit {
       maxDuration: eventSession.maxDuration
     });
     this.isRaceAndLaps = eventSession.sessionType >= 2 && eventSession.durationType === 5;
+    if (this.eventSession.eventEdition.event.rally) {
+      this.editForm.get('durationType').disable();
+      this.editForm.get('durationType').setValue(this.durationTypes.kilometers);
+      this.editForm.get('sessionType').setValue(this.sessionTypes.stage);
+    }
   }
 
   previousState() {
@@ -115,7 +128,7 @@ export class EventSessionUpdateComponent implements OnInit {
       shortname: this.editForm.get(['shortname']).value,
       sessionStartTime:
         this.editForm.get(['sessionStartTime']).value != null
-          ? moment(this.editForm.get(['sessionStartTime']).value).tz(this.eventSession.eventEdition.trackLayout.racetrack.timeZone, true)
+          ? moment(this.editForm.get(['sessionStartTime']).value).tz(this.timeZone, true)
           : undefined,
       duration: this.editForm.get(['duration']).value,
       durationType: this.editForm.get(['durationType']).value,

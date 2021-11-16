@@ -3,7 +3,7 @@ import { Component, OnInit, ElementRef } from '@angular/core';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { switchMap, debounceTime, map, filter } from 'rxjs/operators';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
@@ -26,6 +26,7 @@ import * as moment from 'moment';
 export class EventEditionUpdateComponent implements OnInit {
   isSaving: boolean;
 
+  event: IEvent;
   categories: ICategory[];
   layoutOptions: Observable<IRacetrackLayout[]>;
   eventOptions: Observable<IEvent[]>;
@@ -37,13 +38,14 @@ export class EventEditionUpdateComponent implements OnInit {
     longEventName: [null, [Validators.required, Validators.maxLength(100)]],
     eventDate: [null, [Validators.required]],
     allowedCategories: [],
-    trackLayout: [null, [Validators.required]],
+    trackLayout: [],
     event: [],
     poster: [],
     posterContentType: [],
     posterUrl: [],
-    status: ['O', []],
-    multidriver: [false, []]
+    status: ['ONGOING', []],
+    multidriver: [false, []],
+    location: []
   });
 
   constructor(
@@ -55,8 +57,14 @@ export class EventEditionUpdateComponent implements OnInit {
     protected eventService: EventService,
     protected elementRef: ElementRef,
     protected activatedRoute: ActivatedRoute,
-    private fb: FormBuilder
-  ) {}
+    private fb: FormBuilder,
+    private router: Router
+  ) {
+    if (this.router.getCurrentNavigation().extras.state) {
+      const routeState = this.router.getCurrentNavigation().extras.state;
+      this.event = JSON.parse(routeState.event);
+    }
+  }
 
   ngOnInit() {
     this.displayFnLayouts = this.displayFnLayouts.bind(this);
@@ -107,7 +115,7 @@ export class EventEditionUpdateComponent implements OnInit {
   }
 
   displayFnLayouts(trackLayout?: any): string | undefined {
-    if (trackLayout.racetrack) {
+    if (trackLayout && trackLayout.racetrack) {
       return trackLayout.racetrack.name + ' - ' + trackLayout.name;
     } else {
       return trackLayout ? trackLayout.fullName : undefined;
@@ -116,25 +124,6 @@ export class EventEditionUpdateComponent implements OnInit {
 
   displayFnEvents(event?: any): string | undefined {
     return event ? event.name : undefined;
-  }
-
-  updateForm(eventEdition: IEventEdition) {
-    eventEdition.eventDate[1]--;
-    this.editForm.patchValue({
-      id: eventEdition.id,
-      editionYear: eventEdition.editionYear,
-      shortEventName: eventEdition.shortEventName,
-      longEventName: eventEdition.longEventName,
-      eventDate: moment(eventEdition.eventDate).tz(eventEdition.trackLayout.racetrack.timeZone),
-      allowedCategories: eventEdition.allowedCategories,
-      trackLayout: eventEdition.trackLayout,
-      event: eventEdition.event,
-      poster: eventEdition.poster,
-      posterContentType: eventEdition.posterContentType,
-      posterUrl: eventEdition.posterUrl,
-      status: eventEdition.status,
-      multidriver: eventEdition.multidriver
-    });
   }
 
   byteSize(field) {
@@ -191,10 +180,38 @@ export class EventEditionUpdateComponent implements OnInit {
   save() {
     this.isSaving = true;
     const eventEdition = this.createFromForm();
-    if (eventEdition.id !== null) {
+    if (eventEdition.id) {
       this.subscribeToSaveResponse(this.eventEditionService.update(eventEdition));
     } else {
       this.subscribeToSaveResponse(this.eventEditionService.create(eventEdition));
+    }
+  }
+
+  updateForm(eventEdition: IEventEdition) {
+    // eventEdition.eventDate[1]--;
+    this.editForm.patchValue({
+      id: eventEdition.id,
+      editionYear: eventEdition.editionYear,
+      shortEventName: eventEdition.shortEventName,
+      longEventName: eventEdition.longEventName,
+      eventDate: eventEdition.eventDate
+        ? eventEdition.trackLayout
+          ? moment(eventEdition.eventDate).tz(eventEdition.trackLayout.racetrack.timeZone)
+          : null
+        : null,
+      allowedCategories: eventEdition.allowedCategories,
+      trackLayout: eventEdition.trackLayout,
+      event: this.event ? this.event : eventEdition.event,
+      poster: eventEdition.poster,
+      posterContentType: eventEdition.posterContentType,
+      posterUrl: eventEdition.posterUrl,
+      status: eventEdition.status,
+      multidriver: eventEdition.multidriver,
+      location: eventEdition.location
+    });
+    if (this.event.rally) {
+      this.editForm.get('multidriver').disable();
+      this.editForm.get('multidriver').setValue(true);
     }
   }
 
@@ -208,12 +225,13 @@ export class EventEditionUpdateComponent implements OnInit {
       eventDate: this.editForm.get(['eventDate']).value,
       allowedCategories: this.editForm.get(['allowedCategories']).value,
       trackLayout: this.editForm.get(['trackLayout']).value,
-      event: this.editForm.get(['event']).value,
+      event: this.event,
       poster: this.editForm.get(['poster']).value,
       posterContentType: this.editForm.get(['posterContentType']).value,
       posterUrl: this.editForm.get(['posterUrl']).value,
-      status: this.editForm.get(['status']).value,
-      multidriver: this.editForm.get(['multidriver']).value
+      status: this.editForm.get(['status']).value ? this.editForm.get(['status']).value : 'ONGOING',
+      multidriver: this.editForm.get(['multidriver']).value,
+      location: this.editForm.get(['location']).value
     };
   }
 

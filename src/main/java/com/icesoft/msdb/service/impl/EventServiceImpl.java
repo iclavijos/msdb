@@ -3,15 +3,16 @@ package com.icesoft.msdb.service.impl;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.repository.EventSessionRepository;
+import com.icesoft.msdb.repository.RacetrackLayoutRepository;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
-import com.icesoft.msdb.service.SearchService;
-import com.icesoft.msdb.service.SubscriptionsService;
+import com.icesoft.msdb.service.*;
+import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.SerializationUtils;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -26,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.icesoft.msdb.repository.EventEditionRepository;
 import com.icesoft.msdb.repository.EventRepository;
 import com.icesoft.msdb.repository.search.EventSearchRepository;
-import com.icesoft.msdb.service.EventService;
 import com.icesoft.msdb.service.dto.EditionIdYearDTO;
 
 /**
@@ -34,6 +34,7 @@ import com.icesoft.msdb.service.dto.EditionIdYearDTO;
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 
     private final Logger log = LoggerFactory.getLogger(EventServiceImpl.class);
@@ -41,26 +42,14 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final EventEditionRepository eventEditionRepository;
     private final EventSessionRepository eventSessionRepository;
-    private final EventSearchRepository eventSearchRepo;
+    private final EventSearchRepository eventSearchRepository;
     private final SearchService searchService;
     private final SubscriptionsService subscriptionsService;
     private final EventEditionSearchRepository eventEditionSearchRepository;
-
-    public EventServiceImpl(EventRepository eventRepository,
-    			EventEditionRepository eventEditionRepository,
-    			EventSearchRepository eventSearchRepo,
-                EventSessionRepository eventSessionRepository,
-                SearchService searchService,
-                SubscriptionsService subscriptionsService,
-                EventEditionSearchRepository eventEditionSearchRepository) {
-    	this.eventRepository = eventRepository;
-    	this.eventEditionRepository = eventEditionRepository;
-    	this.eventSearchRepo = eventSearchRepo;
-    	this.eventSessionRepository = eventSessionRepository;
-    	this.searchService = searchService;
-    	this.subscriptionsService = subscriptionsService;
-        this.eventEditionSearchRepository = eventEditionSearchRepository;
-    }
+    private final RacetrackLayoutRepository racetrackLayoutRepository;
+    private final CacheHandler cacheHandler;
+    private final CDNService cdnService;
+    private final GeoLocationService geoLocationService;
 
     /**
      * Save a racetrack.
@@ -72,8 +61,42 @@ public class EventServiceImpl implements EventService {
     public Event save(Event event) {
         log.debug("Request to save Event : {}", event);
         Event result = eventRepository.save(event);
-        eventSearchRepo.deleteById(event.getId());
-        eventSearchRepo.save(result);
+        eventSearchRepository.deleteById(event.getId());
+        eventSearchRepository.save(result);
+        return result;
+    }
+
+    @Override
+    public EventEdition save(EventEdition eventEdition) {
+        if (!eventEdition.getEvent().getRally()) {
+            RacetrackLayout layout = racetrackLayoutRepository.findById(eventEdition.getTrackLayout().getId()).orElseThrow(
+                () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
+            );
+            eventEdition.setTrackLayout(layout);
+        } else {
+            eventEdition.setLocationTimeZone(
+                geoLocationService.getTimeZone(
+                    geoLocationService.getGeolocationInformation(eventEdition.getLocation())));
+        }
+        if (eventEdition.getId() != null) {
+            throw new BadRequestAlertException("A new eventEdition cannot already have an ID", "eventEdition", "idexists");
+        }
+
+        EventEdition result = eventEditionRepository.save(eventEdition);
+        if (eventEdition.getPoster() != null) {
+            result.setPosterUrl(updateImage(
+                eventEdition.getPoster(),
+                null,
+                result.getId().toString(),
+                "affiche"
+            ));
+            result = eventEditionRepository.save(result);
+        }
+        eventEditionSearchRepository.save(result);
+        if (result.getSeriesEditions() != null) {
+            result.getSeriesEditions().forEach(se -> cacheHandler.resetWinnersCache(se.getId()));
+        }
+
         return result;
     }
 
@@ -89,7 +112,7 @@ public class EventServiceImpl implements EventService {
         log.debug("Request to get all Events");
         Page<Event> page;
         if (query.isPresent()) {
-            page = searchService.performWildcardSearch(eventSearchRepo, query.get().toLowerCase(), new String[]{"name", "description"}, pageable);
+            page = searchService.performWildcardSearch(eventSearchRepository, query.get().toLowerCase(), new String[]{"name", "description"}, pageable);
         } else {
             page = eventRepository.findAll(pageable);
         }
@@ -119,7 +142,7 @@ public class EventServiceImpl implements EventService {
     public void delete(Long id) {
         log.debug("Request to delete Event : {}", id);
         eventRepository.deleteById(id);
-        eventSearchRepo.deleteById(id);
+        eventSearchRepository.deleteById(id);
     }
 
     @Override
@@ -129,7 +152,7 @@ public class EventServiceImpl implements EventService {
     				.analyzeWildcard(true)
     				.field("name"));
 
-    	return eventSearchRepo.search(queryBuilder, pageable);
+    	return eventSearchRepository.search(queryBuilder, pageable);
     }
 
     @Override
@@ -224,5 +247,17 @@ public class EventServiceImpl implements EventService {
         });
 
         return evCopy;
+    }
+
+    private String updateImage(byte[] image, String imageUrl, String id, String folder) {
+        if (image != null) {
+            return cdnService.uploadImage(id, image, folder);
+        } else if (imageUrl == null) {
+            if (id != null) {
+                cdnService.deleteImage(id, folder);
+                return null;
+            }
+        }
+        return imageUrl;
     }
 }

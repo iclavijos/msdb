@@ -118,28 +118,9 @@ public class EventEditionResource {
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<EventEdition> createEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to save EventEdition : {}", eventEdition);
-        RacetrackLayout layout = racetrackLayoutRepo.findById(eventEdition.getTrackLayout().getId()).orElseThrow(
-            () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
-        );
-        eventEdition.setTrackLayout(layout);
-        if (eventEdition.getId() != null) {
-            throw new BadRequestAlertException("A new eventEdition cannot already have an ID", ENTITY_NAME, "idexists");
-        }
 
-        EventEdition result = eventEditionRepository.save(eventEdition);
-        if (eventEdition.getPoster() != null) {
-            result.setPosterUrl(updateImage(
-                eventEdition.getPoster(),
-                null,
-                result.getId().toString(),
-                "affiche"
-                ));
-            result = eventEditionRepository.save(result);
-        }
-        eventEditionSearchRepo.save(result);
-        if (result.getSeriesEditions() != null) {
-        	result.getSeriesEditions().forEach(se -> cacheHandler.resetWinnersCache(se.getId()));
-        }
+        EventEdition result = eventService.save(eventEdition);
+
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -160,10 +141,12 @@ public class EventEditionResource {
     @Transactional
     public ResponseEntity<EventEdition> updateEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to update EventEdition : {}", eventEdition);
-        RacetrackLayout layout = racetrackLayoutRepo.findById(eventEdition.getTrackLayout().getId()).orElseThrow(
-            () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
-        );
-        eventEdition.setTrackLayout(layout);
+        if (!eventEdition.getEvent().getRally()) {
+            RacetrackLayout layout = racetrackLayoutRepo.findById(eventEdition.getTrackLayout().getId()).orElseThrow(
+                () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
+            );
+            eventEdition.setTrackLayout(layout);
+        }
         if (eventEdition.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -210,11 +193,11 @@ public class EventEditionResource {
             EventEdition eventEdition = eventEditionOpt.get();
         	List<Long> tmp = eventEditionRepository.findNextEditionId(eventEdition.getEvent().getId(), eventEdition.getEditionYear());
         	if (tmp != null && !tmp.isEmpty()) {
-        		eventEdition.nextEditionId(tmp.get(0));
+        		eventEdition.setNextEditionId(tmp.get(0));
         	}
         	tmp = eventEditionRepository.findPreviousEditionId(eventEdition.getEvent().getId(), eventEdition.getEditionYear());
         	if (tmp != null && !tmp.isEmpty()) {
-        		eventEdition.previousEditionId(tmp.get(0));
+        		eventEdition.setPreviousEditionId(tmp.get(0));
         	}
 
         }
@@ -724,13 +707,20 @@ public class EventEditionResource {
     		return new SessionCalendarDTO(session.getEventEdition().getId(),
     				seriesName,
     				session.getEventEdition().getLongEventName(),
-    				session.getName(),
+    				session.getSessionType().equals(SessionType.STAGE)
+                        ? String.format("%s - %s", session.getShortname(), session.getName())
+                        : session.getName(),
     				session.getSessionTypeValue(),
     				session.getSessionStartTimeDate(), session.getSessionEndTime(),
+                    session.getDuration(),
     				session.getEventEdition().getStatus().getCode(),
                     seriesRelevance,
-    				session.getEventEdition().getTrackLayout().getRacetrack().getName(),
-    				session.getEventEdition().getTrackLayout().getLayoutImageUrl(),
+    				Optional.ofNullable(session.getEventEdition().getTrackLayout())
+                        .map(racetrackLayout -> racetrackLayout.getRacetrack().getName())
+                        .orElse(session.getEventEdition().getLocation()),
+                    Optional.ofNullable(session.getEventEdition().getTrackLayout())
+                        .map(racetrackLayout -> racetrackLayout.getLayoutImageUrl())
+                        .orElse(null),
                     session.getEventEdition().getAllowedCategories().stream()
                         .map(category -> category.getShortname()).toArray(size -> new String[size]),
     				logoUrl);

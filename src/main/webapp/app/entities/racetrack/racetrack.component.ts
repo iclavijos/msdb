@@ -185,7 +185,7 @@ export class RacetrackComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
-    sessionStorage.deleteItem('racetrackSearch');
+    sessionStorage.removeItem('racetrackSearch');
     this.racetracks = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';

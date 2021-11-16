@@ -1,7 +1,10 @@
 package com.icesoft.msdb.service.dto;
 
+import lombok.Data;
+
 import java.time.ZonedDateTime;
 
+@Data
 public class SessionCalendarDTO {
 
 	private final Long id;
@@ -11,6 +14,7 @@ public class SessionCalendarDTO {
 	private final int sessionType;
 	private final ZonedDateTime startTime;
 	private final ZonedDateTime endTime;
+    private final Float duration;
 	private final String[] seriesLogoUrl;
 	private final String[] categories;
 	private final String status;
@@ -20,7 +24,7 @@ public class SessionCalendarDTO {
 
 	public SessionCalendarDTO(
 	    Long id, String seriesName, String eventName, String sessionName, int sessionType,
-        ZonedDateTime startTime, ZonedDateTime endTime, String status, Integer seriesRelevance,
+        ZonedDateTime startTime, ZonedDateTime endTime, Float duration, String status, Integer seriesRelevance,
         String racetrack, String racetrackLayoutUrl, String[] categories,
         String... seriesLogoUrl) {
 		this.id = id;
@@ -30,6 +34,7 @@ public class SessionCalendarDTO {
 		this.sessionType = sessionType;
 		this.startTime = startTime;
 		this.endTime = endTime;
+        this.duration = duration;
 		this.seriesLogoUrl = seriesLogoUrl;
 		this.status = status;
 		this.seriesRelevance = seriesRelevance;
@@ -38,45 +43,4 @@ public class SessionCalendarDTO {
 		this.categories = categories;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public String getSeriesName() { return seriesName; }
-
-	public String getEventName() {
-		return eventName;
-	}
-
-	public String getSessionName() {
-		return sessionName;
-	}
-
-	public int getSessionType() {
-		return sessionType;
-	}
-
-	public ZonedDateTime getStartTime() {
-		return startTime;
-	}
-
-	public ZonedDateTime getEndTime() {
-		return endTime;
-	}
-
-	public String[] getSeriesLogoUrl() {
-		return seriesLogoUrl;
-	}
-
-    public String getStatus() {
-        return status;
-    }
-
-    public Integer getSeriesRelevance() { return seriesRelevance; }
-
-    public String getRacetrack() { return racetrack; }
-
-    public String getRacetrackLayoutUrl() { return racetrackLayoutUrl; }
-
-    public String[] getCategories() { return categories; }
 }

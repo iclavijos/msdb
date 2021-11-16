@@ -19,6 +19,7 @@
       },
       "name": "Name",
       "description": "Description",
+      "rally": "It is a rally",
       "editions": "Editions",
       "winners": "Winners"
     },
@@ -59,6 +60,7 @@
       "driversTimes": "Drivers' times",
       "lapsAnalysis": "Lap by lap",
       "poster": "Poster",
+      "location": "Location",
       "status": {
         "label": "Status",
         "ongoing": "Ongoing",

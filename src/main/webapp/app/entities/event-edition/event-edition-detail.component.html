@@ -95,8 +95,8 @@
                                                                     </li>
                                                                 </ul>
                                                             </dd>
-                                                            <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout">Track Layout</span></dt>
-                                                            <dd>
+                                                            <dt *ngIf="!eventEdition.event.rally"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout">Track Layout</span></dt>
+                                                            <dd *ngIf="!eventEdition.event.rally">
                                                                 <div *ngIf="eventEdition.trackLayout">
                                                                     <a [routerLink]="['/racetrack-layout', eventEdition.trackLayout?.id, 'view' ]" >
                                                                         {{eventEdition.trackLayout?.racetrack.name}} - {{eventEdition.trackLayout?.name}}
@@ -107,6 +107,10 @@
                                                                              (mouseover)="zoomIn(layoutImg)" (mouseleave)="zoomOut(layoutImg)"/>
                                                                     </div>
                                                                 </div>
+                                                            </dd>
+                                                            <dt *ngIf="eventEdition.event.rally"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.location">Location</span></dt>
+                                                            <dd *ngIf="eventEdition.event.rally">
+                                                                {{eventEdition.location}}
                                                             </dd>
                                                         </div>
                                                         <div class="col-lg-6 col-md-6" *ngIf="eventEdition.posterUrl">
@@ -182,7 +186,7 @@
             </div>
         </div>
         <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                [routerLink]="['/event/edition', eventEdition.id, 'edit-ed']"
+                (click)="editEdition()"
                 class="btn btn-primary">
             <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
         </button>

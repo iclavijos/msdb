@@ -29,6 +29,8 @@ export interface IEventEdition {
   posterUrl?: string;
   status?: string;
   seriesEditions?: ISeriesEdition[];
+  location?: string;
+  locationTimeZone?: string;
 }
 
 export class EventEdition implements IEventEdition {
@@ -54,6 +56,8 @@ export class EventEdition implements IEventEdition {
     public poster?: any,
     public posterUrl?: string,
     public string?: string,
-    public seriesEditions?: ISeriesEdition[]
+    public seriesEditions?: ISeriesEdition[],
+    public location?: string,
+    public locationTimeZone?: string
   ) {}
 }

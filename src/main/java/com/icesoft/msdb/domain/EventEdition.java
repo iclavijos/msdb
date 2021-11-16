@@ -1,20 +1,22 @@
 package com.icesoft.msdb.domain;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.repository.converter.EventStatusTypeConverter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -31,6 +33,7 @@ import java.util.SortedSet;
 		@NamedAttributeNode(value="shortEventName"),
 		@NamedAttributeNode(value="longEventName")
 })
+@Data @EqualsAndHashCode(callSuper=false)
 public class EventEdition extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -92,6 +95,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     private String posterUrl;
 
     @ManyToOne
+    @EqualsAndHashCode.Exclude
     private Event event;
 
     @Column(name = "single_chassis")
@@ -106,72 +110,14 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     @Column(name = "single_fuel")
     private Boolean singleFuel;
 
+    @Column(name = "location")
+    private String location;
+
+    @Column(name = "location_time_zone")
+    private String locationTimeZone;
+
     @ManyToMany(mappedBy = "events", fetch=FetchType.EAGER)
     private Set<SeriesEdition> seriesEditions;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getEditionYear() {
-        return editionYear;
-    }
-
-    public EventEdition editionYear(Integer editionYear) {
-        this.editionYear = editionYear;
-        return this;
-    }
-
-    public void setEditionYear(Integer editionYear) {
-        this.editionYear = editionYear;
-    }
-
-    public String getShortEventName() {
-        return shortEventName;
-    }
-
-    public EventEdition shortEventName(String shortEventName) {
-        this.shortEventName = shortEventName;
-        return this;
-    }
-
-    public void setShortEventName(String shortEventName) {
-        this.shortEventName = shortEventName;
-    }
-
-    public String getLongEventName() {
-        return longEventName;
-    }
-
-    public EventEdition longEventName(String longEventName) {
-        this.longEventName = longEventName;
-        return this;
-    }
-
-    public void setLongEventName(String longEventName) {
-        this.longEventName = longEventName;
-    }
-
-    public LocalDate getEventDate() {
-        return eventDate;
-    }
-
-    public EventEdition eventDate(LocalDate eventDate) {
-        this.eventDate = eventDate;
-        return this;
-    }
-
-    public void setEventDate(LocalDate eventDate) {
-        this.eventDate = eventDate;
-    }
-
-    public SortedSet<Category> getAllowedCategories() {
-        return allowedCategories;
-    }
 
     public EventEdition allowedCategories(SortedSet<Category> categories) {
     	if (allowedCategories == null) {
@@ -196,199 +142,8 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
         }
     }
 
-    public RacetrackLayout getTrackLayout() {
-        return trackLayout;
-    }
-
-    public EventEdition trackLayout(RacetrackLayout racetrackLayout) {
-        this.trackLayout = racetrackLayout;
-        return this;
-    }
-
-    public void setTrackLayout(RacetrackLayout racetrackLayout) {
-        this.trackLayout = racetrackLayout;
-    }
-
-    public byte[] getPoster() {
-        return poster;
-    }
-
-    public EventEdition poster(byte[] poster) {
-        this.poster = poster;
-        return this;
-    }
-
-    public void setPoster(byte[] poster) {
-        this.poster = poster;
-    }
-
-    public String getPosterUrl() {
-        return posterUrl;
-    }
-
-    public EventEdition posterUrl(String posterUrl) {
-        this.posterUrl = posterUrl;
-        return this;
-    }
-
-    public void setPosterUrl(String posterUrl) {
-        this.posterUrl = posterUrl;
-    }
-
-    public Event getEvent() {
-        return event;
-    }
-
-    public EventEdition event(Event event) {
-        this.event = event;
-        return this;
-    }
-
-    public void setEvent(Event event) {
-        this.event = event;
-    }
-
-	public Boolean getSingleChassis() {
-		return singleChassis;
-	}
-
-	public EventEdition singleChassis(Boolean singleChassis) {
-		this.singleChassis = singleChassis;
-		return this;
-	}
-
-	public void setSingleChassis(Boolean singleChassis) {
-		this.singleChassis = singleChassis;
-	}
-
-	public Boolean getSingleEngine() {
-		return singleEngine;
-	}
-
-	public EventEdition singleEngine(Boolean singleEngine) {
-		this.singleEngine = singleEngine;
-		return this;
-	}
-
-	public void setSingleEngine(Boolean singleEngine) {
-		this.singleEngine = singleEngine;
-	}
-
-	public Boolean getSingleTyre() {
-		return singleTyre;
-	}
-
-	public EventEdition singleTyre(Boolean singleTyre) {
-		this.singleTyre = singleTyre;
-		return this;
-	}
-
-	public void setSingleTyre(Boolean singleTyre) {
-		this.singleTyre = singleTyre;
-	}
-
-	public Boolean getSingleFuel() {
-		return singleFuel;
-	}
-
-	public EventEdition singleFuel(Boolean singleFuel) {
-		this.singleFuel = singleFuel;
-		return this;
-	}
-
-	public void setSingleFuel(Boolean singleFuel) {
-		this.singleFuel = singleFuel;
-	}
-
     public Boolean isMultidriver() {
-    	if (multidriver == null) {
-    		multidriver = false;
-    	}
-		return multidriver;
-	}
-
-    public EventEdition multidriver(Boolean multidriver) {
-		this.multidriver = multidriver;
-		return this;
-	}
-
-	public void setMultidriver(Boolean multidriver) {
-		this.multidriver = multidriver;
-	}
-
-    public EventStatusType getStatus() {
-        return status;
+        return multidriver;
     }
 
-    public void setStatus(EventStatusType status) {
-        this.status = status;
-    }
-
-    public Set<SeriesEdition> getSeriesEditions() {
-		return seriesEditions;
-	}
-
-	public void setSeriesEditions(Set<SeriesEdition> seriesEditions) {
-		this.seriesEditions = seriesEditions;
-	}
-
-//	public void setSeriesEdition(SeriesEdition seriesEdition) {
-//		if (this.seriesEditions == null) {
-//			this.seriesEditions = new ArrayList<>();
-//		}
-//		this.seriesEditions.add(seriesEdition);
-//	}
-
-	public Long getPreviousEditionId() {
-		return previousEditionId;
-	}
-
-	public EventEdition previousEditionId(Long previousEditionId) {
-		this.previousEditionId = previousEditionId;
-		return this;
-	}
-
-	public void setPreviousEditionId(Long previousEditionId) {
-		this.previousEditionId = previousEditionId;
-	}
-
-	public Long getNextEditionId() {
-		return nextEditionId;
-	}
-
-	public EventEdition nextEditionId(Long nextEditionId) {
-		this.nextEditionId = nextEditionId;
-		return this;
-	}
-
-	public void setNextEditionId(Long nextEditionId) {
-		this.nextEditionId = nextEditionId;
-	}
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof EventEdition)) {
-            return false;
-        }
-        return id != null && id.equals(((EventEdition) o).id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "EventEdition{" +
-            "id=" + getId() +
-            ", editionYear=" + getEditionYear() +
-            ", shortEventName='" + getShortEventName() + "'" +
-            ", longEventName='" + getLongEventName() + "'" +
-            ", eventDate='" + getEventDate() + "'" +
-            "}";
-    }
 }

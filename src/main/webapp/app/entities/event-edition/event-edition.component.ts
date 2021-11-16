@@ -162,4 +162,21 @@ export class EventEditionComponent implements AfterViewInit, OnDestroy {
   zoomOut(elementToUnzoom: HTMLElement) {
     this.renderer.setStyle(elementToUnzoom, 'transform', 'scale(1.0)');
   }
+
+  createEventEdition() {
+    this.router.navigate(['/event/edition/new-ed'], {
+      state: {
+        event: JSON.stringify(this.event)
+      }
+    });
+  }
+
+  editEventEdition(uiEvent, id) {
+    uiEvent.stopPropagation();
+    this.router.navigate(['/event/edition', id, 'edit-ed'], {
+      state: {
+        event: JSON.stringify(this.event)
+      }
+    });
+  }
 }

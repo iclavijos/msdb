@@ -108,7 +108,7 @@ export class TyreProviderComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
-    sessionStorage.deleteItem('tyreSearch');
+    sessionStorage.removeItem('tyreSearch');
     this.tyreProviders = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';

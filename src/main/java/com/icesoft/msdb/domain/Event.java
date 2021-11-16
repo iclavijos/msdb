@@ -1,16 +1,19 @@
 package com.icesoft.msdb.domain;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -25,6 +28,7 @@ import java.util.Set;
 		@NamedAttributeNode(value="name"),
 		@NamedAttributeNode(value="description")
 })
+@Data @EqualsAndHashCode(callSuper=false)
 public class Event extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,91 +52,13 @@ public class Event extends AbstractAuditingEntity implements Serializable {
     @OneToMany(mappedBy = "event")
     @JsonIgnore
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @EqualsAndHashCode.Exclude
     private Set<EventEdition> editions = new HashSet<>();
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public Long getId() {
-        return id;
-    }
+    @Column(name= "rally")
+    private Boolean rally;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Event name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Event description(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Set<EventEdition> getEditions() {
-        return editions;
-    }
-
-    public Event editions(Set<EventEdition> eventEditions) {
-        this.editions = eventEditions;
-        return this;
-    }
-
-    public Event addEditions(EventEdition eventEdition) {
-        this.editions.add(eventEdition);
-        eventEdition.setEvent(this);
-        return this;
-    }
-
-    public Event removeEditions(EventEdition eventEdition) {
-        this.editions.remove(eventEdition);
-        eventEdition.setEvent(null);
-        return this;
-    }
-
-    public void setEditions(Set<EventEdition> eventEditions) {
-        this.editions = eventEditions;
-    }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Event)) {
-            return false;
-        }
-        return id != null && id.equals(((Event) o).id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "Event{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            ", description='" + getDescription() + "'" +
-            "}";
+    public boolean isRally() {
+        return Optional.ofNullable(rally).orElse(Boolean.FALSE).booleanValue();
     }
 }

@@ -24,7 +24,15 @@ public interface EventService {
      * @param event the entity to save
      * @return the persisted entity
      */
-    Event save(Event racetrack);
+    Event save(Event event);
+
+    /**
+     * Save an Event Edition.
+     *
+     * @param eventEdition the entity to save
+     * @return the persisted entity
+     */
+    EventEdition save(EventEdition eventEdition);
 
     /**
      *  Get all the events.

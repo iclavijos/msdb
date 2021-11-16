@@ -48,6 +48,13 @@
                                     <td mat-cell *matCellDef="let event">{{ event.description }}</td>
                                 </ng-container>
 
+                                <ng-container matColumnDef="isRally">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.event.rally' | translate }}</th>
+                                    <td mat-cell *matCellDef="let event">
+                                        <i [ngClass]="event.rally ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
+                                    </td>
+                                </ng-container>
+
                                 <ng-container matColumnDef="buttons">
                                     <th mat-header-cell *matHeaderCellDef></th>
                                     <td mat-cell *matCellDef="let event">

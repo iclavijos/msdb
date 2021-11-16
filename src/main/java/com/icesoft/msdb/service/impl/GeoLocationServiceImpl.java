@@ -42,6 +42,22 @@ public class GeoLocationServiceImpl implements GeoLocationService {
     }
 
     @Override
+    public Geometry getGeolocationInformation(String location) {
+        GeocodingResult[] results;
+        try {
+            results = GeocodingApi.geocode(context, location).await();
+            if (results == null || results.length == 0) {
+                throw new MSDBException("No geolocation could be found for location " + location);
+            }
+            return results[0].geometry;
+
+        } catch (ApiException | InterruptedException | IOException e) {
+            log.error("Error accessing Google Geolocation API", e);
+            throw new MSDBException("Problems trying to retrieve geolocation information");
+        }
+    }
+
+    @Override
     public String getTimeZone(Geometry geometry) {
         try {
             TimeZone timeZone = TimeZoneApi.getTimeZone(context, geometry.location).await();

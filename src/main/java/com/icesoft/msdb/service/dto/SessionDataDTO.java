@@ -13,7 +13,7 @@ public class SessionDataDTO {
 	private final String sessionName;
 	private final ZonedDateTime sessionStartTime;
 	private final ZonedDateTime sessionEndTime;
-	private final Integer duration;
+	private final Float duration;
 	private final Integer durationType;
     private final String sessionType;
 	private final Long eventEditionId;
@@ -22,9 +22,13 @@ public class SessionDataDTO {
 	private final List<Long> seriesIds;
 	private final List<String> seriesNames;
 	private final String seriesLogo;
+    private final Boolean rally;
 
 	public SessionDataDTO(EventSession session) {
-		this.sessionName = session.getName();
+		this.sessionName =
+            session.getEventEdition().getEvent().isRally() ?
+                String.format("%s - %s", session.getShortname(), session.getName()) :
+                session.getName();
 		this.sessionStartTime = session.getSessionStartTimeDate();
 		this.sessionEndTime = session.getSessionEndTime();
 		this.duration = session.getDuration();
@@ -34,7 +38,9 @@ public class SessionDataDTO {
 		this.eventName = session.getEventEdition().getLongEventName();
 		this.seriesIds = session.getSeriesIds();
 		this.seriesNames = session.getSeriesNames();
-		this.racetrack = session.getEventEdition().getTrackLayout().getRacetrack().getName();
+		this.racetrack = Optional.ofNullable(session.getEventEdition().getTrackLayout())
+            .map(trackLayout -> trackLayout.getRacetrack().getName())
+            .orElse(null);
 		Optional<String> seriesLogo = Optional.ofNullable(session.getEventEdition().getSeriesEditions().stream()
             .map(series -> Optional.ofNullable(series.getLogoUrl()).orElse(
                 series.getSeries().getLogoUrl()
@@ -42,6 +48,8 @@ public class SessionDataDTO {
 
 		this.seriesLogo = seriesLogo.orElse(
 		    Optional.ofNullable(session.getEventEdition().getPosterUrl()).orElse(null));
+
+        this.rally = session.getEventEdition().getEvent().getRally();
 	}
 
 }

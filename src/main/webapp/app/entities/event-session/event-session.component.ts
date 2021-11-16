@@ -40,6 +40,8 @@ export class EventSessionComponent implements OnInit, OnChanges {
   resultsLength = 0;
   isLoadingResults = true;
 
+  timeZone: any;
+
   constructor(
     protected eventSessionService: EventSessionService,
     protected parseLinks: JhiParseLinks,
@@ -50,6 +52,11 @@ export class EventSessionComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
+    if (this.eventEdition.event.rally) {
+      this.timeZone = this.eventEdition.locationTimeZone;
+    } else {
+      this.timeZone = this.eventEdition.trackLayout.racetrack.timeZone;
+    }
     this.loadAll();
   }
 
@@ -64,7 +71,7 @@ export class EventSessionComponent implements OnInit, OnChanges {
   loadAll() {
     let showPoints = false;
     this.eventSessions = [];
-    this.eventSessionService.findSessions(this.eventEdition.id, this.eventEdition.trackLayout.racetrack.timeZone).subscribe(sessions => {
+    this.eventSessionService.findSessions(this.eventEdition.id, this.timeZone).subscribe(sessions => {
       this.eventSessions = sessions.body;
       this.eventSessions.forEach(
         item => (showPoints = showPoints || (item.pointsSystemsSession !== null && item.pointsSystemsSession.length > 0))

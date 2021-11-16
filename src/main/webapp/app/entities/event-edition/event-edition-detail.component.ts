@@ -110,7 +110,7 @@ export class EventEditionDetailComponent implements OnInit {
       });
 
       this.lightboxAlbum = [];
-      if (this.eventEdition.trackLayout.layoutImageUrl) {
+      if (this.eventEdition.trackLayout && this.eventEdition.trackLayout.layoutImageUrl) {
         const layout = {
           src: this.eventEdition.trackLayout.layoutImageUrl,
           caption: '',
@@ -180,6 +180,14 @@ export class EventEditionDetailComponent implements OnInit {
 
   previousState() {
     window.history.back();
+  }
+
+  editEdition() {
+    this.router.navigate(['/event/edition', this.eventEdition.id, 'edit-ed'], {
+      state: {
+        event: JSON.stringify(this.eventEdition.event)
+      }
+    });
   }
 
   rescheduleEventDialog() {

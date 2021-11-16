@@ -99,7 +99,7 @@
                                                 </div>
                                                 <div class="row event-detail-row">
                                                     <div class="col-*-12">
-                                                        <img [src]="event.layoutUrl" style="max-height: 100px"/>
+                                                        <img *ngIf="event.layoutUrl" [src]="event.layoutUrl" style="max-height: 100px"/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -116,8 +116,11 @@
                                                     <div class="col-sm-6 col-lg-4">
                                                         {{ formatDate(session.start, 'LLLL') }}
                                                     </div>
-                                                    <div class="col-lg-4 d-none d-lg-block">
+                                                    <div *ngIf="session.sessionType !== 4" class="col-lg-4 d-none d-lg-block">
                                                         {{ formatDate(session.end, 'LLLL') }}
+                                                    </div>
+                                                    <div *ngIf="session.sessionType === 4" class="col-lg-4 d-none d-lg-block">
+                                                        {{ session.duration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}
                                                     </div>
                                                 </div>
                                             </div>

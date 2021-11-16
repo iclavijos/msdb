@@ -28,6 +28,7 @@ export class MyEvent {
   title: string;
   eventName: string;
   sessionName: string;
+  duration: number;
   textColor: string;
   color: string;
   start: any;
@@ -156,6 +157,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       newEvent.eventName = session.eventName;
       newEvent.sessionName = session.sessionName;
       newEvent.start = moment(session.startTime * 1000).tz(currentTZ);
+      newEvent.duration = session.duration;
       if (toDate) newEvent.start = newEvent.start.toDate();
       newEvent.end = moment(session.endTime * 1000).tz(currentTZ);
       if (toDate) newEvent.end = newEvent.end.toDate();

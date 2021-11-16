@@ -4,9 +4,16 @@ export interface IEvent {
   id?: number;
   name?: string;
   description?: string;
+  rally?: boolean;
   editions?: IEventEdition[];
 }
 
 export class Event implements IEvent {
-  constructor(public id?: number, public name?: string, public description?: string, public editions?: IEventEdition[]) {}
+  constructor(
+    public id?: number,
+    public name?: string,
+    public description?: string,
+    public rally?: boolean,
+    public editions?: IEventEdition[]
+  ) {}
 }

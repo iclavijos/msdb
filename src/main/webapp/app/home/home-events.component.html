@@ -44,7 +44,7 @@
                                             </div>
                                             <div class="col-10">
                                                 <strong>{{ session.sessionStartTime.format("HH:mm") }}
-                                                    <span *ngIf="session.sessionEndTime"> - {{ session.sessionEndTime.format("HH:mm")}}</span>
+                                                    <span *ngIf="session.sessionEndTime && !session.rally"> - {{ session.sessionEndTime.format("HH:mm")}}</span>
                                                     <span *ngIf="session.durationType === 5"> ({{ session.duration}}L)</span>
                                                     <span *ngIf="session.durationType === 3"> ({{ session.duration}}KM)</span>
                                                     <span *ngIf="session.durationType === 4"> ({{ session.duration}}M)</span>:

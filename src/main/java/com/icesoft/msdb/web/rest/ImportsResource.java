@@ -286,7 +286,7 @@ public class ImportsResource {
     		session.setSessionType(SessionType.valueOf(tmp.getSessionType().toUpperCase()));
     		session.setDurationType(DurationType.valueOf(tmp.getDurationType().toUpperCase()).getValue());
     		session.setAdditionalLap(tmp.getExtraLap());
-    		session.setMaxDuration(Optional.ofNullable(tmp.getMaxDuration()).orElseGet(() -> new Integer(0)));
+    		session.setMaxDuration(Optional.ofNullable(tmp.getMaxDuration()).orElseGet(() -> 0));
 
     		if (StringUtils.isNotBlank(tmp.getPointsSystem())) {
     			PointsSystem ps = Optional.ofNullable(

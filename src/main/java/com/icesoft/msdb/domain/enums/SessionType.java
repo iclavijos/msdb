@@ -7,8 +7,9 @@ public enum SessionType {
 	PRACTICE(1),
 	QUALIFYING(2),
 	RACE(3),
-	QUALIFYING_RACE(4);
-	
+	QUALIFYING_RACE(4),
+    STAGE(5);
+
 	private int value;
     private static Map<Integer, SessionType> map = new HashMap<>();
 

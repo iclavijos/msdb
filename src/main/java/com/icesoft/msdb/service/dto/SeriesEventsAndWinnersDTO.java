@@ -2,6 +2,7 @@ package com.icesoft.msdb.service.dto;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import com.icesoft.msdb.domain.EventEdition;
 import com.icesoft.msdb.domain.enums.EventStatusType;
@@ -30,6 +31,14 @@ public class SeriesEventsAndWinnersDTO {
 		return winners;
 	}
 	public String getEventEditionPosterUrl() { return eventEdition.getPosterUrl(); }
-	public String getRacetrackLogoUrl() { return eventEdition.getTrackLayout().getRacetrack().getLogoUrl(); }
-    public String getRacetrackLayoutUrl() { return eventEdition.getTrackLayout().getLayoutImageUrl(); }
+	public String getRacetrackLogoUrl() {
+        return Optional.ofNullable(eventEdition.getTrackLayout())
+            .map(trackLayout -> trackLayout.getRacetrack().getLogoUrl())
+            .orElse(null);
+    }
+    public String getRacetrackLayoutUrl() {
+        return Optional.ofNullable(eventEdition.getTrackLayout())
+            .map(trackLayout -> trackLayout.getLayoutImageUrl())
+            .orElse(null);
+    }
 }

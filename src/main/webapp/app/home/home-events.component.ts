@@ -74,7 +74,8 @@ export class HomeEventsComponent implements OnInit {
     } else {
       this.filteredBySessionTypeCalendar = this.calendar.filter(session => {
         if (
-          ((session.sessionType === 'RACE' || session.sessionType === 'QUALIFYING_RACE') && this.showRaces) ||
+          ((session.sessionType === 'RACE' || session.sessionType === 'QUALIFYING_RACE' || session.sessionType === 'STAGE') &&
+            this.showRaces) ||
           (session.sessionType === 'QUALIFYING' && this.showQualiSessions) ||
           (session.sessionType === 'PRACTICE' && this.showPracticeSessions)
         ) {

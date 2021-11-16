@@ -7,6 +7,8 @@ public interface GeoLocationService {
 
     Geometry getGeolocationInformation(Racetrack racetrack);
 
+    Geometry getGeolocationInformation(String location);
+
     String getTimeZone(Geometry geometry);
 
 }

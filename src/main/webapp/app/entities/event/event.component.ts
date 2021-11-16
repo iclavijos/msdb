@@ -30,7 +30,7 @@ export class EventComponent implements AfterViewInit, OnDestroy {
   previousPage: any;
   reverse: any;
 
-  displayedColumns: string[] = ['name', 'description', 'buttons'];
+  displayedColumns: string[] = ['name', 'description', 'isRally', 'buttons'];
 
   resultsLength = 0;
   isLoadingResults = true;
@@ -108,7 +108,7 @@ export class EventComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
-    sessionStorage.deleteItem('eventSearch');
+    sessionStorage.removeItem('eventSearch');
     this.events = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';

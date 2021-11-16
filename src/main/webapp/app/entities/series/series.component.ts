@@ -108,7 +108,7 @@ export class SeriesComponent implements OnDestroy, AfterViewInit {
   }
 
   clear() {
-    sessionStorage.deleteItem('seriesSearch');
+    sessionStorage.removeItem('seriesSearch');
     this.series = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';

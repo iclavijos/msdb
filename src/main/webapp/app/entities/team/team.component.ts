@@ -109,7 +109,7 @@ export class TeamComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
-    sessionStorage.deleteItem('teamSearch');
+    sessionStorage.removeItem('teamSearch');
     this.teams = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';

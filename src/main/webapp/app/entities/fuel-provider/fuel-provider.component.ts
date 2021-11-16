@@ -108,7 +108,7 @@ export class FuelProviderComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
-    sessionStorage.deleteItem('fuelSearch');
+    sessionStorage.removeItem('fuelSearch');
     this.fuelProviders = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';

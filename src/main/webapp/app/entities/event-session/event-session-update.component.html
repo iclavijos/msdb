@@ -62,7 +62,7 @@
                     </div>
                 </mat-form-field>
             </div>
-            <div class="col-md-3">
+            <div *ngIf="!eventSession.eventEdition.event.rally" class="col-md-3">
                 <mat-form-field class="example-full-width">
                     <mat-label>
                         {{'motorsportsDatabaseApp.eventEdition.session.sessionType' | translate}}
@@ -76,7 +76,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-3 col-md-3">
+            <div class="col-lg-4 col-md-4">
                 <mat-form-field class="example-full-width">
                     <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.session.duration' | translate }}" type="number"
                            name="duration" id="field_duration" formControlName="duration">
@@ -92,7 +92,7 @@
                     </div>
                 </mat-form-field>
             </div>
-            <div class="col-lg-3 col-md-3">
+            <div class="col-lg-4 col-md-4">
                 <mat-form-field class="example-full-width">
                     <mat-label>
                         {{'motorsportsDatabaseApp.eventEdition.session.durationType' | translate}}
@@ -110,7 +110,7 @@
                     </div>
                 </mat-form-field>
             </div>
-            <div class="col-lg-2 col-md-2">
+            <div *ngIf="!eventSession.eventEdition.event.rally" class="col-lg-2 col-md-2">
                 <div class="form-group">
                     <mat-checkbox id="field_additionalLap" name="additionalLap" formControlName="additionalLap">
                         {{'motorsportsDatabaseApp.eventEdition.session.additionalLap' | translate}}

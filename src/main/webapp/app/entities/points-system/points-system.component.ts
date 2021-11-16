@@ -118,7 +118,7 @@ export class PointsSystemComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
-    sessionStorage.deleteItem('pointsSearch');
+    sessionStorage.removeItem('pointsSearch');
     this.pointsSystems = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';

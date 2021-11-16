@@ -121,7 +121,7 @@ export class EngineComponent implements AfterViewInit, OnDestroy {
   }
 
   clear() {
-    sessionStorage.deleteItem('engineSearch');
+    sessionStorage.removeItem('engineSearch');
     this.engines = [];
     this.paginator.pageIndex = 0;
     this.currentSearch = '';

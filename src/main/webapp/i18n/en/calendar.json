@@ -5,6 +5,7 @@
       "session": "Session",
       "start": "Start",
       "end": "End",
+      "distance": "Distance",
       "details": "Details",
       "subscription": {
         "title": "Subscribe to calendar",

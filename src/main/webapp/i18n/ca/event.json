@@ -19,6 +19,7 @@
       },
       "name": "Nom",
       "description": "Descripció",
+      "rally": "És un rally",
       "editions": "Edicions",
       "winners": "Guanyadors"
     },
@@ -59,6 +60,7 @@
       "driversTimes": "Temps dels pilots",
       "lapsAnalysis": "Volta a volta",
       "poster": "Pòster",
+      "location": "Base",
       "status": {
         "label": "Situació",
         "ongoing": "Planificat",
