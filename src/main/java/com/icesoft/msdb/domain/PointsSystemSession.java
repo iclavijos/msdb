@@ -9,11 +9,16 @@ import javax.persistence.MapsId;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.Serializable;
 
 @Entity
 @Table(name = "POINTS_SYSTEM_SESSION")
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class PointsSystemSession implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -25,12 +30,16 @@ public class PointsSystemSession implements Serializable {
     @MapsId("series_edition_id")
     @JoinColumn(name = "SERIES_EDITION_ID")
 	@JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private SeriesEdition seriesEdition;
 
     @ManyToOne
     @MapsId("session_id")
     @JoinColumn(name = "SESSION_ID")
     @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private EventSession eventSession;
 
     @ManyToOne
@@ -48,52 +57,6 @@ public class PointsSystemSession implements Serializable {
 		this.seriesEdition = seriesEdition;
 		this.eventSession = eventSession;
 		this.id = new PointsSystemSessionPK(eventSession.getId(), seriesEdition.getId());
-	}
-
-	public PointsSystemSessionPK getId() {
-		return id;
-	}
-
-	public void setId(PointsSystemSessionPK id) {
-		this.id = id;
-	}
-
-	public PointsSystem getPointsSystem() {
-		return pointsSystem;
-	}
-
-	public void setPointsSystem(PointsSystem pointsSystem) {
-		this.pointsSystem = pointsSystem;
-	}
-
-	public SeriesEdition getSeriesEdition() {
-		return seriesEdition;
-	}
-
-	public void setSeriesEdition(SeriesEdition seriesEdition) {
-		this.seriesEdition = seriesEdition;
-	}
-
-	public EventSession getEventSession() {
-		return eventSession;
-	}
-
-	public void setEventSession(EventSession eventSession) {
-		this.eventSession = eventSession;
-	}
-
-	public Float getPsMultiplier() {
-		return psMultiplier;
-	}
-
-	public void setPsMultiplier(Float psMultiplier) {
-		this.psMultiplier = psMultiplier;
-	}
-
-	@Override
-	public String toString() {
-		return "PointsSystemSession [id=" + id + ", seriesEdition=" + seriesEdition + ", eventSession=" + eventSession
-				+ ", pointsSystem=" + pointsSystem + ", psMultiplier=" + psMultiplier + "]";
 	}
 
 }

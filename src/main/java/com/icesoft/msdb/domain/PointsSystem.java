@@ -3,6 +3,8 @@ package com.icesoft.msdb.domain;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -18,6 +20,8 @@ import java.util.Objects;
 @Table(name = "points_system")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "pointssystem")
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class PointsSystem extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -81,54 +85,6 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 		return active;
 	}
 
-    public PointsSystem active(Boolean active) {
-    	this.active = active;
-    	return this;
-    }
-
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-
-	public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public PointsSystem name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public PointsSystem description(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getPoints() {
-        return points;
-    }
-
     @Transient
     public float[] disclosePoints() {
     	String[] tmp = StringUtils.remove(points, " ").split(",");
@@ -139,173 +95,12 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 		return result;
     }
 
-    public PointsSystem points(String points) {
-        this.points = points;
-        return this;
-    }
-
-    public void setPoints(String points) {
-        this.points = points;
-    }
-
-    public Integer getPointsMostLeadLaps() {
-        return pointsMostLeadLaps;
-    }
-
-    public PointsSystem pointsMostLeadLaps(Integer pointsMostLeadLaps) {
-        this.pointsMostLeadLaps = pointsMostLeadLaps;
-        return this;
-    }
-
-    public void setPointsMostLeadLaps(Integer pointsMostLeadLaps) {
-        this.pointsMostLeadLaps = pointsMostLeadLaps;
-    }
-
-    public Integer getPointsPole() {
-        return pointsPole;
-    }
-
-    public PointsSystem pointsPole(Integer pointsPole) {
-        this.pointsPole = pointsPole;
-        return this;
-    }
-
-    public void setPointsPole(Integer pointsPole) {
-        this.pointsPole = pointsPole;
-    }
-
-    public Integer getPointsFastLap() {
-		return pointsFastLap;
-	}
-
-    public void setPointsFastLap(Integer pointsFastLap) {
-        this.pointsFastLap = pointsFastLap;
-    }
-
-    public PointsSystem pointsFastLap(Integer pointsFastLap) {
-    	this.pointsFastLap = pointsFastLap;
-    	return this;
-    }
-
-	public Integer getMaxPosFastLap() {
-		return maxPosFastLap;
-	}
-
-	public PointsSystem maxPosFastLap(Integer maxPosFastLap) {
-		this.maxPosFastLap = maxPosFastLap;
-		return this;
-	}
-
-	public void setMaxPosFastLap(Integer maxPosFastLap) {
-		this.maxPosFastLap = maxPosFastLap;
-	}
-
-	public Integer getPctCompletedFastLap() {
-		return pctCompletedFastLap;
-	}
-
-    public PointsSystem pctCompletedFL(Integer pctCompleted) {
-    	this.pctCompletedFastLap = pctCompleted;
-    	return this;
-    }
-
     public Boolean isAlwaysAssignFastLap() {
         return alwaysAssignFastLap;
     }
-
-    public void setAlwaysAssignFastLap(Boolean alwaysAssignFastLap) {
-        this.alwaysAssignFastLap = alwaysAssignFastLap;
-    }
-
-    public PointsSystem alwaysAssignFL(Boolean alwaysAssignFL) {
-        this.alwaysAssignFastLap = alwaysAssignFL;
-        return this;
-    }
-
-    public void setPctCompletedFastLap(Integer pctCompleted) {
-		this.pctCompletedFastLap = pctCompleted;
-	}
 
 	public Boolean isPitlaneStartAllowed() {
 		return pitlaneStartAllowed;
 	}
 
-	public PointsSystem pitlaneStartAllowed(Boolean pitlaneStartAllowed) {
-		this.pitlaneStartAllowed = pitlaneStartAllowed;
-		return this;
-	}
-
-	public void setPitlaneStartAllowed(Boolean pitlaneStartAllowed) {
-		this.pitlaneStartAllowed = pitlaneStartAllowed;
-	}
-
-    public Integer getPointsLeadLap() {
-        return pointsLeadLap;
-    }
-
-    public PointsSystem pointsLeadLap(Integer pointsLeadLap) {
-        this.pointsLeadLap = pointsLeadLap;
-        return this;
-    }
-
-    public void setPointsLeadLap(Integer pointsLeadLap) {
-        this.pointsLeadLap = pointsLeadLap;
-    }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
-
-    public Integer getRacePctCompleted() {
-		return racePctCompleted;
-	}
-
-    public PointsSystem racePctCompleted(Integer racePctCompleted) {
-		this.racePctCompleted = racePctCompleted;
-		return this;
-	}
-
-	public void setRacePctCompleted(Integer racePctCompleted) {
-		this.racePctCompleted = racePctCompleted;
-	}
-
-	public Integer getPctTotalPoints() {
-		return pctTotalPoints;
-	}
-
-	public PointsSystem pctTotalPoints(Integer pctTotalPoints) {
-		this.pctTotalPoints = pctTotalPoints;
-		return this;
-	}
-
-	public void setPctTotalPoints(Integer pctTotalPoints) {
-		this.pctTotalPoints = pctTotalPoints;
-	}
-
-	@Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof PointsSystem)) {
-            return false;
-        }
-        return id != null && id.equals(((PointsSystem) o).id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "PointsSystem{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            ", description='" + getDescription() + "'" +
-            ", points='" + getPoints() + "'" +
-            ", pointsMostLeadLaps=" + getPointsMostLeadLaps() +
-            ", pointsFastLap=" + getPointsFastLap() +
-            ", pointsPole=" + getPointsPole() +
-            ", pointsLeadLap=" + getPointsLeadLap() +
-            "}";
-    }
 }

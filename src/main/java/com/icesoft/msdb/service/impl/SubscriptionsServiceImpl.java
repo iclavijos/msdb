@@ -70,7 +70,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             .map(sessions -> sessions.getSessions())
             .orElse(Collections.emptyList());
 
-        List<SessionData> sessionsData = new ArrayList<>();
+        Set<SessionData> sessionsData = new HashSet<>();
         sessionsData.addAll(sessionData15m);
         sessionsData.addAll(sessionData1h);
         sessionsData.addAll(sessionData3h);
@@ -98,7 +98,8 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
                     .contains(userSubscription.getSeriesEdition().getId()))
                 .forEach(
                     eventSession -> {
-                        if (userSubscription.getPracticeSessions() && eventSession.getSessionType().equals(SessionType.PRACTICE) ||
+                        if (eventSession.getSessionType().equals(SessionType.STAGE) ||
+                            userSubscription.getPracticeSessions() && eventSession.getSessionType().equals(SessionType.PRACTICE) ||
                             userSubscription.getQualiSessions() && eventSession.getSessionType().equals(SessionType.QUALIFYING) ||
                             userSubscription.getRaces() && (eventSession.getSessionType().equals(SessionType.QUALIFYING_RACE)
                                 || eventSession.getSessionType().equals(SessionType.RACE))) {

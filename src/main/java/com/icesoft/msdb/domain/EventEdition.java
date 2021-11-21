@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.repository.converter.EventStatusTypeConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -96,6 +97,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
     @ManyToOne
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Event event;
 
     @Column(name = "single_chassis")

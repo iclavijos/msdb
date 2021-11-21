@@ -210,8 +210,11 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     }
 
     public String getLogoUrl() {
-
-        return logoUrl;
+        if (logoUrl != null) {
+            return logoUrl;
+        } else {
+            return series.getLogoUrl();
+        }
     }
 
     public SeriesEdition logoUrl(String logoUrl) {

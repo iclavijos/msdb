@@ -3,6 +3,7 @@ package com.icesoft.msdb.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -53,6 +54,7 @@ public class Event extends AbstractAuditingEntity implements Serializable {
     @JsonIgnore
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<EventEdition> editions = new HashSet<>();
 
     @Column(name= "rally")

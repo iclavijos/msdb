@@ -3,6 +3,8 @@ package com.icesoft.msdb.domain;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -19,6 +21,7 @@ import java.util.Set;
 @Table(name = "series")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "series")
+@Data @EqualsAndHashCode(callSuper = false)
 public class Series extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,114 +57,4 @@ public class Series extends AbstractAuditingEntity implements Serializable {
     private Integer relevance;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Series name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getShortname() {
-        return shortname;
-    }
-
-    public Series shortname(String shortname) {
-        this.shortname = shortname;
-        return this;
-    }
-
-    public void setShortname(String shortname) {
-        this.shortname = shortname;
-    }
-
-    public String getOrganizer() {
-        return organizer;
-    }
-
-    public Series organizer(String organizer) {
-        this.organizer = organizer;
-        return this;
-    }
-
-    public void setOrganizer(String organizer) {
-        this.organizer = organizer;
-    }
-
-    public byte[] getLogo() {
-        return logo;
-    }
-
-    public Series logo(byte[] logo) {
-        this.logo = logo;
-        return this;
-    }
-
-    public void setLogo(byte[] logo) {
-        this.logo = logo;
-    }
-
-    public String getLogoUrl() {
-        return logoUrl;
-    }
-
-    public Series logoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
-        return this;
-    }
-
-    public void setLogoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
-    }
-
-    public Integer getRelevance() {
-        return relevance;
-    }
-
-    public void setRelevance(Integer relevance) {
-        this.relevance = relevance;
-    }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Series)) {
-            return false;
-        }
-        return id != null && id.equals(((Series) o).id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "Series{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            ", shortname='" + getShortname() + "'" +
-            ", organizer='" + getOrganizer() + "'" +
-            ", logoUrl='" + getLogoUrl() + "'" +
-            ", relevance='" + getRelevance() + "'" +
-            '}';
-    }
 }

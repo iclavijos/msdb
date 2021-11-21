@@ -80,6 +80,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @OneToMany(mappedBy = "eventSession", cascade=CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     @NotFound(action = NotFoundAction.IGNORE)
+    @EqualsAndHashCode.Exclude
     private List<PointsSystemSession> pointsSystemsSession = new ArrayList<>();
 
     @JsonIgnore

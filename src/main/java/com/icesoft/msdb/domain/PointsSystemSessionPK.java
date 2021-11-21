@@ -12,14 +12,14 @@ public class PointsSystemSessionPK implements Serializable {
 
 	@Column(name = "SESSION_ID")
     private Long sessionId;
-	
+
 	@Column(name = "SERIES_EDITION_ID")
 	private Long seriesEditionId;
 
     public PointsSystemSessionPK() {
     	super();
     }
-    
+
 	public PointsSystemSessionPK(Long sessionId, Long seriesEditionId) {
 		this.sessionId = sessionId;
 		this.seriesEditionId = seriesEditionId;
@@ -42,11 +42,6 @@ public class PointsSystemSessionPK implements Serializable {
 	}
 
 	@Override
-	public String toString() {
-		return "PointsSystemSessionPK [sessionId=" + sessionId + ", seriesEditionId=" + seriesEditionId + "]";
-	}
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -64,7 +59,7 @@ public class PointsSystemSessionPK implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		PointsSystemSessionPK other = (PointsSystemSessionPK) obj;
-		
+
 		if (seriesEditionId == null) {
 			if (other.seriesEditionId != null)
 				return false;
@@ -77,5 +72,5 @@ public class PointsSystemSessionPK implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 }
