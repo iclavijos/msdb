@@ -665,7 +665,7 @@ public class EventEditionResource {
         		tmp.setEditionName(sEd.getEditionName());
         		Series tmpSeries = new Series();
         		tmpSeries.setId(sEd.getSeries().getId());
-        		tmp.setSeries(tmpSeries.name(sEd.getSeries().getName()));
+        		tmpSeries.setName(sEd.getSeries().getName());
         		tmp.setSeries(tmpSeries);
     			//eventEntryResult.getEntry().getEventEdition().setSeriesEdition(tmp);
         	});

@@ -112,7 +112,7 @@ public class SeriesResource {
         }
         if (series.getLogo() != null) {
         	String cdnUrl = cdnService.uploadImage(series.getId().toString(), series.getLogo(), ENTITY_NAME);
-        	series.logoUrl(cdnUrl);
+        	series.setLogoUrl(cdnUrl);
         } else if (series.getLogoUrl() == null) {
         	cdnService.deleteImage(series.getId().toString(), ENTITY_NAME);
         }
