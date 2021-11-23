@@ -141,7 +141,7 @@ public class EventEditionResource {
     @Transactional
     public ResponseEntity<EventEdition> updateEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to update EventEdition : {}", eventEdition);
-        if (!eventEdition.getEvent().getRally()) {
+        if (!eventEdition.getEvent().isRally()) {
             RacetrackLayout layout = racetrackLayoutRepo.findById(eventEdition.getTrackLayout().getId()).orElseThrow(
                 () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
             );

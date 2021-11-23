@@ -68,7 +68,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventEdition save(EventEdition eventEdition) {
-        if (!eventEdition.getEvent().getRally()) {
+        if (!eventEdition.getEvent().isRally()) {
             RacetrackLayout layout = racetrackLayoutRepository.findById(eventEdition.getTrackLayout().getId()).orElseThrow(
                 () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
             );

@@ -23,7 +23,7 @@ export class EventSessionUpdateComponent implements OnInit {
   isRaceAndLaps = false;
 
   private eventEditionId: number;
-  private eventSession: IEventSession;
+  eventSession: IEventSession;
   sessionTypes = SessionType;
   sessionValues = SessionType;
   durationTypes = DurationType;

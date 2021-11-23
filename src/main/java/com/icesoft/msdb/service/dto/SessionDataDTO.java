@@ -49,7 +49,7 @@ public class SessionDataDTO {
 		this.seriesLogo = seriesLogo.orElse(
 		    Optional.ofNullable(session.getEventEdition().getPosterUrl()).orElse(null));
 
-        this.rally = session.getEventEdition().getEvent().getRally();
+        this.rally = session.getEventEdition().getEvent().isRally();
 	}
 
 }
