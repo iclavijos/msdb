@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -144,10 +145,16 @@ public class HomeResource {
         if (!timezonesResp.getStatus().equals("OK")) {
         	throw new MSDBException("Error retrieving timezones: " + timezonesResp.getMessage());
         }
+
+        List<TimeZone> timeZones = timezonesResp.getZones().stream()
+            .sorted(Comparator.reverseOrder())
+            .collect(Collectors.toList());
+
         // This is just an internal joke :P
         TimeZone nerdTZ = new TimeZone("Toledo Hora imperial", "Europe/London", 0L);
-        timezonesResp.getZones().add(nerdTZ);
-        return timezonesResp.getZones();
+        timeZones.add(nerdTZ);
+
+        return timeZones;
 	}
 
 	@GetMapping("/home/testNotif/{email}/{sessionId}")
