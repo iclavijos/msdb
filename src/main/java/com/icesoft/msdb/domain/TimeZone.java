@@ -1,28 +1,19 @@
 package com.icesoft.msdb.domain;
 
-public class TimeZone {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Optional;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class TimeZone implements Comparable<TimeZone> {
 
 	private String countryName;
 	private String zoneName;
 	private Long gmtOffset;
-	
-	public TimeZone() {
-		
-	}
-	
-	public TimeZone(String countryName, String zoneName, Long gmtOffset) {
-		this.countryName = countryName;
-		this.zoneName = zoneName;
-		this.gmtOffset = gmtOffset;
-	}
-
-	public String getCountryName() {
-		return countryName;
-	}
-
-	public String getZoneName() {
-		return zoneName;
-	}
 
 	public String getGmtOffset() {
 		if (gmtOffset == 0) {
@@ -42,15 +33,12 @@ public class TimeZone {
 		return strBuilder.toString();
 	}
 
-	public void setCountryName(String countryName) {
-		this.countryName = countryName;
-	}
+    @Override
+    public int compareTo(TimeZone tz) {
+        assert tz instanceof TimeZone;
 
-	public void setZoneName(String zoneName) {
-		this.zoneName = zoneName;
-	}
-
-	public void setGmtOffset(Long gmtOffset) {
-		this.gmtOffset = gmtOffset;
-	}
+        return Optional.ofNullable(tz)
+            .map(value -> gmtOffset.compareTo(tz.gmtOffset))
+            .orElse(0);
+    }
 }
