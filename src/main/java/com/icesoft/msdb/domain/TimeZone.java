@@ -4,12 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Optional;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TimeZone implements Comparable<TimeZone> {
+public class TimeZone {
 
 	private String countryName;
 	private String zoneName;
@@ -33,12 +31,4 @@ public class TimeZone implements Comparable<TimeZone> {
 		return strBuilder.toString();
 	}
 
-    @Override
-    public int compareTo(TimeZone tz) {
-        assert tz instanceof TimeZone;
-
-        return Optional.ofNullable(tz)
-            .map(value -> gmtOffset.compareTo(tz.gmtOffset))
-            .orElse(0);
-    }
 }

@@ -147,7 +147,9 @@ public class HomeResource {
         }
 
         List<TimeZone> timeZones = timezonesResp.getZones().stream()
-            .sorted(Comparator.reverseOrder())
+            .sorted(
+                Comparator.comparing(TimeZone::getCountryName)
+                    .thenComparing(TimeZone::getZoneName))
             .collect(Collectors.toList());
 
         // This is just an internal joke :P
