@@ -225,7 +225,7 @@ export class EventEditionUpdateComponent implements OnInit {
       eventDate: this.editForm.get(['eventDate']).value,
       allowedCategories: this.editForm.get(['allowedCategories']).value,
       trackLayout: this.editForm.get(['trackLayout']).value,
-      event: this.event,
+      event: this.editForm.get(['event']).value,
       poster: this.editForm.get(['poster']).value,
       posterContentType: this.editForm.get(['posterContentType']).value,
       posterUrl: this.editForm.get(['posterUrl']).value,
