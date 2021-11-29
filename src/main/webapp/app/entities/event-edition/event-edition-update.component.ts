@@ -188,7 +188,7 @@ export class EventEditionUpdateComponent implements OnInit {
   }
 
   updateForm(eventEdition: IEventEdition) {
-    // eventEdition.eventDate[1]--;
+    eventEdition.eventDate[1]--;
     this.editForm.patchValue({
       id: eventEdition.id,
       editionYear: eventEdition.editionYear,
