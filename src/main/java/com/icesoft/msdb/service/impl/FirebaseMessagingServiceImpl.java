@@ -54,18 +54,23 @@ public class FirebaseMessagingServiceImpl implements MessagingService {
                         .map(series -> series.getLogoUrl()).findFirst().orElseGet(null)
                     );
 
-                if (session.getSessionType().equals(SessionType.STAGE)) {
+                if (session.getEventEdition().getEvent().isRally()) {
                     // It's a rally
                     builder.putData("sessionName", String.format("%s - %s", session.getShortname(), session.getName()));
                     builder.putData("distance", session.getDuration().toString());
                     builder.putData("racetrack", session.getEventEdition().getLocation());
+                } else if (session.getEventEdition().getEvent().isRaid()) {
+                    builder.putData("sessionName", String.format("%s - %s", session.getShortname(), session.getName()));
+                    builder.putData("distance", session.getDuration().toString());
+                    builder.putData("totalDistance", session.getTotalDuration().toString());
                 } else {
                     builder.putData("sessionName", session.getName());
                     builder.putData("endTime", Long.toString(session.getSessionEndTime().toEpochSecond()));
                     builder.putData("racetrack", session.getEventEdition().getTrackLayout().getRacetrack().getName());
                     builder.putData("racetrackLayoutUrl", session.getEventEdition().getTrackLayout().getLayoutImageUrl());
                 }
-                builder.putData("rally", Boolean.toString(session.getSessionType().equals(SessionType.STAGE)));
+                builder.putData("rally", session.getEventEdition().getEvent().getRally().toString());
+                builder.putData("raid", session.getEventEdition().getEvent().getRaid().toString());
 
                 Message message = builder.build();
 

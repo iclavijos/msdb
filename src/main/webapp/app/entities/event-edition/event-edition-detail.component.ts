@@ -198,9 +198,15 @@ export class EventEditionDetailComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(newDate => {
+      const timeZone =
+        !this.eventEdition.event.rally && !this.eventEdition.event.raid
+          ? this.eventEdition.trackLayout.racetrack.timeZone
+          : this.eventEdition.event.rally
+          ? this.eventEdition.locationTimeZone
+          : this.eventSessions[0].locationTimeZone;
       if (newDate) {
         this.eventEditionService
-          .rescheduleEvent(this.eventEdition.id, moment.tz(newDate, this.eventEdition.trackLayout.racetrack.timeZone))
+          .rescheduleEvent(this.eventEdition.id, moment.tz(newDate, timeZone))
           .subscribe(event => (this.eventEdition = event.body));
       }
     });

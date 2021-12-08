@@ -13,6 +13,7 @@ public class SessionDataDTO {
 	private final ZonedDateTime sessionStartTime;
 	private final ZonedDateTime sessionEndTime;
 	private final Float duration;
+    private final Float totalDuration;
 	private final Integer durationType;
     private final String sessionType;
 	private final Long eventEditionId;
@@ -33,6 +34,7 @@ public class SessionDataDTO {
 		this.sessionStartTime = session.getSessionStartTimeDate();
 		this.sessionEndTime = session.getSessionEndTime();
 		this.duration = session.getDuration();
+        this.totalDuration = session.getTotalDuration();
 		this.durationType = session.getDurationType();
         this.sessionType = session.getSessionType().name();
 		this.eventEditionId = session.getEventEdition().getId();
