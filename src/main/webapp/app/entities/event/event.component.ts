@@ -30,7 +30,7 @@ export class EventComponent implements AfterViewInit, OnDestroy {
   previousPage: any;
   reverse: any;
 
-  displayedColumns: string[] = ['name', 'description', 'isRally', 'buttons'];
+  displayedColumns: string[] = ['name', 'description', 'isRally', 'isRaid', 'buttons'];
 
   resultsLength = 0;
   isLoadingResults = true;

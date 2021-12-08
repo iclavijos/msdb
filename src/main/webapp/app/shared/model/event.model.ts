@@ -5,6 +5,7 @@ export interface IEvent {
   name?: string;
   description?: string;
   rally?: boolean;
+  raid?: boolean;
   editions?: IEventEdition[];
 }
 
@@ -14,6 +15,7 @@ export class Event implements IEvent {
     public name?: string,
     public description?: string,
     public rally?: boolean,
+    public raid?: boolean,
     public editions?: IEventEdition[]
   ) {}
 }

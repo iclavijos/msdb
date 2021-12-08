@@ -38,10 +38,12 @@ export class EventSessionUpdateComponent implements OnInit {
     shortname: [null, [Validators.required, Validators.maxLength(10)]],
     sessionStartTime: [null, [Validators.required]],
     duration: [null, [Validators.required]],
+    totalDuration: [],
     durationType: [null, [Validators.required]],
     additionalLap: [],
     sessionType: [null, [Validators.required]],
-    maxDuration: []
+    maxDuration: [],
+    location: []
   });
 
   constructor(
@@ -54,10 +56,12 @@ export class EventSessionUpdateComponent implements OnInit {
     this.eventEditionId = data.eventEditionId;
     this.eventSession = data.eventSession;
 
-    if (this.eventSession.eventEdition.event.rally) {
+    if (!this.eventSession.eventEdition.event.rally && !this.eventSession.eventEdition.event.raid) {
+      this.timeZone = this.eventSession.eventEdition.trackLayout.racetrack.timeZone;
+    } else if (this.eventSession.eventEdition.event.rally) {
       this.timeZone = this.eventSession.eventEdition.locationTimeZone;
     } else {
-      this.timeZone = this.eventSession.eventEdition.trackLayout.racetrack.timeZone;
+      this.timeZone = this.eventSession.locationTimeZone;
     }
   }
 
@@ -82,15 +86,17 @@ export class EventSessionUpdateComponent implements OnInit {
       id: eventSession.id,
       name: eventSession.name,
       shortname: eventSession.shortname,
-      sessionStartTime: new Date(moment(eventSession.sessionStartTime).format('YYYY-MM-DDTHH:mm:ss')),
+      sessionStartTime: new Date(moment(eventSession.sessionStartTime).format('YYYY-MM-DDTHH:mm')),
       duration: eventSession.duration,
+      totalDuration: eventSession.totalDuration,
       durationType: eventSession.durationType,
       additionalLap: eventSession.additionalLap,
       sessionType: eventSession.sessionType,
-      maxDuration: eventSession.maxDuration
+      maxDuration: eventSession.maxDuration,
+      location: eventSession.location
     });
     this.isRaceAndLaps = eventSession.sessionType >= 2 && eventSession.durationType === 5;
-    if (this.eventSession.eventEdition.event.rally) {
+    if (this.eventSession.eventEdition.event.rally || this.eventSession.eventEdition.event.raid) {
       this.editForm.get('durationType').disable();
       this.editForm.get('durationType').setValue(this.durationTypes.kilometers);
       this.editForm.get('sessionType').setValue(this.sessionTypes.stage);
@@ -107,12 +113,15 @@ export class EventSessionUpdateComponent implements OnInit {
 
   save() {
     this.isSaving = true;
-    const eventSession = this.createFromForm();
-    if (eventSession.id !== undefined) {
-      this.subscribeToSaveResponse(this.eventSessionService.update(eventSession));
-    } else {
-      this.subscribeToSaveResponse(this.eventSessionService.create(eventSession));
-    }
+    this.eventSessionService.findTimezone(this.editForm.get(['location']).value).subscribe(timeZone => {
+      this.timeZone = timeZone;
+      const eventSession = this.createFromForm();
+      if (eventSession.id !== undefined) {
+        this.subscribeToSaveResponse(this.eventSessionService.update(eventSession));
+      } else {
+        this.subscribeToSaveResponse(this.eventSessionService.create(eventSession));
+      }
+    });
   }
 
   public onChangeType(event) {
@@ -126,15 +135,15 @@ export class EventSessionUpdateComponent implements OnInit {
       id: this.editForm.get(['id']).value,
       name: this.editForm.get(['name']).value,
       shortname: this.editForm.get(['shortname']).value,
-      sessionStartTime:
-        this.editForm.get(['sessionStartTime']).value != null
-          ? moment(this.editForm.get(['sessionStartTime']).value).tz(this.timeZone, true)
-          : undefined,
+      sessionStartTime: moment(this.editForm.get(['sessionStartTime']).value).tz(this.timeZone, true),
       duration: this.editForm.get(['duration']).value,
+      totalDuration: this.editForm.get(['totalDuration']).value,
       durationType: this.editForm.get(['durationType']).value,
       additionalLap: this.editForm.get(['additionalLap']).value,
       sessionType: this.editForm.get(['sessionType']).value,
-      maxDuration: this.editForm.get(['maxDuration']).value
+      maxDuration: this.editForm.get(['maxDuration']).value,
+      location: this.editForm.get(['location']).value,
+      locationTimeZone: this.timeZone
     };
   }
 

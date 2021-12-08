@@ -20,6 +20,7 @@
       "name": "Name",
       "description": "Description",
       "rally": "It is a rally",
+      "raid": "It is a raid",
       "editions": "Editions",
       "winners": "Winners"
     },
@@ -87,6 +88,9 @@
         "shortname": "Shortname",
         "sessionStartTime": "Session Start Time",
         "duration": "Duration",
+        "length": "Length (km)",
+        "totalLength": "Total length (km)",
+        "startingLocation": "Starting location",
         "empty": "-",
         "durationType": "Type",
         "sessionType": "Session type",

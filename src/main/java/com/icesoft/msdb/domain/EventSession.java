@@ -60,6 +60,10 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @Column(name = "duration", nullable = false)
     private Float duration;
 
+    @NotNull
+    @Column(name = "total_duration")
+    private Float totalDuration;
+
     @Column(name = "max_duration")
     private Integer maxDuration;
 
@@ -87,6 +91,12 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     public ZonedDateTime getSessionStartTimeDate() {
         return ZonedDateTime.ofInstant(Instant.ofEpochSecond(getSessionStartTime()), ZoneId.of("UTC"));
     }
+
+    @Column(name = "location")
+    private String location;
+
+    @Column(name = "location_time_zone")
+    private String locationTimeZone;
 
 	public int getSessionTypeValue() {
 		return sessionType.getValue() - 1;

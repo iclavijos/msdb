@@ -60,7 +60,14 @@ public class Event extends AbstractAuditingEntity implements Serializable {
     @Column(name= "rally")
     private Boolean rally;
 
+    @Column(name= "raid")
+    private Boolean raid;
+
     public boolean isRally() {
         return Optional.ofNullable(rally).orElse(Boolean.FALSE).booleanValue();
+    }
+
+    public boolean isRaid() {
+        return Optional.ofNullable(raid).orElse(Boolean.FALSE).booleanValue();
     }
 }

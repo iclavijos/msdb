@@ -3,7 +3,6 @@ package com.icesoft.msdb.service.dto;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.icesoft.msdb.domain.EventSession;
 import lombok.Data;
@@ -23,12 +22,14 @@ public class SessionDataDTO {
 	private final List<String> seriesNames;
 	private final String seriesLogo;
     private final Boolean rally;
+    private final Boolean raid;
 
 	public SessionDataDTO(EventSession session) {
 		this.sessionName =
-            session.getEventEdition().getEvent().isRally() ?
-                String.format("%s - %s", session.getShortname(), session.getName()) :
-                session.getName();
+            session.getEventEdition().getEvent().isRally() ||
+                session.getEventEdition().getEvent().isRaid() ?
+                    String.format("%s - %s", session.getShortname(), session.getName()) :
+                    session.getName();
 		this.sessionStartTime = session.getSessionStartTimeDate();
 		this.sessionEndTime = session.getSessionEndTime();
 		this.duration = session.getDuration();
@@ -50,6 +51,7 @@ public class SessionDataDTO {
 		    Optional.ofNullable(session.getEventEdition().getPosterUrl()).orElse(null));
 
         this.rally = session.getEventEdition().getEvent().isRally();
+        this.raid = session.getEventEdition().getEvent().isRaid();
 	}
 
 }

@@ -11,6 +11,7 @@ export interface IEventSession {
   sessionStartTime?: Moment;
   originalStartTime?: Moment;
   duration?: number;
+  totalDuration?: number;
   maxDuration?: number;
   durationType?: DurationType;
   additionalLap?: boolean;
@@ -18,6 +19,8 @@ export interface IEventSession {
   sessionTypeValue?: number;
   eventEdition?: IEventEdition;
   pointsSystemsSession?: any;
+  location?: string;
+  locationTimeZone?: string;
 }
 
 export class EventSession implements IEventSession {
@@ -28,12 +31,15 @@ export class EventSession implements IEventSession {
     public sessionStartTime?: Moment,
     public originalStartTime?: Moment,
     public duration?: number,
+    public totalDuration?: number,
     public maxDuration?: number,
     public durationType?: DurationType,
     public additionalLap = false,
     public sessionType?: SessionType,
     public sessionTypeValue?: number,
     public eventEdition?: IEventEdition,
-    public pointsSystemsSession?: any
+    public pointsSystemsSession?: any,
+    public location?: string,
+    public locationTimeZone?: string
   ) {}
 }

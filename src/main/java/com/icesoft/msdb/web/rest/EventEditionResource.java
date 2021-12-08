@@ -43,8 +43,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 /**
@@ -80,6 +82,7 @@ public class EventEditionResource {
     private final EventService eventService;
     private final SeriesEditionService seriesEditionService;
     private final SubscriptionsService subscriptionsService;
+    private final GeoLocationService geoLocationService;
 
     public EventEditionResource(EventEditionRepository eventEditionRepository, EventEditionSearchRepository eventEditionSearchRepo,
     		EventEntrySearchRepository eventEntrySearchRepo, EventSessionRepository eventSessionRepository,
@@ -87,7 +90,8 @@ public class EventEditionResource {
     		RacetrackLayoutRepository racetrackLayoutRepo, ResultsService resultsService,
     		CDNService cdnService, StatisticsService statsService, CacheHandler cacheHandler,
             EventService eventService, SeriesEditionService seriesEditionService,
-            DriverEntryRepository driverEntryRepository, SubscriptionsService subscriptionsService) {
+            DriverEntryRepository driverEntryRepository, SubscriptionsService subscriptionsService,
+            GeoLocationService geoLocationService) {
         this.eventEditionRepository = eventEditionRepository;
         this.eventEditionSearchRepo = eventEditionSearchRepo;
         this.eventSessionRepository = eventSessionRepository;
@@ -103,6 +107,7 @@ public class EventEditionResource {
         this.seriesEditionService = seriesEditionService;
         this.driverEntryRepository = driverEntryRepository;
         this.subscriptionsService = subscriptionsService;
+        this.geoLocationService = geoLocationService;
     }
 
     /**
@@ -141,7 +146,7 @@ public class EventEditionResource {
     @Transactional
     public ResponseEntity<EventEdition> updateEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to update EventEdition : {}", eventEdition);
-        if (!eventEdition.getEvent().isRally()) {
+        if (!eventEdition.getEvent().isRally() && !eventEdition.getEvent().isRaid()) {
             RacetrackLayout layout = racetrackLayoutRepo.findById(eventEdition.getTrackLayout().getId()).orElseThrow(
                 () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
             );
@@ -321,6 +326,10 @@ public class EventEditionResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
             		applicationName, true, ENTITY_NAME_SESSION, "idexists", "A new eventSession cannot already have an ID")).body(null);
         }
+        eventSession.setEventEdition(eventEditionRepository.findById(eventSession.getEventEdition().getId()).orElseThrow(
+            () -> new MSDBException("Invalid event edition id " + eventSession.getEventEdition().getId())
+        ));
+
         eventSession.setSessionStartTime(resetSessionStartTimeSeconds(eventSession.getSessionStartTimeDate()));
         EventSession result = eventSessionRepository.save(eventSession);
         subscriptionsService.saveEventSession(result);
@@ -360,12 +369,13 @@ public class EventEditionResource {
     public ResponseEntity<EventSession> updateEventSession(@Valid @RequestBody EventSession eventSession) throws URISyntaxException {
         log.debug("REST request to update EventSession : {}", eventSession);
         eventSession.setSessionStartTime(resetSessionStartTimeSeconds(eventSession.getSessionStartTimeDate()));
-        if (eventSession.getId() == null) {
-            return createEventEditionSession(eventSession);
-        }
         eventSession.setEventEdition(eventEditionRepository.findById(eventSession.getEventEdition().getId()).orElseThrow(
             () -> new MSDBException("Invalid event edition id " + eventSession.getEventEdition().getId())
         ));
+
+        if (eventSession.getId() == null) {
+            return createEventEditionSession(eventSession);
+        }
         Long prevSessionStartTime = eventSessionRepository.findById(eventSession.getId())
             .orElseThrow(() -> new MSDBException("Invalid session id " + eventSession.getId())).getSessionStartTime();
 
@@ -713,6 +723,7 @@ public class EventEditionResource {
     				session.getSessionTypeValue(),
     				session.getSessionStartTimeDate(), session.getSessionEndTime(),
                     session.getDuration(),
+                    session.getTotalDuration(),
     				session.getEventEdition().getStatus().getCode(),
                     seriesRelevance,
     				Optional.ofNullable(session.getEventEdition().getTrackLayout())
@@ -723,6 +734,8 @@ public class EventEditionResource {
                         .orElse(null),
                     session.getEventEdition().getAllowedCategories().stream()
                         .map(category -> category.getShortname()).toArray(size -> new String[size]),
+                    session.getEventEdition().getEvent().isRally(),
+                    session.getEventEdition().getEvent().isRaid(),
     				logoUrl);
     	})
             .sorted(Comparator.comparing(SessionCalendarDTO::getSeriesRelevance))
@@ -830,7 +843,8 @@ public class EventEditionResource {
         boolean isSpecial =
             event.getName().equalsIgnoreCase("Indianapolis 500") ||
             event.getName().equalsIgnoreCase("24 Hours of Le Mans") ||
-            event.getName().equalsIgnoreCase("Bathurst 1000");
+            event.getName().equalsIgnoreCase("Bathurst 1000") ||
+            event.getName().contains("Dakar");
 
         return isSpecial;
     }

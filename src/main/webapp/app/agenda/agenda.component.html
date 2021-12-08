@@ -114,13 +114,16 @@
                                                         {{ session.sessionName }}
                                                     </div>
                                                     <div class="col-sm-6 col-lg-4">
-                                                        {{ formatDate(session.start, 'LLLL') }}
+                                                        {{ formatDate(session.start, 'LLLL', session.raid) }}
                                                     </div>
-                                                    <div *ngIf="session.sessionType !== 4" class="col-lg-4 d-none d-lg-block">
+                                                    <div *ngIf="!session.raid && !session.rally" class="col-lg-4 d-none d-lg-block">
                                                         {{ formatDate(session.end, 'LLLL') }}
                                                     </div>
-                                                    <div *ngIf="session.sessionType === 4" class="col-lg-4 d-none d-lg-block">
+                                                    <div *ngIf="session.rally" class="col-lg-4 d-none d-lg-block">
                                                         {{ session.duration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}
+                                                    </div>
+                                                    <div *ngIf="session.raid" class="col-lg-4 d-none d-lg-block">
+                                                        {{ session.duration }} / {{ session.totalDuration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}
                                                     </div>
                                                 </div>
                                             </div>

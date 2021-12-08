@@ -10,13 +10,17 @@
         <div class="ui-grid-col-2"><label>{{'motorsportsDatabaseApp.calendar.start' | translate}}</label></div>
         <div class="ui-grid-col-10"><span>{{data.event.event.start | localizedDate }}</span></div>
     </div>
-    <div class="ui-grid-row" *ngIf="data.event.event.extendedProps.sessionType !== 4">
+    <div class="ui-grid-row" *ngIf="!data.event.event.extendedProps.rally && !data.event.event.extendedProps.raid">
         <div class="ui-grid-col-2"><label>{{'motorsportsDatabaseApp.calendar.end' | translate}}</label></div>
         <div class="ui-grid-col-10"><span>{{data.event.event.end | localizedDate }}</span></div>
     </div>
-    <div class="ui-grid-row" *ngIf="data.event.event.extendedProps.sessionType === 4">
+    <div class="ui-grid-row" *ngIf="data.event.event.extendedProps.rally">
         <div class="ui-grid-col-2"><label>{{'motorsportsDatabaseApp.calendar.distance' | translate}}</label></div>
         <div class="ui-grid-col-10"><span>{{data.event.event.extendedProps.duration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}</span></div>
+    </div>
+    <div class="ui-grid-row" *ngIf="data.event.event.extendedProps.raid">
+        <div class="ui-grid-col-2"><label>{{'motorsportsDatabaseApp.calendar.distance' | translate}}</label></div>
+        <div class="ui-grid-col-10"><span>{{data.event.event.extendedProps.duration }} / {{data.event.event.extendedProps.totalDuration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}</span></div>
     </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

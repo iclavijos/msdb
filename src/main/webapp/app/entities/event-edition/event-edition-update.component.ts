@@ -209,7 +209,7 @@ export class EventEditionUpdateComponent implements OnInit {
       multidriver: eventEdition.multidriver,
       location: eventEdition.location
     });
-    if (this.event.rally) {
+    if (this.event.rally || this.event.raid) {
       this.editForm.get('multidriver').disable();
       this.editForm.get('multidriver').setValue(true);
     }

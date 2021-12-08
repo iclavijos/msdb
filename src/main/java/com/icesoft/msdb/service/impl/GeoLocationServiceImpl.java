@@ -12,6 +12,7 @@ import com.icesoft.msdb.service.GeoLocationService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -42,6 +43,7 @@ public class GeoLocationServiceImpl implements GeoLocationService {
     }
 
     @Override
+    @Cacheable("timezonesLocations")
     public Geometry getGeolocationInformation(String location) {
         GeocodingResult[] results;
         try {
