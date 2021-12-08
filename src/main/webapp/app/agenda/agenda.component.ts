@@ -95,7 +95,10 @@ export class AgendaComponent implements OnInit {
     return this.events.filter(item => item.eventName === event.name);
   }
 
-  formatDate(date: Moment, pattern: string) {
+  formatDate(date: Moment, pattern: string, raid = false) {
+    if (raid) {
+      return date.locale(this.translateService.currentLang).format('dddd, LL');
+    }
     return date.locale(this.translateService.currentLang).format(pattern);
   }
 

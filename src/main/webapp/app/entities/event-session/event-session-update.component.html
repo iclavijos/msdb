@@ -62,7 +62,7 @@
                     </div>
                 </mat-form-field>
             </div>
-            <div *ngIf="!eventSession.eventEdition.event.rally" class="col-md-3">
+            <div *ngIf="!eventSession.eventEdition.event.rally && !eventSession.eventEdition.event.raid" class="col-md-3">
                 <mat-form-field class="example-full-width">
                     <mat-label>
                         {{'motorsportsDatabaseApp.eventEdition.session.sessionType' | translate}}
@@ -75,10 +75,30 @@
                 </mat-form-field>
             </div>
         </div>
+        <div class="row" *ngIf="eventSession.eventEdition.event.raid">
+            <div class="col-md-12">
+                <mat-form-field class="example-full-width">
+                    <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.session.startingLocation' | translate }}" type="text"
+                           class="form-control" name="location" id="field_location" formControlName="location" required>
+                    <div *ngIf="editForm.get('location').invalid && (editForm.get('location').dirty || editForm.get('location').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('location').errors.required" jhiTranslate="entity.validation.required">
+                            This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('location').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
+                            This field cannot be longer than 100 characters.
+                        </small>
+                    </div>
+                </mat-form-field>
+            </div>
+        </div>
         <div class="row">
             <div class="col-lg-4 col-md-4">
                 <mat-form-field class="example-full-width">
-                    <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.session.duration' | translate }}" type="number"
+                    <input matInput placeholder="{{ (eventSession.eventEdition.event.raid || eventSession.eventEdition.event.rally ?
+                        'motorsportsDatabaseApp.eventEdition.session.length' :
+                        'motorsportsDatabaseApp.eventEdition.session.duration') | translate }}" type="number"
                            name="duration" id="field_duration" formControlName="duration">
                     <div *ngIf="editForm.get('duration').invalid && (editForm.get('duration').dirty || editForm.get('duration').touched)">
                         <small class="form-text text-danger"
@@ -92,7 +112,23 @@
                     </div>
                 </mat-form-field>
             </div>
-            <div class="col-lg-4 col-md-4">
+            <div class="col-lg-4 col-md-4" *ngIf="eventSession.eventEdition.event.raid">
+                <mat-form-field class="example-full-width">
+                    <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.session.totalLength' | translate }}" type="number"
+                           name="duration" id="field_totalDuration" formControlName="totalDuration">
+                    <div *ngIf="editForm.get('totalDuration').invalid && (editForm.get('totalDuration').dirty || editForm.get('totalDuration').touched)">
+                        <small class="form-text text-danger"
+                               [hidden]="!editForm.controls.totalDuration?.errors?.required" jhiTranslate="entity.validation.required">
+                            This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                               [hidden]="!editForm.controls.totalDuration?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-4 col-md-4" *ngIf="!eventSession.eventEdition.event.rally && !eventSession.eventEdition.event.raid">
                 <mat-form-field class="example-full-width">
                     <mat-label>
                         {{'motorsportsDatabaseApp.eventEdition.session.durationType' | translate}}
@@ -110,7 +146,7 @@
                     </div>
                 </mat-form-field>
             </div>
-            <div *ngIf="!eventSession.eventEdition.event.rally" class="col-lg-2 col-md-2">
+            <div *ngIf="!eventSession.eventEdition.event.rally && !eventSession.eventEdition.event.raid" class="col-lg-2 col-md-2">
                 <div class="form-group">
                     <mat-checkbox id="field_additionalLap" name="additionalLap" formControlName="additionalLap">
                         {{'motorsportsDatabaseApp.eventEdition.session.additionalLap' | translate}}

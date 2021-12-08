@@ -119,7 +119,7 @@
                                             </mat-radio-group>
                                         </div>
                                     </div>
-                                    <div class="row" *ngIf="!event.rally">
+                                    <div class="row" *ngIf="!event.rally && !event.raid">
                                         <div class="col-md-12">
                                             <mat-form-field class="example-full-width">
                                                 <input matInput type="text" [matAutocomplete]="autoLayout" formControlName="trackLayout"

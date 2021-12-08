@@ -55,6 +55,13 @@
                                     </td>
                                 </ng-container>
 
+                                <ng-container matColumnDef="isRaid">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.event.raid' | translate }}</th>
+                                    <td mat-cell *matCellDef="let event">
+                                        <i [ngClass]="event.raid ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
+                                    </td>
+                                </ng-container>
+
                                 <ng-container matColumnDef="buttons">
                                     <th mat-header-cell *matHeaderCellDef></th>
                                     <td mat-cell *matCellDef="let event">

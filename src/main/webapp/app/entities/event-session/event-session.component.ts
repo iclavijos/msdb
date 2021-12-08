@@ -34,7 +34,7 @@ export class EventSessionComponent implements OnInit, OnChanges {
   @Output() showPoints = new EventEmitter<boolean>();
   @Output() sessions = new EventEmitter<IEventSession[]>();
 
-  displayedColumns: string[] = ['sessionStartTime', 'name', 'duration', 'buttons'];
+  displayedColumns: string[] = ['sessionStartTime', 'name', 'duration'];
   footerColumns: string[] = ['empty', 'empty', 'empty', 'timeConverter'];
 
   resultsLength = 0;
@@ -52,10 +52,14 @@ export class EventSessionComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
-    if (this.eventEdition.event.rally) {
-      this.timeZone = this.eventEdition.locationTimeZone;
-    } else {
+    if (this.eventEdition.event.raid) {
+      this.displayedColumns.push('totalDuration');
+    }
+    this.displayedColumns.push('buttons');
+    if (!this.eventEdition.event.rally && !this.eventEdition.event.raid) {
       this.timeZone = this.eventEdition.trackLayout.racetrack.timeZone;
+    } else if (this.eventEdition.event.rally) {
+      this.timeZone = this.eventEdition.locationTimeZone;
     }
     this.loadAll();
   }
@@ -143,8 +147,18 @@ export class EventSessionComponent implements OnInit, OnChanges {
   convertToLocalTZ() {
     const clonedSessions = [];
     this.eventSessions.forEach(val => clonedSessions.push(Object.assign({}, val)));
+    const timeZone =
+      !this.eventEdition.event.rally && !this.eventEdition.event.raid
+        ? this.eventEdition.trackLayout.racetrack.timeZone
+        : this.eventEdition.event.rally
+        ? this.eventEdition.locationTimeZone
+        : null;
     for (const session of clonedSessions) {
-      session.sessionStartTime = session.sessionStartTime.tz(this.eventEdition.trackLayout.racetrack.timeZone);
+      if (timeZone) {
+        session.sessionStartTime = session.sessionStartTime.tz(timeZone);
+      } else {
+        session.sessionStartTime = session.sessionStartTime.tz(session.locationTimeZone);
+      }
     }
     this.convertedTime = false;
     this.eventSessions = clonedSessions;

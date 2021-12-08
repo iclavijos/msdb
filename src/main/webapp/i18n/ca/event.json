@@ -20,6 +20,7 @@
       "name": "Nom",
       "description": "Descripció",
       "rally": "És un rally",
+      "raid": "És un raid",
       "editions": "Edicions",
       "winners": "Guanyadors"
     },
@@ -87,6 +88,9 @@
         "shortname": "Nom curt",
         "sessionStartTime": "Dia i hora d'inici",
         "duration": "Duració",
+        "length": "Longitut (km)",
+        "totalLength": "Longitut total (km)",
+        "startingLocation": "Punt de partida",
         "empty": "-",
         "durationType": "Tipus",
         "sessionType": "Tipus de sessió",

@@ -68,12 +68,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventEdition save(EventEdition eventEdition) {
-        if (!eventEdition.getEvent().isRally()) {
+        if (!eventEdition.getEvent().isRally() && !eventEdition.getEvent().isRaid()) {
             RacetrackLayout layout = racetrackLayoutRepository.findById(eventEdition.getTrackLayout().getId()).orElseThrow(
                 () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
             );
             eventEdition.setTrackLayout(layout);
-        } else {
+        } else if (eventEdition.getEvent().isRally()) {
             eventEdition.setLocationTimeZone(
                 geoLocationService.getTimeZone(
                     geoLocationService.getGeolocationInformation(eventEdition.getLocation())));

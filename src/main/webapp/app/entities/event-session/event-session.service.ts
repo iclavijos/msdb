@@ -25,6 +25,7 @@ export class EventSessionService {
   public resourceUrl = SERVER_API_URL + 'api/event-editions/event-sessions';
   public resourceSearchUrl = SERVER_API_URL + 'api/_search/event-sessions';
   public resourceEventEditionUrl = SERVER_API_URL + 'api/event-editions';
+  public resourceGeoLocationUrl = SERVER_API_URL + 'api/timezone';
 
   private sessionTypes = SessionType;
 
@@ -126,12 +127,18 @@ export class EventSessionService {
     return this.http.get<boolean>(`${this.resourceEventEditionUrl}/session/${id}/laps`);
   }
 
+  findTimezone(location: string): Observable<string> {
+    return this.http.get(`${this.resourceGeoLocationUrl}/${location}`, { responseType: 'text' });
+  }
+
   private transformDateTime(res: EntityArrayResponseType, timeZone: string): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((eventSession: IEventSession) => {
         eventSession.sessionType = this.sessionTypes[this.sessionTypes[eventSession.sessionTypeValue]];
         eventSession.sessionStartTime =
-          eventSession.sessionStartTime != null ? moment(Number(eventSession.sessionStartTime) * 1000).tz(timeZone) : null;
+          eventSession.sessionStartTime != null
+            ? moment(Number(eventSession.sessionStartTime) * 1000).tz(timeZone ? timeZone : eventSession.locationTimeZone)
+            : null;
       });
     }
     return res;

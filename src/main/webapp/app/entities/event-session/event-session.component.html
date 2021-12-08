@@ -26,10 +26,10 @@
 
                     <ng-container matColumnDef="sessionStartTime">
                         <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.session.sessionStartTime' | translate }}</th>
-                        <td mat-cell *matCellDef="let session">{{ session.sessionStartTime | localizedDate }}</td>
+                        <td mat-cell *matCellDef="let session">{{ session.sessionStartTime | localizedDate: (eventEdition.event.raid ? 'dddd, LL' : 'LLL') }}</td>
                     </ng-container>
 
-                    <ng-container *ngIf="!eventEdition.event.rally" matColumnDef="duration">
+                    <ng-container *ngIf="!eventEdition.event.rally && !eventEdition.event.raid" matColumnDef="duration">
                         <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.session.duration' | translate }}</th>
                         <td mat-cell *matCellDef="let session">
                             {{session.duration}} {{'motorsportsDatabaseApp.eventEdition.enumerations.' + durationTypes[session.durationType] | translate}}
@@ -37,10 +37,17 @@
                         </td>
                     </ng-container>
 
-                    <ng-container *ngIf="eventEdition.event.rally" matColumnDef="duration">
+                    <ng-container *ngIf="eventEdition.event.rally || eventEdition.event.raid" matColumnDef="duration">
                         <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.session.duration' | translate }}</th>
                         <td mat-cell *matCellDef="let session">
                             {{session.duration}} km
+                        </td>
+                    </ng-container>
+
+                    <ng-container *ngIf="eventEdition.event.raid" matColumnDef="totalDuration">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.session.duration' | translate }}</th>
+                        <td mat-cell *matCellDef="let session">
+                            {{session.totalDuration}} km
                         </td>
                     </ng-container>
 

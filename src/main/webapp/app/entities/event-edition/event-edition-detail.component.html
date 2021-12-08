@@ -95,8 +95,9 @@
                                                                     </li>
                                                                 </ul>
                                                             </dd>
-                                                            <dt *ngIf="!eventEdition.event.rally"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout">Track Layout</span></dt>
-                                                            <dd *ngIf="!eventEdition.event.rally">
+                                                            <dt *ngIf="!eventEdition.event.rally && !eventEdition.event.raid">
+                                                                <span jhiTranslate="motorsportsDatabaseApp.eventEdition.trackLayout">Track Layout</span></dt>
+                                                            <dd *ngIf="!eventEdition.event.rally && !eventEdition.event.raid">
                                                                 <div *ngIf="eventEdition.trackLayout">
                                                                     <a [routerLink]="['/racetrack-layout', eventEdition.trackLayout?.id, 'view' ]" >
                                                                         {{eventEdition.trackLayout?.racetrack.name}} - {{eventEdition.trackLayout?.name}}

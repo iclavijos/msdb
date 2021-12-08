@@ -29,6 +29,7 @@ export class MyEvent {
   eventName: string;
   sessionName: string;
   duration: number;
+  totalDuration: number;
   textColor: string;
   color: string;
   start: any;
@@ -41,6 +42,8 @@ export class MyEvent {
   racetrackLayoutUrl: string;
   categories: string[];
   event: any;
+  rally: boolean;
+  raid: boolean;
 }
 
 @Component({
@@ -158,6 +161,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       newEvent.sessionName = session.sessionName;
       newEvent.start = moment(session.startTime * 1000).tz(currentTZ);
       newEvent.duration = session.duration;
+      newEvent.totalDuration = session.totalDuration;
       if (toDate) newEvent.start = newEvent.start.toDate();
       newEvent.end = moment(session.endTime * 1000).tz(currentTZ);
       if (toDate) newEvent.end = newEvent.end.toDate();
@@ -168,6 +172,9 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       newEvent.racetrack = session.racetrack;
       newEvent.racetrackLayoutUrl = session.racetrackLayoutUrl;
       newEvent.categories = session.categories;
+      newEvent.allDay = session.raid;
+      newEvent.rally = session.rally;
+      newEvent.raid = session.raid;
       if (session.status === 'C') {
         newEvent.color = 'red';
       } else if (session.status === 'S') {

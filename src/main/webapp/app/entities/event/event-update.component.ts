@@ -19,7 +19,8 @@ export class EventUpdateComponent implements OnInit {
     id: [],
     name: [null, [Validators.required, Validators.maxLength(40)]],
     description: [null, [Validators.maxLength(100)]],
-    rally: []
+    rally: [],
+    raid: []
   });
 
   constructor(protected eventService: EventService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}
@@ -36,7 +37,8 @@ export class EventUpdateComponent implements OnInit {
       id: event.id,
       name: event.name,
       description: event.description,
-      rally: event.rally
+      rally: event.rally,
+      raid: event.raid
     });
   }
 
@@ -60,7 +62,8 @@ export class EventUpdateComponent implements OnInit {
       id: this.editForm.get(['id']).value,
       name: this.editForm.get(['name']).value,
       description: this.editForm.get(['description']).value,
-      rally: this.editForm.get(['rally']).value
+      rally: this.editForm.get(['rally']).value,
+      raid: this.editForm.get(['raid']).value
     };
   }
 
