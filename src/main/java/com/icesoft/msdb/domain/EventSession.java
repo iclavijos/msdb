@@ -60,7 +60,6 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @Column(name = "duration", nullable = false)
     private Float duration;
 
-    @NotNull
     @Column(name = "total_duration")
     private Float totalDuration;
 
