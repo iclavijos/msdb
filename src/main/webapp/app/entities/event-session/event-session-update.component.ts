@@ -113,15 +113,23 @@ export class EventSessionUpdateComponent implements OnInit {
 
   save() {
     this.isSaving = true;
-    this.eventSessionService.findTimezone(this.editForm.get(['location']).value).subscribe(timeZone => {
-      this.timeZone = timeZone;
-      const eventSession = this.createFromForm();
-      if (eventSession.id !== undefined) {
-        this.subscribeToSaveResponse(this.eventSessionService.update(eventSession));
-      } else {
-        this.subscribeToSaveResponse(this.eventSessionService.create(eventSession));
-      }
-    });
+    if (!this.eventSession.eventEdition.event.raid) {
+      this.saveSession();
+    } else {
+      this.eventSessionService.findTimezone(this.editForm.get(['location']).value).subscribe(timeZone => {
+        this.timeZone = timeZone;
+        this.saveSession();
+      });
+    }
+  }
+
+  private saveSession() {
+    const eventSession = this.createFromForm();
+    if (eventSession.id !== undefined) {
+      this.subscribeToSaveResponse(this.eventSessionService.update(eventSession));
+    } else {
+      this.subscribeToSaveResponse(this.eventSessionService.create(eventSession));
+    }
   }
 
   public onChangeType(event) {
