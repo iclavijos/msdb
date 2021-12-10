@@ -14,7 +14,7 @@ export class LocalizedDatePipe implements PipeTransform {
   transform(value: Moment, pattern = 'LLL'): any {
     let momentDate: Moment;
     if (!value) return '';
-    if (value instanceof Date) {
+    if (value instanceof Date || Array.isArray(value)) {
       // } && !value.lang) {
       let valueCopy: any;
       if (Array.isArray(value)) {
