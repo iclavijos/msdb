@@ -53,6 +53,24 @@ export class AgendaComponent implements OnInit {
     this.query();
   }
 
+  nextPeriod() {
+    if (this.rangeType === 'WEEK') {
+      this.selectedDate = this.selectedDate.add(7, 'days');
+    } else {
+      this.selectedDate = this.selectedDate.add(1, 'M');
+    }
+    this.dateRangeChanged();
+  }
+
+  previousPeriod() {
+    if (this.rangeType === 'WEEK') {
+      this.selectedDate = this.selectedDate.subtract(7, 'days');
+    } else {
+      this.selectedDate = this.selectedDate.subtract(1, 'M');
+    }
+    this.dateRangeChanged();
+  }
+
   query() {
     this.eventEditionService
       .findCalendarEvents(
