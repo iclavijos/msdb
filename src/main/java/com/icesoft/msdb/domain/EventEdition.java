@@ -5,6 +5,7 @@ import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.repository.converter.EventStatusTypeConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -18,8 +19,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * A EventEdition.
@@ -35,6 +38,7 @@ import java.util.SortedSet;
 		@NamedAttributeNode(value="longEventName")
 })
 @Data @EqualsAndHashCode(callSuper=false)
+@NoArgsConstructor
 public class EventEdition extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -120,6 +124,34 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
     @ManyToMany(mappedBy = "events", fetch=FetchType.EAGER)
     private Set<SeriesEdition> seriesEditions;
+
+    public EventEdition(EventEdition copyFrom) {
+        this.shortEventName = copyFrom.shortEventName;
+        this.longEventName = copyFrom.longEventName;
+        this.eventDate = copyFrom.eventDate;
+        this.multidriver = copyFrom.multidriver;
+        this.status = copyFrom.status;
+        this.setAllowedCategories(new TreeSet<>());
+        copyFrom.getAllowedCategories()
+            .forEach(category -> this.allowedCategories.add(category));
+        this.trackLayout = copyFrom.trackLayout;
+        this.posterUrl = copyFrom.posterUrl;
+        this.event = copyFrom.event;
+        this.singleChassis = copyFrom.singleChassis;
+        this.singleEngine = copyFrom.singleEngine;
+        this.singleTyre = copyFrom.singleTyre;
+        this.singleFuel = copyFrom.singleFuel;
+        this.location = copyFrom.location;
+        this.locationTimeZone = copyFrom.locationTimeZone;
+        this.seriesEditions = copyFrom.seriesEditions;
+    }
+
+    public void addAllowedCategory(Category category) {
+        if (Optional.ofNullable(allowedCategories).isEmpty()) {
+            allowedCategories = new TreeSet<>();
+        }
+        allowedCategories.add(category);
+    }
 
     public EventEdition allowedCategories(SortedSet<Category> categories) {
     	if (allowedCategories == null) {

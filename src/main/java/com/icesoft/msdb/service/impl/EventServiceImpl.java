@@ -7,8 +7,7 @@ import java.util.stream.Collectors;
 
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
-import com.icesoft.msdb.repository.EventSessionRepository;
-import com.icesoft.msdb.repository.RacetrackLayoutRepository;
+import com.icesoft.msdb.repository.*;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.service.*;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
@@ -24,8 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.icesoft.msdb.repository.EventEditionRepository;
-import com.icesoft.msdb.repository.EventRepository;
 import com.icesoft.msdb.repository.search.EventSearchRepository;
 import com.icesoft.msdb.service.dto.EditionIdYearDTO;
 
@@ -198,7 +195,7 @@ public class EventServiceImpl implements EventService {
         EventEdition event = eventEditionRepository.findById(eventEditionId)
             .orElseThrow(() ->  new MSDBException("No event edition with id " + eventEditionId));
 
-        EventEdition newEvent = SerializationUtils.clone(event); // new EventEdition();
+        EventEdition newEvent = new EventEdition(event);
         newEvent.setId(null);
         newEvent.setPosterUrl(null);
         newEvent.setSeriesEditions(series);
