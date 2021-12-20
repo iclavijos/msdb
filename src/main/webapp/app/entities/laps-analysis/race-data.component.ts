@@ -14,6 +14,10 @@ import { EventSessionService } from '../event-session/event-session.service';
 
 import { TimeMaskPipe } from 'app/shared/mask/time-mask.pipe';
 
+import { MatTableDataSource, MatTabChangeEvent } from '@angular/material';
+
+import { TranslateService } from '@ngx-translate/core';
+
 import * as Highcharts from 'highcharts';
 import HCExporting from 'highcharts/modules/exporting';
 import HCMore from 'highcharts/highcharts-more';
@@ -57,6 +61,9 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
   driversPerformance: any[];
   filteredDriversPerformance: any[];
 
+  raceGapsDataSource = new MatTableDataSource([]);
+  raceGapsDisplayedColumns = ['driver', 'raceTime'];
+
   Highcharts: typeof Highcharts = Highcharts;
   chartOptions: Highcharts.Options;
   chart: Highcharts.Chart;
@@ -65,20 +72,41 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
     floor: 0,
     ceil: 70,
     showTicks: true,
-    tickStep: 5,
-    translate(value: number) {
-      // }, label: LabelType) {
-      if (value === 0) {
-        return 'Grid';
-      }
-      if (value === this.ceil) {
-        return 'Finish';
-      }
-      return 'Lap ' + value;
-    }
+    tickStep: 5
   };
 
-  constructor(private router: Router, private eventEditionService: EventEditionService, private eventSessionService: EventSessionService) {}
+  lapByLapColumns = [];
+
+  lapByLapDisplayedColumns = [];
+  lapByLapDataSource = new MatTableDataSource([]);
+
+  tyreCompounds = {
+    hard: '',
+    medium: '',
+    soft: ''
+  };
+
+  constructor(
+    private router: Router,
+    private eventEditionService: EventEditionService,
+    private eventSessionService: EventSessionService,
+    private translateService: TranslateService
+  ) {}
+
+  private calculateRaceElement(element) {
+    if (element) return element;
+    else
+      return {
+        raceNumber: null,
+        raceTime: null,
+        driverName: null
+      };
+  }
+
+  getAccumulatedRaceTime(lapNumber) {
+    const tmp = this.lapByLapDataSource.filteredData[0];
+    return tmp[lapNumber].raceTime;
+  }
 
   ngOnInit() {
     this.data = {
@@ -86,6 +114,7 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
       datasets: []
     };
     this.options = {
+      // translateService: this.translateService,
       tooltips: {
         callbacks: {
           label(tooltipItem, data) {
@@ -95,7 +124,7 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
             return (
               data.datasets[tooltipItem.datasetIndex].label +
               ' ' +
-              this.timeMask.transform(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] * 1000, false, false)
+              this.timeMask.transform(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] * 1000, true, false)
             );
           }
         }
@@ -109,6 +138,7 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
               // eslint-disable-next-line
               callback(value, index, values) {
                 return 'Lap ' + value;
+                // return this.translateService.instant('motorsportsDatabaseApp.lapbylap.lap') + ' ' + value;
               }
             }
           }
@@ -135,8 +165,7 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
         position: 'bottom'
       }
     };
-    //        this.eventSessionService.findSessionDriverNames(this.session.id).subscribe(
-    //            res => this.drivers = this.convertDriversNames(res));
+
     this.drivers = this.convertDriversNames();
     this.eventSessionService.findSessionAverages(this.session.id).subscribe(res => (this.averages = this.convertDriverAverages(res)));
     this.eventSessionService.findFastestTime(this.session.id).subscribe(res => {
@@ -147,12 +176,77 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
     this.eventSessionService.findMaxLaps(this.session.id).subscribe(res => {
       this.maxLaps = res;
       this.lapsRangeTo = this.maxLaps;
-      const newOptionsSlider: Options = Object.assign({}, this.optionsSlider);
+      const newOptionsSlider: any = Object.assign({}, this.optionsSlider);
+
+      newOptionsSlider.translateService = this.translateService;
       newOptionsSlider.ceil = this.maxLaps;
+      newOptionsSlider.translate = function(value: number) {
+        if (value === 0) {
+          return this.translateService.instant('motorsportsDatabaseApp.lapbylap.grid');
+        }
+        if (value === this.ceil) {
+          return this.translateService.instant('motorsportsDatabaseApp.lapbylap.finish');
+        }
+        return this.translateService.instant('motorsportsDatabaseApp.lapbylap.lap') + ' ' + value;
+      };
       this.optionsSlider = newOptionsSlider;
     });
     this.eventSessionService.findRaceChartData(this.session.id).subscribe(res => {
       this.raceChart = this.convertRaceChartData(res);
+      this.raceGapsDataSource = new MatTableDataSource(this.raceChart[0].racePositions);
+      this.raceChart.forEach(lap =>
+        this.lapByLapColumns.push({
+          columnDef: 'lap' + lap.lapNumber,
+          header:
+            lap.lapNumber === 0
+              ? this.translateService.instant('motorsportsDatabaseApp.lapbylap.grid')
+              : this.translateService.instant('motorsportsDatabaseApp.lapbylap.lap') + ' ' + lap.lapNumber,
+          cell: (element: any) => this.calculateRaceElement(element['lap' + lap.lapNumber])
+        })
+      );
+      this.lapByLapDisplayedColumns = this.lapByLapColumns.map(c => c.columnDef);
+
+      if (this.eventEdition.allowedCategories.filter(cat => cat.shortname === 'F1').length > 0) {
+        const tyres = [
+          ...new Set(
+            this.raceChart.flatMap(lap =>
+              lap.racePositions
+                .map(racePosition => racePosition.tyreCompound.substring(0, 2))
+                .filter(tyreCompound => tyreCompound.startsWith('C'))
+            )
+          )
+        ];
+
+        if (tyres.length > 0) {
+          this.raceGapsDisplayedColumns.push('tyreCompound');
+          tyres.sort();
+          this.tyreCompounds.hard = tyres[0];
+          this.tyreCompounds.medium = tyres[1];
+          this.tyreCompounds.soft = tyres[2];
+        }
+      }
+
+      const lapByLapDataSourceTmp = [];
+      const positions = this.raceChart[0].racePositions.length;
+      for (let i = 0; i < positions; i++) {
+        const driverPositionLap = {};
+        this.raceChart.forEach(lap => {
+          if (i < lap.racePositions.length) {
+            driverPositionLap['lap' + lap.lapNumber] = {
+              raceNumber: lap.racePositions[i].raceNumber,
+              driverName: this.drivers
+                .filter(driver => driver.raceNumber === lap.racePositions[i].raceNumber)
+                .map(driver => driver.driversNames.substring(0, 3).toUpperCase()),
+              raceTime: lap.racePositions[i].accumulatedRaceTime,
+              tyreCompound: lap.racePositions[i].tyreCompound
+            };
+          }
+        });
+        lapByLapDataSourceTmp.push(driverPositionLap);
+      }
+
+      this.lapByLapDataSource = new MatTableDataSource(lapByLapDataSourceTmp);
+
       const data = {
         labels: this.raceChart.map(lapRaceChart => lapRaceChart.lapNumber),
         datasets: []
@@ -209,7 +303,7 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
     });
 
     this.eventSessionService.findDriversPerformance(this.session.id).subscribe(res => {
-      this.driversPerformance = res;
+      this.driversPerformance = res.sort((a, b) => a.min - b.min);
       this.categoryToFilter = this.eventEdition.allowedCategories[0].shortname;
       this.filterCategories();
       this.chartOptions = {
@@ -219,18 +313,15 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
         title: {
           text: 'Best 20 laps performance'
         },
-
         legend: {
           enabled: false
         },
-
         xAxis: {
           categories: this.filteredDriversPerformance.map(dp => dp.driverName),
           title: {
             text: 'Drivers'
           }
         },
-
         yAxis: {
           title: {
             text: 'Lap time'
@@ -281,6 +372,12 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
     this.chart = chart;
   }
 
+  onChangeTab(event: MatTabChangeEvent) {
+    if (event.index === 1) {
+      this.chart.reflow();
+    }
+  }
+
   filterCategories(redraw = false) {
     this.filteredDriversPerformance = this.driversPerformance
       .filter(dp => dp.category === this.categoryToFilter)
@@ -305,6 +402,10 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
       this.chart.xAxis[0].setCategories(this.filteredDriversPerformance.map(dp => dp.driverName));
       this.chart.redraw();
     }
+  }
+
+  showRacePositions(event) {
+    this.raceGapsDataSource = new MatTableDataSource(this.raceChart[event.value].racePositions);
   }
 
   refreshLapTimesTable(raceNumber: string, event: any) {

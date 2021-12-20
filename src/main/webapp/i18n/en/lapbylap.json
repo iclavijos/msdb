@@ -1,11 +1,14 @@
 {
   "motorsportsDatabaseApp": {
     "lapbylap": {
+      "gaps": "Gaps",
       "lapCharts": "Lap charts",
       "lapsRange": "Select laps range to draw",
       "lapTimes": "Lap times",
       "lapTime": "Lap time",
       "lap": "Lap",
+      "grid": "Grid",
+      "finish": "Finish",
       "legend": "Legend",
       "fastestLap": "Fastest race lap",
       "fastLap": "Fast lap",

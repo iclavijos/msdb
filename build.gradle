@@ -34,7 +34,7 @@ plugins {
 }
 
 group = "com.icesoft.msdb"
-version = "5.1.2"
+version = "5.2.0"
 
 description = ""
 
@@ -241,6 +241,8 @@ dependencies {
     implementation "org.mapstruct:mapstruct:${mapstruct_version}"
 
     implementation "com.google.firebase:firebase-admin:7.1.0"
+
+    implementation "io.vavr:vavr:0.10.4"
 
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstruct_version}"
     annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernate_version}"

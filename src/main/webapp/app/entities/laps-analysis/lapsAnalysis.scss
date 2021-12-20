@@ -20,3 +20,19 @@
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
+
+td.odd {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.hardCompound {
+  color: #ffffff;
+}
+
+.mediumCompound {
+  color: #ffff00;
+}
+
+.softCompound {
+  color: #ff0000;
+}

@@ -20,6 +20,7 @@ public class LapInfo {
 	private String driverName;
 	private Integer lapNumber;
 	private Long lapTime;
+    private Integer lostLaps;
 	private Boolean pitstop;
 	private Boolean personalBest = false;
 	private Boolean fastLap = false;
@@ -28,6 +29,7 @@ public class LapInfo {
 	private Long s2;
 	private Long s3;
 	private String category;
+    private String tyreCompound;
 
 	public LapInfo() {
 
@@ -77,7 +79,15 @@ public class LapInfo {
 		this.lapTime = lapTime;
 	}
 
-	public void setPitstop(String pitstop) {
+    public Integer getLostLaps() {
+        return lostLaps;
+    }
+
+    public void setLostLaps(Integer lostLaps) {
+        this.lostLaps = lostLaps;
+    }
+
+    public void setPitstop(String pitstop) {
 	    this.pitstop = pitstop != null &&
             (pitstop.equalsIgnoreCase("b") || Boolean.parseBoolean(pitstop));
 	}
@@ -200,12 +210,24 @@ public class LapInfo {
         this.s3 = s3;
     }
 
+    public String getTyreCompound() {
+        return tyreCompound;
+    }
+
+    public void setTyreCompound(String tyreCompound) {
+        this.tyreCompound = tyreCompound;
+    }
+
     private String camelCaseDriverName(String driverName) {
-	    List<String> items = Arrays.asList(StringUtils.split(driverName, " "));
-	    String result = items.get(0).substring(0, 1).toUpperCase();
-	    return result + ". " + items.subList(1, items.size()).stream()
-            .map(name -> name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase())
-            .collect(Collectors.joining(" "));
+        if (StringUtils.isNotEmpty(driverName)) {
+            List<String> items = Arrays.asList(StringUtils.split(driverName, " "));
+            String result = items.get(0).substring(0, 1).toUpperCase();
+            return result + ". " + items.subList(1, items.size()).stream()
+                .map(name -> name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase())
+                .collect(Collectors.joining(" "));
+        } else {
+            return "";
+        }
     }
 
 }

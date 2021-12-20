@@ -6,7 +6,13 @@ import java.util.stream.Collectors;
 
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.service.dto.RacePositionsDTO;
+import io.vavr.Tuple;
+import io.vavr.Tuple4;
+import io.vavr.Tuple5;
+import io.vavr.Tuple6;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.util.MathUtils;
 import org.springframework.data.annotation.Id;
@@ -153,19 +159,37 @@ public class SessionLapData {
 
     @JsonIgnore
     public List<RacePositionsDTO> getPositionsPerLap() {
-	    List<RacePositionsDTO> result = new ArrayList<>();
-	    Map<String, Long> driversTotalTime = new HashMap<>();
-        List<Integer> lapNumber = laps.stream().map(lapInfo -> lapInfo.getLapNumber()).distinct().sorted().collect(Collectors.toList());
-        for(Integer lNumber: lapNumber) {
-            List<LapInfo> completedLaps = laps.stream().filter(li -> li.getLapNumber().equals(lNumber))
-                .collect(Collectors.toList());
-            result.add(new RacePositionsDTO(lNumber, addCompletedLaps(driversTotalTime, completedLaps)));
-        };
+        List<RacePositionsDTO> result = new ArrayList<>();
+        Map<String, Long> driversTotalTime = new HashMap<>();
+        Map<Integer, List<LapInfo>> driversLapsPerLap = new HashMap<>();
+        List<Integer> lapNumbers = laps.stream()
+            .map(LapInfo::getLapNumber)
+            .distinct()
+            .sorted()
+            .collect(Collectors.toList());
+        lapNumbers.forEach(lapNumber -> {
+            driversLapsPerLap.put(lapNumber, new ArrayList<>());
+            laps.stream()
+                .filter(li -> li.getLapNumber().equals(lapNumber))
+                .forEach(lap -> {
+                    List<LapInfo> lapsLap = driversLapsPerLap.get(lapNumber);
+                    lapsLap.add(lap);
+                    // driversLapsPerLap.put(lapNumber, lapsLap);
+                });
+        });
+        lapNumbers.forEach(lapNumber ->
+            result.add(new RacePositionsDTO(
+                lapNumber,
+                addCompletedLaps(
+                    driversTotalTime,
+                    driversLapsPerLap.get(lapNumber)
+                )
+            )));
 
         return result;
     }
 
-    private List<String> addCompletedLaps(Map<String, Long> driversTotalTime, List<LapInfo> completedLaps) {
+    private List<Tuple6<String, String, Long, Integer, Boolean, String>> addCompletedLaps(Map<String, Long> driversTotalTime, List<LapInfo> completedLaps) {
         Map<String, Long> totalTimesCurrentLap = Collections.synchronizedMap(new HashMap<>());
 	    completedLaps.stream().forEach(li -> {
             String raceNumber = li.getRaceNumber();
@@ -177,8 +201,21 @@ public class SessionLapData {
             driversTotalTime.put(raceNumber, totalTime);
             totalTimesCurrentLap.put(raceNumber, totalTime);
         });
-	    return totalTimesCurrentLap.entrySet().stream()
-            .sorted(Map.Entry.comparingByValue()).map(Map.Entry::getKey).collect(Collectors.toList());
+	    return sortByTotalTimeAndCompletedLaps(totalTimesCurrentLap, completedLaps);
+    }
+
+    private List<Tuple6<String, String, Long, Integer, Boolean, String>> sortByTotalTimeAndCompletedLaps(Map<String, Long> totalTimes, List<LapInfo> completedLaps) {
+        return completedLaps.stream()
+            .sorted((li1, li2) -> {
+                int comp = li1.getLostLaps().compareTo(li2.getLostLaps());
+                if (comp == 0) {
+                    return totalTimes.get(li1.getRaceNumber()).compareTo(totalTimes.get(li2.getRaceNumber()));
+                } else {
+                    return comp;
+                }
+            })
+            .map(li -> Tuple.of(li.getRaceNumber(), li.getDriverName(), totalTimes.get(li.getRaceNumber()), li.getLostLaps(), li.getPitstop(), li.getTyreCompound()))
+            .collect(Collectors.toList());
     }
 
 	public List<LapInfo> getLaps() {

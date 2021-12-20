@@ -10,6 +10,12 @@ import com.icesoft.msdb.repository.SessionLapDataRepository;
 import com.icesoft.msdb.service.dto.DriverRaceStatisticsDTO;
 import com.icesoft.msdb.service.dto.LapsInfoDriversDTO;
 import com.icesoft.msdb.service.dto.RacePositionsDTO;
+import io.vavr.Tuple;
+import io.vavr.Tuple4;
+import io.vavr.Tuple5;
+import io.vavr.Tuple6;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
@@ -76,14 +82,14 @@ public class LapsInfoResource {
     }
 
     @GetMapping("/event-sessions/{sessionId}/positions")
-    @Cacheable(cacheNames = "positionsCache")
+    //@Cacheable(cacheNames = "positionsCache")
     public ResponseEntity<List<RacePositionsDTO>> getPositions(@PathVariable Long sessionId) {
         SessionLapData sld = repo.findById(sessionId.toString())
             .orElseThrow(() -> new MSDBException("Invalid event session id " + sessionId));
         List<RacePositionsDTO> result = new ArrayList<>();
-        List<String> posLap0 = resultsRepo.findBySessionIdOrderByFinalPositionAsc(sessionId).stream()
+        List<Tuple6<String, String, Long, Integer, Boolean, String>> posLap0 = resultsRepo.findBySessionIdOrderByFinalPositionAsc(sessionId).stream()
             .sorted(Comparator.comparing(r -> Optional.ofNullable(r.getStartingPosition()).orElse(901)))
-            .map(r -> r.getEntry().getRaceNumber())
+            .map(r -> Tuple.of(r.getEntry().getRaceNumber(), r.getEntry().getDriversName(), 0L, 0, Boolean.FALSE, ""))
             .collect(Collectors.toList());
         RacePositionsDTO dataLap0 = new RacePositionsDTO(0, posLap0);
         result.add(dataLap0);

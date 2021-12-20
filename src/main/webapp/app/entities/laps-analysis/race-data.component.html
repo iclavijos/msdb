@@ -1,4 +1,36 @@
-<mat-tab-group dynamicHeight mat-stretch-tabs>
+<mat-tab-group dynamicHeight mat-stretch-tabs (selectedTabChange)="onChangeTab($event)">
+    <mat-tab label="{{'motorsportsDatabaseApp.lapbylap.gaps' | translate }}">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
+                    <mat-form-field>
+                        <mat-label>{{'motorsportsDatabaseApp.lapbylap.filterCategory' | translate}}</mat-label>
+                        <mat-select [(ngModel)]="categoryToFilter" (ngModelChange)="filterCategories(true)">
+                            <mat-option *ngFor="let category of eventEdition.allowedCategories" [value]="category.shortname">{{category.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-right">
+                <mat-button-toggle-group #viewType="matButtonToggleGroup" value="list">
+                    <mat-button-toggle value="list" aria-label="Grid info view">
+                        <mat-icon>dns</mat-icon>
+                    </mat-button-toggle>
+                    <mat-button-toggle value="grid" aria-label="Grid view">
+                        <mat-icon>view_module</mat-icon>
+                    </mat-button-toggle>
+                </mat-button-toggle-group>
+            </div>
+        </div>
+        <div class="row" *ngIf="viewType.value === 'list'">
+            <div *ngTemplateOutlet="listViewTemplate"></div>
+        </div>
+        <div class="row" *ngIf="viewType.value === 'grid'">
+            <div *ngTemplateOutlet="gridViewTemplate"></div>
+        </div>
+    </mat-tab>
     <mat-tab label="{{'motorsportsDatabaseApp.lapbylap.driverPerformance' | translate }}">
         <div class="row">
             <div class="col-sm-12">
@@ -239,7 +271,7 @@
                     [(value)]="lapsRangeFrom"
                     [(highValue)]="lapsRangeTo"
                     [options]="optionsSlider"
-                    (userChagne)="changeLapsRange($event)">
+                    (userChange)="changeLapsRange($event)">
                 </ngx-slider>
             </div>
         </div>
@@ -252,7 +284,7 @@
     <mat-tab label="{{'motorsportsDatabaseApp.lapbylap.raceHistory' | translate }}">
         <div class="row">
             <div class="col-md-12">
-                <!-- p-chart type="line" [data]="dataRaceChart" [options]="optionsRaceChart">Race chart</p-chart -->
+                <p-chart type="line" [data]="dataRaceChart" [options]="optionsRaceChart">Race chart</p-chart>
             </div>
         </div>
     </mat-tab>
@@ -309,4 +341,83 @@
         </dl>
     </div>
 </div>
+</ng-template>
+
+<ng-template #listViewTemplate>
+    <div class="col-md-2 col-sm-6 col-12">
+        <mat-form-field>
+            <mat-label>{{'motorsportsDatabaseApp.lapbylap.lap' | translate}}</mat-label>
+            <mat-select (selectionChange)="showRacePositions($event)">
+                <mat-option *ngFor="let lap of raceChart" [value]="lap.lapNumber">{{lap.lapNumber}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="col-md-6 col-sm-6 col-12">
+        <mat-table #table [dataSource]="raceGapsDataSource">
+
+            <ng-container matColumnDef="driver">
+                <mat-header-cell *matHeaderCellDef> Driver </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.raceNumber}} - {{ element.driverName }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="tyreCompound">
+                <mat-header-cell *matHeaderCellDef> Tyre </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <i class="fa fa-circle" *ngIf="element.tyreCompound"
+                       [class.hardCompound]="element.tyreCompound.startsWith(tyreCompounds.hard)"
+                       [class.mediumCompound]="element.tyreCompound.startsWith(tyreCompounds.medium)"
+                       [class.softCompound]="element.tyreCompound.startsWith(tyreCompounds.soft)"></i>
+                    {{element.tyreCompound}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="raceTime">
+                <mat-header-cell *matHeaderCellDef> Time </mat-header-cell>
+                <mat-cell *matCellDef="let element; let i = index">
+                    <span *ngIf="i !== 0 && element.accumulatedRaceTime > 0 && element.lostLaps === 0">
+                        +{{ (element.accumulatedRaceTime - raceGapsDataSource.filteredData[0].accumulatedRaceTime) | timeMaskPipe : true : false }}
+                    </span>
+                    <span *ngIf="i !== 0 && element.accumulatedRaceTime > 0 && element.lostLaps > 0">
+                        +{{ element.lostLaps }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.laps' | translate }}
+                    </span>
+                    <span *ngIf="i === 0">
+                        {{ element.accumulatedRaceTime | timeMaskPipe : true : false}}
+                    </span>
+                    <span *ngIf="element.pitstop">
+                        &nbsp;PIT
+                    </span>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="raceGapsDisplayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: raceGapsDisplayedColumns;"></mat-row>
+        </mat-table>
+    </div>
+</ng-template>
+
+<ng-template #gridViewTemplate>
+    <mat-table #lapByLapTable [dataSource]="lapByLapDataSource">
+        <ng-container *ngFor="let column of lapByLapColumns" [matColumnDef]="column.columnDef">
+            <mat-header-cell *matHeaderCellDef style="width: 75px;" sticky>{{ column.header }}</mat-header-cell>
+            <mat-cell *matCellDef="let row; let i = index; let isOdd=odd" [class.odd]="isOdd">
+                <dl class="row-md">
+                    <dt>
+                        <span>{{ column.cell(row).raceNumber }} {{ column.cell(row).driverName }}</span>
+                    </dt>
+                    <dd *ngIf="i !== 0 && column.cell(row).raceTime > 0">
+                        <span>+{{ (column.cell(row).raceTime - getAccumulatedRaceTime(column.columnDef)) | timeMaskPipe : true : false }}</span>
+                    </dd>
+                    <dd>
+                        <i class="fa fa-circle" *ngIf="column.cell(row).tyreCompound"
+                           [class.hardCompound]="column.cell(row).tyreCompound.startsWith(tyreCompounds.hard)"
+                           [class.mediumCompound]="column.cell(row).tyreCompound.startsWith(tyreCompounds.medium)"
+                           [class.softCompound]="column.cell(row).tyreCompound.startsWith(tyreCompounds.soft)"></i>
+                        <span>{{ column.cell(row).tyreCompound }}</span>
+                    </dd>
+                </dl>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="lapByLapDisplayedColumns" sticky></mat-header-row>
+        <mat-row *matRowDef="let row; columns: lapByLapDisplayedColumns;"></mat-row>
+    </mat-table>
 </ng-template>
