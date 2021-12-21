@@ -248,7 +248,6 @@ export class SeriesEditionDetailComponent implements OnInit {
   }
 
   editEventAssignment(event) {
-    event.stopPropagation();
     const dialogRef = this.dialog.open(SeriesEditionCalendarDialogComponent, {
       data: {
         seriesEdition: this.seriesEdition,
@@ -264,7 +263,6 @@ export class SeriesEditionDetailComponent implements OnInit {
   }
 
   removeEventFromSeries(event) {
-    event.stopPropagation();
     const dialogRef = this.dialog.open(SeriesEditionCalendarRemoveDialogComponent, {
       data: {
         seriesEditionId: this.seriesEdition.id,

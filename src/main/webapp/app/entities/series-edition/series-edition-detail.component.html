@@ -362,12 +362,12 @@
                             <fa-icon [icon]="'eye'"></fa-icon>
                         </button>
                         <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                (click)="editEventAssignment(event)"
+                                (click)="$event.stopPropagation(); editEventAssignment(event)"
                                 class="btn btn-primary btn-xs">
                             <fa-icon [icon]="'pencil-alt'"></fa-icon>
                         </button>
                         <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                (click)="removeEventFromSeries(event)"
+                                (click)="$event.stopPropagation(); removeEventFromSeries(event)"
                                 class="btn btn-danger btn-xs">
                             <fa-icon [icon]="'times'"></fa-icon>
                         </button>
