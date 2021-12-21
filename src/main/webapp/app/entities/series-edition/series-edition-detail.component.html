@@ -56,15 +56,15 @@
                                         </div>
                                         <div class="row row-margin">
                                             <div class="col-12 text-right">
-                                                <mat-button-toggle-group #viewType="matButtonToggleGroup" value="grid">
+                                                <mat-button-toggle-group #viewType="matButtonToggleGroup" value="list">
+                                                    <mat-button-toggle value="list" aria-label="List view">
+                                                        <mat-icon>list</mat-icon>
+                                                    </mat-button-toggle>
                                                     <mat-button-toggle value="grid" aria-label="Grid view">
                                                         <mat-icon>view_module</mat-icon>
                                                     </mat-button-toggle>
                                                     <mat-button-toggle value="gridInfo" aria-label="Grid info view">
                                                         <mat-icon>dns</mat-icon>
-                                                    </mat-button-toggle>
-                                                    <mat-button-toggle value="list" aria-label="List view">
-                                                        <mat-icon>list</mat-icon>
                                                     </mat-button-toggle>
                                                 </mat-button-toggle-group>
                                             </div>
@@ -200,13 +200,13 @@
 </div>
 
 <ng-template #gridViewTemplate>
-    <div class="col-md-3 col-sm-6 col-12" *ngFor="let event of seriesEdition.events">
+    <div class="col-md-3 col-sm-6 col-12" *ngFor="let event of seriesEdition.events; let i = index;">
         <mat-card jhiMaterialElevation>
             <div class="poster">
                 <img [src]="getPosterUrl(event.eventEditionPosterUrl)" class="poster img-fluid">
                 <div class="overlay" *ngIf="event.status === 'ONGOING'">
                     <div class="container">
-                        <div *ngTemplateOutlet="winnersTemplate; context:{event: event, thumbSize: 240}"></div>
+                        <div *ngTemplateOutlet="winnersTemplate; context:{event: eventsAndWinners[i], thumbSize: 180}"></div>
                     </div>
                     <div class="row">
                         <div class="col text-center">
@@ -230,7 +230,7 @@
                 </div>
             </div>
             <mat-card-content>
-                <h5 class="card-subtitle">{{ event.eventEditionName }}</h5>
+                <h5 class="card-subtitle">{{ event.longEventName }}</h5>
             </mat-card-content>
             <mat-card-actions *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" align="end">
                 <button mat-button
@@ -249,33 +249,33 @@
 </ng-template>
 
 <ng-template #gridInfoViewTemplate>
-    <div class="col-md-3 col-sm-6 col-12" *ngFor="let event of seriesEdition.events">
+    <div class="col-md-3 col-sm-6 col-12" *ngFor="let event of seriesEdition.events; let i = index;">
         <mat-card jhiMaterialElevation>
             <div class="poster">
                 <div class="row">
                     <div class="col-12 text-center">
-                        <h3 class="card-subtitle">{{ event.eventEditionName }}</h3>
+                        <h3 class="card-subtitle">{{ event.longEventName }}</h3>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12 text-center">
-                        <h5>{{ event.eventEditionDate | localizedDate : 'll' }}</h5>
+                        <h5>{{ event.eventDate | localizedDate : 'll' }}</h5>
                     </div>
                 </div>
-                <div class="row" *ngIf="event.racetrackLogoUrl">
+                <div class="row" *ngIf="eventsAndWinners[i].racetrackLogoUrl">
                     <div class="col-12">
-                        <img [src]="event.racetrackLogoUrl" class="img-fluid mx-auto d-block logo">
+                        <img [src]="eventsAndWinners[i].racetrackLogoUrl" class="img-fluid mx-auto d-block logo">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <img [src]="event.racetrackLayoutUrl" class="img-fluid mx-auto d-block layout">
+                        <img [src]="eventsAndWinners[i].racetrackLayoutUrl" class="img-fluid mx-auto d-block layout">
                     </div>
                 </div>
 
                 <div class="overlay" *ngIf="event.status === 'ONGOING'">
                     <div class="container">
-                        <div *ngTemplateOutlet="winnersTemplate; context:{event: event, thumbSize: 240}"></div>
+                        <div *ngTemplateOutlet="winnersTemplate; context:{event: eventsAndWinners[i], thumbSize: 180}"></div>
                     </div>
                     <div class="row">
                         <div class="col text-center">
@@ -315,67 +315,77 @@
 </ng-template>
 
 <ng-template #listViewTemplate>
-    <div class="col-12">
+    <div class="col-6">
         <div class="table-responsive">
             <table mat-table class="table table-hover" [dataSource]="seriesEdition.events">
 
                 <ng-container matColumnDef="date">
                     <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.eventDate' | translate }}</th>
-                    <td mat-cell *matCellDef="let event">{{ event.eventEditionDate | localizedDate : 'LL' }}</td>
+                    <td mat-cell *matCellDef="let event">{{ event.eventDate | localizedDate : 'LL' }}</td>
                 </ng-container>
 
                 <ng-container matColumnDef="status">
                     <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.status.label' | translate }}</th>
                     <td mat-cell *matCellDef="let event">
                         <div *ngIf="event.status === 'SUSPENDED'">
-                            <h2><span class="badge badge-warning">
+                            <h4><span class="badge badge-warning">
                                 {{ 'motorsportsDatabaseApp.eventEdition.status.suspended' | translate }}
-                            </span></h2>
+                            </span></h4>
                         </div>
                         <div *ngIf="event.status === 'CANCELLED'">
-                            <h2><span class="badge badge-danger">
+                            <h4><span class="badge badge-danger">
                                 {{ 'motorsportsDatabaseApp.eventEdition.status.cancelled' | translate }}
-                            </span></h2>
+                            </span></h4>
                         </div>
                     </td>
                 </ng-container>
 
                 <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.event' | translate }}</th>
-                    <td mat-cell *matCellDef="let event">{{ event.eventEditionName }}</td>
+                    <td mat-cell *matCellDef="let event">{{ event.longEventName }}</td>
                 </ng-container>
 
                 <ng-container matColumnDef="winners">
                     <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.winner' | translate }}</th>
-                    <td mat-cell *matCellDef="let event">
-                        <div *ngTemplateOutlet="winnersTemplate; context:{event: event, thumbSize: 120}"></div>
+                    <td mat-cell *matCellDef="let event; let i = index;">
+                        <div *ngTemplateOutlet="winnersTemplate; context:{event: eventsAndWinners[i], thumbSize: 80}"></div>
                     </td>
                 </ng-container>
 
                 <ng-container matColumnDef="buttons">
                     <th mat-header-cell *matHeaderCellDef></th>
                     <td mat-cell *matCellDef="let event">
-                        <button mat-button type="button"
+                        <button mat-button type="submit"
                                 [routerLink]="['/event/edition', event.id, 'view-ed']"
-                                class="btn btn-primary">
-                            <fa-icon [icon]="'eye'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.view"> view</span>
+                                (click)="$event.stopPropagation()"
+                                class="btn btn-primary btn-xs">
+                            <fa-icon [icon]="'eye'"></fa-icon>
                         </button>
                         <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                 (click)="editEventAssignment(event)"
-                                class="btn btn-primary">
-                            <fa-icon [icon]="'pencil-alt'"></fa-icon> <span jhiTranslate="entity.action.edit"> edit</span>
+                                class="btn btn-primary btn-xs">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
                         </button>
                         <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                 (click)="removeEventFromSeries(event)"
-                                class="btn btn-danger">
-                            <fa-icon [icon]="'times'"></fa-icon> <span jhiTranslate="entity.action.delete"> delete</span>
+                                class="btn btn-danger btn-xs">
+                            <fa-icon [icon]="'times'"></fa-icon>
                         </button>
                     </td>
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                    [routerLink]="['/event/edition', row.id, 'view-ed']"></tr>
             </table>
+        </div>
+    </div>
+    <div class="col-6">
+        <div id="map"
+             leaflet
+             [leafletOptions]="mapOptions"
+             (leafletMapReady)="onMapReady($event)"
+             [leafletLayersControl]="layersControl">
         </div>
     </div>
 </ng-template>

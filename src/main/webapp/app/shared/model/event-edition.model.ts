@@ -31,6 +31,8 @@ export interface IEventEdition {
   seriesEditions?: ISeriesEdition[];
   location?: string;
   locationTimeZone?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export class EventEdition implements IEventEdition {
@@ -58,6 +60,8 @@ export class EventEdition implements IEventEdition {
     public string?: string,
     public seriesEditions?: ISeriesEdition[],
     public location?: string,
-    public locationTimeZone?: string
+    public locationTimeZone?: string,
+    public latitude?: number,
+    public longitude?: number
   ) {}
 }

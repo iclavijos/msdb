@@ -146,12 +146,12 @@ public class EventEditionResource {
     @Transactional
     public ResponseEntity<EventEdition> updateEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to update EventEdition : {}", eventEdition);
-        if (!eventEdition.getEvent().isRally() && !eventEdition.getEvent().isRaid()) {
-            RacetrackLayout layout = racetrackLayoutRepo.findById(eventEdition.getTrackLayout().getId()).orElseThrow(
-                () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
-            );
-            eventEdition.setTrackLayout(layout);
-        }
+//        if (!eventEdition.getEvent().isRally() && !eventEdition.getEvent().isRaid()) {
+//            RacetrackLayout layout = racetrackLayoutRepo.findById(eventEdition.getTrackLayout().getId()).orElseThrow(
+//                () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
+//            );
+//            eventEdition.setTrackLayout(layout);
+//        }
         if (eventEdition.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -170,14 +170,11 @@ public class EventEditionResource {
             ));
             result = eventEditionRepository.save(result);
         }
-        result = eventEditionRepository.save(eventEdition);
+        result = eventService.save(eventEdition, true);
 
         eventEditionSearchRepo.deleteById(result.getId()); //TODO: Temporary fix to avoid duplicity after cloning series edition
         eventEditionSearchRepo.save(result);
 
-        if (result.getSeriesEditions() != null) {
-        	result.getSeriesEditions().stream().map(se -> se.getId()).forEach(cacheHandler::resetWinnersCache);
-        }
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, eventEdition.getId().toString()))
             .body(result);

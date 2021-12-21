@@ -1,5 +1,5 @@
 import { Title } from '@angular/platform-browser';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { JhiAlertService } from 'ng-jhipster';
@@ -7,6 +7,7 @@ import { JhiAlertService } from 'ng-jhipster';
 import { SeriesService } from '../series/series.service';
 import { SeriesEditionService } from './series-edition.service';
 import { ISeriesEdition } from 'app/shared/model/series-edition.model';
+import { IEventEdition } from 'app/shared/model/event-edition.model';
 import { SeriesEditionUpdateComponent } from './series-edition-update.component';
 import { SeriesEditionCalendarDialogComponent } from './series-edition-calendar-dialog.component';
 import { SeriesEditionCalendarRemoveDialogComponent } from './series-edition-calendar-remove-dialog.component';
@@ -17,11 +18,19 @@ import { ImagesService } from 'app/shared/services/images.service';
 
 import { MatDialog } from '@angular/material/dialog';
 
+import { icon, latLng, Marker, tileLayer } from 'leaflet';
+import * as L from 'leaflet';
+
 export class NavigationIds {
   prevId: number;
   nextId: number;
   prevName: string;
   nextName: string;
+}
+
+export class EventAndWinners {
+  eventEdition: IEventEdition;
+  winners: any[];
 }
 
 @Component({
@@ -50,6 +59,28 @@ export class SeriesEditionDetailComponent implements OnInit {
   nextEditionId: number;
   editions = [];
   currentEdPos: number;
+  eventsAndWinners: EventAndWinners[];
+
+  streetMaps = tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    detectRetina: true,
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  });
+
+  layersControl = {
+    baseLayers: {
+      'Street Maps': this.streetMaps
+    }
+  };
+
+  map: L.Map;
+  mapOptions = {
+    maxBounds: [[-90, -180], [90, 180]],
+    worldCopyJump: true,
+    center: latLng(0, 0),
+    zoom: 2,
+    layers: [this.streetMaps]
+  };
 
   constructor(
     protected activatedRoute: ActivatedRoute,
@@ -59,7 +90,9 @@ export class SeriesEditionDetailComponent implements OnInit {
     protected seriesEditionService: SeriesEditionService,
     protected imagesService: ImagesService,
     private dialog: MatDialog,
-    private titleService: Title
+    private titleService: Title,
+    protected ngZone: NgZone,
+    protected elementRef: ElementRef
   ) {
     this.genericPosterUrl = imagesService.getGenericRacePoster();
   }
@@ -78,12 +111,96 @@ export class SeriesEditionDetailComponent implements OnInit {
     });
   }
 
+  onMapReady(newMap: L.Map) {
+    setTimeout(() => {
+      this.map.invalidateSize();
+    });
+    this.map = newMap;
+    if (this.eventsAndWinners && this.eventsAndWinners.length > 0) {
+      this.addMapMarkers();
+    }
+  }
+
+  private addMapMarkers() {
+    const markers = [];
+    this.seriesEdition.events.forEach(event => {
+      let latitude, longitude, id: number;
+      let logoUrl, locationName, flag, trackLayoutUrl: string;
+      let rally = false;
+
+      if (event.event.rally) {
+        latitude = event.latitude;
+        longitude = event.longitude;
+        id = event.id;
+        rally = true;
+        locationName = event.location;
+      } else if (!event.event.rally && !event.event.raid) {
+        latitude = event.trackLayout.racetrack.latitude;
+        longitude = event.trackLayout.racetrack.longitude;
+        id = event.trackLayout.racetrack.id;
+        logoUrl = event.trackLayout.racetrack.logoUrl;
+        locationName = event.trackLayout.racetrack.name;
+        flag = event.trackLayout.racetrack.countryCode;
+        trackLayoutUrl = event.trackLayout.layoutImageUrl;
+      }
+      const location = new Marker([latitude, longitude])
+        .setIcon(
+          icon({
+            iconSize: [25, 41],
+            iconAnchor: [13, 41],
+            iconUrl: 'assets/marker-icon.png'
+          })
+        )
+        .on('popupopen', $event => {
+          const isRally = $event.target.options.isRally;
+          if (isRally) {
+            this.navigateToEvent($event.target.options.trackId, this.elementRef);
+          } else {
+            this.navigateToRacetrack($event.target.options.trackId, this.elementRef);
+          }
+        });
+      L.Util.setOptions(location, { trackId: id, isRally: rally });
+      const logo = logoUrl ? `<img src=${logoUrl} style="max-height: 200px; max-width: 200px"><br/>` : '';
+      let popup = `<p align="center">${logo}<h3>${event.longEventName}</h3><br/><h4>${locationName} `;
+      if (!rally) {
+        popup += `<img src="/images/flags/${flag}.png"/><br/>`;
+        popup += `<img src="${trackLayoutUrl}" style="max-height: 200px; max-width: 200px">`;
+      }
+      popup += `</h4><br/></p>`;
+
+      popup = popup + `<a id="mapLink" href="javascript:void">Details</a>`;
+      location.addTo(this.map).bindPopup(popup, { minWidth: 220 });
+
+      markers.push(location);
+    });
+    const group = L.featureGroup(markers);
+    this.map.fitBounds(group.getBounds());
+  }
+
+  private navigateToRacetrack(trackId, elementRef: ElementRef) {
+    elementRef.nativeElement.querySelector('#mapLink').addEventListener('click', () => {
+      this.ngZone.run(() => {
+        this.router.navigate(['/racetrack', trackId, 'view']);
+      });
+    });
+  }
+
+  private navigateToEvent(trackId, elementRef: ElementRef) {
+    elementRef.nativeElement.querySelector('#mapLink').addEventListener('click', () => {
+      this.ngZone.run(() => {
+        this.router.navigate(['/event/edition', trackId, 'view-ed']);
+      });
+    });
+  }
+
   loadSeriesEvents() {
     this.seriesEditionService.findEvents(this.seriesEdition.id).subscribe(events => {
-      this.seriesEdition.events = events.body;
-      if (events.body.filter(event => event.status !== 'ONGOING').length > 0) {
+      this.eventsAndWinners = events.body;
+      this.seriesEdition.events = this.eventsAndWinners.map(eventWinners => eventWinners.eventEdition);
+      if (this.seriesEdition.events.filter(event => event.status !== 'ONGOING').length > 0) {
         this.displayedColumns.unshift('status');
       }
+      this.addMapMarkers();
     });
   }
 
@@ -131,6 +248,7 @@ export class SeriesEditionDetailComponent implements OnInit {
   }
 
   editEventAssignment(event) {
+    event.stopPropagation();
     const dialogRef = this.dialog.open(SeriesEditionCalendarDialogComponent, {
       data: {
         seriesEdition: this.seriesEdition,
@@ -146,6 +264,7 @@ export class SeriesEditionDetailComponent implements OnInit {
   }
 
   removeEventFromSeries(event) {
+    event.stopPropagation();
     const dialogRef = this.dialog.open(SeriesEditionCalendarRemoveDialogComponent, {
       data: {
         seriesEditionId: this.seriesEdition.id,

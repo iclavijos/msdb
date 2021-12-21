@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.google.maps.model.Geometry;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.repository.*;
@@ -65,18 +66,28 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventEdition save(EventEdition eventEdition) {
+        return save(eventEdition, false);
+    }
+
+    @Override
+    public EventEdition save(EventEdition eventEdition, boolean update) {
         if (!eventEdition.getEvent().isRally() && !eventEdition.getEvent().isRaid()) {
             RacetrackLayout layout = racetrackLayoutRepository.findById(eventEdition.getTrackLayout().getId()).orElseThrow(
                 () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
             );
             eventEdition.setTrackLayout(layout);
         } else if (eventEdition.getEvent().isRally()) {
-            eventEdition.setLocationTimeZone(
-                geoLocationService.getTimeZone(
-                    geoLocationService.getGeolocationInformation(eventEdition.getLocation())));
+            Geometry geometry = geoLocationService
+                .getGeolocationInformation(eventEdition.getLocation());
+            eventEdition.setLatitude(geometry.location.lat);
+            eventEdition.setLongitude(geometry.location.lng);
+            eventEdition.setLocationTimeZone(geoLocationService.getTimeZone(geometry));
         }
-        if (eventEdition.getId() != null) {
+        if (eventEdition.getId() != null && !update) {
             throw new BadRequestAlertException("A new eventEdition cannot already have an ID", "eventEdition", "idexists");
+        }
+        if (eventEdition.getId() == null && update) {
+            throw new BadRequestAlertException("Invalid id", "eventEdition", "idnull");
         }
 
         EventEdition result = eventEditionRepository.save(eventEdition);

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.icesoft.msdb.domain.EventEdition;
+import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.domain.enums.EventStatusType;
 
 public class SeriesEventsAndWinnersDTO {
@@ -17,25 +18,20 @@ public class SeriesEventsAndWinnersDTO {
 		this.winners = winners;
 	}
 
-	public Long getId() {
-		return eventEdition.getId();
-	}
-	public String getEventEditionName() {
-		return eventEdition.getLongEventName();
-	}
-	public EventStatusType getStatus() { return eventEdition.getStatus(); }
-	public LocalDate getEventEditionDate() {
-		return eventEdition.getEventDate();
-	}
+    public EventEdition getEventEdition() { return eventEdition; }
+
 	public List<SessionWinnersDTO> getWinners() {
 		return winners;
 	}
+
 	public String getEventEditionPosterUrl() { return eventEdition.getPosterUrl(); }
+
 	public String getRacetrackLogoUrl() {
         return Optional.ofNullable(eventEdition.getTrackLayout())
             .map(trackLayout -> trackLayout.getRacetrack().getLogoUrl())
             .orElse(null);
     }
+
     public String getRacetrackLayoutUrl() {
         return Optional.ofNullable(eventEdition.getTrackLayout())
             .map(trackLayout -> trackLayout.getLayoutImageUrl())

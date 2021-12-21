@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { ISeriesEdition } from 'app/shared/model/series-edition.model';
-import { IEventEdition } from 'app/shared/model/event-edition.model';
 
 type EntityResponseType = HttpResponse<ISeriesEdition>;
 type EntityArrayResponseType = HttpResponse<ISeriesEdition[]>;
@@ -53,8 +52,8 @@ export class SeriesEditionService {
     return this.http.get<any>(`${this.resourceUrl}/${id}/prevNextEdition`);
   }
 
-  findEvents(id: number): Observable<HttpResponse<IEventEdition[]>> {
-    return this.http.get<IEventEdition[]>(`${this.resourceUrl}/${id}/events`, { observe: 'response' });
+  findEvents(id: number): Observable<HttpResponse<any[]>> {
+    return this.http.get<any[]>(`${this.resourceUrl}/${id}/events`, { observe: 'response' });
   }
 
   findDriversStandings(id: number): Observable<HttpResponse<any[]>> {

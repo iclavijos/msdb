@@ -243,7 +243,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	    	}
 
 	    	return new SeriesEventsAndWinnersDTO(e, winners);
-		}).sorted((sew1, sew2) -> sew1.getEventEditionDate().compareTo(sew2.getEventEditionDate()))
+		}).sorted(Comparator.comparing(sew -> sew.getEventEdition().getEventDate()))
 				.collect(Collectors.toList());
 	}
 

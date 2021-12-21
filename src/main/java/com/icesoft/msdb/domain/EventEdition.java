@@ -119,6 +119,12 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     @Column(name = "location")
     private String location;
 
+    @Column
+    private Double latitude;
+
+    @Column
+    private Double longitude;
+
     @Column(name = "location_time_zone")
     private String locationTimeZone;
 
@@ -142,6 +148,8 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
         this.singleTyre = copyFrom.singleTyre;
         this.singleFuel = copyFrom.singleFuel;
         this.location = copyFrom.location;
+        this.latitude = copyFrom.latitude;
+        this.longitude = copyFrom.longitude;
         this.locationTimeZone = copyFrom.locationTimeZone;
         this.seriesEditions = copyFrom.seriesEditions;
     }

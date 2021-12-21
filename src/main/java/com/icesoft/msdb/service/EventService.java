@@ -34,6 +34,8 @@ public interface EventService {
      */
     EventEdition save(EventEdition eventEdition);
 
+    EventEdition save(EventEdition eventEdition, boolean update);
+
     /**
      *  Get all the events.
      *
