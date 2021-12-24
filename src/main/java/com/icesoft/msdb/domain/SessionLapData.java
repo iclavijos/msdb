@@ -208,7 +208,9 @@ public class SessionLapData {
     private List<Tuple6<String, String, Long, Integer, Boolean, String>> sortByTotalTimeAndCompletedLaps(Map<String, Long> totalTimes, List<LapInfo> completedLaps) {
         return completedLaps.stream()
             .sorted((li1, li2) -> {
-                int comp = li1.getLostLaps().compareTo(li2.getLostLaps());
+                Integer lostLaps1 = Optional.ofNullable(li1.getLostLaps()).orElse(0);
+                Integer lostLaps2 = Optional.ofNullable(li2.getLostLaps()).orElse(0);
+                int comp = lostLaps1.compareTo(lostLaps2);
                 if (comp == 0) {
                     return totalTimes.get(li1.getRaceNumber()).compareTo(totalTimes.get(li2.getRaceNumber()));
                 } else {

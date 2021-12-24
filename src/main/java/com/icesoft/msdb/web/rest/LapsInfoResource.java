@@ -100,8 +100,9 @@ public class LapsInfoResource {
         grid.forEach(driverGrid -> {
             String tyreCompound = lap1.stream()
                 .filter(driverLap -> driverLap.getRaceNumber().equals(driverGrid.getRaceNumber()))
-                .findFirst().get()
-                .getTyreCompound();
+                .findFirst()
+                .map(driverLap -> driverLap.getTyreCompound())
+                .orElse(null);
             driverGrid.setTyreCompound(tyreCompound);
         });
 
