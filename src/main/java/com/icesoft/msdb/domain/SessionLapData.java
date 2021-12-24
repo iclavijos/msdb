@@ -177,6 +177,7 @@ public class SessionLapData {
                     // driversLapsPerLap.put(lapNumber, lapsLap);
                 });
         });
+
         lapNumbers.forEach(lapNumber ->
             result.add(new RacePositionsDTO(
                 lapNumber,

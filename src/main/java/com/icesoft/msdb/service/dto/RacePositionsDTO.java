@@ -6,6 +6,7 @@ import io.vavr.Tuple6;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class RacePositionsDTO {
         private Integer lostLaps;
         private Long accumulatedRaceTime;
         private Boolean pitstop;
+        @Setter
         private String tyreCompound;
 
         public RacePosition(String raceNumber, Integer position) {

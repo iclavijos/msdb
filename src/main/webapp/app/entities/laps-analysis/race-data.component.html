@@ -25,10 +25,14 @@
             </div>
         </div>
         <div class="row" *ngIf="viewType.value === 'list'">
-            <div *ngTemplateOutlet="listViewTemplate"></div>
+            <div class="col-12">
+                <div *ngTemplateOutlet="listViewTemplate"></div>
+            </div>
         </div>
         <div class="row" *ngIf="viewType.value === 'grid'">
-            <div *ngTemplateOutlet="gridViewTemplate"></div>
+            <div class="col-12">
+                <div *ngTemplateOutlet="gridViewTemplate"></div>
+            </div>
         </div>
     </mat-tab>
     <mat-tab label="{{'motorsportsDatabaseApp.lapbylap.driverPerformance' | translate }}">
@@ -396,28 +400,46 @@
 </ng-template>
 
 <ng-template #gridViewTemplate>
-    <mat-table #lapByLapTable [dataSource]="lapByLapDataSource">
-        <ng-container *ngFor="let column of lapByLapColumns" [matColumnDef]="column.columnDef">
-            <mat-header-cell *matHeaderCellDef style="width: 75px;" sticky>{{ column.header }}</mat-header-cell>
-            <mat-cell *matCellDef="let row; let i = index; let isOdd=odd" [class.odd]="isOdd">
-                <dl class="row-md">
-                    <dt>
-                        <span>{{ column.cell(row).raceNumber }} {{ column.cell(row).driverName }}</span>
-                    </dt>
-                    <dd *ngIf="i !== 0 && column.cell(row).raceTime > 0">
-                        <span>+{{ (column.cell(row).raceTime - getAccumulatedRaceTime(column.columnDef)) | timeMaskPipe : true : false }}</span>
-                    </dd>
-                    <dd>
-                        <i class="fa fa-circle" *ngIf="column.cell(row).tyreCompound"
-                           [class.hardCompound]="column.cell(row).tyreCompound.startsWith(tyreCompounds.hard)"
-                           [class.mediumCompound]="column.cell(row).tyreCompound.startsWith(tyreCompounds.medium)"
-                           [class.softCompound]="column.cell(row).tyreCompound.startsWith(tyreCompounds.soft)"></i>
-                        <span>{{ column.cell(row).tyreCompound }}</span>
-                    </dd>
-                </dl>
-            </mat-cell>
-        </ng-container>
-        <mat-header-row *matHeaderRowDef="lapByLapDisplayedColumns" sticky></mat-header-row>
-        <mat-row *matRowDef="let row; columns: lapByLapDisplayedColumns;"></mat-row>
-    </mat-table>
+    <div class="table-container">
+        <table mat-table class="table table-hover" [dataSource]="lapByLapDataSource">
+            <ng-container matColumnDef="lap" sticky>
+                <th mat-header-cell *matHeaderCellDef>&nbsp;</th>
+                <td mat-cell *matCellDef="let i = index">
+                    <strong>
+                        <span *ngIf="i === 0">{{ 'motorsportsDatabaseApp.lapbylap.grid' | translate }}</span>
+                        <span *ngIf="i != 0">{{ 'motorsportsDatabaseApp.lapbylap.lap' | translate }} {{i}}</span>
+                    </strong>
+                </td>
+            </ng-container>
+            <ng-container *ngFor="let column of lapByLapColumns" [matColumnDef]="column.columnDef">
+                <th mat-header-cell *matHeaderCellDef>{{ column.header }}</th>
+                <td mat-cell *matCellDef="let racePosition; let i = index; let isOdd=odd" [class.odd]="isOdd">
+                    <div *ngIf="racePosition[column.columnDef]">
+                        <div class="row">
+                            <div class="col-12">
+                                <span>#{{ racePosition[column.columnDef].raceNumber }} {{ racePosition[column.columnDef].driverName }}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <span *ngIf="racePosition[column.columnDef].position === 1 && i !== 0">&nbsp;</span>
+                                <span *ngIf="racePosition[column.columnDef].position > 1 && i > 0">+{{ (racePosition[column.columnDef].accumulatedRaceTime - racePosition['pos1'].accumulatedRaceTime) | timeMaskPipe : true : false }}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <i class="fa fa-circle" *ngIf="racePosition[column.columnDef].tyreCompound"
+                                   [class.hardCompound]="racePosition[column.columnDef].tyreCompound.startsWith(tyreCompounds.hard)"
+                                   [class.mediumCompound]="racePosition[column.columnDef].tyreCompound.startsWith(tyreCompounds.medium)"
+                                   [class.softCompound]="racePosition[column.columnDef].tyreCompound.startsWith(tyreCompounds.soft)"></i>
+                                <span>{{ racePosition[column.columnDef].tyreCompound }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="lapByLapDisplayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: lapByLapDisplayedColumns;"></tr>
+        </table>
+    </div>
 </ng-template>

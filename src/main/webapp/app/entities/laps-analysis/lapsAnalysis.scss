@@ -36,3 +36,17 @@ td.odd {
 .softCompound {
   color: #ff0000;
 }
+
+.table-container {
+  height: 500px;
+  max-width: 1600px;
+  overflow: auto;
+}
+
+.mat-column-lap {
+  min-width: 90px;
+}
+
+td[class*='mat-column-pos'] {
+  min-width: 100px;
+}

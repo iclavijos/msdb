@@ -93,16 +93,6 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
     private translateService: TranslateService
   ) {}
 
-  private calculateRaceElement(element) {
-    if (element) return element;
-    else
-      return {
-        raceNumber: null,
-        raceTime: null,
-        driverName: null
-      };
-  }
-
   getAccumulatedRaceTime(lapNumber) {
     const tmp = this.lapByLapDataSource.filteredData[0];
     return tmp[lapNumber].raceTime;
@@ -194,17 +184,33 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
     this.eventSessionService.findRaceChartData(this.session.id).subscribe(res => {
       this.raceChart = this.convertRaceChartData(res);
       this.raceGapsDataSource = new MatTableDataSource(this.raceChart[0].racePositions);
-      this.raceChart.forEach(lap =>
+      const raceParticipants = this.raceChart[0].racePositions.length;
+
+      for (let racePosition = 1; racePosition <= raceParticipants; racePosition++) {
         this.lapByLapColumns.push({
-          columnDef: 'lap' + lap.lapNumber,
-          header:
-            lap.lapNumber === 0
-              ? this.translateService.instant('motorsportsDatabaseApp.lapbylap.grid')
-              : this.translateService.instant('motorsportsDatabaseApp.lapbylap.lap') + ' ' + lap.lapNumber,
-          cell: (element: any) => this.calculateRaceElement(element['lap' + lap.lapNumber])
-        })
-      );
-      this.lapByLapDisplayedColumns = this.lapByLapColumns.map(c => c.columnDef);
+          columnDef: 'pos' + racePosition,
+          header: 'Pos ' + racePosition,
+          cell: (element: any) => element
+        });
+      }
+
+      this.lapByLapDisplayedColumns = ['lap'];
+      this.lapByLapColumns.map(c => c.columnDef).forEach(col => this.lapByLapDisplayedColumns.push(col));
+
+      const lapByLapDataSourceTmp = [];
+      const laps = this.raceChart.length;
+      for (let i = 0; i < laps; i++) {
+        const driverPositionLap = {};
+        this.raceChart[i].racePositions.forEach(rp => {
+          driverPositionLap['pos' + rp.position] = rp;
+          driverPositionLap['pos' + rp.position].driverName = this.drivers
+            .filter(driver => driver.raceNumber === rp.raceNumber)
+            .map(driver => driver.driversNames.substring(0, 3).toUpperCase());
+        });
+        lapByLapDataSourceTmp.push(driverPositionLap);
+      }
+
+      this.lapByLapDataSource = new MatTableDataSource(lapByLapDataSourceTmp);
 
       if (this.eventEdition.allowedCategories.filter(cat => cat.shortname === 'F1').length > 0) {
         const tyres = [
@@ -225,27 +231,6 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
           this.tyreCompounds.soft = tyres[2];
         }
       }
-
-      const lapByLapDataSourceTmp = [];
-      const positions = this.raceChart[0].racePositions.length;
-      for (let i = 0; i < positions; i++) {
-        const driverPositionLap = {};
-        this.raceChart.forEach(lap => {
-          if (i < lap.racePositions.length) {
-            driverPositionLap['lap' + lap.lapNumber] = {
-              raceNumber: lap.racePositions[i].raceNumber,
-              driverName: this.drivers
-                .filter(driver => driver.raceNumber === lap.racePositions[i].raceNumber)
-                .map(driver => driver.driversNames.substring(0, 3).toUpperCase()),
-              raceTime: lap.racePositions[i].accumulatedRaceTime,
-              tyreCompound: lap.racePositions[i].tyreCompound
-            };
-          }
-        });
-        lapByLapDataSourceTmp.push(driverPositionLap);
-      }
-
-      this.lapByLapDataSource = new MatTableDataSource(lapByLapDataSourceTmp);
 
       const data = {
         labels: this.raceChart.map(lapRaceChart => lapRaceChart.lapNumber),

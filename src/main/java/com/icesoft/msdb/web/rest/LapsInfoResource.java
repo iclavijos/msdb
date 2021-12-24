@@ -82,7 +82,7 @@ public class LapsInfoResource {
     }
 
     @GetMapping("/event-sessions/{sessionId}/positions")
-    //@Cacheable(cacheNames = "positionsCache")
+    @Cacheable(cacheNames = "positionsCache")
     public ResponseEntity<List<RacePositionsDTO>> getPositions(@PathVariable Long sessionId) {
         SessionLapData sld = repo.findById(sessionId.toString())
             .orElseThrow(() -> new MSDBException("Invalid event session id " + sessionId));
@@ -91,9 +91,22 @@ public class LapsInfoResource {
             .sorted(Comparator.comparing(r -> Optional.ofNullable(r.getStartingPosition()).orElse(901)))
             .map(r -> Tuple.of(r.getEntry().getRaceNumber(), r.getEntry().getDriversName(), 0L, 0, Boolean.FALSE, ""))
             .collect(Collectors.toList());
-        RacePositionsDTO dataLap0 = new RacePositionsDTO(0, posLap0);
-        result.add(dataLap0);
-        result.addAll(sld.getPositionsPerLap());
+        RacePositionsDTO dataGrid = new RacePositionsDTO(0, posLap0);
+        List<RacePositionsDTO> positionsPerLap = sld.getPositionsPerLap();
+
+        // Set tyre compound for race start as same at the end of lap 1
+        List<RacePositionsDTO.RacePosition> grid = dataGrid.getRacePositions();
+        List<RacePositionsDTO.RacePosition> lap1 = positionsPerLap.get(0).getRacePositions();
+        grid.forEach(driverGrid -> {
+            String tyreCompound = lap1.stream()
+                .filter(driverLap -> driverLap.getRaceNumber().equals(driverGrid.getRaceNumber()))
+                .findFirst().get()
+                .getTyreCompound();
+            driverGrid.setTyreCompound(tyreCompound);
+        });
+
+        result.add(dataGrid);
+        result.addAll(positionsPerLap);
         return ResponseEntity.ok(result);
     }
 
