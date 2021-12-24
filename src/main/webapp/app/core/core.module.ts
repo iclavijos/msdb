@@ -3,6 +3,7 @@ import { DatePipe, registerLocaleData } from '@angular/common';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Title } from '@angular/platform-browser';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { far } from '@fortawesome/free-regular-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { CookieModule } from 'ngx-cookie';
@@ -78,7 +79,7 @@ export class MotorsportsDatabaseCoreModule {
     registerLocaleData(locale);
     registerLocaleData(localeES);
     registerLocaleData(localeCA);
-    iconLibrary.addIconPacks(fas, fab);
+    iconLibrary.addIconPacks(fas, fab, far);
     iconLibrary.addIcons(...fontAwesomeIcons);
     dpConfig.minDate = { year: moment().year() - 100, month: 1, day: 1 };
     languageService.init();

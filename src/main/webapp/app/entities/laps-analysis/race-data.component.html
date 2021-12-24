@@ -426,10 +426,12 @@
                                 <span *ngIf="racePosition[column.columnDef].position > 1 && i > 0">+{{ (racePosition[column.columnDef].accumulatedRaceTime - racePosition['pos1'].accumulatedRaceTime) | timeMaskPipe : true : false }}</span>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" *ngIf="racePosition[column.columnDef].tyreCompound">
                             <div class="col-12">
-                                <i class="fa fa-circle" *ngIf="racePosition[column.columnDef].tyreCompound"
-                                   [class.hardCompound]="racePosition[column.columnDef].tyreCompound.startsWith(tyreCompounds.hard)"
+                                <fa-icon [icon]="faCircle" *ngIf="racePosition[column.columnDef].tyreCompound.startsWith(tyreCompounds.hard)"
+                                     class="hardCompound">
+                                </fa-icon>
+                                <i class="fa fa-circle" *ngIf="!racePosition[column.columnDef].tyreCompound.startsWith(tyreCompounds.hard)"
                                    [class.mediumCompound]="racePosition[column.columnDef].tyreCompound.startsWith(tyreCompounds.medium)"
                                    [class.softCompound]="racePosition[column.columnDef].tyreCompound.startsWith(tyreCompounds.soft)"></i>
                                 <span>{{ racePosition[column.columnDef].tyreCompound }}</span>

@@ -26,6 +26,8 @@ HCMore(Highcharts);
 
 import { Options, ChangeContext } from '@angular-slider/ngx-slider';
 
+import { faCircle } from '@fortawesome/free-regular-svg-icons';
+
 @Component({
   selector: 'jhi-race-data',
   templateUrl: './race-data.component.html',
@@ -67,6 +69,8 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
   Highcharts: typeof Highcharts = Highcharts;
   chartOptions: Highcharts.Options;
   chart: Highcharts.Chart;
+
+  faCircle = faCircle;
 
   optionsSlider: Options = {
     floor: 0,
