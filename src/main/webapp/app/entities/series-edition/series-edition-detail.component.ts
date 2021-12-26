@@ -30,6 +30,8 @@ export class NavigationIds {
 
 export class EventAndWinners {
   eventEdition: IEventEdition;
+  racetrackLogoUrl: string;
+  racetrackLayoutUrl: string;
   winners: any[];
 }
 
