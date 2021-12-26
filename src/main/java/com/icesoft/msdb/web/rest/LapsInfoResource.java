@@ -89,6 +89,7 @@ public class LapsInfoResource {
         List<RacePositionsDTO> result = new ArrayList<>();
         List<Tuple6<String, String, Long, Integer, Boolean, String>> posLap0 = resultsRepo.findBySessionIdOrderByFinalPositionAsc(sessionId).stream()
             .sorted(Comparator.comparing(r -> Optional.ofNullable(r.getStartingPosition()).orElse(901)))
+            .filter(r -> r.getFinalPosition() != 901) // Do not include DNS
             .map(r -> Tuple.of(r.getEntry().getRaceNumber(), r.getEntry().getDriversName(), 0L, 0, Boolean.FALSE, ""))
             .collect(Collectors.toList());
         RacePositionsDTO dataGrid = new RacePositionsDTO(0, posLap0);
