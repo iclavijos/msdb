@@ -58,6 +58,11 @@
 
 @import 'core/angular-modal.scss';
 
+.mat-header-cell {
+  font-size: 16px;
+  font-weight: 500;
+}
+
 .selection-list-viewport {
   height: 300px;
   width: 100%;
@@ -69,7 +74,7 @@
   font-size: large;
 }
 
-.navigation-arrows {
+.pointer {
   cursor: pointer;
 }
 

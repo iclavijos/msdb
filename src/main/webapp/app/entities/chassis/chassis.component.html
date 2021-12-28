@@ -35,49 +35,49 @@
                             <span jhiTranslate="motorsportsDatabaseApp.chassis.home.notFound">No chassis found</span>
                         </div>
                         <div class="table-responsive" [hidden]="chassis?.length === 0">
-                            <table mat-table class="table table-hover" [dataSource]="chassis"
+                            <mat-table class="table table-hover" [dataSource]="chassis"
                                    matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
 
                                 <ng-container matColumnDef="name">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.chassis.name' | translate }}</th>
-                                    <td mat-cell *matCellDef="let chassis">{{ chassis.name }}</td>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.chassis.name' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let chassis">{{ chassis.name }}</mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="manufacturer">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.chassis.manufacturer' | translate }}</th>
-                                    <td mat-cell *matCellDef="let chassis">{{ chassis.manufacturer }}</td>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.chassis.manufacturer' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let chassis">{{ chassis.manufacturer }}</mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="debutYear">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.chassis.debutYear' | translate }}</th>
-                                    <td mat-cell *matCellDef="let chassis">{{ chassis.debutYear }}</td>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.chassis.debutYear' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let chassis">{{ chassis.debutYear }}</mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="derivedFrom">
-                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.chassis.derivedFrom' | translate }}</th>
-                                    <td mat-cell *matCellDef="let chassis">
+                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.chassis.derivedFrom' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let chassis">
                                         <div *ngIf="chassis.derivedFrom">
                                             <a [routerLink]="['/chassis', chassis.derivedFrom?.id, 'view' ]"
                                                (click)="$event.stopPropagation()">
                                                 {{chassis.derivedFrom?.manufacturer}} {{chassis.derivedFrom?.name}}
                                             </a>
                                         </div>
-                                    </td>
+                                    </mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="rebranded">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
                                         {{ 'motorsportsDatabaseApp.chassis.rebranded' | translate }}
                                         <span class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="{{ 'motorsportsDatabaseApp.chassis.rebrandedTooltip' | translate }}"></span>
-                                    </th>
-                                    <td mat-cell *matCellDef="let chassis">
-                                        <i [ngClass]="chassis.rebranded ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
-                                    </td>
+                                    </mat-header-cell>
+                                    <mat-cell *matCellDef="let chassis">
+                                        <i [ngClass]="chassis.rebranded ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="buttons">
-                                    <th mat-header-cell *matHeaderCellDef></th>
-                                    <td mat-cell *matCellDef="let chassis">
+                                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                    <mat-cell *matCellDef="let chassis">
                                         <div class="btn-group">
                                             <button type="submit"
                                                     *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
@@ -96,13 +96,13 @@
                                                 <fa-icon [icon]="'times'"></fa-icon>
                                             </button>
                                         </div>
-                                    </td>
+                                    </mat-cell>
                                 </ng-container>
 
-                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-                                    [routerLink]="['/chassis', row.id, 'view' ]"></tr>
-                            </table>
+                                <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                                <mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
+                                    [routerLink]="['/chassis', row.id, 'view' ]"></mat-row>
+                            </mat-table>
                             <mat-paginator [length]="resultsLength"
                                            [pageSizeOptions]="[5, 10, 20]"
                                            [pageSize]="10"

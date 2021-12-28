@@ -1,3 +1,11 @@
 .center-align {
-  text-align: center;
+  justify-content: center;
+}
+
+.mat-column-name {
+  flex: 0 0 18%;
+}
+
+.mat-column-points {
+  flex: 0 0 20%;
 }

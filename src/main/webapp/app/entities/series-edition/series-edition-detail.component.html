@@ -12,14 +12,14 @@
                             </div>
                             <div class="col-md-auto">
                                 <div class="row">
-                                    <fa-icon class="navigation-arrows" *ngIf="previousEditionId" [icon]="'angle-double-left'" size="2x" (click)="gotoPrevious()"></fa-icon>
+                                    <fa-icon class="pointer" *ngIf="previousEditionId" [icon]="'angle-double-left'" size="2x" (click)="gotoPrevious()"></fa-icon>
                                     <div class="select-year-panel">
                                         <mat-select id="yearSelect" (selectionChange)="jumpToEdition($event.value)">
                                             <mat-option></mat-option>
                                             <mat-option *ngFor="let edition of editions" [value]="edition.id">{{ edition.editionYear }}</mat-option>
                                         </mat-select>
                                     </div>
-                                    <fa-icon class="navigation-arrows" *ngIf="nextEditionId" [icon]="'angle-double-right'" size="2x" (click)="gotoNext()"></fa-icon>
+                                    <fa-icon class="pointer" *ngIf="nextEditionId" [icon]="'angle-double-right'" size="2x" (click)="gotoNext()"></fa-icon>
                                 </div>
                             </div>
                         </div>
@@ -381,7 +381,7 @@
         </div>
     </div>
     <div class="col-6">
-        <div id="map"
+        <div id="map" class="fixed-top"
              leaflet
              [leafletOptions]="mapOptions"
              (leafletMapReady)="onMapReady($event)"

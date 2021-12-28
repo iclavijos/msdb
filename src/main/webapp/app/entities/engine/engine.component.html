@@ -35,72 +35,72 @@
                             <span jhiTranslate="motorsportsDatabaseApp.engine.home.notFound">No engines found</span>
                         </div>
                         <div class="table-responsive" [hidden]="engines?.length === 0">
-                            <table mat-table class="table table-hover" [dataSource]="engines"
+                            <mat-table class="table table-hover" [dataSource]="engines"
                                    matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
 
                                 <ng-container matColumnDef="name">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.engine.name' | translate }}</th>
-                                    <td mat-cell *matCellDef="let engine">{{ engine.name }}</td>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.engine.name' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">{{ engine.name }}</mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="manufacturer">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.manufacturer' | translate }}</th>
-                                    <td mat-cell *matCellDef="let engine">{{ engine.manufacturer }}</td>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.manufacturer' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">{{ engine.manufacturer }}</mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="capacity">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.capacity' | translate }}</th>
-                                    <td mat-cell *matCellDef="let engine">{{ engine.capacity }}</td>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.capacity' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">{{ engine.capacity }}</mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="architecture">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.architecture' | translate }}</th>
-                                    <td mat-cell *matCellDef="let engine">{{ engine.architecture }}</td>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.architecture' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">{{ engine.architecture }}</mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="debutYear">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.debutYear' | translate }}</th>
-                                    <td mat-cell *matCellDef="let engine">{{ engine.debutYear }}</td>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.debutYear' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">{{ engine.debutYear }}</mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="petrolEngine">
-                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.petrolEngine' | translate }}</th>
-                                    <td mat-cell *matCellDef="let engine">
-                                        <i [ngClass]="engine.petrolEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
-                                    </td>
+                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.petrolEngine' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.petrolEngine ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="dieselEngine">
-                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.dieselEngine' | translate }}</th>
-                                    <td mat-cell *matCellDef="let engine">
-                                        <i [ngClass]="engine.dieselEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
-                                    </td>
+                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.dieselEngine' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.dieselEngine ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="electricEngine">
-                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.electricEngine' | translate }}</th>
-                                    <td mat-cell *matCellDef="let engine">
-                                        <i [ngClass]="engine.electricEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
-                                    </td>
+                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.electricEngine' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.electricEngine ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="otherEngine">
-                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.otherEngine' | translate }}</th>
-                                    <td mat-cell *matCellDef="let engine">
-                                        <i [ngClass]="engine.otherEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
-                                    </td>
+                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.otherEngine' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.otherEngine ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="turbo">
-                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.turbo' | translate }}</th>
-                                    <td mat-cell *matCellDef="let engine">
-                                        <i [ngClass]="engine.turbo ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
-                                    </td>
+                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.turbo' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.turbo ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="buttons">
-                                    <th mat-header-cell *matHeaderCellDef></th>
-                                    <td mat-cell *matCellDef="let engine">
+                                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">
                                         <div class="btn-group">
                                             <button type="submit"
                                                     *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
@@ -119,13 +119,13 @@
                                                 <fa-icon [icon]="'times'"></fa-icon>
                                             </button>
                                         </div>
-                                    </td>
+                                    </mat-cell>
                                 </ng-container>
 
-                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-                                    [routerLink]="['/engine', row.id, 'view' ]"></tr>
-                            </table>
+                                <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                                <mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
+                                    [routerLink]="['/engine', row.id, 'view' ]"></mat-row>
+                            </mat-table>
                             <mat-paginator [length]="resultsLength"
                                            [pageSizeOptions]="[5, 10, 20]"
                                            [pageSize]="10"

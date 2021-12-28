@@ -84,7 +84,7 @@
                                 <label *ngIf="entry.team"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.team">Team</span></label>
                                 <div *ngIf="entry.team">
                                     <a [routerLink]="['/team', entry.team?.id, 'view' ]" >
-                                        <img *ngIf="entry.team?.logoUrl" [src]="entry.team.logoUrl" class="img-fluid"/>
+                                        <img *ngIf="entry.team?.logoUrl" [src]="entry.team.logoUrl" class="img-fluid logo-img"/>
                                         <span *ngIf="!entry.team?.logoUrl">{{ entry.team?.name }}</span>
                                     </a>
                                 </div></br>
@@ -105,13 +105,13 @@
                                 <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.tyres">Tyres</span></label>
                                 <div *ngIf="entry.tyres?.logoUrl">
                                     <a [routerLink]="['/tyre-provider', entry.tyres?.id, 'view' ]" >
-                                        <img [src]="entry.tyres?.logoUrl" class="img-fluid" alt="tyres logo"/>
+                                        <img [src]="entry.tyres?.logoUrl" class="img-fluid logo-img" alt="tyres logo"/>
                                     </a>
                                 </div></br>
                                 <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.fuel">Fuel</span></label>
                                 <div *ngIf="entry.fuel">
                                     <a [routerLink]="['/fuel-provider', entry.fuel?.id, 'view' ]" >
-                                        <img [src]="entry.fuel?.logoUrl" class="img-fluid" alt="fuel logo"/>
+                                        <img [src]="entry.fuel?.logoUrl" class="img-fluid logo-img" alt="fuel logo"/>
                                     </a>
                                 </div></br>
                                 <label *ngIf="eventEdition.allowedCategories.length != 1"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category">Category</span></label>

@@ -35,36 +35,36 @@
                             <span jhiTranslate="motorsportsDatabaseApp.event.home.notFound">No events found</span>
                         </div>
                         <div class="table-responsive" [hidden]="events?.length === 0">
-                            <table mat-table class="table table-hover" [dataSource]="events"
+                            <mat-table class="table table-hover" [dataSource]="events"
                                    matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
 
                                 <ng-container matColumnDef="name">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.event.name' | translate }}</th>
-                                    <td mat-cell *matCellDef="let event">{{ event.name }}</td>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.event.name' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let event">{{ event.name }}</mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="description">
-                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.event.description' | translate }}</th>
-                                    <td mat-cell *matCellDef="let event">{{ event.description }}</td>
+                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.event.description' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let event">{{ event.description }}</mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="isRally">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.event.rally' | translate }}</th>
-                                    <td mat-cell *matCellDef="let event">
-                                        <i [ngClass]="event.rally ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
-                                    </td>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.event.rally' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let event">
+                                        <i [ngClass]="event.rally ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="isRaid">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.event.raid' | translate }}</th>
-                                    <td mat-cell *matCellDef="let event">
-                                        <i [ngClass]="event.raid ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
-                                    </td>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.event.raid' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let event">
+                                        <i [ngClass]="event.raid ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="buttons">
-                                    <th mat-header-cell *matHeaderCellDef></th>
-                                    <td mat-cell *matCellDef="let event">
+                                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                    <mat-cell *matCellDef="let event">
                                         <div class="btn-group">
                                             <button type="submit"
                                                     *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
@@ -83,13 +83,13 @@
                                                 <fa-icon [icon]="'times'"></fa-icon>
                                             </button>
                                         </div>
-                                    </td>
+                                    </mat-cell>
                                 </ng-container>
 
-                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-                                    [routerLink]="['/event', row.id, 'view' ]"></tr>
-                            </table>
+                                <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                                <mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
+                                    [routerLink]="['/event', row.id, 'view' ]"></mat-row>
+                            </mat-table>
                             <mat-paginator [length]="resultsLength"
                                            [pageSizeOptions]="[5, 10, 20]"
                                            [pageSize]="10"

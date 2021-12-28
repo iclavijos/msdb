@@ -61,7 +61,7 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
   categoryToFilter: string;
   numberOfResults = 0;
   driversPerformance: any[];
-  filteredDriversPerformance: any[];
+  filteredDriversPerformance = [];
 
   raceGapsDataSource = new MatTableDataSource([]);
   raceGapsDisplayedColumns = ['driver', 'raceTime'];
@@ -293,6 +293,7 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
 
     this.eventSessionService.findDriversPerformance(this.session.id).subscribe(res => {
       this.driversPerformance = res.sort((a, b) => a.min - b.min);
+      this.filteredDriversPerformance = this.driversPerformance;
       this.categoryToFilter = this.eventEdition.allowedCategories[0].shortname;
       this.filterCategories();
       this.chartOptions = {
@@ -538,11 +539,10 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
   }
 
   sortedDriversAverages() {
-    return this.driversAverages.sort((a, b) => (a.raceNumber > b.raceNumber ? 1 : 0));
+    return this.driversAverages.sort((a, b) => (parseInt(a.raceNumber, 10) > parseInt(b.raceNumber, 10) ? 1 : -1));
   }
 
   private convertDriversNames() {
-    // }json: any) {
     const result = [];
     this.entries.map(entry => {
       const driversNames = new DriversNames();
@@ -582,5 +582,9 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
     const result = [];
     for (let i = 0; i < json.length; i++) result.push(Object.assign(new LapPositions(), json[i]));
     return result;
+  }
+
+  isChecked(raceNumber: string) {
+    return this.selectedDrivers.some(d => d === raceNumber);
   }
 }

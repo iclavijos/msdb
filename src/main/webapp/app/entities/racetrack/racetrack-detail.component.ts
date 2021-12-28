@@ -35,7 +35,7 @@ export class RacetrackDetailComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['name', 'length', 'yearFirstUse', 'layoutImage', 'active', 'buttons'];
   nextEventsDisplayedColumns: string[] = ['date', 'eventName', 'layout', 'layoutImage'];
-  prevEventsDisplayedColumns: string[] = ['date', 'eventName', 'winners'];
+  prevEventsDisplayedColumns: string[] = ['date', 'prevEventName', 'winners'];
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 

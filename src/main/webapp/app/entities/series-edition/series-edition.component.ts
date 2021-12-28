@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { merge, of as observableOf, Subscription } from 'rxjs';
@@ -10,15 +10,18 @@ import { ISeriesEdition, SeriesEdition } from 'app/shared/model/series-edition.m
 import { SeriesEditionService } from './series-edition.service';
 import { SeriesEditionUpdateComponent } from './series-edition-update.component';
 
+import { AccountService } from 'app/core/auth/account.service';
+
 import { MatPaginator, MatSort } from '@angular/material';
 
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'jhi-series-edition',
-  templateUrl: './series-edition.component.html'
+  templateUrl: './series-edition.component.html',
+  styleUrls: ['series-edition.scss']
 })
-export class SeriesEditionComponent implements AfterViewInit, OnDestroy {
+export class SeriesEditionComponent implements AfterViewInit, OnInit, OnDestroy {
   @Input() series: Series;
   currentAccount: any;
   seriesEditions: ISeriesEdition[];
@@ -33,7 +36,7 @@ export class SeriesEditionComponent implements AfterViewInit, OnDestroy {
   previousPage: any;
   reverse: any;
 
-  displayedColumns: string[] = ['logo', 'period', 'name', 'singleChassis', 'singleEngine', 'singleTyres', 'allowedCategories', 'buttons'];
+  displayedColumns: string[] = ['logo', 'period', 'name', 'singleChassis', 'singleEngine', 'singleTyres', 'allowedCategories'];
 
   resultsLength = 0;
   isLoadingResults = true;
@@ -48,8 +51,16 @@ export class SeriesEditionComponent implements AfterViewInit, OnDestroy {
     protected dataUtils: JhiDataUtils,
     protected router: Router,
     protected eventManager: JhiEventManager,
-    protected dialog: MatDialog
+    protected dialog: MatDialog,
+    private accountService: AccountService
   ) {}
+
+  ngOnInit() {
+    const hasAnyAuthority = this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_EDITOR']);
+    if (hasAnyAuthority) {
+      this.displayedColumns.push('buttons');
+    }
+  }
 
   ngAfterViewInit() {
     this.registerChangeInSeriesEditions();

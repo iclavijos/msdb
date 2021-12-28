@@ -35,24 +35,24 @@
                             <span jhiTranslate="motorsportsDatabaseApp.fuelProvider.home.notFound">No fuel providers found</span>
                         </div>
                         <div class="table-responsive" [hidden]="fuelProviders?.length === 0">
-                            <table mat-table class="table table-hover" [dataSource]="fuelProviders"
+                            <mat-table class="table table-hover" [dataSource]="fuelProviders"
                                    matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
 
                                 <ng-container matColumnDef="name">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.fuelProvider.name' | translate }}</th>
-                                    <td mat-cell *matCellDef="let fuelProvider">{{ fuelProvider.name }}</td>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.fuelProvider.name' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let fuelProvider">{{ fuelProvider.name }}</mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="logo">
-                                    <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.fuelProvider.logo' | translate }}</th>
-                                    <td mat-cell *matCellDef="let fuelProvider">
+                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.fuelProvider.logo' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let fuelProvider">
                                         <img *ngIf="fuelProvider?.logoUrl" [src]="fuelProvider.logoUrl" style="max-height: 30px;" alt="fuel provider logo"/>
-                                    </td>
+                                    </mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="buttons">
-                                    <th mat-header-cell *matHeaderCellDef></th>
-                                    <td mat-cell *matCellDef="let fuelProvider">
+                                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                    <mat-cell *matCellDef="let fuelProvider">
                                         <div class="btn-group">
                                             <button type="submit"
                                                     *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
@@ -71,13 +71,13 @@
                                                 <fa-icon [icon]="'times'"></fa-icon>
                                             </button>
                                         </div>
-                                    </td>
+                                    </mat-cell>
                                 </ng-container>
 
-                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-                                    [routerLink]="['/fuel-provider', row.id, 'view' ]"></tr>
-                            </table>
+                                <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                                <mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
+                                    [routerLink]="['/fuel-provider', row.id, 'view' ]"></mat-row>
+                            </mat-table>
                             <mat-paginator [length]="resultsLength"
                                            [pageSizeOptions]="[5, 10, 20]"
                                            [pageSize]="10"

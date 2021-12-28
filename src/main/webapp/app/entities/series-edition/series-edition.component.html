@@ -22,59 +22,59 @@
                         <span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.home.notFound">No series editions found</span>
                     </div>
                     <div class="table-responsive" [hidden]="seriesEditions?.length === 0">
-                        <table mat-table class="table table-hover" [dataSource]="seriesEditions"
+                        <mat-table class="table table-hover" [dataSource]="seriesEditions"
                                matSort matSortActive="period" matSortDisableClear matSortDirection="desc">
 
                             <ng-container matColumnDef="logo">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-                                <td mat-cell *matCellDef="let seriesEdition">
-                                    <img *ngIf="seriesEdition?.logoUrl" [src]="seriesEdition.logoUrl" style="max-height: 50px;" alt="series logo"/>
-                                </td>
+                                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                <mat-cell *matCellDef="let seriesEdition">
+                                    <img *ngIf="seriesEdition?.logoUrl" [src]="seriesEdition.logoUrl" style="max-width: 100px; max-height: 50px;" alt="series logo"/>
+                                </mat-cell>
                             </ng-container>
 
                             <ng-container matColumnDef="period">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.series.seriesEdition.period' | translate }}</th>
-                                <td mat-cell *matCellDef="let seriesEdition">{{ seriesEdition.period }}</td>
+                                <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.series.seriesEdition.period' | translate }}</mat-header-cell>
+                                <mat-cell *matCellDef="let seriesEdition" width="120px">{{ seriesEdition.period }}</mat-cell>
                             </ng-container>
 
                             <ng-container matColumnDef="name">
-                                <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.name' | translate }}</th>
-                                <td mat-cell *matCellDef="let seriesEdition">{{ seriesEdition.editionName }}</td>
+                                <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.name' | translate }}</mat-header-cell>
+                                <mat-cell mat-cell *matCellDef="let seriesEdition">{{ seriesEdition.editionName }}</mat-cell>
                             </ng-container>
 
                             <ng-container matColumnDef="singleChassis">
-                                <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.singleChassis' | translate }}</th>
-                                <td mat-cell *matCellDef="let seriesEdition">
-                                    <i [ngClass]="seriesEdition.singleChassis ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
-                                </td>
+                                <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.singleChassis' | translate }}</mat-header-cell>
+                                <mat-cell mat-cell *matCellDef="let seriesEdition">
+                                    <i [ngClass]="seriesEdition.singleChassis ? 'fa fa-fw fa-check' : 'none'"></i>
+                                </mat-cell>
                             </ng-container>
 
                             <ng-container matColumnDef="singleEngine">
-                                <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.singleEngine' | translate }}</th>
-                                <td mat-cell *matCellDef="let seriesEdition">
-                                    <i [ngClass]="seriesEdition.singleEngine ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
-                                </td>
+                                <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.singleEngine' | translate }}</mat-header-cell>
+                                <mat-cell mat-cell *matCellDef="let seriesEdition">
+                                    <i [ngClass]="seriesEdition.singleEngine ? 'fa fa-fw fa-check' : 'none'"></i>
+                                </mat-cell>
                             </ng-container>
 
                             <ng-container matColumnDef="singleTyres">
-                                <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.singleTyre' | translate }}</th>
-                                <td mat-cell *matCellDef="let seriesEdition">
-                                    <i [ngClass]="seriesEdition.singleTyre ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
-                                </td>
+                                <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.singleTyre' | translate }}</mat-header-cell>
+                                <mat-cell mat-cell *matCellDef="let seriesEdition">
+                                    <i [ngClass]="seriesEdition.singleTyre ? 'fa fa-fw fa-check' : 'none'"></i>
+                                </mat-cell>
                             </ng-container>
 
                             <ng-container matColumnDef="allowedCategories">
-                                <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.allowedCategories' | translate }}</th>
-                                <td mat-cell *matCellDef="let seriesEdition">
+                                <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.allowedCategories' | translate }}</mat-header-cell>
+                                <mat-cell *matCellDef="let seriesEdition">
                                     <div *ngFor="let category of seriesEdition.allowedCategories">
                                         <span class="tag tag-info">{{ category.shortname }}</span>
                                     </div>
-                                </td>
+                                </mat-cell>
                             </ng-container>
 
                             <ng-container matColumnDef="buttons">
-                                <th mat-header-cell *matHeaderCellDef></th>
-                                <td mat-cell *matCellDef="let seriesEdition">
+                                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                <mat-cell mat-cell *matCellDef="let seriesEdition">
                                     <div class="btn-group">
                                         <button type="submit"
                                                 *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
@@ -92,13 +92,13 @@
                                             <fa-icon [icon]="'times'"></fa-icon>
                                         </button>
                                     </div>
-                                </td>
+                                </mat-cell>
                             </ng-container>
 
-                            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-                                [routerLink]="['/series', 'edition', row.id, 'view' ]"></tr>
-                        </table>
+                            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                            <mat-row matRipple *matRowDef="let row; columns: displayedColumns;" class="pointer"
+                                [routerLink]="['/series', 'edition', row.id, 'view' ]"></mat-row>
+                        </mat-table>
                         <mat-paginator [length]="resultsLength"
                                        [pageSizeOptions]="[5, 10, 20]"
                                        [pageSize]="10"

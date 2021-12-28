@@ -87,6 +87,7 @@
         <div *ngFor="let t of temp(math.ceil(getFilteredDrivers().length/4)).fill(0); index as i" class="row">
             <div *ngFor="let item of getFilteredDrivers().slice(4*i,4*(i + 1));" class="col-md-3">
                 <mat-checkbox [value]="item.raceNumber"
+                              [checked]="isChecked(item.raceNumber)"
                     (change)="refreshLapTimesTable(item.raceNumber, $event)">#{{ item.raceNumber }} {{ item.driversNames }}
                 </mat-checkbox>
             </div>
@@ -120,6 +121,49 @@
                 <i class="fa fa-circle fastestLap"></i>{{'motorsportsDatabaseApp.lapbylap.fastestLap' | translate}}&nbsp;
                 <i class="fa fa-circle fastLap"></i>{{'motorsportsDatabaseApp.lapbylap.fastLap' | translate}}&nbsp;
                 <i class="fa fa-circle personalBest"></i>{{'motorsportsDatabaseApp.lapbylap.personalBest' | translate}}
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab label="{{'motorsportsDatabaseApp.lapbylap.lapCharts' | translate }}">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
+                    <mat-form-field>
+                        <mat-label>Filter by category</mat-label>
+                        <mat-select [(ngModel)]="categoryToFilter" (ngModelChange)="resetCategoryLapTimes()">
+                            <mat-option></mat-option>
+                            <mat-option *ngFor="let category of eventEdition.allowedCategories" [value]="category.shortname">{{category.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div *ngFor="let t of temp(math.ceil(getFilteredDrivers().length/4)).fill(0); index as i" class="row">
+                    <div *ngFor="let item of getFilteredDrivers().slice(4*i,4*(i + 1));" class="col-md-3">
+                        <mat-checkbox [value]="item.raceNumber"
+                                      [checked]="isChecked(item.raceNumber)"
+                                      (change)="refreshLapTimesTable(item.raceNumber, $event)">#{{ item.raceNumber }} {{ item.driversNames }}
+                        </mat-checkbox>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">{{'motorsportsDatabaseApp.lapbylap.lapsRange' | translate}}</label>
+            <div class="col-sm-10">
+                <ngx-slider
+                    [(value)]="lapsRangeFrom"
+                    [(highValue)]="lapsRangeTo"
+                    [options]="optionsSlider"
+                    (userChange)="changeLapsRange($event)">
+                </ngx-slider>
+            </div>
+        </div>
+        <div *ngIf="lapTimes.length > 0" class="row">
+            <div class="col-md-12">
+                <p-chart type="line" [data]="data" [options]="options"></p-chart>
             </div>
         </div>
     </mat-tab>
@@ -236,52 +280,11 @@
             </div>
             <div class="col-md-2">
                 <mat-selection-list #selectedDriversAvg>
-                    <mat-list-option *ngFor="let item of sortedDriversAverages()" checkboxPosition="before" [value]="item">
+                    <mat-list-option *ngFor="let item of sortedDriversAverages()" checkboxPosition="before"
+                                     [value]="item" [selected]="isChecked(item.raceNumber)">
                         #{{ item.raceNumber }} {{ item.driverName }}
                     </mat-list-option>
                 </mat-selection-list>
-            </div>
-        </div>
-    </mat-tab>
-    <mat-tab label="{{'motorsportsDatabaseApp.lapbylap.lapCharts' | translate }}">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
-                    <mat-form-field>
-                        <mat-label>Filter by category</mat-label>
-                        <mat-select [(ngModel)]="categoryToFilter" (ngModelChange)="resetCategoryLapTimes()">
-                            <mat-option></mat-option>
-                            <mat-option *ngFor="let category of eventEdition.allowedCategories" [value]="category.shortname">{{category.name}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div *ngFor="let t of temp(math.ceil(getFilteredDrivers().length/4)).fill(0); index as i" class="row">
-                    <div *ngFor="let item of getFilteredDrivers().slice(4*i,4*(i + 1));" class="col-md-3">
-                        <mat-checkbox [value]="item.raceNumber"
-                                      (change)="refreshLapTimesTable(item.raceNumber, $event)">#{{ item.raceNumber }} {{ item.driversNames }}
-                        </mat-checkbox>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label">{{'motorsportsDatabaseApp.lapbylap.lapsRange' | translate}}</label>
-            <div class="col-sm-10">
-                <ngx-slider
-                    [(value)]="lapsRangeFrom"
-                    [(highValue)]="lapsRangeTo"
-                    [options]="optionsSlider"
-                    (userChange)="changeLapsRange($event)">
-                </ngx-slider>
-            </div>
-        </div>
-        <div *ngIf="lapTimes.length > 0" class="row">
-            <div class="col-md-12">
-                <p-chart type="line" [data]="data" [options]="options"></p-chart>
             </div>
         </div>
     </mat-tab>
@@ -352,7 +355,9 @@
         <mat-form-field>
             <mat-label>{{'motorsportsDatabaseApp.lapbylap.lap' | translate}}</mat-label>
             <mat-select (selectionChange)="showRacePositions($event)">
-                <mat-option *ngFor="let lap of raceChart" [value]="lap.lapNumber">{{lap.lapNumber}}</mat-option>
+                <mat-option *ngFor="let lap of raceChart" [value]="lap.lapNumber">
+                    {{lap.lapNumber !== 0 ? lap.lapNumber : 'Grid'}}
+                </mat-option>
             </mat-select>
         </mat-form-field>
     </div>
@@ -367,11 +372,12 @@
             <ng-container matColumnDef="tyreCompound">
                 <mat-header-cell *matHeaderCellDef> Tyre </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <i class="fa fa-circle" *ngIf="element.tyreCompound"
-                       [class.hardCompound]="element.tyreCompound.startsWith(tyreCompounds.hard)"
+                    <fa-icon [icon]="faCircle" *ngIf="element.tyreCompound.startsWith(tyreCompounds.hard)" class="hardCompound">
+                    </fa-icon>
+                    <i class="fa fa-circle" *ngIf="!element.tyreCompound.startsWith(tyreCompounds.hard)"
                        [class.mediumCompound]="element.tyreCompound.startsWith(tyreCompounds.medium)"
                        [class.softCompound]="element.tyreCompound.startsWith(tyreCompounds.soft)"></i>
-                    {{element.tyreCompound}}
+                    <span>{{ element.tyreCompound }}</span>
                 </mat-cell>
             </ng-container>
 

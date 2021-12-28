@@ -2,11 +2,17 @@ mat-card {
   margin-bottom: 10px;
 }
 
+.mat-column-logo {
+  flex: 0 0 150px;
+}
+.mat-column-period {
+  flex: 0 0 100px;
+}
 .mat-column-date {
   flex: 0 0 10%;
 }
 .mat-column-name {
-  flex: 0 0 20%;
+  flex: 0 0 30%;
 }
 
 .mat-column-poster {
