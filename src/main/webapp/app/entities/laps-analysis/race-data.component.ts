@@ -63,6 +63,9 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
   driversPerformance: any[];
   filteredDriversPerformance = [];
 
+  gapsRaceChart: any;
+  optionsGapsRaceChart: any;
+
   raceGapsDataSource = new MatTableDataSource([]);
   raceGapsDisplayedColumns = ['driver', 'raceTime'];
 
@@ -209,7 +212,13 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
           driverPositionLap['pos' + rp.position] = rp;
           driverPositionLap['pos' + rp.position].driverName = this.drivers
             .filter(driver => driver.raceNumber === rp.raceNumber)
-            .map(driver => driver.driversNames.substring(0, 3).toUpperCase());
+            .map(driver =>
+              driver.driversNames
+                .substring(0, 3)
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toUpperCase()
+            );
         });
         lapByLapDataSourceTmp.push(driverPositionLap);
       }
@@ -237,15 +246,20 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
       }
 
       const data = {
-        labels: this.raceChart.map(lapRaceChart => lapRaceChart.lapNumber),
+        labels: this.raceChart.map(lapRaceChart =>
+          lapRaceChart.lapNumber === 0
+            ? this.translateService.instant('motorsportsDatabaseApp.lapbylap.grid')
+            : this.translateService.instant('motorsportsDatabaseApp.lapbylap.lap') + ' ' + lapRaceChart.lapNumber
+        ),
         datasets: []
       };
-      const labels = this.raceChart[0].racePositions.map(pos => pos.raceNumber);
+      const labels = this.raceChart[0].racePositions.map(pos => pos.raceNumber + ' ' + pos.driverName);
       this.optionsRaceChart = {
         tooltips: {
           callbacks: {
             label(tooltipItem, dataset) {
-              return '#' + dataset.datasets[tooltipItem.datasetIndex].label;
+              const item = dataset.datasets[tooltipItem.datasetIndex];
+              return '#' + item.label + ' - Pos ' + tooltipItem.value;
             }
           }
         },
@@ -256,10 +270,10 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
               ticks: {
                 min: 1,
                 reverse: true,
-                autoSkip: false,
+                stepSize: 1,
                 // eslint-disable-next-line
                 callback(value, index, values) {
-                  return '#' + labels[index];
+                  return value - 1 > labels.length ? '' : '#' + labels[value - 1];
                 }
               }
             }
@@ -274,7 +288,7 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
         const dataset = {
           label,
           data: this.raceChart
-            .map(lapRaceChart => lapRaceChart.racePositions.filter(rp => rp.raceNumber === label))
+            .map(lapRaceChart => lapRaceChart.racePositions.filter(rp => rp.raceNumber + ' ' + rp.driverName === label))
             .map(l => {
               if (l[0] !== undefined) {
                 return l[0].position;
