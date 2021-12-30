@@ -66,6 +66,9 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
   gapsRaceChart: any;
   optionsGapsRaceChart: any;
 
+  tyresRaceChart: any;
+  optionsTyresRaceChart: any;
+
   raceGapsDataSource = new MatTableDataSource([]);
   raceGapsDisplayedColumns = ['driver', 'raceTime'];
 
