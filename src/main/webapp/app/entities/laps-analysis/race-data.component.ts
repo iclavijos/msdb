@@ -245,12 +245,18 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
         }
       }
 
+      const graphicLabels = this.raceChart.map(lapRaceChart =>
+        lapRaceChart.lapNumber === 0
+          ? this.translateService.instant('motorsportsDatabaseApp.lapbylap.grid')
+          : this.translateService.instant('motorsportsDatabaseApp.lapbylap.lap') + ' ' + lapRaceChart.lapNumber
+      );
+
       const data = {
-        labels: this.raceChart.map(lapRaceChart =>
-          lapRaceChart.lapNumber === 0
-            ? this.translateService.instant('motorsportsDatabaseApp.lapbylap.grid')
-            : this.translateService.instant('motorsportsDatabaseApp.lapbylap.lap') + ' ' + lapRaceChart.lapNumber
-        ),
+        labels: graphicLabels,
+        datasets: []
+      };
+      const gapsData = {
+        labels: graphicLabels,
         datasets: []
       };
       const labels = this.raceChart[0].racePositions.map(pos => pos.raceNumber + ' ' + pos.driverName);
@@ -283,6 +289,46 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
           position: 'bottom'
         }
       };
+
+      this.optionsGapsRaceChart = {
+        tooltips: {
+          callbacks: {
+            label(tooltipItem, dataset) {
+              if (!this.timeMask) {
+                this.timeMask = new TimeMaskPipe();
+              }
+              const timeGap = dataset.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+              if (timeGap > 0) {
+                return dataset.datasets[tooltipItem.datasetIndex].label + ' +' + this.timeMask.transform(timeGap, true, false);
+              } else {
+                return dataset.datasets[tooltipItem.datasetIndex].label;
+              }
+            }
+          }
+        },
+        scales: {
+          yAxes: [
+            {
+              display: true,
+              ticks: {
+                min: 0,
+                beginAtZero: true,
+                // eslint-disable-next-line
+                callback(value, index, values) {
+                  if (!this.timeMask) {
+                    this.timeMask = new TimeMaskPipe();
+                  }
+                  return this.timeMask.transform(value, false, false);
+                }
+              }
+            }
+          ]
+        },
+        legend: {
+          position: 'bottom'
+        }
+      };
+
       labels.forEach(label => {
         const randomColor = this.randomColor();
         const dataset = {
@@ -300,9 +346,23 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
           backgroundColor: randomColor
         };
         data.datasets.push(dataset);
+
+        const gapsDataset = {
+          label,
+          data: this.raceChart.map(lapRaceChart => {
+            const racePosition = lapRaceChart.racePositions.filter(rp => rp.raceNumber + ' ' + rp.driverName === label)[0];
+            return racePosition !== undefined ? racePosition.accumulatedRaceTime - lapRaceChart.racePositions[0].accumulatedRaceTime : null;
+          }),
+          fill: false,
+          lineTension: 0,
+          borderColor: randomColor,
+          backgroundColor: randomColor
+        };
+        gapsData.datasets.push(gapsDataset);
       });
 
       this.dataRaceChart = Object.assign({}, data);
+      this.gapsRaceChart = Object.assign({}, gapsData);
     });
 
     this.eventSessionService.findDriversPerformance(this.session.id).subscribe(res => {
