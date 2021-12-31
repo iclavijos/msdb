@@ -1,5 +1,3 @@
-import { IEngine } from 'app/shared/model/engine.model';
-
 export interface IEngine {
   id?: number;
   name?: string;

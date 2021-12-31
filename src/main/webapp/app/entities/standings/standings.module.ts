@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 
 import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
 
-import { ChartModule, CheckboxModule } from 'primeng/primeng';
+import { ChartModule } from 'primeng-lts/chart';
+import { CheckboxModule } from 'primeng-lts/checkbox';
 
 import 'chart.js/dist/Chart.min.js';
 

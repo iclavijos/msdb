@@ -6,7 +6,8 @@ import { LapsAnalysisComponent } from './laps-analysis.component';
 import { RaceDataComponent } from './race-data.component';
 import { lapsAnalysisRoute } from './laps-analysis.route';
 
-import { ChartModule, CheckboxModule } from 'primeng/primeng';
+import { ChartModule } from 'primeng-lts/chart';
+import { CheckboxModule } from 'primeng-lts/checkbox';
 
 import 'chart.js/dist/Chart.min.js';
 

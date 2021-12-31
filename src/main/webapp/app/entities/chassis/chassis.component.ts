@@ -36,8 +36,8 @@ export class ChassisComponent implements AfterViewInit, OnDestroy {
   resultsLength = 0;
   isLoadingResults = true;
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     protected chassisService: ChassisService,

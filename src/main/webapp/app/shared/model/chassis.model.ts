@@ -1,5 +1,3 @@
-import { IChassis } from 'app/shared/model/chassis.model';
-
 export interface IChassis {
   id?: number;
   name?: string;

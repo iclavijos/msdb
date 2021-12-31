@@ -71,7 +71,7 @@ export class EventDialogComponent {
   templateUrl: './calendar.component.html'
 })
 export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('calendar', { static: false }) calendarComponent: FullCalendarComponent;
+  @ViewChild('calendar') calendarComponent: FullCalendarComponent;
 
   calendarPlugins = [dayGridPlugin, timeGridPlugin, timeLinePlugin, listPlugin, momentTimezonePlugin];
   calendarLocales = [esLocale, caLocale, enLocale];

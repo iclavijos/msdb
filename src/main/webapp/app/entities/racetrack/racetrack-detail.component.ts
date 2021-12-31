@@ -37,7 +37,7 @@ export class RacetrackDetailComponent implements OnInit, AfterViewInit {
   nextEventsDisplayedColumns: string[] = ['date', 'eventName', 'layout', 'layoutImage'];
   prevEventsDisplayedColumns: string[] = ['date', 'prevEventName', 'winners'];
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     protected dataUtils: JhiDataUtils,
