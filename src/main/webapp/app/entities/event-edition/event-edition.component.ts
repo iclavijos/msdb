@@ -5,8 +5,8 @@ import { merge, of as observableOf, Subscription } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { Event } from 'app/shared/model/event.model';
-import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { Event } from '../../shared/model/event.model';
+import { IEventEdition } from '../../shared/model/event-edition.model';
 import { EventEditionService } from './event-edition.service';
 
 import { MatPaginator, MatSort } from '@angular/material';

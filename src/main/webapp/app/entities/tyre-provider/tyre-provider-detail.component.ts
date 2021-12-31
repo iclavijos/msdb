@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { JhiDataUtils } from 'ng-jhipster';
 
-import { ITyreProvider } from 'app/shared/model/tyre-provider.model';
+import { ITyreProvider } from '../../shared/model/tyre-provider.model';
 
 @Component({
   selector: 'jhi-tyre-provider-detail',

@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { ISeries } from 'app/shared/model/series.model';
+import { ISeries } from '../../shared/model/series.model';
 import { SeriesService } from './series.service';
 
 @Component({

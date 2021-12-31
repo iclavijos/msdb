@@ -5,7 +5,7 @@ import { merge, of as observableOf, Subscription } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { ITeam } from 'app/shared/model/team.model';
+import { ITeam } from '../../shared/model/team.model';
 
 import { TeamService } from './team.service';
 

@@ -4,8 +4,8 @@ import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import './vendor';
-import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
-import { MotorsportsDatabaseCoreModule } from 'app/core/core.module';
+import { MotorsportsDatabaseSharedModule } from './shared/shared.module';
+import { MotorsportsDatabaseCoreModule } from './core/core.module';
 import { MotorsportsDatabaseAppRoutingModule } from './app-routing.module';
 import { MotorsportsDatabaseHomeModule } from './home/home.module';
 import { MotorsportsDatabaseEntityModule } from './entities/entity.module';

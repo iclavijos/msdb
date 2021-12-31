@@ -2,17 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { DATE_FORMAT } from 'app/shared/constants/input.constants';
+import { DATE_FORMAT } from '../../shared/constants/input.constants';
 import { map } from 'rxjs/operators';
 
-import { SERVER_API_URL } from 'app/app.constants';
-import { createRequestOption } from 'app/shared/util/request-util';
-import { IEventSession } from 'app/shared/model/event-session.model';
+import { SERVER_API_URL } from '../../app.constants';
+import { createRequestOption } from '../../shared/util/request-util';
+import { IEventSession } from '../../shared/model/event-session.model';
 
-import { SessionType } from 'app/shared/enumerations/sessionType.enum';
+import { SessionType } from '../../shared/enumerations/sessionType.enum';
 
-import { IDriverAverages } from 'app/shared/model/driver-averages.model';
-import { ILapPositions } from 'app/shared/model/lap-positions.model';
+import { IDriverAverages } from '../../shared/model/driver-averages.model';
+import { ILapPositions } from '../../shared/model/lap-positions.model';
 
 type EntityResponseType = HttpResponse<IEventSession>;
 type EntityArrayResponseType = HttpResponse<IEventSession[]>;

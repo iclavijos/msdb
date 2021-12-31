@@ -6,7 +6,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
-import { ITeam, Team } from 'app/shared/model/team.model';
+import { ITeam, Team } from '../../shared/model/team.model';
 import { TeamService } from './team.service';
 
 @Component({

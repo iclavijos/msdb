@@ -5,7 +5,7 @@ import { merge, of as observableOf, Subscription } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { IPointsSystem } from 'app/shared/model/points-system.model';
+import { IPointsSystem } from '../../shared/model/points-system.model';
 import { PointsSystemService } from './points-system.service';
 
 import { MatPaginator, MatSort } from '@angular/material';

@@ -5,7 +5,7 @@ import { merge, of as observableOf, Subscription } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { ITyreProvider } from 'app/shared/model/tyre-provider.model';
+import { ITyreProvider } from '../../shared/model/tyre-provider.model';
 import { TyreProviderService } from './tyre-provider.service';
 
 import { MatPaginator, MatSort } from '@angular/material';

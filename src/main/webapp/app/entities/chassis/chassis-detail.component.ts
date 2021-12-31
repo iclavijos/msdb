@@ -6,7 +6,7 @@ import { JhiDataUtils } from 'ng-jhipster';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
-import { IChassis } from 'app/shared/model/chassis.model';
+import { IChassis } from '../../shared/model/chassis.model';
 import { ChassisService } from './chassis.service';
 
 interface ChassisNode {

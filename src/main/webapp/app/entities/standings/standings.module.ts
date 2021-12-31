@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { MotorsportsDatabaseSharedModule } from '../../shared/shared.module';
 
 import { ChartModule } from 'primeng-lts/chart';
 import { CheckboxModule } from 'primeng-lts/checkbox';

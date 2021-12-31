@@ -1,4 +1,4 @@
-import { ISeriesEdition } from 'app/shared/model/series-edition.model';
+import { ISeriesEdition } from './series-edition.model';
 
 export interface ISeries {
   id?: number;

@@ -7,9 +7,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap, debounceTime, map } from 'rxjs/operators';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
-import { ICountry } from 'app/shared/country/country.model';
-import { CountryService } from 'app/shared/country/country.service';
-import { IRacetrack, Racetrack } from 'app/shared/model/racetrack.model';
+import { ICountry } from '../../shared/country/country.model';
+import { CountryService } from '../../shared/country/country.service';
+import { IRacetrack, Racetrack } from '../../shared/model/racetrack.model';
 import { RacetrackService } from './racetrack.service';
 
 @Component({

@@ -5,7 +5,7 @@ import { merge, of as observableOf, Subscription } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { ICategory } from 'app/shared/model/category.model';
+import { ICategory } from '../../shared/model/category.model';
 import { CategoryService } from './category.service';
 
 import { MatPaginator, MatSort } from '@angular/material';

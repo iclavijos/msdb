@@ -5,7 +5,7 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { IPointsSystem, PointsSystem } from 'app/shared/model/points-system.model';
+import { IPointsSystem, PointsSystem } from '../../shared/model/points-system.model';
 import { PointsSystemService } from './points-system.service';
 
 @Component({

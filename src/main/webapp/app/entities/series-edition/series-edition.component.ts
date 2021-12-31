@@ -5,12 +5,12 @@ import { merge, of as observableOf, Subscription } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { Series } from 'app/shared/model/series.model';
-import { ISeriesEdition, SeriesEdition } from 'app/shared/model/series-edition.model';
+import { Series } from '../../shared/model/series.model';
+import { ISeriesEdition, SeriesEdition } from '../../shared/model/series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
 import { SeriesEditionUpdateComponent } from './series-edition-update.component';
 
-import { AccountService } from 'app/core/auth/account.service';
+import { AccountService } from '../../core/auth/account.service';
 
 import { MatPaginator, MatSort } from '@angular/material';
 

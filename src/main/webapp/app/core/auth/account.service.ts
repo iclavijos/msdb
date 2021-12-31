@@ -5,8 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, of } from 'rxjs';
 import { shareReplay, tap, catchError } from 'rxjs/operators';
 
-import { SERVER_API_URL } from 'app/app.constants';
-import { Account } from 'app/core/user/account.model';
+import { SERVER_API_URL } from '../../app.constants';
+import { Account } from '../user/account.model';
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {

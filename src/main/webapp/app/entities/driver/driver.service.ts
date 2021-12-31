@@ -3,12 +3,12 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { DATE_FORMAT } from 'app/shared/constants/input.constants';
+import { DATE_FORMAT } from '../../shared/constants/input.constants';
 import { map } from 'rxjs/operators';
 
-import { SERVER_API_URL } from 'app/app.constants';
-import { createRequestOption } from 'app/shared/util/request-util';
-import { IDriver } from 'app/shared/model/driver.model';
+import { SERVER_API_URL } from '../../app.constants';
+import { createRequestOption } from '../../shared/util/request-util';
+import { IDriver } from '../../shared/model/driver.model';
 
 type EntityResponseType = HttpResponse<IDriver>;
 type EntityArrayResponseType = HttpResponse<IDriver[]>;

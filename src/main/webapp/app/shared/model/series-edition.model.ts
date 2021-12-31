@@ -1,9 +1,9 @@
-import { ICategory } from 'app/shared/model/category.model';
-import { ISeries } from 'app/shared/model/series.model';
-import { IDriver } from 'app/shared/model/driver.model';
-import { ITeam } from 'app/shared/model/team.model';
-import { IPointsSystem } from 'app/shared/model/points-system.model';
-import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { ICategory } from './category.model';
+import { ISeries } from './series.model';
+import { IDriver } from './driver.model';
+import { ITeam } from './team.model';
+import { IPointsSystem } from './points-system.model';
+import { IEventEdition } from './event-edition.model';
 
 export interface ISeriesEdition {
   id?: number;

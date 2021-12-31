@@ -7,7 +7,7 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { IEventEdition } from '../../shared/model/event-edition.model';
 import { EventEditionService } from './event-edition.service';
 
 @Component({

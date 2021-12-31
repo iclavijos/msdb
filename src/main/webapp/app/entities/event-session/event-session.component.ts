@@ -3,14 +3,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { EventEdition } from 'app/shared/model/event-edition.model';
-import { IEventSession, EventSession } from 'app/shared/model/event-session.model';
+import { EventEdition } from '../../shared/model/event-edition.model';
+import { IEventSession, EventSession } from '../../shared/model/event-session.model';
 import { EventSessionUpdateComponent } from './event-session-update.component';
 import { EventSessionDeleteDialogComponent } from './event-session-delete-dialog.component';
 import { EventSessionService } from './event-session.service';
 
-import { DurationType } from 'app/shared/enumerations/durationType.enum';
-import { SessionType } from 'app/shared/enumerations/sessionType.enum';
+import { DurationType } from '../../shared/enumerations/durationType.enum';
+import { SessionType } from '../../shared/enumerations/sessionType.enum';
 
 import { MatDialog } from '@angular/material/dialog';
 

@@ -12,7 +12,7 @@ import { SessionStorageService } from 'ngx-webstorage';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
-import { VERSION } from '/app.constants';
+import { VERSION } from '../../app.constants';
 import { JhiLanguageHelper } from '../../core/language/language.helper';
 import { AccountService } from '../../core/auth/account.service';
 import { LoginService } from '../../core/login/login.service';

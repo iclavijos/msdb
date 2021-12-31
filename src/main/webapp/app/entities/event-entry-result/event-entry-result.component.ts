@@ -4,10 +4,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils, JhiAlertService } from 'ng-jhipster';
 
-import { EventEdition } from 'app/shared/model/event-edition.model';
-import { EventSession } from 'app/shared/model/event-session.model';
-import { EventEntry } from 'app/shared/model/event-entry.model';
-import { IEventEntryResult, EventEntryResult } from 'app/shared/model/event-entry-result.model';
+import { EventEdition } from '../../shared/model/event-edition.model';
+import { EventSession } from '../../shared/model/event-session.model';
+import { EventEntry } from '../../shared/model/event-entry.model';
+import { IEventEntryResult, EventEntryResult } from '../../shared/model/event-entry-result.model';
 import { EventEntryResultService } from './event-entry-result.service';
 import { EventEntryResultUpdateComponent } from './event-entry-result-update.component';
 import { EventEntryUploadResultsComponent } from './event-entry-result-upload.component';

@@ -7,14 +7,14 @@ import { Observable, of } from 'rxjs';
 import { switchMap, debounceTime, map } from 'rxjs/operators';
 import { JhiAlertService } from 'ng-jhipster';
 
-import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { IEventEdition } from '../../shared/model/event-edition.model';
 import { EventEditionService } from '../event-edition/event-edition.service';
 import { EventSessionService } from '../event-session/event-session.service';
-import { IEventSession } from 'app/shared/model/event-session.model';
-import { ISeriesEdition } from 'app/shared/model/series-edition.model';
+import { IEventSession } from '../../shared/model/event-session.model';
+import { ISeriesEdition } from '../../shared/model/series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
 
-import { SessionType } from 'app/shared/enumerations/sessionType.enum';
+import { SessionType } from '../../shared/enumerations/sessionType.enum';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 

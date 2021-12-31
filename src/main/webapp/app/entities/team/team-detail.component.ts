@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { JhiDataUtils } from 'ng-jhipster';
 
-import { ITeam } from 'app/shared/model/team.model';
+import { ITeam } from '../../shared/model/team.model';
 
 @Component({
   selector: 'jhi-team-detail',

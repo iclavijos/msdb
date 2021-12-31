@@ -5,7 +5,7 @@ import { merge, of as observableOf, Subscription } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { IChassis } from 'app/shared/model/chassis.model';
+import { IChassis } from '../../shared/model/chassis.model';
 
 import { ChassisService } from './chassis.service';
 

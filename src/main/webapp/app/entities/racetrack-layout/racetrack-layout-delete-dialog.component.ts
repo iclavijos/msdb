@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
+import { IRacetrackLayout } from '../../shared/model/racetrack-layout.model';
 import { RacetrackLayoutService } from './racetrack-layout.service';
 
 @Component({

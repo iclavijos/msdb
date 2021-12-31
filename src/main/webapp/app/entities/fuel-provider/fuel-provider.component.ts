@@ -5,7 +5,7 @@ import { merge, of as observableOf, Subscription } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { IFuelProvider } from 'app/shared/model/fuel-provider.model';
+import { IFuelProvider } from '../../shared/model/fuel-provider.model';
 import { FuelProviderService } from './fuel-provider.service';
 
 import { MatPaginator, MatSort } from '@angular/material';

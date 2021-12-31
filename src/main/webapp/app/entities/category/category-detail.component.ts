@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { JhiDataUtils } from 'ng-jhipster';
 
-import { ICategory } from 'app/shared/model/category.model';
+import { ICategory } from '../../shared/model/category.model';
 
 @Component({
   selector: 'jhi-category-detail',

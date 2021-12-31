@@ -7,7 +7,7 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { ISeriesEdition } from 'app/shared/model/series-edition.model';
+import { ISeriesEdition } from '../../shared/model/series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
 
 @Component({

@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { IEngine } from 'app/shared/model/engine.model';
+import { IEngine } from '../../shared/model/engine.model';
 import { EngineService } from './engine.service';
 
 @Component({

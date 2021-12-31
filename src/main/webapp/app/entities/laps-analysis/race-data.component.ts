@@ -1,18 +1,18 @@
 import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { EventEdition } from 'app/shared/model/event-edition.model';
-import { EventSession } from 'app/shared/model/event-session.model';
-import { IEventEntry } from 'app/shared/model/event-entry.model';
-import { DriversNames } from 'app/shared/model/drivers-names.model';
-import { DriversLaps } from 'app/shared/model/drivers-laps.model';
-import { DriverLap } from 'app/shared/model/driver-lap.model';
-import { DriverAverages } from 'app/shared/model/driver-averages.model';
-import { LapPositions } from 'app/shared/model/lap-positions.model';
+import { EventEdition } from '../../shared/model/event-edition.model';
+import { EventSession } from '../../shared/model/event-session.model';
+import { IEventEntry } from '../../shared/model/event-entry.model';
+import { DriversNames } from '../../shared/model/drivers-names.model';
+import { DriversLaps } from '../../shared/model/drivers-laps.model';
+import { DriverLap } from '../../shared/model/driver-lap.model';
+import { DriverAverages } from '../../shared/model/driver-averages.model';
+import { LapPositions } from '../../shared/model/lap-positions.model';
 import { EventEditionService } from '../event-edition/event-edition.service';
 import { EventSessionService } from '../event-session/event-session.service';
 
-import { TimeMaskPipe } from 'app/shared/mask/time-mask.pipe';
+import { TimeMaskPipe } from '../../shared/mask/time-mask.pipe';
 
 import { MatTableDataSource, MatTabChangeEvent } from '@angular/material';
 

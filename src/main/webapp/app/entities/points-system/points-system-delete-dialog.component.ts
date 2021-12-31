@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { IPointsSystem } from 'app/shared/model/points-system.model';
+import { IPointsSystem } from '../../shared/model/points-system.model';
 import { PointsSystemService } from './points-system.service';
 
 @Component({

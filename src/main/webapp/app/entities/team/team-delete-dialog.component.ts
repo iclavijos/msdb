@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { ITeam } from 'app/shared/model/team.model';
+import { ITeam } from '../../shared/model/team.model';
 import { TeamService } from './team.service';
 
 @Component({

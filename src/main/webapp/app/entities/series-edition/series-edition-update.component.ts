@@ -7,13 +7,13 @@ import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
-import { ICategory } from 'app/shared/model/category.model';
-import { CategoryService } from 'app/entities/category/category.service';
-import { IPointsSystem } from 'app/shared/model/points-system.model';
-import { PointsSystemService } from 'app/entities/points-system/points-system.service';
-import { ISeries } from 'app/shared/model/series.model';
-import { ISeriesEdition } from 'app/shared/model/series-edition.model';
-import { SeriesEditionService } from 'app/entities/series-edition/series-edition.service';
+import { ICategory } from '../../shared/model/category.model';
+import { CategoryService } from '../../entities/category/category.service';
+import { IPointsSystem } from '../../shared/model/points-system.model';
+import { PointsSystemService } from '../../entities/points-system/points-system.service';
+import { ISeries } from '../../shared/model/series.model';
+import { ISeriesEdition } from '../../shared/model/series-edition.model';
+import { SeriesEditionService } from '../../entities/series-edition/series-edition.service';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 

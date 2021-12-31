@@ -6,7 +6,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
-import { ICategory, Category } from 'app/shared/model/category.model';
+import { ICategory, Category } from '../../shared/model/category.model';
 import { CategoryService } from './category.service';
 
 @Component({

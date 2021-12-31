@@ -5,15 +5,15 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators, FormGroup, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { IEventEntryResult } from 'app/shared/model/event-entry-result.model';
+import { IEventEntryResult } from '../../shared/model/event-entry-result.model';
 import { EventEntryResultService } from './event-entry-result.service';
-import { IEventEdition } from 'app/shared/model/event-edition.model';
-import { IEventEntry } from 'app/shared/model/event-entry.model';
-import { SessionType } from 'app/shared/enumerations/sessionType.enum';
+import { IEventEdition } from '../../shared/model/event-edition.model';
+import { IEventEntry } from '../../shared/model/event-entry.model';
+import { SessionType } from '../../shared/enumerations/sessionType.enum';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { TimeMaskPipe } from 'app/shared/mask/time-mask.pipe';
+import { TimeMaskPipe } from '../../shared/mask/time-mask.pipe';
 
 @Component({
   templateUrl: './event-entry-result-update.component.html'

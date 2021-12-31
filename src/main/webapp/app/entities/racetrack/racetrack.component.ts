@@ -5,7 +5,7 @@ import { merge, of as observableOf, Subscription } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { IRacetrack } from 'app/shared/model/racetrack.model';
+import { IRacetrack } from '../../shared/model/racetrack.model';
 import { RacetrackService } from './racetrack.service';
 
 import { MatPaginator, MatSort } from '@angular/material';

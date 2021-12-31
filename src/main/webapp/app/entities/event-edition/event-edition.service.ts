@@ -3,10 +3,10 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DatePipe } from '@angular/common';
 
-import { SERVER_API_URL } from 'app/app.constants';
-import { createRequestOption } from 'app/shared/util/request-util';
-import { IEventEdition } from 'app/shared/model/event-edition.model';
-import { IDriverLap } from 'app/shared/model/driver-lap.model';
+import { SERVER_API_URL } from '../../app.constants';
+import { createRequestOption } from '../../shared/util/request-util';
+import { IEventEdition } from '../../shared/model/event-edition.model';
+import { IDriverLap } from '../../shared/model/driver-lap.model';
 
 type EntityResponseType = HttpResponse<IEventEdition>;
 type EntityArrayResponseType = HttpResponse<IEventEdition[]>;

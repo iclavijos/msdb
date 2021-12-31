@@ -6,7 +6,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
-import { ITyreProvider, TyreProvider } from 'app/shared/model/tyre-provider.model';
+import { ITyreProvider, TyreProvider } from '../../shared/model/tyre-provider.model';
 import { TyreProviderService } from './tyre-provider.service';
 
 @Component({

@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { UserRouteAccessService } from '../../core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { EventEdition } from 'app/shared/model/event-edition.model';
+import { EventEdition } from '../../shared/model/event-edition.model';
 import { EventEditionService } from './event-edition.service';
 // import { EventEditionComponent } from './event-edition.component';
 import { EventEditionDetailComponent } from './event-edition-detail.component';
 import { EventEditionUpdateComponent } from './event-edition-update.component';
 import { EventEditionDeletePopupComponent } from './event-edition-delete-dialog.component';
-import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { IEventEdition } from '../../shared/model/event-edition.model';
 
 @Injectable({ providedIn: 'root' })
 export class EventEditionResolve implements Resolve<IEventEdition> {

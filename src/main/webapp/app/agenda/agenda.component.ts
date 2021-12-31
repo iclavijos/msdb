@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 
-import { EventEditionService } from 'app/entities/event-edition/event-edition.service';
-import { CalendarComponent, MyEvent } from 'app/calendar/calendar.component';
+import { EventEditionService } from '../entities/event-edition/event-edition.service';
+import { CalendarComponent, MyEvent } from '../calendar/calendar.component';
 
 import { Moment } from 'moment';
 import * as moment from 'moment-timezone';

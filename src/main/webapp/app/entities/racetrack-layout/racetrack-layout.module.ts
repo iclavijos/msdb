@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { MotorsportsDatabaseSharedModule } from '../../shared/shared.module';
 import { RacetrackLayoutDetailComponent } from './racetrack-layout-detail.component';
 import { RacetrackLayoutUpdateComponent } from './racetrack-layout-update.component';
 import { RacetrackLayoutDeletePopupComponent, RacetrackLayoutDeleteDialogComponent } from './racetrack-layout-delete-dialog.component';

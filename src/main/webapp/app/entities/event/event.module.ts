@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { MotorsportsDatabaseSharedModule } from '../../shared/shared.module';
 import { EventComponent } from './event.component';
 import { EventDetailComponent } from './event-detail.component';
 import { EventUpdateComponent } from './event-update.component';

@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { SERVER_API_URL } from 'app/app.constants';
-import { createRequestOption } from 'app/shared/util/request-util';
-import { ISeriesEdition } from 'app/shared/model/series-edition.model';
+import { SERVER_API_URL } from '../../app.constants';
+import { createRequestOption } from '../../shared/util/request-util';
+import { ISeriesEdition } from '../../shared/model/series-edition.model';
 
 type EntityResponseType = HttpResponse<ISeriesEdition>;
 type EntityArrayResponseType = HttpResponse<ISeriesEdition[]>;

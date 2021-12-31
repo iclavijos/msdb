@@ -3,10 +3,10 @@ import { Component, Input, OnChanges, SimpleChange } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 
-import { DriverService } from 'app/entities/driver/driver.service';
-import { TeamService } from 'app/entities/team/team.service';
-import { EngineService } from 'app/entities/engine/engine.service';
-import { ChassisService } from 'app/entities/chassis/chassis.service';
+import { DriverService } from '../../entities/driver/driver.service';
+import { TeamService } from '../../entities/team/team.service';
+import { EngineService } from '../../entities/engine/engine.service';
+import { ChassisService } from '../../entities/chassis/chassis.service';
 
 @Component({
   selector: 'jhi-statistics',

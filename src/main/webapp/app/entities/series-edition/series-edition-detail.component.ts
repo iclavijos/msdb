@@ -6,15 +6,15 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { SeriesService } from '../series/series.service';
 import { SeriesEditionService } from './series-edition.service';
-import { ISeriesEdition } from 'app/shared/model/series-edition.model';
-import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { ISeriesEdition } from '../../shared/model/series-edition.model';
+import { IEventEdition } from '../../shared/model/event-edition.model';
 import { SeriesEditionUpdateComponent } from './series-edition-update.component';
 import { SeriesEditionCalendarDialogComponent } from './series-edition-calendar-dialog.component';
 import { SeriesEditionCalendarRemoveDialogComponent } from './series-edition-calendar-remove-dialog.component';
 import { SeriesEditionCloneDialogComponent } from './series-edition-clone-dialog.component';
 import { SeriesEditionCalendarSubscriptionDialogComponent } from './series-edition-calendar-subscription-dialog.component';
 
-import { ImagesService } from 'app/shared/services/images.service';
+import { ImagesService } from '../../shared/services/images.service';
 
 import { MatDialog } from '@angular/material/dialog';
 

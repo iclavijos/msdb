@@ -1,4 +1,4 @@
-import { ICountry } from 'app/shared/country/country.model';
+import { ICountry } from '../country/country.model';
 
 import { Moment } from 'moment';
 

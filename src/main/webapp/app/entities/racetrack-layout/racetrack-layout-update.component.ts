@@ -6,10 +6,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
-import { IRacetrackLayout, RacetrackLayout } from 'app/shared/model/racetrack-layout.model';
+import { IRacetrackLayout, RacetrackLayout } from '../../shared/model/racetrack-layout.model';
 import { RacetrackLayoutService } from './racetrack-layout.service';
-import { IRacetrack } from 'app/shared/model/racetrack.model';
-import { RacetrackService } from 'app/entities/racetrack/racetrack.service';
+import { IRacetrack } from '../../shared/model/racetrack.model';
+import { RacetrackService } from '../../entities/racetrack/racetrack.service';
 
 @Component({
   selector: 'jhi-racetrack-layout-update',

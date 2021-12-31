@@ -4,16 +4,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs/Rx';
 
-import { IEventEdition } from 'app/shared/model/event-edition.model';
-import { IEventSession } from 'app/shared/model/event-session.model';
-import { IEventEntry } from 'app/shared/model/event-entry.model';
+import { IEventEdition } from '../../shared/model/event-edition.model';
+import { IEventSession } from '../../shared/model/event-session.model';
+import { IEventEntry } from '../../shared/model/event-entry.model';
 import { EventEditionCopyEntriesDialogComponent } from './event-edition-copy-entries-dialog.component';
 import { EventService } from '../event/event.service';
 import { EventEditionService } from './event-edition.service';
 import { EventEditionCloneDialogComponent } from './event-edition-clone-dialog.component';
 
-import { DurationType } from 'app/shared/enumerations/durationType.enum';
-import { SessionType } from 'app/shared/enumerations/sessionType.enum';
+import { DurationType } from '../../shared/enumerations/durationType.enum';
+import { SessionType } from '../../shared/enumerations/sessionType.enum';
 
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 

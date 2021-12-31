@@ -6,7 +6,7 @@ import { JhiDataUtils } from 'ng-jhipster';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
-import { IEngine } from 'app/shared/model/engine.model';
+import { IEngine } from '../../shared/model/engine.model';
 import { EngineService } from './engine.service';
 
 interface EngineNode {

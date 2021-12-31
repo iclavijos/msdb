@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { MotorsportsDatabaseSharedModule } from '../../shared/shared.module';
 import { LapsAnalysisComponent } from './laps-analysis.component';
 import { RaceDataComponent } from './race-data.component';
 import { lapsAnalysisRoute } from './laps-analysis.route';

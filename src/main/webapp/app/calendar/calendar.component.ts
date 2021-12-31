@@ -5,8 +5,8 @@ import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { IEventEdition } from 'app/shared/model/event-edition.model';
-import { EventEditionService } from 'app/entities/event-edition/event-edition.service';
+import { IEventEdition } from '../shared/model/event-edition.model';
+import { EventEditionService } from '../entities/event-edition/event-edition.service';
 
 import * as moment from 'moment-timezone';
 

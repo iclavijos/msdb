@@ -2,16 +2,16 @@ import { NgModule, Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, Routes, RouterModule } from '@angular/router';
 import { JhiResolvePagingParams } from 'ng-jhipster';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { UserRouteAccessService } from '../../core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { SeriesEdition } from 'app/shared/model/series-edition.model';
+import { SeriesEdition } from '../../shared/model/series-edition.model';
 import { SeriesEditionService } from './series-edition.service';
 import { SeriesEditionComponent } from './series-edition.component';
 import { SeriesEditionDetailComponent } from './series-edition-detail.component';
 // import { SeriesEditionUpdateComponent } from './series-edition-update.component';
 // import { SeriesEditionDeletePopupComponent } from './series-edition-delete-dialog.component';
-import { ISeriesEdition } from 'app/shared/model/series-edition.model';
+import { ISeriesEdition } from '../../shared/model/series-edition.model';
 
 @Injectable({ providedIn: 'root' })
 export class SeriesEditionResolve implements Resolve<ISeriesEdition> {

@@ -2,7 +2,7 @@ import { NgModule, Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, Routes, RouterModule } from '@angular/router';
 import { JhiResolvePagingParams } from 'ng-jhipster';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { UserRouteAccessService } from '../../core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { SeriesService } from './series.service';
@@ -10,7 +10,7 @@ import { SeriesComponent } from './series.component';
 import { SeriesDetailComponent } from './series-detail.component';
 import { SeriesUpdateComponent } from './series-update.component';
 import { SeriesDeletePopupComponent } from './series-delete-dialog.component';
-import { ISeries, Series } from 'app/shared/model/series.model';
+import { ISeries, Series } from '../../shared/model/series.model';
 
 @Injectable({ providedIn: 'root' })
 export class SeriesResolve implements Resolve<ISeries> {

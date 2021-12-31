@@ -5,7 +5,7 @@ import { merge, of as observableOf, Subscription } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { IEngine } from 'app/shared/model/engine.model';
+import { IEngine } from '../../shared/model/engine.model';
 
 import { EngineService } from './engine.service';
 

@@ -7,7 +7,7 @@ import { JhiDataUtils, JhiEventManager, JhiParseLinks } from 'ng-jhipster';
 
 import { MatPaginator, MatSort } from '@angular/material';
 
-import { IDriver } from 'app/shared/model/driver.model';
+import { IDriver } from '../../shared/model/driver.model';
 
 import { DriverService } from './driver.service';
 

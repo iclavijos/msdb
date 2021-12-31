@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { IFuelProvider } from 'app/shared/model/fuel-provider.model';
+import { IFuelProvider } from '../../shared/model/fuel-provider.model';
 import { FuelProviderService } from './fuel-provider.service';
 
 @Component({

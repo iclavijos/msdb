@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { MotorsportsDatabaseSharedModule } from '../../shared/shared.module';
 import { EngineComponent } from './engine.component';
 import { EngineDetailComponent } from './engine-detail.component';
 import { EngineUpdateComponent } from './engine-update.component';

@@ -5,7 +5,7 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { IEvent, Event } from 'app/shared/model/event.model';
+import { IEvent, Event } from '../../shared/model/event.model';
 import { EventService } from './event.service';
 
 @Component({

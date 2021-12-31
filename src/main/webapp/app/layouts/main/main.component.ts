@@ -8,10 +8,10 @@ import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { Subject, Observable } from 'rxjs';
 import { map, shareReplay, takeUntil } from 'rxjs/operators';
 
-import { JhiLanguageHelper } from 'app/core/language/language.helper';
-import { Account } from 'app/core/user/account.model';
-import { AccountService } from 'app/core/auth/account.service';
-import { StateStorageService } from 'app/core/auth/state-storage.service';
+import { JhiLanguageHelper } from '../../core/language/language.helper';
+import { Account } from '../../core/user/account.model';
+import { AccountService } from '../../core/auth/account.service';
+import { StateStorageService } from '../../core/auth/state-storage.service';
 
 @Component({
   selector: 'jhi-main',

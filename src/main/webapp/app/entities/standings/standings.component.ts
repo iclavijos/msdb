@@ -2,10 +2,10 @@ import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/cor
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
-import { EventEditionService } from 'app/entities/event-edition/event-edition.service';
-import { SeriesEditionService } from 'app/entities/series-edition/series-edition.service';
-import { EventEdition } from 'app/shared/model/event-edition.model';
-import { SeriesEdition } from 'app/shared/model/series-edition.model';
+import { EventEditionService } from '../event-edition/event-edition.service';
+import { SeriesEditionService } from '../series-edition/series-edition.service';
+import { EventEdition } from '../../shared/model/event-edition.model';
+import { SeriesEdition } from '../../shared/model/series-edition.model';
 
 @Component({
   selector: 'jhi-standings',

@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { EventSessionService } from '../event-session/event-session.service';
-import { EventEdition } from 'app/shared/model/event-edition.model';
-import { IEventSession } from 'app/shared/model/event-session.model';
-import { IEventEntry } from 'app/shared/model/event-entry.model';
+import { EventEdition } from '../../shared/model/event-edition.model';
+import { IEventSession } from '../../shared/model/event-session.model';
+import { IEventEntry } from '../../shared/model/event-entry.model';
 
 @Component({
   selector: 'jhi-laps-analysis',

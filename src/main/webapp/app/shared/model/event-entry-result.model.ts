@@ -1,5 +1,5 @@
-import { IEventSession } from 'app/shared/model/event-session.model';
-import { IEventEntry } from 'app/shared/model/event-entry.model';
+import { IEventSession } from './event-session.model';
+import { IEventEntry } from './event-entry.model';
 
 export interface IEventEntryResult {
   id?: number;

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { IPointsSystem } from 'app/shared/model/points-system.model';
+import { IPointsSystem } from '../../shared/model/points-system.model';
 
 @Component({
   selector: 'jhi-points-system-detail',

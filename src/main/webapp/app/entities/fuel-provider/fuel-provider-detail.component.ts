@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { JhiDataUtils } from 'ng-jhipster';
 
-import { IFuelProvider } from 'app/shared/model/fuel-provider.model';
+import { IFuelProvider } from '../../shared/model/fuel-provider.model';
 
 @Component({
   selector: 'jhi-fuel-provider-detail',

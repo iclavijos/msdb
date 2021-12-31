@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap, debounceTime, map } from 'rxjs/operators';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
-import { IEngine, Engine } from 'app/shared/model/engine.model';
+import { IEngine, Engine } from '../../shared/model/engine.model';
 import { EngineService } from './engine.service';
 
 @Component({

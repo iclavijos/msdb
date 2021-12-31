@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 
-import { AccountService } from 'app/core/auth/account.service';
+import { AccountService } from '../core/auth/account.service';
 
-import { ISeriesEdition } from 'app/shared/model/series-edition.model';
-import { SeriesEditionService } from 'app/entities/series-edition/series-edition.service';
+import { ISeriesEdition } from '../shared/model/series-edition.model';
+import { SeriesEditionService } from '../entities/series-edition/series-edition.service';
 
 @Component({
   selector: 'jhi-subscriptions-component',

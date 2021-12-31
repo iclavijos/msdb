@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 
-import { IEventSession } from 'app/shared/model/event-session.model';
+import { IEventSession } from '../../shared/model/event-session.model';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 

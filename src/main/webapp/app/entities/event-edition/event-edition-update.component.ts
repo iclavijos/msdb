@@ -8,14 +8,14 @@ import { Observable, of } from 'rxjs';
 import { switchMap, debounceTime, map, filter } from 'rxjs/operators';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
-import { IEventEdition, EventEdition } from 'app/shared/model/event-edition.model';
+import { IEventEdition, EventEdition } from '../../shared/model/event-edition.model';
 import { EventEditionService } from './event-edition.service';
-import { ICategory } from 'app/shared/model/category.model';
-import { CategoryService } from 'app/entities/category/category.service';
-import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
-import { RacetrackLayoutService } from 'app/entities/racetrack-layout/racetrack-layout.service';
-import { IEvent } from 'app/shared/model/event.model';
-import { EventService } from 'app/entities/event/event.service';
+import { ICategory } from '../../shared/model/category.model';
+import { CategoryService } from '../../entities/category/category.service';
+import { IRacetrackLayout } from '../../shared/model/racetrack-layout.model';
+import { RacetrackLayoutService } from '../../entities/racetrack-layout/racetrack-layout.service';
+import { IEvent } from '../../shared/model/event.model';
+import { EventService } from '../../entities/event/event.service';
 
 import * as moment from 'moment';
 

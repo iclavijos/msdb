@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap, debounceTime, map } from 'rxjs/operators';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
-import { IChassis, Chassis } from 'app/shared/model/chassis.model';
+import { IChassis, Chassis } from '../../shared/model/chassis.model';
 import { ChassisService } from './chassis.service';
 
 @Component({

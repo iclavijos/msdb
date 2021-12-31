@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { IChassis } from 'app/shared/model/chassis.model';
+import { IChassis } from '../../shared/model/chassis.model';
 import { ChassisService } from './chassis.service';
 
 @Component({

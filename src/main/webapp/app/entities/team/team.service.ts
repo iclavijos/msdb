@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { SERVER_API_URL } from 'app/app.constants';
-import { createRequestOption } from 'app/shared/util/request-util';
-import { ITeam } from 'app/shared/model/team.model';
+import { SERVER_API_URL } from '../../app.constants';
+import { createRequestOption } from '../../shared/util/request-util';
+import { ITeam } from '../../shared/model/team.model';
 
 type EntityResponseType = HttpResponse<ITeam>;
 type EntityArrayResponseType = HttpResponse<ITeam[]>;

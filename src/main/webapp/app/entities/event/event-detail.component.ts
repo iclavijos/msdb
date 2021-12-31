@@ -2,7 +2,7 @@ import { Title } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { IEvent } from 'app/shared/model/event.model';
+import { IEvent } from '../../shared/model/event.model';
 
 @Component({
   selector: 'jhi-event-detail',

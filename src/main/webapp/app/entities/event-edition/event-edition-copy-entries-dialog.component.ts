@@ -7,7 +7,7 @@ import { Observable, of } from 'rxjs';
 import { switchMap, debounceTime, map } from 'rxjs/operators';
 import { JhiAlertService } from 'ng-jhipster';
 
-import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { IEventEdition } from '../../shared/model/event-edition.model';
 import { EventEditionService } from './event-edition.service';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';

@@ -1,8 +1,8 @@
-import { ICategory } from 'app/shared/model/category.model';
-import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
-import { ISeriesEdition } from 'app/shared/model/series-edition.model';
-import { IEvent } from 'app/shared/model/event.model';
-import { IEventSession } from 'app/shared/model/event-session.model';
+import { ICategory } from './category.model';
+import { IRacetrackLayout } from './racetrack-layout.model';
+import { ISeriesEdition } from './series-edition.model';
+import { IEvent } from './event.model';
+import { IEventSession } from './event-session.model';
 
 import * as moment from 'moment';
 

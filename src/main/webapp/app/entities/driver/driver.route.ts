@@ -2,16 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { JhiResolvePagingParams } from 'ng-jhipster';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { UserRouteAccessService } from '../../core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Driver } from 'app/shared/model/driver.model';
+import { Driver } from '../../shared/model/driver.model';
 import { DriverService } from './driver.service';
 import { DriverComponent } from './driver.component';
 import { DriverDetailComponent } from './driver-detail.component';
 import { DriverUpdateComponent } from './driver-update.component';
 import { DriverDeletePopupComponent } from './driver-delete-dialog.component';
-import { IDriver } from 'app/shared/model/driver.model';
+import { IDriver } from '../../shared/model/driver.model';
 
 @Injectable({ providedIn: 'root' })
 export class DriverResolve implements Resolve<IDriver> {

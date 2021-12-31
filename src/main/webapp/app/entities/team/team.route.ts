@@ -2,16 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { JhiResolvePagingParams } from 'ng-jhipster';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { UserRouteAccessService } from '../../core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { Team } from 'app/shared/model/team.model';
+import { Team } from '../../shared/model/team.model';
 import { TeamService } from './team.service';
 import { TeamComponent } from './team.component';
 import { TeamDetailComponent } from './team-detail.component';
 import { TeamUpdateComponent } from './team-update.component';
 import { TeamDeletePopupComponent } from './team-delete-dialog.component';
-import { ITeam } from 'app/shared/model/team.model';
+import { ITeam } from '../../shared/model/team.model';
 
 @Injectable({ providedIn: 'root' })
 export class TeamResolve implements Resolve<ITeam> {

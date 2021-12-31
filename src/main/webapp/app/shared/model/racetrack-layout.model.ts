@@ -1,4 +1,4 @@
-import { IRacetrack } from 'app/shared/model/racetrack.model';
+import { IRacetrack } from './racetrack.model';
 
 export interface IRacetrackLayout {
   id?: number;

@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { IDriver } from 'app/shared/model/driver.model';
+import { IDriver } from '../../shared/model/driver.model';
 import { DriverService } from './driver.service';
 
 @Component({

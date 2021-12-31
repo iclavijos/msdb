@@ -6,7 +6,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
-import { ISeries, Series } from 'app/shared/model/series.model';
+import { ISeries, Series } from '../../shared/model/series.model';
 import { SeriesService } from './series.service';
 
 @Component({

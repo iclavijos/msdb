@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { JhiDataUtils } from 'ng-jhipster';
 
-import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
+import { IRacetrackLayout } from '../../shared/model/racetrack-layout.model';
 
 @Component({
   selector: 'jhi-racetrack-layout-detail',

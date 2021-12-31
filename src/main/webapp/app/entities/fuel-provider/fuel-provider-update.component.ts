@@ -6,7 +6,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
-import { IFuelProvider, FuelProvider } from 'app/shared/model/fuel-provider.model';
+import { IFuelProvider, FuelProvider } from '../../shared/model/fuel-provider.model';
 import { FuelProviderService } from './fuel-provider.service';
 
 @Component({

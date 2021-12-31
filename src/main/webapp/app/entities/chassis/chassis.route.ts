@@ -2,16 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { JhiResolvePagingParams } from 'ng-jhipster';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { UserRouteAccessService } from '../../core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { Chassis } from 'app/shared/model/chassis.model';
+import { Chassis } from '../../shared/model/chassis.model';
 import { ChassisService } from './chassis.service';
 import { ChassisComponent } from './chassis.component';
 import { ChassisDetailComponent } from './chassis-detail.component';
 import { ChassisUpdateComponent } from './chassis-update.component';
 import { ChassisDeletePopupComponent } from './chassis-delete-dialog.component';
-import { IChassis } from 'app/shared/model/chassis.model';
+import { IChassis } from '../../shared/model/chassis.model';
 
 @Injectable({ providedIn: 'root' })
 export class ChassisResolve implements Resolve<IChassis> {

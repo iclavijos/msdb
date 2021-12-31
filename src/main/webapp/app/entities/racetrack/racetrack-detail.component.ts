@@ -8,11 +8,11 @@ import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 
 import { SessionStorageService } from 'ngx-webstorage';
 
-import { IRacetrack } from 'app/shared/model/racetrack.model';
+import { IRacetrack } from '../../shared/model/racetrack.model';
 import { RacetrackService } from './racetrack.service';
-import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
+import { IRacetrackLayout } from '../../shared/model/racetrack-layout.model';
 import { RacetrackLayoutService } from '../racetrack-layout/racetrack-layout.service';
-import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { IEventEdition } from '../../shared/model/event-edition.model';
 
 import { MatPaginator } from '@angular/material';
 

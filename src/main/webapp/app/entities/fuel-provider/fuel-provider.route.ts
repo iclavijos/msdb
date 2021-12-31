@@ -2,16 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { JhiResolvePagingParams } from 'ng-jhipster';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { UserRouteAccessService } from '../../core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { FuelProvider } from 'app/shared/model/fuel-provider.model';
+import { FuelProvider } from '../../shared/model/fuel-provider.model';
 import { FuelProviderService } from './fuel-provider.service';
 import { FuelProviderComponent } from './fuel-provider.component';
 import { FuelProviderDetailComponent } from './fuel-provider-detail.component';
 import { FuelProviderUpdateComponent } from './fuel-provider-update.component';
 import { FuelProviderDeletePopupComponent } from './fuel-provider-delete-dialog.component';
-import { IFuelProvider } from 'app/shared/model/fuel-provider.model';
+import { IFuelProvider } from '../../shared/model/fuel-provider.model';
 
 @Injectable({ providedIn: 'root' })
 export class FuelProviderResolve implements Resolve<IFuelProvider> {

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import { MotorsportsDatabaseSharedModule } from 'app/shared/shared.module';
+import { MotorsportsDatabaseSharedModule } from '../../shared/shared.module';
 import { SeriesComponent } from './series.component';
 import { SeriesDetailComponent } from './series-detail.component';
 import { SeriesUpdateComponent } from './series-update.component';

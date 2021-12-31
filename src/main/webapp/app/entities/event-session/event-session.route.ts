@@ -3,10 +3,10 @@ import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { EventSession } from 'app/shared/model/event-session.model';
+import { EventSession } from '../../shared/model/event-session.model';
 import { EventSessionService } from './event-session.service';
 // import { EventSessionUpdateComponent } from './event-session-update.component';
-import { IEventSession } from 'app/shared/model/event-session.model';
+import { IEventSession } from '../../shared/model/event-session.model';
 
 @Injectable({ providedIn: 'root' })
 export class EventSessionResolve implements Resolve<IEventSession> {

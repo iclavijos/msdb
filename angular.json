@@ -31,6 +31,7 @@
   },
   "defaultProject": "motorsports-database",
   "cli": {
-    "packageManager": "yarn"
+    "packageManager": "yarn",
+    "analytics": false
   }
 }

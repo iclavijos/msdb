@@ -5,7 +5,7 @@ import { merge, of as observableOf, Subscription } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 
-import { ISeries } from 'app/shared/model/series.model';
+import { ISeries } from '../../shared/model/series.model';
 import { SeriesService } from './series.service';
 
 import { MatPaginator, MatSort } from '@angular/material';

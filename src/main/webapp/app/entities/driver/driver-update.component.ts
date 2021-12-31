@@ -7,10 +7,10 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap, debounceTime, map } from 'rxjs/operators';
 import { JhiAlertService, JhiDataUtils } from 'ng-jhipster';
-import { IDriver, Driver } from 'app/shared/model/driver.model';
+import { IDriver, Driver } from '../../shared/model/driver.model';
 import { DriverService } from './driver.service';
-import { ICountry } from 'app/shared/country/country.model';
-import { CountryService } from 'app/shared/country/country.service';
+import { ICountry } from '../../shared/country/country.model';
+import { CountryService } from '../../shared/country/country.service';
 
 @Component({
   selector: 'jhi-driver-update',

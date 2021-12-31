@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { JhiDataUtils } from 'ng-jhipster';
 
-import { IDriver } from 'app/shared/model/driver.model';
+import { IDriver } from '../../shared/model/driver.model';
 
 @Component({
   selector: 'jhi-driver-detail',

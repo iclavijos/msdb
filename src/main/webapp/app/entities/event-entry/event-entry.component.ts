@@ -4,8 +4,8 @@ import { Subscription } from 'rxjs/Rx';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
-import { EventEdition } from 'app/shared/model/event-edition.model';
-import { IEventEntry, EventEntry } from 'app/shared/model/event-entry.model';
+import { EventEdition } from '../../shared/model/event-edition.model';
+import { IEventEntry, EventEntry } from '../../shared/model/event-entry.model';
 import { EventEntryService } from './event-entry.service';
 import { EventEntryUpdateComponent } from './event-entry-update.component';
 import { EventEntryDeleteDialogComponent } from './event-entry-delete-dialog.component';

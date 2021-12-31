@@ -2,16 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { JhiResolvePagingParams } from 'ng-jhipster';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { UserRouteAccessService } from '../../core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { Engine } from 'app/shared/model/engine.model';
+import { Engine } from '../../shared/model/engine.model';
 import { EngineService } from './engine.service';
 import { EngineComponent } from './engine.component';
 import { EngineDetailComponent } from './engine-detail.component';
 import { EngineUpdateComponent } from './engine-update.component';
 import { EngineDeletePopupComponent } from './engine-delete-dialog.component';
-import { IEngine } from 'app/shared/model/engine.model';
+import { IEngine } from '../../shared/model/engine.model';
 
 @Injectable({ providedIn: 'root' })
 export class EngineResolve implements Resolve<IEngine> {

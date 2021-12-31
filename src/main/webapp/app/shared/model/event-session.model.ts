@@ -1,8 +1,8 @@
 import { Moment } from 'moment';
-import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { IEventEdition } from './event-edition.model';
 
-import { DurationType } from 'app/shared/enumerations/durationType.enum';
-import { SessionType } from 'app/shared/enumerations/sessionType.enum';
+import { DurationType } from '../enumerations/durationType.enum';
+import { SessionType } from '../enumerations/sessionType.enum';
 
 export interface IEventSession {
   id?: number;

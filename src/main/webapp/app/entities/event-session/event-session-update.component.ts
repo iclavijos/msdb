@@ -6,11 +6,11 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
-import { IEventSession } from 'app/shared/model/event-session.model';
+import { IEventSession } from '../../shared/model/event-session.model';
 import { EventSessionService } from './event-session.service';
 
-import { DurationType } from 'app/shared/enumerations/durationType.enum';
-import { SessionType } from 'app/shared/enumerations/sessionType.enum';
+import { DurationType } from '../../shared/enumerations/durationType.enum';
+import { SessionType } from '../../shared/enumerations/sessionType.enum';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 

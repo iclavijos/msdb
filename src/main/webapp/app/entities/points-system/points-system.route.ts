@@ -2,16 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { JhiResolvePagingParams } from 'ng-jhipster';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { UserRouteAccessService } from '../../core/auth/user-route-access-service';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { PointsSystem } from 'app/shared/model/points-system.model';
+import { PointsSystem } from '../../shared/model/points-system.model';
 import { PointsSystemService } from './points-system.service';
 import { PointsSystemComponent } from './points-system.component';
 import { PointsSystemDetailComponent } from './points-system-detail.component';
 import { PointsSystemUpdateComponent } from './points-system-update.component';
 import { PointsSystemDeletePopupComponent } from './points-system-delete-dialog.component';
-import { IPointsSystem } from 'app/shared/model/points-system.model';
+import { IPointsSystem } from '../../shared/model/points-system.model';
 
 @Injectable({ providedIn: 'root' })
 export class PointsSystemResolve implements Resolve<IPointsSystem> {

@@ -1,11 +1,11 @@
-import { IDriverEntry } from 'app/shared/model/driver-entry.model';
-import { ITeam } from 'app/shared/model/team.model';
-import { IChassis } from 'app/shared/model/chassis.model';
-import { IEngine } from 'app/shared/model/engine.model';
-import { ITyreProvider } from 'app/shared/model/tyre-provider.model';
-import { IFuelProvider } from 'app/shared/model/fuel-provider.model';
-import { ICategory } from 'app/shared/model/category.model';
-import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { IDriverEntry } from './driver-entry.model';
+import { ITeam } from './team.model';
+import { IChassis } from './chassis.model';
+import { IEngine } from './engine.model';
+import { ITyreProvider } from './tyre-provider.model';
+import { IFuelProvider } from './fuel-provider.model';
+import { ICategory } from './category.model';
+import { IEventEdition } from './event-edition.model';
 
 export interface IEventEntry {
   id?: number;

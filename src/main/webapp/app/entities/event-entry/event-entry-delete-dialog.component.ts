@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 
-import { IEventEntry } from 'app/shared/model/event-entry.model';
+import { IEventEntry } from '../../shared/model/event-entry.model';
 import { EventEntryService } from './event-entry.service';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';

@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { ITyreProvider } from 'app/shared/model/tyre-provider.model';
+import { ITyreProvider } from '../../shared/model/tyre-provider.model';
 import { TyreProviderService } from './tyre-provider.service';
 
 @Component({

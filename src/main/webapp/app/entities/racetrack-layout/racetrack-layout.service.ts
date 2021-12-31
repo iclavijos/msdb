@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { SERVER_API_URL } from 'app/app.constants';
-import { createRequestOption } from 'app/shared/util/request-util';
-import { IRacetrackLayout } from 'app/shared/model/racetrack-layout.model';
+import { SERVER_API_URL } from '../../app.constants';
+import { createRequestOption } from '../../shared/util/request-util';
+import { IRacetrackLayout } from '../../shared/model/racetrack-layout.model';
 
 type EntityResponseType = HttpResponse<IRacetrackLayout>;
 type EntityArrayResponseType = HttpResponse<IRacetrackLayout[]>;

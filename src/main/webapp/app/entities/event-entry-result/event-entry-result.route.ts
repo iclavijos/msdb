@@ -3,13 +3,13 @@ import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { EventEntryResult } from 'app/shared/model/event-entry-result.model';
+import { EventEntryResult } from '../../shared/model/event-entry-result.model';
 import { EventEntryResultService } from './event-entry-result.service';
 // import { EventEntryResultComponent } from './event-entry-result.component';
 // import { EventEntryResultDetailComponent } from './event-entry-result-detail.component';
 // import { EventEntryResultUpdateComponent } from './event-entry-result-update.component';
 // import { EventEntryResultDeletePopupComponent } from './event-entry-result-delete-dialog.component';
-import { IEventEntryResult } from 'app/shared/model/event-entry-result.model';
+import { IEventEntryResult } from '../../shared/model/event-entry-result.model';
 
 @Injectable({ providedIn: 'root' })
 export class EventEntryResultResolve implements Resolve<IEventEntryResult> {
