@@ -12,11 +12,11 @@ import { SessionStorageService } from 'ngx-webstorage';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
-import { VERSION } from 'app/app.constants';
-import { JhiLanguageHelper } from 'app/core/language/language.helper';
-import { AccountService } from 'app/core/auth/account.service';
-import { LoginService } from 'app/core/login/login.service';
-import { ProfileService } from 'app/layouts/profiles/profile.service';
+import { VERSION } from '/app.constants';
+import { JhiLanguageHelper } from '../../core/language/language.helper';
+import { AccountService } from '../../core/auth/account.service';
+import { LoginService } from '../../core/login/login.service';
+import { ProfileService } from '../profiles/profile.service';
 
 @Component({
   selector: 'jhi-navbar',

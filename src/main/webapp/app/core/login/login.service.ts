@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
-import { AuthServerProvider } from 'app/core/auth/auth-session.service';
+import { AuthServerProvider } from '../auth/auth-session.service';
 
 @Injectable({ providedIn: 'root' })
 export class LoginService {
