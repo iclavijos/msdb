@@ -53,8 +53,6 @@
     "classlist.js": "1.1.20150312",
     "core-js": "3.19.0",
     "hammerjs": "2.0.8",
-    "highcharts": "^8.2.0",
-    "highcharts-angular": "^3.0.0",
     "icofont": "file:../icofont",
     "leaflet": "^1.7.1",
     "material-design-icons": "^3.0.1",

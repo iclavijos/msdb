@@ -18,12 +18,6 @@ import { MatTableDataSource, MatTabChangeEvent } from '@angular/material';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import * as Highcharts from 'highcharts';
-import HCExporting from 'highcharts/modules/exporting';
-import HCMore from 'highcharts/highcharts-more';
-HCExporting(Highcharts);
-HCMore(Highcharts);
-
 import { Options, ChangeContext } from '@angular-slider/ngx-slider';
 
 import { faCircle } from '@fortawesome/free-regular-svg-icons';
@@ -71,10 +65,6 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
 
   raceGapsDataSource = new MatTableDataSource([]);
   raceGapsDisplayedColumns = ['driver', 'raceTime'];
-
-  Highcharts: typeof Highcharts = Highcharts;
-  chartOptions: Highcharts.Options;
-  chart: Highcharts.Chart;
 
   faCircle = faCircle;
 
@@ -367,83 +357,21 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
       this.dataRaceChart = Object.assign({}, data);
       this.gapsRaceChart = Object.assign({}, gapsData);
     });
-
-    this.eventSessionService.findDriversPerformance(this.session.id).subscribe(res => {
-      this.driversPerformance = res.sort((a, b) => a.min - b.min);
-      this.filteredDriversPerformance = this.driversPerformance;
-      this.categoryToFilter = this.eventEdition.allowedCategories[0].shortname;
-      this.filterCategories();
-      this.chartOptions = {
-        chart: {
-          inverted: true
-        },
-        title: {
-          text: 'Best 20 laps performance'
-        },
-        legend: {
-          enabled: false
-        },
-        xAxis: {
-          categories: this.filteredDriversPerformance.map(dp => dp.driverName),
-          title: {
-            text: 'Drivers'
-          }
-        },
-        yAxis: {
-          title: {
-            text: 'Lap time'
-          },
-          labels: {
-            formatter() {
-              const timeMask = new TimeMaskPipe();
-              return timeMask.transform(this.value, true, false);
-            }
-          }
-        },
-        series: [
-          {
-            name: 'Lap times',
-            type: 'boxplot',
-            data: this.filteredDriversPerformance.map(dp => [dp.min, dp.q1, dp.mean, dp.q3, dp.max]),
-            tooltip: {
-              headerFormat: '<em>{point.key}</em><br/>',
-              pointFormatter() {
-                const timeMask = new TimeMaskPipe();
-                // eslint-disable-next-line
-                const point: any = this;
-                return (
-                  '<br/>' +
-                  'Fastest lap: ' +
-                  timeMask.transform(this.low, true, false) +
-                  '<br/>' +
-                  'Median lap: ' +
-                  timeMask.transform(point.median, true, false) +
-                  '<br/>' +
-                  'Slowest lap: ' +
-                  timeMask.transform(this.high, true, false) +
-                  '<br/>'
-                );
-              }
-            }
-          }
-        ]
-      };
-    });
   }
 
   ngAfterViewInit() {
-    if (this.chart) this.chart.reflow();
+    // if (this.chart) this.chart.reflow();
   }
 
-  saveChartInstance(chart: Highcharts.Chart) {
-    this.chart = chart;
-  }
+  //   saveChartInstance(chart: Highcharts.Chart) {
+  //     this.chart = chart;
+  //   }
 
-  onChangeTab(event: MatTabChangeEvent) {
-    if (event.index === 1) {
-      this.chart.reflow();
-    }
-  }
+  //   onChangeTab(event: MatTabChangeEvent) {
+  //     if (event.index === 1) {
+  //       this.chart.reflow();
+  //     }
+  //   }
 
   filterCategories(redraw = false) {
     this.filteredDriversPerformance = this.driversPerformance
@@ -451,11 +379,11 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
       .sort((a, b) => (a.mean > b.mean ? 1 : 0))
       .slice(0, this.numberOfResults === 0 ? this.driversPerformance.length : this.numberOfResults);
 
-    if (redraw) {
-      this.chart.series[0].setData(this.filteredDriversPerformance.map(dp => [dp.min, dp.q1, dp.mean, dp.q3, dp.max]));
-      this.chart.xAxis[0].setCategories(this.filteredDriversPerformance.map(dp => dp.driverName));
-      this.chart.redraw();
-    }
+    //     if (redraw) {
+    //       this.chart.series[0].setData(this.filteredDriversPerformance.map(dp => [dp.min, dp.q1, dp.mean, dp.q3, dp.max]));
+    //       this.chart.xAxis[0].setCategories(this.filteredDriversPerformance.map(dp => dp.driverName));
+    //       this.chart.redraw();
+    //     }
   }
 
   filterResults(redraw = false) {
@@ -464,11 +392,11 @@ export class RaceDataComponent implements OnInit, AfterViewInit {
       .sort((a, b) => (a.mean > b.mean ? 1 : 0))
       .slice(0, this.numberOfResults === 0 ? this.driversPerformance.length : this.numberOfResults);
 
-    if (redraw) {
-      this.chart.series[0].setData(this.filteredDriversPerformance.map(dp => [dp.min, dp.q1, dp.mean, dp.q3, dp.max]));
-      this.chart.xAxis[0].setCategories(this.filteredDriversPerformance.map(dp => dp.driverName));
-      this.chart.redraw();
-    }
+    //     if (redraw) {
+    //       this.chart.series[0].setData(this.filteredDriversPerformance.map(dp => [dp.min, dp.q1, dp.mean, dp.q3, dp.max]));
+    //       this.chart.xAxis[0].setCategories(this.filteredDriversPerformance.map(dp => dp.driverName));
+    //       this.chart.redraw();
+    //     }
   }
 
   showRacePositions(event) {

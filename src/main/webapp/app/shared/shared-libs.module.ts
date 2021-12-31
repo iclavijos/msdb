@@ -13,8 +13,6 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
-import { HighchartsChartModule } from 'highcharts-angular';
-
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 
 import {
@@ -105,7 +103,6 @@ import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateMod
     NgxMatTimepickerModule,
     NgxMatNativeDateModule,
     LeafletModule,
-    HighchartsChartModule,
     NgxSliderModule
   ]
 })
