@@ -11,19 +11,19 @@
     "@agm/core": "3.0.0-beta.0",
     "@angular-material-components/datetime-picker": "^2.0.4",
     "@angular-slider/ngx-slider": "^2.0.3",
-    "@angular/animations": "^10.2.5",
+    "@angular/animations": "^11.2.14",
     "@angular/cdk": "8.2.3",
-    "@angular/common": "10.2.5",
-    "@angular/compiler": "10.2.5",
-    "@angular/core": "10.2.5",
-    "@angular/forms": "10.2.5",
-    "@angular/localize": "10.2.5",
+    "@angular/common": "11.2.14",
+    "@angular/compiler": "11.2.14",
+    "@angular/core": "11.2.14",
+    "@angular/forms": "11.2.14",
+    "@angular/localize": "11.2.14",
     "@angular/material": "8.2.3",
     "@angular/material-moment-adapter": "8.2.3",
-    "@angular/platform-browser": "10.2.5",
-    "@angular/platform-browser-dynamic": "10.2.5",
-    "@angular/platform-server": "10.2.5",
-    "@angular/router": "10.2.5",
+    "@angular/platform-browser": "11.2.14",
+    "@angular/platform-browser-dynamic": "11.2.14",
+    "@angular/platform-server": "11.2.14",
+    "@angular/router": "11.2.14",
     "@asymmetrik/ngx-leaflet": "^7.0.1",
     "@fortawesome/angular-fontawesome": "0.6.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.27",
@@ -79,8 +79,9 @@
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
-    "@angular/cli": "10.2.4",
-    "@angular/compiler-cli": "10.2.5",
+    "@angular-devkit/build-angular": "~0.1102.17",
+    "@angular/cli": "11.2.17",
+    "@angular/compiler-cli": "11.2.14",
     "@ngtools/webpack": "9.1.15",
     "@openapitools/openapi-generator-cli": "0.0.14-4.0.2",
     "@types/jest": "24.0.18",
@@ -95,7 +96,7 @@
     "browser-sync": "2.26.7",
     "browser-sync-webpack-plugin": "2.2.2",
     "cache-loader": "4.1.0",
-    "codelyzer": "^5.1.2",
+    "codelyzer": "^6.0.0",
     "copy-webpack-plugin": "5.0.4",
     "css-loader": "3.2.0",
     "eslint": "6.2.2",
@@ -171,5 +172,8 @@
   "jestSonar": {
     "reportPath": "build/test-results/jest",
     "reportFile": "TESTS-results-sonar.xml"
+  },
+  "resolutions": {
+    "webpack": "^5.0.0"
   }
 }
