@@ -12,7 +12,8 @@ import { SeriesEditionUpdateComponent } from './series-edition-update.component'
 
 import { AccountService } from '../../core/auth/account.service';
 
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 import { MatDialog } from '@angular/material/dialog';
 

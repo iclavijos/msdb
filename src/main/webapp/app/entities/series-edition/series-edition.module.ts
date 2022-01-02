@@ -22,13 +22,6 @@ import { SeriesEditionRoutingModule } from './series-edition.route';
     SeriesEditionCloneDialogComponent,
     SeriesEditionCalendarSubscriptionDialogComponent
   ],
-  exports: [SeriesEditionComponent],
-  entryComponents: [
-    SeriesEditionUpdateComponent,
-    SeriesEditionCalendarDialogComponent,
-    SeriesEditionCalendarRemoveDialogComponent,
-    SeriesEditionCloneDialogComponent,
-    SeriesEditionCalendarSubscriptionDialogComponent
-  ]
+  exports: [SeriesEditionComponent]
 })
 export class MotorsportsDatabaseSeriesEditionModule {}

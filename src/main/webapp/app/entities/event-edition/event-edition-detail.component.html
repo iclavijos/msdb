@@ -73,7 +73,7 @@
                                                             </dd>
                                                             <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.eventDate">Event Date</span></dt>
                                                             <dd>
-                                                                <span>{{eventEdition.eventDate | date:'mediumDate'}}</span>
+                                                                <span>{{eventEdition.eventDate.toDate() | date:'mediumDate'}}</span>
                                                             </dd>
                                                             <div *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
                                                                 <dt><span jhiTranslate="motorsportsDatabaseApp.eventEdition.shortEventName">Short Event Name</span></dt>

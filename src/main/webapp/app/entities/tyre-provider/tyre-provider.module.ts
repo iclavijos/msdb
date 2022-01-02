@@ -18,7 +18,6 @@ const ENTITY_STATES = [...tyreProviderRoute, ...tyreProviderPopupRoute];
     TyreProviderUpdateComponent,
     TyreProviderDeleteDialogComponent,
     TyreProviderDeletePopupComponent
-  ],
-  entryComponents: [TyreProviderDeleteDialogComponent]
+  ]
 })
 export class MotorsportsDatabaseTyreProviderModule {}

@@ -18,7 +18,6 @@ const ENTITY_STATES = [...fuelProviderRoute, ...fuelProviderPopupRoute];
     FuelProviderUpdateComponent,
     FuelProviderDeleteDialogComponent,
     FuelProviderDeletePopupComponent
-  ],
-  entryComponents: [FuelProviderDeleteDialogComponent]
+  ]
 })
 export class MotorsportsDatabaseFuelProviderModule {}

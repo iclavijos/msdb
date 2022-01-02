@@ -9,7 +9,8 @@ import { IChassis } from '../../shared/model/chassis.model';
 
 import { ChassisService } from './chassis.service';
 
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'jhi-chassis',

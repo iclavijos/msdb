@@ -9,7 +9,8 @@ import { ITeam } from '../../shared/model/team.model';
 
 import { TeamService } from './team.service';
 
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'jhi-team',

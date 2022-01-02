@@ -8,7 +8,8 @@ import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 import { ICategory } from '../../shared/model/category.model';
 import { CategoryService } from './category.service';
 
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'jhi-category',

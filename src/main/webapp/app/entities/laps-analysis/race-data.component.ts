@@ -14,7 +14,8 @@ import { EventSessionService } from '../event-session/event-session.service';
 
 import { TimeMaskPipe } from '../../shared/mask/time-mask.pipe';
 
-import { MatTableDataSource, MatTabChangeEvent } from '@angular/material';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 import { TranslateService } from '@ngx-translate/core';
 

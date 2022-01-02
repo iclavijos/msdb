@@ -11,7 +11,6 @@ import { MotorsportsDatabaseSeriesEditionModule } from '../series-edition/series
 
 @NgModule({
   imports: [MotorsportsDatabaseSharedModule, SeriesRoutingModule, MotorsportsDatabaseSeriesEditionModule],
-  declarations: [SeriesComponent, SeriesDetailComponent, SeriesUpdateComponent, SeriesDeleteDialogComponent, SeriesDeletePopupComponent],
-  entryComponents: [SeriesDeleteDialogComponent]
+  declarations: [SeriesComponent, SeriesDetailComponent, SeriesUpdateComponent, SeriesDeleteDialogComponent, SeriesDeletePopupComponent]
 })
 export class MotorsportsDatabaseSeriesModule {}

@@ -12,7 +12,6 @@ import { StandingsComponent } from './standings.component';
 @NgModule({
   imports: [MotorsportsDatabaseSharedModule, ChartModule, CheckboxModule],
   exports: [StandingsComponent],
-  declarations: [StandingsComponent],
-  entryComponents: [StandingsComponent]
+  declarations: [StandingsComponent]
 })
 export class MotorsportsDatabaseStandingsModule {}

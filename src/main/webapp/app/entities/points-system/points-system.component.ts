@@ -8,7 +8,8 @@ import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 import { IPointsSystem } from '../../shared/model/points-system.model';
 import { PointsSystemService } from './points-system.service';
 
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'jhi-points-system',

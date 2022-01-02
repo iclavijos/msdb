@@ -9,7 +9,8 @@ import { Event } from '../../shared/model/event.model';
 import { IEventEdition } from '../../shared/model/event-edition.model';
 import { EventEditionService } from './event-edition.service';
 
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 import { Lightbox } from 'ngx-lightbox';
 

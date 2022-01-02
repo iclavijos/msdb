@@ -8,7 +8,8 @@ import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 import { IFuelProvider } from '../../shared/model/fuel-provider.model';
 import { FuelProviderService } from './fuel-provider.service';
 
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'jhi-fuel-provider',

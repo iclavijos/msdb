@@ -8,7 +8,8 @@ import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 import { IEvent } from '../../shared/model/event.model';
 import { EventService } from './event.service';
 
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'jhi-event',

@@ -12,7 +12,6 @@ const ENTITY_STATES = [...driverRoute, ...driverPopupRoute];
 
 @NgModule({
   imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
-  declarations: [DriverComponent, DriverDetailComponent, DriverUpdateComponent, DriverDeleteDialogComponent, DriverDeletePopupComponent],
-  entryComponents: [DriverDeleteDialogComponent]
+  declarations: [DriverComponent, DriverDetailComponent, DriverUpdateComponent, DriverDeleteDialogComponent, DriverDeletePopupComponent]
 })
 export class MotorsportsDatabaseDriverModule {}
