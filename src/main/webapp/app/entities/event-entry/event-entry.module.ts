@@ -17,7 +17,6 @@ const ENTITY_STATES = [...eventEntryRoute, ...eventEntryPopupRoute];
     EventEntryDeleteDialogComponent
     //     EventEntryDeletePopupComponent
   ],
-  exports: [EventEntryComponent],
-  entryComponents: [EventEntryUpdateComponent, EventEntryDeleteDialogComponent]
+  exports: [EventEntryComponent]
 })
 export class MotorsportsDatabaseEventEntryModule {}

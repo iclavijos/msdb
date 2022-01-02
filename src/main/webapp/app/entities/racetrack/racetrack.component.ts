@@ -8,7 +8,8 @@ import { JhiEventManager, JhiParseLinks, JhiDataUtils } from 'ng-jhipster';
 import { IRacetrack } from '../../shared/model/racetrack.model';
 import { RacetrackService } from './racetrack.service';
 
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 import { icon, latLng, Marker, tileLayer } from 'leaflet';
 import * as L from 'leaflet';

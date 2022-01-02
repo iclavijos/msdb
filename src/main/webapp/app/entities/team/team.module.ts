@@ -12,7 +12,6 @@ const ENTITY_STATES = [...teamRoute, ...teamPopupRoute];
 
 @NgModule({
   imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
-  declarations: [TeamComponent, TeamDetailComponent, TeamUpdateComponent, TeamDeleteDialogComponent, TeamDeletePopupComponent],
-  entryComponents: [TeamDeleteDialogComponent]
+  declarations: [TeamComponent, TeamDetailComponent, TeamUpdateComponent, TeamDeleteDialogComponent, TeamDeletePopupComponent]
 })
 export class MotorsportsDatabaseTeamModule {}

@@ -16,7 +16,6 @@ const ENTITY_STATES = [...racetrackLayoutRoute, ...racetrackLayoutPopupRoute];
     RacetrackLayoutUpdateComponent,
     RacetrackLayoutDeleteDialogComponent,
     RacetrackLayoutDeletePopupComponent
-  ],
-  entryComponents: [RacetrackLayoutDeleteDialogComponent]
+  ]
 })
 export class MotorsportsDatabaseRacetrackLayoutModule {}

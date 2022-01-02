@@ -5,7 +5,8 @@ import { merge, of as observableOf, Subscription } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { JhiDataUtils, JhiEventManager, JhiParseLinks } from 'ng-jhipster';
 
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 import { IDriver } from '../../shared/model/driver.model';
 

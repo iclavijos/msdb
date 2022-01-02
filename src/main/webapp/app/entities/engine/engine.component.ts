@@ -9,7 +9,8 @@ import { IEngine } from '../../shared/model/engine.model';
 
 import { EngineService } from './engine.service';
 
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'jhi-engine',

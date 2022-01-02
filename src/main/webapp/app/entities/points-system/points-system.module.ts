@@ -18,7 +18,6 @@ const ENTITY_STATES = [...pointsSystemRoute, ...pointsSystemPopupRoute];
     PointsSystemUpdateComponent,
     PointsSystemDeleteDialogComponent,
     PointsSystemDeletePopupComponent
-  ],
-  entryComponents: [PointsSystemDeleteDialogComponent]
+  ]
 })
 export class MotorsportsDatabasePointsSystemModule {}

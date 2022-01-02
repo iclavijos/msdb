@@ -14,7 +14,7 @@ import { IRacetrackLayout } from '../../shared/model/racetrack-layout.model';
 import { RacetrackLayoutService } from '../racetrack-layout/racetrack-layout.service';
 import { IEventEdition } from '../../shared/model/event-edition.model';
 
-import { MatPaginator } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'jhi-racetrack-detail',

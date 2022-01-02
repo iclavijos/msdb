@@ -9,7 +9,6 @@ import { healthRoute } from './health.route';
 
 @NgModule({
   imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild([healthRoute])],
-  declarations: [JhiHealthCheckComponent, JhiHealthModalComponent],
-  entryComponents: [JhiHealthModalComponent]
+  declarations: [JhiHealthCheckComponent, JhiHealthModalComponent]
 })
 export class HealthModule {}

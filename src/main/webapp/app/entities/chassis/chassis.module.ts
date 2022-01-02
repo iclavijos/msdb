@@ -18,7 +18,6 @@ const ENTITY_STATES = [...chassisRoute, ...chassisPopupRoute];
     ChassisUpdateComponent,
     ChassisDeleteDialogComponent,
     ChassisDeletePopupComponent
-  ],
-  entryComponents: [ChassisDeleteDialogComponent]
+  ]
 })
 export class MotorsportsDatabaseChassisModule {}

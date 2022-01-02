@@ -12,7 +12,6 @@ const ENTITY_STATES = [...eventSessionRoute];
 @NgModule({
   imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
   declarations: [EventSessionComponent, EventSessionUpdateComponent, EventSessionDeleteDialogComponent],
-  exports: [EventSessionComponent],
-  entryComponents: [EventSessionDeleteDialogComponent, EventSessionUpdateComponent]
+  exports: [EventSessionComponent]
 })
 export class MotorsportsDatabaseEventSessionModule {}

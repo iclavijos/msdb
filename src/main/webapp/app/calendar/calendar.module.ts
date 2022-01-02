@@ -8,7 +8,6 @@ import { calendarRoute } from './calendar.route';
 
 @NgModule({
   imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild([calendarRoute])],
-  declarations: [CalendarComponent, EventDialogComponent],
-  entryComponents: [EventDialogComponent]
+  declarations: [CalendarComponent, EventDialogComponent]
 })
 export class MotorsportsDatabaseCalendarModule {}

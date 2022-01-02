@@ -87,16 +87,16 @@
                                         <img *ngIf="entry.team?.logoUrl" [src]="entry.team.logoUrl" class="img-fluid logo-img"/>
                                         <span *ngIf="!entry.team?.logoUrl">{{ entry.team?.name }}</span>
                                     </a>
-                                </div></br>
+                                </div><br/>
                                 <label *ngIf="entry.operatedBy"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.operatedBy">Operated By</span></label>
                                 <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.chassis">Chassis</span></label>
                                 <div *ngIf="entry.chassis">
                                     <a [routerLink]="['/chassis', entry.chassis?.id, 'view' ]" >{{entry.chassis?.manufacturer}} {{entry.chassis?.name}}</a>
-                                </div></br>
+                                </div><br>
                                 <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.engine">Engine</span></label>
                                 <div *ngIf="entry.engine">
                                     <a [routerLink]="['/engine', entry.engine?.id, 'view' ]" >{{entry.engine?.manufacturer}} {{entry.engine?.name}}</a>
-                                </div></br>
+                                </div><br>
                                 <div *ngIf="entry.operatedBy">
                                     <a [routerLink]="['/team', entry.operatedBy?.id, 'view' ]" >{{entry.operatedBy?.name}}</a>
                                 </div>
@@ -107,13 +107,13 @@
                                     <a [routerLink]="['/tyre-provider', entry.tyres?.id, 'view' ]" >
                                         <img [src]="entry.tyres?.logoUrl" class="img-fluid logo-img" alt="tyres logo"/>
                                     </a>
-                                </div></br>
+                                </div><br>
                                 <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.fuel">Fuel</span></label>
                                 <div *ngIf="entry.fuel">
                                     <a [routerLink]="['/fuel-provider', entry.fuel?.id, 'view' ]" >
                                         <img [src]="entry.fuel?.logoUrl" class="img-fluid logo-img" alt="fuel logo"/>
                                     </a>
-                                </div></br>
+                                </div><br>
                                 <label *ngIf="eventEdition.allowedCategories.length != 1"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category">Category</span></label>
                                 <div *ngIf="eventEdition.allowedCategories.length != 1">
                                     {{entry.category.shortname}}

@@ -18,7 +18,6 @@ const ENTITY_STATES = [...categoryRoute, ...categoryPopupRoute];
     CategoryUpdateComponent,
     CategoryDeleteDialogComponent,
     CategoryDeletePopupComponent
-  ],
-  entryComponents: [CategoryDeleteDialogComponent]
+  ]
 })
 export class MotorsportsDatabaseCategoryModule {}

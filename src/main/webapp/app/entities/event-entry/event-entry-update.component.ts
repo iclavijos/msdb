@@ -23,7 +23,7 @@ import { IFuelProvider } from '../../shared/model/fuel-provider.model';
 import { FuelProviderService } from '../../entities/fuel-provider/fuel-provider.service';
 import { DriverCategory } from '../../shared/enumerations/driverCategory.enum';
 
-import { MatAutocompleteSelectedEvent } from '@angular/material';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({

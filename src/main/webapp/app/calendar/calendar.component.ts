@@ -10,7 +10,7 @@ import { EventEditionService } from '../entities/event-edition/event-edition.ser
 
 import * as moment from 'moment-timezone';
 
-import { FullCalendarComponent } from '@fullcalendar/angular';
+import { FullCalendarComponent, CalendarOptions } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timeLinePlugin from '@fullcalendar/timeline';
@@ -83,6 +83,8 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
   timezone: string;
   timezones: any[];
 
+  calendarOptions: CalendarOptions;
+
   filter = new FormControl();
   series = [];
 
@@ -106,11 +108,13 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       this.filterModified = false;
       callback(this.convertEvents(sessions, this.timezone));
     } else {
-      this.eventEditionService.findCalendarEvents(dates.start, dates.end).subscribe(events => {
-        this.filter = new FormControl();
-        this.sessionsSrc = events;
-        this.series = [...new Set(events.map(s => s.seriesName))].sort();
-        callback(this.convertEvents(this.sessionsSrc, this.timezone));
+      this.eventEditionService.findCalendarEvents(dates.start, dates.end).subscribe({
+        next: events => {
+          this.filter = new FormControl();
+          this.sessionsSrc = events;
+          this.series = [...new Set(events.map(s => s.seriesName))].sort();
+          callback(this.convertEvents(this.sessionsSrc, this.timezone));
+        }
       });
     }
   };
@@ -121,6 +125,26 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       this.timezone = 'Europe/London';
     }
     this.http.get<any[]>('api/timezones').subscribe(res => (this.timezones = res));
+
+    this.calendarOptions = {
+      initialView: 'dayGridMonth',
+      eventClick: this.openEventDialog.bind(this),
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+      },
+      nowIndicator: true,
+      eventTimeFormat: {
+        hour: '2-digit',
+        minute: '2-digit'
+      },
+      aspectRatio: 1,
+      allDaySlot: false,
+      timeZone: this.timezone,
+      locales: this.calendarLocales,
+      events: this.events
+    };
   }
 
   ngAfterViewInit() {

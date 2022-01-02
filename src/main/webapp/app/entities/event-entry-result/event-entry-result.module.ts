@@ -20,12 +20,6 @@ const ENTITY_STATES = [...eventEntryResultRoute, ...eventEntryResultPopupRoute];
     EventEntryResultUploadLapByLapComponent,
     EventEntryResultDeleteDialogComponent
   ],
-  exports: [EventEntryResultComponent],
-  entryComponents: [
-    EventEntryResultUpdateComponent,
-    EventEntryUploadResultsComponent,
-    EventEntryResultUploadLapByLapComponent,
-    EventEntryResultDeleteDialogComponent
-  ]
+  exports: [EventEntryResultComponent]
 })
 export class MotorsportsDatabaseEventEntryResultModule {}

@@ -45,6 +45,11 @@ module.exports = (options) => ({
                     name: 'manifest.webapp'
                 }
             },
+            {
+              test: /\.mjs$/,
+              include: /node_modules/,
+              type: 'javascript/auto'
+            },
             // Ignore warnings about System.import in Angular
             { test: /[\/\\]@angular[\/\\].+\.js$/, parser: { system: true } },
         ]
