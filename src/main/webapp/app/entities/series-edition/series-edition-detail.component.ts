@@ -175,8 +175,10 @@ export class SeriesEditionDetailComponent implements OnInit {
 
       markers.push(location);
     });
-    const group = L.featureGroup(markers);
-    this.map.fitBounds(group.getBounds());
+    if (markers.length > 0) {
+      const group = L.featureGroup(markers);
+      this.map.fitBounds(group.getBounds());
+    }
   }
 
   private navigateToRacetrack(trackId, elementRef: ElementRef) {
