@@ -6,14 +6,14 @@
   &:before {
     display: block;
     float: left;
-    content: "";
+    content: '';
     width: 0;
     height: 0;
     padding-bottom: $ratio * 100%;
   }
 
   &:after {
-    content: "";
+    content: '';
     display: table;
     clear: both;
   }
@@ -36,7 +36,7 @@
   -ms-flex-pack: $ct-text-justify;
   justify-content: $ct-text-justify;
   // Fallback to text-align for non-flex browsers
-  @if($ct-text-justify == 'flex-start') {
+  @if ($ct-text-justify == 'flex-start') {
     text-align: left;
   } @else if ($ct-text-justify == 'flex-end') {
     text-align: right;
@@ -101,17 +101,35 @@
 }
 
 @mixin ct-chart-series-color($color) {
-  .#{$ct-class-point}, .#{$ct-class-line}, .#{$ct-class-bar}, .#{$ct-class-slice-donut} {
+  .#{$ct-class-point},
+  .#{$ct-class-line},
+  .#{$ct-class-bar},
+  .#{$ct-class-slice-donut} {
     stroke: $color;
   }
 
-  .#{$ct-class-slice-pie}, .#{$ct-class-slice-donut-solid}, .#{$ct-class-area} {
+  .#{$ct-class-slice-pie},
+  .#{$ct-class-slice-donut-solid},
+  .#{$ct-class-area} {
     fill: $color;
   }
 }
 
-@mixin ct-chart($ct-container-ratio: $ct-container-ratio, $ct-text-color: $ct-text-color, $ct-text-size: $ct-text-size, $ct-grid-color: $ct-grid-color, $ct-grid-width: $ct-grid-width, $ct-grid-dasharray: $ct-grid-dasharray, $ct-point-size: $ct-point-size, $ct-point-shape: $ct-point-shape, $ct-line-width: $ct-line-width, $ct-bar-width: $ct-bar-width, $ct-donut-width: $ct-donut-width, $ct-series-names: $ct-series-names, $ct-series-colors: $ct-series-colors) {
-
+@mixin ct-chart(
+  $ct-container-ratio: $ct-container-ratio,
+  $ct-text-color: $ct-text-color,
+  $ct-text-size: $ct-text-size,
+  $ct-grid-color: $ct-grid-color,
+  $ct-grid-width: $ct-grid-width,
+  $ct-grid-dasharray: $ct-grid-dasharray,
+  $ct-point-size: $ct-point-size,
+  $ct-point-shape: $ct-point-shape,
+  $ct-line-width: $ct-line-width,
+  $ct-bar-width: $ct-bar-width,
+  $ct-donut-width: $ct-donut-width,
+  $ct-series-names: $ct-series-names,
+  $ct-series-colors: $ct-series-colors
+) {
   .#{$ct-class-label} {
     @include ct-chart-label($ct-text-color, $ct-text-size);
   }
@@ -238,8 +256,7 @@
 //   }
 // }
 
-
-.ct-chart{
+.ct-chart {
   .ct-series-a .ct-point,
   .ct-series-a .ct-line,
   .ct-series-a .ct-bar,
@@ -311,18 +328,18 @@
 
   .ct-series-a .ct-slice-pie,
   .ct-series-a .ct-slice-donut-solid,
-  .ct-series-a .ct-area{
+  .ct-series-a .ct-area {
     fill: #00bcd4;
   }
   .ct-series-b .ct-slice-pie,
   .ct-series-b .ct-slice-donut-solid,
-  .ct-series-b .ct-area{
+  .ct-series-b .ct-area {
     fill: #f44336;
   }
 
   .ct-series-c .ct-slice-pie,
   .ct-series-c .ct-slice-donut-solid,
-  .ct-series-c .ct-area{
+  .ct-series-c .ct-area {
     fill: #ff9800;
   }
 }

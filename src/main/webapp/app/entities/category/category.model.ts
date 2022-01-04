@@ -2,8 +2,11 @@ export interface ICategory {
   id?: number;
   name?: string;
   shortname?: string;
+  relevance?: number;
   logoContentType?: string | null;
   logo?: string | null;
+  logoUrl?: string;
+  categoryColor?: string;
 }
 
 export class Category implements ICategory {
@@ -11,8 +14,11 @@ export class Category implements ICategory {
     public id?: number,
     public name?: string,
     public shortname?: string,
+    public relevance?: number,
     public logoContentType?: string | null,
-    public logo?: string | null
+    public logo?: string | null,
+    public logoUrl?: string,
+    public categoryColor = '#FFFFFF'
   ) {}
 }
 

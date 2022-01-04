@@ -29,7 +29,7 @@
                         <div class="row" [formGroup]="editForm">
                             <div class="col-12 form-group" formArrayName="seriesSubscriptions">
                                 <mat-list>
-                                    <ng-container *ngFor="let subscription of editForm.get('seriesSubscriptions')['controls']; let i=index">
+                                    <ng-container *ngFor="let subscription of seriesSubscriptionsFormGroups.controls; let i=index">
                                         <mat-list-item [formGroupName]="i" *ngIf="isShown(subscription.value.editionName)">
                                             <div class="col-3">
                                                 {{ subscription.value.editionName }}

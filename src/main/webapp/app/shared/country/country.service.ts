@@ -12,12 +12,12 @@ type EntityArrayResponseType = HttpResponse<ICountry[]>;
 
 @Injectable({ providedIn: 'root' })
 export class CountryService {
-  public resourceUrl = SERVER_API_URL + 'api/countries';
-  public resourceSearchUrl = SERVER_API_URL + 'api/_typeahead/countries';
+  public resourceUrl = `${String(SERVER_API_URL)}api/countries`;
+  public resourceSearchUrl = `${String(SERVER_API_URL)}api/_typeahead/countries`;
 
   constructor(protected http: HttpClient) {}
 
-  searchCountries(query?: any): Observable<EntityArrayResponseType> {
+  searchCountries(query: string): Observable<EntityArrayResponseType> {
     return this.http.get<ICountry[]>(`${this.resourceSearchUrl}?query=${query}`, { observe: 'response' });
   }
 

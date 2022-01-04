@@ -5,10 +5,9 @@ import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { IEventEdition } from 'app/entities/event-edition/event-edition.model';
-import { EventEditionService } from 'app/entities/event-edition/service/event-edition.service';
-
-import { TimeZone } from '../home/home-events.component';
+import { IEventEdition } from '../shared/model/event-edition.model';
+import { EventEditionService } from '../entities/event-edition/event-edition.service';
+import { TimeZone } from 'app/home/home-events.component';
 
 import * as moment from 'moment-timezone';
 
@@ -31,15 +30,15 @@ export class MyEvent {
   eventName!: string;
   sessionName!: string;
   duration!: number;
+  startTime!: number;
+  endTime!: number;
   totalDuration!: number;
   textColor!: string;
   color!: string;
   start!: any;
-  startTime!: number;
   end!: any;
-  endTime!: number;
-  seriesName!: string;
   seriesLogoUrl!: string;
+  seriesName!: string;
   allDay = false;
   status!: string;
   sessionType!: number;
@@ -47,8 +46,8 @@ export class MyEvent {
   racetrackLayoutUrl!: string;
   categories!: string[];
   event!: any;
-  rally = false;
-  raid = false;
+  rally!: boolean;
+  raid!: boolean;
 }
 
 @Component({
@@ -81,12 +80,12 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
   calendarPlugins = [dayGridPlugin, timeGridPlugin, timeLinePlugin, listPlugin, momentTimezonePlugin];
   calendarLocales = [esLocale, caLocale, enLocale];
 
-  sessionsSrc!: MyEvent[];
+  sessionsSrc: MyEvent[] = [];
   filterModified = false;
   timezone!: string;
-  timezones!: any[];
+  timezones: TimeZone[] = [];
 
-  calendarOptions!: CalendarOptions;
+  calendarOptions: CalendarOptions = {};
 
   filter = new FormControl();
   series: string[] = [];
@@ -104,7 +103,8 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
     let sessions: any[];
     if (this.filterModified) {
       if (this.filter.value.length > 0) {
-        sessions = this.sessionsSrc.filter(item => this.filter.value.includes(item.seriesName));
+        sessions = this.sessionsSrc.filter(item =>
+          this.filter.value.includes(item.seriesName));
       } else {
         sessions = this.sessionsSrc;
       }
@@ -112,12 +112,10 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       callback(this.convertEvents(sessions, this.timezone));
     } else {
       this.eventEditionService.findCalendarEvents(dates.start, dates.end).subscribe({
-        next: (events: MyEvent[]) => {
+        next: events => {
           this.filter = new FormControl();
           this.sessionsSrc = events;
-          this.series = [...new Set(
-            events.map(s => s.seriesName)
-          )].sort();
+          this.series = [...new Set(events.map(s => s.seriesName as string))].sort();
           callback(this.convertEvents(this.sessionsSrc, this.timezone));
         }
       });
@@ -173,30 +171,30 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.langChangeSubscription.unsubscribe();
   }
 
-  openEventDialog = (eventInfo: EventClickArg): void => {
+  openEventDialog = (eventClick: EventClickArg): void => {
     this.eventDialog.open(EventDialogComponent, {
-      data: { event: eventInfo }
+      data: { event: eventClick }
     });
   };
 
   public convertEvents(sessions: MyEvent[], currentTZ: string, toDate = true, includeCancelled = false): MyEvent[] {
-    const result = [];
+    const result: MyEvent[] = [];
     for (const session of sessions) {
       const newEvent = new MyEvent();
       newEvent.id = session.id;
-      newEvent.title = `${String(session.eventName)} - ${String(session.sessionName)}`;
+      newEvent.title = `${session.eventName} ${session.sessionName}`;
       newEvent.eventName = session.eventName;
       newEvent.sessionName = session.sessionName;
       newEvent.start = moment(session.startTime * 1000).tz(currentTZ);
       newEvent.duration = session.duration;
       newEvent.totalDuration = session.totalDuration;
       if (toDate) {
-        newEvent.start = newEvent.start.toDate();
-      }
+        newEvent.start = newEvent.start.toDate()
+      };
       newEvent.end = moment(session.endTime * 1000).tz(currentTZ);
       if (toDate) {
-        newEvent.end = newEvent.end.toDate();
-      }
+        newEvent.end = newEvent.end.toDate()
+      };
       newEvent.seriesLogoUrl = session.seriesLogoUrl;
       newEvent.textColor = 'white';
       newEvent.sessionType = session.sessionType;

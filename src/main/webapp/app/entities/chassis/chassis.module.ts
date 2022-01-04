@@ -1,13 +1,23 @@
 import { NgModule } from '@angular/core';
-import { SharedModule } from 'app/shared/shared.module';
-import { ChassisComponent } from './list/chassis.component';
-import { ChassisDetailComponent } from './detail/chassis-detail.component';
-import { ChassisUpdateComponent } from './update/chassis-update.component';
-import { ChassisDeleteDialogComponent } from './delete/chassis-delete-dialog.component';
-import { ChassisRoutingModule } from './route/chassis-routing.module';
+import { RouterModule } from '@angular/router';
+
+import { SharedModule } from '../../shared/shared.module';
+import { ChassisComponent } from './chassis.component';
+import { ChassisDetailComponent } from './chassis-detail.component';
+import { ChassisUpdateComponent } from './chassis-update.component';
+import { ChassisDeletePopupComponent, ChassisDeleteDialogComponent } from './chassis-delete-dialog.component';
+import { chassisRoute, chassisPopupRoute } from './chassis.route';
+
+const ENTITY_STATES = [...chassisRoute, ...chassisPopupRoute];
 
 @NgModule({
-    imports: [SharedModule, ChassisRoutingModule],
-    declarations: [ChassisComponent, ChassisDetailComponent, ChassisUpdateComponent, ChassisDeleteDialogComponent]
+  imports: [SharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [
+    ChassisComponent,
+    ChassisDetailComponent,
+    ChassisUpdateComponent,
+    ChassisDeleteDialogComponent,
+    ChassisDeletePopupComponent
+  ]
 })
-export class ChassisModule {}
+export class MotorsportsDatabaseChassisModule {}

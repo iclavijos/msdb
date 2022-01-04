@@ -11,9 +11,8 @@ import * as moment from 'moment';
 export class LocalizedDatePipe implements PipeTransform {
   constructor(private translateService: TranslateService) {}
 
-  transform(value: any, pattern = 'LLL'): any {
+  transform(value: Moment, pattern = 'LLL'): any {
     let momentDate: Moment;
-
     if (!value) {
       return '';
     }

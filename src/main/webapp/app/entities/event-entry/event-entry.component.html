@@ -1,0 +1,156 @@
+<div>
+    <div class="row">
+        <div class="col-sm-12">
+            <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                    class="btn btn-primary float-right create-event-entry" (click)="addEntry()">
+                <span class="fa fa-plus"></span>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
+                <mat-form-field>
+                    <mat-label>Filter by category</mat-label>
+                    <mat-select [(ngModel)]="categoryToFilter" (ngModelChange)="filterCategories()">
+                        <mat-option></mat-option>
+                        <mat-option *ngFor="let category of eventEdition.allowedCategories" [value]="category.shortname">{{category.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-warning" [hidden]="eventEntries && eventEntries.length > 0">
+                <span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.notFound">No event entries found</span>
+            </div>
+            <div class="table-responsive" [hidden]="!eventEntries || eventEntries?.length === 0">
+                <mat-accordion>
+                    <mat-expansion-panel *ngFor="let entry of filteredEntries" [style.marginTop]="'3px'">
+                        <mat-expansion-panel-header [collapsedHeight]="'100%'" [expandedHeight]="'100%'">
+                            <div class="media-body row"[style.marginTop]="'3px'">
+                                <div class="col fixed-width">
+                                    {{entry.raceNumber}}
+                                </div>
+                                <div class="col fixed-width">
+                                    <span class="badge" [style.background]="entry.tyres.backgroundColor" [style.color]="entry.tyres.letterColor"
+                                          matTooltip="{{entry.tyres.name}}" matTooltipPosition="after">
+                                        <strong>{{ entry.tyres.name.substring(0,1) }}</strong>
+                                    </span>
+                                </div>
+                                <div class="col-md-1" *ngIf="!entry.eventEdition.multidriver">
+                                    <img *ngIf="entry.drivers[0].driver.faceUrl" [src]="entry.drivers[0].driver.faceUrl" class="img-fluid"/>
+                                </div>
+                                <div class="col-md-5">
+                                    <div *ngIf="!entry.eventEdition.multidriver">
+                                        <span *ngIf="entry.drivers[0].category === 'PLATINUM'">P </span>
+                                        <span *ngIf="entry.drivers[0].category === 'GOLD'">G </span>
+                                        <span *ngIf="entry.drivers[0].category === 'SILVER'">S </span>
+                                        <span *ngIf="entry.drivers[0].category === 'BRONZE'">B </span>
+                                        <img *ngIf="entry.drivers[0].driver.nationality" src="/images/flags16/{{entry.drivers[0].driver.nationality.countryCode}}.png"/>
+                                        <a [routerLink]="['/driver', entry.drivers[0].driver.id, 'view' ]" >
+                                            {{ entry.drivers[0].driver.fullName }}
+                                        </a>
+                                        <span *ngIf="entry.drivers[0].rookie"> (R)</span>
+                                    </div>
+                                    <div *ngIf="entry.eventEdition.multidriver">
+                                        <div *ngFor="let entryDriver of entry.drivers">
+                                            <div *ngIf="entryDriver.category === 'PLATINUM'" class="platinum"></div>
+                                            <div *ngIf="entryDriver.category === 'GOLD'" class="gold"></div>
+                                            <span *ngIf="entryDriver.category === 'SILVER'" class="silver"></span>
+                                            <span *ngIf="entryDriver.category === 'BRONZE'" class="bronze"></span>
+                                            <img *ngIf="entryDriver.driver.nationality" src="/images/flags16/{{entryDriver.driver.nationality.countryCode}}.png"/>
+                                            <a [routerLink]="['/driver', entryDriver.driver.id, 'view' ]" >
+                                                {{ entryDriver.driver.fullName }}
+                                            </a>
+                                            <span *ngIf="entryDriver.rookie"> (R)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">{{entry.entryName}}</div>
+                                <div class="col-md-1" *ngIf="eventEdition.allowedCategories.length != 1">
+                                        <span *ngIf="!entry.category.categoryColor">{{ entry.category.shortname }}</span>
+                                        <span *ngIf="entry.category.categoryColor" class="badge" [style.background]="entry.category.categoryColor" [style.color]="'#FFFFFF'">
+                                            <h5><strong>{{ entry.category.shortname }}</strong></h5>
+                                        </span>
+                                </div>
+                                <div class="col-md-2"><img *ngIf="entry.carImageUrl" [src]="entry.carImageUrl" class="img-fluid" alt="car image"/></div>
+                            </div>
+                        </mat-expansion-panel-header>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label *ngIf="entry.team"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.team">Team</span></label>
+                                <div *ngIf="entry.team">
+                                    <a [routerLink]="['/team', entry.team?.id, 'view' ]" >
+                                        <img *ngIf="entry.team?.logoUrl" [src]="entry.team.logoUrl" class="img-fluid logo-img"/>
+                                        <span *ngIf="!entry.team?.logoUrl">{{ entry.team?.name }}</span>
+                                    </a>
+                                </div><br/>
+                                <label *ngIf="entry.operatedBy"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.operatedBy">Operated By</span></label>
+                                <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.chassis">Chassis</span></label>
+                                <div *ngIf="entry.chassis">
+                                    <a [routerLink]="['/chassis', entry.chassis?.id, 'view' ]" >{{entry.chassis?.manufacturer}} {{entry.chassis?.name}}</a>
+                                </div><br>
+                                <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.engine">Engine</span></label>
+                                <div *ngIf="entry.engine">
+                                    <a [routerLink]="['/engine', entry.engine?.id, 'view' ]" >{{entry.engine?.manufacturer}} {{entry.engine?.name}}</a>
+                                </div><br>
+                                <div *ngIf="entry.operatedBy">
+                                    <a [routerLink]="['/team', entry.operatedBy?.id, 'view' ]" >{{entry.operatedBy?.name}}</a>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.tyres">Tyres</span></label>
+                                <div *ngIf="entry.tyres?.logoUrl">
+                                    <a [routerLink]="['/tyre-provider', entry.tyres?.id, 'view' ]" >
+                                        <img [src]="entry.tyres?.logoUrl" class="img-fluid logo-img" alt="tyres logo"/>
+                                    </a>
+                                </div><br>
+                                <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.fuel">Fuel</span></label>
+                                <div *ngIf="entry.fuel">
+                                    <a [routerLink]="['/fuel-provider', entry.fuel?.id, 'view' ]" >
+                                        <img [src]="entry.fuel?.logoUrl" class="img-fluid logo-img" alt="fuel logo"/>
+                                    </a>
+                                </div><br>
+                                <label *ngIf="eventEdition.allowedCategories.length != 1"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category">Category</span></label>
+                                <div *ngIf="eventEdition.allowedCategories.length != 1">
+                                    {{entry.category.shortname}}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div *ngIf="entry.eventEdition.multidriver">
+                                    <div class="row">
+                                        <div class="col-md-2" *ngFor="let entryDriver of entry.drivers">
+                                            <figure class="figure">
+                                                <img *ngIf="entryDriver.driver.faceUrl" [src]="getSmallFaceUrl(entryDriver.driver.portraitUrl)" alt="{{ entryDriver.driver.fullName }}"/>
+                                                <img *ngIf="!entryDriver.driver.faceUrl"
+                                                     [src]="getSmallFaceUrl('https://res.cloudinary.com/msdb-cloud/image/upload/v1518113603/generic.png')" alt="{{entryDriver.driver.fullName}}"/>
+                                                <figcaption class="figure-caption text-center">{{entryDriver.driver.surname}}</figcaption>
+                                            </figure>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <mat-action-row>
+                            <div class="btn-group flex-btn-group-container">
+                                <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                        (click)="editEntry(entry)"
+                                        class="btn btn-primary btn-sm">
+                                    <span class="fa fa-pencil"></span>
+                                </button>
+                                <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                                        (click)="deleteEntry(entry)"
+                                        class="btn btn-danger btn-sm">
+                                    <span class="fa fa-remove"></span>
+                                </button>
+                            </div>
+                        </mat-action-row>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+        </div>
+    </div>
+</div>

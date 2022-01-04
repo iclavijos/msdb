@@ -1,0 +1,111 @@
+<div>
+    <div class="row">
+        <div class="col-sm-12">
+            <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-series"
+                    (click)="createSeriesEdition()">
+                <fa-icon [icon]="'plus'"></fa-icon>
+                <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.series.home.createLabel">
+                        Create a new series edition
+                    </span>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header card-header-danger">
+                    <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.series.editions">Event edition</span></h4>
+                </div>
+                <div class="card-body">
+                    <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
+                    <div class="alert alert-warning" [hidden]="seriesEditions?.length > 0 || isLoadingResults">
+                        <span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.home.notFound">No series editions found</span>
+                    </div>
+                    <div class="table-responsive" [hidden]="seriesEditions?.length === 0">
+                        <mat-table class="table table-hover" [dataSource]="seriesEditions"
+                               matSort matSortActive="period" matSortDisableClear matSortDirection="desc">
+
+                            <ng-container matColumnDef="logo">
+                                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                <mat-cell *matCellDef="let seriesEdition">
+                                    <img *ngIf="seriesEdition?.logoUrl" [src]="seriesEdition.logoUrl" style="max-width: 100px; max-height: 50px;" alt="series logo"/>
+                                </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="period">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.series.seriesEdition.period' | translate }}</mat-header-cell>
+                                <mat-cell *matCellDef="let seriesEdition" width="120px">{{ seriesEdition.period }}</mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="name">
+                                <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.name' | translate }}</mat-header-cell>
+                                <mat-cell mat-cell *matCellDef="let seriesEdition">{{ seriesEdition.editionName }}</mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="singleChassis">
+                                <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.singleChassis' | translate }}</mat-header-cell>
+                                <mat-cell mat-cell *matCellDef="let seriesEdition">
+                                    <i [ngClass]="seriesEdition.singleChassis ? 'fa fa-fw fa-check' : 'none'"></i>
+                                </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="singleEngine">
+                                <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.singleEngine' | translate }}</mat-header-cell>
+                                <mat-cell mat-cell *matCellDef="let seriesEdition">
+                                    <i [ngClass]="seriesEdition.singleEngine ? 'fa fa-fw fa-check' : 'none'"></i>
+                                </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="singleTyres">
+                                <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.singleTyre' | translate }}</mat-header-cell>
+                                <mat-cell mat-cell *matCellDef="let seriesEdition">
+                                    <i [ngClass]="seriesEdition.singleTyre ? 'fa fa-fw fa-check' : 'none'"></i>
+                                </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="allowedCategories">
+                                <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.allowedCategories' | translate }}</mat-header-cell>
+                                <mat-cell *matCellDef="let seriesEdition">
+                                    <div *ngFor="let category of seriesEdition.allowedCategories">
+                                        <span class="tag tag-info">{{ category.shortname }}</span>
+                                    </div>
+                                </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="buttons">
+                                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                <mat-cell mat-cell *matCellDef="let seriesEdition">
+                                    <div class="btn-group">
+                                        <button type="submit"
+                                                *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                                (click)="editSeriesEdition(seriesEdition, $event)"
+                                                class="btn btn-primary btn-xs">
+                                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                        </button>
+                                        <button type="submit"
+                                                *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                                                [routerLink]="['/series/edition', { outlets: { popup: seriesEdition.id + '/delete-ed'} }]"
+                                                (click)="$event.stopPropagation()"
+                                                replaceUrl="true"
+                                                queryParamsHandling="merge"
+                                                class="btn btn-danger btn-xs">
+                                            <fa-icon [icon]="'times'"></fa-icon>
+                                        </button>
+                                    </div>
+                                </mat-cell>
+                            </ng-container>
+
+                            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                            <mat-row matRipple *matRowDef="let row; columns: displayedColumns;" class="pointer"
+                                [routerLink]="['/series', 'edition', row.id, 'view' ]"></mat-row>
+                        </mat-table>
+                        <mat-paginator [length]="resultsLength"
+                                       [pageSizeOptions]="[5, 10, 20]"
+                                       [pageSize]="10"
+                                       showFirstLastButtons></mat-paginator>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,18 +1,25 @@
 import { NgModule } from '@angular/core';
-import { SharedModule } from 'app/shared/shared.module';
-import { EventEntryResultComponent } from './list/event-entry-result.component';
-import { EventEntryResultDetailComponent } from './detail/event-entry-result-detail.component';
-import { EventEntryResultUpdateComponent } from './update/event-entry-result-update.component';
-import { EventEntryResultDeleteDialogComponent } from './delete/event-entry-result-delete-dialog.component';
-import { EventEntryResultRoutingModule } from './route/event-entry-result-routing.module';
+import { RouterModule } from '@angular/router';
+
+import { SharedModule } from '../../shared/shared.module';
+import { EventEntryResultComponent } from './event-entry-result.component';
+import { EventEntryResultUpdateComponent } from './event-entry-result-update.component';
+import { EventEntryUploadResultsComponent } from './event-entry-result-upload.component';
+import { EventEntryResultUploadLapByLapComponent } from './event-entry-result-upload-lapbylap.component';
+import { EventEntryResultDeleteDialogComponent } from './event-entry-result-delete-dialog.component';
+import { eventEntryResultRoute, eventEntryResultPopupRoute } from './event-entry-result.route';
+
+const ENTITY_STATES = [...eventEntryResultRoute, ...eventEntryResultPopupRoute];
 
 @NgModule({
-    imports: [SharedModule, EventEntryResultRoutingModule],
-    declarations: [
-        EventEntryResultComponent,
-        EventEntryResultDetailComponent,
-        EventEntryResultUpdateComponent,
-        EventEntryResultDeleteDialogComponent,
-    ]
+  imports: [SharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [
+    EventEntryResultComponent,
+    EventEntryResultUpdateComponent,
+    EventEntryUploadResultsComponent,
+    EventEntryResultUploadLapByLapComponent,
+    EventEntryResultDeleteDialogComponent
+  ],
+  exports: [EventEntryResultComponent]
 })
-export class EventEntryResultModule {}
+export class MotorsportsDatabaseEventEntryResultModule {}

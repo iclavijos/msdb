@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+import { UserRouteAccessService } from '../core/auth/user-route-access-service';
 
 import { SubscriptionsComponent } from './subscriptions.component';
 

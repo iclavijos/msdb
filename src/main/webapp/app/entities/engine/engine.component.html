@@ -1,0 +1,139 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-sm-12">
+                <form name="searchForm" class="form-inline">
+                    <div class="input-group w-100 mt-3">
+                        <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.engine.home.search' | translate }}">
+                        <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                            <fa-icon [icon]="'search'"></fa-icon>
+                        </button>
+                        <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                            <fa-icon [icon]="'trash-alt'"></fa-icon>
+                        </button>
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-engine" [routerLink]="['/engine/new']">
+                            <fa-icon [icon]="'plus'"></fa-icon>
+                            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.engine.home.createLabel">
+                            Create a new engine
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.engine.home.title">Engines</span></h4>
+                    </div>
+                    <div class="card-body">
+                        <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
+                        <div class="alert alert-warning" [hidden]="engines?.length > 0 || isLoadingResults">
+                            <span jhiTranslate="motorsportsDatabaseApp.engine.home.notFound">No engines found</span>
+                        </div>
+                        <div class="table-responsive" [hidden]="engines?.length === 0">
+                            <mat-table class="table table-hover" [dataSource]="engines"
+                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
+
+                                <ng-container matColumnDef="name">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.engine.name' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">{{ engine.name }}</mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="manufacturer">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.manufacturer' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">{{ engine.manufacturer }}</mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="capacity">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.capacity' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">{{ engine.capacity }}</mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="architecture">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.architecture' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">{{ engine.architecture }}</mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="debutYear">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.engine.debutYear' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">{{ engine.debutYear }}</mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="petrolEngine">
+                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.petrolEngine' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.petrolEngine ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="dieselEngine">
+                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.dieselEngine' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.dieselEngine ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="electricEngine">
+                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.electricEngine' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.electricEngine ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="otherEngine">
+                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.otherEngine' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.otherEngine ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="turbo">
+                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.engine.turbo' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">
+                                        <i [ngClass]="engine.turbo ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="buttons">
+                                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                    <mat-cell *matCellDef="let engine">
+                                        <div class="btn-group">
+                                            <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                                    [routerLink]="['/engine', engine.id, 'edit']"
+                                                    (click)="$event.stopPropagation()"
+                                                    class="btn btn-primary btn-xs">
+                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                            </button>
+                                            <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                                                    [routerLink]="['/engine', { outlets: { popup: engine.id + '/delete'} }]"
+                                                    (click)="$event.stopPropagation()"
+                                                    replaceUrl="true"
+                                                    queryParamsHandling="merge"
+                                                    class="btn btn-danger btn-xs">
+                                                <fa-icon [icon]="'times'"></fa-icon>
+                                            </button>
+                                        </div>
+                                    </mat-cell>
+                                </ng-container>
+
+                                <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                                <mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
+                                    [routerLink]="['/engine', row.id, 'view' ]"></mat-row>
+                            </mat-table>
+                            <mat-paginator [length]="resultsLength"
+                                           [pageSizeOptions]="[5, 10, 20]"
+                                           [pageSize]="10"
+                                           showFirstLastButtons></mat-paginator>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

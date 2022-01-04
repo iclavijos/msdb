@@ -1,9 +1,9 @@
-<div *ngIf="stats?.length > 0">
+<div *ngIf="stats!.length > 0">
     <div class="row">
         <div class="col-sm-10"></div>
         <div class="col-sm-2">
             <select class="form-control" id="field_jumpToEdition"
-                    name="jumpToYear" (change)="jumpToYear($event.target.value)">
+                    name="jumpToYear" (change)="jumpToYear($event)">
                 <option value="">{{ 'motorsportsDatabaseApp.stats.overall' | translate }}</option>
                 <option *ngFor="let aYear of yearsStats" [value]="aYear">{{aYear}}</option>
             </select>

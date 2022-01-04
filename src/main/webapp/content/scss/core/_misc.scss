@@ -1,15 +1,15 @@
-body{
-    background-color: #eee;
-    color: $black-color;
-    font-weight: 300;
+body {
+  background-color: #eee;
+  color: $black-color;
+  font-weight: 300;
 }
 
 legend {
   border-bottom: 0;
 }
 
-.serif-font{
-    font-family: $font-family-serif;
+.serif-font {
+  font-family: $font-family-serif;
 }
 
 // Prevent highlight on mobile
@@ -21,18 +21,19 @@ legend {
   }
 }
 
-a{
+a {
   color: $link-color;
   &:hover,
-  &:focus{
-      color: darken($link-color, 5%);
-      text-decoration: none;
+  &:focus {
+    color: darken($link-color, 5%);
+    text-decoration: none;
   }
 
-  &.text-info{
-      &:hover, &:focus{
-          color: darken($brand-info, 5%);
-      }
+  &.text-info {
+    &:hover,
+    &:focus {
+      color: darken($brand-info, 5%);
+    }
   }
 
   & .material-icons {
@@ -41,34 +42,34 @@ a{
 }
 
 .form-check,
-label{
-    font-size: 14px;
-    line-height: 1.42857;
-    color: $checkboxes-text-color;
-    font-weight: 400;
+label {
+  font-size: 14px;
+  line-height: 1.42857;
+  color: $checkboxes-text-color;
+  font-weight: 400;
 }
 
 /*           Animations              */
-.animation-transition-general{
-    @include transition-all($general-transition-time, $transition-linear);
+.animation-transition-general {
+  @include transition-all($general-transition-time, $transition-linear);
 }
 
-.animation-transition-slow{
-    @include transition-all($slow-transition-time, $transition-linear);
+.animation-transition-slow {
+  @include transition-all($slow-transition-time, $transition-linear);
 }
 
-.animation-transition-fast{
-    @include transition-all($fast-transition-time, $transition-ease);
+.animation-transition-fast {
+  @include transition-all($fast-transition-time, $transition-ease);
 }
 
 .caret,
-.sidebar a{
-    @include transition-all($fast-transition-time, $transition-ease-in);
+.sidebar a {
+  @include transition-all($fast-transition-time, $transition-ease-in);
 }
 #map {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    height: calc(100vh - 70px);
-    margin-top: 70px;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: calc(100vh - 70px);
+  margin-top: 70px;
 }

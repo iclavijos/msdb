@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
@@ -11,11 +11,15 @@ import { CategoryService } from '../service/category.service';
 import { CategoryDeleteDialogComponent } from '../delete/category-delete-dialog.component';
 import { DataUtils } from 'app/core/util/data-util.service';
 
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+
 @Component({
   selector: 'jhi-category',
   templateUrl: './category.component.html',
 })
-export class CategoryComponent implements OnInit {
+export class CategoryComponent implements OnInit, AfterViewInit {
   categories: ICategory[] = [];
   currentSearch: string;
   isLoading = false;
@@ -25,8 +29,12 @@ export class CategoryComponent implements OnInit {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
-  displayedColumns: string[] = ['name', 'shortname', 'logo', 'buttons'];
-  resultsLength = 0;
+
+  dataSource = new MatTableDataSource<ICategory>(this.categories);
+  displayedColumns: string[] = ['name', 'shortname', 'buttons'];
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sorter!: MatSort;
 
   constructor(
     protected categoryService: CategoryService,
@@ -36,6 +44,11 @@ export class CategoryComponent implements OnInit {
     protected modalService: NgbModal
   ) {
     this.currentSearch = this.activatedRoute.snapshot.queryParams['search'] ?? '';
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sorter;
   }
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -83,7 +96,7 @@ export class CategoryComponent implements OnInit {
 
   search(query: string): void {
     if (query && ['name', 'shortname', 'logo'].includes(this.predicate)) {
-      this.predicate = 'id';
+      this.predicate = 'name';
       this.ascending = true;
     }
     this.currentSearch = query;
@@ -106,7 +119,8 @@ export class CategoryComponent implements OnInit {
     return this.dataUtils.openFile(base64String, contentType);
   }
 
-  delete(category: ICategory): void {
+  delete(event: MouseEvent, category: ICategory): void {
+    event.stopPropagation();
     const modalRef = this.modalService.open(CategoryDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.category = category;
     // unsubscribe not needed because closed completes on modal close
@@ -117,10 +131,16 @@ export class CategoryComponent implements OnInit {
     });
   }
 
+  pageChanged(event: PageEvent): void {
+    this.itemsPerPage = event.pageSize;
+    this.page = event.pageIndex + 1;
+    this.loadPage();
+  }
+
   protected sort(): string[] {
     const result = [this.predicate + ',' + (this.ascending ? ASC : DESC)];
-    if (this.predicate !== 'id') {
-      result.push('id');
+    if (this.predicate !== 'name') {
+      result.push('name');
     }
     return result;
   }
@@ -155,6 +175,7 @@ export class CategoryComponent implements OnInit {
       });
     }
     this.categories = data ?? [];
+    this.dataSource.data = this.categories;
     this.ngbPaginationPage = this.page;
   }
 

@@ -17,15 +17,25 @@ export class UserRouteAccessService implements CanActivate {
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+    const authorities = route.data['authorities'];
+    // We need to call the checkLogin / and so the accountService.identity() function, to ensure,
+    // that the client has a principal too, if they already logged in by the server.
+    // This could happen on a page refresh.
+    return this.checkLogin(authorities, state.url);
+  }
+
+  checkLogin(authorities: string[], url: string): Observable<boolean> {
     return this.accountService.identity().pipe(
       map(account => {
-        if (account) {
-          const authorities = route.data['authorities'];
+        if (!authorities || authorities.length === 0) {
+          return true;
+        }
 
-          if (!authorities || authorities.length === 0 || this.accountService.hasAnyAuthority(authorities)) {
+        if (account) {
+          const hasAnyAuthority = this.accountService.hasAnyAuthority(authorities);
+          if (hasAnyAuthority) {
             return true;
           }
-
           if (isDevMode()) {
             console.error('User has not any of required authorities: ', authorities);
           }
@@ -33,7 +43,7 @@ export class UserRouteAccessService implements CanActivate {
           return false;
         }
 
-        this.stateStorageService.storeUrl(state.url);
+        this.stateStorageService.storeUrl(url);
         this.loginService.login();
         return false;
       })

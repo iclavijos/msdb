@@ -46,8 +46,7 @@
             "styles": [
               "src/main/webapp/content/scss/vendor.scss",
               "src/main/webapp/content/scss/global.scss",
-              "node_modules/perfect-scrollbar/css/perfect-scrollbar.css",
-              "src/main/webapp/content/scss/material-dashboard.scss"
+              "node_modules/perfect-scrollbar/css/perfect-scrollbar.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",

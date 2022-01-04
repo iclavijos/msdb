@@ -40,7 +40,7 @@ export class AccountService {
     if (!Array.isArray(authorities)) {
       authorities = [authorities];
     }
-    return (this.userIdentity.authorities).some((authority: string) => authorities.includes(authority));
+    return this.userIdentity.authorities.some((authority: string) => authorities.includes(authority));
   }
 
   identity(force?: boolean): Observable<Account | null> {
@@ -72,8 +72,16 @@ export class AccountService {
     return this.authenticationState.asObservable();
   }
 
-  getImageUrl(): string  {
-    return String(this.userIdentity?.imageUrl);
+  getImageUrl(): string | null {
+    return this.isAuthenticated() ? this.userIdentity!.imageUrl : '';
+  }
+
+  subscriptions(): Observable<any> {
+    return this.http.get<any>(this.applicationConfigService.getEndpointFor('api/account/subscriptions'));
+  }
+
+  updateSubscriptions(subscriptions: any): Observable<any> {
+    return this.http.put<any>(this.applicationConfigService.getEndpointFor('api/account/subscriptions'), subscriptions, { observe: 'response' });
   }
 
   private fetch(): Observable<Account> {

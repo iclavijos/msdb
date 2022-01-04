@@ -20,7 +20,7 @@ export class HomeEphemerisComponent implements OnInit {
 
   constructor(private http: HttpClient) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     const date = new Date();
     this.http.get<HomeEphemeris[]>(`api/home/ephemeris/${date.getDate()}-${date.getMonth() + 1}`)
       .subscribe((res: HomeEphemeris[]) => {

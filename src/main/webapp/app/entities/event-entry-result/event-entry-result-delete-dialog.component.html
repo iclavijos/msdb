@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>{{'entity.delete.title' | translate }}</h1>
+<div mat-dialog-content>
+    <p id="jhi-delete-eventSession-heading" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.delete.question">
+        Are you sure you want to delete this Event Entry Result?
+    </p>
+</div>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="cancel()" cdkFocusInitial>{{'entity.action.cancel' | translate }}</button>
+    <button mat-button (click)="confirmDelete()">{{'entity.action.delete' | translate }}</button>
+</mat-dialog-actions>

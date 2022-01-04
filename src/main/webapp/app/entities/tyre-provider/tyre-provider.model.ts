@@ -3,6 +3,7 @@ export interface ITyreProvider {
   name?: string;
   logoContentType?: string | null;
   logo?: string | null;
+  logoUrl?: string;
   letterColor?: string;
   backgroundColor?: string;
 }
@@ -13,8 +14,9 @@ export class TyreProvider implements ITyreProvider {
     public name?: string,
     public logoContentType?: string | null,
     public logo?: string | null,
-    public letterColor?: string,
-    public backgroundColor?: string
+    public logoUrl?: any,
+    public letterColor = '#000000',
+    public backgroundColor = '#FFFFFF'
   ) {}
 }
 

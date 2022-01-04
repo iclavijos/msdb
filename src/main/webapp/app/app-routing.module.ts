@@ -1,14 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-
 import { errorRoute } from './layouts/error/error.route';
-// import { navbarRoute } from './layouts/navbar/navbar.route';
-import { DEBUG_INFO_ENABLED } from 'app/app.constants';
-import { Authority } from 'app/config/authority.constants';
+import { navbarRoute } from './layouts/navbar/navbar.route';
+import { DEBUG_INFO_ENABLED } from './app.constants';
 
-import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+import { UserRouteAccessService } from './core/auth/user-route-access.service';
 
-const LAYOUT_ROUTES = [ ...errorRoute];
+const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
 
 @NgModule({
   imports: [
@@ -17,21 +15,35 @@ const LAYOUT_ROUTES = [ ...errorRoute];
         {
           path: 'admin',
           data: {
-            authorities: [Authority.ADMIN],
+            authorities: ['ROLE_ADMIN']
           },
           canActivate: [UserRouteAccessService],
-          loadChildren: () => import('./admin/admin-routing.module').then(m => m.AdminRoutingModule),
+          loadChildren: () => import('./admin/admin-routing.module').then(m => m.AdminRoutingModule)
         },
         {
           path: 'calendar',
           canActivate: [UserRouteAccessService],
           loadChildren: () => import('./calendar/calendar.module').then(m => m.CalendarModule)
         },
-        ...LAYOUT_ROUTES,
+//         {
+//           path: 'agenda',
+//           canActivate: [UserRouteAccessService],
+//           loadChildren: () => import('./agenda/agenda.module').then(m => m.MotorsportsDatabaseAgendaModule)
+//         },
+//         {
+//           path: 'subscriptions',
+//           canActivate: [UserRouteAccessService],
+//           loadChildren: () => import('./subscriptions/subscriptions.module').then(m => m.MotorsportsDatabaseSubscriptionsModule)
+//         },
+        {
+          path: 'legal',
+          loadChildren: () => import('./legal/legal.module').then(m => m.MotorsportsDatabaseLegalModule)
+        },
+        ...LAYOUT_ROUTES
       ],
-      { enableTracing: DEBUG_INFO_ENABLED }
-    ),
+      { enableTracing: DEBUG_INFO_ENABLED, relativeLinkResolution: 'legacy' }
+    )
   ],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
 export class AppRoutingModule {}

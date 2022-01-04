@@ -1,42 +1,23 @@
-@import '~bootstrap/scss/functions';
-@import '~bootstrap/scss/variables';
+.sidenav-container {
+  height: 100%;
+}
 
-/* ==========================================================================
-Navbar
-========================================================================== */
+.sidenav {
+  width: 200px;
+}
 
-.navbar-version {
-  font-size: 0.65em;
-  color: $navbar-dark-color;
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.fill-space {
+  // This fills the remaining space, by using flexbox.
+  // Every toolbar row uses a flexbox row layout.
+  flex: 1 1 auto;
 }
 
 .profile-image {
-  height: 1.75em;
-  width: 1.75em;
-}
-
-.navbar {
-  padding: 0.2rem 1rem;
-
-  ul.navbar-nav {
-    .nav-item {
-      margin-left: 0.5em;
-    }
-  }
-
-  a.nav-link {
-    font-weight: 400;
-  }
-}
-
-/* ==========================================================================
-Logo styles
-========================================================================== */
-.logo-img {
-  height: 45px;
-  width: 45px;
-  display: inline-block;
-  vertical-align: middle;
-  background: url('../../../content/images/logo-jhipster.png') no-repeat center center;
-  background-size: contain;
+  max-height: 48px;
 }

@@ -1,110 +1,101 @@
-<div class="row justify-content-center">
-  <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="jhi-category-heading"
-        data-cy="CategoryCreateUpdateHeading"
-        jhiTranslate="motorsportsDatabaseApp.category.home.createOrEditLabel"
-      >
-        Create or edit a Category
-      </h2>
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title">{{ editForm.get('name')!.value }}</h4>
+                        <p class="card-category">{{ 'motorsportsDatabaseApp.category.home.createOrEditLabel' | translate }}</p>
+                    </div>
+                    <div class="card-body">
+                        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+                            <jhi-alert-error></jhi-alert-error>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.category.name' | translate }}" type="text"
+                                               class="form-control" name="name" id="field_name" formControlName="name">
+                                        <div *ngIf="editForm.get('name')!.invalid && (editForm.get('name')!.dirty || editForm.get('name')!.touched)">
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('name')?.errors?.required" jhiTranslate="entity.validation.required">
+                                                This field is required.
+                                            </small>
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('name')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 40 }">
+                                                This field cannot be longer than 40 characters.
+                                            </small>
+                                        </div>
+                                    </mat-form-field>
 
-      <div>
-        <jhi-alert-error></jhi-alert-error>
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.category.shortname' | translate }}" type="text"
+                                               class="form-control" name="name" id="field_shortname" formControlName="shortname">
+                                        <div *ngIf="editForm.get('shortname')!.invalid && (editForm.get('shortname')!.dirty || editForm.get('shortname')!.touched)">
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('shortname')?.errors?.required" jhiTranslate="entity.validation.required">
+                                                This field is required.
+                                            </small>
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('shortname')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 10 }">
+                                                This field cannot be longer than 10 characters.
+                                            </small>
+                                        </div>
+                                    </mat-form-field>
 
-        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
-          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput type="number" formControlName="relevance"
+                                               placeholder="{{ 'motorsportsDatabaseApp.series.relevance' | translate }}"/>
+                                        <mat-error *ngIf="editForm.get('relevance')?.hasError('max')">
+                                            {{ 'entity.validation.max' | translate: '{ max: 1000 }' }}
+                                        </mat-error>
+                                        <mat-error *ngIf="editForm.get('relevance')?.hasError('min')">
+                                            {{ 'entity.validation.min' | translate: '{ min: 100 }' }}
+                                        </mat-error>
+                                    </mat-form-field>
 
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.category.name" for="field_name">Name</label>
-          <input type="text" class="form-control" name="name" id="field_name" data-cy="name" formControlName="name" />
-          <div *ngIf="editForm.get('name')!.invalid && (editForm.get('name')!.dirty || editForm.get('name')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('name')?.errors?.required" jhiTranslate="entity.validation.required">
-              This field is required.
-            </small>
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('name')?.errors?.maxlength"
-              jhiTranslate="entity.validation.maxlength"
-              [translateValues]="{ max: 40 }"
-            >
-              This field cannot be longer than 40 characters.
-            </small>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.category.shortname" for="field_shortname">Shortname</label>
-          <input type="text" class="form-control" name="shortname" id="field_shortname" data-cy="shortname" formControlName="shortname" />
-          <div *ngIf="editForm.get('shortname')!.invalid && (editForm.get('shortname')!.dirty || editForm.get('shortname')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('shortname')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              This field is required.
-            </small>
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('shortname')?.errors?.maxlength"
-              jhiTranslate="entity.validation.maxlength"
-              [translateValues]="{ max: 10 }"
-            >
-              This field cannot be longer than 10 characters.
-            </small>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.category.logo" for="field_logo">Logo</label>
-          <div>
-            <img
-              [src]="'data:' + editForm.get('logoContentType')!.value + ';base64,' + editForm.get('logo')!.value"
-              style="max-height: 100px"
-              *ngIf="editForm.get('logo')!.value"
-              alt="category image"
-            />
-            <div *ngIf="editForm.get('logo')!.value" class="form-text text-danger clearfix">
-              <span class="pull-left">{{ editForm.get('logoContentType')!.value }}, {{ byteSize(editForm.get('logo')!.value) }}</span>
-              <button
-                type="button"
-                (click)="clearInputImage('logo', 'logoContentType', 'file_logo')"
-                class="btn btn-secondary btn-xs pull-right"
-              >
-                <fa-icon icon="times"></fa-icon>
-              </button>
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.tyreProvider.symbol.backgroundColor' | translate }}" type="color"
+                                               class="form-control" name="name" id="field_categoryColor" formControlName="categoryColor">
+                                        <div *ngIf="editForm.get('categoryColor')?.invalid && (editForm.get('categoryColor')?.dirty || editForm.get('categoryColor')?.touched)">
+                                            <small class="form-text text-danger"
+                                                   *ngIf="editForm.get('categoryColor')?.errors?.required" jhiTranslate="entity.validation.required">
+                                                This field is required.
+                                            </small>
+                                        </div>
+                                    </mat-form-field>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.category.logo" for="field_logo">Logo</label>
+                                        <div>
+                                            <img [src]="editForm.get('logoUrl')?.value" style="max-height: 100px;" *ngIf="!editForm.get('logo')?.value && editForm.get('logoUrl')?.value != null" alt="category logo"/>
+                                            <img [src]="'data:' + editForm.get('logoContentType')?.value + ';base64,' + editForm.get('logo')?.value" style="max-height: 100px;" *ngIf="editForm.get('logo')?.value" alt="category logo"/>
+                                            <div *ngIf="editForm.get('logoUrl')?.value || editForm.get('logo')?.value" class="form-text text-danger clearfix">
+                                                <button type="button" (click)="clearInputImage('logo', 'logoContentType', 'fileImage')"
+                                                        class="btn btn-secondary btn-xs pull-right">
+                                                    <span class="fa fa-times"></span>
+                                                </button>
+                                            </div>
+                                            <input type="file" id="file_logo" (change)="setFileData($event, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                                        </div>
+                                        <input type="hidden" class="form-control" name="logo" id="field_logo" formControlName="logo"/>
+                                        <input type="hidden" class="form-control" name="logoContentType" id="field_logoContentType" formControlName="logoContentType" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <button mat-raised-button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                                </button>
+                                <button mat-raised-button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                                </button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <input
-              type="file"
-              id="file_logo"
-              data-cy="logo"
-              (change)="setFileData($event, 'logo', true)"
-              accept="image/*"
-              jhiTranslate="entity.action.addimage"
-            />
-          </div>
-          <input type="hidden" class="form-control" name="logo" id="field_logo" data-cy="logo" formControlName="logo" />
-          <input type="hidden" class="form-control" name="logoContentType" id="field_logoContentType" formControlName="logoContentType" />
         </div>
-      </div>
-
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
-        </button>
-      </div>
-    </form>
-  </div>
+    </div>
 </div>

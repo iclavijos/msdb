@@ -1,7 +1,7 @@
 export interface InfoResponse {
   'display-ribbon-on-profiles'?: string;
-  git?: string;
-  build?: number;
+  git?: any;
+  build?: any;
   activeProfiles?: string[];
 }
 

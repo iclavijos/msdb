@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
+import { combineLatest, merge, of as observableOf, Subscription } from 'rxjs';
+import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ITyreProvider } from '../tyre-provider.model';
@@ -11,12 +12,16 @@ import { TyreProviderService } from '../service/tyre-provider.service';
 import { TyreProviderDeleteDialogComponent } from '../delete/tyre-provider-delete-dialog.component';
 import { DataUtils } from 'app/core/util/data-util.service';
 
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+
 @Component({
   selector: 'jhi-tyre-provider',
   templateUrl: './tyre-provider.component.html',
 })
-export class TyreProviderComponent implements OnInit {
-  tyreProviders?: ITyreProvider[];
+export class TyreProviderComponent implements OnInit, AfterViewInit {
+  tyreProviders: ITyreProvider[] = [];
   currentSearch: string;
   isLoading = false;
   totalItems = 0;
@@ -26,6 +31,12 @@ export class TyreProviderComponent implements OnInit {
   ascending!: boolean;
   ngbPaginationPage = 1;
 
+  dataSource = new MatTableDataSource<ITyreProvider>(this.tyreProviders);
+  displayedColumns: string[] = ['name', 'logo', 'buttons'];
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sorter!: MatSort;
+
   constructor(
     protected tyreProviderService: TyreProviderService,
     protected activatedRoute: ActivatedRoute,
@@ -34,6 +45,11 @@ export class TyreProviderComponent implements OnInit {
     protected modalService: NgbModal
   ) {
     this.currentSearch = this.activatedRoute.snapshot.queryParams['search'] ?? '';
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sorter;
   }
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -116,7 +132,7 @@ export class TyreProviderComponent implements OnInit {
   }
 
   protected sort(): string[] {
-    const result = [`${this.predicate},${(this.ascending ? ASC : DESC)}`];
+    const result = [this.predicate + ',' + (this.ascending ? ASC : DESC)];
     if (this.predicate !== 'id') {
       result.push('id');
     }
@@ -148,7 +164,7 @@ export class TyreProviderComponent implements OnInit {
           page: this.page,
           size: this.itemsPerPage,
           search: this.currentSearch,
-          sort: `${this.predicate},${(this.ascending ? ASC : DESC)}`,
+          sort: this.predicate + ',' + (this.ascending ? ASC : DESC),
         },
       });
     }
