@@ -19,5 +19,7 @@ export class MetricsRequestComponent {
    */
   @Input() updating?: boolean;
 
-  filterNaN = (input: number): number => filterNaN(input);
+  filterNaN =
+    (input: number): number =>
+      filterNaN(input);
 }

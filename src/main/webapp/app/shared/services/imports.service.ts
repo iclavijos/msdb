@@ -13,6 +13,6 @@ export class ImportsService {
   constructor(private http: HttpClient) {}
 
   importCSV(imports: Imports): Observable<HttpResponse<any>> {
-    return this.http.post<any>(this.resourceUrl, imports);
+    return this.http.post<HttpResponse<any>>(this.resourceUrl, imports);
   }
 }

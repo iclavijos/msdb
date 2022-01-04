@@ -1,8 +1,5 @@
-import { Directive, Input, TemplateRef, ViewContainerRef, OnDestroy } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-
-import { AccountService } from 'app/core/auth/account.service';
+import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { AccountService } from '../../core/auth/account.service';
 
 /**
  * @whatItDoes Conditionally includes an HTML element if current user has any
@@ -16,31 +13,19 @@ import { AccountService } from 'app/core/auth/account.service';
  * ```
  */
 @Directive({
-  selector: '[jhiHasAnyAuthority]',
+  selector: '[jhiHasAnyAuthority]'
 })
-export class HasAnyAuthorityDirective implements OnDestroy {
-  private authorities!: string | string[];
-
-  private readonly destroy$ = new Subject<void>();
+export class HasAnyAuthorityDirective {
+  private authorities: string[] = [];
 
   constructor(private accountService: AccountService, private templateRef: TemplateRef<any>, private viewContainerRef: ViewContainerRef) {}
 
   @Input()
   set jhiHasAnyAuthority(value: string | string[]) {
-    this.authorities = value;
+    this.authorities = typeof value === 'string' ? [value] : value;
     this.updateView();
     // Get notified each time authentication state changes.
-    this.accountService
-      .getAuthenticationState()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.updateView();
-      });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.accountService.getAuthenticationState().subscribe(() => this.updateView());
   }
 
   private updateView(): void {

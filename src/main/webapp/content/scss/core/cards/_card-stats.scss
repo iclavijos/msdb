@@ -1,12 +1,12 @@
-.card-stats{
-  .card-header{
+.card-stats {
+  .card-header {
     &.card-header-icon,
-    &.card-header-text{
+    &.card-header-text {
       text-align: right;
     }
 
     .card-icon + .card-title,
-    .card-icon + .card-category{
+    .card-icon + .card-category {
       padding-top: 10px;
     }
 
@@ -20,13 +20,13 @@
       margin-bottom: 0;
       margin-top: 0;
 
-      &:not([class*="text-"]){
+      &:not([class*='text-']) {
         color: $gray-color;
         font-size: $font-paragraph;
       }
     }
 
-    & + .card-footer{
+    & + .card-footer {
       border-top: 1px solid #eee;
       margin-top: 14px;
     }

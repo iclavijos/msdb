@@ -1,0 +1,52 @@
+.personalBest {
+  color: #00ff00;
+}
+
+.fastestLap {
+  color: #000000;
+}
+
+.fastLap {
+  color: #ff33cc;
+}
+
+.odd {
+  background-color: none;
+}
+.even {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+td.odd {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.hardCompound {
+  color: #000000;
+}
+
+.mediumCompound {
+  color: #ffff00;
+}
+
+.softCompound {
+  color: #ff0000;
+}
+
+.table-container {
+  height: 500px;
+  max-width: 1600px;
+  overflow: auto;
+}
+
+.mat-column-lap {
+  min-width: 110px;
+}
+
+td[class*='mat-column-pos'] {
+  min-width: 100px;
+}

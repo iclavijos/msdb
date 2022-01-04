@@ -2,13 +2,13 @@ import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPT
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
-import { Component, OnDestroy, OnInit, AfterViewInit, RendererFactory2, Renderer2 } from '@angular/core';
+import { Component, OnInit, RendererFactory2, Renderer2 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, ActivatedRouteSnapshot, NavigationEnd } from '@angular/router';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import * as dayjs from 'dayjs';
 import { Subject, Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { map, shareReplay, takeUntil } from 'rxjs/operators';
 
 import { AccountService } from 'app/core/auth/account.service';
 
@@ -25,9 +25,7 @@ import { AccountService } from 'app/core/auth/account.service';
     { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS }
   ]
 })
-export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
-  _cleanup: Subject<any> = new Subject<any>();
-
+export class MainComponent implements OnInit {
   backgroundNumber = 1;
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
@@ -64,18 +62,6 @@ export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
       dayjs.locale(langChangeEvent.lang);
       this.renderer.setAttribute(document.querySelector('html'), 'lang', langChangeEvent.lang);
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
-      this.dateAdapter.setLocale(langChangeEvent.lang);
-    });
-  }
-
-  ngOnDestroy(): void {
-    this._cleanup.next();
-    this._cleanup.complete();
-    this.translateService.onLangChange.unsubscribe();
   }
 
   private getPageTitle(routeSnapshot: ActivatedRouteSnapshot): string {

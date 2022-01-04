@@ -4,8 +4,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { EventEditionService } from '../entities/event-edition/event-edition.service';
 import { CalendarComponent, MyEvent } from '../calendar/calendar.component';
-
-import { TimeZone } from '../home/home-events.component';
+import { TimeZone } from 'app/home/home-events.component';
 
 import { Moment } from 'moment';
 import * as moment from 'moment-timezone';
@@ -35,13 +34,16 @@ export class AgendaComponent implements OnInit {
     this.calendarComponent = new CalendarComponent(null, null, null, null);
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.timezone = moment.tz.guess();
-    this.http.get<TimeZone[]>('api/timezones').subscribe(res => (this.timezones = res));
+    if (this.timezone === undefined) {
+      this.timezone = 'Europe/London';
+    }
+    this.http.get<TimeZone[]>('api/timezones').subscribe((res: TimeZone[]) => (this.timezones = res));
     this.query();
   }
 
-  dateRangeChanged(): void {
+  dateRangeChanged() {
     if (this.rangeType === 'WEEK') {
       this.selectedDate = this.selectedDate.isoWeekday(1);
       this.endDate = this.selectedDate.clone().isoWeekday(7);
@@ -52,7 +54,7 @@ export class AgendaComponent implements OnInit {
     this.query();
   }
 
-  nextPeriod(): void {
+  nextPeriod() {
     if (this.rangeType === 'WEEK') {
       this.selectedDate = this.selectedDate.add(7, 'days');
     } else {
@@ -61,7 +63,7 @@ export class AgendaComponent implements OnInit {
     this.dateRangeChanged();
   }
 
-  previousPeriod(): void {
+  previousPeriod() {
     if (this.rangeType === 'WEEK') {
       this.selectedDate = this.selectedDate.subtract(7, 'days');
     } else {
@@ -70,7 +72,7 @@ export class AgendaComponent implements OnInit {
     this.dateRangeChanged();
   }
 
-  query(): void {
+  query() {
     this.eventEditionService
       .findCalendarEvents(
         this.selectedDate.toDate(),
@@ -86,32 +88,31 @@ export class AgendaComponent implements OnInit {
       });
   }
 
-  uniqueEventsInSeries(series: string): MyEvent[] {
+  uniqueEventsInSeries(series: string) {
     return this.events
       .filter(item => (item.seriesLogoUrl ? item.seriesLogoUrl[0] : '') === series)
-      .map(item => {
-        const event = new MyEvent();
-        event.name = item.eventName;
-        event.racetrack = item.racetrack;
-        event.layoutUrl = item.racetrackLayoutUrl;
-        event.categories = item.categories;
-        return event;
-      });
-      // .filter(this.onlyUniqueEvents);
+      .map(item => ({
+          name: item.eventName,
+          racetrack: item.racetrack,
+          layoutUrl: item.racetrackLayoutUrl,
+          categories: item.categories
+        })
+      )
+      .filter(this.onlyUniqueEvents);
   }
 
-  sessionsEvent(event: any): MyEvent[] {
+  sessionsEvent(event: any) {
     return this.events.filter(item => item.eventName === event.name);
   }
 
-  formatDate(date: Moment, pattern: string, raid = false): string {
+  formatDate(date: Moment, pattern: string, raid = false) {
     if (raid) {
       return date.locale(this.translateService.currentLang).format('dddd, LL');
     }
     return date.locale(this.translateService.currentLang).format(pattern);
   }
 
-  backgroundColor(): string {
+  backgroundColor() {
     this.backgroundColorIndex++;
     if (this.backgroundColorIndex % 3 === 0) {
       return '#dbffff';
@@ -122,15 +123,15 @@ export class AgendaComponent implements OnInit {
     }
   }
 
-  eventStatus(event: any): MyEvent[] {
+  eventStatus(event: any) {
     return this.events.filter(item => item.eventName === event.name)[0].status;
   }
 
-  private onlyUniqueSeries(value, index, self): string {
+  private onlyUniqueSeries(value, index, self) {
     return self.indexOf(value) === index;
   }
 
-  private onlyUniqueEvents(value: MyEvent, index: number, self: MyEvent[]): MyEvent[] {
-    return self.map(x => x.name as string).indexOf(value.name) === index;
+  private onlyUniqueEvents(value, index, self) {
+    return self.map((x: MyEvent) => x.name as string).indexOf(value.name as string) === index;
   }
 }

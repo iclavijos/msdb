@@ -12,7 +12,7 @@ import { SeriesEditionService } from '../entities/series-edition/series-edition.
 })
 export class SubscriptionsComponent implements OnInit {
   availableSeries: ISeriesEdition[] = [];
-  subscriptions: any[];
+  subscriptions: any[] = [];
   currentFilter = '';
 
   public editForm: FormGroup;
@@ -23,15 +23,30 @@ export class SubscriptionsComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.seriesEditionService.findActiveSeries().subscribe(series => {
       this.accountService.subscriptions().subscribe(res => {
         this.subscriptions = res;
 
         const control = this.editForm.get('seriesSubscriptions') as FormArray;
-        series.body
-          .sort((se1, se2) => (se1.editionName > se2.editionName ? 1 : -1))
-          .forEach(s => control.push(this.initSeriesSubscription(s)));
+        if (series?.body) {
+          series.body
+            .sort((se1, se2) => {
+                if (se1.editionName) {
+                  if (se2.editionName) {
+                    return se1.editionName > se2.editionName ? 1 : -1;
+                  } else {
+                    return 1;
+                  }
+                } else {
+                  if (se2.editionName) {
+                    return -1;
+                  }
+                  return 0;
+                }
+            })
+            .forEach(s => control.push(this.initSeriesSubscription(s)));
+        }
       });
     });
   }
@@ -40,11 +55,15 @@ export class SubscriptionsComponent implements OnInit {
     return !this.currentFilter || editionName.toLowerCase().includes(this.currentFilter);
   }
 
-  save(): void {
+  save() {
     this.accountService.updateSubscriptions(this.editForm.value.seriesSubscriptions).subscribe();
   }
 
-  private initSeriesSubscription(seriesEdition: ISeriesEdition): FormGroup {
+  get seriesSubscriptionsFormGroups () {
+    return this.editForm.get('seriesSubscriptions') as FormArray
+  }
+
+  private initSeriesSubscription(seriesEdition: ISeriesEdition) {
     const subs = this.subscriptions.find(s => s.seriesEditionId === seriesEdition.id);
     return this.fb.group({
       editionName: seriesEdition.editionName,

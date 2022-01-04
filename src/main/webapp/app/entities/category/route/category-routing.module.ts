@@ -12,7 +12,7 @@ const categoryRoute: Routes = [
     path: '',
     component: CategoryComponent,
     data: {
-      defaultSort: 'id,asc',
+      defaultSort: 'name,asc',
     },
     canActivate: [UserRouteAccessService],
   },

@@ -22,8 +22,11 @@ export class CategoryUpdateComponent implements OnInit {
     id: [],
     name: [null, [Validators.required, Validators.maxLength(40)]],
     shortname: [null, [Validators.required, Validators.maxLength(10)]],
+    relevance: [1000, [Validators.min(100), Validators.max(1000)]],
     logo: [],
     logoContentType: [],
+    logoUrl: [],
+    categoryColor: [null, [Validators.required]]
   });
 
   constructor(
@@ -106,8 +109,11 @@ export class CategoryUpdateComponent implements OnInit {
       id: category.id,
       name: category.name,
       shortname: category.shortname,
+      relevance: category.relevance,
       logo: category.logo,
       logoContentType: category.logoContentType,
+      logoUrl: category.logoUrl,
+      categoryColor: category.categoryColor
     });
   }
 
@@ -117,8 +123,11 @@ export class CategoryUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
       shortname: this.editForm.get(['shortname'])!.value,
+      relevance: this.editForm.get('relevance')!.value,
       logoContentType: this.editForm.get(['logoContentType'])!.value,
       logo: this.editForm.get(['logo'])!.value,
+      logoUrl: this.editForm.get(['logoUrl'])!.value,
+      categoryColor: this.editForm.get(['categoryColor'])!.value
     };
   }
 }

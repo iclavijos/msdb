@@ -15,7 +15,7 @@ export class TyreProviderRoutingResolveService implements Resolve<ITyreProvider>
     const id = route.params['id'];
     if (id) {
       return this.service.find(id).pipe(
-        mergeMap((tyreProvider: HttpResponse<TyreProvider>) => {
+        mergeMap((tyreProvider: HttpResponse<ITyreProvider>) => {
           if (tyreProvider.body) {
             return of(tyreProvider.body);
           } else {

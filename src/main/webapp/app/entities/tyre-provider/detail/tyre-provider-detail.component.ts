@@ -9,7 +9,7 @@ import { DataUtils } from 'app/core/util/data-util.service';
   templateUrl: './tyre-provider-detail.component.html',
 })
 export class TyreProviderDetailComponent implements OnInit {
-  tyreProvider: ITyreProvider | null = null;
+  tyreProvider!: ITyreProvider;
 
   constructor(protected dataUtils: DataUtils, protected activatedRoute: ActivatedRoute) {}
 

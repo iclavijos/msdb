@@ -7,7 +7,8 @@ import { CategoryDeleteDialogComponent } from './delete/category-delete-dialog.c
 import { CategoryRoutingModule } from './route/category-routing.module';
 
 @NgModule({
-    imports: [SharedModule, CategoryRoutingModule],
-    declarations: [CategoryComponent, CategoryDetailComponent, CategoryUpdateComponent, CategoryDeleteDialogComponent]
+  imports: [SharedModule, CategoryRoutingModule],
+  declarations: [CategoryComponent, CategoryDetailComponent, CategoryUpdateComponent, CategoryDeleteDialogComponent],
+  entryComponents: [CategoryDeleteDialogComponent],
 })
 export class CategoryModule {}

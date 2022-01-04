@@ -1,0 +1,201 @@
+<h1 mat-dialog-title>{{'motorsportsDatabaseApp.eventEdition.result.home.createOrEditLabel' | translate }}</h1>
+<div mat-dialog-content [formGroup]="editForm">
+    <jhi-alert-error></jhi-alert-error>
+    <div class="row">
+        <div class="col-3" *ngIf="eventEntryResult.session.sessionType === sessionTypes['race']">
+            <mat-form-field class="example-full-width">
+                <mat-label>
+                    {{'motorsportsDatabaseApp.eventEdition.result.startingPosition' | translate}}
+                </mat-label>
+                <mat-select formControlName="startingPosition">
+                    <mat-option value="0"> </mat-option>
+                    <mat-option *ngFor="let position of positions" [value]="position">
+                        {{ position }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-3">
+            <mat-form-field class="example-full-width">
+                <mat-label>
+                    {{'motorsportsDatabaseApp.eventEdition.result.finalPosition' | translate}}
+                </mat-label>
+                <mat-select formControlName="finalPosition" required (click)="updateUI()">
+                    <mat-option *ngFor="let position of positions" [value]="position">
+                        {{ position }}
+                    </mat-option>
+                    <mat-option value="900">{{ 'motorsportsDatabaseApp.eventEdition.result.retired' | translate}}</mat-option>
+                    <mat-option value="901">{{ 'motorsportsDatabaseApp.eventEdition.result.dns' | translate}}</mat-option>
+                    <mat-option value="902">{{ 'motorsportsDatabaseApp.eventEdition.result.disqualified' | translate}}</mat-option>
+                    <mat-option value="903">{{ 'motorsportsDatabaseApp.eventEdition.result.dnq' | translate}}</mat-option>
+                    <mat-option value="800">{{ 'motorsportsDatabaseApp.eventEdition.result.nc' | translate}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-6">
+            <mat-form-field class="example-full-width">
+                <mat-label>
+                    {{'motorsportsDatabaseApp.eventEdition.entry.driver' | translate}}
+                </mat-label>
+                <mat-select formControlName="entry" [compareWith]="trackEntryById" required>
+                    <mat-option *ngFor="let entry of entries" [value]="entry">
+                        #{{entry.raceNumber}} <span *ngIf="!eventEdition.multidriver">{{entry.drivers[0].driver.fullName}}</span> <span *ngIf="eventEdition.multidriver">{{entry.driversName}}</span>
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div *ngIf="eventEntryResult.session.sessionType !== sessionTypes['race']">
+        <div class="row">
+            <div class="col-3">
+                <mat-form-field class="example-full-width">
+                    <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.result.lapsCompleted' | translate }}" type="number"
+                           class="form-control" formControlName="lapsCompleted">
+                    <mat-error *ngIf="editForm.get('lapsCompleted')?.hasError('number')">
+                        {{ 'entity.validation.number' | translate }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-6">
+                <mat-form-field class="example-full-width">
+                    <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.result.bestLapTime' | translate }}" type="text"
+                           class="form-control" formControlName="bestLapTime" pattern="([0-5]?\d[':])?[0-5]\d(\.[0-9]{0,4})?">
+                    <mat-hint>00'00.0000</mat-hint>
+                    <mat-error *ngIf="editForm.get('bestLapTime')?.hasError('pattern')">
+                        Lap Pattern Invalid
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="eventEntryResult.session.sessionType === sessionTypes['race']">
+        <div class="row">
+            <div class="col-3">
+                <mat-form-field class="example-full-width">
+                    <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.result.lapsCompleted' | translate }}" type="number"
+                           class="form-control" formControlName="lapsCompleted">
+                    <mat-error *ngIf="editForm.get('lapsCompleted')?.hasError('number')">
+                        {{ 'entity.validation.number' | translate }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-3">
+                <mat-form-field class="example-full-width">
+                    <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.result.lapsLed' | translate }}" type="number"
+                           class="form-control" formControlName="lapsLed">
+                    <mat-error *ngIf="editForm.get('lapsLed')?.hasError('number')">
+                        {{ 'entity.validation.number' | translate }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-6" *ngIf="editForm.get('finalPosition').value === 1">
+                <mat-form-field class="example-full-width">
+                    <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.result.totalTime' | translate }}" type="text"
+                           class="form-control" formControlName="totalTime" pattern="(\d{1,2}[h:])?[0-5]\d[':][0-5]?\d(\.[0-9]{0,4})?">
+                    <mat-hint>00h00'00.0000</mat-hint>
+                    <mat-error *ngIf="editForm.get('totalTime')?.hasError('pattern')">
+                        Time Pattern Invalid
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-6" *ngIf="editForm.get('finalPosition').value !== 1">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4">
+                        <div class="form-group">
+                            <label class="form-control-label">Difference type</label><br/>
+                            <mat-radio-group formControlName="differenceType">
+                                <mat-radio-button value="1">
+                                    {{ 'motorsportsDatabaseApp.eventEdition.enumerations.seconds' | translate}}
+                                </mat-radio-button>
+                                <mat-radio-button value="2">
+                                    {{ 'motorsportsDatabaseApp.eventEdition.enumerations.laps' | translate}}
+                                </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-md-8">
+                        <mat-form-field class="example-full-width" *ngIf="editForm.get('differenceType').value !== '2'">
+                            <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.result.difference' | translate }}" type="text"
+                                   class="form-control" formControlName="difference" pattern="([0-5]?\d[':])?[0-5]?\d(\.[0-9]{0,4})?">
+                            <mat-hint>00'00.0000</mat-hint>
+                            <mat-error *ngIf="editForm.get('difference')?.hasError('pattern')">
+                                Time Pattern Invalid
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="example-full-width" *ngIf="editForm.get('differenceType').value === '2'">
+                            <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.result.difference' | translate }}" type="number"
+                                   class="form-control" formControlName="difference">
+                            <mat-hint>Number of laps</mat-hint>
+                            <mat-error *ngIf="editForm.get('difference')?.hasError('number')">
+                                {{ 'entity.validation.number' | translate }}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <mat-form-field class="example-full-width">
+                    <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.result.bestLapTime' | translate }}" type="text"
+                           class="form-control" formControlName="bestLapTime" pattern="([0-5]?\d[':])?[0-5]\d(\.[0-9]{0,4})?">
+                    <mat-hint>00'00.0000</mat-hint>
+                    <mat-error *ngIf="editForm.get('bestLapTime')?.hasError('pattern')">
+                        Lap Pattern Invalid
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-3">
+                <mat-checkbox formControlName="invalidFastlap">
+                    {{ 'motorsportsDatabaseApp.eventEdition.result.invalidFastlap' | translate }}
+                </mat-checkbox>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <mat-checkbox formControlName="pitlaneStart">
+                    {{ 'motorsportsDatabaseApp.eventEdition.result.pitlaneStart' | translate }}
+                </mat-checkbox>
+            </div>
+            <div class="col-3">
+                <mat-checkbox formControlName="retired">
+                    {{ 'motorsportsDatabaseApp.eventEdition.result.retired' | translate }}
+                </mat-checkbox>
+            </div>
+            <div class="col-6" *ngIf="editForm.get('retired').value">
+                <mat-form-field class="example-full-width">
+                    <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.result.retirementCause' | translate }}" type="text"
+                           class="form-control" formControlName="cause" maxlength="100">
+                    <mat-error *ngIf="editForm.get('cause')?.hasError('maxlength')">
+                        {{ 'entity.validation.maxlength' | translate : '{ max: 100 }' }}
+                    </mat-error>
+                </mat-form-field>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <mat-checkbox formControlName="sharedDrive">
+                    {{ 'motorsportsDatabaseApp.eventEdition.result.sharedDrive' | translate }}
+                </mat-checkbox>
+            </div>
+            <div class="col-6">
+                <mat-form-field class="example-full-width" *ngIf="editForm.get('sharedDrive').value">
+                    <mat-select formControlName="sharedWith" [compareWith]="trackEntryById" required>
+                        <mat-option *ngFor="let entry of entries" [value]="entry">
+                            #{{entry.raceNumber}} <span *ngIf="!eventEdition.multidriver">{{entry.drivers[0].fullName}}</span> <span *ngIf="eventEdition.multidriver">{{entry.driversName}}</span>
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+</div>
+<mat-dialog-actions align="end">
+    <button mat-button class="btn btn-secondary" (click)="close()">
+        <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+    </button>
+    <button mat-button (click)="save()" [disabled]="editForm.invalid || isSaving" class="btn btn-primary" >
+        <span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+    </button>
+</mat-dialog-actions>

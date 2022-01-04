@@ -10,6 +10,8 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
+// import { NgxSliderModule } from '@angular-slider/ngx-slider';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatRippleModule } from '@angular/material/core';
@@ -41,9 +43,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
-import { ScrollingModule } from '@angular/cdk/scrolling';
+import { ColorPickerModule } from 'primeng/colorpicker';
 
-import { ColorPickerModule } from 'ngx-color-picker';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
   exports: [
@@ -83,10 +85,10 @@ import { ColorPickerModule } from 'ngx-color-picker';
     MatCardModule,
     MatChipsModule,
     MatSlideToggleModule,
-    ColorPickerModule,
     FullCalendarModule,
     ScrollingModule,
-    LeafletModule
+    LeafletModule,
+    ColorPickerModule,
   ]
 })
 export class SharedLibsModule {}

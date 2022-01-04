@@ -15,6 +15,7 @@ export type EntityArrayResponseType = HttpResponse<ITyreProvider[]>;
 export class TyreProviderService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/tyre-providers');
   protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/tyre-providers');
+  protected statsSearchUrl = this.applicationConfigService.getEndpointFor('api/stats/tyre-providers');
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
@@ -24,12 +25,6 @@ export class TyreProviderService {
 
   update(tyreProvider: ITyreProvider): Observable<EntityResponseType> {
     return this.http.put<ITyreProvider>(`${this.resourceUrl}/${getTyreProviderIdentifier(tyreProvider) as number}`, tyreProvider, {
-      observe: 'response',
-    });
-  }
-
-  partialUpdate(tyreProvider: ITyreProvider): Observable<EntityResponseType> {
-    return this.http.patch<ITyreProvider>(`${this.resourceUrl}/${getTyreProviderIdentifier(tyreProvider) as number}`, tyreProvider, {
       observe: 'response',
     });
   }
@@ -52,25 +47,19 @@ export class TyreProviderService {
     return this.http.get<ITyreProvider[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
   }
 
-  addTyreProviderToCollectionIfMissing(
-    tyreProviderCollection: ITyreProvider[],
-    ...tyreProvidersToCheck: (ITyreProvider | null | undefined)[]
-  ): ITyreProvider[] {
-    const tyreProviders: ITyreProvider[] = tyreProvidersToCheck.filter(isPresent);
-    if (tyreProviders.length > 0) {
-      const tyreProviderCollectionIdentifiers = tyreProviderCollection.map(
-        tyreProviderItem => getTyreProviderIdentifier(tyreProviderItem)!
-      );
-      const tyreProvidersToAdd = tyreProviders.filter(tyreProviderItem => {
-        const tyreProviderIdentifier = getTyreProviderIdentifier(tyreProviderItem);
-        if (tyreProviderIdentifier == null || tyreProviderCollectionIdentifiers.includes(tyreProviderIdentifier)) {
-          return false;
-        }
-        tyreProviderCollectionIdentifiers.push(tyreProviderIdentifier);
-        return true;
-      });
-      return [...tyreProvidersToAdd, ...tyreProviderCollection];
-    }
-    return tyreProviderCollection;
+  typeahead(req: string): Observable<EntityArrayResponseType> {
+    return this.http.get<ITyreProvider[]>(`${this.resourceSearchUrl}?query=${req}`, { observe: 'response' });
+  }
+
+  getStats(id: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}`, { observe: 'response' });
+  }
+
+  getStatsYear(id: number, year: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}/${year}`, { observe: 'response' });
+  }
+
+  getYears(id: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}/years`, { observe: 'response' });
   }
 }

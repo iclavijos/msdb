@@ -9,7 +9,7 @@ export class TimeMaskPipe implements PipeTransform {
     }
 
     if (isNaN(Number(value))) {
-      return value as string;
+      return String(value);
     }
 
     const timeMillis = Number(value);

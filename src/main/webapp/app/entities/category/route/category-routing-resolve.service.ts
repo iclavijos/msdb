@@ -15,7 +15,7 @@ export class CategoryRoutingResolveService implements Resolve<ICategory> {
     const id = route.params['id'];
     if (id) {
       return this.service.find(id).pipe(
-        mergeMap((category: HttpResponse<Category>) => {
+        mergeMap((category: HttpResponse<ICategory>) => {
           if (category.body) {
             return of(category.body);
           } else {

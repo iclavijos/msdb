@@ -14,42 +14,41 @@
 }
 
 .signup-page {
-    .page-header {
-        min-height: 100vh;
-        height: auto;
-        display: inherit;
+  .page-header {
+    min-height: 100vh;
+    height: auto;
+    display: inherit;
 
-        .container{
-            padding-top: 20vh;
-        }
+    .container {
+      padding-top: 20vh;
     }
+  }
 
-    .card-signup {
-        border-radius: $border-radius-base * 2;
-        @include shadow-16dp();
-        margin-bottom: 100px;
-        padding: 40px 0px;
+  .card-signup {
+    border-radius: $border-radius-base * 2;
+    @include shadow-16dp();
+    margin-bottom: 100px;
+    padding: 40px 0px;
+  }
+  .info-horizontal {
+    padding: 0px 0px 20px;
+  }
 
+  .social {
+    .btn {
+      margin: 5px;
     }
-    .info-horizontal {
-        padding: 0px 0px 20px;
+    h4 {
+      margin-top: 20px;
     }
-
-    .social {
-        .btn {
-            margin: 5px;
-        }
-        h4 {
-            margin-top: 20px;
-        }
+  }
+  .footer {
+    .container {
+      padding: 0;
     }
-    .footer {
-        .container {
-            padding: 0;
-        }
-        .copyright,
-        a{
-            color: $white-color;
-        }
+    .copyright,
+    a {
+      color: $white-color;
     }
+  }
 }

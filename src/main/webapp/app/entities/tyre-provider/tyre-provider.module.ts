@@ -7,7 +7,8 @@ import { TyreProviderDeleteDialogComponent } from './delete/tyre-provider-delete
 import { TyreProviderRoutingModule } from './route/tyre-provider-routing.module';
 
 @NgModule({
-    imports: [SharedModule, TyreProviderRoutingModule],
-    declarations: [TyreProviderComponent, TyreProviderDetailComponent, TyreProviderUpdateComponent, TyreProviderDeleteDialogComponent]
+  imports: [SharedModule, TyreProviderRoutingModule],
+  declarations: [TyreProviderComponent, TyreProviderDetailComponent, TyreProviderUpdateComponent, TyreProviderDeleteDialogComponent],
+  entryComponents: [TyreProviderDeleteDialogComponent],
 })
 export class TyreProviderModule {}

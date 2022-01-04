@@ -1,11 +1,10 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 
-import { ROUTES, RouteInfo } from '../sidebar/sidebar.component';
+import { ROUTES } from '../sidebar/sidebar.component';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-
+import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { TranslateService } from '@ngx-translate/core';
 import { SessionStorageService } from 'ngx-webstorage';
 
@@ -22,12 +21,11 @@ import { ProfileService } from 'app/layouts/profiles/profile.service';
 @Component({
   selector: 'jhi-navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.scss']
+  styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
-  location: Location;
-  mobileMenuVisible: any = 0;
   inProduction?: boolean;
+  isNavbarCollapsed = true;
   languages = LANGUAGES;
   openAPIEnabled?: boolean;
   version = '';
@@ -35,18 +33,11 @@ export class NavbarComponent implements OnInit {
   userFullName = '';
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
-    map(result => result.matches),
+    map((result: BreakpointState) => result.matches),
     shareReplay()
   );
 
-  private listTitles: RouteInfo[] = [];
-  private toggleButton: any;
-  private sidebarVisible: boolean;
-  private $layer: any;
-
   constructor(
-    location: Location,
-    private element: ElementRef,
     private loginService: LoginService,
     private translateService: TranslateService,
     private sessionStorageService: SessionStorageService,
@@ -55,8 +46,6 @@ export class NavbarComponent implements OnInit {
     public router: Router,
     private breakpointObserver: BreakpointObserver
   ) {
-    this.location = location;
-    this.sidebarVisible = false;
     if (VERSION) {
       this.version = VERSION.toLowerCase().startsWith('v') ? VERSION : `v${VERSION}`;
     }
@@ -67,19 +56,11 @@ export class NavbarComponent implements OnInit {
       this.inProduction = profileInfo.inProduction;
       this.openAPIEnabled = profileInfo.openAPIEnabled;
     });
-    this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
-
-    this.listTitles = ROUTES; // .filter(listTitle => listTitle);
-    const navbar: HTMLElement = this.element.nativeElement;
-    this.toggleButton = navbar.getElementsByClassName('navbar-toggler')[0];
-    this.router.events.subscribe(() => {
-      //       this.sidebarClose();
-      this.$layer = document.getElementsByClassName('close-layer')[0];
-      if (this.$layer) {
-        this.$layer.remove();
-        this.mobileMenuVisible = 0;
-      }
-    });
+    this.accountService.getAuthenticationState()
+      .subscribe(
+        account =>
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          (this.account = account));
   }
 
   changeLanguage(languageKey: string): void {
@@ -87,15 +68,16 @@ export class NavbarComponent implements OnInit {
     this.translateService.use(languageKey);
   }
 
-  isAuthenticated(): boolean {
-//     const authenticated = this.accountService.isAuthenticated();
-//     if (authenticated) {
-//       this.accountService.identity().subscribe(
-//         (userIdentity: Account) =>
-//           this.userFullName = `${String(userIdentity.firstName)} ${String(userIdentity.lastName)}`
-//       );
-//     }
-    return this.accountService.isAuthenticated();
+  isAuthenticated() {
+    const authenticated = this.accountService.isAuthenticated();
+    if (authenticated) {
+      this.accountService.identity().subscribe(userIdentity => (this.userFullName = `${userIdentity?.firstName} ${userIdentity?.lastName}`));
+    }
+    return authenticated;
+  }
+
+  collapseNavbar(): void {
+    this.isNavbarCollapsed = true;
   }
 
   login(): void {
@@ -103,12 +85,16 @@ export class NavbarComponent implements OnInit {
   }
 
   logout(): void {
+    this.collapseNavbar();
     this.loginService.logout();
     this.router.navigate(['']);
   }
 
-  getImageUrl(): string | null {
-    return this.isAuthenticated() ? this.accountService.getImageUrl() : null;
+  toggleNavbar(): void {
+    this.isNavbarCollapsed = !this.isNavbarCollapsed;
   }
 
+  getImageUrl() {
+    return this.isAuthenticated() ? this.accountService.getImageUrl() : null;
+  }
 }

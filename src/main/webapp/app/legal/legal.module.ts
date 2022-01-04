@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { MotorsportsDatabaseSharedModule } from '../shared/shared.module';
+import { SharedModule } from '../shared/shared.module';
 
 import { JhiPrivacyComponent } from './privacy/privacy.component';
 import { JhiTermsConditionsComponent } from './terms-conditions/terms-conditions.component';
@@ -8,7 +8,7 @@ import { JhiTermsConditionsComponent } from './terms-conditions/terms-conditions
 import { legalRoute } from './legal.route';
 
 @NgModule({
-  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(legalRoute)],
+  imports: [SharedModule, RouterModule.forChild(legalRoute)],
   declarations: [JhiPrivacyComponent, JhiTermsConditionsComponent],
   exports: [JhiPrivacyComponent, JhiTermsConditionsComponent]
 })

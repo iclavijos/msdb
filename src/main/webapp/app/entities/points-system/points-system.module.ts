@@ -1,13 +1,23 @@
 import { NgModule } from '@angular/core';
-import { SharedModule } from 'app/shared/shared.module';
-import { PointsSystemComponent } from './list/points-system.component';
-import { PointsSystemDetailComponent } from './detail/points-system-detail.component';
-import { PointsSystemUpdateComponent } from './update/points-system-update.component';
-import { PointsSystemDeleteDialogComponent } from './delete/points-system-delete-dialog.component';
-import { PointsSystemRoutingModule } from './route/points-system-routing.module';
+import { RouterModule } from '@angular/router';
+
+import { SharedModule } from '../../shared/shared.module';
+import { PointsSystemComponent } from './points-system.component';
+import { PointsSystemDetailComponent } from './points-system-detail.component';
+import { PointsSystemUpdateComponent } from './points-system-update.component';
+import { PointsSystemDeletePopupComponent, PointsSystemDeleteDialogComponent } from './points-system-delete-dialog.component';
+import { pointsSystemRoute, pointsSystemPopupRoute } from './points-system.route';
+
+const ENTITY_STATES = [...pointsSystemRoute, ...pointsSystemPopupRoute];
 
 @NgModule({
-    imports: [SharedModule, PointsSystemRoutingModule],
-    declarations: [PointsSystemComponent, PointsSystemDetailComponent, PointsSystemUpdateComponent, PointsSystemDeleteDialogComponent]
+  imports: [SharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [
+    PointsSystemComponent,
+    PointsSystemDetailComponent,
+    PointsSystemUpdateComponent,
+    PointsSystemDeleteDialogComponent,
+    PointsSystemDeletePopupComponent
+  ]
 })
-export class PointsSystemModule {}
+export class MotorsportsDatabasePointsSystemModule {}

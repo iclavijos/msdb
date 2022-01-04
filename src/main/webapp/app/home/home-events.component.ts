@@ -30,7 +30,8 @@ export class TimeZone {
 
 @Component({
   selector: 'jhi-home-events',
-  templateUrl: './home-events.component.html'
+  templateUrl: './home-events.component.html',
+  styleUrls: ['./home.scss']
 })
 export class HomeEventsComponent implements OnInit {
   calendar: any;
@@ -45,7 +46,7 @@ export class HomeEventsComponent implements OnInit {
 
   constructor(private http: HttpClient) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.timezone = moment.tz.guess();
     if (this.timezone === undefined) {
       this.timezone = 'Europe/London';
@@ -59,7 +60,13 @@ export class HomeEventsComponent implements OnInit {
     });
   }
 
-  changeTimezone(): void {
+  filteredSessions(day: unknown): HomeEvent[] {
+    const filterDay = <string>day;
+    return this.filteredBySessionTypeCalendar.filter(
+      (item: HomeEvent) => this.formatSessionTime(item.sessionStartTime, 'LL') === filterDay) as HomeEvent[];
+  }
+
+  changeTimezone() {
     this.calendar = this.convertData(this.calendar, this.timezone);
     this.filteredBySessionTypeCalendar = this.calendar;
   }
@@ -91,6 +98,11 @@ export class HomeEventsComponent implements OnInit {
       });
       return true;
     }
+  }
+
+  formatSessionTime(sessionTime: Moment | number, pattern: string): string {
+    const momentTime = <Moment>sessionTime;
+    return momentTime.format(pattern);
   }
 
   private convertData(data: HomeEvent[], tz: string): HomeEvent[] {

@@ -1,13 +1,23 @@
 import { NgModule } from '@angular/core';
-import { SharedModule } from 'app/shared/shared.module';
-import { RacetrackComponent } from './list/racetrack.component';
-import { RacetrackDetailComponent } from './detail/racetrack-detail.component';
-import { RacetrackUpdateComponent } from './update/racetrack-update.component';
-import { RacetrackDeleteDialogComponent } from './delete/racetrack-delete-dialog.component';
-import { RacetrackRoutingModule } from './route/racetrack-routing.module';
+import { RouterModule } from '@angular/router';
+
+import { SharedModule } from '../../shared/shared.module';
+import { RacetrackComponent } from './racetrack.component';
+import { RacetrackDetailComponent } from './racetrack-detail.component';
+import { RacetrackUpdateComponent } from './racetrack-update.component';
+import { RacetrackDeletePopupComponent, RacetrackDeleteDialogComponent } from './racetrack-delete-dialog.component';
+import { racetrackRoute, racetrackPopupRoute } from './racetrack.route';
+
+const ENTITY_STATES = [...racetrackRoute, ...racetrackPopupRoute];
 
 @NgModule({
-    imports: [SharedModule, RacetrackRoutingModule],
-    declarations: [RacetrackComponent, RacetrackDetailComponent, RacetrackUpdateComponent, RacetrackDeleteDialogComponent]
+  imports: [SharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [
+    RacetrackComponent,
+    RacetrackDetailComponent,
+    RacetrackUpdateComponent,
+    RacetrackDeleteDialogComponent,
+    RacetrackDeletePopupComponent
+  ]
 })
-export class RacetrackModule {}
+export class MotorsportsDatabaseRacetrackModule {}

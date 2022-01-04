@@ -41,16 +41,16 @@ export class StandingsComponent implements OnInit, OnChanges {
     private router: Router
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: SimpleChanges) {
     const changeEventEdition = changes['eventEdition'];
     const changeSeriesEdition = changes['seriesEdition'];
 
-    if ((changeEventEdition.previousValue) || (changeSeriesEdition.previousValue)) {
+    if (changeEventEdition?.previousValue || changeSeriesEdition?.previousValue) {
       this.ngOnInit();
     }
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     let getTeamsStandings = false;
     if (this.eventEdition) {
       let seriesId = null;
@@ -106,7 +106,7 @@ export class StandingsComponent implements OnInit, OnChanges {
     }
   }
 
-  changeCategory(): void {
+  changeCategory() {
     this.drivers = this.driversUnfiltered.filter(d => d.category === this.filterCategory);
     if (this.teamsUnfiltered) {
       this.teams = this.teamsUnfiltered.filter(d => d.category === this.filterCategory);
@@ -124,7 +124,7 @@ export class StandingsComponent implements OnInit, OnChanges {
     this.updateDriversPoints();
   }
 
-  refreshGraphic(event): void {
+  refreshGraphic(event) {
     if (event.checked) {
       if (!this.selectedDrivers.includes(event.source.value)) {
         this.selectedDrivers.push(event.source.value);
@@ -166,7 +166,7 @@ export class StandingsComponent implements OnInit, OnChanges {
     this.data = Object.assign({}, data);
   }
 
-  randomColor(brightness = 3): string {
+  randomColor(brightness = 3) {
     // Six levels of brightness from 0 to 5, 0 being the darkest
     const rgb = [Math.random() * 256, Math.random() * 256, Math.random() * 256];
     const mix = [brightness * 51, brightness * 51, brightness * 51]; // 51 => 255/5
@@ -176,7 +176,7 @@ export class StandingsComponent implements OnInit, OnChanges {
     return 'rgb(' + mixedrgb.join(',') + ')';
   }
 
-  getPointsDetail(driverId: number): void {
+  getPointsDetail(driverId: number) {
     if (this.eventEdition !== undefined) {
       this.router.navigate([
         '/driver-points-details',
@@ -198,17 +198,16 @@ export class StandingsComponent implements OnInit, OnChanges {
     }
   }
 
-  switchSeries(id): boolean {
+  switchSeries(id) {
     if (!id) {
       return false;
     }
     this.eventEditionService.loadDriversPoints(this.eventEdition.id, id).subscribe(driversPoints => {
       this.drivers = driversPoints;
     });
-    return true;
   }
 
-  private updateDriversPoints(): void {
+  private updateDriversPoints() {
     this.seriesEditionService.findDriversPointsByRace(this.seriesEdition.id, this.filterCategory).subscribe(pointsByRace => {
       this.pointsByRace = pointsByRace;
       this.numRaces = pointsByRace[0].length - 2;
@@ -244,9 +243,10 @@ export class StandingsComponent implements OnInit, OnChanges {
     });
   }
 
-  private updateDriversResults(): void {
+  private updateDriversResults() {
     this.seriesEditionService.findDriversResultsByRace(this.seriesEdition.id, this.filterCategory).subscribe(resultsByRace => {
       this.resultsByRace = resultsByRace;
     });
   }
+
 }

@@ -13,11 +13,11 @@ import { ChassisService } from '../../entities/chassis/chassis.service';
   templateUrl: './statistics.component.html'
 })
 export class StatisticsComponent implements OnChanges {
-  @Input() id: number;
-  @Input() statsType: string;
-  stats: any[];
-  yearsStats: number[];
-  year: number;
+  @Input() id!: number;
+  @Input() statsType!: string;
+  stats: any[] = [];
+  yearsStats: any[] = [];
+  year = 0;
 
   constructor(
     private router: Router,
@@ -29,85 +29,88 @@ export class StatisticsComponent implements OnChanges {
 
   ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
     this.id = changes['id'].currentValue;
-    if (changes['statsType']) this.statsType = changes['statsType'].currentValue;
+    if (changes['statsType']) {
+      this.statsType = changes['statsType'].currentValue;
+    }
     this.loadStats(this.id);
     this.loadYears(this.id);
   }
 
-  loadStats(id) {
+  loadStats(id: number) {
     if (this.statsType === 'drivers') {
       this.driverService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
-        this.stats = stats.body;
+        this.stats = stats.body as any[];
       });
     }
     if (this.statsType === 'teams') {
       this.teamService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
-        this.stats = stats.body;
+        this.stats = stats.body as any[];
       });
     }
     if (this.statsType === 'engines') {
       this.engineService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
-        this.stats = stats.body;
+        this.stats = stats.body as any[];
       });
     }
     if (this.statsType === 'chassis') {
       this.chassisService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
-        this.stats = stats.body;
+        this.stats = stats.body as any[];
       });
     }
     if (this.statsType === 'engines') {
       this.engineService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
-        this.stats = stats.body;
-      });
-    }
-  }
-  loadStatsYear(id, year) {
-    if (this.statsType === 'drivers') {
-      this.driverService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
-        this.stats = stats.body;
-      });
-    }
-    if (this.statsType === 'teams') {
-      this.teamService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
-        this.stats = stats.body;
-      });
-    }
-    if (this.statsType === 'engines') {
-      this.engineService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
-        this.stats = stats.body;
-      });
-    }
-    if (this.statsType === 'chassis') {
-      this.chassisService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
-        this.stats = stats.body;
+        this.stats = stats.body as any[];
       });
     }
   }
 
-  loadYears(id) {
+  loadStatsYear(id: number, year: number) {
+    if (this.statsType === 'drivers') {
+      this.driverService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
+        this.stats = stats.body as any[];
+      });
+    }
+    if (this.statsType === 'teams') {
+      this.teamService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
+        this.stats = stats.body as any[];
+      });
+    }
+    if (this.statsType === 'engines') {
+      this.engineService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
+        this.stats = stats.body as any[];
+      });
+    }
+    if (this.statsType === 'chassis') {
+      this.chassisService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
+        this.stats = stats.body as any[];
+      });
+    }
+  }
+
+  loadYears(id: number) {
     if (this.statsType === 'drivers') {
       this.driverService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
-        this.yearsStats = stats.body;
+        this.yearsStats = stats.body as any[];
       });
     }
     if (this.statsType === 'teams') {
       this.teamService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
-        this.yearsStats = stats.body;
+        this.yearsStats = stats.body as any[];
       });
     }
     if (this.statsType === 'engines') {
       this.engineService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
-        this.yearsStats = stats.body;
+        this.yearsStats = stats.body as any[];
       });
     }
     if (this.statsType === 'chassis') {
       this.chassisService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
-        this.yearsStats = stats.body;
+        this.yearsStats = stats.body as any[];
       });
     }
     if (this.statsType === 'engines') {
       this.engineService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
-        this.yearsStats = stats.body;
+        this.yearsStats = stats.body as any[];
       });
     }
   }
@@ -125,20 +128,21 @@ export class StatisticsComponent implements OnChanges {
     if (position === 800) {
       return 'NC';
     }
-    return '' + position;
+    return `${position}`;
   }
 
-  jumpToYear(year) {
+  jumpToYear(event: Event) {
+    const year = (<HTMLInputElement>event.target).value;
     if (!year) {
       this.loadStats(this.id);
-      this.year = null;
+      this.year = null as any;
     } else {
-      this.year = year;
-      this.loadStatsYear(this.id, year);
+      this.year = Number(year);
+      this.loadStatsYear(this.id, this.year);
     }
   }
 
-  getParticipations(category) {
+  getParticipations(category: string) {
     this.router.navigate([
       '/homeEntries',
       {
@@ -150,7 +154,7 @@ export class StatisticsComponent implements OnChanges {
     ]);
   }
 
-  getWins(category) {
+  getWins(category: string) {
     this.router.navigate([
       '/homeEntries',
       {

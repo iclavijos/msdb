@@ -1,13 +1,17 @@
 import { NgModule } from '@angular/core';
-import { SharedModule } from 'app/shared/shared.module';
-import { EngineComponent } from './list/engine.component';
-import { EngineDetailComponent } from './detail/engine-detail.component';
-import { EngineUpdateComponent } from './update/engine-update.component';
-import { EngineDeleteDialogComponent } from './delete/engine-delete-dialog.component';
-import { EngineRoutingModule } from './route/engine-routing.module';
+import { RouterModule } from '@angular/router';
+
+import { SharedModule } from '../../shared/shared.module';
+import { EngineComponent } from './engine.component';
+import { EngineDetailComponent } from './engine-detail.component';
+import { EngineUpdateComponent } from './engine-update.component';
+import { EngineDeletePopupComponent, EngineDeleteDialogComponent } from './engine-delete-dialog.component';
+import { engineRoute, enginePopupRoute } from './engine.route';
+
+const ENTITY_STATES = [...engineRoute, ...enginePopupRoute];
 
 @NgModule({
-    imports: [SharedModule, EngineRoutingModule],
-    declarations: [EngineComponent, EngineDetailComponent, EngineUpdateComponent, EngineDeleteDialogComponent]
+  imports: [SharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [EngineComponent, EngineDetailComponent, EngineUpdateComponent, EngineDeleteDialogComponent, EngineDeletePopupComponent]
 })
-export class EngineModule {}
+export class MotorsportsDatabaseEngineModule {}

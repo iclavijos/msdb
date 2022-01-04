@@ -1,0 +1,82 @@
+mat-card {
+  margin-bottom: 10px;
+}
+
+.mat-column-logo {
+  flex: 0 0 150px;
+}
+.mat-column-period {
+  flex: 0 0 100px;
+}
+.mat-column-date {
+  flex: 0 0 10%;
+}
+.mat-column-name {
+  flex: 0 0 30%;
+}
+
+.mat-column-poster {
+  flex: 0 0 10%;
+}
+.mat-column-winners {
+  flex: 0 0 50%;
+}
+
+.row-margin {
+  margin-top: 20px;
+}
+
+.poster-table {
+  max-height: 220px;
+  width: auto;
+}
+
+.poster {
+  display: inline-block;
+}
+
+.overlay {
+  display: none;
+}
+
+.overlay-fixed {
+  background: rgba(0, 0, 0, 1);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90%;
+  transform: translate(-50%, -50%);
+  display: inline-block;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  text-align: center;
+  color: white;
+  padding: 12px;
+  font-size: 20px;
+}
+
+.poster:hover .overlay {
+  background: rgba(0, 0, 0, 0.8);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90%;
+  transform: translate(-50%, -50%);
+  display: inline-block;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  text-align: center;
+  color: white;
+  padding: 12px;
+  font-size: 20px;
+}
+
+.logo {
+  max-height: 200px;
+}
+
+.layout {
+  max-height: 400px;
+}

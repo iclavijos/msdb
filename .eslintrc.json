@@ -80,6 +80,7 @@
     "@typescript-eslint/no-unsafe-member-access": "off",
     "@typescript-eslint/prefer-nullish-coalescing": "error",
     "@typescript-eslint/prefer-optional-chain": "error",
+    "@typescript-eslint/restrict-template-expressions": ["warn", { "allowNullish": true }],
     "@typescript-eslint/unbound-method": "off",
     "arrow-body-style": "error",
     "curly": "error",

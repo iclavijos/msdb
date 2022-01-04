@@ -1,0 +1,103 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row">
+            <div class="col-sm-12">
+                <form name="searchForm" class="form-inline">
+                    <div class="input-group w-100 mt-3">
+                        <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.event.home.search' | translate }}">
+                        <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+                            <fa-icon [icon]="'search'"></fa-icon>
+                        </button>
+                        <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                            <fa-icon [icon]="'trash-alt'"></fa-icon>
+                        </button>
+                        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-event" [routerLink]="['/event/new']">
+                            <fa-icon [icon]="'plus'"></fa-icon>
+                            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.event.home.createLabel">
+                                Create a new event
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.event.home.title">Event</span></h4>
+                    </div>
+                    <div class="card-body">
+                        <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
+                        <div class="alert alert-warning" [hidden]="events?.length > 0 || isLoadingResults">
+                            <span jhiTranslate="motorsportsDatabaseApp.event.home.notFound">No events found</span>
+                        </div>
+                        <div class="table-responsive" [hidden]="events?.length === 0">
+                            <mat-table class="table table-hover" [dataSource]="events"
+                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
+
+                                <ng-container matColumnDef="name">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.event.name' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let event">{{ event.name }}</mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="description">
+                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.event.description' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let event">{{ event.description }}</mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="isRally">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.event.rally' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let event">
+                                        <i [ngClass]="event.rally ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="isRaid">
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.event.raid' | translate }}</mat-header-cell>
+                                    <mat-cell *matCellDef="let event">
+                                        <i [ngClass]="event.raid ? 'fa fa-fw fa-check' : 'none'"></i>
+                                    </mat-cell>
+                                </ng-container>
+
+                                <ng-container matColumnDef="buttons">
+                                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                    <mat-cell *matCellDef="let event">
+                                        <div class="btn-group">
+                                            <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                                    [routerLink]="['/event', event.id, 'edit']"
+                                                    (click)="$event.stopPropagation()"
+                                                    class="btn btn-primary btn-xs">
+                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                            </button>
+                                            <button type="submit"
+                                                    *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                                                    [routerLink]="['/event', { outlets: { popup: event.id + '/delete'} }]"
+                                                    (click)="$event.stopPropagation()"
+                                                    replaceUrl="true"
+                                                    queryParamsHandling="merge"
+                                                    class="btn btn-danger btn-xs">
+                                                <fa-icon [icon]="'times'"></fa-icon>
+                                            </button>
+                                        </div>
+                                    </mat-cell>
+                                </ng-container>
+
+                                <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                                <mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
+                                    [routerLink]="['/event', row.id, 'view' ]"></mat-row>
+                            </mat-table>
+                            <mat-paginator [length]="resultsLength"
+                                           [pageSizeOptions]="[5, 10, 20]"
+                                           [pageSize]="10"
+                                           showFirstLastButtons></mat-paginator>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -8,7 +8,7 @@ import { TyreProviderService } from '../service/tyre-provider.service';
   templateUrl: './tyre-provider-delete-dialog.component.html',
 })
 export class TyreProviderDeleteDialogComponent {
-  tyreProvider?: ITyreProvider;
+  tyreProvider!: ITyreProvider;
 
   constructor(protected tyreProviderService: TyreProviderService, protected activeModal: NgbActiveModal) {}
 
