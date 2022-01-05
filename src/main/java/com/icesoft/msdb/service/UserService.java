@@ -125,7 +125,7 @@ public class UserService {
             }
         }
         // save account in to sync users between IdP and JHipster's local database
-        Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(user.getEmail());
+        Optional<User> existingUser = userRepository.findOneByLogin(user.getLogin());
         if (existingUser.isPresent()) {
             // if IdP sends last updated information, use it to determine if an update should happen
             if (details.get("updated_at") != null) {
@@ -156,7 +156,7 @@ public class UserService {
      * @return the user from the authentication.
      */
     @Transactional
-    public AdminUserDTO getUserFromAuthentication(AbstractAuthenticationToken authToken) {
+    public UserDTO getUserFromAuthentication(AbstractAuthenticationToken authToken) {
         Map<String, Object> attributes;
         if (authToken instanceof OAuth2AuthenticationToken) {
             attributes = ((OAuth2AuthenticationToken) authToken).getPrincipal().getAttributes();
@@ -187,7 +187,7 @@ public class UserService {
                 .collect(Collectors.toSet())
         );
 
-        return new AdminUserDTO(syncUserWithIdP(attributes, user));
+        return new UserDTO(syncUserWithIdP(attributes, user));
     }
 
     public Set<UserSubscription> getUserSuscriptions(String userEmail) {
@@ -198,7 +198,7 @@ public class UserService {
         return user.getSubscriptions();
     }
 
-    public void setUserSuscriptions(AdminUserDTO userDTO, Set<UserSubscriptionDTO> subscriptions) {
+    public void setUserSuscriptions(UserDTO userDTO, Set<UserSubscriptionDTO> subscriptions) {
         User user = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).orElseThrow(
             () -> new MSDBException("User not found") // Should never happen
         );
@@ -212,7 +212,7 @@ public class UserService {
             .forEach(subs -> userSubscriptionRepository.save(subs));
     }
 
-    public void registerDevice(AdminUserDTO userDTO, String deviceId) {
+    public void registerDevice(UserDTO userDTO, String deviceId) {
         User user = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).orElseThrow(
             () -> new MSDBException("User not found") // Should never happen
         );
@@ -220,7 +220,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void removeDevice(AdminUserDTO userDTO, String deviceId) {
+    public void removeDevice(UserDTO userDTO, String deviceId) {
         User user = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).orElseThrow(
             () -> new MSDBException("User not found") // Should never happen
         );

@@ -52,7 +52,7 @@ public class AccountResource {
      */
     @GetMapping("/account")
     @SuppressWarnings("unchecked")
-    public AdminUserDTO getAccount(Principal principal) {
+    public UserDTO getAccount(Principal principal) {
         if (principal instanceof AbstractAuthenticationToken) {
             return userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
         } else {
@@ -83,7 +83,7 @@ public class AccountResource {
     @SuppressWarnings("unchecked")
     public Set<UserSubscriptionDTO> getSubscriptions(Principal principal) {
         if (principal instanceof AbstractAuthenticationToken) {
-            AdminUserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
+            UserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
             return userService.getUserSuscriptions(user.getEmail()).parallelStream().
                 map(UserSubscriptionDTO::new).collect(Collectors.toSet());
         } else {
@@ -104,7 +104,7 @@ public class AccountResource {
         Principal principal,
         @RequestBody Set<UserSubscriptionDTO> subscriptions) throws URISyntaxException {
         if (principal instanceof AbstractAuthenticationToken) {
-            AdminUserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
+            UserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
 
             userService.setUserSuscriptions(user, subscriptions);
         } else {
@@ -120,7 +120,7 @@ public class AccountResource {
         @RequestBody String deviceId) throws URISyntaxException {
         log.debug("Registering device {} for user", deviceId);
         if (principal instanceof AbstractAuthenticationToken) {
-            AdminUserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
+            UserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
             log.debug("User for device: {} - {}", user.getId(), user.getEmail());
             // This should be handled better, but it's a bit overkill to define a class for a single attribute
             Assert.notNull(deviceId, "A deviceId must be provided");
@@ -138,7 +138,7 @@ public class AccountResource {
         @PathVariable String deviceId) throws URISyntaxException {
         log.debug("Removing device {} for user", deviceId);
         if (principal instanceof AbstractAuthenticationToken) {
-            AdminUserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
+            UserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
             log.debug("User for device: {} - {}", user.getId(), user.getEmail());
             userService.removeDevice(user, deviceId);
         } else {
