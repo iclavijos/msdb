@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 
-declare const $: any;
-declare interface RouteInfo {
+// declare const $: any;
+export interface RouteInfo {
   path: string;
   title: string;
   icon: string;
@@ -31,23 +31,21 @@ export const RESTRICTED_ROUTES: RouteInfo[] = [
   styleUrls: ['./sidebar.scss']
 })
 export class SidebarComponent implements OnInit {
-  menuItems: any[];
-  restrictedMenuItems: any[];
+  menuItems: RouteInfo[] = [];
+  restrictedMenuItems: RouteInfo[] = [];
   innerWidth = 1024;
 
-  constructor() {}
-
   @HostListener('window:resize')
-  onResize() {
+  onResize(): void {
     this.innerWidth = window.innerWidth;
   }
 
-  ngOnInit() {
-    this.menuItems = ROUTES.filter(menuItem => menuItem);
-    this.restrictedMenuItems = RESTRICTED_ROUTES.filter(menuItem => menuItem);
+  ngOnInit(): void {
+    this.menuItems = ROUTES; // .filter(menuItem => menuItem);
+    this.restrictedMenuItems = RESTRICTED_ROUTES; // .filter(menuItem => menuItem);
   }
 
-  isMobileMenu() {
+  isMobileMenu(): boolean {
     if (this.innerWidth > 991) {
       return false;
     }

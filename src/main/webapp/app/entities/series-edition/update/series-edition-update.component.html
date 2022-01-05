@@ -1,0 +1,172 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-series-edition-heading"
+        data-cy="SeriesEditionCreateUpdateHeading"
+        jhiTranslate="motorsportsDatabaseApp.seriesEdition.home.createOrEditLabel"
+      >
+        Create or edit a Series Edition
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
+          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.seriesEdition.period" for="field_period">Period</label>
+          <input type="text" class="form-control" name="period" id="field_period" data-cy="period" formControlName="period" />
+          <div *ngIf="editForm.get('period')!.invalid && (editForm.get('period')!.dirty || editForm.get('period')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('period')?.errors?.required" jhiTranslate="entity.validation.required">
+              This field is required.
+            </small>
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('period')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 10 }"
+            >
+              This field cannot be longer than 10 characters.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.seriesEdition.singleChassis" for="field_singleChassis"
+            >Single Chassis</label
+          >
+          <input
+            type="checkbox"
+            class="form-check"
+            name="singleChassis"
+            id="field_singleChassis"
+            data-cy="singleChassis"
+            formControlName="singleChassis"
+          />
+          <div
+            *ngIf="
+              editForm.get('singleChassis')!.invalid && (editForm.get('singleChassis')!.dirty || editForm.get('singleChassis')!.touched)
+            "
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('singleChassis')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.seriesEdition.singleEngine" for="field_singleEngine"
+            >Single Engine</label
+          >
+          <input
+            type="checkbox"
+            class="form-check"
+            name="singleEngine"
+            id="field_singleEngine"
+            data-cy="singleEngine"
+            formControlName="singleEngine"
+          />
+          <div
+            *ngIf="editForm.get('singleEngine')!.invalid && (editForm.get('singleEngine')!.dirty || editForm.get('singleEngine')!.touched)"
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('singleEngine')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.seriesEdition.singleTyre" for="field_singleTyre"
+            >Single Tyre</label
+          >
+          <input
+            type="checkbox"
+            class="form-check"
+            name="singleTyre"
+            id="field_singleTyre"
+            data-cy="singleTyre"
+            formControlName="singleTyre"
+          />
+          <div *ngIf="editForm.get('singleTyre')!.invalid && (editForm.get('singleTyre')!.dirty || editForm.get('singleTyre')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('singleTyre')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label
+            class="form-control-label"
+            jhiTranslate="motorsportsDatabaseApp.seriesEdition.allowedCategories"
+            for="field_allowedCategories"
+            >Allowed Categories</label
+          >
+          <select
+            class="form-control"
+            id="field_allowedCategories"
+            data-cy="allowedCategories"
+            name="allowedCategories"
+            formControlName="allowedCategories"
+          >
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="
+                categoryOption.id === editForm.get('allowedCategories')!.value?.id
+                  ? editForm.get('allowedCategories')!.value
+                  : categoryOption
+              "
+              *ngFor="let categoryOption of categoriesSharedCollection; trackBy: trackCategoryById"
+            >
+              {{ categoryOption.id }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.seriesEdition.series" for="field_series">Series</label>
+          <select class="form-control" id="field_series" data-cy="series" name="series" formControlName="series">
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="seriesOption.id === editForm.get('series')!.value?.id ? editForm.get('series')!.value : seriesOption"
+              *ngFor="let seriesOption of seriesSharedCollection; trackBy: trackSeriesById"
+            >
+              {{ seriesOption.id }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

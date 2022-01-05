@@ -18,10 +18,10 @@ import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
 import com.icesoft.msdb.web.rest.views.ResponseViews;
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import io.micrometer.core.annotation.Timed;
+import lombok.RequiredArgsConstructor;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -54,6 +55,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 @Transactional
 public class EventEditionResource {
 
@@ -74,7 +76,6 @@ public class EventEditionResource {
     private final DriverEntryRepository driverEntryRepository;
     private final EventEntrySearchRepository eventEntrySearchRepo;
     private final EventEntryResultRepository eventResultRepository;
-    private final RacetrackLayoutRepository racetrackLayoutRepo;
     private final ResultsService resultsService;
     private final StatisticsService statsService;
     private final CDNService cdnService;
@@ -82,33 +83,7 @@ public class EventEditionResource {
     private final EventService eventService;
     private final SeriesEditionService seriesEditionService;
     private final SubscriptionsService subscriptionsService;
-    private final GeoLocationService geoLocationService;
-
-    public EventEditionResource(EventEditionRepository eventEditionRepository, EventEditionSearchRepository eventEditionSearchRepo,
-    		EventEntrySearchRepository eventEntrySearchRepo, EventSessionRepository eventSessionRepository,
-    		EventEntryRepository eventEntryRepository, EventEntryResultRepository resultRepository,
-    		RacetrackLayoutRepository racetrackLayoutRepo, ResultsService resultsService,
-    		CDNService cdnService, StatisticsService statsService, CacheHandler cacheHandler,
-            EventService eventService, SeriesEditionService seriesEditionService,
-            DriverEntryRepository driverEntryRepository, SubscriptionsService subscriptionsService,
-            GeoLocationService geoLocationService) {
-        this.eventEditionRepository = eventEditionRepository;
-        this.eventEditionSearchRepo = eventEditionSearchRepo;
-        this.eventSessionRepository = eventSessionRepository;
-        this.eventEntryRepository = eventEntryRepository;
-        this.eventEntrySearchRepo = eventEntrySearchRepo;
-        this.racetrackLayoutRepo = racetrackLayoutRepo;
-        this.eventResultRepository = resultRepository;
-        this.resultsService = resultsService;
-        this.cdnService = cdnService;
-        this.statsService = statsService;
-        this.cacheHandler = cacheHandler;
-        this.eventService = eventService;
-        this.seriesEditionService = seriesEditionService;
-        this.driverEntryRepository = driverEntryRepository;
-        this.subscriptionsService = subscriptionsService;
-        this.geoLocationService = geoLocationService;
-    }
+    private final SearchService searchService;
 
     /**
      * {@code POST  /event-editions} : Create a new eventEdition.
@@ -118,43 +93,50 @@ public class EventEditionResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/event-editions")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<EventEdition> createEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
         log.debug("REST request to save EventEdition : {}", eventEdition);
-
+        if (eventEdition.getId() != null) {
+            throw new BadRequestAlertException("A new eventEdition cannot already have an ID", ENTITY_NAME, "idexists");
+        }
         EventEdition result = eventService.save(eventEdition);
 
-        return ResponseEntity.created(new URI("/api/event-editions/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/event-editions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /event-editions} : Updates an existing eventEdition.
+     * {@code PUT  /event-editions/:id} : Updates an existing eventEdition.
      *
+     * @param id the id of the eventEdition to save.
      * @param eventEdition the eventEdition to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated eventEdition,
      * or with status {@code 400 (Bad Request)} if the eventEdition is not valid,
      * or with status {@code 500 (Internal Server Error)} if the eventEdition couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/event-editions")
-    @Timed
+    @PutMapping("/event-editions/{id}")
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
-    public ResponseEntity<EventEdition> updateEventEdition(@Valid @RequestBody EventEdition eventEdition) throws URISyntaxException {
-        log.debug("REST request to update EventEdition : {}", eventEdition);
-//        if (!eventEdition.getEvent().isRally() && !eventEdition.getEvent().isRaid()) {
-//            RacetrackLayout layout = racetrackLayoutRepo.findById(eventEdition.getTrackLayout().getId()).orElseThrow(
-//                () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
-//            );
-//            eventEdition.setTrackLayout(layout);
-//        }
+    public ResponseEntity<EventEdition> updateEventEdition(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody EventEdition eventEdition
+    ) throws URISyntaxException {
+        log.debug("REST request to update EventEdition : {}, {}", id, eventEdition);
         if (eventEdition.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        if (!Objects.equals(id, eventEdition.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!eventEditionRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
         EventEdition result = eventEditionRepository.getOne(eventEdition.getId());
         if (result.getSeriesEditions() != null) {
     		eventEdition.setSeriesEditions(result.getSeriesEditions());
@@ -181,13 +163,85 @@ public class EventEditionResource {
     }
 
     /**
+     * {@code PATCH  /event-editions/:id} : Partial updates given fields of an existing eventEdition, field will ignore if it is null
+     *
+     * @param id the id of the eventEdition to save.
+     * @param eventEdition the eventEdition to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated eventEdition,
+     * or with status {@code 400 (Bad Request)} if the eventEdition is not valid,
+     * or with status {@code 404 (Not Found)} if the eventEdition is not found,
+     * or with status {@code 500 (Internal Server Error)} if the eventEdition couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/event-editions/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<EventEdition> partialUpdateEventEdition(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody EventEdition eventEdition
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update EventEdition partially : {}, {}", id, eventEdition);
+        if (eventEdition.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, eventEdition.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!eventEditionRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<EventEdition> result = eventEditionRepository
+            .findById(eventEdition.getId())
+            .map(existingEventEdition -> {
+                if (eventEdition.getEditionYear() != null) {
+                    existingEventEdition.setEditionYear(eventEdition.getEditionYear());
+                }
+                if (eventEdition.getShortEventName() != null) {
+                    existingEventEdition.setShortEventName(eventEdition.getShortEventName());
+                }
+                if (eventEdition.getLongEventName() != null) {
+                    existingEventEdition.setLongEventName(eventEdition.getLongEventName());
+                }
+                if (eventEdition.getEventDate() != null) {
+                    existingEventEdition.setEventDate(eventEdition.getEventDate());
+                }
+
+                return existingEventEdition;
+            })
+            .map(eventEditionRepository::save)
+            .map(savedEventEdition -> {
+                eventEditionSearchRepo.save(savedEventEdition);
+
+                return savedEventEdition;
+            });
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, eventEdition.getId().toString())
+        );
+    }
+
+    /**
+     * {@code GET  /event-editions} : get all the eventEditions.
+     *
+     * @param pageable the pagination information.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of eventEditions in body.
+     */
+    @GetMapping("/event-editions")
+    public ResponseEntity<List<EventEdition>> getAllEventEditions(Pageable pageable) {
+        log.debug("REST request to get a page of EventEditions");
+        Page<EventEdition> page = eventEditionRepository.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
      * {@code GET  /event-editions/:id} : get the "id" eventEdition.
      *
      * @param id the id of the eventEdition to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the eventEdition, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/event-editions/{id}")
-    @Timed
     public ResponseEntity<EventEdition> getEventEdition(@PathVariable Long id) {
         log.debug("REST request to get EventEdition : {}", id);
         Optional<EventEdition> eventEditionOpt = eventEditionRepository.findById(id);
@@ -213,7 +267,6 @@ public class EventEditionResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/event-editions/{id}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     @Transactional
@@ -246,7 +299,6 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/{id}/prevNextInSeries")
-    @Timed
     @Transactional(readOnly=true)
     public List<EventsSeriesNavigationDTO> getPrevNextIdInSeries(@PathVariable Long id) {
     	EventEdition event = eventEditionRepository.findById(id).orElseThrow(
@@ -278,23 +330,25 @@ public class EventEditionResource {
      * @return the result of the search.
      */
     @GetMapping("/_search/event-editions")
-    @Timed
     public ResponseEntity<List<EventEdition>> searchEventEditions(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of EventEditions for query {}", query);
 
-        QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
-    			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
-    				.analyzeWildcard(true)
-    				.field("longEventName", 2.0f)
-    				.field("shortEventName"));
+//        QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
+//    			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
+//    				.analyzeWildcard(true)
+//    				.field("longEventName", 2.0f)
+//    				.field("shortEventName"));
 
-        Page<EventEdition> page = eventEditionSearchRepo.search(queryBuilder, pageable);
+        Page<EventEdition> page = searchService.performWildcardSearch(
+            EventEdition.class,
+            query,
+            Arrays.asList("longEventName", "shortEventName"),
+            pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     @GetMapping("/event-editions/{id}/sessions")
-    @Timed
     @Transactional(readOnly = true)
     public List<EventSession> getEventEditionSessions(@PathVariable Long id) {
     	log.debug("REST request to get all EventEditions {} sessions", id);
@@ -304,7 +358,6 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/{id}/sessions/nonfp")
-    @Timed
     public List<EventSession> getEventEditionNonFPSessions(@PathVariable Long id) {
     	log.debug("REST request to get all EventEditions {} sessions", id);
     	List<EventSession> result = eventSessionRepository.findNonFPSessions(id);
@@ -313,7 +366,6 @@ public class EventEditionResource {
     }
 
     @PostMapping("/event-editions/event-sessions")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict(cacheNames="calendar", allEntries=true)
     @Transactional
@@ -336,7 +388,6 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/event-sessions/{id}")
-    @Timed
     public ResponseEntity<EventSession> getEventSession(@PathVariable Long id) {
         log.debug("REST request to get EventSession : {}", id);
         Optional<EventSession> eventSession = eventSessionRepository.findById(id);
@@ -345,7 +396,6 @@ public class EventEditionResource {
     }
 
     @DeleteMapping("/event-editions/event-sessions/{id}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     @CacheEvict(cacheNames="calendar", allEntries=true)
     @Transactional
@@ -359,7 +409,6 @@ public class EventEditionResource {
     }
 
     @PutMapping("/event-editions/event-sessions")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict(cacheNames="calendar", allEntries=true)
     @Transactional
@@ -395,7 +444,6 @@ public class EventEditionResource {
     }
 
     @PutMapping("/event-editions/event-sessions/{sessionId}/process-results")
-    @Timed
     @CacheEvict(cacheNames = {"driversStandingsCache", "teamsStandingsCache", "pointRaceByRace", "winnersCache", "resultsRaceByRace"}) //TODO: Improve to only remove the required key
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
@@ -416,7 +464,6 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/{id}/entries")
-    @Timed
     public List<EventEditionEntry> getEventEditionEntries(@PathVariable Long id) {
     	log.debug("REST request to get all EventEditions {} entries", id);
     	List<EventEditionEntry> result = eventEntryRepository.findEventEditionEntries(id);
@@ -430,7 +477,6 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/{eventId}/points/drivers/{driverId}")
-    @Timed
     @Transactional(readOnly = true)
     @JsonView(ResponseViews.ParticipantPointsDetailView.class)
     public ResponseEntity<List<ParticipantPointsDTO>> getDriverEventPoints(@PathVariable Long eventId, @PathVariable Long driverId) {
@@ -440,7 +486,6 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/{eventId}/points/drivers")
-    @Timed
     @Transactional(readOnly = true)
     public ResponseEntity<List<ParticipantPointsDTO>> getDriversEventPoints(@PathVariable Long eventId) {
     	List<ParticipantPointsDTO> result = resultsService.getDriversPointsEvent(eventId);
@@ -449,7 +494,6 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/{seriesId}/{eventId}/points/drivers")
-    @Timed
     @Transactional(readOnly = true)
     public ResponseEntity<List<ParticipantPointsDTO>> getDriversEventPointsInSeries(@PathVariable Long seriesId, @PathVariable Long eventId) {
     	List<ParticipantPointsDTO> result = resultsService.getDriversPointsEvent(seriesId, eventId);
@@ -458,7 +502,6 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/{eventId}/points/teams/{teamId}")
-    @Timed
     @Transactional(readOnly = true)
     @JsonView(ResponseViews.ParticipantPointsDetailView.class)
     public ResponseEntity<List<ParticipantPointsDTO>> getTeamEventPoints(@PathVariable Long eventId, @PathVariable Long teamId) {
@@ -468,7 +511,6 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/{eventId}/points/teams")
-    @Timed
     @Transactional(readOnly = true)
     public ResponseEntity<List<ParticipantPointsDTO>> getTeamsEventPoints(@PathVariable Long eventId) {
         List<ParticipantPointsDTO> result = resultsService.getTeamsPointsEvent(eventId);
@@ -477,7 +519,6 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/{seriesId}/{eventId}/points/teams")
-    @Timed
     @Transactional(readOnly = true)
     public ResponseEntity<List<ParticipantPointsDTO>> getTeamsEventPointsInSeries(@PathVariable Long seriesId, @PathVariable Long eventId) {
         List<ParticipantPointsDTO> result = resultsService.getTeamsPointsEvent(seriesId, eventId);
@@ -486,7 +527,6 @@ public class EventEditionResource {
     }
 
     @PostMapping("/event-editions/{idTarget}/entries/{idSource}")
-    @Timed
     @Transactional
     public ResponseEntity<Void> copyEntries(@PathVariable Long idTarget, @PathVariable Long idSource) {
     	List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(idSource);
@@ -527,7 +567,7 @@ public class EventEditionResource {
     }
 
     @PostMapping("/event-editions/{eventEditionId}/entries")
-    @Timed
+
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<EventEditionEntry> createEventEditionEntry(
         @Valid @RequestBody EventEditionEntry eventEntry, @PathVariable Long eventEditionId) throws URISyntaxException {
@@ -557,7 +597,6 @@ public class EventEditionResource {
     }
 
     @PutMapping("/event-editions/{eventEditionId}/entries")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<EventEditionEntry> updateEventEditionEntry(
         @Valid @RequestBody EventEditionEntry eventEntry, @PathVariable Long eventEditionId) throws URISyntaxException {
@@ -584,7 +623,6 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/entries/{id}")
-    @Timed
     public ResponseEntity<EventEditionEntry> getEventEntry(@PathVariable Long id) {
         log.debug("REST request to get EventEntry : {}", id);
         EventEditionEntry eventEntry = eventEntryRepository.findById(id).orElseThrow(
@@ -598,7 +636,6 @@ public class EventEditionResource {
     }
 
     @DeleteMapping("/event-editions/entries/{id}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteEventEntry(@PathVariable Long id) {
         log.debug("REST request to delete EventEntry : {}", id);
@@ -614,7 +651,6 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/{id}/event-sessions/{idSession}/results")
-    @Timed
     @Transactional(readOnly = true)
     public List<SessionResultDTO> getEventSessionResults(@PathVariable Long id, @PathVariable Long idSession) {
     	log.debug("REST request to get EventEdition {} results for session {}", id, idSession);
@@ -643,21 +679,18 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/event-sessions/{idSession}/fastestLap")
-    @Timed
     public ResponseEntity<Long> getEventSessionFastestTime(@PathVariable Long idSession) {
         Long bestLap = eventResultRepository.findSessionFastestTime(idSession);
         return ResponseEntity.ok(bestLap);
     }
 
     @GetMapping("/event-editions/event-sessions/{idSession}/maxLaps")
-    @Timed
     public ResponseEntity<Integer> getEventSessionMaxLapsCompleted(@PathVariable Long idSession) {
         Integer maxLaps = eventResultRepository.findSessionMaxLapsCompleted(idSession);
         return ResponseEntity.ok(maxLaps);
     }
 
     @GetMapping("/event-editions/event-sessions/results/{idResult}")
-    @Timed
     @Transactional(readOnly = true)
     public ResponseEntity<EventEntryResult> getEventSessionResult(@PathVariable Long idResult) {
         log.debug("REST request to get eventSessionResult : {}", idResult);
@@ -682,7 +715,6 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/calendar/{startDate}/{endDate}")
-    @Timed
     public List<SessionCalendarDTO> getEvents(@PathVariable LocalDate startDate, @PathVariable LocalDate endDate) {
     	LocalDateTime startMidnight = LocalDateTime.of(startDate, LocalTime.MIDNIGHT);
 		ZonedDateTime start = ZonedDateTime.of(startMidnight, ZoneId.of("UTC"));
@@ -741,7 +773,6 @@ public class EventEditionResource {
     }
 
     @PostMapping("/event-editions/event-sessions/{sessionId}/results")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     //@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, allEntries = true)
     public ResponseEntity<EventEntryResult> createEventSessionResult(
@@ -764,7 +795,6 @@ public class EventEditionResource {
     }
 
     @PutMapping("/event-editions/event-sessions/{sessionId}/results")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     //@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, allEntries = true)
     public ResponseEntity<EventEntryResult> updateEventSessionResult(
@@ -787,7 +817,6 @@ public class EventEditionResource {
     }
 
     @DeleteMapping("/event-editions/event-sessions/results/{id}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteEventSessionResult(@PathVariable Long id) {
         log.debug("REST request to delete EventSessionResult : {}", id);
@@ -797,14 +826,12 @@ public class EventEditionResource {
     }
 
     @GetMapping("/event-editions/{id}/bestTimes")
-    @Timed
     public ResponseEntity<String[][]> getDriversBestTimes(@PathVariable Long id) {
     	log.debug("REST request to retrieve drivers best times on event {}", id);
     	return ResponseEntity.ok(resultsService.getDriverEventBestTimes(id));
     }
 
     @PutMapping("/event-editions/{id}/reschedule")
-    @Timed
     public ResponseEntity<EventEdition> rescheduleEvent(@PathVariable Long id, @Valid @RequestBody LocalDate newDate) {
         EventEdition event = eventEditionRepository.findById(id)
             .orElseThrow(() -> new MSDBException("Invalid event edition id"));
@@ -816,7 +843,6 @@ public class EventEditionResource {
     }
 
     @PostMapping("/event-editions/{eventEditionId}/clone")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
     public ResponseEntity<Void> cloneSeriesEdition(@PathVariable Long eventEditionId, @RequestBody String newPeriod) {

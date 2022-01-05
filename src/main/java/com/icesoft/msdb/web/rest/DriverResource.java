@@ -13,10 +13,9 @@ import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.DriverFullNameDTO;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import io.micrometer.core.annotation.Timed;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,11 +33,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -85,7 +83,6 @@ public class DriverResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/drivers")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Driver> createDriver(@Valid @RequestBody Driver driver) throws URISyntaxException {
@@ -103,28 +100,40 @@ public class DriverResource {
 			driverSearchRepository.save(result);
         }
 
-        return ResponseEntity.created(new URI("/api/drivers/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/drivers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /drivers} : Updates an existing driver.
+     * {@code PUT  /drivers/:id} : Updates an existing driver.
      *
+     * @param id the id of the driver to save.
      * @param driver the driver to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated driver,
      * or with status {@code 400 (Bad Request)} if the driver is not valid,
      * or with status {@code 500 (Internal Server Error)} if the driver couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/drivers")
-    @Timed
+    @PutMapping("/drivers/{id}")
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    public ResponseEntity<Driver> updateDriver(@Valid @RequestBody Driver driver) throws URISyntaxException {
-        log.debug("REST request to update Driver : {}", driver);
+    public ResponseEntity<Driver> updateDriver(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody Driver driver
+    ) throws URISyntaxException {
+        log.debug("REST request to update Driver : {}, {}", id, driver);
         if (driver.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        if (!Objects.equals(id, driver.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!driverRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
         if (driver.getPortrait() != null) {
 	        String cdnUrl = cdnService.uploadImage(driver.getId().toString(), driver.getPortrait(), ENTITY_NAME);
 	        driver.setPortraitUrl(cdnUrl);
@@ -133,27 +142,97 @@ public class DriverResource {
         }
         Driver result = driverRepository.save(driver);
         driverSearchRepository.save(result);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, driver.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code GET  /drivers} : get drivers.
+     * {@code PATCH  /drivers/:id} : Partial updates given fields of an existing driver, field will ignore if it is null
      *
-     * @param query the search term
-     * @param pageable the pagination information.
+     * @param id the id of the driver to save.
+     * @param driver the driver to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated driver,
+     * or with status {@code 400 (Bad Request)} if the driver is not valid,
+     * or with status {@code 404 (Not Found)} if the driver is not found,
+     * or with status {@code 500 (Internal Server Error)} if the driver couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/drivers/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<Driver> partialUpdateDriver(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody Driver driver
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update Driver partially : {}, {}", id, driver);
+        if (driver.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, driver.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
 
+        if (!driverRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<Driver> result = driverRepository
+            .findById(driver.getId())
+            .map(existingDriver -> {
+                if (driver.getName() != null) {
+                    existingDriver.setName(driver.getName());
+                }
+                if (driver.getSurname() != null) {
+                    existingDriver.setSurname(driver.getSurname());
+                }
+                if (driver.getBirthDate() != null) {
+                    existingDriver.setBirthDate(driver.getBirthDate());
+                }
+                if (driver.getBirthPlace() != null) {
+                    existingDriver.setBirthPlace(driver.getBirthPlace());
+                }
+                if (driver.getDeathDate() != null) {
+                    existingDriver.setDeathDate(driver.getDeathDate());
+                }
+                if (driver.getDeathPlace() != null) {
+                    existingDriver.setDeathPlace(driver.getDeathPlace());
+                }
+                if (driver.getPortrait() != null) {
+                    existingDriver.setPortrait(driver.getPortrait());
+                }
+
+                return existingDriver;
+            })
+            .map(driverRepository::save)
+            .map(savedDriver -> {
+                driverSearchRepository.save(savedDriver);
+
+                return savedDriver;
+            });
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, driver.getId().toString())
+        );
+    }
+
+    /**
+     * {@code GET  /drivers} : get all the drivers.
+     *
+     * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of drivers in body.
      */
     @GetMapping("/drivers")
-    @Timed
     public ResponseEntity<List<Driver>> getDrivers(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of Drivers");
         Page<Driver> page;
         Optional<String> queryOpt = Optional.ofNullable(query);
         if (queryOpt.isPresent()) {
-            page = searchService.performWildcardSearch(driverSearchRepository, query.toLowerCase(), new String[]{"surname", "name"}, pageable);
+            page = searchService.performWildcardSearch(
+                Driver.class,
+                query.toLowerCase(),
+                Arrays.asList("surname", "name"),
+                pageable);
         } else {
             page = driverRepository.findAll(pageable);
         }
@@ -168,7 +247,6 @@ public class DriverResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the driver, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/drivers/{id}")
-    @Timed
     public ResponseEntity<Driver> getDriver(@PathVariable Long id) {
         log.debug("REST request to get Driver : {}", id);
         Optional<Driver> driver = driverRepository.findById(id);
@@ -179,7 +257,6 @@ public class DriverResource {
      *
      */
     @GetMapping("/drivers/{id}/statistics")
-    @Timed
     public ResponseEntity<DriverStatistics> getDriverStatistics(@PathVariable Long id) {
     	log.debug("REST request to get statistics for driver : {}", id);
     	Optional<DriverStatistics> stats = statsRepo.findById(id.toString());
@@ -187,7 +264,6 @@ public class DriverResource {
     }
 
     @GetMapping("/drivers/{id}/participations/{category}")
-    @Timed
     public ResponseEntity<List<EventEntrySearchResultDTO>> getDriverParticipations(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
     	log.debug("REST request to get participations for driver {} in category {}", id, category);
         DriverStatistics stats = statsRepo.findById(id.toString()).orElse(new DriverStatistics(id.toString()));
@@ -213,7 +289,6 @@ public class DriverResource {
     }
 
     @GetMapping("/drivers/{id}/wins/{category}")
-    @Timed
     public ResponseEntity<List<EventEntrySearchResultDTO>> getDriverWins(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
     	log.debug("REST request to get wins for driver {} in category {}", id, category);
     	ParticipantStatisticsSnapshot stats = statsRepo.findById(id.toString()).orElse(new DriverStatistics(id.toString()));
@@ -243,24 +318,27 @@ public class DriverResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/drivers/{id}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
         log.debug("REST request to delete Driver : {}", id);
         driverRepository.deleteById(id);
         driverSearchRepository.deleteById(id);
-        cdnService.deleteImage(id.toString(), ENTITY_NAME);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
     }
 
     @GetMapping("/_typeahead/drivers")
-    @Timed
     public ResponseEntity<List<DriverFullNameDTO>> typeahead(@RequestParam String query) throws URISyntaxException {
         log.debug("REST request to search for a page of Drivers for query '{}'", query);
 
-        Page<Driver> page = searchService
-            .performWildcardSearch(driverSearchRepository, query.toLowerCase(), new String[]{"surname", "name"}, PageRequest.of(0, 10));
+        Page<Driver> page = searchService.performWildcardSearch(
+            Driver.class,
+            query.toLowerCase(),
+            Arrays.asList("surname", "name"),
+            PageRequest.of(0, 20));
         List<DriverFullNameDTO> result = new ArrayList<>();
         for (Driver driver : page) {
 			result.add(new DriverFullNameDTO(driver));

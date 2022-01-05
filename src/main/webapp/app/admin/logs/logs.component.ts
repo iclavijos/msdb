@@ -1,35 +1,48 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Log } from './log.model';
+import { Log, LoggersResponse, Level } from './log.model';
 import { LogsService } from './logs.service';
 
 @Component({
   selector: 'jhi-logs',
-  templateUrl: './logs.component.html'
+  templateUrl: './logs.component.html',
 })
 export class LogsComponent implements OnInit {
-  loggers: Log[];
-  filter: string;
-  orderProp: string;
-  reverse: boolean;
+  loggers?: Log[];
+  filteredAndOrderedLoggers?: Log[];
+  filter = '';
+  orderProp: keyof Log = 'name';
+  ascending = true;
 
-  constructor(private logsService: LogsService) {
-    this.filter = '';
-    this.orderProp = 'name';
-    this.reverse = false;
+  constructor(private logsService: LogsService) {}
+
+  ngOnInit(): void {
+    this.findAndExtractLoggers();
   }
 
-  ngOnInit() {
-    this.logsService.findAll().subscribe(response => this.extractLoggers(response));
+  changeLevel(name: string, level: Level): void {
+    this.logsService.changeLevel(name, level).subscribe(() => this.findAndExtractLoggers());
   }
 
-  changeLevel(name: string, level: string) {
-    this.logsService.changeLevel(name, level).subscribe(() => {
-      this.logsService.findAll().subscribe(response => this.extractLoggers(response));
+  filterAndSort(): void {
+    this.filteredAndOrderedLoggers = this.loggers!.filter(
+      logger => !this.filter || logger.name.toLowerCase().includes(this.filter.toLowerCase())
+    ).sort((a, b) => {
+      if (a[this.orderProp] < b[this.orderProp]) {
+        return this.ascending ? -1 : 1;
+      } else if (a[this.orderProp] > b[this.orderProp]) {
+        return this.ascending ? 1 : -1;
+      } else if (this.orderProp === 'level') {
+        return a.name < b.name ? -1 : 1;
+      }
+      return 0;
     });
   }
 
-  private extractLoggers(response) {
-    this.loggers = Object.entries(response.body.loggers).map(e => new Log(e[0], e[1]['effectiveLevel']));
+  private findAndExtractLoggers(): void {
+    this.logsService.findAll().subscribe((response: LoggersResponse) => {
+      this.loggers = Object.entries(response.loggers).map(([key, logger]) => new Log(key, logger.effectiveLevel));
+      this.filterAndSort();
+    });
   }
 }

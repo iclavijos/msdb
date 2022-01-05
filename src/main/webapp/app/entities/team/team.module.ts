@@ -1,17 +1,14 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { MotorsportsDatabaseSharedModule } from '../../shared/shared.module';
-import { TeamComponent } from './team.component';
-import { TeamDetailComponent } from './team-detail.component';
-import { TeamUpdateComponent } from './team-update.component';
-import { TeamDeletePopupComponent, TeamDeleteDialogComponent } from './team-delete-dialog.component';
-import { teamRoute, teamPopupRoute } from './team.route';
-
-const ENTITY_STATES = [...teamRoute, ...teamPopupRoute];
+import { SharedModule } from 'app/shared/shared.module';
+import { TeamComponent } from './list/team.component';
+import { TeamDetailComponent } from './detail/team-detail.component';
+import { TeamUpdateComponent } from './update/team-update.component';
+import { TeamDeleteDialogComponent } from './delete/team-delete-dialog.component';
+import { TeamRoutingModule } from './route/team-routing.module';
 
 @NgModule({
-  imports: [MotorsportsDatabaseSharedModule, RouterModule.forChild(ENTITY_STATES)],
-  declarations: [TeamComponent, TeamDetailComponent, TeamUpdateComponent, TeamDeleteDialogComponent, TeamDeletePopupComponent]
+  imports: [SharedModule, TeamRoutingModule],
+  declarations: [TeamComponent, TeamDetailComponent, TeamUpdateComponent, TeamDeleteDialogComponent],
+  entryComponents: [TeamDeleteDialogComponent],
 })
-export class MotorsportsDatabaseTeamModule {}
+export class TeamModule {}

@@ -2,7 +2,6 @@ package com.icesoft.msdb.service.dto;
 
 import com.icesoft.msdb.domain.Chassis;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class ChassisEvolutionDTO extends ItemEvolutionDTO {

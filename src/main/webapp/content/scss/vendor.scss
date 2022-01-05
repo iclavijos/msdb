@@ -1,4 +1,4 @@
-/* after changing this file run 'yarn run webpack:build' */
+/* after changing this file run 'yarn run webapp:build' */
 
 /***************************
 put Sass variables here:
@@ -10,16 +10,3 @@ eg $input-color: red;
 @import '~bootstrap/scss/bootstrap';
 
 /* jhipster-needle-scss-add-vendor JHipster will add new css style */
-
-@import '~icofont/css/icofont.min.css';
-@import '~@mdi/font/css/materialdesignicons.min.css';
-
-@import '~ngx-lightbox/lightbox.css';
-
-@import '~@fullcalendar/bootstrap/main.min.css';
-@import '~@fullcalendar/daygrid/main.min.css';
-@import '~@fullcalendar/timegrid/main.min.css';
-@import '~@fullcalendar/timeline/main.min.css';
-@import '~@fullcalendar/list/main.min.css';
-
-@import '~leaflet/dist/leaflet.css';

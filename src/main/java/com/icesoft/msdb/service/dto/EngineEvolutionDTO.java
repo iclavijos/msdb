@@ -1,6 +1,5 @@
 package com.icesoft.msdb.service.dto;
 
-import com.icesoft.msdb.domain.Chassis;
 import com.icesoft.msdb.domain.Engine;
 
 import java.util.stream.Collectors;

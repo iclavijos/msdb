@@ -1,7 +1,9 @@
 package com.icesoft.msdb.service.dto;
 
 import com.icesoft.msdb.domain.EventEditionEntry;
+import lombok.Data;
 
+@Data
 public class LapsInfoDriversDTO {
     private String driversNames;
     private String raceNumber;
@@ -14,21 +16,5 @@ public class LapsInfoDriversDTO {
     public LapsInfoDriversDTO(String raceNumber, String driversNames) {
         this.raceNumber = raceNumber;
         this.driversNames = driversNames;
-    }
-
-    public String getDriversNames() {
-        return driversNames;
-    }
-
-    public void setDriversNames(String driversNames) {
-        this.driversNames = driversNames;
-    }
-
-    public String getRaceNumber() {
-        return raceNumber;
-    }
-
-    public void setRaceNumber(String raceNumber) {
-        this.raceNumber = raceNumber;
     }
 }

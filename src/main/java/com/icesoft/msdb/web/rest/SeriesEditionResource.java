@@ -12,10 +12,6 @@ import com.icesoft.msdb.service.dto.*;
 import com.icesoft.msdb.service.impl.CacheHandler;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +27,17 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -86,10 +83,9 @@ public class SeriesEditionResource {
      *
      * @param seriesEdition the seriesEdition to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new seriesEdition, or with status {@code 400 (Bad Request)} if the seriesEdition has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     * @throws java.net.URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/series-editions")
-    @Timed
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<SeriesEdition> createSeriesEdition(@Valid @RequestBody SeriesEdition seriesEdition) throws URISyntaxException {
@@ -118,15 +114,25 @@ public class SeriesEditionResource {
      * or with status {@code 500 (Internal Server Error)} if the seriesEdition couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/series-editions")
-    @Timed
+    @PutMapping("/series-editions/{id}")
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
-    public ResponseEntity<SeriesEdition> updateSeriesEdition(@Valid @RequestBody SeriesEdition seriesEdition) throws URISyntaxException {
-        log.debug("REST request to update SeriesEdition : {}", seriesEdition);
+    public ResponseEntity<SeriesEdition> updateSeriesEdition(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody SeriesEdition seriesEdition
+    ) throws URISyntaxException {
+        log.debug("REST request to update SeriesEdition : {}, {}", id, seriesEdition);
         if (seriesEdition.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        if (!Objects.equals(id, seriesEdition.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!seriesEditionRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
         seriesEdition.setEvents(seriesEditionRepository.getOne(seriesEdition.getId()).getEvents());
         if (seriesEdition.getLogo() != null) {
             String cdnUrl = cdnService.uploadImage(seriesEdition.getId().toString(), seriesEdition.getLogo(), ENTITY_NAME);
@@ -135,7 +141,8 @@ public class SeriesEditionResource {
             cdnService.deleteImage(seriesEdition.getId().toString(), ENTITY_NAME);
         }
         SeriesEdition result = seriesEditionRepository.save(seriesEdition);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, seriesEdition.getId().toString()))
             .body(result);
     }
@@ -143,13 +150,10 @@ public class SeriesEditionResource {
     /**
      * {@code GET  /series-editions} : get all the seriesEditions.
      *
-
      * @param pageable the pagination information.
-
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of seriesEditions in body.
      */
     @GetMapping("/series-editions")
-    @Timed
     public ResponseEntity<List<SeriesEdition>> getAllSeriesEditions(Pageable pageable) {
         log.debug("REST request to get a page of SeriesEditions");
         Page<SeriesEdition> page = seriesEditionRepository.findAll(pageable);
@@ -164,7 +168,6 @@ public class SeriesEditionResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the seriesEdition, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/series-editions/{id}")
-    @Timed
     public ResponseEntity<SeriesEdition> getSeriesEdition(@PathVariable Long id) {
         log.debug("REST request to get SeriesEdition : {}", id);
         Optional<SeriesEdition> seriesEdition = seriesEditionRepository.findById(id);
@@ -178,7 +181,6 @@ public class SeriesEditionResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/series-editions/{id}")
-    @Timed
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteSeriesEdition(@PathVariable Long id) {
@@ -189,7 +191,6 @@ public class SeriesEditionResource {
     }
 
     @GetMapping("/series-editions/{id}/standings/drivers")
-    @Timed
     @Cacheable(cacheNames="driversStandingsCache", key="#id")
     public ResponseEntity<List<ParticipantPointsDTO>> getSeriesDriversStandings(@PathVariable Long id) {
     	List<ParticipantPointsDTO> result = resultsService.getDriversStandings(id);
@@ -198,7 +199,6 @@ public class SeriesEditionResource {
     }
 
     @GetMapping("/series-editions/{id}/standings/teams")
-    @Timed
     @Cacheable(cacheNames="teamsStandingsCache", key="#id")
     public ResponseEntity<List<ParticipantPointsDTO>> getSeriesTeamsStandings(@PathVariable Long id) {
     	List<ParticipantPointsDTO> result = resultsService.getTeamsStandings(id);
@@ -207,7 +207,6 @@ public class SeriesEditionResource {
     }
 
     @GetMapping("/series-editions/{id}/standings/manufacturers")
-    @Timed
     @Cacheable(cacheNames="manufacturersStandingsCache", key="#id")
     public ResponseEntity<List<ManufacturerPointsDTO>> getSeriesManufacturersStandings(@PathVariable Long id) {
     	List<ManufacturerPointsDTO> result = resultsService.getManufacturersStandings(id);
@@ -216,7 +215,6 @@ public class SeriesEditionResource {
     }
 
     @GetMapping({"/series-editions/{id}/points", "/series-editions/{id}/points/{category}"})
-    @Timed
     @Cacheable(cacheNames="pointRaceByRace")
     public ResponseEntity<List<List<?>>> getSeriesPointsRaceByRace(@PathVariable Long id, @PathVariable(required = false) String category) {
         return new ResponseEntity<>(
@@ -225,7 +223,6 @@ public class SeriesEditionResource {
     }
 
     @GetMapping({"/series-editions/{id}/results", "/series-editions/{id}/results/{category}"})
-    @Timed
     @Cacheable(cacheNames="resultsRaceByRace")
     public ResponseEntity<List<List<?>>> getSeriesResultsRaceByRace(@PathVariable Long id, @PathVariable(required = false) String category) {
     	return new ResponseEntity<>(
@@ -234,7 +231,6 @@ public class SeriesEditionResource {
     }
 
     @GetMapping("/series-editions/{id}/events")
-    @Timed
     @Cacheable(cacheNames="winnersCache", key="#id")
     public ResponseEntity<List<SeriesEventsAndWinnersDTO>> getSeriesEvents(@PathVariable Long id) {
     	log.debug("REST request to retrieve all events of series edition {}", id);
@@ -243,7 +239,6 @@ public class SeriesEditionResource {
     }
 
     @PostMapping("/series-editions/{id}/events/{idEvent}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<Void> addEventToSeries(@PathVariable Long id, @PathVariable Long idEvent, @Valid @RequestBody List<EventRacePointsDTO> racesPointsData) {
     	log.debug("REST request to add an event to series {}", id);
@@ -256,7 +251,6 @@ public class SeriesEditionResource {
     }
 
     @DeleteMapping("/series-editions/{id}/events/{idEvent}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     //@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, allEntries = true)
     public ResponseEntity<Void> removeEventFromSeries(@PathVariable Long id, @PathVariable Long idEvent) {
@@ -270,7 +264,6 @@ public class SeriesEditionResource {
     }
 
     @PostMapping("/series-editions/{id}/standings")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     //@CacheEvict(cacheNames={"winnersCache", "pointRaceByRace", "resultsRaceByRace"}, allEntries = true)
     @Transactional
@@ -297,7 +290,6 @@ public class SeriesEditionResource {
     }
 
     @PostMapping("/series-editions/{seriesEditionId}/champions/drivers")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
     public ResponseEntity<Void> updateSeriesDriversChampions(@PathVariable Long seriesEditionId, @RequestBody List<DriverCategoryChampionDTO> selectedDrivers) {
@@ -307,7 +299,6 @@ public class SeriesEditionResource {
     }
 
     @PostMapping("/series-editions/{seriesEditionId}/champions/teams")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
     public ResponseEntity<Void> updateSeriesTeamsChampions(@PathVariable Long seriesEditionId, @RequestBody List<Long> selectedTeamsId) {
@@ -317,7 +308,6 @@ public class SeriesEditionResource {
     }
 
     @GetMapping("/series-editions/{id}/champions/drivers")
-    @Timed
     public ResponseEntity<List<SeriesDriverChampionDTO>> getSeriesEventsChampionsDrivers(@PathVariable Long id) {
     	log.debug("REST request to retrieve all champions drivers of series edition {}", id);
     	List<Driver> champs = seriesEditionService.getSeriesDriversChampions(id);
@@ -327,7 +317,6 @@ public class SeriesEditionResource {
     }
 
     @GetMapping("/series-editions/{id}/champions/teams")
-    @Timed
     public ResponseEntity<List<SeriesTeamChampionDTO>> getSeriesEventsChampionsTeams(@PathVariable Long id) {
     	log.debug("REST request to retrieve all champions drivers of series edition {}", id);
     	List<Team> champs = seriesEditionService.getSeriesTeamsChampions(id);
@@ -337,7 +326,6 @@ public class SeriesEditionResource {
     }
 
     @PostMapping("/series-editions/{seriesEditionId}/clone")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
     public ResponseEntity<Void> cloneSeriesEdition(@PathVariable Long seriesEditionId, @RequestBody String newPeriod) {
@@ -346,8 +334,18 @@ public class SeriesEditionResource {
     	    HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, seriesEditionId.toString())).build();
     }
 
+    @GetMapping("/series-editions/active")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<SeriesEdition>> getActiveSeriesEditions() {
+        return ResponseEntity.ok(
+            seriesEditionRepository
+                .findDistinctSeriesEditionByEventsEventDateAfter(LocalDate.now(ZoneId.of("UTC")))
+            .parallelStream()
+            .sorted(Comparator.comparing(s -> s.getSeries().getRelevance()))
+            .collect(Collectors.toList()));
+    }
+
     @GetMapping("/series-editions/{id}/prevNextEdition")
-    @Timed
     @Transactional(readOnly=true)
     public EventsSeriesNavigationDTO getPrevNextEditionIds(@PathVariable Long id) {
         SeriesEdition seriesEdition = seriesEditionRepository.findById(id).orElseThrow(

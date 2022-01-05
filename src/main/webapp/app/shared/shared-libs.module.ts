@@ -1,10 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgJhipsterModule } from 'ng-jhipster';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
@@ -12,8 +9,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FullCalendarModule } from '@fullcalendar/angular';
 
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
-
-import { NgxSliderModule } from '@angular-slider/ngx-slider';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -49,17 +44,12 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { ColorPickerModule } from 'ngx-color-picker';
-import { LightboxModule } from 'ngx-lightbox';
-
-import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
 
 @NgModule({
   exports: [
     FormsModule,
     CommonModule,
-    RouterModule,
     NgbModule,
-    NgJhipsterModule,
     InfiniteScrollModule,
     FontAwesomeModule,
     ReactiveFormsModule,
@@ -94,14 +84,9 @@ import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateMod
     MatChipsModule,
     MatSlideToggleModule,
     ColorPickerModule,
-    LightboxModule,
     FullCalendarModule,
     ScrollingModule,
-    NgxMatDatetimePickerModule,
-    NgxMatTimepickerModule,
-    NgxMatNativeDateModule,
-    LeafletModule,
-    NgxSliderModule
+    LeafletModule
   ]
 })
-export class MotorsportsDatabaseSharedLibsModule {}
+export class SharedLibsModule {}

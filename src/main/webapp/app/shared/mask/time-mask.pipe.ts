@@ -2,15 +2,14 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({ name: 'timeMaskPipe' })
 export class TimeMaskPipe implements PipeTransform {
-  constructor() {}
 
   transform(value: any, includeMillis = true, tensOfMillis = true, handleHours = true): string {
     if (!value) {
-      return;
+      return '';
     }
 
     if (isNaN(Number(value))) {
-      return value;
+      return value as string;
     }
 
     const timeMillis = Number(value);

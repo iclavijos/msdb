@@ -1,12 +1,36 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
+import { Moment } from 'moment';
 import * as moment from 'moment-timezone';
+
+export class HomeEvent {
+  sessionName!: string;
+  sessionStartTime!: number|Moment;
+  sessionEndTime!: number|Moment;
+  duration!: number;
+  totalDuration!: number;
+  durationType!: number;
+  sessionType!: string;
+  eventEditionId!: number;
+  eventName!: string;
+  racetrack!: string;
+  seriesIds!: number[];
+  seriesNames!: string[];
+  seriesLogo!: string;
+  rally!: boolean;
+  raid!: boolean;
+}
+
+export class TimeZone {
+  countryName!: string;
+  zoneName!: string;
+  gmtOffset!: string;
+}
 
 @Component({
   selector: 'jhi-home-events',
-  templateUrl: './home-events.component.html',
-  styleUrls: ['home.scss']
+  templateUrl: './home-events.component.html'
 })
 export class HomeEventsComponent implements OnInit {
   calendar: any;
@@ -21,45 +45,26 @@ export class HomeEventsComponent implements OnInit {
 
   constructor(private http: HttpClient) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.timezone = moment.tz.guess();
     if (this.timezone === undefined) {
       this.timezone = 'Europe/London';
     }
-    this.http.get<HttpResponse<any>>('api/home/calendar').subscribe(res => {
+    this.http.get<HomeEvent[]>('api/home/calendar').subscribe((res: HomeEvent[]) => {
       this.calendar = this.convertData(res, this.timezone);
       this.filteredBySessionTypeCalendar = this.calendar;
     });
-    this.http.get<HttpResponse<any>>('api/timezones').subscribe(res => {
+    this.http.get<TimeZone[]>('api/timezones').subscribe((res: TimeZone[]) => {
       this.timezones = res;
     });
   }
 
-  private convertData(data, tz) {
-    this.dates = new Set();
-    for (let i = 0; i < data.length; i++) {
-      if (moment.isMoment(data[i].sessionStartTime)) {
-        data[i].sessionStartTime.tz(tz);
-        data[i].sessionEndTime.tz(tz);
-      } else {
-        data[i].sessionStartTime = moment(data[i].sessionStartTime * 1000).tz(tz);
-        data[i].sessionEndTime = moment(data[i].sessionEndTime * 1000).tz(tz);
-      }
-      this.dates.add(data[i].sessionStartTime.tz(tz).format('LL'));
-    }
-    return data;
-  }
-
-  filteredSessions(day) {
-    return this.filteredBySessionTypeCalendar.filter(item => item.sessionStartTime.format('LL') === day);
-  }
-
-  changeTimezone() {
+  changeTimezone(): void {
     this.calendar = this.convertData(this.calendar, this.timezone);
     this.filteredBySessionTypeCalendar = this.calendar;
   }
 
-  filterBySessionType(sessionType, isChecked) {
+  filterBySessionType(sessionType: string, isChecked: boolean): boolean {
     if (sessionType === 'races') {
       this.showRaces = isChecked;
     }
@@ -71,8 +76,9 @@ export class HomeEventsComponent implements OnInit {
     }
     if (!(this.showRaces || this.showQualiSessions || this.showPracticeSessions)) {
       this.filteredBySessionTypeCalendar = this.calendar;
+      return true;
     } else {
-      this.filteredBySessionTypeCalendar = this.calendar.filter(session => {
+      this.filteredBySessionTypeCalendar = this.calendar.filter((session: HomeEvent) => {
         if (
           ((session.sessionType === 'RACE' || session.sessionType === 'QUALIFYING_RACE' || session.sessionType === 'STAGE') &&
             this.showRaces) ||
@@ -83,6 +89,25 @@ export class HomeEventsComponent implements OnInit {
         }
         return false;
       });
+      return true;
     }
+  }
+
+  private convertData(data: HomeEvent[], tz: string): HomeEvent[] {
+    this.dates = new Set();
+    for (let i = 0; i < data.length; i++) {
+      let tmpStart: Moment;
+      if (moment.isMoment(data[i].sessionStartTime)) {
+        (data[i].sessionStartTime as Moment).tz(tz);
+        (data[i].sessionEndTime as Moment).tz(tz);
+        tmpStart = data[i].sessionStartTime as Moment;
+      } else {
+        data[i].sessionStartTime = moment.unix(data[i].sessionStartTime as number).tz(tz);
+        data[i].sessionEndTime = moment.unix(data[i].sessionEndTime as number).tz(tz);
+        tmpStart = moment(data[i].sessionStartTime as number).tz(tz);
+      }
+      this.dates.add(tmpStart.format('LL'));
+    }
+    return data;
   }
 }

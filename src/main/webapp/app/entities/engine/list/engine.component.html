@@ -1,0 +1,164 @@
+<div>
+  <h2 id="page-heading" data-cy="EngineHeading">
+    <span jhiTranslate="motorsportsDatabaseApp.engine.home.title">Engines</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info mr-2" (click)="loadPage()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="motorsportsDatabaseApp.engine.home.refreshListLabel">Refresh List</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-engine"
+        [routerLink]="['/engine/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span class="hidden-sm-down" jhiTranslate="motorsportsDatabaseApp.engine.home.createLabel"> Create a new Engine </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <form name="searchForm" class="form-inline">
+        <div class="input-group w-100 mt-3">
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="currentSearch"
+            id="currentSearch"
+            name="currentSearch"
+            placeholder="{{ 'motorsportsDatabaseApp.engine.home.search' | translate }}"
+          />
+
+          <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
+            <fa-icon icon="search"></fa-icon>
+          </button>
+
+          <button class="input-group-append btn btn-danger" (click)="search('')" *ngIf="currentSearch">
+            <fa-icon icon="trash-alt"></fa-icon>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="engines?.length === 0">
+    <span jhiTranslate="motorsportsDatabaseApp.engine.home.notFound">No engines found</span>
+  </div>
+
+  <div class="table-responsive" id="entities" *ngIf="engines && engines.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="name">
+            <span jhiTranslate="motorsportsDatabaseApp.engine.name">Name</span> <fa-icon *ngIf="!currentSearch" icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="manufacturer">
+            <span jhiTranslate="motorsportsDatabaseApp.engine.manufacturer">Manufacturer</span>
+            <fa-icon *ngIf="!currentSearch" icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="capacity">
+            <span jhiTranslate="motorsportsDatabaseApp.engine.capacity">Capacity</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="architecture">
+            <span jhiTranslate="motorsportsDatabaseApp.engine.architecture">Architecture</span>
+            <fa-icon *ngIf="!currentSearch" icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="debutYear">
+            <span jhiTranslate="motorsportsDatabaseApp.engine.debutYear">Debut Year</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="petrolEngine">
+            <span jhiTranslate="motorsportsDatabaseApp.engine.petrolEngine">Petrol Engine</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="dieselEngine">
+            <span jhiTranslate="motorsportsDatabaseApp.engine.dieselEngine">Diesel Engine</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="electricEngine">
+            <span jhiTranslate="motorsportsDatabaseApp.engine.electricEngine">Electric Engine</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="turbo">
+            <span jhiTranslate="motorsportsDatabaseApp.engine.turbo">Turbo</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="image">
+            <span jhiTranslate="motorsportsDatabaseApp.engine.image">Image</span> <fa-icon *ngIf="!currentSearch" icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="derivedFrom.id">
+            <span jhiTranslate="motorsportsDatabaseApp.engine.derivedFrom">Derived From</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let engine of engines; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/engine', engine.id, 'view']">{{ engine.id }}</a>
+          </td>
+          <td>{{ engine.name }}</td>
+          <td>{{ engine.manufacturer }}</td>
+          <td>{{ engine.capacity }}</td>
+          <td>{{ engine.architecture }}</td>
+          <td>{{ engine.debutYear }}</td>
+          <td>{{ engine.petrolEngine }}</td>
+          <td>{{ engine.dieselEngine }}</td>
+          <td>{{ engine.electricEngine }}</td>
+          <td>{{ engine.turbo }}</td>
+          <td>
+            <a *ngIf="engine.image" (click)="openFile(engine.image, engine.imageContentType)">
+              <img [src]="'data:' + engine.imageContentType + ';base64,' + engine.image" style="max-height: 30px" alt="engine image" />
+            </a>
+            <span *ngIf="engine.image">{{ engine.imageContentType }}, {{ byteSize(engine.image) }}</span>
+          </td>
+          <td>
+            <div *ngIf="engine.derivedFrom">
+              <a [routerLink]="['/engine', engine.derivedFrom?.id, 'view']">{{ engine.derivedFrom?.id }}</a>
+            </div>
+          </td>
+          <td class="text-right">
+            <div class="btn-group">
+              <button type="submit" [routerLink]="['/engine', engine.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+
+              <button type="submit" [routerLink]="['/engine', engine.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+              </button>
+
+              <button type="submit" (click)="delete(engine)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="engines && engines.length > 0">
+    <div class="row justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="row justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [(page)]="ngbPaginationPage"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="loadPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

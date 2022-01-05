@@ -2,7 +2,9 @@ package com.icesoft.msdb.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.icesoft.msdb.web.rest.views.ResponseViews;
+import lombok.Getter;
 
+@Getter
 public class ParticipantPointsDTO {
 
 	@JsonView(ResponseViews.ParticipantPointsDetailView.class)
@@ -39,30 +41,4 @@ public class ParticipantPointsDTO {
 		this.category = category;
 		this.reason = reason;
 	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public Long getParticipantId() {
-		return participantId;
-	}
-
-	public String getParticipantName() {
-		return participantName;
-	}
-
-	public Float getPoints() {
-		return points;
-	}
-
-	public Integer getNumPoints() {
-		return numPoints;
-	}
-
-	public String getReason() {
-		return reason;
-	}
-
-	public String getCategory() { return category; }
 }

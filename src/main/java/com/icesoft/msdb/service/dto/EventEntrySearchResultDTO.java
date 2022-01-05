@@ -5,12 +5,16 @@ import java.util.Optional;
 
 import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.domain.EventEditionEntry;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
 public class EventEntrySearchResultDTO {
 	private String raceNumber;
 	private String entryName;
 	private long driverId = -1;
 	private Long eventEditionId;
+    @Setter
 	private LocalDate sessionDate;
 	private String driverName;
 	private String eventName;
@@ -67,77 +71,5 @@ public class EventEntrySearchResultDTO {
 		if (racePosition == 800) {
 			this.raceStatus = "NC";
 		}
-	}
-
-	public String getRaceNumber() {
-		return raceNumber;
-	}
-
-	public String getEntryName() {
-		return entryName;
-	}
-
-	public long getDriverId() {
-		return driverId;
-	}
-
-	public long getEventEditionId() {
-		return eventEditionId;
-	}
-
-	public String getDriverName() {
-		return driverName;
-	}
-
-	public String getEventName() {
-		return eventName;
-	}
-
-	public String getChassisEngine() {
-		return chassisEngine;
-	}
-
-	public Integer getEditionYear() {
-		return editionYear;
-	}
-
-	public Long getPoleTime() {
-		return poleTime;
-	}
-
-	public Integer getPolePosition() {
-		return polePosition;
-	}
-
-	public Long getRaceFastLap() {
-		return raceFastLap;
-	}
-
-	public Integer getRacePosition() {
-		return racePosition;
-	}
-
-	public String getRetirement() {
-		return retirement;
-	}
-
-	public Long getFastestLap() {
-		return fastestLap;
-	}
-
-	public String getSession() {
-		return session;
-	}
-
-	public String getRaceStatus() {
-		return raceStatus;
-	}
-
-	public LocalDate getSessionDate() {
-		return sessionDate;
-	}
-
-	public void setSessionDate(LocalDate sessionDate) {
-		this.sessionDate = sessionDate;
 	}
 }

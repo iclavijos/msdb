@@ -2,16 +2,15 @@ import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPT
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
-import { Component, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
-import { Router, ActivatedRouteSnapshot, NavigationEnd, NavigationError } from '@angular/router';
+import { Component, OnDestroy, OnInit, AfterViewInit, RendererFactory2, Renderer2 } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { Router, ActivatedRouteSnapshot, NavigationEnd } from '@angular/router';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import * as dayjs from 'dayjs';
 import { Subject, Observable } from 'rxjs';
-import { map, shareReplay, takeUntil } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 
-import { JhiLanguageHelper } from '../../core/language/language.helper';
-import { Account } from '../../core/user/account.model';
-import { AccountService } from '../../core/auth/account.service';
-import { StateStorageService } from '../../core/auth/state-storage.service';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-main',
@@ -26,7 +25,7 @@ import { StateStorageService } from '../../core/auth/state-storage.service';
     { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS }
   ]
 })
-export class JhiMainComponent implements OnInit, OnDestroy, AfterViewInit {
+export class MainComponent implements OnInit, OnDestroy, AfterViewInit {
   _cleanup: Subject<any> = new Subject<any>();
 
   backgroundNumber = 1;
@@ -36,65 +35,62 @@ export class JhiMainComponent implements OnInit, OnDestroy, AfterViewInit {
     shareReplay()
   );
 
+  private renderer: Renderer2;
+
   constructor(
     private accountService: AccountService,
-    private stateStorageService: StateStorageService,
-    private jhiLanguageHelper: JhiLanguageHelper,
+    private titleService: Title,
     private router: Router,
     private translateService: TranslateService,
     private dateAdapter: DateAdapter<any>,
-    private breakpointObserver: BreakpointObserver
-  ) {}
-
-  private getPageTitle(routeSnapshot: ActivatedRouteSnapshot) {
-    let title: string = routeSnapshot.data && routeSnapshot.data['pageTitle'] ? routeSnapshot.data['pageTitle'] : 'motorsportsDatabaseApp';
-    if (routeSnapshot.firstChild) {
-      title = this.getPageTitle(routeSnapshot.firstChild) || title;
-    }
-    return title;
+    private breakpointObserver: BreakpointObserver,
+    rootRenderer: RendererFactory2
+  ) {
+    this.renderer = rootRenderer.createRenderer(document.querySelector('html'), null);
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    // try to log in automatically
+    this.accountService.identity().subscribe();
     this.backgroundNumber = Math.floor(Math.random() * 4) + 1;
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        this.jhiLanguageHelper.updateTitle(this.getPageTitle(this.router.routerState.snapshot.root));
-      }
-      if (event instanceof NavigationError && event.error.status === 404) {
-        this.router.navigate(['/404']);
+        this.updateTitle();
       }
     });
-    this.subscribeToLoginEvents();
+
+    this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
+      this.updateTitle();
+      dayjs.locale(langChangeEvent.lang);
+      this.renderer.setAttribute(document.querySelector('html'), 'lang', langChangeEvent.lang);
+    });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
       this.dateAdapter.setLocale(langChangeEvent.lang);
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this._cleanup.next();
     this._cleanup.complete();
     this.translateService.onLangChange.unsubscribe();
   }
 
-  private subscribeToLoginEvents() {
-    this.accountService
-      .getAuthenticationState()
-      .pipe(takeUntil(this._cleanup))
-      .subscribe((account: Account) => {
-        if (account) {
-          this.navigateToStoredUrl();
-        }
-      });
+  private getPageTitle(routeSnapshot: ActivatedRouteSnapshot): string {
+    const title: string = routeSnapshot.data['pageTitle'] ?? '';
+    if (routeSnapshot.firstChild) {
+      return this.getPageTitle(routeSnapshot.firstChild) || title;
+    }
+    return title;
   }
 
-  private navigateToStoredUrl() {
-    const previousUrl = this.stateStorageService.getUrl();
-    if (previousUrl) {
-      this.stateStorageService.storeUrl(null);
-      this.router.navigateByUrl(previousUrl);
+  private updateTitle(): void {
+    let pageTitle = this.getPageTitle(this.router.routerState.snapshot.root);
+    if (!pageTitle) {
+      pageTitle = 'global.title';
     }
+    this.translateService.get(pageTitle).subscribe(title => this.titleService.setTitle(title));
   }
 }

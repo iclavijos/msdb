@@ -1,13 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'jhi-footer',
   templateUrl: './footer.component.html'
 })
-export class FooterComponent implements OnInit {
+export class FooterComponent {
   test: Date = new Date();
-
-  constructor() {}
-
-  ngOnInit() {}
 }

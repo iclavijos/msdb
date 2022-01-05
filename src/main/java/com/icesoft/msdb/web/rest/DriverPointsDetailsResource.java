@@ -6,9 +6,8 @@ import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.repository.DriverEventPointsRepository;
 import com.icesoft.msdb.repository.EventSessionRepository;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import io.micrometer.core.annotation.Timed;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +51,6 @@ public class DriverPointsDetailsResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/driver-points-details")
-    @Timed
     @CacheEvict(cacheNames="driversStandingsCache", key="#driverPointsDetails.session.id")
     public ResponseEntity<DriverEventPoints> createDriverPointsDetails(@RequestBody DriverEventPoints driverPointsDetails) throws URISyntaxException {
         log.debug("REST request to save DriverPointsDetails : {}", driverPointsDetails);
@@ -76,18 +74,21 @@ public class DriverPointsDetailsResource {
     }
 
     /**
-     * {@code PUT  /driver-points-details} : Updates an existing driverPointsDetails.
+     * {@code PUT  /driver-points-details/:id} : Updates an existing driverPointsDetails.
      *
+     * @param id the id of the driverPointsDetails to save.
      * @param driverPointsDetails the driverPointsDetails to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated driverPointsDetails,
      * or with status {@code 400 (Bad Request)} if the driverPointsDetails is not valid,
      * or with status {@code 500 (Internal Server Error)} if the driverPointsDetails couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/driver-points-details")
-    @Timed
-    public ResponseEntity<DriverEventPoints> updateDriverPointsDetails(@RequestBody DriverEventPoints driverPointsDetails) throws URISyntaxException {
-        log.debug("REST request to update DriverPointsDetails : {}", driverPointsDetails);
+    @PutMapping("/driver-points-details/{id}")
+    public ResponseEntity<DriverEventPoints> updateDriverPointsDetails(
+        @PathVariable(value = "id", required = false) final Long id,
+        @RequestBody DriverEventPoints driverPointsDetails
+    ) throws URISyntaxException {
+        log.debug("REST request to update DriverPointsDetails : {}, {}", id, driverPointsDetails);
         if (driverPointsDetails.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -104,7 +105,6 @@ public class DriverPointsDetailsResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the driverPointsDetails, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/driver-points-details/{id}")
-    @Timed
     public ResponseEntity<DriverEventPoints> getDriverPointsDetails(@PathVariable Long id) {
         log.debug("REST request to get DriverPointsDetails : {}", id);
         Optional<DriverEventPoints> driverPointsDetails = driverPointsDetailsRepository.findById(id);
@@ -118,7 +118,6 @@ public class DriverPointsDetailsResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/driver-points-details/{id}")
-    @Timed
     public ResponseEntity<Void> deleteDriverPointsDetails(@PathVariable Long id) {
         log.debug("REST request to delete DriverPointsDetails : {}", id);
         driverPointsDetailsRepository.deleteById(id);
