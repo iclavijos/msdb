@@ -8,10 +8,9 @@ import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import io.micrometer.core.annotation.Timed;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
@@ -30,10 +29,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -78,7 +80,6 @@ public class FuelProviderResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/fuel-providers")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<FuelProvider> createFuelProvider(@Valid @RequestBody FuelProvider fuelProvider) throws URISyntaxException {
         log.debug("REST request to save FuelProvider : {}", fuelProvider);
@@ -94,28 +95,40 @@ public class FuelProviderResource {
             result = fuelProviderRepository.save(result);
         }
 
-        return ResponseEntity.created(new URI("/api/fuel-providers/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/fuel-providers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /fuel-providers} : Updates an existing fuelProvider.
+     * {@code PUT  /fuel-providers/:id} : Updates an existing fuelProvider.
      *
+     * @param id the id of the fuelProvider to save.
      * @param fuelProvider the fuelProvider to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated fuelProvider,
      * or with status {@code 400 (Bad Request)} if the fuelProvider is not valid,
      * or with status {@code 500 (Internal Server Error)} if the fuelProvider couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/fuel-providers")
-    @Timed
+    @PutMapping("/fuel-providers/{id}")
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    public ResponseEntity<FuelProvider> updateFuelProvider(@Valid @RequestBody FuelProvider fuelProvider) throws URISyntaxException {
-        log.debug("REST request to update FuelProvider : {}", fuelProvider);
+    public ResponseEntity<FuelProvider> updateFuelProvider(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody FuelProvider fuelProvider
+    ) throws URISyntaxException {
+        log.debug("REST request to update FuelProvider : {}, {}", id, fuelProvider);
         if (fuelProvider.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        if (!Objects.equals(id, fuelProvider.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!fuelProviderRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
         if (fuelProvider.getLogo() != null) {
             String cdnUrl = cdnService.uploadImage(fuelProvider.getId().toString(), fuelProvider.getLogo(), ENTITY_NAME);
             fuelProvider.logoUrl(cdnUrl);
@@ -124,27 +137,82 @@ public class FuelProviderResource {
         }
         FuelProvider result = fuelProviderRepository.save(fuelProvider);
         fuelProviderSearchRepository.save(result);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, fuelProvider.getId().toString()))
             .body(result);
     }
 
     /**
+     * {@code PATCH  /fuel-providers/:id} : Partial updates given fields of an existing fuelProvider, field will ignore if it is null
+     *
+     * @param id the id of the fuelProvider to save.
+     * @param fuelProvider the fuelProvider to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated fuelProvider,
+     * or with status {@code 400 (Bad Request)} if the fuelProvider is not valid,
+     * or with status {@code 404 (Not Found)} if the fuelProvider is not found,
+     * or with status {@code 500 (Internal Server Error)} if the fuelProvider couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/fuel-providers/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<FuelProvider> partialUpdateFuelProvider(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody FuelProvider fuelProvider
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update FuelProvider partially : {}, {}", id, fuelProvider);
+        if (fuelProvider.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, fuelProvider.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!fuelProviderRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<FuelProvider> result = fuelProviderRepository
+            .findById(fuelProvider.getId())
+            .map(existingFuelProvider -> {
+                if (fuelProvider.getName() != null) {
+                    existingFuelProvider.setName(fuelProvider.getName());
+                }
+                if (fuelProvider.getLogo() != null) {
+                    existingFuelProvider.setLogo(fuelProvider.getLogo());
+                }
+
+                return existingFuelProvider;
+            })
+            .map(fuelProviderRepository::save)
+            .map(savedFuelProvider -> {
+                fuelProviderSearchRepository.save(savedFuelProvider);
+
+                return savedFuelProvider;
+            });
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, fuelProvider.getId().toString())
+        );
+    }
+
+    /**
      * {@code GET  /fuel-providers} : get all the fuelProviders.
      *
-
      * @param pageable the pagination information.
-
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of fuelProviders in body.
      */
     @GetMapping("/fuel-providers")
-    @Timed
     public ResponseEntity<List<FuelProvider>> getFuelProviders(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of FuelProviders");
         Page<FuelProvider> page;
         Optional<String> queryOpt = Optional.ofNullable(query);
         if (queryOpt.isPresent()) {
-            page = searchService.performWildcardSearch(fuelProviderSearchRepository, query.toLowerCase(), new String[]{"manufacturer", "name"}, pageable);
+            page = searchService.performWildcardSearch(
+                FuelProvider.class,
+                query.toLowerCase(),
+                Arrays.asList("manufacturer", "name"),
+                pageable);
         } else {
             page = fuelProviderRepository.findAll(pageable);
         }
@@ -159,7 +227,6 @@ public class FuelProviderResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the fuelProvider, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/fuel-providers/{id}")
-    @Timed
     public ResponseEntity<FuelProvider> getFuelProvider(@PathVariable Long id) {
         log.debug("REST request to get FuelProvider : {}", id);
         Optional<FuelProvider> fuelProvider = fuelProviderRepository.findById(id);
@@ -173,14 +240,16 @@ public class FuelProviderResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/fuel-providers/{id}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteFuelProvider(@PathVariable Long id) {
         log.debug("REST request to delete FuelProvider : {}", id);
         fuelProviderRepository.deleteById(id);
         fuelProviderSearchRepository.deleteById(id);
         cdnService.deleteImage(id.toString(), ENTITY_NAME);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
     }
 
     /**
@@ -192,25 +261,29 @@ public class FuelProviderResource {
      * @return the result of the search.
      */
     @GetMapping("/_search/fuel-providers")
-    @Timed
     public ResponseEntity<List<FuelProvider>> searchFuelProviders(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of FuelProviders for query {}", query);
-        String searchValue = '*' + query + '*';
-        Page<FuelProvider> page = fuelProviderSearchRepository.search(queryStringQuery(query), pageable);
+
+        Page<FuelProvider> page = searchService.performWildcardSearch(
+            FuelProvider.class,
+            query,
+            Arrays.asList("name"),
+            pageable
+        );
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     @GetMapping("/_typeahead/fuels")
-    @Timed
     public List<FuelProvider> typeahead(@RequestParam String query) {
         log.debug("REST request to search for a page of FuelProvider for query {}", query);
-        String searchValue = '*' + query + '*';
-        NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
-            .withQuery(QueryBuilders.boolQuery().must(queryStringQuery(searchValue)))
-            .withSort(SortBuilders.fieldSort("name"))
-            .withPageable(PageRequest.of(0, 10));
-        Page<FuelProvider> page = fuelProviderSearchRepository.search(nqb.build());
+
+        Page<FuelProvider> page = searchService.performWildcardSearch(
+            FuelProvider.class,
+            query,
+            Arrays.asList("name"),
+            PageRequest.of(0, 10)
+        );
         return page.getContent();
     }
 }

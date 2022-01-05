@@ -9,10 +9,6 @@ import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.dto.RacetrackLayoutSearchResultDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,13 +23,18 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -67,7 +68,6 @@ public class RacetrackResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/racetracks")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Racetrack> createRacetrack(@Valid @RequestBody Racetrack racetrack) throws URISyntaxException {
@@ -77,30 +77,39 @@ public class RacetrackResource {
         }
         Racetrack result = racetrackService.save(racetrack);
 
-        return ResponseEntity.created(new URI("/api/racetracks/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/racetracks/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /racetracks} : Updates an existing racetrack.
+     * {@code PUT  /racetracks/:id} : Updates an existing racetrack.
      *
+     * @param id the id of the racetrack to save.
      * @param racetrack the racetrack to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated racetrack,
      * or with status {@code 400 (Bad Request)} if the racetrack is not valid,
      * or with status {@code 500 (Internal Server Error)} if the racetrack couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/racetracks")
-    @Timed
+    @PutMapping("/racetracks/{id}")
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    public ResponseEntity<Racetrack> updateRacetrack(@Valid @RequestBody Racetrack racetrack) throws URISyntaxException {
-        log.debug("REST request to update Racetrack : {}", racetrack);
+    public ResponseEntity<Racetrack> updateRacetrack(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody Racetrack racetrack
+    ) throws URISyntaxException {
+        log.debug("REST request to update Racetrack : {}, {}", id, racetrack);
         if (racetrack.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        if (!Objects.equals(id, racetrack.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
         Racetrack result = racetrackService.save(racetrack);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, racetrack.getId().toString()))
             .body(result);
     }
@@ -108,13 +117,10 @@ public class RacetrackResource {
     /**
      * {@code GET  /racetracks} : get all the racetracks.
      *
-
      * @param pageable the pagination information.
-
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of racetracks in body.
      */
     @GetMapping("/racetracks")
-    @Timed
     public ResponseEntity<List<Racetrack>> getAllRacetracks(@RequestParam(required = false) String query,  Pageable pageable) {
         log.debug("REST request to get a page of Racetracks");
         Page<Racetrack> page = racetrackService.findRacetracks(Optional.ofNullable(query), pageable);
@@ -129,7 +135,6 @@ public class RacetrackResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the racetrack, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/racetracks/{id}")
-    @Timed
     public ResponseEntity<Racetrack> getRacetrack(@PathVariable Long id) {
         log.debug("REST request to get Racetrack : {}", id);
         Racetrack racetrack = racetrackService.find(id);
@@ -143,7 +148,6 @@ public class RacetrackResource {
      * @return the ResponseEntity with status 200 (OK) and with body the list of layouts, or with status 404 (Not Found)
      */
     @GetMapping("/racetracks/{id}/layouts")
-    @Timed
     public List<RacetrackLayout> getRacetrackLayouts(@PathVariable Long id) {
         log.debug("REST request to get Racetrack layouts : {}", id);
         return racetrackService.findRacetrackLayouts(id);
@@ -156,14 +160,16 @@ public class RacetrackResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/racetracks/{id}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Void> deleteRacetrack(@PathVariable Long id) {
         log.debug("REST request to delete Racetrack : {}", id);
         racetrackService.delete(id);
 
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
     }
 
     /**
@@ -190,7 +196,6 @@ public class RacetrackResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/racetrack-layouts")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<RacetrackLayout> createRacetrackLayout(@Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
         log.debug("REST request to save RacetrackLayout : {}", racetrackLayout);
@@ -217,7 +222,6 @@ public class RacetrackResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/racetrack-layouts")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<RacetrackLayout> updateRacetrackLayout(@Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
         log.debug("REST request to update RacetrackLayout : {}", racetrackLayout);
@@ -239,7 +243,6 @@ public class RacetrackResource {
      * @return the ResponseEntity with status 200 (OK) and with body the racetrackLayout, or with status 404 (Not Found)
      */
     @GetMapping("/racetrack-layouts/{id}")
-    @Timed
     public ResponseEntity<RacetrackLayout> getRacetrackLayout(@PathVariable Long id) {
         log.debug("REST request to get RacetrackLayout : {}", id);
         RacetrackLayout racetrackLayout = racetrackService.findLayout(id);
@@ -253,7 +256,6 @@ public class RacetrackResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/racetrack-layouts/{id}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteRacetrackLayout(@PathVariable Long id) {
         log.debug("REST request to delete RacetrackLayout : {}", id);
@@ -268,7 +270,6 @@ public class RacetrackResource {
      * @return the ResponseEntity with status 200 (OK) and the list of racetrackLayouts in body
      */
     @GetMapping("/racetracks/{id}/racetrack-layouts")
-    @Timed
     public List<RacetrackLayout> getAllRacetrackLayouts(@PathVariable Long id) {
         log.debug("REST request to get all RacetrackLayouts");
         List<RacetrackLayout> racetrackLayouts = racetrackService.findRacetrackLayouts(id);
@@ -281,7 +282,6 @@ public class RacetrackResource {
      * @return the ResponseEntity with status 200 (OK) and the list of events in body
      */
     @GetMapping("/racetracks/{id}/events")
-    @Timed
     public ResponseEntity<List<EventEditionWinnersDTO>> getRacetrackEvents(@PathVariable Long id, @RequestParam String type, Pageable page) {
         log.debug("REST request to get {} events to happen at racetrack {}", type, id);
         Page<EventEditionWinnersDTO> eventsEditions = null;
@@ -298,7 +298,6 @@ public class RacetrackResource {
     }
 
     @GetMapping("/_search/racetrack-layouts")
-    @Timed
     public List<RacetrackLayoutSearchResultDTO> searchTypeaheadLayouts(@RequestParam String query) {
     	log.debug("REST request to search RacetracksLayouts for query {}", query);
         Page<RacetrackLayout> page = racetrackService.searchLayouts(query, PageRequest.of(0, 10));

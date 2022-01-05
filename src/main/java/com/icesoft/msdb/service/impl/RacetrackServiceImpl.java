@@ -3,10 +3,7 @@ package com.icesoft.msdb.service.impl;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.maps.model.Geometry;
@@ -143,7 +140,11 @@ public class RacetrackServiceImpl implements RacetrackService {
         log.debug("Request to get all Racetracks");
         Page<Racetrack> page;
         if (query.isPresent()) {
-            page = searchService.performWildcardSearch(racetrackSearchRepo, query.get().toLowerCase(), new String[]{"name", "location"}, pageable);
+            page = searchService.performWildcardSearch(
+                Racetrack.class,
+                query.get().toLowerCase(),
+                Arrays.asList("name", "location"),
+                pageable);
         } else {
             page = racetrackRepository.findAll(pageable);
         }
@@ -199,24 +200,20 @@ public class RacetrackServiceImpl implements RacetrackService {
 
     @Override
     public Page<Racetrack> search(String query, Pageable pageable) {
-    	String searchValue = "*" + query + '*';
-    	NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
-        		.withQuery(queryStringQuery(searchValue))
-        		.withSort(SortBuilders.fieldSort("name"))
-        		.withPageable(pageable);
-
-    	return racetrackSearchRepo.search(nqb.build());
+    	return searchService.performWildcardSearch(
+            Racetrack.class,
+            query.toLowerCase(),
+            Arrays.asList("name", "location"),
+            pageable);
     }
 
     @Override
     public Page<RacetrackLayout> searchLayouts(String query, Pageable pageable) {
-    	String searchValue = "*" + query + '*';
-    	NativeSearchQueryBuilder nqb = new NativeSearchQueryBuilder()
-        		.withQuery(queryStringQuery(searchValue))
-        		.withSort(SortBuilders.fieldSort("name"))
-        		.withPageable(pageable);
-
-    	return racetrackLayoutSearchRepo.search(nqb.build());
+    	return searchService.performWildcardSearch(
+            RacetrackLayout.class,
+            query.toLowerCase(),
+            Arrays.asList("name"),
+            pageable);
     }
 
     @Override

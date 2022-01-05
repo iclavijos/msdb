@@ -120,7 +120,11 @@ public class EventServiceImpl implements EventService {
         log.debug("Request to get all Events");
         Page<Event> page;
         if (query.isPresent()) {
-            page = searchService.performWildcardSearch(eventSearchRepository, query.get().toLowerCase(), new String[]{"name", "description"}, pageable);
+            page = searchService.performWildcardSearch(
+                Event.class,
+                query.get().toLowerCase(),
+                Arrays.asList("name", "description"),
+                pageable);
         } else {
             page = eventRepository.findAll(pageable);
         }
@@ -160,7 +164,7 @@ public class EventServiceImpl implements EventService {
     				.analyzeWildcard(true)
     				.field("name"));
 
-    	return eventSearchRepository.search(queryBuilder, pageable);
+        return searchService.performWildcardSearch(Event.class, query, Arrays.asList("name"), pageable);
     }
 
     @Override

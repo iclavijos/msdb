@@ -1,18 +1,18 @@
 package com.icesoft.msdb.web.rest;
 
 import com.icesoft.msdb.service.UserService;
+import com.icesoft.msdb.service.dto.AdminUserDTO;
 import com.icesoft.msdb.service.dto.UserDTO;
-
 import com.icesoft.msdb.service.dto.UserSubscriptionDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
@@ -27,6 +27,9 @@ import java.util.stream.Collectors;
 public class AccountResource {
 
     private static class AccountResourceException extends RuntimeException {
+
+        private static final long serialVersionUID = 1L;
+
         private AccountResourceException(String message) {
             super(message);
         }
@@ -38,18 +41,6 @@ public class AccountResource {
 
     public AccountResource(UserService userService) {
         this.userService = userService;
-    }
-
-    /**
-     * {@code GET  /authenticate} : check if the user is authenticated, and return its login.
-     *
-     * @param request the HTTP request.
-     * @return the login if the user is authenticated.
-     */
-    @GetMapping("/authenticate")
-    public String isAuthenticated(HttpServletRequest request) {
-        log.debug("REST request to check if the current user is authenticated");
-        return request.getRemoteUser();
     }
 
     /**
@@ -67,6 +58,18 @@ public class AccountResource {
         } else {
             throw new AccountResourceException("User could not be found");
         }
+    }
+
+    /**
+     * {@code GET  /authenticate} : check if the user is authenticated, and return its login.
+     *
+     * @param request the HTTP request.
+     * @return the login if the user is authenticated.
+     */
+    @GetMapping("/authenticate")
+    public String isAuthenticated(HttpServletRequest request) {
+        log.debug("REST request to check if the current user is authenticated");
+        return request.getRemoteUser();
     }
 
     /**
@@ -118,7 +121,7 @@ public class AccountResource {
         log.debug("Registering device {} for user", deviceId);
         if (principal instanceof AbstractAuthenticationToken) {
             UserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
-            log.debug("User for device: {} - {} {}", user.getEmail(), user.getFirstName(), user.getLastName());
+            log.debug("User for device: {} - {}", user.getId(), user.getEmail());
             // This should be handled better, but it's a bit overkill to define a class for a single attribute
             Assert.notNull(deviceId, "A deviceId must be provided");
             userService.registerDevice(user, deviceId);
@@ -136,7 +139,7 @@ public class AccountResource {
         log.debug("Removing device {} for user", deviceId);
         if (principal instanceof AbstractAuthenticationToken) {
             UserDTO user = userService.getUserFromAuthentication((AbstractAuthenticationToken) principal);
-            log.debug("User for device: {} - {} {}", user.getEmail(), user.getFirstName(), user.getLastName());
+            log.debug("User for device: {} - {}", user.getId(), user.getEmail());
             userService.removeDevice(user, deviceId);
         } else {
             throw new AccountResourceException("User could not be found");

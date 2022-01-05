@@ -1,23 +1,26 @@
-version: '2.1'
+# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+version: '3.8'
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.4
-    container_name: elasticsearch
+  motorsportsdatabase-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.3
     volumes:
       - ~/volumes/jhipster/MotorsportsDatabase/elasticsearch/:/usr/share/elasticsearch/data/
+    # If you want to expose these ports outside your dev PC,
+    # remove the "127.0.0.1:" prefix
     ports:
-      - 9200:9200
-      - 9300:9300
+      - 127.0.0.1:9200:9200
+      - 127.0.0.1:9300:9300
     environment:
-      - 'ES_JAVA_OPTS=-Xms1024m -Xmx1024m'
+      - 'xpack.security.enabled=false'
       - 'discovery.type=single-node'
-      - cluster.routing.allocation.disk.watermark.flood_stage=99%
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:6.8.4
-    container_name: kibana
-    environment:
-      SERVER_NAME: kibana.local
-      ELASTICSEARCH_URL: http://elasticsearch:9200
-    ports:
-      - '5601:5601'
+      - 'bootstrap.memory_lock=true'
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK

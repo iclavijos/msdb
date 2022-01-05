@@ -3,7 +3,7 @@ package com.icesoft.msdb.web.rest;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.jhipster.web.util.ResponseUtil;
+import tech.jhipster.web.util.ResponseUtil;
 import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

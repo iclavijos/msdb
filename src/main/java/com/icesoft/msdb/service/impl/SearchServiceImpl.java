@@ -1,8 +1,5 @@
 package com.icesoft.msdb.service.impl;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,7 +7,6 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.icesoft.msdb.MSDBException;
 import org.elasticsearch.index.query.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,15 +15,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHitsIterator;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.icesoft.msdb.domain.EventEditionEntry;
-import com.icesoft.msdb.domain.EventEntryResult;
-import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.repository.CategoryRepository;
 import com.icesoft.msdb.repository.ChassisRepository;
 import com.icesoft.msdb.repository.DriverRepository;
@@ -58,9 +53,7 @@ import com.icesoft.msdb.repository.search.SeriesSearchRepository;
 import com.icesoft.msdb.repository.search.TeamSearchRepository;
 import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
 import com.icesoft.msdb.service.SearchService;
-import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.Assert;
 
 @Service
 @Transactional(readOnly=true)
@@ -99,7 +92,9 @@ public class SearchServiceImpl implements SearchService {
 	@Autowired private RacetrackLayoutSearchRepository racetrackLayoutSearchRepo;
 
 	@Autowired @Qualifier("taskExecutor") private Executor executor;
-	@Autowired TransactionTemplate txTemplate;
+	@Autowired private TransactionTemplate txTemplate;
+
+    @Autowired private ElasticsearchOperations operations;
 
 	@Override
 	@Transactional()
@@ -190,11 +185,11 @@ public class SearchServiceImpl implements SearchService {
 		return null;
 	}
 
-	@Override
-    public <T> Page<T> performWildcardSearch(final ElasticsearchRepository<T, Long> searchRepo, String query, String[] fields, Pageable pageable) {
-	    String[] queryTerms = query.split(" ");
+    @Override
+    public <T> Page<T> performWildcardSearch(Class searchClass, String query, List<String> fields, Pageable pageable) {
+        String[] queryTerms = query.split(" ");
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
-        Arrays.stream(fields).forEach(field -> {
+        fields.stream().forEach(field -> {
             Arrays.stream(queryTerms).forEach(queryTerm -> {
                 boolQueryBuilder.should(
                     QueryBuilders.wildcardQuery(field, "*" + queryTerm + "*"));
@@ -203,76 +198,29 @@ public class SearchServiceImpl implements SearchService {
             });
         });
 
-	    String queryString = Arrays.stream(queryTerms)
+        String queryString = Arrays.stream(queryTerms)
             .map(value -> value + "*")
             .collect(Collectors.joining("~2 | "));
         SimpleQueryStringBuilder queryBuilder = new SimpleQueryStringBuilder(queryString + "~2");
-        Arrays.asList(fields).parallelStream().forEach(field -> queryBuilder.field(field));
+        fields.parallelStream().forEach(field -> queryBuilder.field(field));
 
         boolQueryBuilder.should(queryBuilder);
 
-        return searchRepo.search(boolQueryBuilder, pageable);
+        NativeSearchQuery nativeQuery = new NativeSearchQueryBuilder()
+            .withQuery(boolQueryBuilder)
+                .build();
+
+        SearchHitsIterator<T> hits = (SearchHitsIterator<T>) operations.searchForStream(nativeQuery, searchClass.getClass());
+        Page<T> result = new PageImpl(
+            hits.stream()
+                .skip(pageable.getOffset() * pageable.getPageSize())
+                .limit(pageable.getPageSize())
+                .collect(Collectors.toList()),
+            pageable,
+            hits.getTotalHits()
+        );
+
+        return result;
     }
-
-	@Override
-	public Page<EventEntrySearchResultDTO> searchEntries(String searchTerms, Pageable pageable) {
-		String searchValue = '*' + searchTerms + '*';
-		Page<EventEditionEntry> tmp = eventEntrySearchRepo.search(queryStringQuery(searchValue), pageable);
-		List<EventEntrySearchResultDTO> aux = tmp.getContent().parallelStream()
-				.map(this::createDTO)
-				.collect(Collectors.<EventEntrySearchResultDTO> toList());
-		return new PageImpl<>(aux, pageable, tmp.getTotalElements());
-	}
-
-	private EventEntrySearchResultDTO createDTO(EventEditionEntry entry) {
-		long poleTime;
-		Integer polePosition;
-		long raceFastLap;
-		Integer racePosition;
-		String retirement = "";
-		LocalDate sessionDate;
-
-		List<EventEntryResult> results = resultsRepo.findByEntryId(entry.getId());
-
-		List<EventEntryResult> qResults = results.stream()
-				.filter(r -> r.getSession().getSessionType() == SessionType.QUALIFYING).collect(Collectors.<EventEntryResult> toList());
-		if (qResults != null && !qResults.isEmpty()) {
-			poleTime = qResults.get(0).getBestLapTime() != null ? qResults.get(0).getBestLapTime() : 0;
-			polePosition = qResults.get(0).getFinalPosition();
-		} else {
-			poleTime = 0;
-			polePosition = 0;
-		}
-
-		List<EventEntryResult> rResults = results.stream()
-				.filter(r -> r.getSession().getSessionType() == SessionType.RACE).collect(Collectors.<EventEntryResult> toList());
-		if (rResults != null && !rResults.isEmpty()) {
-			EventEntryResult result = rResults.get(0);
-			if (result.isRetired()) {
-				if (result.getBestLapTime() == null) {
-					raceFastLap = 0;
-				} else {
-					raceFastLap = result.getBestLapTime();
-				}
-				retirement = result.getCause();
-			} else {
-				if (result.getBestLapTime() != null) {
-					raceFastLap = result.getBestLapTime();
-				} else {
-					raceFastLap = 0;
-				}
-			}
-			racePosition = result.getFinalPosition();
-			sessionDate = result.getSession().getSessionStartTimeDate().toLocalDate();
-		} else {
-			raceFastLap = 0;
-			racePosition = 0;
-			sessionDate = null;
-		}
-
-		EventEntrySearchResultDTO dto = new EventEntrySearchResultDTO(entry, sessionDate, poleTime, raceFastLap, polePosition, racePosition, retirement);
-
-		return dto;
-	}
 
 }

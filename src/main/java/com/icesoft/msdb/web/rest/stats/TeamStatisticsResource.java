@@ -19,16 +19,16 @@ import com.icesoft.msdb.domain.stats.Result;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.StatsDTO;
 
-import io.github.jhipster.web.util.ResponseUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 @RestController
 @RequestMapping("/api/stats/teams")
 public class TeamStatisticsResource {
-	
+
 	private final Logger log = LoggerFactory.getLogger(TeamStatisticsResource.class);
-	
+
 	private final StatisticsService statsService;
-	
+
 	public TeamStatisticsResource(StatisticsService statsService) {
 		this.statsService = statsService;
 	}
@@ -38,17 +38,17 @@ public class TeamStatisticsResource {
 	 */
 	@GetMapping("/{teamId}")
 	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long teamId) {
-		Map<String, ParticipantStatistics> mapStats = 
+		Map<String, ParticipantStatistics> mapStats =
 				Optional.ofNullable(statsService.getTeamStatistics(teamId))
 					.orElse(new HashMap<>());
-		
+
 		List<StatsDTO> result = mapStats.entrySet().stream()
 			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
 			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))
 			.collect(Collectors.toList());
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(result));
 	}
-	
+
 	@GetMapping("/{teamId}/{year}")
 	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long teamId, @PathVariable String year) {
 		Map<String, ParticipantStatistics> mapStats = statsService.getTeamStatistics(teamId, year);
@@ -58,12 +58,12 @@ public class TeamStatisticsResource {
 			.collect(Collectors.toList());
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(result));
 	}
-	
+
 	@GetMapping("/{teamId}/years")
 	public ResponseEntity<List<String>> getYearsStatistics(@PathVariable Long teamId) {
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(statsService.getTeamYearsStatistics(teamId)));
 	}
-	
+
 	@GetMapping("/{teamId}/participations/{category}")
 	public ResponseEntity<List<Result>> getParticipations(@PathVariable Long teamId, @PathVariable String category) {
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(statsService.getTeamStatistics(teamId).get(category).getParticipationsList()));
