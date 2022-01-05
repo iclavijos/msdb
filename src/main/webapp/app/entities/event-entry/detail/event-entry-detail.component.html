@@ -1,0 +1,38 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="eventEntry">
+      <h2 data-cy="eventEntryDetailsHeading"><span jhiTranslate="motorsportsDatabaseApp.eventEntry.detail.title">Event Entry</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ eventEntry.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEntry.teamName">Team Name</span></dt>
+        <dd>
+          <span>{{ eventEntry.teamName }}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEntry.driver">Driver</span></dt>
+        <dd>
+          <div *ngIf="eventEntry.driver">
+            <a [routerLink]="['/driver', eventEntry.driver?.id, 'view']">{{ eventEntry.driver?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/event-entry', eventEntry.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

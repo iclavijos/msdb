@@ -8,7 +8,6 @@ import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.service.MessagingService;
 import com.icesoft.msdb.service.dto.SessionDataDTO;
 import com.icesoft.msdb.service.dto.TimeZonesResponse;
-import io.micrometer.core.annotation.Timed;
 import net.minidev.json.JSONObject;
 import org.cloudinary.json.JSONException;
 import org.slf4j.Logger;
@@ -64,7 +63,6 @@ public class HomeResource {
 	}
 
 	@GetMapping("/home")
-    @Timed
     @Cacheable(cacheNames="homeInfo")
     public Object getHomeInfo() {
         log.debug("REST request to get home information");
@@ -83,7 +81,6 @@ public class HomeResource {
     }
 
 	@GetMapping("/home/calendar")
-	@Timed
 	@Cacheable(cacheNames="calendar")
 	public List<SessionDataDTO> getCalendar() {
 		log.debug("REST request to get calendar");
@@ -109,7 +106,6 @@ public class HomeResource {
 	}
 
 	@GetMapping("/home/ephemeris/{today}")
-    @Timed
     @Cacheable(cacheNames = "ephemeris", key="#today")
     public ResponseEntity<List<Ephemeris.EphemerisItem>> getTodayEphemeris(@PathVariable String today) {
         String[] data = today.split("-");

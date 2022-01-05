@@ -15,10 +15,9 @@ import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.service.dto.ItemEvolutionDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import io.micrometer.core.annotation.Timed;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,10 +34,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -85,7 +87,6 @@ public class EngineResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/engines")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     public ResponseEntity<Engine> createEngine(@Valid @RequestBody Engine engine) throws URISyntaxException {
         log.debug("REST request to save Engine : {}", engine);
@@ -103,27 +104,38 @@ public class EngineResource {
 			engineSearchRepository.save(result);
         }
 
-        return ResponseEntity.created(new URI("/api/engines/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/engines/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /engines} : Updates an existing engine.
+     * {@code PUT  /engines/:id} : Updates an existing engine.
      *
+     * @param id the id of the engine to save.
      * @param engine the engine to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated engine,
      * or with status {@code 400 (Bad Request)} if the engine is not valid,
      * or with status {@code 500 (Internal Server Error)} if the engine couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/engines")
-    @Timed
+    @PutMapping("/engines/{id}")
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    public ResponseEntity<Engine> updateEngine(@Valid @RequestBody Engine engine) throws URISyntaxException {
-        log.debug("REST request to update Engine : {}", engine);
+    public ResponseEntity<Engine> updateEngine(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody Engine engine
+    ) throws URISyntaxException {
+        log.debug("REST request to update Engine : {}, {}", id, engine);
         if (engine.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, engine.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!engineRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
         if (engine.getImage() != null) {
@@ -134,28 +146,103 @@ public class EngineResource {
         }
         Engine result = engineRepository.save(engine);
         engineSearchRepository.save(result);
-
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, engine.getId().toString()))
             .body(result);
     }
 
     /**
-     * GET  /engines : get all the engines.
+     * {@code PATCH  /engines/:id} : Partial updates given fields of an existing engine, field will ignore if it is null
      *
+     * @param id the id of the engine to save.
+     * @param engine the engine to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated engine,
+     * or with status {@code 400 (Bad Request)} if the engine is not valid,
+     * or with status {@code 404 (Not Found)} if the engine is not found,
+     * or with status {@code 500 (Internal Server Error)} if the engine couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/engines/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<Engine> partialUpdateEngine(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody Engine engine
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update Engine partially : {}, {}", id, engine);
+        if (engine.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, engine.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
 
+        if (!engineRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<Engine> result = engineRepository
+            .findById(engine.getId())
+            .map(existingEngine -> {
+                if (engine.getName() != null) {
+                    existingEngine.setName(engine.getName());
+                }
+                if (engine.getManufacturer() != null) {
+                    existingEngine.setManufacturer(engine.getManufacturer());
+                }
+                if (engine.getCapacity() != null) {
+                    existingEngine.setCapacity(engine.getCapacity());
+                }
+                if (engine.getArchitecture() != null) {
+                    existingEngine.setArchitecture(engine.getArchitecture());
+                }
+                if (engine.getDebutYear() != null) {
+                    existingEngine.setDebutYear(engine.getDebutYear());
+                }
+                if (engine.isPetrolEngine() != null) {
+                    existingEngine.setPetrolEngine(engine.isPetrolEngine());
+                }
+                if (engine.isDieselEngine() != null) {
+                    existingEngine.setDieselEngine(engine.isDieselEngine());
+                }
+                if (engine.isElectricEngine() != null) {
+                    existingEngine.setElectricEngine(engine.isElectricEngine());
+                }
+                if (engine.isTurbo() != null) {
+                    existingEngine.setTurbo(engine.isTurbo());
+                }
+                if (engine.getImage() != null) {
+                    existingEngine.setImage(engine.getImage());
+                }
+
+                return existingEngine;
+            })
+            .map(engineRepository::save)
+            .map(savedEngine -> {
+                engineSearchRepository.save(savedEngine);
+
+                return savedEngine;
+            });
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, engine.getId().toString())
+        );
+    }
+
+    /**
+     * {@code GET  /engines} : get all the engines.
+     *
      * @param pageable the pagination information.
-
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of engines in body.
      */
     @GetMapping("/engines")
-    @Timed
+
     public ResponseEntity<List<Engine>> getEngines(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of Engines");
         Page<Engine> page;
         Optional<String> queryOpt = Optional.ofNullable(query);
         if (queryOpt.isPresent()) {
-            page = searchService.performWildcardSearch(engineSearchRepository, query.toLowerCase(), new String[]{"manufacturer", "name"}, pageable);
+            page = searchService.performWildcardSearch(Engine.class, query.toLowerCase(), Arrays.asList("manufacturer", "name"), pageable);
         } else {
             page = engineRepository.findAll(pageable);
         }
@@ -170,7 +257,6 @@ public class EngineResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the engine, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/engines/{id}")
-    @Timed
     public ResponseEntity<Engine> getEngine(@PathVariable Long id) {
         log.debug("REST request to get Engine : {}", id);
         Optional<Engine> engine = engineRepository.findById(id);
@@ -184,18 +270,18 @@ public class EngineResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/engines/{id}")
-    @Timed
-    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteEngine(@PathVariable Long id) {
         log.debug("REST request to delete Engine : {}", id);
         engineRepository.deleteById(id);
         engineSearchRepository.deleteById(id);
         cdnService.deleteImage(id.toString(), ENTITY_NAME);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
     }
 
     @GetMapping("/engines/{id}/statistics")
-    @Timed
     public ResponseEntity<EngineStatistics> getEngineStatistics(@PathVariable Long id) {
     	log.debug("REST request to get statistics for engine : {}", id);
     	Optional<EngineStatistics> stats = statsRepo.findById(id.toString());
@@ -203,7 +289,6 @@ public class EngineResource {
     }
 
     @GetMapping("/engines/{id}/evolutions")
-    @Timed
     public ResponseEntity<List<ItemEvolutionDTO>> getEngineEvolutions(@PathVariable Long id) {
         log.debug("REST request to get engine evolutions : {}", id);
         Optional<Engine> engine = engineRepository.findById(id);
@@ -212,7 +297,6 @@ public class EngineResource {
     }
 
     @GetMapping("/engines/{id}/participations/{category}")
-    @Timed
     public ResponseEntity<List<EventEntrySearchResultDTO>> getEngineParticipations(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
     	log.debug("REST request to get participations for engine {} in category {}", id, category);
     	ParticipantStatisticsSnapshot stats = statsRepo.findById(id.toString()).orElse(new EngineStatistics(id.toString()));
@@ -238,7 +322,6 @@ public class EngineResource {
     }
 
     @GetMapping("/engines/{id}/wins/{category}")
-    @Timed
     public ResponseEntity<List<EventEntrySearchResultDTO>> getEngineWins(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
     	log.debug("REST request to get wins for engine {} in category {}", id, category);
     	EngineStatistics stats = statsRepo.findById(id.toString()).orElse(new EngineStatistics(id.toString()));
@@ -263,11 +346,10 @@ public class EngineResource {
     }
 
     @GetMapping("/_typeahead/engines")
-    @Timed
     public List<Engine> typeahead(@RequestParam String query) {
         log.debug("REST request to search Engines for query {}", query);
         Page<Engine> page = page = searchService
-            .performWildcardSearch(engineSearchRepository, query.toLowerCase(), new String[]{"manufacturer", "name"}, PageRequest.of(0, 10));
+            .performWildcardSearch(Engine.class, query.toLowerCase(), Arrays.asList("manufacturer", "name"), PageRequest.of(0, 20));
         return page.getContent();
     }
 }

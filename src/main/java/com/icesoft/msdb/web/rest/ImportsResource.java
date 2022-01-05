@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -188,7 +189,7 @@ public class ImportsResource {
     	MappingIterator<Team> readValues = initializeIterator(Team.class, data);
         while (readValues.hasNext()) {
         	Team team = readValues.next();
-        	if (teamRepository.findByNameContainsIgnoreCaseOrderByNameAsc(team.getName(), new PageRequest(0, 15))
+        	if (teamRepository.findByNameContainsIgnoreCaseOrderByNameAsc(team.getName(), PageRequest.of(0, 15))
         			.getContent().isEmpty()) {
         		log.debug("Importing team: {}", team);
 	        	teamRepository.save(team);

@@ -20,16 +20,16 @@ import com.icesoft.msdb.domain.stats.Result;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.StatsDTO;
 
-import io.github.jhipster.web.util.ResponseUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 @RestController
 @RequestMapping("/api/stats/chassis")
 public class ChassisStatisticsResource {
 
 private final Logger log = LoggerFactory.getLogger(ChassisStatisticsResource.class);
-	
+
 	private final StatisticsService statsService;
-	
+
 	public ChassisStatisticsResource(StatisticsService statsService) {
 		this.statsService = statsService;
 	}
@@ -39,17 +39,17 @@ private final Logger log = LoggerFactory.getLogger(ChassisStatisticsResource.cla
 	 */
 	@GetMapping("/{elementId}")
 	public ResponseEntity<List<StatsDTO>> getStatistics(@PathVariable Long elementId) {
-		Map<String, ParticipantStatistics> mapStats = 
+		Map<String, ParticipantStatistics> mapStats =
 				Optional.ofNullable(statsService.getChassisStatistics(elementId))
 					.orElse(new HashMap<>());
-		
+
 		List<StatsDTO> result = mapStats.entrySet().stream()
 			.map((entry) -> new StatsDTO(entry.getKey(), entry.getValue()))
 			.sorted((e1, e2) -> e1.getCategory().compareTo(e2.getCategory()))
 			.collect(Collectors.toList());
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(result));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.icesoft.msdb.web.rest.stats.StatsResourceInterface#getDriverStatistics(java.lang.Long, java.lang.Integer)
 	 */
@@ -62,7 +62,7 @@ private final Logger log = LoggerFactory.getLogger(ChassisStatisticsResource.cla
 			.collect(Collectors.toList());
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(result));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.icesoft.msdb.web.rest.stats.StatsResourceInterface#getDriverYearsStatistics(java.lang.Long)
 	 */
@@ -70,7 +70,7 @@ private final Logger log = LoggerFactory.getLogger(ChassisStatisticsResource.cla
 	public ResponseEntity<List<String>> getYearsStatistics(@PathVariable Long elementId) {
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(statsService.getChassisYearsStatistics(elementId)));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.icesoft.msdb.web.rest.stats.StatsResourceInterface#getDriverParticipations(java.lang.Long, java.lang.String)
 	 */

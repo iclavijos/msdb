@@ -5,7 +5,7 @@ import { Injectable, Pipe, PipeTransform } from '@angular/core';
 })
 @Injectable()
 export class EventEntryCategoryFilter implements PipeTransform {
-  transform(items: any[], filter: string): any {
+  transform(items: any[], filter: string): any[] {
     if (!filter || filter === 'ALL') {
       return items;
     }

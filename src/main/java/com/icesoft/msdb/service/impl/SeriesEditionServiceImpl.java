@@ -92,12 +92,12 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 				Optional.ofNullable(session.getPointsSystemsSession())
 					.map(pss -> pss.removeIf(item -> item.getEventSession().getId().equals(racePoints.getRaceId())));
 			} else {
-				PointsSystem points = pointsRepo.findById(racePoints.getpSystemAssigned()).get();
+				PointsSystem points = pointsRepo.findById(racePoints.getPSystemAssigned()).get();
 				if (session == null || points == null) {
 					throw new MSDBException(
 							String.format("Provided points for race data invalid [%s, %s]",
 									racePoints.getRaceId(),
-									racePoints.getpSystemAssigned()));
+									racePoints.getPSystemAssigned()));
 				}
 				PointsSystemSession pss = new PointsSystemSession(points, seriesEd, session);
 				pss.setPsMultiplier(racePoints.getPsMultiplier());

@@ -8,7 +8,7 @@ import { SeriesEditionService } from '../entities/series-edition/series-edition.
 
 @Component({
   selector: 'jhi-subscriptions-component',
-  templateUrl: 'subscriptions.component.html'
+  templateUrl: './subscriptions.component.html'
 })
 export class SubscriptionsComponent implements OnInit {
   availableSeries: ISeriesEdition[] = [];
@@ -23,7 +23,7 @@ export class SubscriptionsComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.seriesEditionService.findActiveSeries().subscribe(series => {
       this.accountService.subscriptions().subscribe(res => {
         this.subscriptions = res;
@@ -36,7 +36,15 @@ export class SubscriptionsComponent implements OnInit {
     });
   }
 
-  private initSeriesSubscription(seriesEdition: ISeriesEdition) {
+  isShown(editionName: string): boolean {
+    return !this.currentFilter || editionName.toLowerCase().includes(this.currentFilter);
+  }
+
+  save(): void {
+    this.accountService.updateSubscriptions(this.editForm.value.seriesSubscriptions).subscribe();
+  }
+
+  private initSeriesSubscription(seriesEdition: ISeriesEdition): FormGroup {
     const subs = this.subscriptions.find(s => s.seriesEditionId === seriesEdition.id);
     return this.fb.group({
       editionName: seriesEdition.editionName,
@@ -48,13 +56,5 @@ export class SubscriptionsComponent implements OnInit {
       oneHourWarning: subs ? subs.oneHourWarning : false,
       threeHoursWarning: subs ? subs.threeHoursWarning : false
     });
-  }
-
-  isShown(editionName: string): boolean {
-    return !this.currentFilter || editionName.toLowerCase().includes(this.currentFilter);
-  }
-
-  save() {
-    this.accountService.updateSubscriptions(this.editForm.value.seriesSubscriptions).subscribe(() => {});
   }
 }

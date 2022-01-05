@@ -14,10 +14,7 @@ import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import io.micrometer.core.annotation.Timed;
+import lombok.RequiredArgsConstructor;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
@@ -35,12 +32,18 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -52,6 +55,7 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
  */
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 @Transactional
 public class TeamResource {
 
@@ -72,16 +76,6 @@ public class TeamResource {
 
     private final TeamSearchRepository teamSearchRepository;
 
-    public TeamResource(TeamRepository teamRepository, TeamSearchRepository teamSearchRepository,
-    		EventEntryRepository entryRepository, SearchService searchService,
-    		TeamStatisticsRepository statsRepo, CDNService cdnService) {
-        this.teamRepository = teamRepository;
-        this.teamSearchRepository = teamSearchRepository;
-        this.searchService = searchService;
-        this.entryRepository = entryRepository;
-        this.statsRepo = statsRepo;
-        this.cdnService = cdnService;
-    }
 
     /**
      * {@code POST  /teams} : Create a new team.
@@ -91,7 +85,6 @@ public class TeamResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/teams")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Team> createTeam(@Valid @RequestBody Team team) throws URISyntaxException {
@@ -107,28 +100,39 @@ public class TeamResource {
 
 			result = teamRepository.save(result);
         }
-        return ResponseEntity.created(new URI("/api/teams/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/teams/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /teams} : Updates an existing team.
+     * {@code PUT  /teams/:id} : Updates an existing team.
      *
+     * @param id the id of the team to save.
      * @param team the team to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated team,
      * or with status {@code 400 (Bad Request)} if the team is not valid,
      * or with status {@code 500 (Internal Server Error)} if the team couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/teams")
-    @Timed
+    @PutMapping("/teams/{id}")
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    public ResponseEntity<Team> updateTeam(@Valid @RequestBody Team team) throws URISyntaxException {
+    public ResponseEntity<Team> updateTeam(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody Team team) throws URISyntaxException {
         log.debug("REST request to update Team : {}", team);
         if (team.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        if (!Objects.equals(id, team.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!teamRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
         if (team.getLogo() != null) {
         	String cdnUrl = cdnService.uploadImage(team.getId().toString(), team.getLogo(), ENTITY_NAME);
 			team.logoUrl(cdnUrl);
@@ -137,27 +141,89 @@ public class TeamResource {
         }
         Team result = teamRepository.save(team);
         teamSearchRepository.save(result);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, team.getId().toString()))
             .body(result);
     }
 
     /**
+     * {@code PATCH  /teams/:id} : Partial updates given fields of an existing team, field will ignore if it is null
+     *
+     * @param id the id of the team to save.
+     * @param team the team to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated team,
+     * or with status {@code 400 (Bad Request)} if the team is not valid,
+     * or with status {@code 404 (Not Found)} if the team is not found,
+     * or with status {@code 500 (Internal Server Error)} if the team couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/teams/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<Team> partialUpdateTeam(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody Team team
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update Team partially : {}, {}", id, team);
+        if (team.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, team.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!teamRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<Team> result = teamRepository
+            .findById(team.getId())
+            .map(existingTeam -> {
+                if (team.getName() != null) {
+                    existingTeam.setName(team.getName());
+                }
+                if (team.getDescription() != null) {
+                    existingTeam.setDescription(team.getDescription());
+                }
+                if (team.getHqLocation() != null) {
+                    existingTeam.setHqLocation(team.getHqLocation());
+                }
+                if (team.getLogo() != null) {
+                    existingTeam.setLogo(team.getLogo());
+                }
+
+                return existingTeam;
+            })
+            .map(teamRepository::save)
+            .map(savedTeam -> {
+                teamSearchRepository.save(savedTeam);
+
+                return savedTeam;
+            });
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, team.getId().toString())
+        );
+    }
+
+    /**
      * {@code GET  /teams} : get all the teams.
      *
-
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of teams in body.
      */
     @GetMapping("/teams")
-    @Timed
     public ResponseEntity<List<Team>> searchTeams(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to search for a page of Teams for query '{}'", query);
 
         Page<Team> page;
         Optional<String> queryOpt = Optional.ofNullable(query);
         if (queryOpt.isPresent()) {
-            page = searchService.performWildcardSearch(teamSearchRepository, query.toLowerCase(), new String[]{"name", "location"}, pageable);
+            page = searchService.performWildcardSearch(
+                Team.class,
+                query.toLowerCase(),
+                Arrays.asList("name", "location"),
+                pageable);
         } else {
             page = teamRepository.findAll(pageable);
         }
@@ -172,7 +238,6 @@ public class TeamResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the team, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/teams/{id}")
-    @Timed
     public ResponseEntity<Team> getTeam(@PathVariable Long id) {
         log.debug("REST request to get Team : {}", id);
         Optional<Team> team = teamRepository.findById(id);
@@ -180,7 +245,6 @@ public class TeamResource {
     }
 
     @GetMapping("/teams/{id}/participations/{category}")
-    @Timed
     public ResponseEntity<List<EventEntrySearchResultDTO>> getTeamParticipations(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
     	log.debug("REST request to get participations for driver {} in category {}", id, category);
     	TeamStatistics stats = statsRepo.findById(id.toString()).orElse(new TeamStatistics(id.toString()));
@@ -205,7 +269,6 @@ public class TeamResource {
     }
 
     @GetMapping("/teams/{id}/wins/{category}")
-    @Timed
     public ResponseEntity<List<EventEntrySearchResultDTO>> getTeamWins(@PathVariable Long id, @PathVariable String category, Pageable pageable) {
     	log.debug("REST request to get wins for driver {} in category {}", id, category);
     	TeamStatistics stats = statsRepo.findById(id.toString()).orElse(new TeamStatistics(id.toString()));
@@ -235,7 +298,6 @@ public class TeamResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/teams/{id}")
-    @Timed
     @Secured({AuthoritiesConstants.ADMIN})
     @CacheEvict(cacheNames="homeInfo", allEntries=true)
     public ResponseEntity<Void> deleteTeam(@PathVariable Long id) {
@@ -243,7 +305,10 @@ public class TeamResource {
         teamRepository.deleteById(id);
         teamSearchRepository.deleteById(id);
         cdnService.deleteImage(id.toString(), ENTITY_NAME);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
     }
 
 }

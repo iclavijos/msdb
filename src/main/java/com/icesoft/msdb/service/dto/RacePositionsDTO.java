@@ -1,13 +1,9 @@
 package com.icesoft.msdb.service.dto;
 
-import io.vavr.Tuple4;
-import io.vavr.Tuple5;
 import io.vavr.Tuple6;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;

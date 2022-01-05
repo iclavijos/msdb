@@ -5,13 +5,15 @@ import { HttpClient } from '@angular/common/http';
 import { EventEditionService } from '../entities/event-edition/event-edition.service';
 import { CalendarComponent, MyEvent } from '../calendar/calendar.component';
 
+import { TimeZone } from '../home/home-events.component';
+
 import { Moment } from 'moment';
 import * as moment from 'moment-timezone';
 
 @Component({
   selector: 'jhi-agenda-component',
-  templateUrl: 'agenda.component.html',
-  styleUrls: ['agenda.scss']
+  templateUrl: './agenda.component.html',
+  styleUrls: ['./agenda.scss']
 })
 export class AgendaComponent implements OnInit {
   selectedDate: Moment;
@@ -23,7 +25,7 @@ export class AgendaComponent implements OnInit {
   currentEvent: any;
   backgroundColorIndex: number;
   timezone: string;
-  timezones: any[];
+  timezones: TimeZone[];
 
   constructor(private eventEditionService: EventEditionService, private translateService: TranslateService, private http: HttpClient) {
     this.rangeType = 'WEEK';
@@ -33,16 +35,13 @@ export class AgendaComponent implements OnInit {
     this.calendarComponent = new CalendarComponent(null, null, null, null);
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.timezone = moment.tz.guess();
-    if (this.timezone === undefined) {
-      this.timezone = 'Europe/London';
-    }
-    this.http.get<any[]>('api/timezones').subscribe(res => (this.timezones = res));
+    this.http.get<TimeZone[]>('api/timezones').subscribe(res => (this.timezones = res));
     this.query();
   }
 
-  dateRangeChanged() {
+  dateRangeChanged(): void {
     if (this.rangeType === 'WEEK') {
       this.selectedDate = this.selectedDate.isoWeekday(1);
       this.endDate = this.selectedDate.clone().isoWeekday(7);
@@ -53,7 +52,7 @@ export class AgendaComponent implements OnInit {
     this.query();
   }
 
-  nextPeriod() {
+  nextPeriod(): void {
     if (this.rangeType === 'WEEK') {
       this.selectedDate = this.selectedDate.add(7, 'days');
     } else {
@@ -62,7 +61,7 @@ export class AgendaComponent implements OnInit {
     this.dateRangeChanged();
   }
 
-  previousPeriod() {
+  previousPeriod(): void {
     if (this.rangeType === 'WEEK') {
       this.selectedDate = this.selectedDate.subtract(7, 'days');
     } else {
@@ -71,7 +70,7 @@ export class AgendaComponent implements OnInit {
     this.dateRangeChanged();
   }
 
-  query() {
+  query(): void {
     this.eventEditionService
       .findCalendarEvents(
         this.selectedDate.toDate(),
@@ -87,40 +86,32 @@ export class AgendaComponent implements OnInit {
       });
   }
 
-  private onlyUniqueSeries(value, index, self) {
-    return self.indexOf(value) === index;
-  }
-
-  private onlyUniqueEvents(value, index, self) {
-    return self.map(x => x.name).indexOf(value.name) === index;
-  }
-
-  uniqueEventsInSeries(series: string) {
+  uniqueEventsInSeries(series: string): MyEvent[] {
     return this.events
       .filter(item => (item.seriesLogoUrl ? item.seriesLogoUrl[0] : '') === series)
       .map(item => {
-        return {
-          name: item.eventName,
-          racetrack: item.racetrack,
-          layoutUrl: item.racetrackLayoutUrl,
-          categories: item.categories
-        };
-      })
-      .filter(this.onlyUniqueEvents);
+        const event = new MyEvent();
+        event.name = item.eventName;
+        event.racetrack = item.racetrack;
+        event.layoutUrl = item.racetrackLayoutUrl;
+        event.categories = item.categories;
+        return event;
+      });
+      // .filter(this.onlyUniqueEvents);
   }
 
-  sessionsEvent(event: any) {
+  sessionsEvent(event: any): MyEvent[] {
     return this.events.filter(item => item.eventName === event.name);
   }
 
-  formatDate(date: Moment, pattern: string, raid = false) {
+  formatDate(date: Moment, pattern: string, raid = false): string {
     if (raid) {
       return date.locale(this.translateService.currentLang).format('dddd, LL');
     }
     return date.locale(this.translateService.currentLang).format(pattern);
   }
 
-  backgroundColor() {
+  backgroundColor(): string {
     this.backgroundColorIndex++;
     if (this.backgroundColorIndex % 3 === 0) {
       return '#dbffff';
@@ -131,7 +122,15 @@ export class AgendaComponent implements OnInit {
     }
   }
 
-  eventStatus(event: any) {
+  eventStatus(event: any): MyEvent[] {
     return this.events.filter(item => item.eventName === event.name)[0].status;
+  }
+
+  private onlyUniqueSeries(value, index, self): string {
+    return self.indexOf(value) === index;
+  }
+
+  private onlyUniqueEvents(value: MyEvent, index: number, self: MyEvent[]): MyEvent[] {
+    return self.map(x => x.name as string).indexOf(value.name) === index;
   }
 }

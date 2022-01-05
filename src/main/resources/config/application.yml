@@ -19,11 +19,19 @@ management:
     web:
       base-path: /management
       exposure:
-        include: ['configprops', 'env', 'health', 'info', 'jhimetrics', 'logfile', 'loggers', 'prometheus', 'threaddump']
+        include:
+          ['configprops', 'env', 'health', 'info', 'jhimetrics', 'logfile', 'loggers', 'prometheus', 'threaddump', 'caches', 'liquibase']
   endpoint:
     health:
-      show-details: when-authorized
+      show-details: when_authorized
       roles: 'ROLE_ADMIN'
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState,db
     jhimetrics:
       enabled: true
   info:
@@ -53,11 +61,11 @@ management:
       application: ${spring.application.name}
     web:
       server:
-        auto-time-requests: true
+        request:
+          autotime:
+            enabled: true
 
 spring:
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration
   application:
     name: MotorsportsDatabase
   profiles:
@@ -65,8 +73,14 @@ spring:
     # Otherwise, it will be filled in by gradle when building the JAR file
     # Either way, it can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
     active: #spring.profiles.active#
+    group:
+      dev:
+        - dev
+        - api-docs
+        # Uncomment to activate TLS for the dev profile
+        #- tls
   jackson:
-    serialization.write_dates_as_timestamps: false
+    serialization.write_dates_as_timestamps: true
   jmx:
     enabled: false
   data:
@@ -77,6 +91,17 @@ spring:
     open-in-view: false
     properties:
       hibernate.jdbc.time_zone: UTC
+      hibernate.id.new_generator_mappings: true
+      hibernate.connection.provider_disables_autocommit: true
+      hibernate.cache.use_second_level_cache: true
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: false
+      # modify batch size as necessary
+      hibernate.jdbc.batch_size: 25
+      hibernate.order_inserts: true
+      hibernate.order_updates: true
+      hibernate.query.fail_on_pagination_over_collection_fetch: true
+      hibernate.query.in_clause_parameter_padding: true
     hibernate:
       ddl-auto: none
       naming:
@@ -86,9 +111,6 @@ spring:
     basename: i18n/messages
   main:
     allow-bean-definition-overriding: true
-  mvc:
-    favicon:
-      enabled: false
   task:
     execution:
       thread-name-prefix: motorsports-database-task-
@@ -116,6 +138,7 @@ spring:
           oidc:
             client-id: ${OIDC_CLIENT_ID}
             client-secret: ${OIDC_CLIENT_SECRET}
+            scope: openid, profile, email
   flyway:
     table: schema_version
 
@@ -141,26 +164,28 @@ jhipster:
     name: 'motorsportsDatabaseApp'
   # By default CORS is disabled. Uncomment to enable.
   # cors:
-  #     allowed-origins: "*"
-  #     allowed-methods: "*"
-  #     allowed-headers: "*"
-  #     exposed-headers: "Authorization,Link,X-Total-Count"
-  #     allow-credentials: true
-  #     max-age: 1800
+  #   allowed-origins: "http://localhost:8100,http://localhost:9000"
+  #   allowed-methods: "*"
+  #   allowed-headers: "*"
+  #   exposed-headers: "Authorization,Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params"
+  #   allow-credentials: true
+  #   max-age: 1800
   mail:
     from: MotorsportsDatabase@localhost
-  swagger:
-    default-include-pattern: /api/.*
-    title: MotorsportsDatabase API
-    description: MotorsportsDatabase API documentation
+  api-docs:
+    default-include-pattern: ${server.servlet.context-path:}/api/.*
+    management-include-pattern: ${server.servlet.context-path:}/management/.*
+    title: Motorsports Database API
+    description: Motorsports Database API documentation
     version: 0.0.1
     terms-of-service-url:
     contact-name:
     contact-url:
     contact-email:
-    license:
+    license: unlicensed
     license-url:
   security:
+    content-security-policy: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:"
     oauth2:
       audience:
         - account

@@ -38,26 +38,26 @@
                                 <div class="card-block" *ngFor="let day of dates">
                                     <h5 class="card-title">{{ day }}</h5>
                                     <div class="card-body">
-                                        <div class="row p-2" *ngFor="let session of filteredSessions(day);">
+                                        <div class="row p-2" *ngFor="let session of filteredBySessionTypeCalendar | eventsDayFilter: day">
                                             <div class="col-2">
                                                 <img *ngIf="session.seriesLogo" #layoutImg [src]="session.seriesLogo" class="img-fluid" alt="series logo" style="text-align: center">
                                             </div>
                                             <div class="col-10">
                                                 <strong>
-                                                    <span *ngIf="!session.raid">{{ session.sessionStartTime.format("HH:mm") }}</span>
-                                                    <span *ngIf="session.sessionEndTime && !session.rally && !session.raid"> - {{ session.sessionEndTime.format("HH:mm")}}</span>
-                                                    <span *ngIf="session.durationType === 5"> ({{ session.duration}}L)</span>
-                                                    <span *ngIf="session.durationType === 4"> ({{ session.duration}}M)</span><span *ngIf="!session.raid">:</span>
+                                                    <span *ngIf="!session.raid">{{ session.sessionStartTime | localizedDate: 'HH:mm' }}</span>
+                                                    <span *ngIf="session.sessionEndTime && !session.rally && !session.raid"> - {{ session.sessionEndTime | localizedDate: 'HH:mm'}}</span>
+                                                    <span *ngIf="session.durationType === 5"> ({{ session.duration }}L)</span>
+                                                    <span *ngIf="session.durationType === 4"> ({{ session.duration }}M)</span><span *ngIf="!session.raid">:</span>
                                                 </strong>
                                                 <span>
                                                 <span *ngIf="session.seriesIds.length > 0">
                                                     <ng-template ngFor let-item [ngForOf]="session.seriesIds" let-currentIndex="index">
-                                                      <a [routerLink]="['/series/edition', item, 'view' ]" >{{session.seriesNames[currentIndex]}} </a>
+                                                      <a [routerLink]="['/series/edition', item, 'view' ]" >{{ session.seriesNames[currentIndex] }} </a>
                                                     </ng-template> -
                                                 </span>
                                                 <a [routerLink]="['/event/edition', session.eventEditionId, 'view-ed' ]" >{{ session.eventName }}, {{ session.sessionName }}</a>
-                                                <span *ngIf="session.durationType === 3 && !session.raid"> ({{ session.duration}}KM)</span>
-                                                <span *ngIf="session.raid"> - {{ session.duration}} / {{ session.totalDuration}} KM</span>
+                                                <span *ngIf="session.durationType === 3 && !session.raid"> ({{ session.duration }}KM)</span>
+                                                <span *ngIf="session.raid"> - {{ session.duration }} / {{ session.totalDuration }} KM</span>
                                             </span>
                                             </div>
                                         </div>

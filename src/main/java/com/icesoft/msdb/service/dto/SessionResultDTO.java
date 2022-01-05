@@ -2,8 +2,12 @@ package com.icesoft.msdb.service.dto;
 
 import com.icesoft.msdb.domain.EventEditionEntry;
 import com.icesoft.msdb.domain.EventEntryResult;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
 
+@NoArgsConstructor
+@Data
 public class SessionResultDTO {
 
 	private Long id;
@@ -24,10 +28,6 @@ public class SessionResultDTO {
     private String sharedWithNumber;
     private EventEditionEntry sharedWith;
     private EventEditionEntry entry;
-
-    public SessionResultDTO() {
-    	super();
-    }
 
     public SessionResultDTO(EventEntryResult result) {
     	this.id = result.getId();
@@ -50,38 +50,6 @@ public class SessionResultDTO {
     	this.entry.engine(null).chassis(null).fuel(null).team(null);
     }
 
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getRaceNumber() {
-		return raceNumber;
-	}
-	public void setRaceNumber(String raceNumber) {
-		this.raceNumber = raceNumber;
-	}
-	public EventEditionEntry getEntry() {
-		return entry;
-	}
-
-	public void setEntry(EventEditionEntry entry) {
-		this.entry = entry;
-	}
-
-	public Integer getStartingPosition() {
-		return startingPosition;
-	}
-	public void setStartingPosition(Integer startingPosition) {
-		this.startingPosition = startingPosition;
-	}
-	public Integer getFinalPosition() {
-		return finalPosition;
-	}
-	public void setFinalPosition(Integer finalPosition) {
-		this.finalPosition = finalPosition;
-	}
 	public void setFinalPosition(String finalPosition) {
         try {
             this.finalPosition = Integer.parseInt(finalPosition);
@@ -90,75 +58,5 @@ public class SessionResultDTO {
             this.finalPositionStr = finalPosition;
         }
     }
-	public String getFinalPositionStr() { return finalPositionStr; }
-	public void setFinalPositionStr(String finalPositionStr) {
-        this.finalPositionStr = finalPositionStr;
-    }
-	public String getTotalTime() {
-		return totalTime;
-	}
-	public void setTotalTime(String totalTime) {
-		this.totalTime = totalTime;
-	}
-	public String getBestLapTime() {
-		return bestLapTime;
-	}
-	public void setBestLapTime(String bestLapTime) {
-		this.bestLapTime = bestLapTime;
-	}
-	public Integer getLapsCompleted() {
-		return lapsCompleted;
-	}
-	public void setLapsCompleted(Integer lapsCompleted) {
-		this.lapsCompleted = lapsCompleted;
-	}
-	public Integer getLapsLed() {
-		return lapsLed;
-	}
-	public void setLapsLed(Integer lapsLed) {
-		this.lapsLed = lapsLed;
-	}
-	public Boolean getRetired() {
-		return retired;
-	}
-	public void setRetired(Boolean retired) {
-		this.retired = retired;
-	}
-	public String getCause() {
-		return cause;
-	}
-	public void setCause(String cause) {
-		this.cause = cause;
-	}
-	public String getDifference() {
-		return difference;
-	}
-	public void setDifference(String difference) {
-		this.difference = difference;
-	}
-	public Integer getDifferenceType() {
-		return differenceType;
-	}
-	public void setDifferenceType(Integer differenceType) {
-		this.differenceType = differenceType;
-	}
-	public Boolean getPitlaneStart() {
-		return pitlaneStart;
-	}
-	public void setPitlaneStart(Boolean pitlaneStart) {
-		this.pitlaneStart = pitlaneStart;
-	}
-	public String getSharedWithNumber() {
-		return sharedWithNumber;
-	}
-	public void setSharedWithNumber(String sharedWithNumber) {
-		this.sharedWithNumber = sharedWithNumber;
-	}
-	public EventEditionEntry getSharedWith() {
-		return sharedWith;
-	}
-	public void setSharedWith(EventEditionEntry sharedWith) {
-		this.sharedWith = sharedWith;
-	}
 
 }

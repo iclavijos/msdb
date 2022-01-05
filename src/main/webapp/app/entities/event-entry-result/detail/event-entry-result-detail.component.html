@@ -1,0 +1,50 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="eventEntryResult">
+      <h2 data-cy="eventEntryResultDetailsHeading">
+        <span jhiTranslate="motorsportsDatabaseApp.eventEntryResult.detail.title">Event Entry Result</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ eventEntryResult.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEntryResult.finalPosition">Final Position</span></dt>
+        <dd>
+          <span>{{ eventEntryResult.finalPosition }}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEntryResult.totalTime">Total Time</span></dt>
+        <dd>
+          <span>{{ eventEntryResult.totalTime }}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEntryResult.bestLapTime">Best Lap Time</span></dt>
+        <dd>
+          <span>{{ eventEntryResult.bestLapTime }}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEntryResult.lapsCompleted">Laps Completed</span></dt>
+        <dd>
+          <span>{{ eventEntryResult.lapsCompleted }}</span>
+        </dd>
+        <dt><span jhiTranslate="motorsportsDatabaseApp.eventEntryResult.retired">Retired</span></dt>
+        <dd>
+          <span>{{ eventEntryResult.retired }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/event-entry-result', eventEntryResult.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

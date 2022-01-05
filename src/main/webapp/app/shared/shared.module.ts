@@ -1,48 +1,58 @@
 import { NgModule } from '@angular/core';
-import { MotorsportsDatabaseSharedLibsModule } from './shared-libs.module';
+
+import { SharedLibsModule } from './shared-libs.module';
 import { FindLanguageFromKeyPipe } from './language/find-language-from-key.pipe';
-import { JhiAlertComponent } from './alert/alert.component';
-import { JhiAlertErrorComponent } from './alert/alert-error.component';
+import { TranslateDirective } from './language/translate.directive';
+import { AlertComponent } from './alert/alert.component';
+import { AlertErrorComponent } from './alert/alert-error.component';
 import { HasAnyAuthorityDirective } from './auth/has-any-authority.directive';
-import { StatisticsComponent } from './statistics/statistics.component';
+import { DurationPipe } from './date/duration.pipe';
+import { FormatMediumDatetimePipe } from './date/format-medium-datetime.pipe';
+import { FormatMediumDatePipe } from './date/format-medium-date.pipe';
+import { SortByDirective } from './sort/sort-by.directive';
+import { SortDirective } from './sort/sort.directive';
+import { ItemCountComponent } from './pagination/item-count.component';
 import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
 import { TimeMaskPipe } from './mask/time-mask.pipe';
 import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
 import { EventEntryCategoryFilter } from './filters/entry-category-filter.pipe';
-import { EphemerisYearFilter } from './filters/ephemeris-year-filter.pipe';
-import { MaterialElevationDirective } from './directives/material-elevation.directive';
-import { ImagesService } from './services/images.service';
-import { ImportsService } from './services/imports.service';
 
 @NgModule({
-  imports: [MotorsportsDatabaseSharedLibsModule],
+  imports: [SharedLibsModule],
   declarations: [
     FindLanguageFromKeyPipe,
-    JhiAlertComponent,
-    JhiAlertErrorComponent,
+    TranslateDirective,
+    AlertComponent,
+    AlertErrorComponent,
     HasAnyAuthorityDirective,
-    StatisticsComponent,
+    DurationPipe,
+    FormatMediumDatetimePipe,
+    FormatMediumDatePipe,
+    SortByDirective,
+    SortDirective,
+    ItemCountComponent,
     RacetrackLengthPipe,
     TimeMaskPipe,
     LocalizedDatePipe,
     EventEntryCategoryFilter,
-    EphemerisYearFilter,
-    MaterialElevationDirective
   ],
   exports: [
-    MotorsportsDatabaseSharedLibsModule,
+    SharedLibsModule,
     FindLanguageFromKeyPipe,
-    JhiAlertComponent,
-    JhiAlertErrorComponent,
+    TranslateDirective,
+    AlertComponent,
+    AlertErrorComponent,
     HasAnyAuthorityDirective,
-    StatisticsComponent,
+    DurationPipe,
+    FormatMediumDatetimePipe,
+    FormatMediumDatePipe,
+    SortByDirective,
+    SortDirective,
+    ItemCountComponent,
     RacetrackLengthPipe,
     TimeMaskPipe,
     LocalizedDatePipe,
     EventEntryCategoryFilter,
-    EphemerisYearFilter,
-    MaterialElevationDirective
   ],
-  providers: [ImagesService, ImportsService, TimeMaskPipe]
 })
-export class MotorsportsDatabaseSharedModule {}
+export class SharedModule {}
