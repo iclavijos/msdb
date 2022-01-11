@@ -7,8 +7,7 @@ import { EventEditionDeleteDialogComponent } from './delete/event-edition-delete
 import { EventEditionRoutingModule } from './route/event-edition-routing.module';
 
 @NgModule({
-  imports: [SharedModule, EventEditionRoutingModule],
-  declarations: [EventEditionComponent, EventEditionDetailComponent, EventEditionUpdateComponent, EventEditionDeleteDialogComponent],
-  entryComponents: [EventEditionDeleteDialogComponent],
+    imports: [SharedModule, EventEditionRoutingModule],
+    declarations: [EventEditionComponent, EventEditionDetailComponent, EventEditionUpdateComponent, EventEditionDeleteDialogComponent]
 })
 export class EventEditionModule {}

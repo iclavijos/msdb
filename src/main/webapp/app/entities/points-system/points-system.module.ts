@@ -7,8 +7,7 @@ import { PointsSystemDeleteDialogComponent } from './delete/points-system-delete
 import { PointsSystemRoutingModule } from './route/points-system-routing.module';
 
 @NgModule({
-  imports: [SharedModule, PointsSystemRoutingModule],
-  declarations: [PointsSystemComponent, PointsSystemDetailComponent, PointsSystemUpdateComponent, PointsSystemDeleteDialogComponent],
-  entryComponents: [PointsSystemDeleteDialogComponent],
+    imports: [SharedModule, PointsSystemRoutingModule],
+    declarations: [PointsSystemComponent, PointsSystemDetailComponent, PointsSystemUpdateComponent, PointsSystemDeleteDialogComponent]
 })
 export class PointsSystemModule {}

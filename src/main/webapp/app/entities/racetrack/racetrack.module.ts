@@ -7,8 +7,7 @@ import { RacetrackDeleteDialogComponent } from './delete/racetrack-delete-dialog
 import { RacetrackRoutingModule } from './route/racetrack-routing.module';
 
 @NgModule({
-  imports: [SharedModule, RacetrackRoutingModule],
-  declarations: [RacetrackComponent, RacetrackDetailComponent, RacetrackUpdateComponent, RacetrackDeleteDialogComponent],
-  entryComponents: [RacetrackDeleteDialogComponent],
+    imports: [SharedModule, RacetrackRoutingModule],
+    declarations: [RacetrackComponent, RacetrackDetailComponent, RacetrackUpdateComponent, RacetrackDeleteDialogComponent]
 })
 export class RacetrackModule {}

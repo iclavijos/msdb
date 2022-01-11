@@ -7,8 +7,7 @@ import { EventSessionDeleteDialogComponent } from './delete/event-session-delete
 import { EventSessionRoutingModule } from './route/event-session-routing.module';
 
 @NgModule({
-  imports: [SharedModule, EventSessionRoutingModule],
-  declarations: [EventSessionComponent, EventSessionDetailComponent, EventSessionUpdateComponent, EventSessionDeleteDialogComponent],
-  entryComponents: [EventSessionDeleteDialogComponent],
+    imports: [SharedModule, EventSessionRoutingModule],
+    declarations: [EventSessionComponent, EventSessionDetailComponent, EventSessionUpdateComponent, EventSessionDeleteDialogComponent]
 })
 export class EventSessionModule {}

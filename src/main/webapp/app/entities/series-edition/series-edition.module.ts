@@ -7,8 +7,7 @@ import { SeriesEditionDeleteDialogComponent } from './delete/series-edition-dele
 import { SeriesEditionRoutingModule } from './route/series-edition-routing.module';
 
 @NgModule({
-  imports: [SharedModule, SeriesEditionRoutingModule],
-  declarations: [SeriesEditionComponent, SeriesEditionDetailComponent, SeriesEditionUpdateComponent, SeriesEditionDeleteDialogComponent],
-  entryComponents: [SeriesEditionDeleteDialogComponent],
+    imports: [SharedModule, SeriesEditionRoutingModule],
+    declarations: [SeriesEditionComponent, SeriesEditionDetailComponent, SeriesEditionUpdateComponent, SeriesEditionDeleteDialogComponent]
 })
 export class SeriesEditionModule {}
