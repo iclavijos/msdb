@@ -7,8 +7,7 @@ import { EngineDeleteDialogComponent } from './delete/engine-delete-dialog.compo
 import { EngineRoutingModule } from './route/engine-routing.module';
 
 @NgModule({
-  imports: [SharedModule, EngineRoutingModule],
-  declarations: [EngineComponent, EngineDetailComponent, EngineUpdateComponent, EngineDeleteDialogComponent],
-  entryComponents: [EngineDeleteDialogComponent],
+    imports: [SharedModule, EngineRoutingModule],
+    declarations: [EngineComponent, EngineDetailComponent, EngineUpdateComponent, EngineDeleteDialogComponent]
 })
 export class EngineModule {}

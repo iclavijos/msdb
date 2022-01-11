@@ -7,13 +7,12 @@ import { DriverPointsDetailsDeleteDialogComponent } from './delete/driver-points
 import { DriverPointsDetailsRoutingModule } from './route/driver-points-details-routing.module';
 
 @NgModule({
-  imports: [SharedModule, DriverPointsDetailsRoutingModule],
-  declarations: [
-    DriverPointsDetailsComponent,
-    DriverPointsDetailsDetailComponent,
-    DriverPointsDetailsUpdateComponent,
-    DriverPointsDetailsDeleteDialogComponent,
-  ],
-  entryComponents: [DriverPointsDetailsDeleteDialogComponent],
+    imports: [SharedModule, DriverPointsDetailsRoutingModule],
+    declarations: [
+        DriverPointsDetailsComponent,
+        DriverPointsDetailsDetailComponent,
+        DriverPointsDetailsUpdateComponent,
+        DriverPointsDetailsDeleteDialogComponent,
+    ]
 })
 export class DriverPointsDetailsModule {}

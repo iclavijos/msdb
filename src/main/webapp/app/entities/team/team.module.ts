@@ -7,8 +7,7 @@ import { TeamDeleteDialogComponent } from './delete/team-delete-dialog.component
 import { TeamRoutingModule } from './route/team-routing.module';
 
 @NgModule({
-  imports: [SharedModule, TeamRoutingModule],
-  declarations: [TeamComponent, TeamDetailComponent, TeamUpdateComponent, TeamDeleteDialogComponent],
-  entryComponents: [TeamDeleteDialogComponent],
+    imports: [SharedModule, TeamRoutingModule],
+    declarations: [TeamComponent, TeamDetailComponent, TeamUpdateComponent, TeamDeleteDialogComponent]
 })
 export class TeamModule {}

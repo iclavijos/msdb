@@ -7,8 +7,7 @@ import { ChassisDeleteDialogComponent } from './delete/chassis-delete-dialog.com
 import { ChassisRoutingModule } from './route/chassis-routing.module';
 
 @NgModule({
-  imports: [SharedModule, ChassisRoutingModule],
-  declarations: [ChassisComponent, ChassisDetailComponent, ChassisUpdateComponent, ChassisDeleteDialogComponent],
-  entryComponents: [ChassisDeleteDialogComponent],
+    imports: [SharedModule, ChassisRoutingModule],
+    declarations: [ChassisComponent, ChassisDetailComponent, ChassisUpdateComponent, ChassisDeleteDialogComponent]
 })
 export class ChassisModule {}

@@ -7,8 +7,7 @@ import { DriverDeleteDialogComponent } from './delete/driver-delete-dialog.compo
 import { DriverRoutingModule } from './route/driver-routing.module';
 
 @NgModule({
-  imports: [SharedModule, DriverRoutingModule],
-  declarations: [DriverComponent, DriverDetailComponent, DriverUpdateComponent, DriverDeleteDialogComponent],
-  entryComponents: [DriverDeleteDialogComponent],
+    imports: [SharedModule, DriverRoutingModule],
+    declarations: [DriverComponent, DriverDetailComponent, DriverUpdateComponent, DriverDeleteDialogComponent]
 })
 export class DriverModule {}
