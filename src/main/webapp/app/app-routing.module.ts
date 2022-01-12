@@ -22,6 +22,11 @@ const LAYOUT_ROUTES = [ ...errorRoute];
           canActivate: [UserRouteAccessService],
           loadChildren: () => import('./admin/admin-routing.module').then(m => m.AdminRoutingModule),
         },
+        {
+          path: 'calendar',
+          canActivate: [UserRouteAccessService],
+          loadChildren: () => import('./calendar/calendar.module').then(m => m.CalendarModule)
+        },
         ...LAYOUT_ROUTES,
       ],
       { enableTracing: DEBUG_INFO_ENABLED }
