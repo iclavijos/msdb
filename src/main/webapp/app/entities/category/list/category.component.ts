@@ -16,7 +16,7 @@ import { DataUtils } from 'app/core/util/data-util.service';
   templateUrl: './category.component.html',
 })
 export class CategoryComponent implements OnInit {
-  categories?: ICategory[];
+  categories: ICategory[] = [];
   currentSearch: string;
   isLoading = false;
   totalItems = 0;
@@ -25,6 +25,8 @@ export class CategoryComponent implements OnInit {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  displayedColumns: string[] = ['name', 'shortname', 'logo', 'buttons'];
+  resultsLength = 0;
 
   constructor(
     protected categoryService: CategoryService,

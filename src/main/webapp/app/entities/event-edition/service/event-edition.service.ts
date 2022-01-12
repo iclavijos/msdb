@@ -19,7 +19,9 @@ export class EventEditionService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/event-editions');
   protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/event-editions');
 
-  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+  constructor(
+    protected http: HttpClient,
+    protected applicationConfigService: ApplicationConfigService) {}
 
   create(eventEdition: IEventEdition): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(eventEdition);
@@ -86,6 +88,13 @@ export class EventEditionService {
       return [...eventEditionsToAdd, ...eventEditionCollection];
     }
     return eventEditionCollection;
+  }
+
+  findCalendarEvents(startDate: Date, endDate: Date): Observable<any[]> {
+    const dateFormat = 'yyyy-MM-dd';
+    const fromDate = dayjs(startDate).format(dateFormat);
+    const toDate = dayjs(endDate).format(dateFormat);
+    return this.http.get<any[]>(`${this.resourceUrl}/calendar/${String(fromDate)}/${String(toDate)}`);
   }
 
   protected convertDateFromClient(eventEdition: IEventEdition): IEventEdition {

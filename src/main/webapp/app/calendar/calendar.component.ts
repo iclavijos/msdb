@@ -5,14 +5,14 @@ import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { IEventEdition } from '../shared/model/event-edition.model';
-import { EventEditionService } from '../entities/event-edition/event-edition.service';
+import { IEventEdition } from 'app/entities/event-edition/event-edition.model';
+import { EventEditionService } from 'app/entities/event-edition/service/event-edition.service';
 
 import { TimeZone } from '../home/home-events.component';
 
 import * as moment from 'moment-timezone';
 
-import { FullCalendarComponent, CalendarOptions } from '@fullcalendar/angular';
+import { FullCalendarComponent, CalendarOptions, EventClickArg } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timeLinePlugin from '@fullcalendar/timeline';
@@ -26,26 +26,29 @@ import enLocale from '@fullcalendar/core/locales/en-gb';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 export class MyEvent {
-  id: number;
-  title: string;
-  eventName: string;
-  sessionName: string;
-  duration: number;
-  totalDuration: number;
-  textColor: string;
-  color: string;
-  start: any;
-  end: any;
-  seriesLogoUrl: string;
+  id!: number;
+  title!: string;
+  eventName!: string;
+  sessionName!: string;
+  duration!: number;
+  totalDuration!: number;
+  textColor!: string;
+  color!: string;
+  start!: any;
+  startTime!: number;
+  end!: any;
+  endTime!: number;
+  seriesName!: string;
+  seriesLogoUrl!: string;
   allDay = false;
-  status: string;
-  sessionType: string;
-  racetrack: string;
-  racetrackLayoutUrl: string;
-  categories: string[];
-  event: any;
-  rally: boolean;
-  raid: boolean;
+  status!: string;
+  sessionType!: number;
+  racetrack!: string;
+  racetrackLayoutUrl!: string;
+  categories!: string[];
+  event!: any;
+  rally = false;
+  raid = false;
 }
 
 @Component({
@@ -73,22 +76,22 @@ export class EventDialogComponent {
   templateUrl: './calendar.component.html'
 })
 export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('calendar') calendarComponent: FullCalendarComponent;
+  @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
 
   calendarPlugins = [dayGridPlugin, timeGridPlugin, timeLinePlugin, listPlugin, momentTimezonePlugin];
   calendarLocales = [esLocale, caLocale, enLocale];
 
-  sessionsSrc: MyEvent[];
+  sessionsSrc!: MyEvent[];
   filterModified = false;
-  timezone: string;
-  timezones: any[];
+  timezone!: string;
+  timezones!: any[];
 
-  calendarOptions: CalendarOptions;
+  calendarOptions!: CalendarOptions;
 
   filter = new FormControl();
   series: string[] = [];
 
-  private langChangeSubscription: Subscription;
+  private langChangeSubscription!: Subscription;
 
   constructor(
     private eventEditionService: EventEditionService,
@@ -97,7 +100,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
     private eventDialog: MatDialog
   ) {}
 
-  events = (dates, callback): void => {
+  events = (dates: any, callback: any): void => {
     let sessions: any[];
     if (this.filterModified) {
       if (this.filter.value.length > 0) {
@@ -113,7 +116,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
           this.filter = new FormControl();
           this.sessionsSrc = events;
           this.series = [...new Set(
-            events.map(s => s.seriesName as string)
+            events.map(s => s.seriesName)
           )].sort();
           callback(this.convertEvents(this.sessionsSrc, this.timezone));
         }
@@ -170,13 +173,13 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.langChangeSubscription.unsubscribe();
   }
 
-  openEventDialog = eventInfo: void => {
+  openEventDialog = (eventInfo: EventClickArg): void => {
     this.eventDialog.open(EventDialogComponent, {
       data: { event: eventInfo }
     });
   };
 
-  public convertEvents(sessions, currentTZ, toDate = true, includeCancelled = false): MyEvent[] {
+  public convertEvents(sessions: MyEvent[], currentTZ: string, toDate = true, includeCancelled = false): MyEvent[] {
     const result = [];
     for (const session of sessions) {
       const newEvent = new MyEvent();
