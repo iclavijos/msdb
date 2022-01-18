@@ -1,7 +1,5 @@
 package com.icesoft.msdb.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
-
 import com.icesoft.msdb.domain.TyreProvider;
 import com.icesoft.msdb.repository.TyreProviderRepository;
 import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
@@ -15,28 +13,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -208,21 +199,10 @@ public class TyreProviderResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of tyreProviders in body.
      */
     @GetMapping("/tyre-providers")
-    public ResponseEntity<List<TyreProvider>> getTyreProviders(@RequestParam(required = false) String query, Pageable pageable) {
+    public ResponseEntity<List<TyreProvider>> getTyreProviders(Pageable pageable) {
         log.debug("REST request to get a page of TyreProviders");
-        Page<TyreProvider> page;
-        Optional<String> queryOpt = Optional.ofNullable(query);
-        if (queryOpt.isPresent()) {
-            page = searchService.performWildcardSearch(
-                TyreProvider.class,
-                query.toLowerCase(),
-                Arrays.asList("manufacturer", "name"),
-                pageable);
-        } else {
-            page = tyreProviderRepository.findAll(pageable);
-        }
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        List<TyreProvider> allTyreProviders = tyreProviderRepository.findAll(pageable.getSort());
+        return ResponseEntity.ok(allTyreProviders);
     }
 
     /**
@@ -268,7 +248,6 @@ public class TyreProviderResource {
     @GetMapping("/_search/tyre-providers")
     public ResponseEntity<List<TyreProvider>> searchTyreProviders(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of TyreProviders for query {}", query);
-        String searchValue = '*' + query + '*';
         Page<TyreProvider> page = searchService.performWildcardSearch(
             TyreProvider.class,
             query.toLowerCase(),
@@ -276,7 +255,9 @@ public class TyreProviderResource {
             pageable
         );
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity
+            .ok().headers(headers)
+            .body(page.getContent());
     }
 
     @GetMapping("/_typeahead/tyres")

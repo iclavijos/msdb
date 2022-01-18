@@ -81,25 +81,25 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   }
 
   protected loadPage(): void {
-  this.categoryService
-    .query({
-      page: 0,
-      query: this.currentSearch,
-      size: this.itemsPerPage,
-      sort: ['name,asc'],
-    })
-    .subscribe(
-      (res: HttpResponse<ICategory[]>) => {
-        this.isLoading = false;
-        this.totalItems = Number(res.headers.get('X-Total-Count'));
-        this.dataSource.data = res.body ?? [];
-        this.dataSource.sort = this.sorter;
-      },
-      () => {
-        this.isLoading = false;
-        this.onError();
-      }
-    );
+    this.categoryService
+      .query({
+        page: 0,
+        query: this.currentSearch,
+        size: this.itemsPerPage,
+        sort: ['name,asc'],
+      })
+      .subscribe(
+        (res: HttpResponse<ICategory[]>) => {
+          this.isLoading = false;
+          this.totalItems = Number(res.headers.get('X-Total-Count'));
+          this.dataSource.data = res.body ?? [];
+          this.dataSource.sort = this.sorter;
+        },
+        () => {
+          this.isLoading = false;
+          this.onError();
+        }
+      );
   }
 
   protected sort(): string[] {

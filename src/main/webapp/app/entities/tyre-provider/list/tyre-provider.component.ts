@@ -1,8 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, merge, of as observableOf, Subscription } from 'rxjs';
-import { catchError, map, startWith, switchMap } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ITyreProvider } from '../tyre-provider.model';
@@ -21,7 +20,6 @@ import { MatSort } from '@angular/material/sort';
   templateUrl: './tyre-provider.component.html',
 })
 export class TyreProviderComponent implements OnInit, AfterViewInit {
-  tyreProviders: ITyreProvider[] = [];
   currentSearch: string;
   isLoading = false;
   totalItems = 0;
@@ -29,9 +27,8 @@ export class TyreProviderComponent implements OnInit, AfterViewInit {
   page?: number;
   predicate!: string;
   ascending!: boolean;
-  ngbPaginationPage = 1;
 
-  dataSource = new MatTableDataSource<ITyreProvider>(this.tyreProviders);
+  dataSource = new MatTableDataSource<ITyreProvider>([]);
   displayedColumns: string[] = ['name', 'logo', 'buttons'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -49,63 +46,14 @@ export class TyreProviderComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sorter;
-  }
-
-  loadPage(page?: number, dontNavigate?: boolean): void {
-    this.isLoading = true;
-    const pageToLoad: number = page ?? this.page ?? 1;
-
-    if (this.currentSearch) {
-      this.tyreProviderService
-        .search({
-          page: pageToLoad - 1,
-          query: this.currentSearch,
-          size: this.itemsPerPage,
-          sort: this.sort(),
-        })
-        .subscribe(
-          (res: HttpResponse<ITyreProvider[]>) => {
-            this.isLoading = false;
-            this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate);
-          },
-          () => {
-            this.isLoading = false;
-            this.onError();
-          }
-        );
-      return;
-    }
-
-    this.tyreProviderService
-      .query({
-        page: pageToLoad - 1,
-        size: this.itemsPerPage,
-        sort: this.sort(),
-      })
-      .subscribe(
-        (res: HttpResponse<ITyreProvider[]>) => {
-          this.isLoading = false;
-          this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate);
-        },
-        () => {
-          this.isLoading = false;
-          this.onError();
-        }
-      );
-  }
-
-  search(query: string): void {
-    if (query && ['name', 'logo', 'letterColor', 'backgroundColor'].includes(this.predicate)) {
-      this.predicate = 'id';
-      this.ascending = true;
-    }
-    this.currentSearch = query;
-    this.loadPage(1);
   }
 
   ngOnInit(): void {
-    this.handleNavigation();
+    this.loadPage();
+  }
+
+  search(query: string): void {
+    this.dataSource.filter = query.trim().toLowerCase();
   }
 
   trackId(index: number, item: ITyreProvider): number {
@@ -120,7 +68,8 @@ export class TyreProviderComponent implements OnInit, AfterViewInit {
     return this.dataUtils.openFile(base64String, contentType);
   }
 
-  delete(tyreProvider: ITyreProvider): void {
+  delete(event: MouseEvent, tyreProvider: ITyreProvider): void {
+    event.stopPropagation();
     const modalRef = this.modalService.open(TyreProviderDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.tyreProvider = tyreProvider;
     // unsubscribe not needed because closed completes on modal close
@@ -131,12 +80,30 @@ export class TyreProviderComponent implements OnInit, AfterViewInit {
     });
   }
 
+  protected loadPage(): void {
+    this.tyreProviderService
+      .query({
+        page: 0,
+        query: this.currentSearch,
+        size: this.itemsPerPage,
+        sort: ['name,asc'],
+      })
+      .subscribe(
+        (res: HttpResponse<ITyreProvider[]>) => {
+          this.isLoading = false;
+          this.totalItems = Number(res.headers.get('X-Total-Count'));
+          this.dataSource.data = res.body ?? [];
+          this.dataSource.sort = this.sorter;
+        },
+        () => {
+          this.isLoading = false;
+          this.onError();
+        }
+      );
+  }
+
   protected sort(): string[] {
-    const result = [this.predicate + ',' + (this.ascending ? ASC : DESC)];
-    if (this.predicate !== 'id') {
-      result.push('id');
-    }
-    return result;
+    return [this.predicate + ',' + (this.ascending ? ASC : DESC)];
   }
 
   protected handleNavigation(): void {
@@ -149,30 +116,12 @@ export class TyreProviderComponent implements OnInit, AfterViewInit {
       if (pageNumber !== this.page || predicate !== this.predicate || ascending !== this.ascending) {
         this.predicate = predicate;
         this.ascending = ascending;
-        this.loadPage(pageNumber, true);
+        // this.loadPage(pageNumber, true);
       }
     });
   }
 
-  protected onSuccess(data: ITyreProvider[] | null, headers: HttpHeaders, page: number, navigate: boolean): void {
-    this.totalItems = Number(headers.get('X-Total-Count'));
-    this.page = page;
-    this.ngbPaginationPage = this.page;
-    if (navigate) {
-      this.router.navigate(['/tyre-provider'], {
-        queryParams: {
-          page: this.page,
-          size: this.itemsPerPage,
-          search: this.currentSearch,
-          sort: this.predicate + ',' + (this.ascending ? ASC : DESC),
-        },
-      });
-    }
-    this.tyreProviders = data ?? [];
-    this.ngbPaginationPage = this.page;
-  }
-
   protected onError(): void {
-    this.ngbPaginationPage = this.page ?? 1;
+    this.page = this.page ?? 1;
   }
 }
