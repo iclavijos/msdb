@@ -1,7 +1,5 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { ROUTES } from '../sidebar/sidebar.component';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
@@ -68,7 +66,7 @@ export class NavbarComponent implements OnInit {
     this.translateService.use(languageKey);
   }
 
-  isAuthenticated() {
+  isAuthenticated(): boolean {
     const authenticated = this.accountService.isAuthenticated();
     if (authenticated) {
       this.accountService.identity().subscribe(userIdentity => (this.userFullName = `${userIdentity?.firstName} ${userIdentity?.lastName}`));
@@ -94,7 +92,7 @@ export class NavbarComponent implements OnInit {
     this.isNavbarCollapsed = !this.isNavbarCollapsed;
   }
 
-  getImageUrl() {
+  getImageUrl(): string | null {
     return this.isAuthenticated() ? this.accountService.getImageUrl() : null;
   }
 }

@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit {
     this.homeData = {};
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.accountService.identity().subscribe(account => (this.account = account));
     this.http.get<HttpResponse<any>>('api/home').subscribe(res => (this.homeData = res));
   }

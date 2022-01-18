@@ -7,8 +7,8 @@ import { Title } from '@angular/platform-browser';
 import { Router, ActivatedRouteSnapshot, NavigationEnd } from '@angular/router';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import * as dayjs from 'dayjs';
-import { Subject, Observable } from 'rxjs';
-import { map, shareReplay, takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, shareReplay } from 'rxjs/operators';
 
 import { AccountService } from 'app/core/auth/account.service';
 

@@ -13,11 +13,11 @@ export class JhiRebuildStatisticsComponent implements OnInit {
 
   constructor(private http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.http.put<any>(this.resourceUrl, { observe: 'response' }).subscribe(() => this.finishedOk());
   }
 
-  private finishedOk() {
+  private finishedOk(): void {
     // this.alertService.success('motorsportsDatabaseApp.stats.home.rebuilt', null, null);
     this.finished = true;
   }
