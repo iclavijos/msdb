@@ -11,16 +11,12 @@ import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
@@ -185,17 +181,10 @@ public class CategoryResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of categories in body.
      */
     @GetMapping("/categories")
-    public ResponseEntity<List<Category>> getCategories(@RequestParam(required = false) String query, Pageable pageable) {
+    public ResponseEntity<List<Category>> getCategories(Pageable pageable) {
         log.debug("REST request to get a page of Categories");
-        Page<Category> page;
-
-        if (StringUtils.isNotEmpty(query)) {
-            page = searchService.performWildcardSearch(Category.class, query.toLowerCase(), Arrays.asList("name", "shortname"), pageable);
-        } else {
-            page = categoryRepository.findAll(pageable);
-        }
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        List<Category> allCategories = categoryRepository.findAll(pageable.getSort());
+        return ResponseEntity.ok().body(allCategories);
     }
 
     /**
@@ -229,4 +218,25 @@ public class CategoryResource {
             .build();
     }
 
+    /**
+     * {@code SEARCH  /_search/categories?query=:query} : search for the category corresponding
+     * to the query.
+     *
+     * @param query the query of the category search.
+     * @param pageable the pagination information.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search/categories")
+    public ResponseEntity<List<Category>> searchCategories(@RequestParam String query, Pageable pageable) {
+        log.debug("REST request to search for a page of Categories for query {}", query);
+        Page<Category> page = searchService.performWildcardSearch(
+            Category.class,
+            query.toLowerCase(),
+            Arrays.asList("name", "shortname"),
+            pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity
+            .ok().headers(headers)
+            .body(page.getContent());
+    }
 }

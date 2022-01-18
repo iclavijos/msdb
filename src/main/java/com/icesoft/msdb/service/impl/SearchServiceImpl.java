@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.elasticsearch.index.query.*;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortMode;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHitsIterator;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -101,71 +105,71 @@ public class SearchServiceImpl implements SearchService {
 	public void rebuildIndexes() {
 		log.debug("Rebuilding search indexes");
         List<Runnable> tasks = new ArrayList<>();
-        tasks.add(() -> {
-            log.debug("Building Drivers index");
-            txTemplate.execute(status -> updateSearchIndex(driverRepo.streamAll(), driverSearchRepo));
-            log.debug("Building Drivers index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Engines index");
-            txTemplate.execute(status -> updateSearchIndex(engineRepo.readAllByIdNotNull(), engineSearchRepo));
-            log.debug("Building Engines index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Teams index");
-            txTemplate.execute(status -> updateSearchIndex(teamRepo.streamAll(), teamSearchRepo));
-            log.debug("Building Teams index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Chassis index");
-            txTemplate.execute(status -> updateSearchIndex(chassisRepo.streamAllByIdNotNull(), chassisSearchRepo));
-            log.debug("Building Chassis index done");
-        });
+//        tasks.add(() -> {
+//            log.debug("Building Drivers index");
+//            txTemplate.execute(status -> updateSearchIndex(driverRepo.streamAll(), driverSearchRepo));
+//            log.debug("Building Drivers index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Engines index");
+//            txTemplate.execute(status -> updateSearchIndex(engineRepo.readAllByIdNotNull(), engineSearchRepo));
+//            log.debug("Building Engines index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Teams index");
+//            txTemplate.execute(status -> updateSearchIndex(teamRepo.streamAll(), teamSearchRepo));
+//            log.debug("Building Teams index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Chassis index");
+//            txTemplate.execute(status -> updateSearchIndex(chassisRepo.streamAllByIdNotNull(), chassisSearchRepo));
+//            log.debug("Building Chassis index done");
+//        });
         tasks.add(() -> {
             log.debug("Building Categories index");
             txTemplate.execute(status -> updateSearchIndex(categoryRepo.streamAll(), categorySearchRepo));
             log.debug("Building Categories index done");
         });
-        tasks.add(() -> {
-            log.debug("Building Fuel suppliers index");
-            txTemplate.execute(status -> updateSearchIndex(fuelRepo.streamAll(), fuelSearchRepo));
-            log.debug("Building Fuel suppliers index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Tyre suppliers index");
-            txTemplate.execute(status -> updateSearchIndex(tyreRepo.streamAll(), tyreSearchRepo));
-            log.debug("Building Tyre suppliers index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Points systems index");
-            txTemplate.execute(status -> updateSearchIndex(pointsRepo.streamAll(), pointsSearchRepo));
-            log.debug("Building Points systems index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Events index");
-            txTemplate.execute(status -> updateSearchIndex(eventRepo.readAllByIdNotNull(), eventSearchRepo));
-            log.debug("Building Events index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Series index");
-            txTemplate.execute(status -> updateSearchIndex(seriesRepo.streamAll(), seriesSearchRepo));
-            log.debug("Building Series index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Event Editions index");
-            txTemplate.execute(status -> updateSearchIndex(eventEditionRepo.streamAllByIdNotNull(), eventEditionSearchRepo));
-            log.debug("Building Event Editions index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Racetracks & layouts index");
-            txTemplate.execute(status -> {
-                updateSearchIndex(racetrackRepo.streamAll(), racetrackSearchRepo);
-                log.debug("Racetracks done. Now layouts");
-                updateSearchIndex(racetrackLayoutRepo.streamAll(), racetrackLayoutSearchRepo);
-                return null;
-            });
-            log.debug("Building Racetracks & layouts index done");
-        });
+//        tasks.add(() -> {
+//            log.debug("Building Fuel suppliers index");
+//            txTemplate.execute(status -> updateSearchIndex(fuelRepo.streamAll(), fuelSearchRepo));
+//            log.debug("Building Fuel suppliers index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Tyre suppliers index");
+//            txTemplate.execute(status -> updateSearchIndex(tyreRepo.streamAll(), tyreSearchRepo));
+//            log.debug("Building Tyre suppliers index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Points systems index");
+//            txTemplate.execute(status -> updateSearchIndex(pointsRepo.streamAll(), pointsSearchRepo));
+//            log.debug("Building Points systems index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Events index");
+//            txTemplate.execute(status -> updateSearchIndex(eventRepo.readAllByIdNotNull(), eventSearchRepo));
+//            log.debug("Building Events index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Series index");
+//            txTemplate.execute(status -> updateSearchIndex(seriesRepo.streamAll(), seriesSearchRepo));
+//            log.debug("Building Series index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Event Editions index");
+//            txTemplate.execute(status -> updateSearchIndex(eventEditionRepo.streamAllByIdNotNull(), eventEditionSearchRepo));
+//            log.debug("Building Event Editions index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Racetracks & layouts index");
+//            txTemplate.execute(status -> {
+//                updateSearchIndex(racetrackRepo.streamAll(), racetrackSearchRepo);
+//                log.debug("Racetracks done. Now layouts");
+//                updateSearchIndex(racetrackLayoutRepo.streamAll(), racetrackLayoutSearchRepo);
+//                return null;
+//            });
+//            log.debug("Building Racetracks & layouts index done");
+//        });
 
         tasks.forEach(task -> {
             executor.execute(task);
@@ -186,7 +190,7 @@ public class SearchServiceImpl implements SearchService {
 	}
 
     @Override
-    public <T> Page<T> performWildcardSearch(Class searchClass, String query, List<String> fields, Pageable pageable) {
+    public <T> Page<T> performWildcardSearch(Class<T> searchClass, String query, List<String> fields, Pageable pageable) {
         String[] queryTerms = query.split(" ");
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
         fields.stream().forEach(field -> {
@@ -205,16 +209,21 @@ public class SearchServiceImpl implements SearchService {
         fields.parallelStream().forEach(field -> queryBuilder.field(field));
 
         boolQueryBuilder.should(queryBuilder);
+        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder()
+            .withQuery(boolQueryBuilder);
+        pageable.getSort().forEach(sort -> nativeSearchQueryBuilder
+            .withSort(SortBuilders
+                .fieldSort(sort.getProperty())
+                .order(sort.getDirection().isAscending() ? SortOrder.ASC : SortOrder.DESC)));
 
-        NativeSearchQuery nativeQuery = new NativeSearchQueryBuilder()
-            .withQuery(boolQueryBuilder)
-                .build();
+        NativeSearchQuery nativeQuery = nativeSearchQueryBuilder.build();
 
-        SearchHitsIterator<T> hits = (SearchHitsIterator<T>) operations.searchForStream(nativeQuery, searchClass.getClass());
+        SearchHitsIterator<T> hits = (SearchHitsIterator<T>) operations.searchForStream(nativeQuery, searchClass);
         Page<T> result = new PageImpl(
             hits.stream()
                 .skip(pageable.getOffset() * pageable.getPageSize())
                 .limit(pageable.getPageSize())
+                .map(SearchHit::getContent)
                 .collect(Collectors.toList()),
             pageable,
             hits.getTotalHits()

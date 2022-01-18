@@ -13,7 +13,7 @@ public interface SearchService {
 
     void rebuildIndexes();
 
-    <T> Page<T> performWildcardSearch(final Class searchClass, String query, List<String> fields, Pageable pageable);
+    <T> Page<T> performWildcardSearch(final Class<T> searchClass, String query, List<String> fields, Pageable pageable);
 
 	// public Page<EventEntrySearchResultDTO> searchEntries(String searchTems, Pageable pageable);
 }

@@ -3,6 +3,7 @@ package com.icesoft.msdb.domain;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "category")
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
+@Data
 public class Category extends AbstractAuditingEntity implements Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
@@ -33,14 +35,14 @@ public class Category extends AbstractAuditingEntity implements Serializable, Co
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
-    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
+    @Field(type = FieldType.Keyword, normalizer = "lowercase")
     @EqualsAndHashCode.Include
     private String name;
 
     @NotNull
     @Size(max = 10)
     @Column(name = "shortname", length = 10, nullable = false)
-    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
+    @Field(type = FieldType.Keyword, normalizer = "lowercase")
     @EqualsAndHashCode.Include
     private String shortname;
 
@@ -50,65 +52,19 @@ public class Category extends AbstractAuditingEntity implements Serializable, Co
     @Column(name="category_color")
     private String categoryColor;
 
+    @Column(name="category_front_color")
+    private String categoryFrontColor;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
 
     public Category name(String name) {
         this.name = name;
         return this;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getShortname() {
-        return shortname;
-    }
-
     public Category shortname(String shortname) {
         this.shortname = shortname;
         return this;
-    }
-
-    public void setShortname(String shortname) {
-        this.shortname = shortname;
-    }
-
-    public Integer getRelevance() {
-        return relevance;
-    }
-
-    public void setRelevance(Integer relevance) {
-        this.relevance = relevance;
-    }
-
-    public String getCategoryColor() {
-        return categoryColor;
-    }
-
-    public void setCategoryColor(String categoryColor) {
-        this.categoryColor = categoryColor;
-    }
-
-    @Override
-    public String toString() {
-        return "Category{" +
-            "id=" + id +
-            ", name='" + name + "'" +
-            ", shortname='" + shortname + "'" +
-            ", categoryColor='" + categoryColor + "'" +
-            '}';
     }
 
     @Override
