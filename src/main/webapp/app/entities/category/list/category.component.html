@@ -6,10 +6,9 @@
             <div class="col-sm-12">
                 <form name="searchForm" class="form-inline">
                     <div class="input-group w-100 mt-3">
-                        <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.category.home.search' | translate }}">
-                        <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
-                            <fa-icon [icon]="'search'"></fa-icon>
-                        </button>
+                        <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch"
+                               placeholder="{{ 'motorsportsDatabaseApp.category.home.search' | translate }}"
+                               (keyup)="search(currentSearch)">
                         <button class="input-group-append btn btn-danger" (click)="search('')" *ngIf="currentSearch">
                             <fa-icon [icon]="'trash-alt'"></fa-icon>
                         </button>
@@ -31,11 +30,11 @@
                     </div>
                     <div class="card-body">
                         <mat-spinner [hidden]="!isLoading"></mat-spinner>
-                        <div class="alert alert-warning" id="no-result" *ngIf="categories?.length === 0 && !isLoading">
+                        <div class="alert alert-warning" id="no-result" *ngIf="dataSource!.data!.length === 0 && !isLoading">
                             <span jhiTranslate="motorsportsDatabaseApp.category.home.notFound">No categories found</span>
                         </div>
-                        <div class="table-responsive" *ngIf="categories && categories.length > 0">
-                            <mat-table class="table table-hover" [dataSource]="categories"
+                        <div class="table-responsive" [ngClass]="{ hidden: dataSource!.data!.length > 0 }">
+                            <mat-table class="table table-hover" [dataSource]="dataSource"
                                    matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
 
                                 <ng-container matColumnDef="name">
@@ -44,10 +43,10 @@
                                 </ng-container>
 
                                 <ng-container matColumnDef="shortname">
-                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.category.shortname' | translate }}</mat-header-cell>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.category.shortname' | translate }}</mat-header-cell>
                                     <mat-cell *matCellDef="let category">
                                         <span *ngIf="!category.categoryColor">{{ category.shortname }}</span>
-                                        <span *ngIf="category.categoryColor" class="badge" [style.background]="category.categoryColor" [style.color]="'#FFFFFF'"><h4><strong>{{ category.shortname }}</strong></h4></span>
+                                        <span *ngIf="category.categoryColor" class="badge" [style.background]="category.categoryColor" [style.color]="category.categoryFrontColor"><h4><strong>{{ category.shortname }}</strong></h4></span>
                                     </mat-cell>
                                 </ng-container>
 
@@ -86,7 +85,6 @@
                             <mat-paginator [length]="totalItems"
                                            [pageSizeOptions]="[5, 10, 20]"
                                            [pageSize]="10"
-                                           (page)="pageChanged($event)"
                                            showFirstLastButtons></mat-paginator>
                         </div>
                     </div>

@@ -45,7 +45,7 @@ export class CategoryService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  search(req: SearchWithPagination): Observable<EntityArrayResponseType> {
+  search(req?: SearchWithPagination): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http.get<ICategory[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
   }

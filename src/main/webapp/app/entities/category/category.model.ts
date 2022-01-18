@@ -7,6 +7,7 @@ export interface ICategory {
   logo?: string | null;
   logoUrl?: string;
   categoryColor?: string;
+  categoryFrontColor?: string;
 }
 
 export class Category implements ICategory {
@@ -18,7 +19,8 @@ export class Category implements ICategory {
     public logoContentType?: string | null,
     public logo?: string | null,
     public logoUrl?: string,
-    public categoryColor = '#FFFFFF'
+    public categoryColor = '#FFFFFF',
+    public categoryFrontColor = '#000000'
   ) {}
 }
 

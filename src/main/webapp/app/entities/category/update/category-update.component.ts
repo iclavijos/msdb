@@ -26,7 +26,8 @@ export class CategoryUpdateComponent implements OnInit {
     logo: [],
     logoContentType: [],
     logoUrl: [],
-    categoryColor: [null, [Validators.required]]
+    categoryColor: ['#ffffff'],
+    categoryFrontColor: ['#000000']
   });
 
   constructor(
@@ -113,7 +114,8 @@ export class CategoryUpdateComponent implements OnInit {
       logo: category.logo,
       logoContentType: category.logoContentType,
       logoUrl: category.logoUrl,
-      categoryColor: category.categoryColor
+      categoryColor: category.categoryColor,
+      categoryFrontColor: category.categoryFrontColor
     });
   }
 
@@ -127,7 +129,8 @@ export class CategoryUpdateComponent implements OnInit {
       logoContentType: this.editForm.get(['logoContentType'])!.value,
       logo: this.editForm.get(['logo'])!.value,
       logoUrl: this.editForm.get(['logoUrl'])!.value,
-      categoryColor: this.editForm.get(['categoryColor'])!.value
+      categoryColor: this.editForm.get(['categoryColor'])!.value,
+      categoryFrontColor: this.editForm.get(['categoryFrontColor'])!.value,
     };
   }
 }
