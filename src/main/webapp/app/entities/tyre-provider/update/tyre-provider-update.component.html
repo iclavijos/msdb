@@ -17,14 +17,14 @@
                                             <mat-form-field class="example-full-width">
                                                 <input matInput placeholder="{{ 'motorsportsDatabaseApp.tyreProvider.name' | translate }}" type="text"
                                                        class="form-control" name="name" id="field_name" formControlName="name">
-                                                <div *ngIf="editForm.get('name')?.invalid && (editForm.get('name')?.dirty || editForm.get('name')?.touched)">
+                                                <div *ngIf="editForm.get('name')!.invalid && (editForm.get('name')!.dirty || editForm.get('name')!.touched)">
                                                     <small class="form-text text-danger"
                                                            *ngIf="editForm.get('name')?.errors?.required" jhiTranslate="entity.validation.required">
                                                         This field is required.
                                                     </small>
                                                     <small class="form-text text-danger"
                                                            *ngIf="editForm.get('name')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 50 }">
-                                                        This field cannot be longer than 50 characters.
+                                                        This field cannot be longer than 40 characters.
                                                     </small>
                                                 </div>
                                             </mat-form-field>
@@ -61,7 +61,7 @@
                                             {{ 'motorsportsDatabaseApp.tyreProvider.symbol.symbol' | translate }}
                                             <div [style.background]="editForm.get('backgroundColor')?.value" [style.color]="editForm.get('letterColor')?.value"
                                                  style="width: 30px; height: 30px; vertical-align: top; text-align:center;">
-                                                <h3>{{editForm.get('name')?.value.substring(0,1)}}</h3>
+                                                <h3>{{ editForm.get('name')?.value?.substring(0,1) }}</h3>
                                             </div>
                                         </div>
                                     </div>
