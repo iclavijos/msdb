@@ -46,7 +46,7 @@ export class HomeEventsComponent implements OnInit {
 
   constructor(private http: HttpClient) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.timezone = moment.tz.guess();
     if (this.timezone === undefined) {
       this.timezone = 'Europe/London';
@@ -66,7 +66,7 @@ export class HomeEventsComponent implements OnInit {
       (item: HomeEvent) => this.formatSessionTime(item.sessionStartTime, 'LL') === filterDay) as HomeEvent[];
   }
 
-  changeTimezone() {
+  changeTimezone(): void {
     this.calendar = this.convertData(this.calendar, this.timezone);
     this.filteredBySessionTypeCalendar = this.calendar;
   }

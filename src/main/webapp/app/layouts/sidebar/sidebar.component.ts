@@ -1,6 +1,5 @@
 import { Component, HostListener } from '@angular/core';
 
-declare const $: any;
 declare interface RouteInfo {
   path: string;
   title: string;
@@ -36,11 +35,11 @@ export class SidebarComponent {
   innerWidth = 1024;
 
   @HostListener('window:resize')
-  onResize() {
+  onResize(): void {
     this.innerWidth = window.innerWidth;
   }
 
-  isMobileMenu() {
+  isMobileMenu(): boolean {
     if (this.innerWidth > 991) {
       return false;
     }
