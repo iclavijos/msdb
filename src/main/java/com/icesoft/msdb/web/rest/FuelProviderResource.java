@@ -1,6 +1,7 @@
 package com.icesoft.msdb.web.rest;
 
 import com.icesoft.msdb.domain.FuelProvider;
+
 import com.icesoft.msdb.repository.FuelProviderRepository;
 import com.icesoft.msdb.repository.search.FuelProviderSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
@@ -8,20 +9,16 @@ import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
+import org.springframework.data.domain.PageRequest;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
@@ -37,10 +34,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link com.icesoft.msdb.domain.FuelProvider}.
@@ -180,7 +173,6 @@ public class FuelProviderResource {
                 if (fuelProvider.getLogo() != null) {
                     existingFuelProvider.setLogo(fuelProvider.getLogo());
                 }
-
                 return existingFuelProvider;
             })
             .map(fuelProviderRepository::save)
@@ -203,21 +195,10 @@ public class FuelProviderResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of fuelProviders in body.
      */
     @GetMapping("/fuel-providers")
-    public ResponseEntity<List<FuelProvider>> getFuelProviders(@RequestParam(required = false) String query, Pageable pageable) {
+    public ResponseEntity<List<FuelProvider>> getFuelProviders(Pageable pageable) {
         log.debug("REST request to get a page of FuelProviders");
-        Page<FuelProvider> page;
-        Optional<String> queryOpt = Optional.ofNullable(query);
-        if (queryOpt.isPresent()) {
-            page = searchService.performWildcardSearch(
-                FuelProvider.class,
-                query.toLowerCase(),
-                Arrays.asList("manufacturer", "name"),
-                pageable);
-        } else {
-            page = fuelProviderRepository.findAll(pageable);
-        }
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        List<FuelProvider> allFuelProviders = fuelProviderRepository.findAll(pageable.getSort());
+        return ResponseEntity.ok(allFuelProviders);
     }
 
     /**
@@ -263,7 +244,6 @@ public class FuelProviderResource {
     @GetMapping("/_search/fuel-providers")
     public ResponseEntity<List<FuelProvider>> searchFuelProviders(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of FuelProviders for query {}", query);
-
         Page<FuelProvider> page = searchService.performWildcardSearch(
             FuelProvider.class,
             query,
@@ -271,7 +251,9 @@ public class FuelProviderResource {
             pageable
         );
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity
+            .ok().headers(headers)
+            .body(page.getContent());
     }
 
     @GetMapping("/_typeahead/fuels")
@@ -282,7 +264,7 @@ public class FuelProviderResource {
             FuelProvider.class,
             query,
             Arrays.asList("name"),
-            PageRequest.of(0, 10)
+            PageRequest.of(0, 20)
         );
         return page.getContent();
     }

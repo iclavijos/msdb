@@ -59,11 +59,11 @@ import { RouterModule } from '@angular/router';
 //         data: { pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title' },
 //         loadChildren: () => import('./points-system/points-system.module').then(m => m.PointsSystemModule),
 //       },
-//       {
-//         path: 'fuel-provider',
-//         data: { pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title' },
-//         loadChildren: () => import('./fuel-provider/fuel-provider.module').then(m => m.FuelProviderModule),
-//       },
+      {
+        path: 'fuel-provider',
+        data: { pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title' },
+        loadChildren: () => import('./fuel-provider/fuel-provider.module').then(m => m.FuelProviderModule),
+      },
       {
         path: 'category',
         data: { pageTitle: 'motorsportsDatabaseApp.category.home.title' },
