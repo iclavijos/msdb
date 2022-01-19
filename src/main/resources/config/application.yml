@@ -211,3 +211,6 @@ application:
   timezone:
     key: ${timezone_key}
     url: https://api.timezonedb.com/v2.1/list-time-zone?key=%s&format=json&fields=countryName,zoneName,gmtOffset
+  telegramBot:
+    token: ${telegram_token}
+    channelId: ${telegram_channel}

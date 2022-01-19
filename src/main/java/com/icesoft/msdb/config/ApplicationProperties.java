@@ -1,5 +1,6 @@
 package com.icesoft.msdb.config;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -18,20 +19,21 @@ public class ApplicationProperties {
 	private final Cloudinary cloudinary = new Cloudinary();
     private final Geolocation geolocation = new Geolocation();
     private final TimeZone timeZone = new TimeZone();
+    private final TelegramBot telegramBot = new TelegramBot();
 
-    @Getter @Setter
+    @Data
 	public class SendGrid {
 		private String key;
 	}
 
-    @Getter @Setter
+    @Data
 	public class Cloudinary {
 		private String name;
 		private String key;
 		private String secret;
 	}
 
-    @Getter @Setter
+    @Data
     public class Geolocation {
         private String key;
     }
@@ -44,5 +46,11 @@ public class ApplicationProperties {
         public String getServiceUrl() {
             return String.format(url, key);
         }
+    }
+
+    @Data
+    public class TelegramBot {
+        private String token;
+        private String channelId;
     }
 }

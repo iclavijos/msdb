@@ -1,6 +1,9 @@
 package com.icesoft.msdb.service.impl;
 
-import com.icesoft.msdb.domain.*;
+import com.icesoft.msdb.domain.EventSession;
+import com.icesoft.msdb.domain.SeriesEdition;
+import com.icesoft.msdb.domain.User;
+import com.icesoft.msdb.domain.UserSubscription;
 import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.domain.subscriptions.SessionData;
@@ -11,6 +14,8 @@ import com.icesoft.msdb.repository.UserSubscriptionRepository;
 import com.icesoft.msdb.repository.subscriptions.SessionsRepository;
 import com.icesoft.msdb.service.MessagingService;
 import com.icesoft.msdb.service.SubscriptionsService;
+import com.icesoft.msdb.service.TelegramSenderService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -25,6 +30,7 @@ import java.util.stream.StreamSupport;
 @Service
 @Transactional
 @Slf4j
+@RequiredArgsConstructor
 public class SubscriptionsServiceImpl implements SubscriptionsService {
 
     private final SessionsRepository sessionsRepository;
@@ -32,18 +38,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     private final UserRepository userRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final MessagingService messagingService;
-
-    public SubscriptionsServiceImpl(SessionsRepository sessionsRepository,
-                                    EventSessionRepository eventSessionRepository,
-                                    UserRepository userRepository,
-                                    UserSubscriptionRepository userSubscriptionRepository,
-                                    MessagingService messagingService) {
-        this.sessionsRepository = sessionsRepository;
-        this.eventSessionRepository = eventSessionRepository;
-        this.userRepository = userRepository;
-        this.userSubscriptionRepository = userSubscriptionRepository;
-        this.messagingService = messagingService;
-    }
+    private final TelegramSenderService telegramSenderService;
 
     @Scheduled(cron = "0 * * * * *")
     @Transactional(readOnly = true)
@@ -53,17 +48,20 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             utc.getYear(), utc.getMonthValue(),
             utc.getDayOfMonth(), utc.getHour(),
             utc.getMinute(), 0, 0, utc.getOffset());
+        OffsetDateTime utcPlus15m = utc.plusMinutes(15);
+        OffsetDateTime utcPlus1h = utc.plusHours(1);
+        OffsetDateTime utcPlus3h = utc.plusHours(3);
         log.trace("Generating notifications at {}", utc);
         List<SessionData> sessionData15m = sessionsRepository
-            .findById(utc.plusMinutes(15).toEpochSecond())
+            .findById(utcPlus15m.toEpochSecond())
             .map(sessions -> sessions.getSessions())
             .orElse(Collections.emptyList());
         List<SessionData> sessionData1h = sessionsRepository
-            .findById(utc.plusHours(1).toEpochSecond())
+            .findById(utcPlus1h.toEpochSecond())
             .map(sessions -> sessions.getSessions())
             .orElse(Collections.emptyList());
         List<SessionData> sessionData3h = sessionsRepository
-            .findById(utc.plusHours(3).toEpochSecond())
+            .findById(utcPlus3h.toEpochSecond())
             .map(sessions -> sessions.getSessions())
             .orElse(Collections.emptyList());
 
@@ -78,24 +76,29 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
                 .collect(Collectors.toList())
             )
             .stream()
-            .filter(session -> session.getEventEdition().getStatus().equals(EventStatusType.ONGOING))
-            .filter(session -> !session.isCancelled())
-            .peek(session -> log.trace("Session to notify: {}", session.getName()))
-            .collect(Collectors.toList());
+                .filter(session -> session.getEventEdition().getStatus().equals(EventStatusType.ONGOING))
+                .peek(session -> {
+                    log.trace("Session to notify: {}", session.getName());
+                    // Send notifications to telegram channel
+                    telegramSenderService.sendMessage(session,
+                        session.getSessionStartTime().equals(utcPlus15m) ? 15 :
+                            session.getSessionStartTime().equals(utcPlus1h)? 60 : 180
+                    );
+                })
+                .collect(Collectors.toList());
 
-        List<Series> seriesEds = eventSessions.stream()
+        List<SeriesEdition> seriesEds = eventSessions.stream()
             .flatMap(session -> session.getEventEdition().getSeriesEditions().stream())
-            .map(seriesEdition -> seriesEdition.getSeries())
             .distinct()
             .collect(Collectors.toList());
 
-        List<UserSubscription> usersSubs = userSubscriptionRepository.findAllBySeriesIn(seriesEds);
+        List<UserSubscription> usersSubs = userSubscriptionRepository.findAllBySeriesEditionIn(seriesEds);
         usersSubs.forEach(userSubscription -> {
             log.trace("User to be notified: {}", userSubscription.getUser().getId());
             eventSessions.stream()
                 .filter(eventSession -> eventSession.getEventEdition().getSeriesEditions()
-                    .stream().map(seriesEdition -> seriesEdition.getSeries().getId()).collect(Collectors.toList())
-                    .contains(userSubscription.getSeries().getId()))
+                    .stream().map(seriesEdition -> seriesEdition.getId()).collect(Collectors.toList())
+                    .contains(userSubscription.getSeriesEdition().getId()))
                 .forEach(
                     eventSession -> {
                         if (eventSession.getSessionType().equals(SessionType.STAGE) ||

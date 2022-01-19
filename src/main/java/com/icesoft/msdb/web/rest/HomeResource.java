@@ -6,8 +6,10 @@ import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.repository.*;
 import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.service.MessagingService;
+import com.icesoft.msdb.service.TelegramSenderService;
 import com.icesoft.msdb.service.dto.SessionDataDTO;
 import com.icesoft.msdb.service.dto.TimeZonesResponse;
+import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.cloudinary.json.JSONException;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 @Transactional(readOnly=true)
+@RequiredArgsConstructor
 public class HomeResource {
 
 	private final Logger log = LoggerFactory.getLogger(HomeResource.class);
@@ -42,25 +45,12 @@ public class HomeResource {
 	private final TeamRepository teamRepository;
 	private final EventEditionRepository eventsEditionsRepository;
 	private final EventSessionRepository eventSessionRepository;
-
-	@Autowired
-    private UserRepository userRepository;
-	@Autowired
-    private MessagingService messagingService;
+    private final UserRepository userRepository;
+    private final MessagingService messagingService;
+    private final TelegramSenderService telegramSenderService;
 
     @Autowired
     private String timeZoneServiceUrl;
-
-	public HomeResource(DriverRepository driverRepo, RacetrackLayoutRepository racetrackRepo,
-			SeriesEditionRepository seriesRepo, TeamRepository teamRepo, EventEditionRepository eventsRepo,
-			EventSessionRepository eventSessionRepo, JDBCRepositoryImpl jdbcRepo) {
-		this.driversRepository = driverRepo;
-		this.racetrackRepository = racetrackRepo;
-		this.seriesEditionRepository = seriesRepo;
-		this.teamRepository = teamRepo;
-		this.eventsEditionsRepository = eventsRepo;
-		this.eventSessionRepository = eventSessionRepo;
-	}
 
 	@GetMapping("/home")
     @Cacheable(cacheNames="homeInfo")
@@ -159,6 +149,7 @@ public class HomeResource {
     public void testNotif(@PathVariable String email, @PathVariable Long sessionId) {
         User ivan = userRepository.findOneByEmailIgnoreCase(email).get();
         EventSession session = eventSessionRepository.findById(sessionId).get();
-        messagingService.sendSessionNotification(ivan, session);
+        // messagingService.sendSessionNotification(ivan, session);
+        telegramSenderService.sendMessage(session, 17);
     }
 }
