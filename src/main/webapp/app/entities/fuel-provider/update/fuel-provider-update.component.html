@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-danger">
-                        <h4 class="card-title">{{ editForm.get('name').value }}</h4>
+                        <h4 class="card-title">{{ editForm.get('name')?.value }}</h4>
                         <p class="card-category">{{ 'motorsportsDatabaseApp.fuelProvider.home.createOrEditLabel' | translate }}</p>
                     </div>
                     <div class="card-body">
@@ -17,13 +17,13 @@
                                             <mat-form-field class="example-full-width">
                                                 <input matInput placeholder="{{ 'motorsportsDatabaseApp.fuelProvider.name' | translate }}" type="text"
                                                        class="form-control" name="name" id="field_name" formControlName="name">
-                                                <div *ngIf="editForm.get('name').invalid && (editForm.get('name').dirty || editForm.get('name').touched)">
+                                                <div *ngIf="editForm.get('name')!.invalid && (editForm.get('name')!.dirty || editForm.get('name')!.touched)">
                                                     <small class="form-text text-danger"
-                                                           *ngIf="editForm.get('name').errors.required" jhiTranslate="entity.validation.required">
+                                                           *ngIf="editForm.get('name')?.errors?.required" jhiTranslate="entity.validation.required">
                                                         This field is required.
                                                     </small>
                                                     <small class="form-text text-danger"
-                                                           *ngIf="editForm.get('name').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 50 }">
+                                                           *ngIf="editForm.get('name')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 50 }">
                                                         This field cannot be longer than 50 characters.
                                                     </small>
                                                 </div>
@@ -34,15 +34,31 @@
                                 <div class="col-md-7">
                                     <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.fuelProvider.logo" for="field_logo">Logo</label>
                                     <div>
-                                        <img [src]="editForm.get('logoUrl').value" class="img-fluid" *ngIf="!editForm.get('logo').value && editForm.get('logoUrl').value != null" alt="provider logo"/>
-                                        <img [src]="'data:' + editForm.get('logoContentType').value + ';base64,' + editForm.get('logo').value" class="img-fluid" *ngIf="editForm.get('logo').value" alt="provider logo"/>
-                                        <div *ngIf="editForm.get('logoUrl').value" class="form-text text-danger clearfix">
-                                            <button type="button" (click)="resetLogo()"
-                                                    class="btn btn-secondary btn-xs pull-right">
-                                                <span class="fa fa-times"></span>
+                                        <img [src]="editForm.get('logoUrl')?.value" class="img-fluid" *ngIf="!editForm.get('logo')?.value && editForm.get('logoUrl')?.value != null" alt="provider logo"/>
+                                        <img
+                                            [src]="'data:' + editForm.get('logoContentType')!.value + ';base64,' + editForm.get('logo')!.value"
+                                            style="max-height: 100px"
+                                            *ngIf="editForm.get('logo')!.value"
+                                            alt="tyreProvider image"
+                                        />
+                                        <div *ngIf="editForm.get('logo')!.value" class="form-text text-danger clearfix">
+                                            <span class="pull-left">{{ editForm.get('logoContentType')!.value }}, {{ byteSize(editForm.get('logo')!.value) }}</span>
+                                            <button
+                                                type="button"
+                                                (click)="clearInputImage('logo', 'logoContentType', 'file_logo')"
+                                                class="btn btn-secondary btn-xs pull-right"
+                                            >
+                                                <fa-icon icon="times"></fa-icon>
                                             </button>
                                         </div>
-                                        <input type="file" id="file_logo" (change)="setFileData($event, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
+                                        <input
+                                            type="file"
+                                            id="file_logo"
+                                            data-cy="logo"
+                                            (change)="setFileData($event, 'logo', true)"
+                                            accept="image/*"
+                                            jhiTranslate="entity.action.addimage"
+                                        />
                                     </div>
                                     <input type="hidden" class="form-control" name="logo" id="field_logo" formControlName="logo"/>
                                     <input type="hidden" class="form-control" name="logoContentType" id="field_logoContentType" formControlName="logoContentType" />
