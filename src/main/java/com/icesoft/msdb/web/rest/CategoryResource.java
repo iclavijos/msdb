@@ -32,10 +32,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link com.icesoft.msdb.domain.Category}.
@@ -233,7 +229,8 @@ public class CategoryResource {
             Category.class,
             query.toLowerCase(),
             Arrays.asList("name", "shortname"),
-            pageable);
+            pageable
+        );
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity
             .ok().headers(headers)
