@@ -115,11 +115,11 @@ public class SearchServiceImpl implements SearchService {
 //            txTemplate.execute(status -> updateSearchIndex(engineRepo.readAllByIdNotNull(), engineSearchRepo));
 //            log.debug("Building Engines index done");
 //        });
-//        tasks.add(() -> {
-//            log.debug("Building Teams index");
-//            txTemplate.execute(status -> updateSearchIndex(teamRepo.streamAll(), teamSearchRepo));
-//            log.debug("Building Teams index done");
-//        });
+        tasks.add(() -> {
+            log.debug("Building Teams index");
+            txTemplate.execute(status -> updateSearchIndex(teamRepo.streamAll(), teamSearchRepo));
+            log.debug("Building Teams index done");
+        });
 //        tasks.add(() -> {
 //            log.debug("Building Chassis index");
 //            txTemplate.execute(status -> updateSearchIndex(chassisRepo.streamAllByIdNotNull(), chassisSearchRepo));
