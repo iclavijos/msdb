@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { SearchWithPagination } from 'app/core/request/request.model';
@@ -15,6 +14,7 @@ export type EntityArrayResponseType = HttpResponse<ITeam[]>;
 export class TeamService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/teams');
   protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/teams');
+  protected statsSearchUrl = this.applicationConfigService.getEndpointFor('api/stats/teams');
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
@@ -48,20 +48,16 @@ export class TeamService {
     return this.http.get<ITeam[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
   }
 
-  addTeamToCollectionIfMissing(teamCollection: ITeam[], ...teamsToCheck: (ITeam | null | undefined)[]): ITeam[] {
-    const teams: ITeam[] = teamsToCheck.filter(isPresent);
-    if (teams.length > 0) {
-      const teamCollectionIdentifiers = teamCollection.map(teamItem => getTeamIdentifier(teamItem)!);
-      const teamsToAdd = teams.filter(teamItem => {
-        const teamIdentifier = getTeamIdentifier(teamItem);
-        if (teamIdentifier == null || teamCollectionIdentifiers.includes(teamIdentifier)) {
-          return false;
-        }
-        teamCollectionIdentifiers.push(teamIdentifier);
-        return true;
-      });
-      return [...teamsToAdd, ...teamCollection];
-    }
-    return teamCollection;
+  getStats(id: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}`, { observe: 'response' });
   }
+
+  getStatsYear(id: number, year: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}/${year}`, { observe: 'response' });
+  }
+
+  getYears(id: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.statsSearchUrl}/${id}/years`, { observe: 'response' });
+  }
+
 }
