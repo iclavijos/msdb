@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 import { SharedLibsModule } from './shared-libs.module';
 import { FindLanguageFromKeyPipe } from './language/find-language-from-key.pipe';
@@ -12,6 +13,7 @@ import { FormatMediumDatePipe } from './date/format-medium-date.pipe';
 import { SortByDirective } from './sort/sort-by.directive';
 import { SortDirective } from './sort/sort.directive';
 import { ItemCountComponent } from './pagination/item-count.component';
+import { StatisticsComponent } from './statistics/statistics.component';
 import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
 import { TimeMaskPipe } from './mask/time-mask.pipe';
 import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
@@ -22,7 +24,7 @@ import { ImagesService } from './services/images.service';
 import { ImportsService } from './services/imports.service';
 
 @NgModule({
-  imports: [SharedLibsModule],
+  imports: [SharedLibsModule, RouterModule],
   declarations: [
     FindLanguageFromKeyPipe,
     TranslateDirective,
@@ -30,6 +32,7 @@ import { ImportsService } from './services/imports.service';
     AlertErrorComponent,
     HasAnyAuthorityDirective,
     DurationPipe,
+    StatisticsComponent,
     FormatMediumDatetimePipe,
     FormatMediumDatePipe,
     SortByDirective,
@@ -50,6 +53,7 @@ import { ImportsService } from './services/imports.service';
     AlertErrorComponent,
     HasAnyAuthorityDirective,
     DurationPipe,
+    StatisticsComponent,
     FormatMediumDatetimePipe,
     FormatMediumDatePipe,
     SortByDirective,
