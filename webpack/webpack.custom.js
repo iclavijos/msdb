@@ -43,7 +43,7 @@ module.exports = async (config, options, targetOptions) => {
       }),
       new WebpackNotifierPlugin({
         title: 'Motorsports Database',
-        contentImage: path.join(__dirname, 'logo-jhipster.png'),
+        contentImage: path.join(__dirname, 'msdb_logo.png'),
       })
     );
   }
@@ -101,6 +101,11 @@ module.exports = async (config, options, targetOptions) => {
 
   const patterns = [
     // jhipster-needle-add-assets-to-webpack - JHipster will add/remove third-party resources in this array
+    { from: './src/main/webapp/content/', to: 'content' },
+    { from: './src/main/webapp/content/images', to: 'images' },
+    { from: './node_modules/leaflet/dist/images', to: 'assets'},
+    // jhipster-needle-add-assets-to-webpack - JHipster will add/remove third-party resources in this array
+    { from: './src/main/webapp/robots.txt', to: 'robots.txt' }
   ];
 
   if (patterns.length > 0) {
