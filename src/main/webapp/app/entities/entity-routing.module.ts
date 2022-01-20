@@ -4,6 +4,26 @@ import { RouterModule } from '@angular/router';
 @NgModule({
   imports: [
     RouterModule.forChild([
+      {
+        path: 'category',
+        data: { pageTitle: 'motorsportsDatabaseApp.category.home.title' },
+        loadChildren: () => import('./category/category.module').then(m => m.CategoryModule),
+      },
+      {
+        path: 'fuel-provider',
+        data: { pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title' },
+        loadChildren: () => import('./fuel-provider/fuel-provider.module').then(m => m.FuelProviderModule),
+      },
+      {
+        path: 'team',
+        data: { pageTitle: 'motorsportsDatabaseApp.team.home.title' },
+        loadChildren: () => import('./team/team.module').then(m => m.TeamModule),
+      },
+      {
+        path: 'tyre-provider',
+        data: { pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title' },
+        loadChildren: () => import('./tyre-provider/tyre-provider.module').then(m => m.TyreProviderModule),
+      },
 //       {
 //         path: 'series-edition',
 //         data: { pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title' },
@@ -59,16 +79,6 @@ import { RouterModule } from '@angular/router';
 //         data: { pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title' },
 //         loadChildren: () => import('./points-system/points-system.module').then(m => m.PointsSystemModule),
 //       },
-      {
-        path: 'fuel-provider',
-        data: { pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title' },
-        loadChildren: () => import('./fuel-provider/fuel-provider.module').then(m => m.FuelProviderModule),
-      },
-      {
-        path: 'category',
-        data: { pageTitle: 'motorsportsDatabaseApp.category.home.title' },
-        loadChildren: () => import('./category/category.module').then(m => m.CategoryModule),
-      },
 //       {
 //         path: 'driver',
 //         data: { pageTitle: 'motorsportsDatabaseApp.driver.home.title' },
@@ -79,21 +89,13 @@ import { RouterModule } from '@angular/router';
 //         data: { pageTitle: 'motorsportsDatabaseApp.series.home.title' },
 //         loadChildren: () => import('./series/series.module').then(m => m.SeriesModule),
 //       },
-//       {
-//         path: 'team',
-//         data: { pageTitle: 'motorsportsDatabaseApp.team.home.title' },
-//         loadChildren: () => import('./team/team.module').then(m => m.TeamModule),
-//       },
+
 //       {
 //         path: 'driver-points-details',
 //         data: { pageTitle: 'motorsportsDatabaseApp.driverPointsDetails.home.title' },
 //         loadChildren: () => import('./driver-points-details/driver-points-details.module').then(m => m.DriverPointsDetailsModule),
 //       },
-      {
-        path: 'tyre-provider',
-        data: { pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title' },
-        loadChildren: () => import('./tyre-provider/tyre-provider.module').then(m => m.TyreProviderModule),
-      },
+
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ]),
   ],

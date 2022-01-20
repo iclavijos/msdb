@@ -1,8 +1,6 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.domain.Engine;
 import com.icesoft.msdb.domain.Team;
-import com.icesoft.msdb.domain.stats.ParticipantStatisticsSnapshot;
 import com.icesoft.msdb.domain.stats.TeamStatistics;
 import com.icesoft.msdb.repository.EventEntryRepository;
 import com.icesoft.msdb.repository.TeamRepository;
@@ -15,15 +13,13 @@ import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
 import lombok.RequiredArgsConstructor;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -46,9 +42,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link com.icesoft.msdb.domain.Team}.
@@ -217,8 +210,7 @@ public class TeamResource {
         log.debug("REST request to search for a page of Teams for query '{}'", query);
 
         Page<Team> page;
-        Optional<String> queryOpt = Optional.ofNullable(query);
-        if (queryOpt.isPresent()) {
+        if (!StringUtils.isBlank(query)) {
             page = searchService.performWildcardSearch(
                 Team.class,
                 query.toLowerCase(),
