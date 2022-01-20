@@ -13,6 +13,7 @@ import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.dto.DriverFullNameDTO;
 import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
+import org.apache.commons.lang3.StringUtils;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -226,8 +227,7 @@ public class DriverResource {
     public ResponseEntity<List<Driver>> getDrivers(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of Drivers");
         Page<Driver> page;
-        Optional<String> queryOpt = Optional.ofNullable(query);
-        if (queryOpt.isPresent()) {
+        if (!StringUtils.isBlank(query)) {
             page = searchService.performWildcardSearch(
                 Driver.class,
                 query.toLowerCase(),

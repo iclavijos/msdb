@@ -1,7 +1,5 @@
 package com.icesoft.msdb.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +13,7 @@ import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import tech.jhipster.config.JHipsterConstants;
+
 
 @Configuration
 @EnableJpaRepositories({ "com.icesoft.msdb.repository" })
@@ -24,6 +22,8 @@ import tech.jhipster.config.JHipsterConstants;
 @EnableElasticsearchRepositories("com.icesoft.msdb.repository.search")
 @EnableMongoAuditing
 public class DatabaseConfiguration {
+
+//    private final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
 
 //    @Autowired
 //    private MongoMappingContext mongoMappingContext;

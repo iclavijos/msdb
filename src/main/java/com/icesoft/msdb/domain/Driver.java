@@ -38,13 +38,13 @@ public class Driver extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
-    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
+    @Field(type = FieldType.Keyword, normalizer = "lowercase_keyword")
     private String name;
 
     @NotNull
     @Size(max = 60)
     @Column(name = "surname", length = 60, nullable = false)
-    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
+    @Field(type = FieldType.Keyword, normalizer = "lowercase_keyword")
     private String surname;
 
     @Column(name = "birth_date")

@@ -1,18 +1,21 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { SessionStorageService } from 'ngx-webstorage';
 
-import { Moment } from 'moment';
-import * as moment from 'moment';
+import * as dayjs from 'dayjs';
 
 @Pipe({
   name: 'localizedDate',
   pure: false
 })
 export class LocalizedDatePipe implements PipeTransform {
-  constructor(private translateService: TranslateService) {}
+  constructor(private sessionStorageService: SessionStorageService) {}
 
-  transform(value: Moment, pattern = 'LLL'): any {
-    let momentDate: Moment;
+  transform(value?: dayjs.Dayjs, pattern = 'LL'): string {
+    let momentDate: dayjs.Dayjs;
+
+    if (!value) {
+      return '';
+    }
 
     if (value instanceof Date || Array.isArray(value)) {
       // } && !value.lang) {
@@ -24,10 +27,11 @@ export class LocalizedDatePipe implements PipeTransform {
         valueCopy = value;
       }
 
-      momentDate = moment(valueCopy);
+      momentDate = valueCopy.clone();
     } else {
       momentDate = value;
     }
-    return momentDate.locale(this.translateService.currentLang).format(pattern);
+    const localeKey = this.sessionStorageService.retrieve('locale');
+    return momentDate.locale(localeKey).format(pattern);
   }
 }

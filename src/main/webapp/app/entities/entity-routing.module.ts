@@ -5,6 +5,11 @@ import { RouterModule } from '@angular/router';
   imports: [
     RouterModule.forChild([
       {
+        path: 'driver',
+        data: { pageTitle: 'motorsportsDatabaseApp.driver.home.title' },
+        loadChildren: () => import('./driver/driver.module').then(m => m.DriverModule),
+      },
+      {
         path: 'category',
         data: { pageTitle: 'motorsportsDatabaseApp.category.home.title' },
         loadChildren: () => import('./category/category.module').then(m => m.CategoryModule),
@@ -78,11 +83,6 @@ import { RouterModule } from '@angular/router';
 //         path: 'points-system',
 //         data: { pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title' },
 //         loadChildren: () => import('./points-system/points-system.module').then(m => m.PointsSystemModule),
-//       },
-//       {
-//         path: 'driver',
-//         data: { pageTitle: 'motorsportsDatabaseApp.driver.home.title' },
-//         loadChildren: () => import('./driver/driver.module').then(m => m.DriverModule),
 //       },
 //       {
 //         path: 'series',

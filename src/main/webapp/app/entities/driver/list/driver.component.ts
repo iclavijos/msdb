@@ -1,14 +1,15 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ITeam } from '../team.model';
+import { IDriver, Driver } from '../driver.model';
 
-import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
-import { TeamService } from '../service/team.service';
-import { TeamDeleteDialogComponent } from '../delete/team-delete-dialog.component';
+import { ASC, DESC, ITEMS_PER_PAGE } from 'app/config/pagination.constants';
+import { DriverService } from '../service/driver.service';
+import { DriverDeleteDialogComponent } from '../delete/driver-delete-dialog.component';
 import { DataUtils } from 'app/core/util/data-util.service';
 
 import { MatTableDataSource } from '@angular/material/table';
@@ -16,26 +17,28 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 
 @Component({
-  selector: 'jhi-team',
-  templateUrl: './team.component.html',
+  selector: 'jhi-driver',
+  templateUrl: './driver.component.html',
 })
-export class TeamComponent implements OnInit, AfterViewInit {
+export class DriverComponent implements OnInit, AfterViewInit {
   currentSearch: string;
   isLoading = false;
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
   page = 0;
-  predicate = 'name';
+  predicate = 'surname';
   ascending = true;
 
-  dataSource = new MatTableDataSource<ITeam>([]);
-  displayedColumns: string[] = ['name', 'description', 'hqLocation', 'logo', 'buttons'];
+  dataSource = new MatTableDataSource<IDriver>([]);
+  displayedColumns: string[] = ['flag', 'name', 'surname', 'birthDate', 'birthPlace', 'deathDate', 'deathPlace', 'portrait', 'buttons'];
+
+  driversSearchTextChanged = new Subject<string>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sorter!: MatSort;
 
   constructor(
-    protected teamService: TeamService,
+    protected driverService: DriverService,
     protected activatedRoute: ActivatedRoute,
     protected dataUtils: DataUtils,
     protected router: Router,
@@ -50,16 +53,24 @@ export class TeamComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.loadPage();
+
+    this.driversSearchTextChanged
+      .pipe(debounceTime(300))
+      .subscribe(() => this.loadPage());
   }
 
-  search(query?: string): void {
-    if (!query) {
+  search(query: string): void {
+    if (query.length === 0) {
       this.currentSearch = '';
+      this.loadPage();
+    } else {
+      if (query.length >= 3) {
+        this.driversSearchTextChanged.next();
+      }
     }
-    this.loadPage();
   }
 
-  trackId(index: number, item: ITeam): number {
+  trackId(index: number, item: IDriver): number {
     return item.id!;
   }
 
@@ -71,10 +82,10 @@ export class TeamComponent implements OnInit, AfterViewInit {
     return this.dataUtils.openFile(base64String, contentType);
   }
 
-  delete(event: MouseEvent, team: ITeam): void {
+  delete(event: MouseEvent, driver: IDriver): void {
     event.stopPropagation();
-    const modalRef = this.modalService.open(TeamDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.team = team;
+    const modalRef = this.modalService.open(DriverDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.driver = driver;
     // unsubscribe not needed because closed completes on modal close
     modalRef.closed.subscribe(reason => {
       if (reason === 'deleted') {
@@ -94,21 +105,23 @@ export class TeamComponent implements OnInit, AfterViewInit {
     this.ascending = (event.direction as string) === 'asc';
     this.page = 0;
     this.loadPage();
+    this.paginator.pageIndex = 0;
   }
 
   protected loadPage(): void {
-    this.teamService
+    this.isLoading = true;
+    this.driverService
       .query({
         page: this.page,
         query: this.currentSearch,
         size: this.itemsPerPage,
-        sort: [`${this.predicate},${this.ascending ? ASC : DESC }`],
+        sort: this.sort(),
       })
       .subscribe(
-        (res: HttpResponse<ITeam[]>) => {
+        (res: HttpResponse<IDriver[]>) => {
           this.isLoading = false;
           this.totalItems = Number(res.headers.get('X-Total-Count'));
-          this.dataSource = new MatTableDataSource(res.body ?? []);
+          this.dataSource = new MatTableDataSource(this.instantiateResponseObjects(res.body as IDriver[]));
           this.dataSource.sort = this.sorter;
         },
         () => {
@@ -119,25 +132,30 @@ export class TeamComponent implements OnInit, AfterViewInit {
   }
 
   protected sort(): string[] {
-    return [this.predicate + ',' + (this.ascending ? ASC : DESC)];
+    const sortPredicates = [`${this.predicate},${this.ascending ? ASC : DESC }`];
+    if (this.predicate !== 'surname') {
+      sortPredicates.push(`surname,${ASC}`);
+    }
+    return sortPredicates;
   }
 
-  protected handleNavigation(): void {
-    combineLatest([this.activatedRoute.data, this.activatedRoute.queryParamMap]).subscribe(([data, params]) => {
-      const page = params.get('page');
-      const pageNumber = +(page ?? 1);
-      const sort = (params.get(SORT) ?? data['defaultSort']).split(',');
-      const predicate = sort[0];
-      const ascending = sort[1] === ASC;
-      if (pageNumber !== this.page || predicate !== this.predicate || ascending !== this.ascending) {
-        this.predicate = predicate;
-        this.ascending = ascending;
-        // this.loadPage(pageNumber, true);
-      }
-    });
-  }
+  private instantiateResponseObjects(data: IDriver[]): IDriver[] {
+    const objects: IDriver[] = [];
+    data.forEach(driver => objects.push(
+      new Driver(
+        driver.id,
+        driver.name,
+        driver.surname,
+        driver.birthDate,
+        driver.birthPlace,
+        driver.nationality,
+        driver.deathDate,
+        driver.deathPlace,
+        driver.portraitContentType,
+        driver.portrait,
+        driver.portraitUrl
+      )));
 
-//   protected onError(): void {
-//     this.page = this.page ?? 0;
-//   }
+    return objects;
+  }
 }

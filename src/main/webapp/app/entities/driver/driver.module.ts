@@ -1,17 +1,14 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { SharedModule } from '../../shared/shared.module';
-import { DriverComponent } from './driver.component';
-import { DriverDetailComponent } from './driver-detail.component';
-import { DriverUpdateComponent } from './driver-update.component';
-import { DriverDeletePopupComponent, DriverDeleteDialogComponent } from './driver-delete-dialog.component';
-import { driverRoute, driverPopupRoute } from './driver.route';
-
-const ENTITY_STATES = [...driverRoute, ...driverPopupRoute];
+import { SharedModule } from 'app/shared/shared.module';
+import { DriverComponent } from './list/driver.component';
+import { DriverDetailComponent } from './detail/driver-detail.component';
+import { DriverUpdateComponent } from './update/driver-update.component';
+import { DriverDeleteDialogComponent } from './delete/driver-delete-dialog.component';
+import { DriverRoutingModule } from './route/driver-routing.module';
 
 @NgModule({
-  imports: [SharedModule, RouterModule.forChild(ENTITY_STATES)],
-  declarations: [DriverComponent, DriverDetailComponent, DriverUpdateComponent, DriverDeleteDialogComponent, DriverDeletePopupComponent]
+  imports: [SharedModule, DriverRoutingModule],
+  declarations: [DriverComponent, DriverDetailComponent, DriverUpdateComponent, DriverDeleteDialogComponent],
+  entryComponents: [DriverDeleteDialogComponent],
 })
-export class MotorsportsDatabaseDriverModule {}
+export class DriverModule {}

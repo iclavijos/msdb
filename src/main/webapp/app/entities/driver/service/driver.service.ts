@@ -1,25 +1,25 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import * as moment from 'moment';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { DATE_FORMAT } from '../../shared/constants/input.constants';
 import { map } from 'rxjs/operators';
+import * as dayjs from 'dayjs';
 
-import { SERVER_API_URL } from '../../app.constants';
-import { createRequestOption } from '../../shared/util/request-util';
-import { IDriver } from '../../shared/model/driver.model';
+import { DATE_FORMAT } from 'app/config/input.constants';
+import { ApplicationConfigService } from 'app/core/config/application-config.service';
+import { createRequestOption } from 'app/core/request/request-util';
+import { SearchWithPagination } from 'app/core/request/request.model';
+import { IDriver, getDriverIdentifier } from '../driver.model';
 
-type EntityResponseType = HttpResponse<IDriver>;
-type EntityArrayResponseType = HttpResponse<IDriver[]>;
+export type EntityResponseType = HttpResponse<IDriver>;
+export type EntityArrayResponseType = HttpResponse<IDriver[]>;
 
 @Injectable({ providedIn: 'root' })
 export class DriverService {
-  public resourceUrl = `${SERVER_API_URL as string}api/drivers`;
-  public resourceSearchUrl = `${SERVER_API_URL as string}api/_search/drivers`;
-  public statsSearchUrl = `${SERVER_API_URL as string}api/stats/drivers`;
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/drivers');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/drivers');
+  protected statsSearchUrl = this.applicationConfigService.getEndpointFor('api/stats/drivers');
 
-  constructor(protected http: HttpClient) {}
+  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
   create(driver: IDriver): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(driver);
@@ -31,7 +31,14 @@ export class DriverService {
   update(driver: IDriver): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(driver);
     return this.http
-      .put<IDriver>(this.resourceUrl, copy, { observe: 'response' })
+      .put<IDriver>(`${this.resourceUrl}/${getDriverIdentifier(driver) as number}`, copy, { observe: 'response' })
+      .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
+  }
+
+  partialUpdate(driver: IDriver): Observable<EntityResponseType> {
+    const copy = this.convertDateFromClient(driver);
+    return this.http
+      .patch<IDriver>(`${this.resourceUrl}/${getDriverIdentifier(driver) as number}`, copy, { observe: 'response' })
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
@@ -48,11 +55,11 @@ export class DriverService {
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 
-  delete(id: number): Observable<HttpResponse<any>> {
-    return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  delete(id: number): Observable<HttpResponse<{}>> {
+    return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  search(req?: any): Observable<EntityArrayResponseType> {
+  search(req: SearchWithPagination): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http
       .get<IDriver[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
@@ -72,23 +79,16 @@ export class DriverService {
   }
 
   protected convertDateFromClient(driver: IDriver): IDriver {
-    const copy: IDriver = Object.assign({}, driver, {
-      birthDate: driver.birthDate?.isValid() ? driver.birthDate.format(DATE_FORMAT) : null,
-      deathDate: driver.deathDate?.isValid() ? driver.deathDate.format(DATE_FORMAT) : null
+    return Object.assign({}, driver, {
+      birthDate: driver.birthDate?.isValid() ? driver.birthDate.format(DATE_FORMAT) : undefined,
+      deathDate: driver.deathDate?.isValid() ? driver.deathDate.format(DATE_FORMAT) : undefined,
     });
-    return copy;
   }
 
   protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
     if (res.body) {
-      if (res.body.birthDate !== null) {
-        res.body.birthDate[1]--;
-        res.body.birthDate = moment(res.body.birthDate);
-      }
-      if (res.body.deathDate !== null) {
-        res.body.deathDate[1]--;
-        res.body.deathDate = moment(res.body.deathDate);
-      }
+      res.body.birthDate = res.body.birthDate ? dayjs(res.body.birthDate) : undefined;
+      res.body.deathDate = res.body.deathDate ? dayjs(res.body.deathDate) : undefined;
     }
     return res;
   }
@@ -96,14 +96,8 @@ export class DriverService {
   protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((driver: IDriver) => {
-        if (driver.birthDate !== null) {
-          driver.birthDate[1]--;
-          driver.birthDate = moment(driver.birthDate);
-        }
-        if (driver.deathDate !== null) {
-          driver.deathDate[1]--;
-          driver.deathDate = moment(driver.deathDate);
-        }
+        driver.birthDate = driver.birthDate ? dayjs(driver.birthDate) : undefined;
+        driver.deathDate = driver.deathDate ? dayjs(driver.deathDate) : undefined;
       });
     }
     return res;

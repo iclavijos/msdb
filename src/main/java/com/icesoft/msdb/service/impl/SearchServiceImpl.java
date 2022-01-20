@@ -105,11 +105,11 @@ public class SearchServiceImpl implements SearchService {
 	public void rebuildIndexes() {
 		log.debug("Rebuilding search indexes");
         List<Runnable> tasks = new ArrayList<>();
-//        tasks.add(() -> {
-//            log.debug("Building Drivers index");
-//            txTemplate.execute(status -> updateSearchIndex(driverRepo.streamAll(), driverSearchRepo));
-//            log.debug("Building Drivers index done");
-//        });
+        tasks.add(() -> {
+            log.debug("Building Drivers index");
+            txTemplate.execute(status -> updateSearchIndex(driverRepo.streamAll(), driverSearchRepo));
+            log.debug("Building Drivers index done");
+        });
 //        tasks.add(() -> {
 //            log.debug("Building Engines index");
 //            txTemplate.execute(status -> updateSearchIndex(engineRepo.readAllByIdNotNull(), engineSearchRepo));
@@ -218,10 +218,10 @@ public class SearchServiceImpl implements SearchService {
 
         NativeSearchQuery nativeQuery = nativeSearchQueryBuilder.build();
 
-        SearchHitsIterator<T> hits = (SearchHitsIterator<T>) operations.searchForStream(nativeQuery, searchClass);
+        SearchHitsIterator<T> hits = operations.searchForStream(nativeQuery, searchClass);
         Page<T> result = new PageImpl(
             hits.stream()
-                .skip(pageable.getOffset() * pageable.getPageSize())
+                .skip(pageable.getPageNumber() * pageable.getPageSize())
                 .limit(pageable.getPageSize())
                 .map(SearchHit::getContent)
                 .collect(Collectors.toList()),

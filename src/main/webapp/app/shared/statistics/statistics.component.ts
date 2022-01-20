@@ -3,7 +3,7 @@ import { Component, Input, OnChanges, SimpleChange } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 
-// import { DriverService } from 'app/entities/driver/driver.service';
+import { DriverService } from 'app/entities/driver/service/driver.service';
 import { TeamService } from 'app/entities/team/service/team.service';
 // import { EngineService } from 'app/entities/engine/service/engine.service';
 // import { ChassisService } from 'app/entities/chassis/chassis.service';
@@ -21,7 +21,7 @@ export class StatisticsComponent implements OnChanges {
 
   constructor(
     private router: Router,
-    // private driverService: DriverService,
+    private driverService: DriverService,
     private teamService: TeamService,
     // private engineService: EngineService,
     // private chassisService: ChassisService
@@ -35,11 +35,11 @@ export class StatisticsComponent implements OnChanges {
   }
 
   loadStats(id: number): void {
-//     if (this.statsType === 'drivers') {
-//       this.driverService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
-//         this.stats = stats.body as any[];
-//       });
-//     }
+    if (this.statsType === 'drivers') {
+      this.driverService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
+        this.stats = stats.body as any[];
+      });
+    }
     if (this.statsType === 'teams') {
       this.teamService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
         this.stats = stats.body as any[];
@@ -58,11 +58,11 @@ export class StatisticsComponent implements OnChanges {
   }
 
   loadStatsYear(id: number, year: number): void {
-//     if (this.statsType === 'drivers') {
-//       this.driverService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
-//         this.stats = stats.body as any[];
-//       });
-//     }
+    if (this.statsType === 'drivers') {
+      this.driverService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
+        this.stats = stats.body as any[];
+      });
+    }
     if (this.statsType === 'teams') {
       this.teamService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
         this.stats = stats.body as any[];
@@ -81,11 +81,11 @@ export class StatisticsComponent implements OnChanges {
   }
 
   loadYears(id: number): void {
-//     if (this.statsType === 'drivers') {
-//       this.driverService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
-//         this.yearsStats = stats.body as any[];
-//       });
-//     }
+    if (this.statsType === 'drivers') {
+      this.driverService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
+        this.yearsStats = stats.body as any[];
+      });
+    }
     if (this.statsType === 'teams') {
       this.teamService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
         this.yearsStats = stats.body as any[];

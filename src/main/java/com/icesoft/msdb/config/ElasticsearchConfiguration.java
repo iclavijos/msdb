@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -113,6 +114,18 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
             return LocalDate.parse(source);
         }
     }
+
+//    @ReadingConverter
+//    static class IntegerArrayListDateReadingConverter implements Converter<ArrayList<Integer>, LocalDate> {
+//
+//        @Override
+//        public LocalDate convert(ArrayList<Integer> source) {
+//            if (source == null || source.size() != 3) {
+//                return null;
+//            }
+//            return LocalDate.of(source.get(0), source.get(1), source.get(2));
+//        }
+//    }
 
 //    @Bean
 //    public EntityMapper getEntityMapper() {
