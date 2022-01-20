@@ -12,7 +12,8 @@ const tyreProviderRoute: Routes = [
     path: '',
     component: TyreProviderComponent,
     data: {
-      defaultSort: 'id,asc',
+      authorities: ['ROLE_USER'],
+      defaultSort: 'name,asc',
     },
     canActivate: [UserRouteAccessService],
   },
@@ -22,13 +23,19 @@ const tyreProviderRoute: Routes = [
     resolve: {
       tyreProvider: TyreProviderRoutingResolveService,
     },
-    canActivate: [UserRouteAccessService],
+    data: {
+      authorities: ['ROLE_USER'],
+    },
+    canActivate: [UserRouteAccessService]
   },
   {
     path: 'new',
     component: TyreProviderUpdateComponent,
     resolve: {
       tyreProvider: TyreProviderRoutingResolveService,
+    },
+    data: {
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
     },
     canActivate: [UserRouteAccessService],
   },
@@ -37,6 +44,9 @@ const tyreProviderRoute: Routes = [
     component: TyreProviderUpdateComponent,
     resolve: {
       tyreProvider: TyreProviderRoutingResolveService,
+    },
+    data: {
+      authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
     },
     canActivate: [UserRouteAccessService],
   },
