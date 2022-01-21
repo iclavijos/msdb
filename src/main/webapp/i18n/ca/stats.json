@@ -6,6 +6,7 @@
         "init": "S'estàn recalculant les estadístiques... esperi uns segons",
         "rebuilt": "Estadístiques recalculades correctament"
       },
+      "noStats": "No hi ha estadístiques disponibles",
       "participations": "Participacions",
       "starts": "Sortides",
       "finished": "Finalitzades",
