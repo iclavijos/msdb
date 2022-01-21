@@ -6,6 +6,7 @@
         "init": "Se están recalculando las estadísticas... espera unos segundos",
         "rebuilt": "Estadísticas recalculadas correctamente"
       },
+      "noStats": "No hay estadísticas disponibles",
       "participations": "Participaciones",
       "starts": "Salidas",
       "finished": "Acabadas",

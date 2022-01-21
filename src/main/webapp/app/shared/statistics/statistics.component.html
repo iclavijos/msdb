@@ -150,3 +150,10 @@
         </div>
     </div>
 </div>
+<div *ngIf="stats!.length === 0">
+    <div class="row">
+        <div class="col-sm-12">
+            <span jhiTranslate="motorsportsDatabaseApp.stats.noStats">No statistics</span>
+        </div>
+    </div>
+</div>

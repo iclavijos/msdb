@@ -6,6 +6,7 @@
         "init": "Statistics being rebuilt... wait a few seconds",
         "rebuilt": "Statistics successfully rebuilt"
       },
+      "noStats": "No statistics available",
       "participations": "Participations",
       "starts": "Starts",
       "finished": "Finished",
