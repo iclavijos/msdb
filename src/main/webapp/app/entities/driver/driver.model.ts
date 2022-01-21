@@ -37,7 +37,7 @@ export class Driver implements IDriver {
     if (deathDate) {
       this.age = deathDate.diff(birthDate, 'year');
     } else {
-      this.age = birthDate?.diff(dayjs(), 'year');
+      this.age = dayjs().diff(birthDate, 'year');
     }
   }
 
