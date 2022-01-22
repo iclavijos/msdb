@@ -8,8 +8,8 @@
                     <div class="input-group w-100 mt-3">
                         <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch"
                                placeholder="{{ 'motorsportsDatabaseApp.driver.home.search' | translate }}"
-                               (keyup)="search(currentSearch)">
-                        <button class="input-group-append btn btn-danger" (click)="search('')" *ngIf="currentSearch">
+                               (keyup)="search(currentSearch)" (keydown.enter)="$event.preventDefault()">
+                        <button class="input-group-append btn btn-danger" (click)="clearSearch()" *ngIf="currentSearch">
                             <fa-icon [icon]="'trash-alt'"></fa-icon>
                         </button>
                         <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-driver" [routerLink]="['/driver/new']">
@@ -46,7 +46,7 @@
                                 </ng-container>
 
                                 <ng-container matColumnDef="name">
-                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.driver.name' | translate }}</mat-header-cell>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.driver.name' | translate }}</mat-header-cell>
                                     <mat-cell *matCellDef="let driver">{{ driver.name }}</mat-cell>
                                 </ng-container>
 
@@ -56,7 +56,7 @@
                                 </ng-container>
 
                                 <ng-container matColumnDef="birthDate">
-                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.driver.birthDate' | translate }}</mat-header-cell>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.driver.birthDate' | translate }}</mat-header-cell>
                                     <mat-cell *matCellDef="let driver">{{ driver.birthDate | localizedDate }}</mat-cell>
                                 </ng-container>
 
@@ -66,7 +66,7 @@
                                 </ng-container>
 
                                 <ng-container matColumnDef="deathDate">
-                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.driver.deathDate' | translate }}</mat-header-cell>
+                                    <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.driver.deathDate' | translate }}</mat-header-cell>
                                     <mat-cell *matCellDef="let driver">{{ driver.deathDate | localizedDate }}</mat-cell>
                                 </ng-container>
 
