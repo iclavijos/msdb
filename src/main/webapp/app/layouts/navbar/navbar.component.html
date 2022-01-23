@@ -4,7 +4,7 @@
         <span *ngIf="!(isHandset$ | async)" jhiTranslate="global.menu.home">Home</span>
     </button>
     <button mat-button (click)="router.navigate(['/calendar']);">
-        <fa-icon icon="calendar"></fa-icon>
+        <i class="fa fa-calendar" aria-hidden="true"></i>
         <span *ngIf="!(isHandset$ | async)" jhiTranslate="global.menu.calendar">Calendar</span>
     </button>
     <button mat-button (click)="router.navigate(['/agenda']);">
@@ -20,7 +20,7 @@
         <span *ngIf="!(isHandset$ | async)" jhiTranslate="global.menu.admin.main">Administration</span>
     </button>
     <button mat-button [matMenuTriggerFor]="languagesMenu" *ngIf="languages!.length > 1">
-        <fa-icon icon="language"></fa-icon>
+        <i class="fa fa-language" aria-hidden="true"></i>
         <span *ngIf="!(isHandset$ | async)" jhiTranslate="global.menu.language">Language</span>
     </button>
     <button mat-button [matMenuTriggerFor]="account">
