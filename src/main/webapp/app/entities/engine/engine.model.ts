@@ -43,5 +43,10 @@ export class Engine implements IEngine {
     this.electricEngine = this.electricEngine ?? false;
     this.otherEngine = this.otherEngine ?? false;
     this.turbo = this.turbo ?? false;
+    this.evolutions = this.evolutions ?? [];
   }
+}
+
+export function getEngineIdentifier(engine: IEngine): number | undefined {
+  return engine.id;
 }

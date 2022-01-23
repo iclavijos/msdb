@@ -15,6 +15,7 @@ import com.icesoft.msdb.service.dto.EventEntrySearchResultDTO;
 import com.icesoft.msdb.service.dto.ItemEvolutionDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
+import org.apache.commons.lang3.StringUtils;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -198,17 +199,20 @@ public class EngineResource {
                 if (engine.getDebutYear() != null) {
                     existingEngine.setDebutYear(engine.getDebutYear());
                 }
-                if (engine.isPetrolEngine() != null) {
-                    existingEngine.setPetrolEngine(engine.isPetrolEngine());
+                if (engine.getPetrolEngine() != null) {
+                    existingEngine.setPetrolEngine(engine.getPetrolEngine());
                 }
-                if (engine.isDieselEngine() != null) {
-                    existingEngine.setDieselEngine(engine.isDieselEngine());
+                if (engine.getDieselEngine() != null) {
+                    existingEngine.setDieselEngine(engine.getDieselEngine());
                 }
-                if (engine.isElectricEngine() != null) {
-                    existingEngine.setElectricEngine(engine.isElectricEngine());
+                if (engine.getElectricEngine() != null) {
+                    existingEngine.setElectricEngine(engine.getElectricEngine());
                 }
-                if (engine.isTurbo() != null) {
-                    existingEngine.setTurbo(engine.isTurbo());
+                if (engine.getOtherEngine() != null) {
+                    existingEngine.setOtherEngine(engine.getOtherEngine());
+                }
+                if (engine.getTurbo() != null) {
+                    existingEngine.setTurbo(engine.getTurbo());
                 }
                 if (engine.getImage() != null) {
                     existingEngine.setImage(engine.getImage());
@@ -236,13 +240,15 @@ public class EngineResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of engines in body.
      */
     @GetMapping("/engines")
-
     public ResponseEntity<List<Engine>> getEngines(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of Engines");
         Page<Engine> page;
-        Optional<String> queryOpt = Optional.ofNullable(query);
-        if (queryOpt.isPresent()) {
-            page = searchService.performWildcardSearch(Engine.class, query.toLowerCase(), Arrays.asList("manufacturer", "name"), pageable);
+        if (!StringUtils.isBlank(query)) {
+            page = searchService.performWildcardSearch(
+                Engine.class,
+                query.toLowerCase(),
+                Arrays.asList("manufacturer", "name"),
+                pageable);
         } else {
             page = engineRepository.findAll(pageable);
         }
@@ -264,23 +270,8 @@ public class EngineResource {
     }
 
     /**
-     * {@code DELETE  /engines/:id} : delete the "id" engine.
      *
-     * @param id the id of the engine to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/engines/{id}")
-    public ResponseEntity<Void> deleteEngine(@PathVariable Long id) {
-        log.debug("REST request to delete Engine : {}", id);
-        engineRepository.deleteById(id);
-        engineSearchRepository.deleteById(id);
-        cdnService.deleteImage(id.toString(), ENTITY_NAME);
-        return ResponseEntity
-            .noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-            .build();
-    }
-
     @GetMapping("/engines/{id}/statistics")
     public ResponseEntity<EngineStatistics> getEngineStatistics(@PathVariable Long id) {
     	log.debug("REST request to get statistics for engine : {}", id);
@@ -345,11 +336,21 @@ public class EngineResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-    @GetMapping("/_typeahead/engines")
-    public List<Engine> typeahead(@RequestParam String query) {
-        log.debug("REST request to search Engines for query {}", query);
-        Page<Engine> page = page = searchService
-            .performWildcardSearch(Engine.class, query.toLowerCase(), Arrays.asList("manufacturer", "name"), PageRequest.of(0, 20));
-        return page.getContent();
+    /**
+     * {@code DELETE  /engines/:id} : delete the "id" engine.
+     *
+     * @param id the id of the engine to delete.
+     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
+     */
+    @DeleteMapping("/engines/{id}")
+    public ResponseEntity<Void> deleteEngine(@PathVariable Long id) {
+        log.debug("REST request to delete Engine : {}", id);
+        engineRepository.deleteById(id);
+        engineSearchRepository.deleteById(id);
+        cdnService.deleteImage(id.toString(), ENTITY_NAME);
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
     }
 }
