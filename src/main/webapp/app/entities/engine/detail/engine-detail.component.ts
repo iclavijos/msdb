@@ -1,13 +1,12 @@
-import { Title } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { JhiDataUtils } from 'ng-jhipster';
 
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
-import { IEngine } from '../../shared/model/engine.model';
-import { EngineService } from './engine.service';
+import { IEngine } from '../engine.model';
+import { EngineService } from '../service/engine.service';
+import { DataUtils } from 'app/core/util/data-util.service';
 
 interface EngineNode {
   expandable: boolean;
@@ -17,7 +16,7 @@ interface EngineNode {
 
 @Component({
   selector: 'jhi-engine-detail',
-  templateUrl: './engine-detail.component.html'
+  templateUrl: './engine-detail.component.html',
 })
 export class EngineDetailComponent implements OnInit {
   treeControl = new FlatTreeControl<EngineNode>(node => node.level, node => node.expandable);
@@ -35,36 +34,35 @@ export class EngineDetailComponent implements OnInit {
 
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-  engine: IEngine;
+  engine: IEngine | null = null;
 
   constructor(
-    protected dataUtils: JhiDataUtils,
+    protected dataUtils: DataUtils,
     protected activatedRoute: ActivatedRoute,
-    protected engineService: EngineService,
-    private titleService: Title
+    protected engineService: EngineService
   ) {}
 
-  hasChild = (_: number, node: EngineNode) => node.expandable;
+  hasChild = (_: number, node: EngineNode): boolean => node.expandable;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ engine }) => {
       this.engine = engine;
-      this.titleService.setTitle(`${engine.manufacturer as string} ${engine.name as string}`);
       this.engineService.getEvolutions(engine.id).subscribe(evolutions => {
-        this.engine.evolutions = evolutions.body;
-        this.dataSource.data = evolutions.body;
+        this.engine!.evolutions = evolutions.body ?? [];
+        this.dataSource.data = evolutions.body ?? [];
       });
     });
   }
 
-  byteSize(field) {
-    return this.dataUtils.byteSize(field);
+  byteSize(base64String: string): string {
+    return this.dataUtils.byteSize(base64String);
   }
 
-  openFile(contentType, field) {
-    return this.dataUtils.openFile(contentType, field);
+  openFile(base64String: string, contentType: string | null | undefined): void {
+    this.dataUtils.openFile(base64String, contentType);
   }
-  previousState() {
+
+  previousState(): void {
     window.history.back();
   }
 }

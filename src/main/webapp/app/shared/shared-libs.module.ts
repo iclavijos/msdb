@@ -40,10 +40,9 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
-
-import { ColorPickerModule } from 'primeng/colorpicker';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
@@ -87,8 +86,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     MatSlideToggleModule,
     FullCalendarModule,
     ScrollingModule,
+    MatProgressBarModule,
     LeafletModule,
-    ColorPickerModule,
   ]
 })
 export class SharedLibsModule {}
