@@ -15,6 +15,11 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./category/category.module').then(m => m.CategoryModule),
       },
       {
+        path: 'chassis',
+        data: { pageTitle: 'motorsportsDatabaseApp.chassis.home.title' },
+        loadChildren: () => import('./chassis/chassis.module').then(m => m.ChassisModule),
+      },
+      {
         path: 'engine',
         data: { pageTitle: 'motorsportsDatabaseApp.engine.home.title' },
         loadChildren: () => import('./engine/engine.module').then(m => m.EngineModule),
@@ -38,11 +43,6 @@ import { RouterModule } from '@angular/router';
 //         path: 'series-edition',
 //         data: { pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title' },
 //         loadChildren: () => import('./series-edition/series-edition.module').then(m => m.SeriesEditionModule),
-//       },
-//       {
-//         path: 'chassis',
-//         data: { pageTitle: 'motorsportsDatabaseApp.chassis.home.title' },
-//         loadChildren: () => import('./chassis/chassis.module').then(m => m.ChassisModule),
 //       },
 //       {
 //         path: 'event-entry',

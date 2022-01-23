@@ -25,3 +25,7 @@ export class Chassis implements IChassis {
     public evolutions?: IChassis[]
   ) {}
 }
+
+export function getChassisIdentifier(chassis: IChassis): number | undefined {
+  return chassis.id;
+}
