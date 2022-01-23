@@ -1,43 +1,28 @@
 .card-plain {
-  background: transparent;
-  box-shadow: none;
+    background: transparent;
+    box-shadow: none;
 
-  .card-header:not(.card-avatar) {
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .card-logo {
-    margin: -50px auto 0;
-    overflow: hidden;
-    padding: 0;
-
-    @include shadow-big();
-
-    & + .card-body {
-      margin-top: 15px;
+    .card-header:not(.card-avatar) {
+        margin-left: 0;
+        margin-right: 0;
     }
-    img {
-      max-width: 300px;
+
+    .card-body {
+        padding-left: 5px;
+        padding-right: 5px;
     }
-  }
 
-  .card-body {
-    padding-left: 5px;
-    padding-right: 5px;
-  }
+    .card-header-image {
+        margin: 0 !important;
+        border-radius: $border-radius-large;
 
-  .card-header-image {
-    margin: 0 !important;
-    border-radius: $border-radius-large;
-
-    img {
-      border-radius: $border-radius-large;
+        img {
+          border-radius: $border-radius-large;
+        }
     }
-  }
-  .card-footer {
-    padding-left: 5px;
-    padding-right: 5px;
-    background-color: transparent;
-  }
+    .card-footer {
+        padding-left: 5px;
+        padding-right: 5px;
+        background-color: transparent;
+    }
 }

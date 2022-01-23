@@ -1,9 +1,8 @@
+@use "sass:math";
+
 .togglebutton {
   vertical-align: middle;
-  &,
-  label,
-  input,
-  .toggle {
+  &, label, input, .toggle {
     user-select: none;
   }
   label {
@@ -12,7 +11,7 @@
     @include mdb-label-color-toggle-focus();
 
     // Hide original checkbox
-    input[type='checkbox'] {
+    input[type=checkbox] {
       opacity: 0;
       width: 0;
       height: 0;
@@ -24,8 +23,8 @@
     }
     // Switch bg off and disabled
     .toggle,
-    input[type='checkbox'][disabled] + .toggle {
-      content: '';
+    input[type=checkbox][disabled] + .toggle {
+      content: "";
       display: inline-block;
       width: 30px;
       height: 15px;
@@ -37,11 +36,11 @@
     }
     // Handle off
     .toggle:after {
-      content: '';
+      content: "";
       display: inline-block;
       width: 20px;
       height: 20px;
-      background-color: #ffffff;
+      background-color: #FFFFFF;
       border-radius: 20px;
       position: relative;
       box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4);
@@ -50,12 +49,12 @@
       border: 1px solid $mdb-checkbox-border-color;
       transition: left 0.3s ease, background 0.3s ease, box-shadow 0.1s ease;
     }
-    input[type='checkbox'] {
+    input[type=checkbox] {
       // Handle disabled
       &[disabled] {
         & + .toggle:after,
         &:checked + .toggle:after {
-          background-color: #bdbdbd;
+          background-color: #BDBDBD;
         }
       }
 
@@ -71,9 +70,9 @@
     }
 
     // set bg when checked
-    input[type='checkbox']:checked {
+    input[type=checkbox]:checked {
       + .toggle {
-        background-color: rgba($brand-primary, (70/100)); // Switch bg on
+        background-color: rgba($brand-primary, (math.div(70,100))); // Switch bg on
       }
 
       + .toggle:after {
@@ -81,7 +80,7 @@
       }
 
       + .toggle:active:after {
-        box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 0 0 15px rgba($brand-primary, (10/100)); // Ripple on
+        box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 0 0 15px rgba($brand-primary, (math.div(10,100))); // Ripple on
       }
     }
   }
