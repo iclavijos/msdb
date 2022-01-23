@@ -46,6 +46,8 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
+import { ImageModule } from 'primeng/image';
+
 @NgModule({
   exports: [
     FormsModule,
@@ -88,6 +90,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     ScrollingModule,
     MatProgressBarModule,
     LeafletModule,
+    ImageModule,
   ]
 })
 export class SharedLibsModule {}
