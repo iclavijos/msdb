@@ -1,13 +1,12 @@
-import { Title } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { JhiDataUtils } from 'ng-jhipster';
 
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 
-import { IChassis } from '../../shared/model/chassis.model';
-import { ChassisService } from './chassis.service';
+import { IChassis } from '../chassis.model';
+import { ChassisService } from '../service/chassis.service';
+import { DataUtils } from 'app/core/util/data-util.service';
 
 interface ChassisNode {
   expandable: boolean;
@@ -17,7 +16,7 @@ interface ChassisNode {
 
 @Component({
   selector: 'jhi-chassis-detail',
-  templateUrl: './chassis-detail.component.html'
+  templateUrl: './chassis-detail.component.html',
 })
 export class ChassisDetailComponent implements OnInit {
   treeControl = new FlatTreeControl<ChassisNode>(node => node.level, node => node.expandable);
@@ -27,7 +26,7 @@ export class ChassisDetailComponent implements OnInit {
         expandable: !!node.evolutions && node.evolutions.length > 0,
         chassis: node,
         level: nodeLevel
-      }),
+    }),
     node => node.level,
     node => node.expandable,
     node => node.evolutions
@@ -35,36 +34,35 @@ export class ChassisDetailComponent implements OnInit {
 
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-  chassis: IChassis;
+  chassis: IChassis | null = null;
 
   constructor(
-    protected dataUtils: JhiDataUtils,
+    protected dataUtils: DataUtils,
     protected activatedRoute: ActivatedRoute,
-    protected chassisService: ChassisService,
-    private titleService: Title
+    protected chassisService: ChassisService
   ) {}
 
-  hasChild = (_: number, node: ChassisNode) => node.expandable;
+  hasChild = (_: number, node: ChassisNode): boolean => node.expandable;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ chassis }) => {
       this.chassis = chassis;
-      this.titleService.setTitle(`${chassis.manufacturer as string} ${chassis.name as string}`);
       this.chassisService.getEvolutions(chassis.id).subscribe(evolutions => {
-        this.chassis.evolutions = evolutions.body;
-        this.dataSource.data = this.chassis.evolutions;
+        this.chassis!.evolutions = evolutions.body ?? [];
+        this.dataSource.data = evolutions.body ?? [];
       });
     });
   }
 
-  byteSize(field) {
-    return this.dataUtils.byteSize(field);
+  byteSize(base64String: string): string {
+    return this.dataUtils.byteSize(base64String);
   }
 
-  openFile(contentType, field) {
-    return this.dataUtils.openFile(contentType, field);
+  openFile(base64String: string, contentType: string | null | undefined): void {
+    this.dataUtils.openFile(base64String, contentType);
   }
-  previousState() {
+
+  previousState(): void {
     window.history.back();
   }
 }

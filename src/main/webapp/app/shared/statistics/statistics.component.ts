@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { DriverService } from 'app/entities/driver/service/driver.service';
 import { TeamService } from 'app/entities/team/service/team.service';
 import { EngineService } from 'app/entities/engine/service/engine.service';
-// import { ChassisService } from 'app/entities/chassis/chassis.service';
+import { ChassisService } from 'app/entities/chassis/service/chassis.service';
 
 @Component({
   selector: 'jhi-statistics',
@@ -24,7 +24,7 @@ export class StatisticsComponent implements OnChanges {
     private driverService: DriverService,
     private teamService: TeamService,
     private engineService: EngineService,
-    // private chassisService: ChassisService
+    private chassisService: ChassisService
   ) {}
 
   ngOnChanges(changes: { [propKey: string]: SimpleChange }): void {
@@ -50,11 +50,11 @@ export class StatisticsComponent implements OnChanges {
         this.stats = stats.body as any[];
       });
     }
-//     if (this.statsType === 'chassis') {
-//       this.chassisService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
-//         this.stats = stats.body as any[];
-//       });
-//     }
+    if (this.statsType === 'chassis') {
+      this.chassisService.getStats(id).subscribe((stats: HttpResponse<any[]>) => {
+        this.stats = stats.body as any[];
+      });
+    }
   }
 
   loadStatsYear(id: number, year: number): void {
@@ -73,11 +73,11 @@ export class StatisticsComponent implements OnChanges {
         this.stats = stats.body as any[];
       });
     }
-//     if (this.statsType === 'chassis') {
-//       this.chassisService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
-//         this.stats = stats.body as any[];
-//       });
-//     }
+    if (this.statsType === 'chassis') {
+      this.chassisService.getStatsYear(id, year).subscribe((stats: HttpResponse<any[]>) => {
+        this.stats = stats.body as any[];
+      });
+    }
   }
 
   loadYears(id: number): void {
@@ -96,11 +96,11 @@ export class StatisticsComponent implements OnChanges {
         this.yearsStats = stats.body as any[];
       });
     }
-//     if (this.statsType === 'chassis') {
-//       this.chassisService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
-//         this.yearsStats = stats.body as any[];
-//       });
-//     }
+    if (this.statsType === 'chassis') {
+      this.chassisService.getYears(id).subscribe((stats: HttpResponse<any[]>) => {
+        this.yearsStats = stats.body as any[];
+      });
+    }
   }
 
   finishingPosition(position: number): string {
