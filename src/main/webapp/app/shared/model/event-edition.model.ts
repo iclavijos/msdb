@@ -1,10 +1,10 @@
 import { ICategory } from 'app/entities/category/category.model';
-import { IRacetrackLayout } from './racetrack-layout.model';
+import { IRacetrackLayout } from 'app/entities/racetrack-layout/racetrack-layout.model';
 import { ISeriesEdition } from './series-edition.model';
 import { IEvent } from './event.model';
 import { IEventSession } from './event-session.model';
 
-import * as moment from 'moment';
+import * as dayjs from 'dayjs';
 
 export interface IEventEdition {
   id?: number;
@@ -13,7 +13,7 @@ export interface IEventEdition {
   editionYear?: number;
   shortEventName?: string;
   longEventName?: string;
-  eventDate?: moment.Moment;
+  eventDate?: dayjs.Dayjs;
   allowedCategories?: ICategory[];
   trackLayout?: IRacetrackLayout;
   event?: IEvent;
@@ -43,7 +43,7 @@ export class EventEdition implements IEventEdition {
     public editionYear?: number,
     public shortEventName?: string,
     public longEventName?: string,
-    public eventDate?: moment.Moment,
+    public eventDate?: dayjs.Dayjs,
     public allowedCategories?: ICategory[],
     public trackLayout?: IRacetrackLayout,
     public event?: IEvent,
@@ -64,4 +64,9 @@ export class EventEdition implements IEventEdition {
     public latitude?: number,
     public longitude?: number
   ) {}
+}
+
+export class EventEditionAndWinners {
+  public eventEdition?: IEventEdition;
+  public winners?: any[];
 }

@@ -1,4 +1,4 @@
-import { IRacetrackLayout } from './racetrack-layout.model';
+import { IRacetrackLayout } from '../racetrack-layout/racetrack-layout.model';
 
 export interface IRacetrack {
   id?: number;
@@ -28,4 +28,8 @@ export class Racetrack implements IRacetrack {
     public logoUrl?: string,
     public layouts?: IRacetrackLayout[]
   ) {}
+}
+
+export function getRacetrackIdentifier(racetrack: IRacetrack): number | undefined {
+  return racetrack.id;
 }

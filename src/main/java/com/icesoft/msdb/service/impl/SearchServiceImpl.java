@@ -160,16 +160,16 @@ public class SearchServiceImpl implements SearchService {
 //            txTemplate.execute(status -> updateSearchIndex(eventEditionRepo.streamAllByIdNotNull(), eventEditionSearchRepo));
 //            log.debug("Building Event Editions index done");
 //        });
-//        tasks.add(() -> {
-//            log.debug("Building Racetracks & layouts index");
-//            txTemplate.execute(status -> {
-//                updateSearchIndex(racetrackRepo.streamAll(), racetrackSearchRepo);
-//                log.debug("Racetracks done. Now layouts");
-//                updateSearchIndex(racetrackLayoutRepo.streamAll(), racetrackLayoutSearchRepo);
-//                return null;
-//            });
-//            log.debug("Building Racetracks & layouts index done");
-//        });
+        tasks.add(() -> {
+            log.debug("Building Racetracks & layouts index");
+            txTemplate.execute(status -> {
+                updateSearchIndex(racetrackRepo.streamAll(), racetrackSearchRepo);
+                log.debug("Racetracks done. Now layouts");
+                updateSearchIndex(racetrackLayoutRepo.streamAll(), racetrackLayoutSearchRepo);
+                return null;
+            });
+            log.debug("Building Racetracks & layouts index done");
+        });
 
         tasks.forEach(task -> {
             executor.execute(task);

@@ -1,4 +1,4 @@
-import { IRacetrack } from './racetrack.model';
+import { IRacetrack } from '../racetrack/racetrack.model';
 
 export interface IRacetrackLayout {
   id?: number;
@@ -27,4 +27,8 @@ export class RacetrackLayout implements IRacetrackLayout {
     this.racetrack = racetrack;
     this.active = this.active ?? false;
   }
+}
+
+export function getRacetrackLayoutIdentifier(racetrackLayout: IRacetrackLayout): number | undefined {
+  return racetrackLayout.id;
 }

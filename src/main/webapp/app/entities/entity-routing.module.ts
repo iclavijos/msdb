@@ -30,6 +30,16 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./fuel-provider/fuel-provider.module').then(m => m.FuelProviderModule),
       },
       {
+        path: 'racetrack',
+        data: { pageTitle: 'motorsportsDatabaseApp.racetrack.home.title' },
+        loadChildren: () => import('./racetrack/racetrack.module').then(m => m.RacetrackModule),
+      },
+      {
+        path: 'racetrack-layout',
+        data: { pageTitle: 'motorsportsDatabaseApp.racetrackLayout.home.title' },
+        loadChildren: () => import('./racetrack-layout/racetrack-layout.module').then(m => m.RacetrackLayoutModule),
+      },
+      {
         path: 'team',
         data: { pageTitle: 'motorsportsDatabaseApp.team.home.title' },
         loadChildren: () => import('./team/team.module').then(m => m.TeamModule),
@@ -58,16 +68,6 @@ import { RouterModule } from '@angular/router';
 //         path: 'event-entry-result',
 //         data: { pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title' },
 //         loadChildren: () => import('./event-entry-result/event-entry-result.module').then(m => m.EventEntryResultModule),
-//       },
-//       {
-//         path: 'racetrack',
-//         data: { pageTitle: 'motorsportsDatabaseApp.racetrack.home.title' },
-//         loadChildren: () => import('./racetrack/racetrack.module').then(m => m.RacetrackModule),
-//       },
-//       {
-//         path: 'racetrack-layout',
-//         data: { pageTitle: 'motorsportsDatabaseApp.racetrackLayout.home.title' },
-//         loadChildren: () => import('./racetrack-layout/racetrack-layout.module').then(m => m.RacetrackLayoutModule),
 //       },
 //       {
 //         path: 'event-edition',
