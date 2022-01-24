@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-danger">
-                        <h4 class="card-title">{{ editForm.get('name').value }}</h4>
+                        <h4 class="card-title">{{ editForm.get('name')?.value }}</h4>
                         <p class="card-category">{{ 'motorsportsDatabaseApp.racetrack.home.createOrEditLabel' | translate }}</p>
                     </div>
                     <div class="card-body">
@@ -17,13 +17,13 @@
                                             <mat-form-field class="example-full-width">
                                                 <input matInput placeholder="{{ 'motorsportsDatabaseApp.racetrack.name' | translate }}" type="text"
                                                        class="form-control" name="name" id="field_name" formControlName="name">
-                                                <div *ngIf="editForm.get('name').invalid && (editForm.get('name').dirty || editForm.get('name').touched)">
+                                                <div *ngIf="editForm.get('name')?.invalid && (editForm.get('name')?.dirty || editForm.get('name')?.touched)">
                                                     <small class="form-text text-danger"
-                                                           *ngIf="editForm.get('name').errors.required" jhiTranslate="entity.validation.required">
+                                                           *ngIf="editForm.get('name')?.errors?.required" jhiTranslate="entity.validation.required">
                                                         This field is required.
                                                     </small>
                                                     <small class="form-text text-danger"
-                                                           *ngIf="editForm.get('name').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
+                                                           *ngIf="editForm.get('name')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
                                                         This field cannot be longer than 100 characters.
                                                     </small>
                                                 </div>
@@ -35,13 +35,13 @@
                                             <mat-form-field class="example-full-width">
                                                 <input matInput placeholder="{{ 'motorsportsDatabaseApp.racetrack.location' | translate }}" type="text"
                                                        class="form-control" name="location" id="field_location" formControlName="location">
-                                                <div *ngIf="editForm.get('location').invalid && (editForm.get('location').dirty || editForm.get('location').touched)">
+                                                <div *ngIf="editForm.get('location')?.invalid && (editForm.get('location')?.dirty || editForm.get('location')?.touched)">
                                                     <small class="form-text text-danger"
-                                                           *ngIf="editForm.get('location').errors.required" jhiTranslate="entity.validation.required">
+                                                           *ngIf="editForm.get('location')?.errors?.required" jhiTranslate="entity.validation.required">
                                                         This field is required.
                                                     </small>
                                                     <small class="form-text text-danger"
-                                                           *ngIf="editForm.get('location').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
+                                                           *ngIf="editForm.get('location')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
                                                         This field cannot be longer than 100 characters.
                                                     </small>
                                                 </div>
@@ -53,6 +53,7 @@
                                                        [matAutocomplete]="auto" formControlName="countryCode"
                                                        placeholder="{{ 'motorsportsDatabaseApp.racetrack.country' | translate }}"/>
                                                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                                                    <mat-option *ngIf="isLoading" class="is-loading"><mat-progress-bar mode="indeterminate"></mat-progress-bar></mat-option>
                                                     <mat-option *ngFor="let country of (options | async)" [value]="country">
                                                         <img aria-hidden src="/images/flags/{{country.countryCode}}.png">
                                                         <span>{{ country.countryName }}</span>
@@ -66,13 +67,13 @@
                                             <mat-form-field class="example-full-width">
                                                 <input matInput placeholder="{{ 'motorsportsDatabaseApp.racetrackLayout.latitude' | translate }}" type="number"
                                                        class="form-control" name="latitude" id="field_latitude" formControlName="latitude">
-                                                <div *ngIf="editForm.get('latitude').invalid && (editForm.get('latitude').dirty || editForm.get('latitude').touched)">
+                                                <div *ngIf="editForm.get('latitude')?.invalid && (editForm.get('latitude')?.dirty || editForm.get('latitude')?.touched)">
                                                     <small class="form-text text-danger"
-                                                           *ngIf="editForm.get('latitude').errors.required" jhiTranslate="entity.validation.required">
+                                                           *ngIf="editForm.get('latitude')?.errors?.required" jhiTranslate="entity.validation.required">
                                                         This field is required.
                                                     </small>
                                                     <small class="form-text text-danger"
-                                                           *ngIf="editForm.get('latitude').errors.number" jhiTranslate="entity.validation.number">
+                                                           *ngIf="editForm.get('latitude')?.errors?.number" jhiTranslate="entity.validation.number">
                                                         This field should be a number.
                                                     </small>
                                                 </div>
@@ -82,13 +83,13 @@
                                             <mat-form-field class="example-full-width">
                                                 <input matInput placeholder="{{ 'motorsportsDatabaseApp.racetrackLayout.longitude' | translate }}" type="number"
                                                        class="form-control" name="longitude" id="field_longitude" formControlName="longitude">
-                                                <div *ngIf="editForm.get('longitude').invalid && (editForm.get('longitude').dirty || editForm.get('longitude').touched)">
+                                                <div *ngIf="editForm.get('longitude')?.invalid && (editForm.get('longitude')?.dirty || editForm.get('longitude')?.touched)">
                                                     <small class="form-text text-danger"
-                                                           *ngIf="editForm.get('longitude').errors.required" jhiTranslate="entity.validation.required">
+                                                           *ngIf="editForm.get('longitude')?.errors?.required" jhiTranslate="entity.validation.required">
                                                         This field is required.
                                                     </small>
                                                     <small class="form-text text-danger"
-                                                           *ngIf="editForm.get('longitude').errors.number" jhiTranslate="entity.validation.number">
+                                                           *ngIf="editForm.get('longitude')?.errors?.number" jhiTranslate="entity.validation.number">
                                                         This field should be a number.
                                                     </small>
                                                 </div>
@@ -99,10 +100,10 @@
                                 <div class="col-md-7">
                                     <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.racetrack.logo" for="field_logo">Logo</label>
                                     <div>
-                                        <img [src]="editForm.get('logoUrl').value" class="img-fluid" *ngIf="!editForm.get('logo').value && editForm.get('logoUrl').value != null" alt="racetrack logo"/>
-                                        <img [src]="'data:' + editForm.get('logoContentType').value + ';base64,' + editForm.get('logo').value" class="img-fluid" *ngIf="editForm.get('logo').value" alt="racetrack logo"/>
-                                        <div *ngIf="editForm.get('logoUrl').value" class="form-text text-danger clearfix">
-                                            <button type="button" (click)="resetLogo()"
+                                        <img [src]="editForm.get('logoUrl')?.value" class="img-fluid" *ngIf="!editForm.get('logo')?.value && editForm.get('logoUrl')?.value != null" alt="racetrack logo"/>
+                                        <img [src]="'data:' + editForm.get('logoContentType')?.value + ';base64,' + editForm.get('logo')?.value" class="img-fluid" *ngIf="editForm.get('logo')?.value" alt="racetrack logo"/>
+                                        <div *ngIf="editForm.get('logoUrl')?.value" class="form-text text-danger clearfix">
+                                            <button type="button" (click)="clearInputImage('logo', 'logoContentType', 'file_logo')"
                                                     class="btn btn-secondary btn-xs pull-right">
                                                 <span class="fa fa-times"></span>
                                             </button>

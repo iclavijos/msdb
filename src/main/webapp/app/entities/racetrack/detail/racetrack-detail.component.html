@@ -4,20 +4,20 @@
             <div class="col-12">
                 <div class="card card-profile">
                     <div class="card-header card-header-danger">
-                        <h3 class="card-title">{{ racetrack.name }}</h3>
+                        <h3 class="card-title">{{ racetrack?.name }}</h3>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
                                 <dl class="row-md jh-entity-details">
                                     <dd>
-                                        <img *ngIf="racetrack.logoUrl" [src]="racetrack.logoUrl" class="img-fluid"
+                                        <img *ngIf="racetrack?.logoUrl" [src]="racetrack?.logoUrl" class="img-fluid"
                                              alt="racetrack logo"/>
                                     </dd>
                                     <dd>
-                                <span *ngIf="racetrack.countryCode"><img
-                                    src="/images/flags64/{{racetrack.countryCode}}.png"/></span>
-                                        <span>{{racetrack.location}}</span>
+                                <span *ngIf="racetrack?.countryCode"><img
+                                    src="/images/flags64/{{racetrack?.countryCode}}.png"/></span>
+                                        <span>{{racetrack?.location}}</span>
                                     </dd>
                                 </dl>
                                 <button type="submit"
@@ -28,7 +28,7 @@
                                 </button>
 
                                 <button type="button"
-                                        [routerLink]="['/racetrack', racetrack.id, 'edit']"
+                                        [routerLink]="['/racetrack', racetrack?.id, 'edit']"
                                         class="btn btn-primary">
                                     <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span
                                     jhiTranslate="entity.action.edit"> Edit</span>
@@ -37,8 +37,7 @@
                             <div class="col-md-9">
                                 <div class="card">
                                     <div class="card-header card-header-danger">
-                                        <h4 class="card-title">{{ "motorsportsDatabaseApp.racetrackLayout.home.title" |
-                                            translate }}</h4>
+                                        <h4 class="card-title">{{ "motorsportsDatabaseApp.racetrackLayout.home.title" | translate }}</h4>
                                     </div>
                                     <div class="card-body" style="min-height: 60px">
                                         <div class="alert alert-warning" *ngIf="racetrackLayouts?.length === 0">
@@ -48,30 +47,26 @@
                                             <mat-table mat-table class="table table-hover" [dataSource]="racetrackLayouts">
 
                                                 <ng-container matColumnDef="name">
-                                                    <mat-header-cell *matHeaderCellDef>{{
-                                                        'motorsportsDatabaseApp.racetrackLayout.name' | translate }}
+                                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.racetrackLayout.name' | translate }}
                                                     </mat-header-cell>
                                                     <mat-cell *matCellDef="let layout">{{ layout.name }}</mat-cell>
                                                 </ng-container>
 
                                                 <ng-container matColumnDef="length">
-                                                    <mat-header-cell *matHeaderCellDef>{{
-                                                        'motorsportsDatabaseApp.racetrackLayout.length' | translate }}
+                                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.racetrackLayout.length' | translate }}
                                                     </mat-header-cell>
                                                     <mat-cell *matCellDef="let layout">{{ layout.length | racetrackLengthMask }}
                                                     </mat-cell>
                                                 </ng-container>
 
                                                 <ng-container matColumnDef="yearFirstUse">
-                                                    <mat-header-cell *matHeaderCellDef>{{
-                                                        'motorsportsDatabaseApp.racetrackLayout.yearFirstUse' | translate }}
+                                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.racetrackLayout.yearFirstUse' | translate }}
                                                     </mat-header-cell>
                                                     <mat-cell *matCellDef="let layout">{{ layout.yearFirstUse }}</mat-cell>
                                                 </ng-container>
 
                                                 <ng-container matColumnDef="layoutImage">
-                                                    <mat-header-cell *matHeaderCellDef>{{
-                                                        'motorsportsDatabaseApp.racetrackLayout.layoutImage' | translate }}
+                                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.racetrackLayout.layoutImage' | translate }}
                                                     </mat-header-cell>
                                                     <mat-cell *matCellDef="let layout">
                                                         <img *ngIf="layout?.layoutImageUrl" [src]="layout.layoutImageUrl"
@@ -80,8 +75,7 @@
                                                 </ng-container>
 
                                                 <ng-container matColumnDef="active">
-                                                    <mat-header-cell *matHeaderCellDef>{{
-                                                        'motorsportsDatabaseApp.racetrackLayout.active' | translate }}
+                                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.racetrackLayout.active' | translate }}
                                                     </mat-header-cell>
                                                     <mat-cell *matCellDef="let layout"><i
                                                         [ngClass]="layout.active ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"></i>
@@ -90,21 +84,18 @@
 
                                                 <ng-container matColumnDef="buttons">
                                                     <mat-header-cell *matHeaderCellDef></mat-header-cell>
-                                                    <mat-cell *matCellDef="let racetrack">
+                                                    <mat-cell *matCellDef="let layout">
                                                         <div class="btn-group">
                                                             <button type="submit"
                                                                     *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                                                    [routerLink]="['/racetrack-layout', racetrack.id, 'edit']"
+                                                                    [routerLink]="['/racetrack-layout', layout.id, 'edit']"
                                                                     (click)="$event.stopPropagation()"
                                                                     class="btn btn-primary btn-xs">
                                                                 <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                                             </button>
                                                             <button type="submit"
                                                                     *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                                                    [routerLink]="['/racetrack-layout', { outlets: { popup: racetrack.id + '/delete'} }]"
-                                                                    (click)="$event.stopPropagation()"
-                                                                    replaceUrl="true"
-                                                                    queryParamsHandling="merge"
+                                                                    (click)="deleteLayout($event, layout)"
                                                                     class="btn btn-danger btn-xs">
                                                                 <fa-icon [icon]="'times'"></fa-icon>
                                                             </button>
@@ -120,7 +111,7 @@
 
                                         <button class="btn btn-primary float-right create-racetrack-layout"
                                                 *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                                [routerLink]="['/racetrack-layout/new/', racetrack.id]">
+                                                [routerLink]="['/racetrack-layout/new/', racetrack?.id]">
                                             <span class="fa fa-plus"></span>
                                             <span class="hidden-sm-down"
                                                   jhiTranslate="motorsportsDatabaseApp.racetrackLayout.home.createLabel">
@@ -142,16 +133,16 @@
                         <h4 class="card-title">{{ 'motorsportsDatabaseApp.racetrack.nextEvents' | translate }}</h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-warning" [hidden]="nextEventsEditions?.length > 0">
+                        <div class="alert alert-warning" [hidden]="nextEventsEditions!.length > 0">
                             <span jhiTranslate="motorsportsDatabaseApp.eventEdition.home.notFound">No event editions found</span>
                         </div>
-                        <div class="table-responsive" [hidden]="nextEventsEditions?.length === 0">
+                        <div class="table-responsive" [hidden]="nextEventsEditions!.length === 0">
                             <mat-table class="table table-hover" [dataSource]="nextEventsEditions">
 
                                 <ng-container matColumnDef="date">
                                     <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.eventDate' | translate }}
                                     </mat-header-cell>
-                                    <mat-cell *matCellDef="let event">{{ event.eventEdition.eventDate | localizedDate : 'LL'  }}
+                                    <mat-cell *matCellDef="let event">{{ event.eventEdition.eventDate | localizedDate }}
                                     </mat-cell>
                                 </ng-container>
 
@@ -161,18 +152,12 @@
                                     <mat-cell *matCellDef="let event">{{ event.eventEdition.longEventName }}</mat-cell>
                                 </ng-container>
 
-                                <ng-container matColumnDef="layout">
-                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.trackLayout' | translate }}
-                                    </mat-header-cell>
-                                    <mat-cell *matCellDef="let event">{{ event.eventEdition.trackLayout.name }}</mat-cell>
-                                </ng-container>
-
                                 <ng-container matColumnDef="layoutImage">
                                     <mat-header-cell *matHeaderCellDef></mat-header-cell>
                                     <mat-cell *matCellDef="let event">
                                         <img *ngIf="event.eventEdition.trackLayout?.layoutImageUrl"
                                              [src]="event.eventEdition.trackLayout.layoutImageUrl" style="max-height: 30px;"
-                                             alt="racetrack layout"/>
+                                             alt="racetrack layout"/> {{ event.eventEdition.trackLayout.name }}
                                     </mat-cell>
                                 </ng-container>
 
@@ -190,14 +175,14 @@
                         <h4 class="card-title">{{ 'motorsportsDatabaseApp.racetrack.prevEvents' | translate }}</h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-warning" [hidden]="prevEventsEditions?.length > 0">
+                        <div class="alert alert-warning" [hidden]="prevEventsEditions!.length > 0">
                             <span jhiTranslate="motorsportsDatabaseApp.eventEdition.home.notFound">No event editions found</span>
                         </div>
-                        <div class="table-responsive" [hidden]="prevEventsEditions?.length === 0">
+                        <div class="table-responsive" [hidden]="prevEventsEditions!.length === 0">
                             <mat-table class="table table-hover" [dataSource]="prevEventsEditions">
                                 <ng-container matColumnDef="date">
                                     <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.eventDate' | translate }}</mat-header-cell>
-                                    <mat-cell *matCellDef="let event">{{ event.eventEdition.eventDate | localizedDate : 'LL'  }}</mat-cell>
+                                    <mat-cell *matCellDef="let event">{{ event.eventEdition.eventDate | localizedDate }}</mat-cell>
                                 </ng-container>
 
                                 <ng-container matColumnDef="prevEventName">

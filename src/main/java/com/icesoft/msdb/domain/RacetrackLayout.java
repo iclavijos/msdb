@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -18,6 +21,7 @@ import java.util.Objects;
 @Table(name = "racetrack_layout")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "racetracklayout")
+@Data @EqualsAndHashCode(callSuper = false)
 public class RacetrackLayout extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -30,7 +34,7 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
     @NotNull
     @Size(max = 100)
     @Column(name = "name", length = 100, nullable = false)
-    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
+    @Field(type = FieldType.Keyword, normalizer = "lowercase")
     private String name;
 
     @NotNull
@@ -50,130 +54,7 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
     private Boolean active;
 
     @ManyToOne
+    @EqualsAndHashCode.Exclude @ToString.Exclude
     private Racetrack racetrack;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public RacetrackLayout name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getLength() {
-        return length;
-    }
-
-    public RacetrackLayout length(Integer length) {
-        this.length = length;
-        return this;
-    }
-
-    public void setLength(Integer length) {
-        this.length = length;
-    }
-
-    public Integer getYearFirstUse() {
-        return yearFirstUse;
-    }
-
-    public RacetrackLayout yearFirstUse(Integer yearFirstUse) {
-        this.yearFirstUse = yearFirstUse;
-        return this;
-    }
-
-    public void setYearFirstUse(Integer yearFirstUse) {
-        this.yearFirstUse = yearFirstUse;
-    }
-
-    public byte[] getLayoutImage() {
-        return layoutImage;
-    }
-
-    public RacetrackLayout layoutImage(byte[] layoutImage) {
-        this.layoutImage = layoutImage;
-        return this;
-    }
-
-    public String getLayoutImageUrl() {
-    	return layoutImageUrl;
-    }
-
-    public RacetrackLayout layoutImageUrl(String layoutImageUrl) {
-    	this.layoutImageUrl = layoutImageUrl;
-    	return this;
-    }
-
-    public void setLayoutImageUrl(String layoutImageUrl) {
-    	this.layoutImageUrl = layoutImageUrl;
-    }
-
-    public Boolean isActive() {
-        return active;
-    }
-
-    public RacetrackLayout active(Boolean active) {
-        this.active = active;
-        return this;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public Racetrack getRacetrack() {
-        return racetrack;
-    }
-
-    public RacetrackLayout racetrack(Racetrack racetrack) {
-        this.racetrack = racetrack;
-        return this;
-    }
-
-    public void setRacetrack(Racetrack racetrack) {
-        this.racetrack = racetrack;
-    }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof RacetrackLayout)) {
-            return false;
-        }
-        return id != null && id.equals(((RacetrackLayout) o).id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "RacetrackLayout{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            ", length='" + getLength() + "'" +
-            ", yearFirstUse='" + getYearFirstUse() + "'" +
-            ", layoutImageUrl='" + getLayoutImageUrl() + "'" +
-            ", active='" + isActive() + "'" +
-            "}";
-    }
 }
