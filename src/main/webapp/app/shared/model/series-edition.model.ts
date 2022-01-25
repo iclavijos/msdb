@@ -2,7 +2,7 @@ import { ICategory } from 'app/entities/category/category.model';
 import { ISeries } from './series.model';
 import { IDriver } from 'app/entities/driver/driver.model';
 import { ITeam } from 'app/entities/team/team.model';
-import { IPointsSystem } from './points-system.model';
+import { IPointsSystem } from 'app/entities/points-system/points-system.model';
 import { IEventEdition } from './event-edition.model';
 
 export interface ISeriesEdition {

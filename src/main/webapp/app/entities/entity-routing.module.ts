@@ -30,6 +30,11 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./fuel-provider/fuel-provider.module').then(m => m.FuelProviderModule),
       },
       {
+        path: 'points-system',
+        data: { pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title' },
+        loadChildren: () => import('./points-system/points-system.module').then(m => m.PointsSystemModule),
+      },
+      {
         path: 'racetrack',
         data: { pageTitle: 'motorsportsDatabaseApp.racetrack.home.title' },
         loadChildren: () => import('./racetrack/racetrack.module').then(m => m.RacetrackModule),
