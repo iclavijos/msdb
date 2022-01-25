@@ -84,7 +84,7 @@
                                         <img [src]="editForm.get('imageUrl')?.value" style="max-height: 100px;" *ngIf="!editForm.get('image')?.value && editForm.get('imageUrl')?.value != null" alt="chassis image"/>
                                         <img [src]="'data:' + editForm.get('imageContentType')?.value + ';base64,' + editForm.get('image')?.value" style="max-height: 100px;" *ngIf="editForm.get('image')?.value" alt="chassis image"/>
                                         <div *ngIf="editForm.get('image')?.value" class="form-text text-danger clearfix">
-                                            <button type="button" (click)="clearInputImage('image', 'imageContentType', 'fileImage')" class="btn btn-secondary btn-xs pull-right">
+                                            <button type="button" (click)="clearInputImage('image', 'imageContentType', 'fileImage')" class="btn btn-secondary btn-sm pull-right">
                                                 <span class="fa fa-times"></span>
                                             </button>
                                         </div>

@@ -172,7 +172,7 @@
                                                     <img [src]="editForm.get('posterUrl').value" style="max-height: 100px;" *ngIf="!editForm.get('poster').value && editForm.get('posterUrl').value != null" alt="event edition poster"/>
                                                     <img [src]="'data:' + editForm.get('posterContentType').value + ';base64,' + editForm.get('poster').value" style="max-height: 100px;" *ngIf="editForm.get('poster').value" alt="event edition poster"/>
                                                     <div *ngIf="editForm.get('poster').value" class="form-text text-danger clearfix">
-                                                        <button type="button" (click)="clearInputImage('poster', 'posterContentType', 'fileImage')" class="btn btn-secondary btn-xs pull-right">
+                                                        <button type="button" (click)="clearInputImage('poster', 'posterContentType', 'fileImage')" class="btn btn-secondary btn-sm pull-right">
                                                             <span class="fa fa-times"></span>
                                                         </button>
                                                     </div>

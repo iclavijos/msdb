@@ -77,7 +77,7 @@
                                             <img [src]="'data:' + editForm.get('logoContentType')?.value + ';base64,' + editForm.get('logo')?.value" style="max-height: 100px;" *ngIf="editForm.get('logo')?.value" alt="category logo"/>
                                             <div *ngIf="editForm.get('logoUrl')?.value || editForm.get('logo')?.value" class="form-text text-danger clearfix">
                                                 <button type="button" (click)="clearInputImage('logo', 'logoContentType', 'fileImage')"
-                                                        class="btn btn-secondary btn-xs pull-right">
+                                                        class="btn btn-secondary btn-sm pull-right">
                                                     <span class="fa fa-times"></span>
                                                 </button>
                                             </div>

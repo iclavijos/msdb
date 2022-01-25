@@ -235,12 +235,12 @@
             <mat-card-actions *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" align="end">
                 <button mat-button
                         (click)="editEventAssignment(event)"
-                        class="btn btn-primary btn-xs">
+                        class="btn btn-primary btn-sm">
                     <fa-icon [icon]="'pencil-alt'"></fa-icon>
                 </button>
                 <button mat-button
                         (click)="removeEventFromSeries(event)"
-                        class="btn btn-danger btn-xs">
+                        class="btn btn-danger btn-sm">
                     <fa-icon [icon]="'times'"></fa-icon>
                 </button>
             </mat-card-actions>
@@ -301,12 +301,12 @@
             <mat-card-actions *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" align="end">
                 <button mat-button
                         (click)="editEventAssignment(event)"
-                        class="btn btn-primary btn-xs">
+                        class="btn btn-primary btn-sm">
                     <fa-icon [icon]="'pencil-alt'"></fa-icon>
                 </button>
                 <button mat-button
                         (click)="removeEventFromSeries(event)"
-                        class="btn btn-danger btn-xs">
+                        class="btn btn-danger btn-sm">
                     <fa-icon [icon]="'times'"></fa-icon>
                 </button>
             </mat-card-actions>
@@ -357,12 +357,12 @@
                     <mat-cell *matCellDef="let event">
                         <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                 (click)="$event.stopPropagation(); editEventAssignment(event)"
-                                class="btn btn-primary btn-xs">
+                                class="btn btn-primary btn-sm">
                             <fa-icon [icon]="'pencil-alt'"></fa-icon>
                         </button>
                         <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                 (click)="$event.stopPropagation(); removeEventFromSeries(event)"
-                                class="btn btn-danger btn-xs">
+                                class="btn btn-danger btn-sm">
                             <fa-icon [icon]="'times'"></fa-icon>
                         </button>
                     </mat-cell>
