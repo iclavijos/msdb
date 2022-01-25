@@ -31,7 +31,7 @@ export class RacetrackLayoutUpdateComponent implements OnInit {
     active: []
   });
 
-  private racetrack!: IRacetrack;
+  private racetrack: IRacetrack = new RacetrackLayout();
 
   constructor(
     protected dataUtils: DataUtils,
@@ -45,6 +45,9 @@ export class RacetrackLayoutUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ racetrackLayout }) => {
+      if (!racetrackLayout) {
+        racetrackLayout = new RacetrackLayout();
+      }
       this.updateForm(racetrackLayout);
 
       if (!racetrackLayout.racetrack) {

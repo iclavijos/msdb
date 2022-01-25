@@ -7,6 +7,8 @@ import { RacetrackLayoutDetailComponent } from '../detail/racetrack-layout-detai
 import { RacetrackLayoutUpdateComponent } from '../update/racetrack-layout-update.component';
 import { RacetrackLayoutRoutingResolveService } from './racetrack-layout-routing-resolve.service';
 
+import { RacetrackRoutingResolveService } from 'app/entities/racetrack/route/racetrack-routing-resolve.service';
+
 const racetrackLayoutRoute: Routes = [
   {
     path: '',
@@ -25,10 +27,11 @@ const racetrackLayoutRoute: Routes = [
     canActivate: [UserRouteAccessService]
   },
   {
-    path: 'new/:idRacetrack',
+    path: 'new/:id',
     component: RacetrackLayoutUpdateComponent,
     resolve: {
-      racetrackLayout: RacetrackLayoutRoutingResolveService,
+      // racetrackLayout: RacetrackLayoutRoutingResolveService,
+      racetrack: RacetrackRoutingResolveService
     },
     data: {
       authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],

@@ -221,10 +221,16 @@ public class RacetrackResource {
      * or with status 500 (Internal Server Error) if the racetrackLayout couldnt be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PutMapping("/racetrack-layouts")
+    @PutMapping("/racetrack-layouts/{id}")
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
-    public ResponseEntity<RacetrackLayout> updateRacetrackLayout(@Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
-        log.debug("REST request to update RacetrackLayout : {}", racetrackLayout);
+    public ResponseEntity<RacetrackLayout> updateRacetrackLayout(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody RacetrackLayout racetrackLayout) throws URISyntaxException {
+
+        log.debug("REST request to update RacetrackLayout : {}, {}", id, racetrackLayout);
+        if (!Objects.equals(id, racetrackLayout.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
         if (racetrackLayout.getId() == null) {
             return createRacetrackLayout(racetrackLayout);
         }

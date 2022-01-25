@@ -155,9 +155,15 @@
                                 <ng-container matColumnDef="layoutImage">
                                     <mat-header-cell *matHeaderCellDef></mat-header-cell>
                                     <mat-cell *matCellDef="let event">
-                                        <img *ngIf="event.eventEdition.trackLayout?.layoutImageUrl"
-                                             [src]="event.eventEdition.trackLayout.layoutImageUrl" style="max-height: 30px;"
-                                             alt="racetrack layout"/> {{ event.eventEdition.trackLayout.name }}
+                                        <div class="row">
+                                            <div class="col-6" *ngIf="event.eventEdition.trackLayout?.layoutImageUrl">
+                                                <img [src]="event.eventEdition.trackLayout.layoutImageUrl" style="max-height: 30px;"
+                                                     alt="racetrack layout"/>
+                                            </div>
+                                            <div class="col-6">
+                                                {{ event.eventEdition.trackLayout.name }}
+                                            </div>
+                                        </div>
                                     </mat-cell>
                                 </ng-container>
 
