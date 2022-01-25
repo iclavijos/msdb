@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-danger">
-                        <h4 class="card-title">{{ editForm.get('name').value }}</h4>
+                        <h4 class="card-title">{{ editForm.get('name')?.value }}</h4>
                         <p class="card-category">{{ 'motorsportsDatabaseApp.series.home.createOrEditLabel' | translate }}</p>
                     </div>
                     <div class="card-body">
@@ -14,13 +14,13 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.series.name' | translate }}" type="text"
                                                class="form-control" name="name" id="field_name" formControlName="name">
-                                        <div *ngIf="editForm.get('name').invalid && (editForm.get('name').dirty || editForm.get('name').touched)">
+                                        <div *ngIf="editForm.get('name')?.invalid && (editForm.get('name')?.dirty || editForm.get('name')?.touched)">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('name').errors.required" jhiTranslate="entity.validation.required">
+                                                   *ngIf="editForm.get('name')?.errors?.required" jhiTranslate="entity.validation.required">
                                                 This field is required.
                                             </small>
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('name').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
+                                                   *ngIf="editForm.get('name')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
                                                 This field cannot be longer than 50 characters.
                                             </small>
                                         </div>
@@ -30,13 +30,13 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.series.shortname' | translate }}" type="text"
                                                class="form-control" name="shortname" id="field_shortname" formControlName="shortname">
-                                        <div *ngIf="editForm.get('shortname').invalid && (editForm.get('shortname').dirty || editForm.get('shortname').touched)">
+                                        <div *ngIf="editForm.get('shortname')?.invalid && (editForm.get('shortname')?.dirty || editForm.get('shortname')?.touched)">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('shortname').errors.required" jhiTranslate="entity.validation.required">
+                                                   *ngIf="editForm.get('shortname')?.errors?.required" jhiTranslate="entity.validation.required">
                                                 This field is required.
                                             </small>
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('shortname').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 10 }">
+                                                   *ngIf="editForm.get('shortname')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 10 }">
                                                 This field cannot be longer than 50 characters.
                                             </small>
                                         </div>
@@ -71,9 +71,9 @@
                                 <div class="col-md-6">
                                     <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.series.logo" for="field_logo">Logo</label>
                                     <div>
-                                        <img [src]="editForm.get('logoUrl').value" style="max-height: 100px;" *ngIf="!editForm.get('logo').value && editForm.get('logoUrl').value != null" alt="engine logo"/>
-                                        <img [src]="'data:' + editForm.get('logoContentType').value + ';base64,' + editForm.get('logo').value" style="max-height: 100px;" *ngIf="editForm.get('logo').value" alt="engine logo"/>
-                                        <div *ngIf="editForm.get('logo').value" class="form-text text-danger clearfix">
+                                        <img [src]="editForm.get('logoUrl')?.value" style="max-height: 100px;" *ngIf="!editForm.get('logo')?.value && editForm.get('logoUrl')?.value != null" alt="engine logo"/>
+                                        <img [src]="'data:' + editForm.get('logoContentType')?.value + ';base64,' + editForm.get('logo')?.value" style="max-height: 100px;" *ngIf="editForm.get('logo')?.value" alt="engine logo"/>
+                                        <div *ngIf="editForm.get('logo')?.value" class="form-text text-danger clearfix">
                                             <button type="button" (click)="clearInputImage('logo', 'logoContentType', 'fileImage')" class="btn btn-secondary btn-sm pull-right">
                                                 <span class="fa fa-times"></span>
                                             </button>

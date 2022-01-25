@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -202,9 +201,8 @@ public class SeriesResource {
     @GetMapping("/series")
     public ResponseEntity<List<Series>> getAllSeries(Pageable pageable) {
         log.debug("REST request to get a page of Series");
-        Page<Series> page = seriesRepository.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        List<Series> allSeries = seriesRepository.findAll(pageable.getSort());
+        return ResponseEntity.ok(allSeries);
     }
 
     @GetMapping("/series/{id}/editions")
