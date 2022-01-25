@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-danger">
-                        <h4 class="card-title">{{ editForm.get('name').value }}</h4>
+                        <h4 class="card-title">{{ editForm.get('name')?.value }}</h4>
                         <p class="card-category">{{ 'motorsportsDatabaseApp.pointsSystem.home.createOrEditLabel' | translate }}</p>
                     </div>
                     <div class="card-body">
@@ -14,13 +14,13 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.pointsSystem.name' | translate }}" type="text"
                                                class="form-control" name="name" id="field_name" formControlName="name">
-                                        <div *ngIf="editForm.get('name').invalid && (editForm.get('name').dirty || editForm.get('name').touched)">
+                                        <div *ngIf="editForm.get('name')?.invalid && (editForm.get('name')?.dirty || editForm.get('name')?.touched)">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('name').errors.required" jhiTranslate="entity.validation.required">
+                                                   *ngIf="editForm.get('name')?.errors?.required" jhiTranslate="entity.validation.required">
                                                 This field is required.
                                             </small>
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('name').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 50 }">
+                                                   *ngIf="editForm.get('name')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 50 }">
                                                 This field cannot be longer than 50 characters.
                                             </small>
                                         </div>
@@ -28,7 +28,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <label jhiTranslate="motorsportsDatabaseApp.pointsSystem.active">Active</label>
-                                    <i [ngClass]="editForm.get('active').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="switchActive()"></i>
+                                    <i [ngClass]="editForm.get('active')?.value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'" (click)="switchActive()"></i>
                                 </div>
                             </div>
                             <div class="row">
@@ -36,9 +36,9 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.pointsSystem.description' | translate }}" type="text"
                                                class="form-control" name="description" id="field_description" formControlName="description">
-                                        <div *ngIf="editForm.get('description').invalid && (editForm.get('description').dirty || editForm.get('description').touched)">
+                                        <div *ngIf="editForm.get('description')?.invalid && (editForm.get('description')?.dirty || editForm.get('description')?.touched)">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('description').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
+                                                   *ngIf="editForm.get('description')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
                                                 This field cannot be longer than 100 characters.
                                             </small>
                                         </div>
@@ -58,13 +58,13 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps' | translate }}" type="number"
                                                class="form-control" name="name" id="field_pointsMostLeadLaps" formControlName="pointsMostLeadLaps">
-                                        <div *ngIf="editForm.get('pointsMostLeadLaps').invalid">
+                                        <div *ngIf="editForm.get('pointsMostLeadLaps')?.invalid">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('pointsMostLeadLaps').errors.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 10 }">
+                                                   *ngIf="editForm.get('pointsMostLeadLaps')?.errors?.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 10 }">
                                                 Maximum value exceeded
                                             </small>
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('pointsMostLeadLaps').errors.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
+                                                   *ngIf="editForm.get('pointsMostLeadLaps')?.errors?.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
                                                 Minimum value exceeded
                                             </small>
                                         </div>
@@ -74,13 +74,13 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.pointsSystem.pointsFastLap' | translate }}" type="number"
                                                class="form-control" name="name" id="field_pointsFastLap" formControlName="pointsFastLap">
-                                        <div *ngIf="editForm.get('pointsFastLap').invalid">
+                                        <div *ngIf="editForm.get('pointsFastLap')?.invalid">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('pointsFastLap').errors.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 10 }">
+                                                   *ngIf="editForm.get('pointsFastLap')?.errors?.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 10 }">
                                                 Maximum value exceeded
                                             </small>
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('pointsFastLap').errors.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
+                                                   *ngIf="editForm.get('pointsFastLap')?.errors?.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
                                                 Minimum value exceeded
                                             </small>
                                         </div>
@@ -90,13 +90,13 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.pointsSystem.pointsPole' | translate }}" type="number"
                                                class="form-control" name="name" id="field_pointsPole" formControlName="pointsPole">
-                                        <div *ngIf="editForm.get('pointsPole').invalid">
+                                        <div *ngIf="editForm.get('pointsPole')?.invalid">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('pointsPole').errors.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 10 }">
+                                                   *ngIf="editForm.get('pointsPole')?.errors?.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 10 }">
                                                 Maximum value exceeded
                                             </small>
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('pointsPole').errors.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
+                                                   *ngIf="editForm.get('pointsPole')?.errors?.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
                                                 Minimum value exceeded
                                             </small>
                                         </div>
@@ -106,13 +106,13 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.pointsSystem.pointsLeadLap' | translate }}" type="number"
                                                class="form-control" name="name" id="field_pointsLeadLap" formControlName="pointsLeadLap">
-                                        <div *ngIf="editForm.get('pointsLeadLap').invalid">
+                                        <div *ngIf="editForm.get('pointsLeadLap')?.invalid">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('pointsLeadLap').errors.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 10 }">
+                                                   *ngIf="editForm.get('pointsLeadLap')?.errors?.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 10 }">
                                                 Maximum value exceeded
                                             </small>
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('pointsLeadLap').errors.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
+                                                   *ngIf="editForm.get('pointsLeadLap')?.errors?.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
                                                 Minimum value exceeded
                                             </small>
                                         </div>
@@ -120,7 +120,7 @@
                                 </div>
                             </div>
 
-                            <div class="row" *ngIf="editForm.get('pointsFastLap').value > 0">
+                            <div class="row" *ngIf="editForm.get('pointsFastLap')?.value > 0">
                                 <div class="form-group col-lg-12 col-md-12">
                                     <div class="card">
                                         <div class="card-header">
@@ -133,13 +133,13 @@
                                                         <mat-form-field class="example-full-width">
                                                             <input matInput placeholder="{{ 'motorsportsDatabaseApp.pointsSystem.maxFinishinPositionFL' | translate }}" type="number"
                                                                    class="form-control" name="maxPosFastLap" id="field_maxPosFastLap" formControlName="maxPosFastLap">
-                                                            <div *ngIf="editForm.get('maxPosFastLap').invalid">
+                                                            <div *ngIf="editForm.get('maxPosFastLap')?.invalid">
                                                                 <small class="form-text text-danger"
-                                                                       *ngIf="editForm.get('maxPosFastLap').errors.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 100 }">
+                                                                       *ngIf="editForm.get('maxPosFastLap')?.errors?.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 100 }">
                                                                     Maximum value exceeded
                                                                 </small>
                                                                 <small class="form-text text-danger"
-                                                                       *ngIf="editForm.get('maxPosFastLap').errors.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
+                                                                       *ngIf="editForm.get('maxPosFastLap')?.errors?.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
                                                                     Minimum value exceeded
                                                                 </small>
                                                             </div>
@@ -147,12 +147,12 @@
                                                     </div>
                                                     <div class="form-group col-lg-4 col-md-4">
                                                         <label jhiTranslate="motorsportsDatabaseApp.pointsSystem.pitlaneStartAllowed">Pitlane start allowed</label>
-                                                        <i [ngClass]="editForm.get('pitlaneStartAllowed').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"
+                                                        <i [ngClass]="editForm.get('pitlaneStartAllowed')?.value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"
                                                            (click)="switchPitlaneStart()"></i>
                                                     </div>
                                                     <div class="form-group col-lg-4 col-md-4">
                                                         <label jhiTranslate="motorsportsDatabaseApp.pointsSystem.alwaysAssignFastLap">Assign fast lap points to any driver</label>
-                                                        <i [ngClass]="editForm.get('alwaysAssignFastLap').value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"
+                                                        <i [ngClass]="editForm.get('alwaysAssignFastLap')?.value ? 'fa fa-fw fa-check-square-o' : 'fa fa-fw fa-square-o'"
                                                            (click)="switchAlwaysAssignFastLap()"></i>
                                                     </div>
                                                 </div>
@@ -166,13 +166,13 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.pointsSystem.pointsRacePctCompletion1' | translate }}" type="number"
                                                class="form-control" name="racePctCompleted" id="field_racePctCompletion" formControlName="racePctCompleted">
-                                        <div *ngIf="editForm.get('racePctCompleted').invalid">
+                                        <div *ngIf="editForm.get('racePctCompleted')?.invalid">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('racePctCompleted').errors.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 100 }">
+                                                   *ngIf="editForm.get('racePctCompleted')?.errors?.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 100 }">
                                                 Maximum value exceeded
                                             </small>
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('racePctCompleted').errors.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
+                                                   *ngIf="editForm.get('racePctCompleted')?.errors?.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
                                                 Minimum value exceeded
                                             </small>
                                         </div>
@@ -180,13 +180,13 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.pointsSystem.pointsRacePctCompletion2' | translate }}" type="number"
                                                class="form-control" name="pctTotalPoints" id="field_totalPointsPct" formControlName="pctTotalPoints">
-                                        <div *ngIf="editForm.get('pctTotalPoints').invalid">
+                                        <div *ngIf="editForm.get('pctTotalPoints')?.invalid">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('pctTotalPoints').errors.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 100 }">
+                                                   *ngIf="editForm.get('pctTotalPoints')?.errors?.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 100 }">
                                                 Maximum value exceeded
                                             </small>
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('pctTotalPoints').errors.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
+                                                   *ngIf="editForm.get('pctTotalPoints')?.errors?.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
                                                 Minimum value exceeded
                                             </small>
                                         </div>

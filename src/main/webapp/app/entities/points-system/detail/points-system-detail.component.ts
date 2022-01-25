@@ -1,24 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { IPointsSystem } from '../../shared/model/points-system.model';
+import { IPointsSystem } from '../points-system.model';
 
 @Component({
   selector: 'jhi-points-system-detail',
-  templateUrl: './points-system-detail.component.html'
+  templateUrl: './points-system-detail.component.html',
 })
 export class PointsSystemDetailComponent implements OnInit {
-  pointsSystem: IPointsSystem;
+  pointsSystem: IPointsSystem | null = null;
 
   constructor(protected activatedRoute: ActivatedRoute) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ pointsSystem }) => {
       this.pointsSystem = pointsSystem;
     });
   }
 
-  previousState() {
+  previousState(): void {
     window.history.back();
   }
 }

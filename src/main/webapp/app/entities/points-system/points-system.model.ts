@@ -3,18 +3,18 @@ export interface IPointsSystem {
   name?: string;
   description?: string;
   points?: string;
-  pointsMostLeadLaps?: number;
-  pointsFastLap?: number;
-  maxPosFastLap?: number;
-  dnfFastLap?: boolean;
-  pitlaneStartAllowed?: boolean;
-  alwaysAssignFastLap?: boolean;
-  pctCompletedFastLap?: number;
-  pointsPole?: number;
-  pointsLeadLap?: number;
-  racePctCompleted?: number;
-  pctTotalPoints?: number;
-  active?: boolean;
+  pointsMostLeadLaps: number;
+  pointsFastLap: number;
+  maxPosFastLap: number;
+  dnfFastLap: boolean;
+  pitlaneStartAllowed: boolean;
+  alwaysAssignFastLap: boolean;
+  pctCompletedFastLap: number;
+  pointsPole: number;
+  pointsLeadLap: number;
+  racePctCompleted: number;
+  pctTotalPoints: number;
+  active: boolean;
 }
 
 export class PointsSystem implements IPointsSystem {
@@ -36,4 +36,8 @@ export class PointsSystem implements IPointsSystem {
     public pctTotalPoints = 100,
     public active = true
   ) {}
+}
+
+export function getPointsSystemIdentifier(pointsSystem: IPointsSystem): number | undefined {
+  return pointsSystem.id;
 }

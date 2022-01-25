@@ -8,36 +8,29 @@ import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
-import tech.jhipster.web.util.HeaderUtil;
-import tech.jhipster.web.util.PaginationUtil;
-import tech.jhipster.web.util.ResponseUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link com.icesoft.msdb.domain.PointsSystem}.
@@ -201,19 +194,8 @@ public class PointsSystemResource {
     @GetMapping("/points-systems")
     public ResponseEntity<List<PointsSystem>> getPointsSystems(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of PointsSystems");
-        Page<PointsSystem> page;
-
-        if (StringUtils.isNotEmpty(query)) {
-            page = searchService.performWildcardSearch(
-                PointsSystem.class,
-                query.toLowerCase(),
-                Arrays.asList("name", "description"),
-                pageable);
-        } else {
-            page = pointsSystemRepository.findAll(pageable);
-        }
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        List<PointsSystem> allPointsSystems = pointsSystemRepository.findAll(pageable.getSort());
+        return ResponseEntity.ok(allPointsSystems);
     }
 
     /**
@@ -242,5 +224,28 @@ public class PointsSystemResource {
         pointsSystemRepository.deleteById(id);
         pointsSystemSearchRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+    }
+
+    /**
+     * {@code SEARCH  /_search/points-systems?query=:query} : search for the pointsSystem corresponding
+     * to the query.
+     *
+     * @param query the query of the pointsSystem search.
+     * @param pageable the pagination information.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search/points-systems")
+    public ResponseEntity<List<PointsSystem>> searchPointsSystems(@RequestParam String query, Pageable pageable) {
+        log.debug("REST request to search for a page of PointsSystems for query {}", query);
+        Page<PointsSystem> page = searchService.performWildcardSearch(
+            PointsSystem.class,
+            query.toLowerCase(),
+            Arrays.asList("name"),
+            pageable
+        );
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity
+            .ok().headers(headers)
+            .body(page.getContent());
     }
 }
