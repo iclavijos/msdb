@@ -1,4 +1,4 @@
-import { ISeriesEdition } from './series-edition.model';
+import { ISeriesEdition } from 'app/shared/model/series-edition.model';
 
 export interface ISeries {
   id?: number;
@@ -24,4 +24,8 @@ export class Series implements ISeries {
     public logoUrl?: string,
     public relevance?: number
   ) {}
+}
+
+export function getSeriesIdentifier(series: ISeries): number | undefined {
+  return series.id;
 }

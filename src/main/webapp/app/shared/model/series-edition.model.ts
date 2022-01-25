@@ -1,5 +1,5 @@
 import { ICategory } from 'app/entities/category/category.model';
-import { ISeries } from './series.model';
+import { ISeries } from 'app/entities/series/series.model';
 import { IDriver } from 'app/entities/driver/driver.model';
 import { ITeam } from 'app/entities/team/team.model';
 import { IPointsSystem } from 'app/entities/points-system/points-system.model';

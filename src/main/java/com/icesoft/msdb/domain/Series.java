@@ -28,23 +28,23 @@ public class Series extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
     @Size(max = 100)
     @Column(name = "name", length = 100, nullable = false)
-    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
+    @Field(type = FieldType.Keyword, normalizer = "lowercase")
     private String name;
 
     @NotNull
     @Size(max = 10)
     @Column(name = "shortname", length = 10, nullable = false)
-    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
+    @Field(type = FieldType.Keyword, normalizer = "lowercase")
     private String shortname;
 
     @Size(max = 50)
     @Column(name = "organizer", length = 50)
+    @Field(type = FieldType.Keyword, normalizer = "lowercase")
     private String organizer;
 
     @Transient

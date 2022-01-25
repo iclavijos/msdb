@@ -45,6 +45,11 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./racetrack-layout/racetrack-layout.module').then(m => m.RacetrackLayoutModule),
       },
       {
+        path: 'series',
+        data: { pageTitle: 'motorsportsDatabaseApp.series.home.title' },
+        loadChildren: () => import('./series/series.module').then(m => m.SeriesModule),
+      },
+      {
         path: 'team',
         data: { pageTitle: 'motorsportsDatabaseApp.team.home.title' },
         loadChildren: () => import('./team/team.module').then(m => m.TeamModule),
@@ -83,16 +88,6 @@ import { RouterModule } from '@angular/router';
 //         path: 'event',
 //         data: { pageTitle: 'motorsportsDatabaseApp.event.home.title' },
 //         loadChildren: () => import('./event/event.module').then(m => m.EventModule),
-//       },
-//       {
-//         path: 'points-system',
-//         data: { pageTitle: 'motorsportsDatabaseApp.pointsSystem.home.title' },
-//         loadChildren: () => import('./points-system/points-system.module').then(m => m.PointsSystemModule),
-//       },
-//       {
-//         path: 'series',
-//         data: { pageTitle: 'motorsportsDatabaseApp.series.home.title' },
-//         loadChildren: () => import('./series/series.module').then(m => m.SeriesModule),
 //       },
 
 //       {
