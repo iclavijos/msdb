@@ -69,6 +69,7 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
     @JsonIgnore
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @EqualsAndHashCode.Exclude @ToString.Exclude
+    @org.springframework.data.annotation.Transient
     private Set<RacetrackLayout> layouts = new HashSet<>();
 
 }
