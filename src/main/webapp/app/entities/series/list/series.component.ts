@@ -29,7 +29,7 @@ export class SeriesComponent implements OnInit, AfterViewInit {
   ascending!: boolean;
 
   dataSource = new MatTableDataSource<ISeries>([]);
-  displayedColumns: string[] = ['name', 'shortname', 'organizer', 'logo', 'buttons'];
+  displayedColumns: string[] = ['logo', 'name', 'shortname', 'organizer', 'buttons'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sorter!: MatSort;

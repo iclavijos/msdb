@@ -53,7 +53,7 @@
                                 </ng-container>
 
                                 <ng-container matColumnDef="logo">
-                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.logo' | translate }}</mat-header-cell>
+                                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
                                     <mat-cell *matCellDef="let series">
                                         <img *ngIf="series?.logoUrl" [src]="series.logoUrl" style="max-height: 50px;" alt="series logo"/>
                                     </mat-cell>
