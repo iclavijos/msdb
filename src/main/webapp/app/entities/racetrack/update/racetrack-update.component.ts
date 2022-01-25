@@ -47,7 +47,7 @@ export class RacetrackUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.options = this.editForm.get('derivedFrom')!.valueChanges.pipe(
+    this.options = this.editForm.get('countryCode')!.valueChanges.pipe(
       startWith(''),
       debounceTime(300),
       distinctUntilChanged(),

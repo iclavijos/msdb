@@ -18,7 +18,9 @@
         "question": "¿Seguro que quiere eliminar el circuito {{ id }}?"
       },
       "detail": {
-        "title": "circuito"
+        "title": "circuito",
+        "latitude": "Latitud",
+        "longitude": "Longitud"
       },
       "name": "Nombre",
       "location": "Localización",

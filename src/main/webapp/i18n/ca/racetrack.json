@@ -18,7 +18,9 @@
         "question": "Esteu segur que voleu esborrar el circuit amb identificador {{ id }}?"
       },
       "detail": {
-        "title": "Circuit"
+        "title": "Circuit",
+        "latitude": "Latitut",
+        "longitude": "Longitut"
       },
       "name": "Nom",
       "location": "Localització",

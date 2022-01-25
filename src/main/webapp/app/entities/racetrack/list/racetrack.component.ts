@@ -1,10 +1,11 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, NgZone } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SessionStorageService } from 'ngx-webstorage';
+import { TranslateService } from '@ngx-translate/core';
 
 import { ASC, DESC, ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 import { IRacetrack, Racetrack } from '../racetrack.model';
@@ -16,9 +17,28 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort, MatSortHeader } from '@angular/material/sort';
 
+import { latLng, Marker } from 'leaflet';
+import * as L from 'leaflet';
+
+const iconRetinaUrl = 'assets/marker-icon-2x.png';
+const iconUrl = 'assets/marker-icon.png';
+const shadowUrl = 'assets/marker-shadow.png';
+const iconDefault = L.icon({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
+L.Marker.prototype.options.icon = iconDefault;
+
 @Component({
   selector: 'jhi-racetrack',
   templateUrl: './racetrack.component.html',
+  styleUrls: ['./racetrack.component.scss']
 })
 export class RacetrackComponent implements OnInit, AfterViewInit {
   currentSearch: string;
@@ -38,19 +58,26 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sorter!: MatSort;
 
+  map!: L.Map;
+
   constructor(
     protected racetrackService: RacetrackService,
     protected activatedRoute: ActivatedRoute,
     protected dataUtils: DataUtils,
     protected router: Router,
     protected modalService: NgbModal,
-    private sessionStorageService: SessionStorageService
+    protected sessionStorageService: SessionStorageService,
+    protected ngZone: NgZone,
+    protected elementRef: ElementRef,
+    protected translateService: TranslateService
   ) {
     this.currentSearch = this.activatedRoute.snapshot.queryParams['search'] ?? '';
   }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+    this.initMap();
+    this.addMapMarkers();
   }
 
   ngOnInit(): void {
@@ -179,6 +206,52 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
       sortPredicates.push(`id,${ASC}`);
     }
     return sortPredicates;
+  }
+
+  private initMap(): void {
+    this.map = L.map('map', {
+      center: [ 0, 0 ],
+      zoom: 2,
+      maxBounds: L.latLngBounds(latLng(-90, -180), latLng(90, 180)),
+      worldCopyJump: true,
+    });
+
+    const streetMaps = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      detectRetina: true,
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    });
+
+    streetMaps.addTo(this.map);
+  }
+
+  private addMapMarkers(): void {
+    this.racetrackService
+      .query({
+        page: 0,
+        size: 500
+      })
+      .subscribe(data =>
+        data.body!.forEach(rt => {
+          const racetrackLocation = new Marker([rt.latitude!, rt.longitude!])
+            .on('popupopen', $event => {
+              this.navigateFromPopup($event.target.options.trackId, this.elementRef);
+            });
+          L.Util.setOptions(racetrackLocation, { trackId: rt.id });
+          const logo = rt.logoUrl ? `<img src=${rt.logoUrl} style="max-height: 200px; max-width: 200px"><br/>` : '';
+          let popup = `<p align="center">${logo}<h4>${rt.name}</h4><br/>${rt.location}, ${rt.countryCode}<br/></p>`;
+          popup = popup + `<a id="mapLink" href="javascript:void">${this.translateService.instant('motorsportsDatabaseApp.racetrack.home.link') as string}</a>`;
+          racetrackLocation.addTo(this.map).bindPopup(popup, { minWidth: 220 });
+        })
+      );
+  }
+
+  private navigateFromPopup(trackId: number, elementRef: ElementRef): void {
+    elementRef.nativeElement.querySelector('#mapLink').addEventListener('click', () => {
+      this.ngZone.run(() => {
+        this.router.navigate(['/racetrack', trackId, 'view']);
+      });
+    });
   }
 
   private instantiateResponseObjects(data: IRacetrack[]): IRacetrack[] {
