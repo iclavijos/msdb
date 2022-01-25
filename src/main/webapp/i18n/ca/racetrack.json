@@ -8,7 +8,8 @@
         "search": "Cercar circuits",
         "notFound": "No s'ha trobat cap circuit",
         "map": "Mapa",
-        "list": "Llistat"
+        "list": "Llistat",
+        "link": "Detall del circuit"
       },
       "created": "S'ha afegit un circuit amb identificador {{ param }}",
       "updated": "S'ha modificat el circuit amb identificador {{ param }}",
@@ -17,7 +18,9 @@
         "question": "Esteu segur que voleu esborrar el circuit amb identificador {{ id }}?"
       },
       "detail": {
-        "title": "Circuit"
+        "title": "Circuit",
+        "latitude": "Latitut",
+        "longitude": "Longitut"
       },
       "name": "Nom",
       "location": "Localització",

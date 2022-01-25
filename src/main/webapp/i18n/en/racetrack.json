@@ -8,7 +8,8 @@
         "search": "Search for Racetrack",
         "notFound": "No racetracks found",
         "map": "Map",
-        "list": "List"
+        "list": "List",
+        "link": "Racetrack details"
       },
       "created": "A new Racetrack is created with identifier {{ param }}",
       "updated": "A Racetrack is updated with identifier {{ param }}",
@@ -17,7 +18,9 @@
         "question": "Are you sure you want to delete Racetrack {{ id }}?"
       },
       "detail": {
-        "title": "Racetrack"
+        "title": "Racetrack",
+        "latitude": "Latitude",
+        "longitude": "Longitude"
       },
       "name": "Name",
       "location": "Location",

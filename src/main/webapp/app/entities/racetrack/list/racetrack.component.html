@@ -1,19 +1,15 @@
 <div class="main-content">
     <div class="container-fluid">
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
         <div class="row">
             <div class="col-md-12">
                 <mat-tab-group dynamicHeight mat-stretch-tabs>
                     <mat-tab label="{{'motorsportsDatabaseApp.racetrack.home.map' | translate }}">
-                        <!-- div id="map"
-                             leaflet
-                             [leafletOptions]="mapOptions"
-                             (leafletMapReady)="onMapReady($event)"
-                             [leafletLayersControl]="layersControl">
-                        </div -->
+                        <div id="map">
+                        </div>
                     </mat-tab>
                     <mat-tab label="{{'motorsportsDatabaseApp.racetrack.home.list' | translate }}">
-                        <jhi-alert-error></jhi-alert-error>
-                        <jhi-alert></jhi-alert>
                         <div class="row">
                             <div class="col-sm-12">
                                 <form name="searchForm" class="form-inline">

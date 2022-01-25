@@ -8,7 +8,8 @@
         "search": "Buscar circuitos",
         "notFound": "Ningún circuito encontrado",
         "map": "Mapa",
-        "list": "Listado"
+        "list": "Listado",
+        "link": "Detalles del circuito"
       },
       "created": "Un nuevo circuito ha sido creado con el identificador {{ param }}",
       "updated": "Un circuito ha sido actualizado con el identificador {{ param }}",
@@ -17,7 +18,9 @@
         "question": "¿Seguro que quiere eliminar el circuito {{ id }}?"
       },
       "detail": {
-        "title": "circuito"
+        "title": "circuito",
+        "latitude": "Latitud",
+        "longitude": "Longitud"
       },
       "name": "Nombre",
       "location": "Localización",
