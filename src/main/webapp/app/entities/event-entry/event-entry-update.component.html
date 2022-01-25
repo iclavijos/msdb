@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-md-1">
                     <button mat-button *ngIf="eventEntry.eventEdition.multidriver" type="button"
-                            (click)="removeDriverEntry(driverIndex)" class="btn btn-secondary btn-xs pull-right">
+                            (click)="removeDriverEntry(driverIndex)" class="btn btn-secondary btn-sm pull-right">
                         <span class="fa fa-times"></span>
                     </button>
                 </div>
@@ -169,7 +169,7 @@
                 <img [src]="editForm.get('carImageUrl').value" style="max-height: 100px;" *ngIf="!editForm.get('carImage').value && editForm.get('carImageUrl').value != null" alt="car image"/>
                 <img [src]="'data:' + editForm.get('carImageContentType').value + ';base64,' + editForm.get('carImage').value" style="max-height: 100px;" *ngIf="editForm.get('carImage').value" alt="car image"/>
                 <div *ngIf="editForm.get('carImage').value" class="form-text text-danger clearfix">
-                    <button type="button" (click)="clearInputImage('carImage', 'carImageContentType', 'fileImage')" class="btn btn-secondary btn-xs pull-right">
+                    <button type="button" (click)="clearInputImage('carImage', 'carImageContentType', 'fileImage')" class="btn btn-secondary btn-sm pull-right">
                         <span class="fa fa-times"></span>
                     </button>
                 </div>

@@ -74,7 +74,7 @@
                                         <img [src]="editForm.get('logoUrl').value" style="max-height: 100px;" *ngIf="!editForm.get('logo').value && editForm.get('logoUrl').value != null" alt="engine logo"/>
                                         <img [src]="'data:' + editForm.get('logoContentType').value + ';base64,' + editForm.get('logo').value" style="max-height: 100px;" *ngIf="editForm.get('logo').value" alt="engine logo"/>
                                         <div *ngIf="editForm.get('logo').value" class="form-text text-danger clearfix">
-                                            <button type="button" (click)="clearInputImage('logo', 'logoContentType', 'fileImage')" class="btn btn-secondary btn-xs pull-right">
+                                            <button type="button" (click)="clearInputImage('logo', 'logoContentType', 'fileImage')" class="btn btn-secondary btn-sm pull-right">
                                                 <span class="fa fa-times"></span>
                                             </button>
                                         </div>

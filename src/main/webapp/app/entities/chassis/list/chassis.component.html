@@ -83,13 +83,13 @@
                                                     *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                                     [routerLink]="['/chassis', chassis.id, 'edit']"
                                                     (click)="$event.stopPropagation()"
-                                                    class="btn btn-primary btn-xs">
+                                                    class="btn btn-primary btn-sm">
                                                 <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                             </button>
                                             <button type="submit"
                                                     *jhiHasAnyAuthority="['ROLE_ADMIN']"
                                                     (click)="delete($event, chassis)"
-                                                    class="btn btn-danger btn-xs">
+                                                    class="btn btn-danger btn-sm">
                                                 <fa-icon [icon]="'times'"></fa-icon>
                                             </button>
                                         </div>
