@@ -7,6 +7,7 @@ import javax.validation.constraints.*;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -97,9 +98,13 @@ public class Engine extends AbstractAuditingEntity implements Serializable {
     @OneToMany(mappedBy = "derivedFrom")
     @JsonIgnore
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @EqualsAndHashCode.Exclude @ToString.Exclude
+    @org.springframework.data.annotation.Transient
     private Set<Engine> evolutions = new HashSet<>();
 
     @ManyToOne
+    @EqualsAndHashCode.Exclude @ToString.Exclude
+    @org.springframework.data.annotation.Transient
     private Engine derivedFrom;
 
     @Column

@@ -69,10 +69,12 @@ public class Chassis extends AbstractAuditingEntity implements Serializable {
     @JsonIgnore
     @EqualsAndHashCode.Exclude @ToString.Exclude
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @org.springframework.data.annotation.Transient
     private Set<Chassis> evolutions = new HashSet<>();
 
     @ManyToOne
     @EqualsAndHashCode.Exclude @ToString.Exclude
+    @org.springframework.data.annotation.Transient
     private Chassis derivedFrom;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
