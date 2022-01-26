@@ -19,9 +19,9 @@ public class UserSubscription implements Serializable {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("series_edition_id")
-    @JoinColumn(name = "series_edition_id")
-    private SeriesEdition seriesEdition;
+    @MapsId("series_id")
+    @JoinColumn(name = "series_id")
+    private Series series;
 
     @Column(name = "practice_sessions")
     private Boolean practiceSessions = Boolean.FALSE;
@@ -41,7 +41,7 @@ public class UserSubscription implements Serializable {
     }
 
     public UserSubscription(String userId, UserSubscriptionDTO dto) {
-        this.id = new UserSubscriptionPK(userId, dto.getSeriesEditionId());
+        this.id = new UserSubscriptionPK(userId, dto.getSeriesId());
         this.practiceSessions = dto.getPracticeSessions();
         this.qualiSessions = dto.getQualiSessions();
         this.races = dto.getRaces();
