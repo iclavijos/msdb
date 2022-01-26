@@ -115,8 +115,4 @@ export class SeriesEditionService {
   setTeamsChampions(seriesEditionId: number, selectedTeamsId: any) {
     return this.http.post(`${this.resourceUrl}/${seriesEditionId}/champions/teams`, selectedTeamsId);
   }
-
-  findActiveSeries(): Observable<EntityArrayResponseType> {
-    return this.http.get<ISeriesEdition[]>(`${this.resourceUrl}/active`, { observe: 'response' });
-  }
 }

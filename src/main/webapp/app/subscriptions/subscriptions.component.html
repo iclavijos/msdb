@@ -30,16 +30,16 @@
                             <div class="col-12 form-group" formArrayName="seriesSubscriptions">
                                 <mat-list>
                                     <ng-container *ngFor="let subscription of seriesSubscriptionsFormGroups.controls; let i=index">
-                                        <mat-list-item [formGroupName]="i" *ngIf="isShown(subscription.value.editionName)">
+                                        <mat-list-item [formGroupName]="i" *ngIf="isShown(subscription.value.seriesName)">
                                             <div class="col-3">
-                                                {{ subscription.value.editionName }}
+                                                {{ subscription.value.seriesName }}
                                             </div>
-                                            <div *ngIf="!subscription.value.editionName.toLowerCase().includes('rally')" class="col-4">
+                                            <div *ngIf="!isRally(subscription.value.seriesName)" class="col-4">
                                                 <mat-slide-toggle formControlName="practiceSessions">{{'motorsportsDatabaseApp.subscriptions.sessions.freePractice' | translate }}</mat-slide-toggle>
                                                 <mat-slide-toggle formControlName="qualiSessions">{{'motorsportsDatabaseApp.subscriptions.sessions.qualifying' | translate }}</mat-slide-toggle>
                                                 <mat-slide-toggle formControlName="races">{{'motorsportsDatabaseApp.subscriptions.sessions.races' | translate }}</mat-slide-toggle>
                                             </div>
-                                            <div *ngIf="subscription.value.editionName.toLowerCase().includes('rally')" class="col-4">
+                                            <div *ngIf="isRally(subscription.value.seriesName)" class="col-4">
                                             </div>
                                             <div class="col-4">
                                                 <mat-slide-toggle formControlName="fifteenMinWarning">{{'motorsportsDatabaseApp.subscriptions.warnings.fifteenMins' | translate }}</mat-slide-toggle>
