@@ -8,7 +8,7 @@ import org.springframework.beans.BeanUtils;
 @Data
 @NoArgsConstructor
 public class UserSubscriptionDTO {
-    private Long seriesEditionId;
+    private Long seriesId;
     private Boolean practiceSessions = Boolean.FALSE;
     private Boolean qualiSessions = Boolean.FALSE;
     private Boolean races = Boolean.TRUE;
@@ -17,7 +17,7 @@ public class UserSubscriptionDTO {
     private Boolean ThreeHoursWarning = Boolean.FALSE;
 
     public UserSubscriptionDTO(UserSubscription userSubscription) {
-        this.seriesEditionId = userSubscription.getSeriesEdition().getId();
+        this.seriesId = userSubscription.getSeries().getId();
         BeanUtils.copyProperties(userSubscription, this);
     }
 }

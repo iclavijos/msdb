@@ -3,44 +3,50 @@ import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 
 import { AccountService } from '../core/auth/account.service';
 
-import { ISeriesEdition } from '../shared/model/series-edition.model';
-import { SeriesEditionService } from '../entities/series-edition/series-edition.service';
+import { ISeries } from '../shared/model/series.model';
+import { SeriesService } from '../entities/series/series.service';
 
 @Component({
   selector: 'jhi-subscriptions-component',
   templateUrl: 'subscriptions.component.html'
 })
 export class SubscriptionsComponent implements OnInit {
-  availableSeries: ISeriesEdition[] = [];
+  availableSeries: ISeries[] = [];
   subscriptions: any[];
   currentFilter = '';
 
   public editForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private seriesEditionService: SeriesEditionService, private accountService: AccountService) {
+  constructor(private fb: FormBuilder, private seriesService: SeriesService, private accountService: AccountService) {
     this.editForm = this.fb.group({
       seriesSubscriptions: this.fb.array([])
     });
   }
 
   ngOnInit() {
-    this.seriesEditionService.findActiveSeries().subscribe(series => {
+
+    this.seriesService.query({
+      page: 0,
+      query: '',
+      size: 200,
+      sort: ['name', 'asc']
+    }).subscribe(series => {
       this.accountService.subscriptions().subscribe(res => {
         this.subscriptions = res;
 
         const control = this.editForm.get('seriesSubscriptions') as FormArray;
         series.body
-          .sort((se1, se2) => (se1.editionName > se2.editionName ? 1 : -1))
+          .sort((se1, se2) => (se1.name > se2.name ? 1 : -1))
           .forEach(s => control.push(this.initSeriesSubscription(s)));
       });
     });
   }
 
-  private initSeriesSubscription(seriesEdition: ISeriesEdition) {
-    const subs = this.subscriptions.find(s => s.seriesEditionId === seriesEdition.id);
+  private initSeriesSubscription(series: ISeries) {
+    const subs = this.subscriptions.find(s => s.seriesId === series.id);
     return this.fb.group({
-      editionName: seriesEdition.editionName,
-      seriesEditionId: seriesEdition.id,
+      seriesName: series.name,
+      seriesId: series.id,
       practiceSessions: subs ? subs.practiceSessions : false,
       qualiSessions: subs ? subs.qualiSessions : false,
       races: subs ? subs.races : false,
@@ -52,6 +58,11 @@ export class SubscriptionsComponent implements OnInit {
 
   isShown(editionName: string): boolean {
     return !this.currentFilter || editionName.toLowerCase().includes(this.currentFilter);
+  }
+
+  isRally(seriesName: string): boolean {
+    const name = seriesName?.toLowerCase() ?? '';
+    return name.includes('rally') && !name.includes('cross');
   }
 
   save() {

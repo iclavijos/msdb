@@ -1,9 +1,6 @@
 package com.icesoft.msdb.service.impl;
 
-import com.icesoft.msdb.domain.EventSession;
-import com.icesoft.msdb.domain.SeriesEdition;
-import com.icesoft.msdb.domain.User;
-import com.icesoft.msdb.domain.UserSubscription;
+import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.domain.subscriptions.SessionData;
@@ -84,18 +81,19 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             .peek(session -> log.trace("Session to notify: {}", session.getName()))
             .collect(Collectors.toList());
 
-        List<SeriesEdition> seriesEds = eventSessions.stream()
+        List<Series> seriesEds = eventSessions.stream()
             .flatMap(session -> session.getEventEdition().getSeriesEditions().stream())
+            .map(seriesEdition -> seriesEdition.getSeries())
             .distinct()
             .collect(Collectors.toList());
 
-        List<UserSubscription> usersSubs = userSubscriptionRepository.findAllBySeriesEditionIn(seriesEds);
+        List<UserSubscription> usersSubs = userSubscriptionRepository.findAllBySeriesIn(seriesEds);
         usersSubs.forEach(userSubscription -> {
             log.trace("User to be notified: {}", userSubscription.getUser().getId());
             eventSessions.stream()
                 .filter(eventSession -> eventSession.getEventEdition().getSeriesEditions()
                     .stream().map(seriesEdition -> seriesEdition.getId()).collect(Collectors.toList())
-                    .contains(userSubscription.getSeriesEdition().getId()))
+                    .contains(userSubscription.getSeries().getId()))
                 .forEach(
                     eventSession -> {
                         if (eventSession.getSessionType().equals(SessionType.STAGE) ||

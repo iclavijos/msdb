@@ -346,18 +346,6 @@ public class SeriesEditionResource {
     	    HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, seriesEditionId.toString())).build();
     }
 
-    @GetMapping("/series-editions/active")
-    @Timed
-    @Transactional(readOnly = true)
-    public ResponseEntity<List<SeriesEdition>> getActiveSeriesEditions() {
-        return ResponseEntity.ok(
-            seriesEditionRepository
-                .findDistinctSeriesEditionByEventsEventDateAfter(LocalDate.now(ZoneId.of("UTC")))
-            .parallelStream()
-            .sorted(Comparator.comparing(s -> s.getSeries().getRelevance()))
-            .collect(Collectors.toList()));
-    }
-
     @GetMapping("/series-editions/{id}/prevNextEdition")
     @Timed
     @Transactional(readOnly=true)
