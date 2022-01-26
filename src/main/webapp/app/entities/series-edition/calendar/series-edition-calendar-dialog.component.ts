@@ -7,14 +7,14 @@ import { Observable, of } from 'rxjs';
 import { switchMap, debounceTime, map } from 'rxjs/operators';
 import { JhiAlertService } from 'ng-jhipster';
 
-import { IEventEdition } from '../../shared/model/event-edition.model';
-import { EventEditionService } from '../event-edition/event-edition.service';
-import { EventSessionService } from '../event-session/event-session.service';
-import { IEventSession } from '../../shared/model/event-session.model';
-import { ISeriesEdition } from '../../shared/model/series-edition.model';
-import { SeriesEditionService } from './series-edition.service';
+import { IEventEdition } from 'app/entities/event-edition/event-edition.model';
+import { EventEditionService } from 'app/entities/event-edition/service/event-edition.service';
+import { EventSessionService } from 'app/entities/event-session/service/event-session.service';
+import { IEventSession } from 'app/entities/event-session/event-session.model';
+import { ISeriesEdition } from '../series-edition.model';
+import { SeriesEditionService } from '../service/series-edition.service';
 
-import { SessionType } from '../../shared/enumerations/sessionType.enum';
+import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -51,7 +51,7 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.isSaving = false;
 
     if (this.eventEdition) {
@@ -81,7 +81,7 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
     }
   }
 
-  initSession(session: IEventSession) {
+  initSession(session: IEventSession): void {
     let pSystemAss = '';
     let psMult = 1;
 
@@ -102,25 +102,25 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
     });
   }
 
-  addRaces(races: IEventSession[]) {
+  addRaces(races: IEventSession[]): void {
     const control = this.editForm.get('races') as FormArray;
     for (const race of races) {
       control.push(this.initSession(race));
     }
   }
 
-  close() {
+  close(): void {
     this.dialogRef.close();
   }
 
-  save() {
+  save(): void {
     this.isSaving = true;
     this.seriesEditionService
       .addEventToSeries(this.seriesEdition.id, this.eventEdition.id, this.editForm.value.races)
       .subscribe(() => this.onSaveSuccess(), () => this.onSaveError());
   }
 
-  setEvent(event: IEventEdition) {
+  setEvent(event: IEventEdition): void {
     this.eventEdition = event;
     this.updateUI();
   }
@@ -129,16 +129,16 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
     return event ? event.longEventName as string: undefined;
   }
 
-  private onSaveSuccess() {
+  private onSaveSuccess(): void {
     this.isSaving = false;
     this.dialogRef.close('ok');
   }
 
-  private onSaveError() {
+  private onSaveError(): void {
     this.isSaving = false;
   }
 
-  private updateUI() {
+  private updateUI(): void {
     this.eventSessionService.findSessions(this.eventEdition.id, moment.tz.guess(true)).subscribe(eventSessions => {
       const sessions: IEventSession[] = eventSessions.body.filter(session => session.sessionType !== this.sessionType['practice']);
       this.eventEdition.sessions = sessions;

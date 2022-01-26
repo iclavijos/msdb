@@ -34,27 +34,27 @@ export class SeriesEditionCloneDialogComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.isSaving = false;
   }
 
-  close() {
+  close(): void {
     this.dialogRef.close();
   }
 
-  clone() {
+  clone(): void {
     this.isSaving = true;
     this.seriesEditionService
       .clone(this.seriesEdition.id, this.editForm.get('period').value)
       .subscribe(() => this.onSaveSuccess(), () => this.onSaveError());
   }
 
-  private onSaveSuccess() {
+  private onSaveSuccess(): void {
     this.isSaving = false;
     this.dialogRef.close('ok');
   }
 
-  private onSaveError() {
+  private onSaveError(): void {
     this.isSaving = false;
   }
 }
