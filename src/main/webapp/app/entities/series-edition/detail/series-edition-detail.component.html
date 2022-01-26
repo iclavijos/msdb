@@ -8,7 +8,7 @@
                     <div class="card-header card-header-danger">
                         <div class="row">
                             <div class="col-9">
-                                <h3 class="card-title">{{ seriesEdition.editionName }}</h3>
+                                <h3 class="card-title">{{ seriesEdition!.editionName }}</h3>
                             </div>
                             <div class="col-md-auto">
                                 <div class="row">
@@ -87,13 +87,13 @@
                                                         <div class="col-lg-4 col-md-4">
                                                             <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.period">Period</span></dt>
                                                             <dd>
-                                                                <span>{{seriesEdition.period}}</span>
+                                                                <span>{{ seriesEdition!.period}}</span>
                                                             </dd>
                                                         </div>
                                                         <div class="col-lg-8 col-md-8">
                                                             <dt><span jhiTranslate="motorsportsDatabaseApp.series.seriesEdition.numEvents">Number Events</span></dt>
                                                             <dd>
-                                                                <span>{{seriesEdition.numEvents}}</span>
+                                                                <span>{{ seriesEdition!.numEvents}}</span>
                                                             </dd>
                                                         </div>
                                                     </div>

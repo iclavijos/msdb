@@ -50,6 +50,11 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./series/series.module').then(m => m.SeriesModule),
       },
       {
+        path: 'series-edition',
+        data: { pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title' },
+        loadChildren: () => import('./series-edition/series-edition.module').then(m => m.SeriesEditionModule),
+      },
+      {
         path: 'team',
         data: { pageTitle: 'motorsportsDatabaseApp.team.home.title' },
         loadChildren: () => import('./team/team.module').then(m => m.TeamModule),
@@ -59,11 +64,6 @@ import { RouterModule } from '@angular/router';
         data: { pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title' },
         loadChildren: () => import('./tyre-provider/tyre-provider.module').then(m => m.TyreProviderModule),
       },
-//       {
-//         path: 'series-edition',
-//         data: { pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title' },
-//         loadChildren: () => import('./series-edition/series-edition.module').then(m => m.SeriesEditionModule),
-//       },
 //       {
 //         path: 'event-entry',
 //         data: { pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title' },

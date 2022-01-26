@@ -31,11 +31,11 @@ export class SeriesEditionCalendarSubscriptionDialogComponent implements OnInit 
     this.linkToCalendar = `${location.origin}${this.calendarUrl}${this.seriesEditionId}`;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.changePlatform('google');
   }
 
-  copyToClipboard() {
+  copyToClipboard(): void {
     if (this.clipboardService.copyFromContent(this.linkToCalendar)) {
       this.alertService.success('copiado', null, null);
     } else {
@@ -43,12 +43,12 @@ export class SeriesEditionCalendarSubscriptionDialogComponent implements OnInit 
     }
   }
 
-  importToGoogle() {
+  importToGoogle(): void {
     const link = `https://calendar.google.com/calendar/r?cid=${this.linkToCalendar}`;
     window.open(link, 'importCalendar');
   }
 
-  changePlatform(platform: string) {
+  changePlatform(platform: string): void {
     fetch(`/html/calendar/${platform}-${this.translateService.currentLang}.html`)
       .then(res => res.text())
       .then(data => {
@@ -56,7 +56,7 @@ export class SeriesEditionCalendarSubscriptionDialogComponent implements OnInit 
       });
   }
 
-  close() {
+  close(): void {
     this.dialogRef.close();
   }
 }

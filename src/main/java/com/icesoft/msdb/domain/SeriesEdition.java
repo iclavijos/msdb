@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.icesoft.msdb.MSDBException;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -26,19 +28,20 @@ import java.util.regex.Pattern;
 @Table(name = "series_edition")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "seriesedition")
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class SeriesEdition extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
     @Size(max = 150)
     @Column(name = "edition_name", length = 150, nullable = false)
-    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
+    @Field(type = FieldType.Keyword, normalizer = "lowercase")
     private String editionName;
 
     @Transient
@@ -84,6 +87,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     @ManyToMany(fetch=FetchType.LAZY)
     @Fetch(FetchMode.SELECT)
     @JsonIgnore
+    @org.springframework.data.annotation.Transient
     @JoinTable(
         name="EVENTS_SERIES",
         joinColumns=@JoinColumn(name="series_id", referencedColumnName="ID"),
@@ -108,6 +112,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     private List<Team> teamsChampions;
 
     @ManyToOne
+    @org.springframework.data.annotation.Transient
     private Series series;
 
     @Column(name="drivers_standings")

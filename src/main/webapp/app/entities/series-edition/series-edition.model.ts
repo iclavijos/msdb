@@ -58,3 +58,7 @@ export class SeriesEdition implements ISeriesEdition {
     this.singleTyre = this.singleTyre ?? false;
   }
 }
+
+export function getSeriesEditionIdentifier(seriesEdition: ISeriesEdition): number | undefined {
+  return seriesEdition.id;
+}
