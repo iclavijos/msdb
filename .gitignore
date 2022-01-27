@@ -154,3 +154,5 @@ Desktop.ini
 /src/main/resources/msdb-firebase-service-acc.json
 /src/main/resources/config/tls/keystore.p12
 /src/tsconfig.app.json
+/.angular/
+/package-lock.json
