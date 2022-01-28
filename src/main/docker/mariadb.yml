@@ -1,13 +1,13 @@
 # This configuration is intended for development purpose, it's **your** responsibility to harden it for production
 version: '3.8'
 services:
-  motorsportsdatabase-mysql:
-    image: mysql:8.0.27
+  jhipster-mariadb:
+    image: mariadb:10.7.1
     # volumes:
     #   - ~/volumes/jhipster/MotorsportsDatabase/mysql/:/var/lib/mysql/
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_DATABASE=motorsportsdatabase
+      - MYSQL_DATABASE=msdb
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     ports:
