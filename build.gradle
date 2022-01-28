@@ -201,7 +201,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation "org.springframework.boot:spring-boot-starter-data-elasticsearch"
     implementation "org.springframework.boot:spring-boot-starter-data-mongodb"
-    testImplementation "org.testcontainers:mysql"
+    testImplementation "org.testcontainers:mariadb"
     implementation "org.springframework.boot:spring-boot-starter-security"
     implementation ("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
@@ -217,7 +217,7 @@ dependencies {
     implementation ("io.springfox:springfox-oas")
     implementation ("io.springfox:springfox-swagger2")
     implementation "io.springfox:springfox-bean-validators"
-    implementation "mysql:mysql-connector-java"
+    implementation "org.mariadb.jdbc:mariadb-java-client"
 
     implementation 'com.sendgrid:sendgrid-java:3.0.9'
     implementation 'com.cloudinary:cloudinary-http44:1.26.0'
