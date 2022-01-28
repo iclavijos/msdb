@@ -142,39 +142,18 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         this.setEditionName(period + " " + source.getSeries().getName());
         this.setEvents(null);
         this.setSeries(source.getSeries());
-        this.setSingleTyre(source.isSingleTyre());
-        this.setSingleEngine(source.isSingleEngine());
-        this.setSingleChassis(source.isSingleChassis());
-        this.setStadingsPerCategory(source.getStandingsPerCategory());
+        this.setSingleTyre(source.getSingleTyre());
+        this.setSingleEngine(source.getSingleEngine());
+        this.setSingleChassis(source.getSingleChassis());
+        this.setStandingsPerCategory(source.getStandingsPerCategory());
         this.setNumEvents(source.getNumEvents());
-        this.setMultidriver(source.isMultidriver());
+        this.setMultidriver(source.getMultidriver());
         this.setTeamsStandings(source.getTeamsStandings());
         this.setManufacturersStandings(source.getManufacturersStandings());
         this.setDriversStandings(source.getDriversStandings());
         this.setLogoUrl(source.getLogoUrl());
         this.getAllowedCategories().addAll(source.getAllowedCategories());
         this.getPointsSystems().addAll(source.getPointsSystems());
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getPeriod() {
-        return period;
-    }
-
-    public SeriesEdition period(String period) {
-        this.period = period;
-        return this;
-    }
-
-    public void setPeriod(String period) {
-        this.period = period;
     }
 
     public String getPeriodEnd() {
@@ -193,27 +172,6 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     	}
     }
 
-    public String getEditionName() {
-		return editionName;
-	}
-
-	public void setEditionName(String editionName) {
-		this.editionName = editionName;
-	}
-
-    public byte[] getLogo() {
-        return logo;
-    }
-
-    public SeriesEdition logo(byte[] logo) {
-        this.logo = logo;
-        return this;
-    }
-
-    public void setLogo(byte[] logo) {
-        this.logo = logo;
-    }
-
     public String getLogoUrl() {
         if (logoUrl != null) {
             return logoUrl;
@@ -221,117 +179,6 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
             return series.getLogoUrl();
         }
     }
-
-    public SeriesEdition logoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
-        return this;
-    }
-
-    public void setLogoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
-    }
-
-    public Boolean isSingleChassis() {
-        return singleChassis;
-    }
-
-    public SeriesEdition singleChassis(Boolean singleChassis) {
-        this.singleChassis = singleChassis;
-        return this;
-    }
-
-    public void setSingleChassis(Boolean singleChassis) {
-        this.singleChassis = singleChassis;
-    }
-
-    public Boolean isSingleEngine() {
-        return singleEngine;
-    }
-
-    public SeriesEdition singleEngine(Boolean singleEngine) {
-        this.singleEngine = singleEngine;
-        return this;
-    }
-
-    public void setSingleEngine(Boolean singleEngine) {
-        this.singleEngine = singleEngine;
-    }
-
-    public Boolean isSingleTyre() {
-        return singleTyre;
-    }
-
-    public SeriesEdition singleTyre(Boolean singleTyre) {
-        this.singleTyre = singleTyre;
-        return this;
-    }
-
-    public void setSingleTyre(Boolean singleTyre) {
-        this.singleTyre = singleTyre;
-    }
-
-    public Boolean isMultidriver() {
-		return multidriver;
-	}
-
-	public void setMultidriver(Boolean multidriver) {
-		this.multidriver = multidriver;
-	}
-
-	public SortedSet<Category> getAllowedCategories() {
-        return allowedCategories;
-    }
-
-    public SeriesEdition allowedCategories(SortedSet<Category> categories) {
-    	if (allowedCategories == null) {
-    		this.allowedCategories = categories;
-    		return this;
-    	}
-    	this.allowedCategories.clear();
-        if (categories != null) {
-        	this.allowedCategories.addAll(categories);
-        }
-        return this;
-    }
-
-    public void setAllowedCategories(SortedSet<Category> categories) {
-    	if (allowedCategories == null) {
-    		this.allowedCategories = categories;
-    		return;
-    	}
-        this.allowedCategories.clear();
-        if (categories != null) {
-        	this.allowedCategories.addAll(categories);
-        }
-    }
-
-    public List<PointsSystem> getPointsSystems() {
-        return pointsSystems;
-    }
-
-    public SeriesEdition pointsSystems(List<PointsSystem> pointsSystems) {
-    	if (pointsSystems == null) {
-    		this.pointsSystems = pointsSystems;
-    		return this;
-    	}
-    	this.pointsSystems.clear();
-        if (pointsSystems != null) {
-        	this.pointsSystems.addAll(pointsSystems);
-        }
-        return this;
-    }
-
-    public void setPointsSystems(List<PointsSystem> pointsSystems) {
-    	this.pointsSystems = pointsSystems;
-    }
-
-    public Set<EventEdition> getEvents() {
-        return Optional.ofNullable(events).orElse(new HashSet<>());
-	}
-
-	public void setEvents(Set<EventEdition> events) {
-		this.events = events;
-	}
 
 	public void addEvent(EventEdition event) {
         Set<EventEdition> events = getEvents();
@@ -343,10 +190,6 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     public void removeEvent(EventEdition event) {
         this.events.remove(event);
         event.getSeriesEditions().remove(this);
-    }
-
-	public Series getSeries() {
-        return series;
     }
 
 //    public List<Driver> getDriversChampions() {
@@ -362,104 +205,4 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 //		this.driversChampions = driversChampions;
 //	}
 
-	public List<Team> getTeamsChampions() {
-		return teamsChampions;
-	}
-
-	public SeriesEdition teamsChampions(List<Team> teamsChampions) {
-		this.teamsChampions = teamsChampions;
-		return this;
-	}
-
-	public void setTeamsChampions(List<Team> teamsChampions) {
-		this.teamsChampions = teamsChampions;
-	}
-
-	public SeriesEdition series(Series series) {
-        this.series = series;
-        return this;
-    }
-
-    public void setSeries(Series series) {
-        this.series = series;
-    }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
-
-    public Boolean getDriversStandings() {
-		return driversStandings;
-	}
-
-	public void setDriversStandings(Boolean driversStandings) {
-		this.driversStandings = driversStandings;
-	}
-
-	public Boolean getTeamsStandings() {
-		return teamsStandings;
-	}
-
-	public void setTeamsStandings(Boolean teamsStandings) {
-		this.teamsStandings = teamsStandings;
-	}
-
-	public Boolean getManufacturersStandings() {
-		return manufacturersStandings;
-	}
-
-	public void setManufacturersStandings(Boolean manufacturersStandings) {
-		this.manufacturersStandings = manufacturersStandings;
-	}
-
-	public Integer getNumEvents() {
-		return numEvents;
-	}
-
-	public SeriesEdition numEvents(Integer numEvents) {
-		this.numEvents = numEvents;
-		return this;
-	}
-
-	public void setNumEvents(Integer numEvents) {
-		this.numEvents = numEvents;
-	}
-
-	public void setStadingsPerCategory(Boolean standingsPerCategory) {
-		this.standingsPerCategory = standingsPerCategory;
-	}
-
-	public SeriesEdition stadingsPerCategory(Boolean standingsPerCategory) {
-		this.standingsPerCategory = standingsPerCategory;
-		return this;
-	}
-
-	public Boolean getStandingsPerCategory() {
-		return this.standingsPerCategory;
-	}
-
-	@Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof SeriesEdition)) {
-            return false;
-        }
-        return id != null && id.equals(((SeriesEdition) o).id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "SeriesEdition{" +
-            "id=" + getId() +
-            ", name='" + getEditionName() + "'" +
-            ", period='" + getPeriod() + "'" +
-            ", singleChassis='" + isSingleChassis() + "'" +
-            ", singleEngine='" + isSingleEngine() + "'" +
-            ", singleTyre='" + isSingleTyre() + "'" +
-            "}";
-    }
 }

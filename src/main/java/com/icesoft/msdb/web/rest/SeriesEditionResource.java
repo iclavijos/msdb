@@ -136,7 +136,7 @@ public class SeriesEditionResource {
         seriesEdition.setEvents(seriesEditionRepository.getOne(seriesEdition.getId()).getEvents());
         if (seriesEdition.getLogo() != null) {
             String cdnUrl = cdnService.uploadImage(seriesEdition.getId().toString(), seriesEdition.getLogo(), ENTITY_NAME);
-            seriesEdition.logoUrl(cdnUrl);
+            seriesEdition.setLogoUrl(cdnUrl);
         } else if (seriesEdition.getLogoUrl() == null) {
             cdnService.deleteImage(seriesEdition.getId().toString(), ENTITY_NAME);
         }
