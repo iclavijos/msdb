@@ -1,28 +1,13 @@
 package com.icesoft.msdb.service.impl;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.firebase.messaging.*;
 import com.icesoft.msdb.domain.EventSession;
-import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.User;
-import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.service.MessagingService;
 import com.icesoft.msdb.service.UserService;
-import com.icesoft.msdb.service.dto.UserDTO;
-import com.mysql.cj.MessageBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
 
 @Service
 @Slf4j
