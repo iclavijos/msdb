@@ -15,7 +15,8 @@ export interface IDriver {
   portrait?: any;
   portraitUrl?: string;
   age?: number;
-  getDriverFaceImageUrl(): string;
+  getDriverFaceImageUrl(size?: number): string;
+  getFullName(): string;
   getCompositeName(): string;
 }
 
@@ -41,15 +42,19 @@ export class Driver implements IDriver {
     }
   }
 
+  getFullName(): string {
+    return `${this.name} ${this.surname}`
+  }
+
   getCompositeName(): string {
     return `${this.surname}, ${this.name}`
   }
 
-  getDriverFaceImageUrl(): string {
+  getDriverFaceImageUrl(size = 300): string {
     const tmpFaceUrl = this.portraitUrl
             ? this.portraitUrl
             : 'https://res.cloudinary.com/msdb-cloud/image/upload/v1518113603/generic.png';
-    return tmpFaceUrl.replace('upload/', 'upload/w_300,h_300,c_thumb,g_face/');
+    return tmpFaceUrl.replace('upload/', `upload/w_${size},h_${size},c_thumb,g_face/`);
   }
 }
 
