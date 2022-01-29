@@ -9,7 +9,7 @@
     </div>
     <div class="row">
         <div class="col-sm-12">
-            <div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
+            <div class="float-right" *ngIf="eventEdition.allowedCategories!.length > 1">
                 <mat-form-field>
                     <mat-label>Filter by category</mat-label>
                     <mat-select [(ngModel)]="categoryToFilter" (ngModelChange)="filterCategories()">
@@ -34,45 +34,45 @@
                                     {{entry.raceNumber}}
                                 </div>
                                 <div class="col fixed-width">
-                                    <span class="badge" [style.background]="entry.tyres.backgroundColor" [style.color]="entry.tyres.letterColor"
-                                          matTooltip="{{entry.tyres.name}}" matTooltipPosition="after">
-                                        <strong>{{ entry.tyres.name.substring(0,1) }}</strong>
+                                    <span class="badge" [style.background]="entry.tyres!.backgroundColor" [style.color]="entry.tyres!.letterColor"
+                                          matTooltip="{{entry.tyres!.name}}" matTooltipPosition="after">
+                                        <strong>{{ entry.tyres!.name!.substring(0,1) }}</strong>
                                     </span>
                                 </div>
-                                <div class="col-md-1" *ngIf="!entry.eventEdition.multidriver">
-                                    <img *ngIf="entry.drivers[0].driver.faceUrl" [src]="entry.drivers[0].driver.faceUrl" class="img-fluid"/>
+                                <div class="col-md-1" *ngIf="!entry.eventEdition!.multidriver">
+                                    <img [src]="entry.drivers?.[0]?.driver!.getDriverFaceImageUrl(120)" class="img-fluid"/>
                                 </div>
                                 <div class="col-md-5">
-                                    <div *ngIf="!entry.eventEdition.multidriver">
-                                        <span *ngIf="entry.drivers[0].category === 'PLATINUM'">P </span>
-                                        <span *ngIf="entry.drivers[0].category === 'GOLD'">G </span>
-                                        <span *ngIf="entry.drivers[0].category === 'SILVER'">S </span>
-                                        <span *ngIf="entry.drivers[0].category === 'BRONZE'">B </span>
-                                        <img *ngIf="entry.drivers[0].driver.nationality" src="/images/flags16/{{entry.drivers[0].driver.nationality.countryCode}}.png"/>
-                                        <a [routerLink]="['/driver', entry.drivers[0].driver.id, 'view' ]" >
-                                            {{ entry.drivers[0].driver.fullName }}
+                                    <div *ngIf="!entry.eventEdition!.multidriver">
+                                        <span *ngIf="entry.drivers?.[0]?.category === 'PLATINUM'">P </span>
+                                        <span *ngIf="entry.drivers?.[0]?.category === 'GOLD'">G </span>
+                                        <span *ngIf="entry.drivers?.[0]?.category === 'SILVER'">S </span>
+                                        <span *ngIf="entry.drivers?.[0]?.category === 'BRONZE'">B </span>
+                                        <img *ngIf="entry.drivers?.[0]?.driver!.nationality" src="/images/flags16/{{entry.drivers?.[0]?.driver!.nationality!.countryCode}}.png"/>
+                                        <a [routerLink]="['/driver', entry.drivers?.[0]?.driver!.id, 'view' ]" >
+                                            {{ entry.drivers?.[0]?.driver!.getFullName() }}
                                         </a>
-                                        <span *ngIf="entry.drivers[0].rookie"> (R)</span>
+                                        <span *ngIf="entry.drivers?.[0]?.rookie"> (R)</span>
                                     </div>
-                                    <div *ngIf="entry.eventEdition.multidriver">
+                                    <div *ngIf="entry.eventEdition!.multidriver">
                                         <div *ngFor="let entryDriver of entry.drivers">
                                             <div *ngIf="entryDriver.category === 'PLATINUM'" class="platinum"></div>
                                             <div *ngIf="entryDriver.category === 'GOLD'" class="gold"></div>
                                             <span *ngIf="entryDriver.category === 'SILVER'" class="silver"></span>
                                             <span *ngIf="entryDriver.category === 'BRONZE'" class="bronze"></span>
-                                            <img *ngIf="entryDriver.driver.nationality" src="/images/flags16/{{entryDriver.driver.nationality.countryCode}}.png"/>
-                                            <a [routerLink]="['/driver', entryDriver.driver.id, 'view' ]" >
-                                                {{ entryDriver.driver.fullName }}
+                                            <img *ngIf="entryDriver.driver!.nationality" src="/images/flags16/{{entryDriver.driver!.nationality.countryCode}}.png"/>
+                                            <a [routerLink]="['/driver', entryDriver.driver!.id, 'view' ]" >
+                                                {{ entryDriver.driver!.getFullName() }}
                                             </a>
                                             <span *ngIf="entryDriver.rookie"> (R)</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-3">{{entry.entryName}}</div>
-                                <div class="col-md-1" *ngIf="eventEdition.allowedCategories.length != 1">
-                                        <span *ngIf="!entry.category.categoryColor">{{ entry.category.shortname }}</span>
-                                        <span *ngIf="entry.category.categoryColor" class="badge" [style.background]="entry.category.categoryColor" [style.color]="'#FFFFFF'">
-                                            <h5><strong>{{ entry.category.shortname }}</strong></h5>
+                                <div class="col-md-1" *ngIf="eventEdition.allowedCategories!.length != 1">
+                                        <span *ngIf="!entry.category!.categoryColor">{{ entry.category!.shortname }}</span>
+                                        <span *ngIf="entry.category!.categoryColor" class="badge" [style.background]="entry.category!.categoryColor" [style.color]="entry.category!.categoryFrontColor">
+                                            <h5><strong>{{ entry.category!.shortname }}</strong></h5>
                                         </span>
                                 </div>
                                 <div class="col-md-2"><img *ngIf="entry.carImageUrl" [src]="entry.carImageUrl" class="img-fluid" alt="car image"/></div>
@@ -114,20 +114,18 @@
                                         <img [src]="entry.fuel?.logoUrl" class="img-fluid logo-img" alt="fuel logo"/>
                                     </a>
                                 </div><br>
-                                <label *ngIf="eventEdition.allowedCategories.length != 1"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category">Category</span></label>
-                                <div *ngIf="eventEdition.allowedCategories.length != 1">
-                                    {{entry.category.shortname}}
+                                <label *ngIf="eventEdition.allowedCategories!.length != 1"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category">Category</span></label>
+                                <div *ngIf="eventEdition.allowedCategories!.length != 1">
+                                    {{entry.category?.shortname}}
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div *ngIf="entry.eventEdition.multidriver">
+                                <div *ngIf="entry.eventEdition!.multidriver">
                                     <div class="row">
                                         <div class="col-md-2" *ngFor="let entryDriver of entry.drivers">
                                             <figure class="figure">
-                                                <img *ngIf="entryDriver.driver.faceUrl" [src]="getSmallFaceUrl(entryDriver.driver.portraitUrl)" alt="{{ entryDriver.driver.fullName }}"/>
-                                                <img *ngIf="!entryDriver.driver.faceUrl"
-                                                     [src]="getSmallFaceUrl('https://res.cloudinary.com/msdb-cloud/image/upload/v1518113603/generic.png')" alt="{{entryDriver.driver.fullName}}"/>
-                                                <figcaption class="figure-caption text-center">{{entryDriver.driver.surname}}</figcaption>
+                                                <img [src]="entryDriver.driver!.getDriverFaceImageUrl(120)" alt="{{ entryDriver.driver!.getFullName() }}"/>
+                                                <figcaption class="figure-caption text-center">{{entryDriver.driver!.surname}}</figcaption>
                                             </figure>
                                         </div>
                                     </div>
@@ -142,7 +140,7 @@
                                     <span class="fa fa-pencil"></span>
                                 </button>
                                 <button type="submit" *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                        (click)="deleteEntry(entry)"
+                                        (click)="delete(entry)"
                                         class="btn btn-danger btn-sm">
                                     <span class="fa fa-remove"></span>
                                 </button>

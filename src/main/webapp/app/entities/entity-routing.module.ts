@@ -25,6 +25,11 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./engine/engine.module').then(m => m.EngineModule),
       },
       {
+        path: 'event-entry',
+        data: { pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title' },
+        loadChildren: () => import('./event-entry/event-entry.module').then(m => m.EventEntryModule),
+      },
+      {
         path: 'event-session',
         data: { pageTitle: 'motorsportsDatabaseApp.eventSession.home.title' },
         loadChildren: () => import('./event-session/event-session.module').then(m => m.EventSessionModule),
@@ -69,11 +74,6 @@ import { RouterModule } from '@angular/router';
         data: { pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title' },
         loadChildren: () => import('./tyre-provider/tyre-provider.module').then(m => m.TyreProviderModule),
       },
-//       {
-//         path: 'event-entry',
-//         data: { pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title' },
-//         loadChildren: () => import('./event-entry/event-entry.module').then(m => m.EventEntryModule),
-//       },
 
 //       {
 //         path: 'event-entry-result',

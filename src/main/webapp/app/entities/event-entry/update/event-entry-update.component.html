@@ -36,7 +36,7 @@
                                           (optionSelected)="selectedDriver($event, driverIndex)"
                                           [displayWith]="displayFnDrivers">
                             <mat-option *ngFor="let driver of (driversOptions | async)" [value]="driver">
-                                <span>{{ driver.fullName }}</span>
+                                <span>{{ driver.getFullName() }}</span>
                             </mat-option>
                         </mat-autocomplete>
                     </mat-form-field>
@@ -48,8 +48,8 @@
                         </mat-label>
                         <mat-select name="category" formControlName="category">
                             <mat-option value=""></mat-option>
-                            <mat-option *ngFor="let category of categoryKeys()" [value]="category.toUpperCase()">
-                                {{'motorsportsDatabaseApp.eventEdition.enumerations.' + category | translate}}
+                            <mat-option *ngFor="let category of categoryValues | keyvalue" [value]="category.value.toUpperCase()">
+                                {{'motorsportsDatabaseApp.eventEdition.enumerations.' + category.key | translate}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
@@ -62,13 +62,13 @@
                     </div>
                 </div>
                 <div class="col-md-1">
-                    <button mat-button *ngIf="eventEntry.eventEdition.multidriver" type="button"
+                    <button mat-button *ngIf="eventEntry.eventEdition?.multidriver" type="button"
                             (click)="removeDriverEntry(driverIndex)" class="btn btn-secondary btn-sm pull-right">
                         <span class="fa fa-times"></span>
                     </button>
                 </div>
             </div>
-            <button mat-button class="btn btn-secondary" *ngIf="eventEntry.eventEdition.multidriver"
+            <button mat-button class="btn btn-secondary" *ngIf="eventEntry.eventEdition?.multidriver"
                     type="button" (click)="addDriverEntry()">Add</button>
         </div>
     </div>
@@ -147,12 +147,12 @@
             </mat-form-field>
         </div>
     </div>
-    <div class="row" *ngIf="eventEntry.eventEdition.allowedCategories.length > 1">
+    <div class="row" *ngIf="allowedCategories().length > 1">
         <div class="col-12">
             <div class="form-group">
                 <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category">Category</label>
                 <mat-radio-group class="categories-radio-group" formControlName="category" required>
-                    <mat-radio-button *ngFor="let category of eventEntry.eventEdition.allowedCategories" [value]="category" [checked]="category.id === eventEntry.category?.id">
+                    <mat-radio-button *ngFor="let category of allowedCategories()" [value]="category" [checked]="category.id === eventEntry.category?.id">
                         {{ category.name }}
                     </mat-radio-button>
                 </mat-radio-group>
@@ -166,9 +166,9 @@
         <div class="col-md-5">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.carImage" for="field_carImage">Portrait</label>
             <div>
-                <img [src]="editForm.get('carImageUrl').value" style="max-height: 100px;" *ngIf="!editForm.get('carImage').value && editForm.get('carImageUrl').value != null" alt="car image"/>
-                <img [src]="'data:' + editForm.get('carImageContentType').value + ';base64,' + editForm.get('carImage').value" style="max-height: 100px;" *ngIf="editForm.get('carImage').value" alt="car image"/>
-                <div *ngIf="editForm.get('carImage').value" class="form-text text-danger clearfix">
+                <img [src]="editForm.get('carImageUrl')?.value" style="max-height: 100px;" *ngIf="!editForm.get('carImage')?.value && editForm.get('carImageUrl')?.value != null" alt="car image"/>
+                <img [src]="'data:' + editForm.get('carImageContentType')?.value + ';base64,' + editForm.get('carImage')?.value" style="max-height: 100px;" *ngIf="editForm.get('carImage')?.value" alt="car image"/>
+                <div *ngIf="editForm.get('carImage')?.value" class="form-text text-danger clearfix">
                     <button type="button" (click)="clearInputImage('carImage', 'carImageContentType', 'fileImage')" class="btn btn-secondary btn-sm pull-right">
                         <span class="fa fa-times"></span>
                     </button>
@@ -181,7 +181,7 @@
     </div>
 </div>
 <mat-dialog-actions align="end">
-    <button mat-button class="btn btn-secondary" (click)="close()">
+    <button mat-button class="btn btn-secondary" (click)="previousState()">
         <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
     </button>
     <button mat-button (click)="save()" [disabled]="editForm.invalid || isSaving" class="btn btn-primary" >

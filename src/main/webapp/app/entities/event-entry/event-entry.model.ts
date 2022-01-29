@@ -1,11 +1,11 @@
 import { IDriverEntry } from './driver-entry.model';
-import { ITeam } from './team.model';
-import { IChassis } from './chassis.model';
-import { IEngine } from './engine.model';
-import { ITyreProvider } from './tyre-provider.model';
-import { IFuelProvider } from './fuel-provider.model';
-import { ICategory } from './category.model';
-import { IEventEdition } from './event-edition.model';
+import { ITeam } from 'app/entities/team/team.model';
+import { IChassis } from 'app/entities/chassis/chassis.model';
+import { IEngine } from 'app/entities/engine/engine.model';
+import { ITyreProvider } from 'app/entities/tyre-provider/tyre-provider.model';
+import { IFuelProvider } from 'app/entities/fuel-provider/fuel-provider.model';
+import { ICategory } from 'app/entities/category/category.model';
+import { IEventEdition } from 'app/entities/event-edition/event-edition.model';
 
 export interface IEventEntry {
   id?: number;
@@ -47,4 +47,8 @@ export class EventEntry implements IEventEntry {
     public carImageContentType?: any,
     public carImageUrl?: string
   ) {}
+}
+
+export function getEventEntryIdentifier(eventEntry: IEventEntry): number | undefined {
+  return eventEntry.id;
 }
