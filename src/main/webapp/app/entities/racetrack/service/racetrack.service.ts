@@ -9,7 +9,7 @@ import { createRequestOption } from 'app/core/request/request-util';
 import { SearchWithPagination } from 'app/core/request/request.model';
 import { IRacetrack, getRacetrackIdentifier } from '../racetrack.model';
 import { IRacetrackLayout } from '../../racetrack-layout/racetrack-layout.model';
-import { EventEditionAndWinners } from 'app/shared/model/event-edition.model';
+import { EventEditionAndWinners } from 'app/entities/event-edition/event-edition.model';
 
 export type EntityResponseType = HttpResponse<IRacetrack>;
 export type EntityArrayResponseType = HttpResponse<IRacetrack[]>;

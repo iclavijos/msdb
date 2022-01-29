@@ -106,6 +106,7 @@
     "@fullcalendar/timeline": "^5.10.1",
     "@mdi/font": "^6.5.95",
     "@ng-bootstrap/ng-bootstrap": "11.0.0",
+    "@ng-matero/extensions": "13.0.1",
     "@ngx-translate/core": "14.0.0",
     "@ngx-translate/http-loader": "7.0.0",
     "ajv": "8.6.1",

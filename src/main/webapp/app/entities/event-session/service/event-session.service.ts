@@ -1,35 +1,30 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { DATE_FORMAT } from '../../shared/constants/input.constants';
 import { map } from 'rxjs/operators';
+import * as dayjs from 'dayjs';
 
-import { SERVER_API_URL } from '../../app.constants';
-import { createRequestOption } from '../../shared/util/request-util';
-import { IEventSession } from '../../shared/model/event-session.model';
+import { ApplicationConfigService } from 'app/core/config/application-config.service';
+import { createRequestOption } from 'app/core/request/request-util';
+import { Search } from 'app/core/request/request.model';
+import { IEventSession, getEventSessionIdentifier } from '../event-session.model';
+import { SessionType } from 'app/shared/enumerations/sessionType.enum';
+import { IDriverAverages } from 'app/shared/model/driver-averages.model';
+import { ILapPositions } from 'app/shared/model/lap-positions.model';
 
-import { SessionType } from '../../shared/enumerations/sessionType.enum';
-
-import { IDriverAverages } from '../../shared/model/driver-averages.model';
-import { ILapPositions } from '../../shared/model/lap-positions.model';
-
-type EntityResponseType = HttpResponse<IEventSession>;
-type EntityArrayResponseType = HttpResponse<IEventSession[]>;
-
-import * as moment from 'moment';
-import 'moment-timezone';
+export type EntityResponseType = HttpResponse<IEventSession>;
+export type EntityArrayResponseType = HttpResponse<IEventSession[]>;
 
 @Injectable({ providedIn: 'root' })
 export class EventSessionService {
-  public resourceUrl = `${SERVER_API_URL as string}api/event-editions/event-sessions`;
-  public resourceSearchUrl = `${SERVER_API_URL as string}api/_search/event-sessions`;
-  public resourceEventEditionUrl = `${SERVER_API_URL as string}api/event-editions`;
-  public resourceGeoLocationUrl = `${SERVER_API_URL as string}api/timezone`;
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/event-sessions');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/event-sessions');
+  protected resourceEventEditionUrl = this.applicationConfigService.getEndpointFor('api/event-editions');
+  protected resourceGeoLocationUrl = this.applicationConfigService.getEndpointFor('api/timezone');
 
   private sessionTypes = SessionType;
 
-  constructor(protected http: HttpClient) {}
+  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
   create(eventSession: IEventSession): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(eventSession);
@@ -41,7 +36,14 @@ export class EventSessionService {
   update(eventSession: IEventSession): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(eventSession);
     return this.http
-      .put<IEventSession>(this.resourceUrl, copy, { observe: 'response' })
+      .put<IEventSession>(`${this.resourceUrl}/${getEventSessionIdentifier(eventSession) as number}`, copy, { observe: 'response' })
+      .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
+  }
+
+  partialUpdate(eventSession: IEventSession): Observable<EntityResponseType> {
+    const copy = this.convertDateFromClient(eventSession);
+    return this.http
+      .patch<IEventSession>(`${this.resourceUrl}/${getEventSessionIdentifier(eventSession) as number}`, copy, { observe: 'response' })
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
@@ -58,11 +60,11 @@ export class EventSessionService {
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 
-  delete(id: number): Observable<HttpResponse<any>> {
-    return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  delete(id: number): Observable<HttpResponse<{}>> {
+    return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  search(req?: any): Observable<EntityArrayResponseType> {
+  search(req: Search): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http
       .get<IEventSession[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
@@ -108,16 +110,14 @@ export class EventSessionService {
   }
 
   protected convertDateFromClient(eventSession: IEventSession): IEventSession {
-    const copy: IEventSession = Object.assign({}, eventSession, {
-      sessionStartTime:
-        eventSession.sessionStartTime?.isValid() ? eventSession.sessionStartTime.unix() : null
+    return Object.assign({}, eventSession, {
+      sessionStartTime: eventSession.sessionStartTime?.isValid() ? eventSession.sessionStartTime.toJSON() : undefined,
     });
-    return copy;
   }
 
   protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
     if (res.body) {
-      res.body.sessionStartTime = res.body.sessionStartTime != null ? moment(res.body.sessionStartTime) : null;
+      res.body.sessionStartTime = res.body.sessionStartTime ? dayjs(res.body.sessionStartTime) : undefined;
     }
     return res;
   }
@@ -125,7 +125,7 @@ export class EventSessionService {
   protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((eventSession: IEventSession) => {
-        eventSession.sessionStartTime = eventSession.sessionStartTime != null ? moment(eventSession.sessionStartTime) : null;
+        eventSession.sessionStartTime = eventSession.sessionStartTime ? dayjs(eventSession.sessionStartTime) : undefined;
       });
     }
     return res;
@@ -134,11 +134,11 @@ export class EventSessionService {
   private transformDateTime(res: EntityArrayResponseType, timeZone: string): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((eventSession: IEventSession) => {
-        eventSession.sessionType = this.sessionTypes[this.sessionTypes[eventSession.sessionTypeValue]];
+        // eventSession.sessionType = SessionType[eventSession.sessionType!];
         eventSession.sessionStartTime =
           eventSession.sessionStartTime != null
-            ? moment(Number(eventSession.sessionStartTime) * 1000).tz(timeZone ? timeZone : eventSession.locationTimeZone)
-            : null;
+            ? dayjs(Number(eventSession.sessionStartTime) * 1000).tz(timeZone ? timeZone : eventSession.locationTimeZone)
+            : undefined;
       });
     }
     return res;

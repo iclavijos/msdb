@@ -1,15 +1,15 @@
-import { Moment } from 'moment';
-import { IEventEdition } from './event-edition.model';
+import * as dayjs from 'dayjs';
+import { IEventEdition } from 'app/entities/event-edition/event-edition.model';
 
-import { DurationType } from '../enumerations/durationType.enum';
-import { SessionType } from '../enumerations/sessionType.enum';
+import { DurationType } from 'app/shared/enumerations/durationType.enum';
+import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 
 export interface IEventSession {
   id?: number;
   name?: string;
   shortname?: string;
-  sessionStartTime?: Moment;
-  originalStartTime?: Moment;
+  sessionStartTime?: dayjs.Dayjs;
+  originalStartTime?: dayjs.Dayjs;
   duration?: number;
   totalDuration?: number;
   maxDuration?: number;
@@ -28,8 +28,8 @@ export class EventSession implements IEventSession {
     public id?: number,
     public name?: string,
     public shortname?: string,
-    public sessionStartTime?: Moment,
-    public originalStartTime?: Moment,
+    public sessionStartTime?: dayjs.Dayjs,
+    public originalStartTime?: dayjs.Dayjs,
     public duration?: number,
     public totalDuration?: number,
     public maxDuration?: number,
@@ -42,4 +42,8 @@ export class EventSession implements IEventSession {
     public location?: string,
     public locationTimeZone?: string
   ) {}
+}
+
+export function getEventSessionIdentifier(eventSession: IEventSession): number | undefined {
+  return eventSession.id;
 }
