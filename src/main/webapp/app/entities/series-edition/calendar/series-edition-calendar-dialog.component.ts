@@ -5,10 +5,9 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators, FormGroup, FormControl, ValidationErrors, FormArray } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { switchMap, debounceTime, map } from 'rxjs/operators';
-import { JhiAlertService } from 'ng-jhipster';
 
-import { IEventEdition } from 'app/entities/event-edition/event-edition.model';
-import { EventEditionService } from 'app/entities/event-edition/service/event-edition.service';
+import { IEventEdition } from 'app/shared/model/event-edition.model';
+import { EventEditionService } from 'app/entities/event-edition/event-edition.service';
 import { EventSessionService } from 'app/entities/event-session/service/event-session.service';
 import { IEventSession } from 'app/entities/event-session/event-session.model';
 import { ISeriesEdition } from '../series-edition.model';
@@ -38,7 +37,6 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
     private seriesEditionService: SeriesEditionService,
     private eventEditionService: EventEditionService,
     private eventSessionService: EventSessionService,
-    private alertService: JhiAlertService,
     private dialogRef: MatDialogRef<SeriesEditionCalendarDialogComponent>,
     @Inject(MAT_DIALOG_DATA) data: any
   ) {
@@ -54,11 +52,9 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
   ngOnInit(): void {
     this.isSaving = false;
 
-    if (this.eventEdition) {
-      this.editForm.patchValue({
-        event: this.eventEdition
-      });
-    }
+    this.editForm.patchValue({
+      event: this.eventEdition
+    });
 
     this.displayFnEvents = this.displayFnEvents.bind(this);
 
@@ -76,9 +72,7 @@ export class SeriesEditionCalendarDialogComponent implements OnInit {
       map(response => (response ? response.body : null))
     );
 
-    if (this.eventEdition) {
-      this.updateUI();
-    }
+    this.updateUI();
   }
 
   initSession(session: IEventSession): void {

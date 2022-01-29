@@ -1,4 +1,4 @@
-import { IEventEdition } from './event-edition.model';
+import { IEventEdition } from 'app/entities/event-edition/event-edition.model';
 
 export interface IEvent {
   id?: number;

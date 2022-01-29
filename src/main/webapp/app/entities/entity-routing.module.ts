@@ -25,6 +25,11 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./engine/engine.module').then(m => m.EngineModule),
       },
       {
+        path: 'event-session',
+        data: { pageTitle: 'motorsportsDatabaseApp.eventSession.home.title' },
+        loadChildren: () => import('./event-session/event-session.module').then(m => m.EventSessionModule),
+      },
+      {
         path: 'fuel-provider',
         data: { pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title' },
         loadChildren: () => import('./fuel-provider/fuel-provider.module').then(m => m.FuelProviderModule),
@@ -44,16 +49,16 @@ import { RouterModule } from '@angular/router';
         data: { pageTitle: 'motorsportsDatabaseApp.racetrackLayout.home.title' },
         loadChildren: () => import('./racetrack-layout/racetrack-layout.module').then(m => m.RacetrackLayoutModule),
       },
-      {
-        path: 'series',
-        data: { pageTitle: 'motorsportsDatabaseApp.series.home.title' },
-        loadChildren: () => import('./series/series.module').then(m => m.SeriesModule),
-      },
-      {
-        path: 'series-edition',
-        data: { pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title' },
-        loadChildren: () => import('./series-edition/series-edition.module').then(m => m.SeriesEditionModule),
-      },
+//       {
+//         path: 'series',
+//         data: { pageTitle: 'motorsportsDatabaseApp.series.home.title' },
+//         loadChildren: () => import('./series/series.module').then(m => m.SeriesModule),
+//       },
+//       {
+//         path: 'series-edition',
+//         data: { pageTitle: 'motorsportsDatabaseApp.seriesEdition.home.title' },
+//         loadChildren: () => import('./series-edition/series-edition.module').then(m => m.SeriesEditionModule),
+//       },
       {
         path: 'team',
         data: { pageTitle: 'motorsportsDatabaseApp.team.home.title' },
@@ -69,11 +74,7 @@ import { RouterModule } from '@angular/router';
 //         data: { pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title' },
 //         loadChildren: () => import('./event-entry/event-entry.module').then(m => m.EventEntryModule),
 //       },
-//       {
-//         path: 'event-session',
-//         data: { pageTitle: 'motorsportsDatabaseApp.eventSession.home.title' },
-//         loadChildren: () => import('./event-session/event-session.module').then(m => m.EventSessionModule),
-//       },
+
 //       {
 //         path: 'event-entry-result',
 //         data: { pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title' },

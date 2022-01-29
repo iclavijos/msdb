@@ -4,6 +4,11 @@
 put Sass variables here:
 eg $input-color: red;
 ****************************/
+@use '@ng-matero/extensions' as mtx;
+
+// @include mtx.all-component-themes($theme);
+// @include mtx.all-experimental-component-themes($theme);
+
 // Override Bootstrap variables
 @import 'bootstrap-variables';
 // Import Bootstrap source files from node_modules

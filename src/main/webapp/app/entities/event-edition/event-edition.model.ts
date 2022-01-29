@@ -1,8 +1,8 @@
 import { ICategory } from 'app/entities/category/category.model';
 import { IRacetrackLayout } from 'app/entities/racetrack-layout/racetrack-layout.model';
-import { ISeriesEdition } from './series-edition.model';
-import { IEvent } from './event.model';
-import { IEventSession } from './event-session.model';
+import { ISeriesEdition } from 'app/entities/series-edition/series-edition.model';
+import { IEvent } from 'app/entities/event/event.model';
+import { IEventSession } from 'app/entities/event-session/event-session.model';
 
 import * as dayjs from 'dayjs';
 

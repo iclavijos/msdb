@@ -1,17 +1,13 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { SharedModule } from '../../shared/shared.module';
-import { EventSessionComponent } from './event-session.component';
-import { EventSessionUpdateComponent } from './event-session-update.component';
-import { EventSessionDeleteDialogComponent } from './event-session-delete-dialog.component';
-import { eventSessionRoute } from './event-session.route';
-
-const ENTITY_STATES = [...eventSessionRoute];
+import { SharedModule } from 'app/shared/shared.module';
+import { EventSessionComponent } from './list/event-session.component';
+import { EventSessionUpdateComponent } from './update/event-session-update.component';
+import { EventSessionDeleteDialogComponent } from './delete/event-session-delete-dialog.component';
+import { EventSessionRoutingModule } from './route/event-session-routing.module';
 
 @NgModule({
-  imports: [SharedModule, RouterModule.forChild(ENTITY_STATES)],
+  imports: [SharedModule, EventSessionRoutingModule],
   declarations: [EventSessionComponent, EventSessionUpdateComponent, EventSessionDeleteDialogComponent],
-  exports: [EventSessionComponent]
+  entryComponents: [EventSessionDeleteDialogComponent],
 })
-export class MotorsportsDatabaseEventSessionModule {}
+export class EventSessionModule {}

@@ -10,7 +10,7 @@ import { RacetrackService } from '../service/racetrack.service';
 import { IRacetrackLayout } from 'app/entities/racetrack-layout/racetrack-layout.model';
 import { RacetrackLayoutDeleteDialogComponent } from 'app/entities/racetrack-layout/delete/racetrack-layout-delete-dialog.component';
 import { RacetrackLayoutService } from 'app/entities/racetrack-layout/service/racetrack-layout.service';
-import { EventEditionAndWinners } from 'app/shared/model/event-edition.model';
+import { EventEditionAndWinners } from 'app/entities/event-edition/event-edition.model';
 
 import { DataUtils } from 'app/core/util/data-util.service';
 
@@ -101,9 +101,11 @@ export class RacetrackDetailComponent implements OnInit, AfterViewInit {
   }
 
   private loadPreviousEvents(id: number): Observable<HttpResponse<EventEditionAndWinners[]>> {
-    return this.racetrackService.findPrevEvents(id, {
+    const result = this.racetrackService.findPrevEvents(id, {
       page: this.paginator.pageIndex,
       size: this.paginator.pageSize
     });
+
+    return result;
   }
 }
