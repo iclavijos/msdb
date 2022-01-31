@@ -1,6 +1,6 @@
 <div>
     <div class="row">
-        <div class="col-sm-12" *ngIf="eventEntries?.length > 0">
+        <div class="col-sm-12" *ngIf="(eventEntries ?? []).length > 0">
             <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                     class="btn btn-primary float-right create-event-entry-result"
                     (click)="addResult()">
@@ -30,7 +30,7 @@
             </button>
         </div>
         <div class="col-sm-12">
-            <div class="float-right" *ngIf="eventEdition.allowedCategories.length > 1">
+            <div class="float-right" *ngIf="getEventAllowedCategories().length > 1">
                 <mat-form-field>
                     <mat-label>Filter by category</mat-label>
                     <mat-select [(ngModel)]="categoryToFilter" (ngModelChange)="filterCategory()">

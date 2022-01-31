@@ -2,7 +2,7 @@
 <div mat-dialog-content [formGroup]="editForm">
     <jhi-alert-error></jhi-alert-error>
     <div class="row">
-        <div class="col-3" *ngIf="eventEntryResult.session.sessionType === sessionTypes['race']">
+        <div class="col-3" *ngIf="eventEntryResult.session!.sessionType === sessionTypes['race']">
             <mat-form-field class="example-full-width">
                 <mat-label>
                     {{'motorsportsDatabaseApp.eventEdition.result.startingPosition' | translate}}
@@ -39,13 +39,13 @@
                 </mat-label>
                 <mat-select formControlName="entry" [compareWith]="trackEntryById" required>
                     <mat-option *ngFor="let entry of entries" [value]="entry">
-                        #{{entry.raceNumber}} <span *ngIf="!eventEdition.multidriver">{{entry.drivers[0].driver.fullName}}</span> <span *ngIf="eventEdition.multidriver">{{entry.driversName}}</span>
+                        #{{entry.raceNumber}} <span *ngIf="!eventEdition.multidriver">{{entry.drivers?.[0]!.driver!.getFullName()}}</span> <span *ngIf="eventEdition.multidriver">{{entry.driversName}}</span>
                     </mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
     </div>
-    <div *ngIf="eventEntryResult.session.sessionType !== sessionTypes['race']">
+    <div *ngIf="eventEntryResult.session!.sessionType !== sessionTypes['race']">
         <div class="row">
             <div class="col-3">
                 <mat-form-field class="example-full-width">
@@ -68,7 +68,7 @@
             </div>
         </div>
     </div>
-    <div *ngIf="eventEntryResult.session.sessionType === sessionTypes['race']">
+    <div *ngIf="eventEntryResult.session!.sessionType === sessionTypes['race']">
         <div class="row">
             <div class="col-3">
                 <mat-form-field class="example-full-width">
@@ -88,7 +88,7 @@
                     </mat-error>
                 </mat-form-field>
             </div>
-            <div class="col-6" *ngIf="editForm.get('finalPosition').value === 1">
+            <div class="col-6" *ngIf="editForm.get('finalPosition')!.value === 1">
                 <mat-form-field class="example-full-width">
                     <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.result.totalTime' | translate }}" type="text"
                            class="form-control" formControlName="totalTime" pattern="(\d{1,2}[h:])?[0-5]\d[':][0-5]?\d(\.[0-9]{0,4})?">
@@ -98,7 +98,7 @@
                     </mat-error>
                 </mat-form-field>
             </div>
-            <div class="col-6" *ngIf="editForm.get('finalPosition').value !== 1">
+            <div class="col-6" *ngIf="editForm.get('finalPosition')!.value !== 1">
                 <div class="row">
                     <div class="col-lg-4 col-md-4">
                         <div class="form-group">
@@ -114,7 +114,7 @@
                         </div>
                     </div>
                     <div class="col-lg-8 col-md-8">
-                        <mat-form-field class="example-full-width" *ngIf="editForm.get('differenceType').value !== '2'">
+                        <mat-form-field class="example-full-width" *ngIf="editForm.get('differenceType')!.value !== '2'">
                             <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.result.difference' | translate }}" type="text"
                                    class="form-control" formControlName="difference" pattern="([0-5]?\d[':])?[0-5]?\d(\.[0-9]{0,4})?">
                             <mat-hint>00'00.0000</mat-hint>
@@ -122,7 +122,7 @@
                                 Time Pattern Invalid
                             </mat-error>
                         </mat-form-field>
-                        <mat-form-field class="example-full-width" *ngIf="editForm.get('differenceType').value === '2'">
+                        <mat-form-field class="example-full-width" *ngIf="editForm.get('differenceType')!.value === '2'">
                             <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.result.difference' | translate }}" type="number"
                                    class="form-control" formControlName="difference">
                             <mat-hint>Number of laps</mat-hint>
@@ -162,7 +162,7 @@
                     {{ 'motorsportsDatabaseApp.eventEdition.result.retired' | translate }}
                 </mat-checkbox>
             </div>
-            <div class="col-6" *ngIf="editForm.get('retired').value">
+            <div class="col-6" *ngIf="editForm.get('retired')!.value">
                 <mat-form-field class="example-full-width">
                     <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.result.retirementCause' | translate }}" type="text"
                            class="form-control" formControlName="cause" maxlength="100">
@@ -180,10 +180,10 @@
                 </mat-checkbox>
             </div>
             <div class="col-6">
-                <mat-form-field class="example-full-width" *ngIf="editForm.get('sharedDrive').value">
+                <mat-form-field class="example-full-width" *ngIf="editForm.get('sharedDrive')!.value">
                     <mat-select formControlName="sharedWith" [compareWith]="trackEntryById" required>
                         <mat-option *ngFor="let entry of entries" [value]="entry">
-                            #{{entry.raceNumber}} <span *ngIf="!eventEdition.multidriver">{{entry.drivers[0].fullName}}</span> <span *ngIf="eventEdition.multidriver">{{entry.driversName}}</span>
+                            #{{entry.raceNumber}} <span *ngIf="!eventEdition.multidriver">{{entry.drivers?.[0]!.driver!.getFullName()}}</span> <span *ngIf="eventEdition.multidriver">{{entry.driversName}}</span>
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -192,7 +192,7 @@
     </div>
 </div>
 <mat-dialog-actions align="end">
-    <button mat-button class="btn btn-secondary" (click)="close()">
+    <button mat-button class="btn btn-secondary" (click)="previousState()">
         <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
     </button>
     <button mat-button (click)="save()" [disabled]="editForm.invalid || isSaving" class="btn btn-primary" >
