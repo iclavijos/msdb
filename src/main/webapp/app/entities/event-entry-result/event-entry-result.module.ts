@@ -1,25 +1,21 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { SharedModule } from '../../shared/shared.module';
-import { EventEntryResultComponent } from './event-entry-result.component';
-import { EventEntryResultUpdateComponent } from './event-entry-result-update.component';
-import { EventEntryUploadResultsComponent } from './event-entry-result-upload.component';
-import { EventEntryResultUploadLapByLapComponent } from './event-entry-result-upload-lapbylap.component';
-import { EventEntryResultDeleteDialogComponent } from './event-entry-result-delete-dialog.component';
-import { eventEntryResultRoute, eventEntryResultPopupRoute } from './event-entry-result.route';
-
-const ENTITY_STATES = [...eventEntryResultRoute, ...eventEntryResultPopupRoute];
+import { SharedModule } from 'app/shared/shared.module';
+import { EventEntryResultComponent } from './list/event-entry-result.component';
+import { EventEntryResultUpdateComponent } from './update/event-entry-result-update.component';
+import { EventEntryUploadResultsComponent } from './upload/event-entry-result-upload.component';
+import { EventEntryResultUploadLapByLapComponent } from './upload/event-entry-result-upload-lapbylap.component';
+import { EventEntryResultDeleteDialogComponent } from './delete/event-entry-result-delete-dialog.component';
+import { EventEntryResultRoutingModule } from './route/event-entry-result-routing.module';
 
 @NgModule({
-  imports: [SharedModule, RouterModule.forChild(ENTITY_STATES)],
+  imports: [SharedModule, EventEntryResultRoutingModule],
   declarations: [
     EventEntryResultComponent,
     EventEntryResultUpdateComponent,
+    EventEntryResultDeleteDialogComponent,
     EventEntryUploadResultsComponent,
-    EventEntryResultUploadLapByLapComponent,
-    EventEntryResultDeleteDialogComponent
+    EventEntryResultUploadLapByLapComponent
   ],
-  exports: [EventEntryResultComponent]
+  entryComponents: [EventEntryResultDeleteDialogComponent],
 })
-export class MotorsportsDatabaseEventEntryResultModule {}
+export class EventEntryResultModule {}

@@ -1,5 +1,5 @@
-import { IEventSession } from './event-session.model';
-import { IEventEntry } from './event-entry.model';
+import { IEventSession } from 'app/entities/event-session/event-session.model';
+import { IEventEntry } from 'app/entities/event-entry/event-entry.model';
 
 export interface IEventEntryResult {
   id?: number;
@@ -42,4 +42,8 @@ export class EventEntryResult implements IEventEntryResult {
     this.retired = this.retired ?? false;
     this.invalidFastlap = this.invalidFastlap ?? false;
   }
+}
+
+export function getEventEntryResultIdentifier(eventEntryResult: IEventEntryResult): number | undefined {
+  return eventEntryResult.id;
 }

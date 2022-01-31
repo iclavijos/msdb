@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-12">
             <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.file">File</label>
-            <input type="file" formControlName="file" (change)="setFileData($event)" accept="text/csv" required
+            <input type="file" id="file" (change)="setFileData($event, 'file', false)" accept="text/csv"
                    jhiTranslate="motorsportsDatabaseApp.eventEdition.result.upload.selectFile"/>
         </div>
     </div>
