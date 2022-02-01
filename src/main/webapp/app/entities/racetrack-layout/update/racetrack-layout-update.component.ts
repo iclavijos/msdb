@@ -144,17 +144,18 @@ export class RacetrackLayoutUpdateComponent implements OnInit {
   }
 
   private createFromForm(): IRacetrackLayout {
-    return {
-      ...new RacetrackLayout(),
-      id: this.editForm.get(['id'])!.value,
-      name: this.editForm.get(['name'])!.value,
-      length: this.editForm.get(['length'])!.value,
-      yearFirstUse: this.editForm.get(['yearFirstUse'])!.value,
-      layoutImageContentType: this.editForm.get(['layoutImageContentType'])!.value,
-      layoutImage: this.editForm.get(['layoutImage'])!.value,
-      layoutImageUrl: this.editForm.get(['layoutImageUrl'])!.value,
-      active: this.editForm.get(['active'])!.value,
-      racetrack: this.racetrack
-    };
+    const racetrackLayout = new RacetrackLayout();
+
+    racetrackLayout.id = this.editForm.get(['id'])!.value;
+    racetrackLayout.name = this.editForm.get(['name'])!.value;
+    racetrackLayout.length = this.editForm.get(['length'])!.value;
+    racetrackLayout.yearFirstUse = this.editForm.get(['yearFirstUse'])!.value;
+    racetrackLayout.layoutImageContentType = this.editForm.get(['layoutImageContentType'])!.value;
+    racetrackLayout.layoutImage = this.editForm.get(['layoutImage'])!.value;
+    racetrackLayout.layoutImageUrl = this.editForm.get(['layoutImageUrl'])!.value;
+    racetrackLayout.active = this.editForm.get(['active'])!.value;
+    racetrackLayout.racetrack = this.racetrack;
+
+    return racetrackLayout;
   }
 }
