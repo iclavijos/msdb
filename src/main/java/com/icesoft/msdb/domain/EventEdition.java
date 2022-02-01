@@ -45,7 +45,6 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
@@ -55,13 +54,13 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     @NotNull
     @Size(max = 40)
     @Column(name = "short_event_name", length = 40, nullable = false)
-    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
+    @Field(type = FieldType.Keyword, normalizer = "lowercase")
     private String shortEventName;
 
     @NotNull
     @Size(max = 100)
     @Column(name = "long_event_name", length = 100, nullable = false)
-    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
+    @Field(type = FieldType.Keyword, normalizer = "lowercase")
     private String longEventName;
 
     @NotNull
@@ -129,6 +128,8 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     private String locationTimeZone;
 
     @ManyToMany(mappedBy = "events", fetch=FetchType.EAGER)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<SeriesEdition> seriesEditions;
 
     public EventEdition(EventEdition copyFrom) {

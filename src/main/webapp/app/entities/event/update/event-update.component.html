@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-danger">
-                        <h4 class="card-title">{{ editForm.get('name').value }}</h4>
+                        <h4 class="card-title">{{ editForm.get('name')?.value }}</h4>
                         <p class="card-category">{{ 'motorsportsDatabaseApp.event.home.createOrEditLabel' | translate }}</p>
                     </div>
                     <div class="card-body">
@@ -15,13 +15,13 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.event.name' | translate }}" type="text"
                                                class="form-control" name="name" id="field_name" formControlName="name">
-                                        <div *ngIf="editForm.get('name').invalid && (editForm.get('name').dirty || editForm.get('name').touched)">
+                                        <div *ngIf="editForm.get('name')?.invalid && (editForm.get('name')?.dirty || editForm.get('name')?.touched)">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('name').errors.required" jhiTranslate="entity.validation.required">
+                                                   *ngIf="editForm.get('name')?.errors!.required" jhiTranslate="entity.validation.required">
                                                 This field is required.
                                             </small>
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('name').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 50 }">
+                                                   *ngIf="editForm.get('name')?.errors!.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 50 }">
                                                 This field cannot be longer than 50 characters.
                                             </small>
                                         </div>
@@ -45,9 +45,9 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.event.description' | translate }}" type="text"
                                                class="form-control" name="description" id="field_description" formControlName="description">
-                                        <div *ngIf="editForm.get('description').invalid && (editForm.get('description').dirty || editForm.get('description').touched)">
+                                        <div *ngIf="editForm.get('description')?.invalid && (editForm.get('description')?.dirty || editForm.get('description')?.touched)">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('name').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
+                                                   *ngIf="editForm.get('name')?.errors!.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
                                                 This field cannot be longer than 100 characters.
                                             </small>
                                         </div>
