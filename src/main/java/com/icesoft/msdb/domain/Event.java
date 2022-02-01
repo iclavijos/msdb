@@ -36,18 +36,17 @@ public class Event extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Keyword)
     private Long id;
 
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
-    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
+    @Field(type = FieldType.Keyword, normalizer = "lowercase")
     private String name;
 
     @Size(max = 100)
     @Column(name = "description", length = 100)
-    @Field(type = FieldType.Text, fielddata = true, normalizer = "lowercase_keyword")
+    @Field(type = FieldType.Keyword, normalizer = "lowercase")
     private String description;
 
     @OneToMany(mappedBy = "event")

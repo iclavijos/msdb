@@ -6,11 +6,10 @@
             <div class="col-sm-12">
                 <form name="searchForm" class="form-inline">
                     <div class="input-group w-100 mt-3">
-                        <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'motorsportsDatabaseApp.event.home.search' | translate }}">
-                        <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
-                            <fa-icon [icon]="'search'"></fa-icon>
-                        </button>
-                        <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
+                        <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch"
+                               placeholder="{{ 'motorsportsDatabaseApp.event.home.search' | translate }}"
+                               (keyup)="search(currentSearch)" (keydown.enter)="$event.preventDefault()">
+                        <button class="input-group-append btn btn-danger" (click)="clearSearch()" *ngIf="currentSearch">
                             <fa-icon [icon]="'trash-alt'"></fa-icon>
                         </button>
                         <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-event" [routerLink]="['/event/new']">
@@ -30,13 +29,14 @@
                         <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.event.home.title">Event</span></h4>
                     </div>
                     <div class="card-body">
-                        <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
-                        <div class="alert alert-warning" [hidden]="events?.length > 0 || isLoadingResults">
+                        <mat-spinner [hidden]="!isLoading"></mat-spinner>
+                        <div class="alert alert-warning" id="no-result" [hidden]="dataSource!.data!.length != 0 || isLoading">
                             <span jhiTranslate="motorsportsDatabaseApp.event.home.notFound">No events found</span>
                         </div>
-                        <div class="table-responsive" [hidden]="events?.length === 0">
-                            <mat-table class="table table-hover" [dataSource]="events"
-                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
+                        <div class="table-responsive" [hidden]="dataSource!.data!.length === 0 || isLoading">
+                            <mat-table class="table table-hover" [dataSource]="dataSource"
+                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc"
+                                       (matSortChange)="sortChanged($event)">
 
                                 <ng-container matColumnDef="name">
                                     <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.event.name' | translate }}</mat-header-cell>
@@ -75,10 +75,7 @@
                                             </button>
                                             <button type="submit"
                                                     *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                                    [routerLink]="['/event', { outlets: { popup: event.id + '/delete'} }]"
-                                                    (click)="$event.stopPropagation()"
-                                                    replaceUrl="true"
-                                                    queryParamsHandling="merge"
+                                                    (click)="delete($event, event)"
                                                     class="btn btn-danger btn-sm">
                                                 <fa-icon [icon]="'times'"></fa-icon>
                                             </button>
@@ -90,10 +87,11 @@
                                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
                                     [routerLink]="['/event', row.id, 'view' ]"></mat-row>
                             </mat-table>
-                            <mat-paginator [length]="resultsLength"
+                            <mat-paginator [length]="totalItems"
                                            [pageSizeOptions]="[5, 10, 20]"
                                            [pageSize]="10"
-                                           showFirstLastButtons></mat-paginator>
+                                           showFirstLastButtons
+                                           (page)="pageChanged($event)"></mat-paginator>
                         </div>
                     </div>
                 </div>

@@ -19,3 +19,7 @@ export class Event implements IEvent {
     public editions?: IEventEdition[]
   ) {}
 }
+
+export function getEventIdentifier(event: IEvent): number | undefined {
+  return event.id;
+}

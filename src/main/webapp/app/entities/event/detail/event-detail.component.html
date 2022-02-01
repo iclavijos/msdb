@@ -6,23 +6,23 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-danger">
-                        <h3 class="card-title">{{event.name}}</h3>
+                        <h3 class="card-title">{{event!.name}}</h3>
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div *ngIf="event.description" class="col-md-3">
+                            <div *ngIf="event!.description" class="col-md-3">
                                 <dl class="row-md jh-entity-details">
                                     <dt><span jhiTranslate="motorsportsDatabaseApp.event.description">Description</span></dt>
                                     <dd>
-                                        <span>{{event.description}}</span>
+                                        <span>{{event!.description}}</span>
                                     </dd>
                                 </dl>
                             </div>
-                            <div *ngIf="event.description" class="col-md-9">
-                                <jhi-event-edition [event]="event">Event editions...</jhi-event-edition>
+                            <div *ngIf="event!.description" class="col-md-9">
+                                <!-- jhi-event-edition [event]="event">Event editions...</jhi-event-edition -->
                             </div>
-                            <div *ngIf="!event.description" class="col-md-12">
-                                <jhi-event-edition [event]="event">Event editions...</jhi-event-edition>
+                            <div *ngIf="!event!.description" class="col-md-12">
+                                <!-- jhi-event-edition [event]="event">Event editions...</jhi-event-edition -->
                             </div>
                         </div>
                     </div>
@@ -30,7 +30,7 @@
             </div>
         </div>
         <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                [routerLink]="['/event', event.id, 'edit']"
+                [routerLink]="['/event', event!.id, 'edit']"
                 class="btn btn-primary">
             <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
         </button>
