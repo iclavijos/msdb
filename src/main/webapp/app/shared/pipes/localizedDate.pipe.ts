@@ -1,6 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { SessionStorageService } from 'ngx-webstorage';
 
+import { AccountService } from 'app/core/auth/account.service';
+
 import * as dayjs from 'dayjs';
 
 @Pipe({
@@ -8,7 +10,9 @@ import * as dayjs from 'dayjs';
   pure: false
 })
 export class LocalizedDatePipe implements PipeTransform {
-  constructor(private sessionStorageService: SessionStorageService) {}
+  constructor(
+    private sessionStorageService: SessionStorageService,
+    private accountService: AccountService) {}
 
   transform(value?: dayjs.Dayjs, pattern = 'LL'): string {
     let momentDate: dayjs.Dayjs;
@@ -31,7 +35,15 @@ export class LocalizedDatePipe implements PipeTransform {
     } else {
       momentDate = value;
     }
-    const localeKey = this.sessionStorageService.retrieve('locale');
+
+    let localeKey = this.sessionStorageService.retrieve('locale');
+    if (!localeKey) {
+      this.accountService.getAuthenticationState()
+        .subscribe(
+          account =>
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            localeKey = account!.langKey);
+    }
     return momentDate.locale(localeKey).format(pattern);
   }
 }
