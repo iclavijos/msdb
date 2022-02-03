@@ -6,10 +6,10 @@ import { EventUpdateComponent } from './update/event-update.component';
 import { EventDeleteDialogComponent } from './delete/event-delete-dialog.component';
 import { EventRoutingModule } from './route/event-routing.module';
 
-// import { MotorsportsDatabaseEventEditionModule } from '../event-edition/event-edition.module';
+import { EventEditionModule } from '../event-edition/event-edition.module';
 
 @NgModule({
-  imports: [SharedModule, EventRoutingModule],
+  imports: [SharedModule, EventRoutingModule, EventEditionModule],
   declarations: [EventComponent, EventDetailComponent, EventUpdateComponent, EventDeleteDialogComponent],
   entryComponents: [EventDeleteDialogComponent],
 })

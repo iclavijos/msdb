@@ -8,6 +8,7 @@ import { EventEntryRoutingModule } from './route/event-entry-routing.module';
 @NgModule({
   imports: [SharedModule, EventEntryRoutingModule],
   declarations: [EventEntryComponent, EventEntryUpdateComponent, EventEntryDeleteDialogComponent],
+  exports: [EventEntryComponent],
   entryComponents: [EventEntryDeleteDialogComponent],
 })
 export class EventEntryModule {}

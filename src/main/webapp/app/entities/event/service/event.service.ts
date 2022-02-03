@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { SearchWithPagination } from 'app/core/request/request.model';
-import { IEvent, getEventIdentifier } from '../event.model';
+import { IEvent, getEventIdentifier, EditionIdYear } from '../event.model';
 
 export type EntityResponseType = HttpResponse<IEvent>;
 export type EntityArrayResponseType = HttpResponse<IEvent[]>;
@@ -47,7 +47,7 @@ export class EventService {
     return this.http.get<IEvent[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
   }
 
-  findEventEditionIds(idEvent: number): Observable<number[]> {
-    return this.http.get<number[]>(`${this.resourceUrl}/${idEvent}/editionIds`);
+  findEventEditionIds(idEvent: number): Observable<EditionIdYear[]> {
+    return this.http.get<EditionIdYear[]>(`${this.resourceUrl}/${idEvent}/editionIds`);
   }
 }

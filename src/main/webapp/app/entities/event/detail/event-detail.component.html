@@ -18,11 +18,8 @@
                                     </dd>
                                 </dl>
                             </div>
-                            <div *ngIf="event!.description" class="col-md-9">
-                                <!-- jhi-event-edition [event]="event">Event editions...</jhi-event-edition -->
-                            </div>
-                            <div *ngIf="!event!.description" class="col-md-12">
-                                <!-- jhi-event-edition [event]="event">Event editions...</jhi-event-edition -->
+                            <div [class.col-md-9]="event!.description" [class.col-md-12]="!event!.description">
+                                <jhi-event-edition [event]="event!">Event editions...</jhi-event-edition>
                             </div>
                         </div>
                     </div>

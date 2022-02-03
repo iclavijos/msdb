@@ -3,11 +3,11 @@
         <div class="col-sm-12">
             <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity"
                     class="btn btn-primary float-right jh-create-entity create-event"
-                    (click)="createEventEdition()">
+                    [routerLink]="['/event-edition/new']">
                 <fa-icon [icon]="'plus'"></fa-icon>
                 <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.home.createLabel">
-                        Create a new event edition
-                    </span>
+                    Create a new event edition
+                </span>
             </button>
         </div>
     </div>
@@ -18,12 +18,12 @@
                     <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.eventEdition.home.title">Event edition</span></h4>
                 </div>
                 <div class="card-body">
-                    <mat-spinner [hidden]="!isLoadingResults"></mat-spinner>
-                    <div class="alert alert-warning" [hidden]="eventEditions?.length > 0 || isLoadingResults">
+                    <mat-spinner [hidden]="!isLoading"></mat-spinner>
+                    <div class="alert alert-warning" id="no-result" [hidden]="dataSource!.data!.length != 0 || isLoading">
                         <span jhiTranslate="motorsportsDatabaseApp.eventEdition.home.notFound">No event editions found</span>
                     </div>
-                    <div class="table-responsive" [hidden]="eventEditions?.length === 0">
-                        <table mat-table class="table table-hover" [dataSource]="eventEditions"
+                    <div class="table-responsive" [hidden]="dataSource!.data!.length === 0 || isLoading">
+                        <table mat-table class="table table-hover" [dataSource]="dataSource"
                                matSort matSortActive="editionYear" matSortDisableClear matSortDirection="desc">
 
                             <ng-container matColumnDef="editionYear">
@@ -79,16 +79,14 @@
                                     <div class="btn-group">
                                         <button type="submit"
                                                 *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                                (click)="editEventEdition($event, eventEdition.id)"
+                                                [routerLink]="['edition', eventEdition.id, 'edit']"
+                                                (click)="$event.stopPropagation()"
                                                 class="btn btn-primary btn-sm">
                                             <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                         </button>
                                         <button type="submit"
                                                 *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                                [routerLink]="['/event/edition', { outlets: { popup: eventEdition.id + '/delete-ed'} }]"
-                                                (click)="$event.stopPropagation()"
-                                                replaceUrl="true"
-                                                queryParamsHandling="merge"
+                                                (click)="delete($event, eventEdition)"
                                                 class="btn btn-danger btn-sm">
                                             <fa-icon [icon]="'times'"></fa-icon>
                                         </button>
@@ -98,12 +96,13 @@
 
                             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                             <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-                                [routerLink]="['/event', 'edition', row.id, 'view-ed' ]"></tr>
+                                [routerLink]="['edition', row.id ]"></tr>
                         </table>
-                        <mat-paginator [length]="resultsLength"
+                        <mat-paginator [length]="totalItems"
                                        [pageSizeOptions]="[5, 10, 20]"
                                        [pageSize]="10"
-                                       showFirstLastButtons></mat-paginator>
+                                       showFirstLastButtons
+                                       (page)="pageChanged($event)"></mat-paginator>
                     </div>
                 </div>
             </div>

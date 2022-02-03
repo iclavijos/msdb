@@ -18,17 +18,6 @@ const eventRoute: Routes = [
     canActivate: [UserRouteAccessService],
   },
   {
-    path: ':id/view',
-    component: EventDetailComponent,
-    resolve: {
-      event: EventRoutingResolveService,
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-    },
-    canActivate: [UserRouteAccessService]
-  },
-  {
     path: 'new',
     component: EventUpdateComponent,
     resolve: {
@@ -38,6 +27,26 @@ const eventRoute: Routes = [
       authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
     },
     canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id', // /view',
+    children: [
+      {
+        path: '',
+        component: EventDetailComponent,
+        resolve: {
+          event: EventRoutingResolveService,
+        },
+        data: {
+          authorities: ['ROLE_USER'],
+        },
+        canActivate: [UserRouteAccessService],
+      },
+      {
+        path: 'edition',
+        loadChildren: () => import('app/entities/event-edition/event-edition.module').then(m => m.EventEditionModule)
+      }
+    ]
   },
   {
     path: ':id/edit',
@@ -50,10 +59,6 @@ const eventRoute: Routes = [
     },
     canActivate: [UserRouteAccessService],
   },
-//   {
-//     path: 'edition',
-//     loadChildren: () => import('../event-edition/event-edition.module').then(m => m.MotorsportsDatabaseEventEditionModule)
-//   }
 ];
 
 @NgModule({

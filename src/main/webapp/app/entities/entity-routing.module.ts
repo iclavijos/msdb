@@ -30,21 +30,6 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./event/event.module').then(m => m.EventModule),
       },
       {
-        path: 'event-entry',
-        data: { pageTitle: 'motorsportsDatabaseApp.eventEntry.home.title' },
-        loadChildren: () => import('./event-entry/event-entry.module').then(m => m.EventEntryModule),
-      },
-      {
-        path: 'event-entry-result',
-        data: { pageTitle: 'motorsportsDatabaseApp.eventEntryResult.home.title' },
-        loadChildren: () => import('./event-entry-result/event-entry-result.module').then(m => m.EventEntryResultModule),
-      },
-      {
-        path: 'event-session',
-        data: { pageTitle: 'motorsportsDatabaseApp.eventSession.home.title' },
-        loadChildren: () => import('./event-session/event-session.module').then(m => m.EventSessionModule),
-      },
-      {
         path: 'fuel-provider',
         data: { pageTitle: 'motorsportsDatabaseApp.fuelProvider.home.title' },
         loadChildren: () => import('./fuel-provider/fuel-provider.module').then(m => m.FuelProviderModule),
@@ -84,11 +69,7 @@ import { RouterModule } from '@angular/router';
         data: { pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title' },
         loadChildren: () => import('./tyre-provider/tyre-provider.module').then(m => m.TyreProviderModule),
       },
-//       {
-//         path: 'event-edition',
-//         data: { pageTitle: 'motorsportsDatabaseApp.eventEdition.home.title' },
-//         loadChildren: () => import('./event-edition/event-edition.module').then(m => m.EventEditionModule),
-//       },
+
 
 //       {
 //         path: 'driver-points-details',

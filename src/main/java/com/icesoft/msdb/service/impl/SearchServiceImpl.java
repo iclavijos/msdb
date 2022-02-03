@@ -105,51 +105,51 @@ public class SearchServiceImpl implements SearchService {
 	public void rebuildIndexes() {
 		log.debug("Rebuilding search indexes");
         List<Runnable> tasks = new ArrayList<>();
-        tasks.add(() -> {
-            log.debug("Building Drivers index");
-            txTemplate.execute(status -> updateSearchIndex(driverRepo.streamAll(), driverSearchRepo));
-            log.debug("Building Drivers index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Teams index");
-            txTemplate.execute(status -> updateSearchIndex(teamRepo.streamAll(), teamSearchRepo));
-            log.debug("Building Teams index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Engines index");
-            txTemplate.execute(status -> updateSearchIndex(engineRepo.readAllByIdNotNull(), engineSearchRepo));
-            log.debug("Building Engines index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Chassis index");
-            txTemplate.execute(status -> updateSearchIndex(chassisRepo.streamAllByIdNotNull(), chassisSearchRepo));
-            log.debug("Building Chassis index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Categories index");
-            txTemplate.execute(status -> updateSearchIndex(categoryRepo.streamAll(), categorySearchRepo));
-            log.debug("Building Categories index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Fuel suppliers index");
-            txTemplate.execute(status -> updateSearchIndex(fuelRepo.streamAll(), fuelSearchRepo));
-            log.debug("Building Fuel suppliers index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Tyre suppliers index");
-            txTemplate.execute(status -> updateSearchIndex(tyreRepo.streamAll(), tyreSearchRepo));
-            log.debug("Building Tyre suppliers index done");
-        });
-        tasks.add(() -> {
-            log.debug("Building Points systems index");
-            txTemplate.execute(status -> updateSearchIndex(pointsRepo.streamAll(), pointsSearchRepo));
-            log.debug("Building Points systems index done");
-        });
 //        tasks.add(() -> {
-//            log.debug("Building Events index");
-//            txTemplate.execute(status -> updateSearchIndex(eventRepo.readAllByIdNotNull(), eventSearchRepo));
-//            log.debug("Building Events index done");
+//            log.debug("Building Drivers index");
+//            txTemplate.execute(status -> updateSearchIndex(driverRepo.streamAll(), driverSearchRepo));
+//            log.debug("Building Drivers index done");
 //        });
+//        tasks.add(() -> {
+//            log.debug("Building Teams index");
+//            txTemplate.execute(status -> updateSearchIndex(teamRepo.streamAll(), teamSearchRepo));
+//            log.debug("Building Teams index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Engines index");
+//            txTemplate.execute(status -> updateSearchIndex(engineRepo.readAllByIdNotNull(), engineSearchRepo));
+//            log.debug("Building Engines index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Chassis index");
+//            txTemplate.execute(status -> updateSearchIndex(chassisRepo.streamAllByIdNotNull(), chassisSearchRepo));
+//            log.debug("Building Chassis index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Categories index");
+//            txTemplate.execute(status -> updateSearchIndex(categoryRepo.streamAll(), categorySearchRepo));
+//            log.debug("Building Categories index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Fuel suppliers index");
+//            txTemplate.execute(status -> updateSearchIndex(fuelRepo.streamAll(), fuelSearchRepo));
+//            log.debug("Building Fuel suppliers index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Tyre suppliers index");
+//            txTemplate.execute(status -> updateSearchIndex(tyreRepo.streamAll(), tyreSearchRepo));
+//            log.debug("Building Tyre suppliers index done");
+//        });
+//        tasks.add(() -> {
+//            log.debug("Building Points systems index");
+//            txTemplate.execute(status -> updateSearchIndex(pointsRepo.streamAll(), pointsSearchRepo));
+//            log.debug("Building Points systems index done");
+//        });
+        tasks.add(() -> {
+            log.debug("Building Events index");
+            txTemplate.execute(status -> updateSearchIndex(eventRepo.readAllByIdNotNull(), eventSearchRepo));
+            log.debug("Building Events index done");
+        });
         tasks.add(() -> {
             log.debug("Building Series index");
             txTemplate.execute(status -> updateSearchIndex(seriesRepo.streamAll(), seriesSearchRepo));

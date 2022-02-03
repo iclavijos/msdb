@@ -1,0 +1,30 @@
+<form name="copyEntriesForm" (ngSubmit)="copyEntries()">
+    <div class="modal-header">
+        <h4 mat-dialog-title jhiTranslate="motorsportsDatabaseApp.eventEdition.copyEntries.title">Copy entries</h4>
+        <button mat-button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="cancel()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+        <div mat-dialog-content>
+            <p>{{'motorsportsDatabaseApp.eventEdition.copy' | translate }}</p>
+            <mat-form-field class="example-full-width">
+                <input matInput id="field_sourceEvent" type="text" name="sourceEvent" class="form-control"
+                       [matAutocomplete]="autoEvent" formControlName="sourceEvent"
+                       placeholder="{{ 'motorsportsDatabaseApp.series.seriesEdition.calendar.searchEvent' | translate }}"/>
+                <mat-autocomplete #autoEvent="matAutocomplete" [displayWith]="displayFnEvents">
+                    <mat-option *ngFor="let event of (eventOptions | async)" [value]="event" (click)="setEvent(event)">
+                        <span matTooltip="{{ event.longEventName }}">{{ event.longEventName }}</span>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
+            <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+        <button mat-button type="submit" [disabled]="copyEntriesForm.invalid || isSaving" class="btn btn-primary" >
+            <span jhiTranslate="entity.action.copy">Copy</span>
+        </button>
+    </div>
+</form>
