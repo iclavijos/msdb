@@ -18,7 +18,9 @@ export class EventUpdateComponent implements OnInit {
   editForm = this.fb.group({
     id: [],
     name: [null, [Validators.required, Validators.maxLength(40)]],
-    description: [null, [Validators.required, Validators.maxLength(100)]],
+    description: [null, [Validators.maxLength(100)]],
+    rally: [],
+    raid: []
   });
 
   constructor(protected eventService: EventService, protected activatedRoute: ActivatedRoute, protected fb: FormBuilder) {}
@@ -67,15 +69,20 @@ export class EventUpdateComponent implements OnInit {
       id: event.id,
       name: event.name,
       description: event.description,
+      rally: event.rally,
+      raid: event.raid
     });
   }
 
   protected createFromForm(): IEvent {
-    return {
-      ...new Event(),
-      id: this.editForm.get(['id'])!.value,
-      name: this.editForm.get(['name'])!.value,
-      description: this.editForm.get(['description'])!.value,
-    };
+    const event = new Event();
+
+    event.id = this.editForm.get(['id'])!.value;
+    event.name = this.editForm.get(['name'])!.value;
+    event.description = this.editForm.get(['description'])!.value;
+    event.rally = this.editForm.get(['rally'])!.value;
+    event.raid = this.editForm.get(['raid'])!.value;
+
+    return event;
   }
 }

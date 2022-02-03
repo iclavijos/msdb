@@ -16,6 +16,7 @@ import { EventEntryResultRoutingModule } from './route/event-entry-result-routin
     EventEntryUploadResultsComponent,
     EventEntryResultUploadLapByLapComponent
   ],
+  exports: [EventEntryResultComponent],
   entryComponents: [EventEntryResultDeleteDialogComponent],
 })
 export class EventEntryResultModule {}

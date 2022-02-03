@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-danger">
-                        <h4 class="card-title">{{ editForm.get('longEventName').value }}</h4>
+                        <h4 class="card-title">{{ editForm.get('longEventName')!.value }}</h4>
                         <p class="card-category">{{ 'motorsportsDatabaseApp.eventEdition.home.createOrEditLabel' | translate }}</p>
                     </div>
                     <div class="card-body">
@@ -15,13 +15,13 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.editionYear' | translate }}" type="number"
                                                class="form-control" name="editionYear" id="field_editionYear" formControlName="editionYear" required>
-                                        <div *ngIf="editForm.get('editionYear').invalid && (editForm.get('editionYear').dirty || editForm.get('editionYear').touched)">
+                                        <div *ngIf="editForm.get('editionYear')!.invalid && (editForm.get('editionYear')!.dirty || editForm.get('editionYear')!.touched)">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('editionYear').errors.required" jhiTranslate="entity.validation.required">
+                                                   *ngIf="editForm.get('editionYear')!.errors!.required" jhiTranslate="entity.validation.required">
                                                 This field is required.
                                             </small>
                                             <small class="form-text text-danger"
-                                                   [hidden]="!editForm.get('editionYear').errors.number" jhiTranslate="entity.validation.number">
+                                                   [hidden]="!editForm.get('editionYear')!.errors!.number" jhiTranslate="entity.validation.number">
                                                 This field should be a number.
                                             </small>
                                         </div>
@@ -34,9 +34,9 @@
                                                id="field_eventDate" formControlName="eventDate" required>
                                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                         <mat-datepicker #picker></mat-datepicker>
-                                        <div *ngIf="editForm.get('eventDate').invalid && (editForm.get('eventDate').dirty || editForm.get('eventDate').touched)">
+                                        <div *ngIf="editForm.get('eventDate')!.invalid && (editForm.get('eventDate')!.dirty || editForm.get('eventDate')!.touched)">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('eventDate').errors.required" jhiTranslate="entity.validation.required">
+                                                   *ngIf="editForm.get('eventDate')!.errors!.required" jhiTranslate="entity.validation.required">
                                                 This field is required.
                                             </small>
                                         </div>
@@ -62,13 +62,13 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.shortEventName' | translate }}" type="text"
                                                class="form-control" name="shortEventName" id="field_shortEventName" formControlName="shortEventName" required>
-                                        <div *ngIf="editForm.get('shortEventName').invalid && (editForm.get('shortEventName').dirty || editForm.get('shortEventName').touched)">
+                                        <div *ngIf="editForm.get('shortEventName')!.invalid && (editForm.get('shortEventName')!.dirty || editForm.get('shortEventName')!.touched)">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('shortEventName').errors.required" jhiTranslate="entity.validation.required">
+                                                   *ngIf="editForm.get('shortEventName')!.errors!.required" jhiTranslate="entity.validation.required">
                                                 This field is required.
                                             </small>
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('shortEventName').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 40 }">
+                                                   *ngIf="editForm.get('shortEventName')!.errors!.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 40 }">
                                                 This field cannot be longer than 40 characters.
                                             </small>
                                         </div>
@@ -78,13 +78,13 @@
                                     <mat-form-field class="example-full-width">
                                         <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.longEventName' | translate }}" type="text"
                                                class="form-control" name="longEventName" id="field_longEventName" formControlName="longEventName" required>
-                                        <div *ngIf="editForm.get('longEventName').invalid && (editForm.get('longEventName').dirty || editForm.get('longEventName').touched)">
+                                        <div *ngIf="editForm.get('longEventName')!.invalid && (editForm.get('longEventName')!.dirty || editForm.get('longEventName')!.touched)">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('longEventName').errors.required" jhiTranslate="entity.validation.required">
+                                                   *ngIf="editForm.get('longEventName')!.errors!.required" jhiTranslate="entity.validation.required">
                                                 This field is required.
                                             </small>
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('longEventName').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
+                                                   *ngIf="editForm.get('longEventName')!.errors!.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
                                                 This field cannot be longer than 100 characters.
                                             </small>
                                         </div>
@@ -104,13 +104,13 @@
                                 </div>
                                 <div class="col-3">
                                     <mat-list>
-                                        <mat-list-item *ngFor="let cat of editForm.get('allowedCategories').value">
+                                        <mat-list-item *ngFor="let cat of editForm.get('allowedCategories')!.value">
                                             <p mat-line>{{cat.name}}</p>
                                         </mat-list-item>
                                     </mat-list>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="row" *ngIf="!event.rally">
+                                    <div class="row" *ngIf="!event?.isRally()">
                                         <div class="col-md-12">
                                             <mat-label>{{'motorsportsDatabaseApp.eventEdition.multidriver' | translate }}</mat-label>
                                             <mat-radio-group class="form-control" name="multidriver" id="field_multidriver" formControlName="multidriver">
@@ -119,32 +119,32 @@
                                             </mat-radio-group>
                                         </div>
                                     </div>
-                                    <div class="row" *ngIf="!event.rally && !event.raid">
+                                    <div class="row" *ngIf="!event?.isRally() && !event?.isRaid()">
                                         <div class="col-md-12">
                                             <mat-form-field class="example-full-width">
                                                 <input matInput type="text" [matAutocomplete]="autoLayout" formControlName="trackLayout"
                                                        placeholder="{{ 'motorsportsDatabaseApp.eventEdition.trackLayout' | translate }}" required/>
                                                 <mat-autocomplete #autoLayout="matAutocomplete" [displayWith]="displayFnLayouts">
                                                     <mat-option *ngFor="let trackLayout of layoutOptions | async" [value]="trackLayout" style="height: 80px">
-                                                        <img *ngIf="trackLayout.layoutImg" src="{{ trackLayout.layoutImg }}" class="img-fluid"/>
-                                                        <span>{{ trackLayout.fullName }}</span>
+                                                        <img *ngIf="trackLayout.layoutImage" src="{{ trackLayout.layoutImage }}" class="img-fluid"/>
+                                                        <span>{{ trackLayout.getFullName() }}</span>
                                                     </mat-option>
                                                 </mat-autocomplete>
                                             </mat-form-field>
                                         </div>
                                     </div>
-                                    <div class="row" *ngIf="event.rally">
+                                    <div class="row" *ngIf="event!.isRally()">
                                         <div class="col-md-12">
                                             <mat-form-field class="example-full-width">
                                                 <input matInput placeholder="{{ 'motorsportsDatabaseApp.eventEdition.location' | translate }}" type="text"
                                                        class="form-control" name="location" id="field_location" formControlName="location" required>
-                                                <div *ngIf="editForm.get('location').invalid && (editForm.get('location').dirty || editForm.get('location').touched)">
+                                                <div *ngIf="editForm.get('location')!.invalid && (editForm.get('location')!.dirty || editForm.get('location')!.touched)">
                                                     <small class="form-text text-danger"
-                                                           *ngIf="editForm.get('location').errors.required" jhiTranslate="entity.validation.required">
+                                                           *ngIf="editForm.get('location')!.errors!.required" jhiTranslate="entity.validation.required">
                                                         This field is required.
                                                     </small>
                                                     <small class="form-text text-danger"
-                                                           *ngIf="editForm.get('location').errors.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
+                                                           *ngIf="editForm.get('location')!.errors!.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
                                                         This field cannot be longer than 100 characters.
                                                     </small>
                                                 </div>
@@ -169,9 +169,9 @@
                                             <div class="col-md-6">
                                                 <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.eventEdition.poster" for="field_poster">Event edition poster</label>
                                                 <div>
-                                                    <img [src]="editForm.get('posterUrl').value" style="max-height: 100px;" *ngIf="!editForm.get('poster').value && editForm.get('posterUrl').value != null" alt="event edition poster"/>
-                                                    <img [src]="'data:' + editForm.get('posterContentType').value + ';base64,' + editForm.get('poster').value" style="max-height: 100px;" *ngIf="editForm.get('poster').value" alt="event edition poster"/>
-                                                    <div *ngIf="editForm.get('poster').value" class="form-text text-danger clearfix">
+                                                    <img [src]="editForm.get('posterUrl')!.value" style="max-height: 100px;" *ngIf="!editForm.get('poster')!.value && editForm.get('posterUrl')!.value != null" alt="event edition poster"/>
+                                                    <img [src]="'data:' + editForm.get('posterContentType')!.value + ';base64,' + editForm.get('poster')!.value" style="max-height: 100px;" *ngIf="editForm.get('poster')!.value" alt="event edition poster"/>
+                                                    <div *ngIf="editForm.get('poster')!.value" class="form-text text-danger clearfix">
                                                         <button type="button" (click)="clearInputImage('poster', 'posterContentType', 'fileImage')" class="btn btn-secondary btn-sm pull-right">
                                                             <span class="fa fa-times"></span>
                                                         </button>

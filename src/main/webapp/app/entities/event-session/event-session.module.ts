@@ -8,6 +8,7 @@ import { EventSessionRoutingModule } from './route/event-session-routing.module'
 @NgModule({
   imports: [SharedModule, EventSessionRoutingModule],
   declarations: [EventSessionComponent, EventSessionUpdateComponent, EventSessionDeleteDialogComponent],
+  exports: [EventSessionComponent],
   entryComponents: [EventSessionDeleteDialogComponent],
 })
 export class EventSessionModule {}

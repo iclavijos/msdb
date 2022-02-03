@@ -7,6 +7,8 @@ export interface IEvent {
   rally?: boolean;
   raid?: boolean;
   editions?: IEventEdition[];
+  isRally(): boolean;
+  isRaid(): boolean;
 }
 
 export class Event implements IEvent {
@@ -18,6 +20,19 @@ export class Event implements IEvent {
     public raid?: boolean,
     public editions?: IEventEdition[]
   ) {}
+
+  isRally(): boolean {
+    return this.rally ?? false;
+  }
+
+  isRaid(): boolean {
+    return this.raid ?? false;
+  }
+}
+
+export class EditionIdYear {
+  public id?: number;
+  public editionYear?: number;
 }
 
 export function getEventIdentifier(event: IEvent): number | undefined {

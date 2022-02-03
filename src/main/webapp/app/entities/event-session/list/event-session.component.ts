@@ -1,8 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpResponse } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { EventEdition } from 'app/entities/event-edition/event-edition.model';
+import { IEventEdition } from 'app/entities/event-edition/event-edition.model';
 import { IEventSession, EventSession } from '../event-session.model';
 import { EventSessionUpdateComponent } from '../update/event-session-update.component';
 import { EventSessionDeleteDialogComponent } from '../delete/event-session-delete-dialog.component';
@@ -11,7 +12,7 @@ import { EventSessionService } from '../service/event-session.service';
 import { DurationType } from 'app/shared/enumerations/durationType.enum';
 import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 
-import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 
 import * as dayjs from 'dayjs';
 
@@ -20,10 +21,9 @@ import * as dayjs from 'dayjs';
   templateUrl: './event-session.component.html',
 })
 export class EventSessionComponent implements OnInit, OnChanges {
-  @Input() eventEdition!: EventEdition;
-  eventSessions!: IEventSession[];
-  links: any;
-  totalItems: any;
+  @Input() eventEdition!: IEventEdition;
+  isLoading = false;
+  totalItems = 0;
   sessionTypes = SessionType;
   durationTypes = DurationType;
   showPointsResult = false;
@@ -34,8 +34,7 @@ export class EventSessionComponent implements OnInit, OnChanges {
   displayedColumns: string[] = ['sessionStartTime', 'name', 'duration'];
   footerColumns: string[] = ['empty', 'empty', 'empty', 'timeConverter'];
 
-  resultsLength = 0;
-  isLoading = false;
+  dataSource = new MatTableDataSource<IEventSession>([]);
 
   timeZone: any;
 
@@ -43,8 +42,7 @@ export class EventSessionComponent implements OnInit, OnChanges {
     protected eventSessionService: EventSessionService,
     protected modalService: NgbModal,
     protected activatedRoute: ActivatedRoute,
-    protected router: Router,
-    private dialog: MatDialog
+    protected router: Router
   ) {}
 
   ngOnInit(): void {
@@ -70,59 +68,48 @@ export class EventSessionComponent implements OnInit, OnChanges {
 
   loadAll(): void {
     this.isLoading = true;
-    this.eventSessions = [];
-    this.eventSessionService.findSessions(this.eventEdition.id!, this.timeZone).subscribe(
-      sessions => {
-        this.isLoading = false;
-        this.eventSessions = sessions.body ?? [];
-        let showPoints = false;
-        this.eventSessions.forEach(
-          (item: IEventSession) =>
-            (showPoints = showPoints ||
-              (item.pointsSystemsSession !== null &&
-                item.pointsSystemsSession.length > 0))
-        );
-        this.showPoints.emit(showPoints);
-        this.sessions.emit(this.eventSessions);
-      },
-      () => this.isLoading = false
-    );
+    this.eventSessionService.findSessions(this.eventEdition.id!, this.timeZone)
+      .subscribe(
+        (res: HttpResponse<IEventSession[]>) => {
+          this.isLoading = false;
+          this.dataSource.data = res.body ?? [];
+          let showPoints = false;
+          this.dataSource.data.forEach(
+            (item: IEventSession) =>
+              (showPoints = showPoints ||
+                (item.pointsSystemsSession !== null &&
+                  item.pointsSystemsSession.length > 0))
+          );
+          this.showPoints.emit(showPoints);
+          this.sessions.emit(this.dataSource.data);
+        },
+        () => {
+          this.isLoading = false;
+        }
+      );
   }
 
   createSession(): void {
-    const newSession = new EventSession();
-    newSession.eventEdition = this.eventEdition;
-    const dialogRef = this.dialog.open(EventSessionUpdateComponent, {
-      data: {
-        eventSession: newSession
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(newEventSession => {
-      if (newEventSession) {
+    const modalRef = this.modalService.open(EventSessionUpdateComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.eventSession = new EventSession();
+    // unsubscribe not needed because closed completes on modal close
+    modalRef.closed.subscribe(reason => {
+      if (reason === 'edit') {
         this.loadAll();
       }
     });
   }
 
-  editSession(session: IEventSession): void {
-    session.eventEdition = this.eventEdition;
-    const dialogRef = this.dialog.open(EventSessionUpdateComponent, {
-      data: {
-        eventEditionId: this.eventEdition.id,
-        eventSession: session
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(updatedEventSession => {
-      if (updatedEventSession) {
+  editSession(eventSession: IEventSession): void {
+    const modalRef = this.modalService.open(EventSessionUpdateComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.eventEditionId = this.eventEdition.id;
+    modalRef.componentInstance.session = eventSession;
+    // unsubscribe not needed because closed completes on modal close
+    modalRef.closed.subscribe(reason => {
+      if (reason === 'edit') {
         this.loadAll();
       }
     });
-  }
-
-  trackId(index: number, item: IEventSession): number {
-    return item.id!;
   }
 
   delete(eventSession: IEventSession): void {
@@ -139,17 +126,18 @@ export class EventSessionComponent implements OnInit, OnChanges {
   convertToCurrentTZ(): void {
     const currentTZ = dayjs.tz.guess();
     const clonedSessions: IEventSession[] = [];
-    this.eventSessions.forEach(val => clonedSessions.push(Object.assign({}, val)));
+    this.dataSource.data.forEach((val: IEventSession) => clonedSessions.push(Object.assign({}, val)));
     for (const session of clonedSessions) {
-      session.sessionStartTime = session.sessionStartTime!.tz(currentTZ);
+      const tmp = session.sessionStartTime!.utc();
+      session.sessionStartTime = tmp.tz(currentTZ);
     }
     this.convertedTime = true;
-    this.eventSessions = clonedSessions;
+    this.dataSource.data = clonedSessions;
   }
 
   convertToLocalTZ(): void {
     const clonedSessions: IEventSession[] = [];
-    this.eventSessions.forEach(val => clonedSessions.push(Object.assign({}, val)));
+    this.dataSource.data.forEach((val: IEventSession) => clonedSessions.push(Object.assign({}, val)));
     const timeZone =
       !this.eventEdition.event?.rally && !this.eventEdition.event?.raid
         ? this.eventEdition.trackLayout?.racetrack?.timeZone
@@ -164,6 +152,6 @@ export class EventSessionComponent implements OnInit, OnChanges {
       }
     }
     this.convertedTime = false;
-    this.eventSessions = clonedSessions;
+    this.dataSource.data = clonedSessions;
   }
 }

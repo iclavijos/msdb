@@ -33,6 +33,8 @@ export interface IEventEdition {
   locationTimeZone?: string;
   latitude?: number;
   longitude?: number;
+  isRally(): boolean;
+  isRaid(): boolean;
 }
 
 export class EventEdition implements IEventEdition {
@@ -57,16 +59,35 @@ export class EventEdition implements IEventEdition {
     public posterContentType?: string,
     public poster?: any,
     public posterUrl?: string,
-    public string?: string,
+    public status?: string,
     public seriesEditions?: ISeriesEdition[],
     public location?: string,
     public locationTimeZone?: string,
     public latitude?: number,
     public longitude?: number
   ) {}
+
+  isRally(): boolean {
+    return this.event!.rally ?? false;
+  }
+
+  isRaid(): boolean {
+    return this.event!.raid ?? false;
+  }
 }
 
 export class EventEditionAndWinners {
   public eventEdition?: IEventEdition;
   public winners?: any[];
+}
+
+export class EventsSeriesNavigation {
+  public prevId!: number;
+  public nextId!: number;
+  public prevName!: string;
+  public nextName!: string;
+}
+
+export function getEventEditionIdentifier(eventEdition: IEventEdition): number | undefined {
+  return eventEdition.id;
 }

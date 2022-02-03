@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { Search } from 'app/core/request/request.model';
+import { Driver } from 'app/entities/driver/driver.model';
 import { IEventEntry, getEventEntryIdentifier } from '../event-entry.model';
+import { IDriverEntry } from '../driver-entry.model';
 
 export type EntityResponseType = HttpResponse<IEventEntry>;
 export type EntityArrayResponseType = HttpResponse<IEventEntry[]>;
@@ -52,6 +55,32 @@ export class EventEntryService {
   }
 
   findEntries(id: number): Observable<EntityArrayResponseType> {
-    return this.http.get<IEventEntry[]>(`api/event-editions/${id}/entries`, { observe: 'response' });
+    return this.http
+      .get<IEventEntry[]>(`api/event-editions/${id}/entries`, { observe: 'response' })
+      .pipe(map((res: EntityArrayResponseType) => this.instantiateDrivers(res)));
+  }
+
+  private instantiateDrivers(res: EntityArrayResponseType): EntityArrayResponseType {
+    if (res.body) {
+      res.body.forEach((eventEntry: IEventEntry) => {
+        eventEntry.drivers!.forEach((driverEntry: IDriverEntry) => {
+          const driver = new Driver(
+            driverEntry.driver!.id,
+            driverEntry.driver!.name,
+            driverEntry.driver!.surname,
+            driverEntry.driver!.birthDate,
+            driverEntry.driver!.birthPlace,
+            driverEntry.driver!.nationality,
+            driverEntry.driver!.deathDate,
+            driverEntry.driver!.deathPlace,
+            driverEntry.driver!.portraitContentType,
+            driverEntry.driver!.portrait,
+            driverEntry.driver!.portraitUrl
+          );
+          driverEntry.driver = driver;
+        });
+      });
+    }
+    return res;
   }
 }

@@ -31,7 +31,7 @@ export class EventComponent implements OnInit, AfterViewInit {
   reloadData = true;
 
   dataSource = new MatTableDataSource<IEvent>([]);
-  displayedColumns: string[] = ['name', 'description', 'isRally', 'isRaid', 'buttons'];
+  displayedColumns: string[] = ['name', 'description', 'rally', 'raid', 'buttons'];
 
   eventsSearchTextChanged = new Subject<string>();
 

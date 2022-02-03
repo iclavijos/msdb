@@ -54,12 +54,15 @@ public class Event extends AbstractAuditingEntity implements Serializable {
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    @org.springframework.data.annotation.Transient
     private Set<EventEdition> editions = new HashSet<>();
 
     @Column(name= "rally")
+    @Field
     private Boolean rally;
 
     @Column(name= "raid")
+    @Field
     private Boolean raid;
 
     public boolean isRally() {

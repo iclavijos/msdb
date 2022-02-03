@@ -48,14 +48,14 @@
                                     <mat-cell *matCellDef="let event">{{ event.description }}</mat-cell>
                                 </ng-container>
 
-                                <ng-container matColumnDef="isRally">
+                                <ng-container matColumnDef="rally">
                                     <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.event.rally' | translate }}</mat-header-cell>
                                     <mat-cell *matCellDef="let event">
                                         <i [ngClass]="event.rally ? 'fa fa-fw fa-check' : 'none'"></i>
                                     </mat-cell>
                                 </ng-container>
 
-                                <ng-container matColumnDef="isRaid">
+                                <ng-container matColumnDef="raid">
                                     <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.event.raid' | translate }}</mat-header-cell>
                                     <mat-cell *matCellDef="let event">
                                         <i [ngClass]="event.raid ? 'fa fa-fw fa-check' : 'none'"></i>
@@ -85,7 +85,7 @@
 
                                 <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
                                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
-                                    [routerLink]="['/event', row.id, 'view' ]"></mat-row>
+                                    [routerLink]="['/event', row.id ]"></mat-row>
                             </mat-table>
                             <mat-paginator [length]="totalItems"
                                            [pageSizeOptions]="[5, 10, 20]"

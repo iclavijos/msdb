@@ -14,6 +14,7 @@ import com.icesoft.msdb.service.*;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
@@ -116,14 +117,14 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<Event> findAll(Optional<String> query, Pageable pageable) {
+    public Page<Event> findAll(String query, Pageable pageable) {
         log.debug("Request to get all Events");
         Page<Event> page;
-        if (query.isPresent()) {
+        if (!StringUtils.isBlank(query)) {
             page = searchService.performWildcardSearch(
                 Event.class,
-                query.get().toLowerCase(),
-                Arrays.asList("name", "description"),
+                query.toLowerCase(),
+                Arrays.asList("name", "description", "rally", "raid"),
                 pageable);
         } else {
             page = eventRepository.findAll(pageable);

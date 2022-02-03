@@ -10,11 +10,12 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div class="alert alert-warning" [hidden]="eventSessions && eventSessions.length > 0">
+            <mat-spinner [hidden]="!isLoading"></mat-spinner>
+            <div class="alert alert-warning" id="no-result" [hidden]="dataSource!.data!.length != 0 || isLoading">
                 <span jhiTranslate="motorsportsDatabaseApp.eventEdition.session.notFound">No event sessions found</span>
             </div>
-            <div class="table-responsive" [hidden]="!eventSessions || eventSessions?.length === 0">
-                <table mat-table class="table table-hover" [dataSource]="eventSessions">
+            <div class="table-responsive" [hidden]="dataSource!.data!.length === 0">
+                <table mat-table class="table table-hover" [dataSource]="dataSource">
 
                     <ng-container matColumnDef="name">
                         <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.session.name' | translate }}</th>
@@ -57,11 +58,11 @@
 
                     <ng-container matColumnDef="timeConverter">
                         <mat-footer-cell *matFooterCellDef>
-                            <button type="button" *ngIf="!convertedTime && eventSessions!.length > 0"
+                            <button type="button" *ngIf="!convertedTime && dataSource.data.length > 0"
                                     class="btn btn-outline-primary float-right create-event-session" (click)="convertToCurrentTZ()">
                                 <span jhiTranslate="motorsportsDatabaseApp.eventEdition.yourTime">Your Time</span>
                             </button>
-                            <button type="button" *ngIf="convertedTime && eventSessions!.length > 0"
+                            <button type="button" *ngIf="convertedTime && dataSource.data.length > 0"
                                     class="btn btn-outline-primary float-right create-event-session" (click)="convertToLocalTZ()">
                                 <span jhiTranslate="motorsportsDatabaseApp.eventEdition.localTime">Local Time</span>
                             </button>

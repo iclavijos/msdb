@@ -149,7 +149,7 @@ public class EventResource {
     @GetMapping("/events")
     public ResponseEntity<List<Event>> getAllEvents(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of Events");
-        Page<Event> page = eventService.findAll(Optional.ofNullable(query), pageable);
+        Page<Event> page = eventService.findAll(query, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

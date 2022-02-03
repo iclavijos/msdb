@@ -42,7 +42,7 @@ public interface EventService {
      *  @param pageable the pagination information
      *  @return the list of entities
      */
-    Page<Event> findAll(Optional<String> query, Pageable pageable);
+    Page<Event> findAll(String query, Pageable pageable);
 
     /**
      *  Get the "id" event.

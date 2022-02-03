@@ -21,6 +21,7 @@ export interface IEventSession {
   pointsSystemsSession?: any;
   location?: string;
   locationTimeZone?: string;
+  sessionStartTimeDate?: number;
 }
 
 export class EventSession implements IEventSession {
@@ -40,7 +41,8 @@ export class EventSession implements IEventSession {
     public eventEdition?: IEventEdition,
     public pointsSystemsSession?: any,
     public location?: string,
-    public locationTimeZone?: string
+    public locationTimeZone?: string,
+    public sessionStartTimeDate?: number
   ) {}
 }
 
