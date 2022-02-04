@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import * as dayjs from 'dayjs';
+import { DateTime } from 'luxon';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
@@ -75,9 +75,14 @@ export class RacetrackService {
   private convertDateArrayFromServer(res: HttpResponse<EventEditionAndWinners[]>): HttpResponse<EventEditionAndWinners[]> {
     if (res.body) {
       res.body.forEach((eventEditionWinners: EventEditionAndWinners) => {
+        const eventDateCopy = Object.assign([], eventEditionWinners.eventEdition!.eventDate);
         eventEditionWinners.eventEdition!.eventDate =
           eventEditionWinners.eventEdition!.eventDate ?
-            dayjs(eventEditionWinners.eventEdition!.eventDate) :
+            DateTime.fromObject({
+              year: eventDateCopy[0],
+              month: eventDateCopy[1],
+              day: eventDateCopy[2]
+            }) :
             undefined;
       });
     }

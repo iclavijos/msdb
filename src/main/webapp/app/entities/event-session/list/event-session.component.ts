@@ -14,7 +14,7 @@ import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 
 import { MatTableDataSource } from '@angular/material/table';
 
-import * as dayjs from 'dayjs';
+import { DateTime } from 'luxon';
 
 @Component({
   selector: 'jhi-event-session',
@@ -124,12 +124,11 @@ export class EventSessionComponent implements OnInit, OnChanges {
   }
 
   convertToCurrentTZ(): void {
-    const currentTZ = dayjs.tz.guess();
+    const currentTZ = DateTime.local().zone;
     const clonedSessions: IEventSession[] = [];
     this.dataSource.data.forEach((val: IEventSession) => clonedSessions.push(Object.assign({}, val)));
     for (const session of clonedSessions) {
-      const tmp = session.sessionStartTime!.utc();
-      session.sessionStartTime = tmp.tz(currentTZ);
+      session.sessionStartTime = session.sessionStartTime!.setZone(currentTZ);
     }
     this.convertedTime = true;
     this.dataSource.data = clonedSessions;
@@ -146,9 +145,9 @@ export class EventSessionComponent implements OnInit, OnChanges {
         : null;
     for (const session of clonedSessions) {
       if (timeZone) {
-        session.sessionStartTime = session.sessionStartTime!.tz(timeZone);
+        session.sessionStartTime = session.sessionStartTime!.setZone(timeZone);
       } else {
-        session.sessionStartTime = session.sessionStartTime!.tz(session.locationTimeZone);
+        session.sessionStartTime = session.sessionStartTime!.setZone(session.locationTimeZone);
       }
     }
     this.convertedTime = false;

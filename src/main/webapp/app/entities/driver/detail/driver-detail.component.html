@@ -15,7 +15,7 @@
                         <dl class="row-md jh-entity-details">
                             <dt><span jhiTranslate="motorsportsDatabaseApp.driver.birthDate">Birth Date</span></dt>
                             <dd>
-                                <span>{{ driver?.birthDate | formatMediumDate }}</span>
+                                <span>{{ driver?.birthDate | localizedDate }}</span>
                             </dd>
                             <dt><span jhiTranslate="motorsportsDatabaseApp.driver.birthPlace">Birth Place</span></dt>
                             <dd>
@@ -27,7 +27,7 @@
                             </dd>
                             <dt *ngIf="driver?.deathDate"><span jhiTranslate="motorsportsDatabaseApp.driver.deathDate">Death Date</span></dt>
                             <dd *ngIf="driver?.deathDate">
-                                <span>{{ driver?.deathDate | formatMediumDate }}</span>
+                                <span>{{ driver?.deathDate! | localizedDate }}</span>
                             </dd>
                             <dt *ngIf="driver?.deathDate"><span jhiTranslate="motorsportsDatabaseApp.driver.deathPlace">Death Place</span></dt>
                             <dd *ngIf="driver?.deathDate">

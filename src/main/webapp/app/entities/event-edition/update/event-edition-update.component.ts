@@ -17,8 +17,6 @@ import { AlertError } from 'app/shared/alert/alert-error.model';
 import { EventManager, EventWithContent } from 'app/core/util/event-manager.service';
 import { DataUtils, FileLoadError } from 'app/core/util/data-util.service';
 
-import * as dayjs from 'dayjs';
-
 @Component({
   selector: 'jhi-event-edition-update',
   templateUrl: './event-edition-update.component.html',
@@ -195,7 +193,7 @@ export class EventEditionUpdateComponent implements OnInit {
       longEventName: eventEdition.longEventName,
       eventDate: eventEdition.eventDate
         ? eventEdition.trackLayout
-          ? dayjs(eventEdition.eventDate).tz(eventEdition.trackLayout.racetrack!.timeZone)
+          ? eventEdition.eventDate.setZone(eventEdition.trackLayout.racetrack!.timeZone)
           : null
         : null,
       allowedCategories: eventEdition.allowedCategories,

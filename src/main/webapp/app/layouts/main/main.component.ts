@@ -6,7 +6,7 @@ import { Component, OnInit, RendererFactory2, Renderer2 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, ActivatedRouteSnapshot, NavigationEnd } from '@angular/router';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
-import * as dayjs from 'dayjs';
+import { Settings } from 'luxon';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
@@ -59,7 +59,7 @@ export class MainComponent implements OnInit {
 
     this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
       this.updateTitle();
-      dayjs.locale(langChangeEvent.lang);
+      Settings.defaultLocale = langChangeEvent.lang;
       this.renderer.setAttribute(document.querySelector('html'), 'lang', langChangeEvent.lang);
     });
   }

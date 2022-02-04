@@ -4,7 +4,7 @@ import { ISeriesEdition } from 'app/entities/series-edition/series-edition.model
 import { IEvent } from 'app/entities/event/event.model';
 import { IEventSession } from 'app/entities/event-session/event-session.model';
 
-import * as dayjs from 'dayjs';
+import { DateTime } from 'luxon';
 
 export interface IEventEdition {
   id?: number;
@@ -13,7 +13,7 @@ export interface IEventEdition {
   editionYear?: number;
   shortEventName?: string;
   longEventName?: string;
-  eventDate?: dayjs.Dayjs;
+  eventDate?: DateTime;
   allowedCategories?: ICategory[];
   trackLayout?: IRacetrackLayout;
   event?: IEvent;
@@ -45,7 +45,7 @@ export class EventEdition implements IEventEdition {
     public editionYear?: number,
     public shortEventName?: string,
     public longEventName?: string,
-    public eventDate?: dayjs.Dayjs,
+    public eventDate?: DateTime,
     public allowedCategories?: ICategory[],
     public trackLayout?: IRacetrackLayout,
     public event?: IEvent,

@@ -5,14 +5,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IEventEdition } from '../event-edition.model';
 import { EventEditionService } from '../service/event-edition.service';
 
-import * as dayjs from 'dayjs';
+import { DateTime } from 'luxon';
 
 @Component({
   templateUrl: './event-edition-reschedule-dialog.component.html'
 })
 export class EventEditionRescheduleDialogComponent {
   eventEdition?: IEventEdition;
-  startDate = dayjs();
+  startDate = DateTime.now();
   isSaving = false;
   public rescheduleForm: FormGroup;
 
@@ -39,7 +39,7 @@ export class EventEditionRescheduleDialogComponent {
           ? this.eventEdition!.locationTimeZone
           : this.eventEdition!.sessions?.[0].locationTimeZone;
     this.eventEditionService
-        .rescheduleEvent(this.eventEdition!.id!, dayjs(this.rescheduleForm.get('newDate')!.value).tz(timeZone))
+        .rescheduleEvent(this.eventEdition!.id!, DateTime.fromJSDate(this.rescheduleForm.get('newDate')!.value, { zone: timeZone}))
         .subscribe(() => this.activeModal.dismiss());
 
     this.isSaving = false;

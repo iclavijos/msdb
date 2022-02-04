@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
-import * as dayjs from 'dayjs';
+import { DateTime } from 'luxon';
 import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 
 import { IEventSession } from '../event-session.model';
@@ -67,7 +67,7 @@ export class EventSessionUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ eventSession }) => {
       if (eventSession.id === undefined) {
-        const today = dayjs().startOf('day');
+        const today = DateTime.local().startOf('day');
         eventSession.sessionStartTime = today;
       }
 
@@ -118,7 +118,7 @@ export class EventSessionUpdateComponent implements OnInit {
       id: eventSession.id,
       name: eventSession.name,
       shortname: eventSession.shortname,
-      sessionStartTime: eventSession.sessionStartTime ? eventSession.sessionStartTime.format(DATE_TIME_FORMAT) : null,
+      sessionStartTime: eventSession.sessionStartTime ? eventSession.sessionStartTime.toFormat(DATE_TIME_FORMAT) : null,
       duration: eventSession.duration,
       totalDuration: eventSession.totalDuration,
       durationType: eventSession.durationType,
@@ -141,9 +141,9 @@ export class EventSessionUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
       shortname: this.editForm.get(['shortname'])!.value,
-      sessionStartTime: this.editForm.get(['sessionStartTime'])!.value
-        ? dayjs(this.editForm.get(['sessionStartTime'])!.value, DATE_TIME_FORMAT)
-        : undefined,
+//       sessionStartTime: this.editForm.get(['sessionStartTime'])!.value
+//         ? DateTime.fromJSDate(this.editForm.get(['sessionStartTime'])!.value).toFormat(DATE_TIME_FORMAT)
+//         : undefined,
       duration: this.editForm.get(['duration'])!.value,
       totalDuration: this.editForm.get(['totalDuration'])!.value,
       durationType: this.editForm.get(['durationType'])!.value,

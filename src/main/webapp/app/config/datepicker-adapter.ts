@@ -3,18 +3,25 @@
  */
 import { Injectable } from '@angular/core';
 import { NgbDateAdapter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import * as dayjs from 'dayjs';
+import { DateTime } from 'luxon';
 
 @Injectable()
-export class NgbDateDayjsAdapter extends NgbDateAdapter<dayjs.Dayjs> {
-  fromModel(date: dayjs.Dayjs | null): NgbDateStruct | null {
-    if (date && dayjs.isDayjs(date) && date.isValid()) {
-      return { year: date.year(), month: date.month() + 1, day: date.date() };
+export class NgbDateLuxonAdapter extends NgbDateAdapter<DateTime> {
+  fromModel(date: DateTime | null): NgbDateStruct | null {
+    if (date?.isValid) {
+      return { year: date.year, month: date.month + 1, day: date.day };
     }
     return null;
   }
 
-  toModel(date: NgbDateStruct | null): dayjs.Dayjs | null {
-    return date ? dayjs(`${date.year}-${date.month}-${date.day}`) : null;
+  toModel(date: NgbDateStruct | null): DateTime | null {
+    return date ?
+      DateTime.fromObject(
+        {
+          year: date.year,
+          month: date.month,
+          day: date.day
+        })
+      : null;
   }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import * as dayjs from 'dayjs';
+import { DateTime } from 'luxon';
 
 import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
@@ -80,15 +80,25 @@ export class DriverService {
 
   protected convertDateFromClient(driver: IDriver): IDriver {
     return Object.assign({}, driver, {
-      birthDate: driver.birthDate?.isValid() ? driver.birthDate.format(DATE_FORMAT) : undefined,
-      deathDate: driver.deathDate?.isValid() ? driver.deathDate.format(DATE_FORMAT) : undefined,
+      birthDate: driver.birthDate?.isValid ? driver.birthDate.toFormat(DATE_FORMAT) : undefined,
+      deathDate: driver.deathDate?.isValid ? driver.deathDate.toFormat(DATE_FORMAT) : undefined,
     });
   }
 
   protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
     if (res.body) {
-      res.body.birthDate = res.body.birthDate ? dayjs(res.body.birthDate) : undefined;
-      res.body.deathDate = res.body.deathDate ? dayjs(res.body.deathDate) : undefined;
+      const birthCopy = Object.assign([], res.body.birthDate);
+      const deathCopy = Object.assign([], res.body.deathDate);
+      res.body.birthDate = res.body.birthDate ? DateTime.fromObject({
+        year: birthCopy[0],
+        month: birthCopy[1],
+        day: birthCopy[2]
+      }) : undefined;
+      res.body.deathDate = res.body.deathDate ? DateTime.fromObject({
+        year: deathCopy[0],
+        month: deathCopy[1],
+        day: deathCopy[2]
+      }) : undefined;
     }
     return res;
   }
@@ -96,8 +106,18 @@ export class DriverService {
   protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((driver: IDriver) => {
-        driver.birthDate = driver.birthDate ? dayjs(driver.birthDate) : undefined;
-        driver.deathDate = driver.deathDate ? dayjs(driver.deathDate) : undefined;
+        const birthCopy = Object.assign([], driver.birthDate);
+        const deathCopy = Object.assign([], driver.deathDate);
+        driver.birthDate = driver.birthDate ? DateTime.fromObject({
+          year: birthCopy[0],
+          month: birthCopy[1],
+          day: birthCopy[2]
+        }) : undefined;
+        driver.deathDate = driver.deathDate ? DateTime.fromObject({
+          year: deathCopy[0],
+          month: deathCopy[1],
+          day: deathCopy[2]
+        }) : undefined;
       });
     }
     return res;
