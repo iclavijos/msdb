@@ -1,15 +1,15 @@
 import { ICountry } from 'app/entities/country/country.model';
 
-import * as dayjs from 'dayjs';
+import { DateTime } from 'luxon';
 
 export interface IDriver {
   id?: number;
   name?: string;
   surname?: string;
-  birthDate?: dayjs.Dayjs;
+  birthDate?: DateTime;
   birthPlace?: string;
   nationality?: ICountry;
-  deathDate?: dayjs.Dayjs | null;
+  deathDate?: DateTime | null;
   deathPlace?: string;
   portraitContentType?: string;
   portrait?: any;
@@ -25,20 +25,22 @@ export class Driver implements IDriver {
     public id?: number,
     public name?: string,
     public surname?: string,
-    public birthDate?: dayjs.Dayjs,
+    public birthDate?: DateTime,
     public birthPlace?: string,
     public nationality?: ICountry,
-    public deathDate?: dayjs.Dayjs | null,
+    public deathDate?: DateTime | null,
     public deathPlace?: string,
     public portraitContentType?: string,
     public portrait?: any,
     public portraitUrl?: string,
     public age?: number
   ) {
-    if (deathDate) {
-      this.age = deathDate.diff(birthDate, 'year');
-    } else {
-      this.age = dayjs().diff(birthDate, 'year');
+    if (birthDate) {
+      if (deathDate) {
+        this.age = Math.floor(deathDate.diff(birthDate, 'years').as('years'));
+      } else {
+        this.age = Math.floor(DateTime.now().diff(birthDate, 'years').as('years'));
+      }
     }
   }
 

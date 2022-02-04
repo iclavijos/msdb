@@ -1,4 +1,4 @@
-import * as dayjs from 'dayjs';
+import { DateTime } from 'luxon';
 import { IEventEdition } from 'app/entities/event-edition/event-edition.model';
 
 import { DurationType } from 'app/shared/enumerations/durationType.enum';
@@ -8,8 +8,8 @@ export interface IEventSession {
   id?: number;
   name?: string;
   shortname?: string;
-  sessionStartTime?: dayjs.Dayjs;
-  originalStartTime?: dayjs.Dayjs;
+  sessionStartTime?: DateTime;
+  originalStartTime?: DateTime;
   duration?: number;
   totalDuration?: number;
   maxDuration?: number;
@@ -29,8 +29,8 @@ export class EventSession implements IEventSession {
     public id?: number,
     public name?: string,
     public shortname?: string,
-    public sessionStartTime?: dayjs.Dayjs,
-    public originalStartTime?: dayjs.Dayjs,
+    public sessionStartTime?: DateTime,
+    public originalStartTime?: DateTime,
     public duration?: number,
     public totalDuration?: number,
     public maxDuration?: number,

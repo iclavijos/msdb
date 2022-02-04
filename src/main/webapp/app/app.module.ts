@@ -8,17 +8,16 @@ import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule, TranslateService, TranslateLoader, MissingTranslationHandler } from '@ngx-translate/core';
 import { NgxWebstorageModule, SessionStorageService } from 'ngx-webstorage';
-import * as dayjs from 'dayjs';
+import { DateTime } from 'luxon';
 import { NgbDateAdapter, NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
-import './config/dayjs';
 import { SharedModule } from 'app/shared/shared.module';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeModule } from './home/home.module';
 import { EntityRoutingModule } from './entities/entity-routing.module';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
-import { NgbDateDayjsAdapter } from './config/datepicker-adapter';
+import { NgbDateLuxonAdapter } from './config/datepicker-adapter';
 import { fontAwesomeIcons } from './config/font-awesome-icons';
 import { httpInterceptorProviders } from 'app/core/interceptor/index';
 import { translatePartialLoader, missingTranslationHandler } from './config/translation.config';
@@ -58,7 +57,7 @@ import { ErrorComponent } from './layouts/error/error.component';
   providers: [
     Title,
     { provide: LOCALE_ID, useValue: 'en' },
-    { provide: NgbDateAdapter, useClass: NgbDateDayjsAdapter },
+    { provide: NgbDateAdapter, useClass: NgbDateLuxonAdapter },
     httpInterceptorProviders,
   ],
   declarations: [MainComponent, NavbarComponent, ErrorComponent, PageRibbonComponent, ActiveMenuDirective, FooterComponent, SidebarComponent],
@@ -75,7 +74,7 @@ export class AppModule {
     applicationConfigService.setEndpointPrefix(SERVER_API_URL);
     registerLocaleData(locale);
     iconLibrary.addIcons(...fontAwesomeIcons);
-    dpConfig.minDate = { year: dayjs().subtract(100, 'year').year(), month: 1, day: 1 };
+    dpConfig.minDate = { year: DateTime.now().minus({years: 100}).year, month: 1, day: 1 };
     translateService.setDefaultLang('en');
     // if user have changed language and navigates away from the application and back to the application then use previously choosed language
     const langKey = sessionStorageService.retrieve('locale') ?? 'en';

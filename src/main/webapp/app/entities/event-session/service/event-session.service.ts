@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import * as dayjs from 'dayjs';
+import { DateTime } from 'luxon';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
@@ -111,13 +111,18 @@ export class EventSessionService {
 
   protected convertDateFromClient(eventSession: IEventSession): IEventSession {
     return Object.assign({}, eventSession, {
-      sessionStartTime: eventSession.sessionStartTime?.isValid() ? eventSession.sessionStartTime.toJSON() : undefined,
+      sessionStartTime: eventSession.sessionStartTime?.isValid ? eventSession.sessionStartTime.toJSON() : undefined,
     });
   }
 
   protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
     if (res.body) {
-      res.body.sessionStartTime = res.body.sessionStartTime ? dayjs(res.body.sessionStartTime) : undefined;
+      const startTimeCopy = Object.assign([], res.body.sessionStartTime);
+      res.body.sessionStartTime = res.body.sessionStartTime ? DateTime.fromObject({
+        year: startTimeCopy[0],
+        month: startTimeCopy[1],
+        day: startTimeCopy[2]
+      }) : undefined;
     }
     return res;
   }
@@ -125,7 +130,12 @@ export class EventSessionService {
   protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((eventSession: IEventSession) => {
-        eventSession.sessionStartTime = eventSession.sessionStartTime ? dayjs(eventSession.sessionStartTime) : undefined;
+        const startTimeCopy = Object.assign([], eventSession.sessionStartTime);
+        eventSession.sessionStartTime = eventSession.sessionStartTime ? DateTime.fromObject({
+          year: startTimeCopy[0],
+          month: startTimeCopy[1],
+          day: startTimeCopy[2]
+        }) : undefined;
       });
     }
     return res;
@@ -134,8 +144,8 @@ export class EventSessionService {
   private transformDateTime(res: EntityArrayResponseType, timeZone: string): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((eventSession: IEventSession) => {
-        const startTime = dayjs(eventSession.sessionStartTimeDate as number * 1000).utc();
-        eventSession.sessionStartTime = startTime.tz(timeZone ? timeZone : eventSession.locationTimeZone);
+        const tzToApply = timeZone ? timeZone : eventSession.locationTimeZone;
+        eventSession.sessionStartTime = DateTime.fromSeconds(eventSession.sessionStartTimeDate!, { zone: tzToApply});
       });
     }
     return res;

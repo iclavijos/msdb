@@ -3,7 +3,7 @@ import { SessionStorageService } from 'ngx-webstorage';
 
 import { AccountService } from 'app/core/auth/account.service';
 
-import * as dayjs from 'dayjs';
+import { DateTime } from 'luxon';
 
 @Pipe({
   name: 'localizedDate',
@@ -14,28 +14,19 @@ export class LocalizedDatePipe implements PipeTransform {
     private sessionStorageService: SessionStorageService,
     private accountService: AccountService) {}
 
-  transform(value?: dayjs.Dayjs, pattern = 'LL'): string {
-    let momentDate: dayjs.Dayjs;
-
+  transform(value?: DateTime, pattern = 'DDD'): string {
     if (!value) {
       return '';
     }
 
-    if (value instanceof Date || Array.isArray(value)) {
-      // } && !value.lang) {
-      let valueCopy: any;
-      if (Array.isArray(value)) {
-        valueCopy = Object.assign([], value);
-        valueCopy[1] = value[1] - 1;
-      } else {
-        valueCopy = value;
-      }
-
-      momentDate = valueCopy.clone();
-    } else {
-      momentDate = value;
+    if (Array.isArray(value)) {
+      const copyValue = Object.assign([], value);
+      value = DateTime.fromObject({
+        year: copyValue[0],
+        month: copyValue[1],
+        day: copyValue[2]
+      });
     }
-
     let localeKey = this.sessionStorageService.retrieve('locale');
     if (!localeKey) {
       this.accountService.getAuthenticationState()
@@ -44,6 +35,7 @@ export class LocalizedDatePipe implements PipeTransform {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             localeKey = account!.langKey);
     }
-    return momentDate.locale(localeKey).format(pattern);
+
+    return value.setLocale(localeKey).toFormat(pattern);
   }
 }

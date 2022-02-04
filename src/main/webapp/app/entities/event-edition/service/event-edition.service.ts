@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import * as dayjs from 'dayjs';
+import { DateTime } from 'luxon';
 
 import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
@@ -92,12 +92,12 @@ export class EventEditionService {
 
   findCalendarEvents(startDate: Date, endDate: Date): Observable<any[]> {
     const dateFormat = 'yyyy-MM-dd';
-    const fromDate = dayjs(startDate).format(dateFormat);
-    const toDate = dayjs(endDate).format(dateFormat);
+    const fromDate = DateTime.fromJSDate(startDate).toFormat(dateFormat);
+    const toDate = DateTime.fromJSDate(endDate).toFormat(dateFormat);
     return this.http.get<any[]>(`${this.resourceUrl}/calendar/${fromDate}/${toDate}`);
   }
 
-  rescheduleEvent(eventId: number, newDate: dayjs.Dayjs): Observable<HttpResponse<{}>> {
+  rescheduleEvent(eventId: number, newDate: DateTime): Observable<HttpResponse<{}>> {
     return this.http.put<HttpResponse<{}>>(`${this.resourceUrl}/${eventId}/reschedule`, newDate, { observe: 'response' });
   }
 
@@ -131,13 +131,18 @@ export class EventEditionService {
 
   protected convertDateFromClient(eventEdition: IEventEdition): IEventEdition {
     return Object.assign({}, eventEdition, {
-      eventDate: eventEdition.eventDate?.isValid() ? eventEdition.eventDate.format(DATE_FORMAT) : undefined,
+      eventDate: eventEdition.eventDate?.isValid ? eventEdition.eventDate.toFormat(DATE_FORMAT) : undefined,
     });
   }
 
   protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
     if (res.body) {
-      res.body.eventDate = res.body.eventDate ? dayjs(res.body.eventDate) : undefined;
+      const eventDateCopy = Object.assign([], res.body.eventDate);
+      res.body.eventDate = res.body.eventDate ? DateTime.fromObject({
+        year: eventDateCopy[0],
+        month: eventDateCopy[1],
+        day: eventDateCopy[2]
+      }) : undefined;
     }
     return res;
   }
@@ -145,7 +150,12 @@ export class EventEditionService {
   protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((eventEdition: IEventEdition) => {
-        eventEdition.eventDate = eventEdition.eventDate ? dayjs(eventEdition.eventDate) : undefined;
+        const eventDateCopy = Object.assign([], eventEdition.eventDate);
+        eventEdition.eventDate = eventEdition.eventDate ? DateTime.fromObject({
+          year: eventDateCopy[0],
+          month: eventDateCopy[1],
+          day: eventDateCopy[2]
+        }) : undefined;
       });
     }
     return res;
