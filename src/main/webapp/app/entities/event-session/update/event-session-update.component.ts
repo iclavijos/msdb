@@ -1,12 +1,10 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 import { DateTime } from 'luxon';
-import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 
 import { IEventSession } from '../event-session.model';
 import { EventSessionService } from '../service/event-session.service';
@@ -15,6 +13,10 @@ import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
+export interface DialogData {
+  eventSession: IEventSession;
+}
+
 @Component({
   selector: 'jhi-event-session-update',
   templateUrl: './event-session-update.component.html',
@@ -22,7 +24,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class EventSessionUpdateComponent implements OnInit {
   isSaving = false;
   isRaceAndLaps = false;
-  eventSession: IEventSession;
+  eventSession!: IEventSession;
   sessionValues = SessionType;
   durationValues = DurationType;
 
@@ -43,40 +45,33 @@ export class EventSessionUpdateComponent implements OnInit {
     location: []
   });
 
-  private eventEditionId: number;
-
   constructor(
     public dialogRef: MatDialogRef<EventSessionUpdateComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
     protected eventSessionService: EventSessionService,
-    protected activatedRoute: ActivatedRoute,
     protected fb: FormBuilder
   ) {
-   this.eventEditionId = data.eventEditionId;
-   this.eventSession = data.eventSession;
+    this.eventSession = data.eventSession;
 
-   if (!this.eventSession.eventEdition!.event?.rally && !this.eventSession.eventEdition!.event?.raid) {
-     this.timeZone = this.eventSession.eventEdition!.trackLayout?.racetrack?.timeZone;
-   } else if (this.eventSession.eventEdition!.event.rally) {
-     this.timeZone = this.eventSession.eventEdition!.locationTimeZone;
-   } else {
-     this.timeZone = this.eventSession.locationTimeZone;
-   }
+    if (!this.eventSession.eventEdition!.event?.rally && !this.eventSession.eventEdition!.event?.raid) {
+      this.timeZone = this.eventSession.eventEdition!.trackLayout?.racetrack?.timeZone;
+    } else if (this.eventSession.eventEdition!.event.rally) {
+      this.timeZone = this.eventSession.eventEdition!.locationTimeZone;
+    } else {
+      this.timeZone = this.eventSession.locationTimeZone;
+    }
  }
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ eventSession }) => {
-      if (eventSession.id === undefined) {
-        const today = DateTime.local().startOf('day');
-        eventSession.sessionStartTime = today;
-      }
+    if (this.eventSession.id === undefined) {
+      this.eventSession.sessionStartTime = DateTime.local();
+    }
 
-      this.updateForm(eventSession);
-    });
+    this.updateForm(this.eventSession);
   }
 
-  previousState(): void {
-    window.history.back();
+  cancel(): void {
+    this.dialogRef.close();
   }
 
   save(): void {
@@ -94,6 +89,26 @@ export class EventSessionUpdateComponent implements OnInit {
     this.isRaceAndLaps = selectedType >= 2 && this.editForm.get(['durationType'])!.value === 5;
   }
 
+  getSessionValues(): string[] {
+    const enumNames=[];
+    for (const log in SessionType) {
+        if (isNaN(Number(log))) {
+           enumNames.push(log);
+       }
+    }
+    return enumNames;
+  }
+
+  getDurationValues(): string[] {
+    const enumNames=[];
+    for (const log in DurationType) {
+        if (isNaN(Number(log))) {
+           enumNames.push(log);
+       }
+    }
+    return enumNames;
+  }
+
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IEventSession>>): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       () => this.onSaveSuccess(),
@@ -102,7 +117,7 @@ export class EventSessionUpdateComponent implements OnInit {
   }
 
   protected onSaveSuccess(): void {
-    this.previousState();
+    this.dialogRef.close('updatedSession');
   }
 
   protected onSaveError(): void {
@@ -118,7 +133,7 @@ export class EventSessionUpdateComponent implements OnInit {
       id: eventSession.id,
       name: eventSession.name,
       shortname: eventSession.shortname,
-      sessionStartTime: eventSession.sessionStartTime ? eventSession.sessionStartTime.toFormat(DATE_TIME_FORMAT) : null,
+      sessionStartTime: eventSession.sessionStartTime?.setZone(this.timeZone).toJSDate(),
       duration: eventSession.duration,
       totalDuration: eventSession.totalDuration,
       durationType: eventSession.durationType,
