@@ -49,14 +49,11 @@
                         <input matInput [mtxDatetimepicker]="datetimePicker" name="sessionStartTime" id="field_sessionStartTime"
                                formControlName="sessionStartTime" matInput required>
                         <mtx-datetimepicker-toggle [for]="datetimePicker" matSuffix></mtx-datetimepicker-toggle>
-                        <mtx-datetimepicker #datetimePicker></mtx-datetimepicker>
-                                            <!-- [type]="datetime"
-                                            [mode]="mode"
-                                            [multiYearSelector]="multiYearSelector"
-                                            [startView]="startView"
-                                            [twelvehour]="twelvehour"
-                                            [timeInterval]="timeInterval"
-                                            [touchUi]="touchUi" -->
+                        <mtx-datetimepicker #datetimePicker
+                                            type="datetime"
+                                            mode="auto"
+                                            startView="month">
+                        </mtx-datetimepicker>
                     </mat-form-field>
                     <div *ngIf="editForm.get('sessionStartTime')!.invalid && (editForm.get('sessionStartTime')!.dirty || editForm.get('sessionStartTime')!.touched)">
                         <small class="form-text text-danger"
@@ -76,8 +73,8 @@
                         {{'motorsportsDatabaseApp.eventEdition.session.sessionType' | translate}}
                     </mat-label>
                     <mat-select id="field_sessionType" name="sessionType" formControlName="sessionType">
-                        <mat-option *ngFor="let session of sessionValues | keyvalue" [value]="session.value">
-                            {{'motorsportsDatabaseApp.eventEdition.enumerations.' + session.key | translate}}
+                        <mat-option *ngFor="let session of getSessionValues(); let i = index" [value]="i + 1">
+                            {{'motorsportsDatabaseApp.eventEdition.enumerations.' + session | translate }}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -142,8 +139,8 @@
                         {{'motorsportsDatabaseApp.eventEdition.session.durationType' | translate}}
                     </mat-label>
                     <mat-select id="field_durationType" name="durationType" formControlName="durationType" (selectionChange)="onChangeType($event)" required>
-                        <mat-option *ngFor="let duration of durationValues | keyvalue" [value]="duration.value">
-                            {{'motorsportsDatabaseApp.eventEdition.enumerations.' + duration.key | translate}}
+                        <mat-option *ngFor="let duration of getDurationValues(); let i = index" [value]="i+1">
+                            {{'motorsportsDatabaseApp.eventEdition.enumerations.' + duration | translate }}
                         </mat-option>
                     </mat-select>
                     <div [hidden]="!(editForm.controls.durationType?.dirty && editForm.controls.durationType?.invalid)">
@@ -173,7 +170,7 @@
     </form>
 </div>
 <mat-dialog-actions align="end">
-    <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+    <button type="button" id="cancel-save" class="btn btn-secondary" (click)="cancel()">
         <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
     </button>
     <button type="button" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary" (click)="save()">

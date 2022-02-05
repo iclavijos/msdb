@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpResponse } from '@angular/common/http';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { IEventEdition } from 'app/entities/event-edition/event-edition.model';
 import { IEventSession, EventSession } from '../event-session.model';
@@ -13,6 +12,7 @@ import { DurationType } from 'app/shared/enumerations/durationType.enum';
 import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 
 import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 
 import { DateTime } from 'luxon';
 
@@ -40,9 +40,9 @@ export class EventSessionComponent implements OnInit, OnChanges {
 
   constructor(
     protected eventSessionService: EventSessionService,
-    protected modalService: NgbModal,
     protected activatedRoute: ActivatedRoute,
-    protected router: Router
+    protected router: Router,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -90,38 +90,46 @@ export class EventSessionComponent implements OnInit, OnChanges {
   }
 
   createSession(): void {
-    const modalRef = this.modalService.open(EventSessionUpdateComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.eventSession = new EventSession();
-    // unsubscribe not needed because closed completes on modal close
-    modalRef.closed.subscribe(reason => {
-      if (reason === 'edit') {
+    const newSession = new EventSession();
+    newSession.eventEdition = this.eventEdition;
+    const dialogRef = this.dialog.open(EventSessionUpdateComponent, {
+      data: {
+        eventSession: newSession
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(reason => {
+      if (reason === 'updatedSession') {
         this.loadAll();
       }
     });
   }
 
   editSession(eventSession: IEventSession): void {
-    const modalRef = this.modalService.open(EventSessionUpdateComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.eventEditionId = this.eventEdition.id;
-    modalRef.componentInstance.session = eventSession;
-    // unsubscribe not needed because closed completes on modal close
-    modalRef.closed.subscribe(reason => {
-      if (reason === 'edit') {
+    eventSession.eventEdition = this.eventEdition;
+    const dialogRef = this.dialog.open(EventSessionUpdateComponent, {
+      data: {
+        eventSession
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(reason => {
+      if (reason === 'updatedSession') {
         this.loadAll();
       }
     });
   }
 
-  delete(eventSession: IEventSession): void {
-    const modalRef = this.modalService.open(EventSessionDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.eventSession = eventSession;
-    // unsubscribe not needed because closed completes on modal close
-    modalRef.closed.subscribe(reason => {
-      if (reason === 'deleted') {
-        this.loadAll();
-      }
-    });
-  }
+//   delete(eventSession: IEventSession): void {
+//     const modalRef = this.modalService.open(EventSessionDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+//     modalRef.componentInstance.eventSession = eventSession;
+//     // unsubscribe not needed because closed completes on modal close
+//     modalRef.closed.subscribe(reason => {
+//       if (reason === 'deleted') {
+//         this.loadAll();
+//       }
+//     });
+//   }
 
   convertToCurrentTZ(): void {
     const currentTZ = DateTime.local().zone;

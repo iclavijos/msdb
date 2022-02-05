@@ -17,7 +17,7 @@ export type EntityArrayResponseType = HttpResponse<IEventSession[]>;
 
 @Injectable({ providedIn: 'root' })
 export class EventSessionService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/event-sessions');
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/event-editions/event-sessions');
   protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/event-sessions');
   protected resourceEventEditionUrl = this.applicationConfigService.getEndpointFor('api/event-editions');
   protected resourceGeoLocationUrl = this.applicationConfigService.getEndpointFor('api/timezone');
@@ -110,9 +110,19 @@ export class EventSessionService {
   }
 
   protected convertDateFromClient(eventSession: IEventSession): IEventSession {
-    return Object.assign({}, eventSession, {
-      sessionStartTime: eventSession.sessionStartTime?.isValid ? eventSession.sessionStartTime.toJSON() : undefined,
+    const tmp = Object.assign({}, eventSession.eventEdition, {
+      eventDate: [
+        eventSession.eventEdition!.eventDate!.year,
+        eventSession.eventEdition!.eventDate!.month,
+        eventSession.eventEdition!.eventDate!.day,
+      ]
     });
+    const result = Object.assign({}, eventSession, {
+      sessionStartTime: eventSession.sessionStartTime?.isValid ? eventSession.sessionStartTime.toSeconds() : undefined,
+      eventEdition: tmp
+    });
+
+    return result;
   }
 
   protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
