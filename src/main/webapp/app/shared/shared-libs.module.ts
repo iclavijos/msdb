@@ -43,7 +43,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
-import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { MatLuxonDateModule } from '@angular/material-luxon-adapter';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
@@ -65,7 +65,7 @@ import { ImageModule } from 'primeng/image';
     MatSelectModule,
     MatTooltipModule,
     MatTabsModule,
-    MatMomentDateModule,
+    MatLuxonDateModule,
     MatDatepickerModule,
     MatAutocompleteModule,
     MatDialogModule,

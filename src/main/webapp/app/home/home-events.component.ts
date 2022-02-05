@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Moment } from 'moment';
-import * as moment from 'moment-timezone';
+import { DateTime } from 'luxon';
 
 export class HomeEvent {
   sessionName!: string;
-  sessionStartTime!: number|Moment;
-  sessionEndTime!: number|Moment;
+  sessionStartTime!: number | DateTime;
+  sessionEndTime!: number | DateTime;
   duration!: number;
   totalDuration!: number;
   durationType!: number;
@@ -47,7 +46,7 @@ export class HomeEventsComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.timezone = moment.tz.guess();
+    this.timezone = DateTime.local().zone;
     if (this.timezone === undefined) {
       this.timezone = 'Europe/London';
     }
@@ -100,25 +99,25 @@ export class HomeEventsComponent implements OnInit {
     }
   }
 
-  formatSessionTime(sessionTime: Moment | number, pattern: string): string {
-    const momentTime = <Moment>sessionTime;
-    return momentTime.format(pattern);
+  formatSessionTime(sessionTime: DateTime | number, pattern: string): string {
+    const luxonTime = <DateTime>sessionTime;
+    return luxonTime.toFormat(pattern);
   }
 
   private convertData(data: HomeEvent[], tz: string): HomeEvent[] {
     this.dates = new Set();
     for (let i = 0; i < data.length; i++) {
-      let tmpStart: Moment;
-      if (moment.isMoment(data[i].sessionStartTime)) {
-        (data[i].sessionStartTime as Moment).tz(tz);
-        (data[i].sessionEndTime as Moment).tz(tz);
-        tmpStart = data[i].sessionStartTime as Moment;
+      let tmpStart: DateTime;
+      if (data[i].sessionStartTime instanceof DateTime) {
+        (data[i].sessionStartTime as DateTime).setZone(tz);
+        (data[i].sessionEndTime as DateTime).setZone(tz);
+        tmpStart = data[i].sessionStartTime as DateTime;
       } else {
-        data[i].sessionStartTime = moment.unix(data[i].sessionStartTime as number).tz(tz);
-        data[i].sessionEndTime = moment.unix(data[i].sessionEndTime as number).tz(tz);
-        tmpStart = moment(data[i].sessionStartTime as number).tz(tz);
+        data[i].sessionStartTime = DateTime.fromMillis(data[i].sessionStartTime as number).setZone(tz);
+        data[i].sessionEndTime = DateTime.fromMillis(data[i].sessionEndTime as number).setZone(tz);
+        tmpStart = data[i].sessionStartTime as DateTime;
       }
-      this.dates.add(tmpStart.format('LL'));
+      this.dates.add(tmpStart.toFormat('DDD'));
     }
     return data;
   }
