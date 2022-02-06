@@ -3,9 +3,7 @@
     <p>{{'motorsportsDatabaseApp.eventEdition.reschedule.question' | translate }}</p>
     <mat-form-field>
         <mat-label>{{'motorsportsDatabaseApp.eventEdition.reschedule.newDate' | translate }}</mat-label>
-        <input [mtxDatetimepicker]="datetimePicker" name="newDate" id="field_newDate" formControlName="newDate" matInput required>
-        <mtx-datetimepicker-toggle [for]="datetimePicker" matSuffix></mtx-datetimepicker-toggle>
-        <mtx-datetimepicker #datetimePicker></mtx-datetimepicker>
+        <input type="date" name="newDate" id="field_newDate" formControlName="newDate" matInput required>
     </mat-form-field>
 </div>
 <mat-dialog-actions align="end">

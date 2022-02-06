@@ -10,9 +10,6 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
-import { MtxNativeDatetimeModule } from '@ng-matero/extensions/core';
-import { MtxDatetimepickerModule } from '@ng-matero/extensions/datetimepicker';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatRippleModule } from '@angular/material/core';
@@ -92,8 +89,6 @@ import { ImageModule } from 'primeng/image';
     MatProgressBarModule,
     LeafletModule,
     ImageModule,
-    MtxDatetimepickerModule,
-    MtxNativeDatetimeModule
   ]
 })
 export class SharedLibsModule {}
