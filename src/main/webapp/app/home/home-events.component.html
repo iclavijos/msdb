@@ -35,10 +35,10 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <div class="card-block" *ngFor="let day of dates">
-                                    <h5 class="card-title">{{ day }}</h5>
+                                <div class="card-block" *ngFor="let day of dates | keyvalue">
+                                    <h5 class="card-title">{{ day.value | localizedDate: 'DDDD' }}</h5>
                                     <div class="card-body">
-                                        <div class="row p-2" *ngFor="let session of filteredSessions(day);">
+                                        <div class="row p-2" *ngFor="let session of filteredSessions(day.value);">
                                             <div class="col-2">
                                                 <img *ngIf="session.seriesLogo" #layoutImg [src]="session.seriesLogo" class="img-fluid" alt="series logo" style="text-align: center">
                                             </div>
