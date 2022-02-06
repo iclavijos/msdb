@@ -4,26 +4,6 @@
 put Sass variables here:
 eg $input-color: red;
 ****************************/
-@use "@angular/material" as mat;
-@use '@ng-matero/extensions' as mtx;
-
-@include mat.core();
-
-$my-app-primary: mat.define-palette(mat.$indigo-palette);
-$my-app-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
-$my-app-warn: mat.define-palette(mat.$red-palette);
-
-$my-app-theme: mat.define-light-theme(
-  (
-    color: (
-      primary: $my-app-primary,
-      accent: $my-app-accent,
-      warn: $my-app-warn,
-    ),
-  )
-);
-
-@include mat.all-component-themes($my-app-theme);
 
 // Override Bootstrap variables
 @import 'bootstrap-variables';
@@ -42,6 +22,3 @@ $my-app-theme: mat.define-light-theme(
 @import '~@fullcalendar/list/main.min.css';
 
 @import '~leaflet/dist/leaflet.css';
-
-@include mtx.all-component-themes($my-app-theme);
-@include mtx.all-experimental-component-themes($my-app-theme);

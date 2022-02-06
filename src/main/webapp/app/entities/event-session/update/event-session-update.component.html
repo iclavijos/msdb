@@ -45,16 +45,8 @@
                     <mat-label>
                         {{'motorsportsDatabaseApp.eventEdition.session.sessionStartTime' | translate}}
                     </mat-label>
-                    <mat-form-field>
-                        <input matInput [mtxDatetimepicker]="datetimePicker" name="sessionStartTime" id="field_sessionStartTime"
-                               formControlName="sessionStartTime" matInput required>
-                        <mtx-datetimepicker-toggle [for]="datetimePicker" matSuffix></mtx-datetimepicker-toggle>
-                        <mtx-datetimepicker #datetimePicker
-                                            type="datetime"
-                                            mode="auto"
-                                            startView="month">
-                        </mtx-datetimepicker>
-                    </mat-form-field>
+                    <input matInput type="datetime-local" name="sessionStartTime" id="field_sessionStartTime"
+                       formControlName="sessionStartTime" matInput required>
                     <div *ngIf="editForm.get('sessionStartTime')!.invalid && (editForm.get('sessionStartTime')!.dirty || editForm.get('sessionStartTime')!.touched)">
                         <small class="form-text text-danger"
                                *ngIf="editForm.get('sessionStartTime')!.errors!.required" jhiTranslate="entity.validation.required">
