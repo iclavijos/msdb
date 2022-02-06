@@ -33,12 +33,12 @@ export class TimeZone {
   styleUrls: ['./home.scss']
 })
 export class HomeEventsComponent implements OnInit {
-  calendar: any;
-  filteredBySessionTypeCalendar: any;
-  timezone: any;
-  timezones: any;
+  calendar!: HomeEvent[];
+  filteredBySessionTypeCalendar!: HomeEvent[];
+  timezone!: string;
+  timezones!: TimeZone[];
   noEvents = false;
-  dates = new Set();
+  dates = new Map<string, DateTime>();
   showRaces = false;
   showQualiSessions = false;
   showPracticeSessions = false;
@@ -46,10 +46,8 @@ export class HomeEventsComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.timezone = DateTime.local().zone;
-    if (this.timezone === undefined) {
-      this.timezone = 'Europe/London';
-    }
+    this.timezone = DateTime.local().zone.name;
+
     this.http.get<HomeEvent[]>('api/home/calendar').subscribe((res: HomeEvent[]) => {
       this.calendar = this.convertData(res, this.timezone);
       this.filteredBySessionTypeCalendar = this.calendar;
@@ -59,10 +57,9 @@ export class HomeEventsComponent implements OnInit {
     });
   }
 
-  filteredSessions(day: unknown): HomeEvent[] {
-    const filterDay = <string>day;
+  filteredSessions(day: DateTime): HomeEvent[] {
     return this.filteredBySessionTypeCalendar.filter(
-      (item: HomeEvent) => this.formatSessionTime(item.sessionStartTime, 'LL') === filterDay) as HomeEvent[];
+      (item: HomeEvent) => (item.sessionStartTime as DateTime).startOf('day').equals(day.startOf('day')));
   }
 
   changeTimezone(): void {
@@ -105,19 +102,16 @@ export class HomeEventsComponent implements OnInit {
   }
 
   private convertData(data: HomeEvent[], tz: string): HomeEvent[] {
-    this.dates = new Set();
+    this.dates = new Map<string, DateTime>();
     for (let i = 0; i < data.length; i++) {
-      let tmpStart: DateTime;
       if (data[i].sessionStartTime instanceof DateTime) {
-        (data[i].sessionStartTime as DateTime).setZone(tz);
-        (data[i].sessionEndTime as DateTime).setZone(tz);
-        tmpStart = data[i].sessionStartTime as DateTime;
+        data[i].sessionStartTime = (data[i].sessionStartTime as DateTime).setZone(tz);
+        data[i].sessionEndTime = (data[i].sessionEndTime as DateTime).setZone(tz);
       } else {
-        data[i].sessionStartTime = DateTime.fromMillis(data[i].sessionStartTime as number).setZone(tz);
-        data[i].sessionEndTime = DateTime.fromMillis(data[i].sessionEndTime as number).setZone(tz);
-        tmpStart = data[i].sessionStartTime as DateTime;
+        data[i].sessionStartTime = DateTime.fromSeconds(data[i].sessionStartTime as number).setZone(tz);
+        data[i].sessionEndTime = DateTime.fromSeconds(data[i].sessionEndTime as number).setZone(tz);
       }
-      this.dates.add(tmpStart.toFormat('DDD'));
+      this.dates.set((data[i].sessionStartTime as DateTime).toFormat('DDD'), (data[i].sessionStartTime as DateTime));
     }
     return data;
   }
