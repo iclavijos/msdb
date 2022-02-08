@@ -285,7 +285,7 @@ public class ImportsResource {
     		session.setSessionStartTime(tmp.getSessionStartTime().atZone(tz.toZoneId()).toInstant().toEpochMilli());
     		session.setDuration(tmp.getSessionDuration());
     		session.setSessionType(SessionType.valueOf(tmp.getSessionType().toUpperCase()));
-    		session.setDurationType(DurationType.valueOf(tmp.getDurationType().toUpperCase()).getValue());
+    		session.setDurationType(DurationType.valueOf(tmp.getDurationType().toUpperCase()));
     		session.setAdditionalLap(tmp.getExtraLap());
     		session.setMaxDuration(Optional.ofNullable(tmp.getMaxDuration()).orElseGet(() -> 0));
 
