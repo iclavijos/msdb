@@ -67,7 +67,7 @@ public class ResultsService {
             }
 			if (ps.getRacePctCompleted() > 0) {
 				EventEntryResult result = results.get(0);
-				if (session.isRace() && session.getDurationType().equals(DurationType.LAPS.getValue())) {
+				if (session.isRace() && session.getDurationType().equals(DurationType.LAPS)) {
 					Float completionPct = ((float)result.getLapsCompleted().intValue() / (float)session.getDuration().intValue()) * 100;
 					if (completionPct.intValue() < ps.getRacePctCompleted()) {
 						pointsPct = ps.getPctTotalPoints() / 100f;

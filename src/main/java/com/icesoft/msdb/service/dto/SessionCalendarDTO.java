@@ -1,5 +1,6 @@
 package com.icesoft.msdb.service.dto;
 
+import com.icesoft.msdb.domain.enums.SessionType;
 import lombok.Data;
 
 import java.time.ZonedDateTime;
@@ -11,8 +12,7 @@ public class SessionCalendarDTO {
 	private final String seriesName;
 	private final String eventName;
 	private final String sessionName;
-    private final Boolean cancelled;
-	private final int sessionType;
+	private final SessionType sessionType;
 	private final ZonedDateTime startTime;
 	private final ZonedDateTime endTime;
     private final Float duration;
@@ -27,7 +27,7 @@ public class SessionCalendarDTO {
     private final Boolean raid;
 
 	public SessionCalendarDTO(
-	    Long id, String seriesName, String eventName, String sessionName, Boolean cancelled, int sessionType,
+	    Long id, String seriesName, String eventName, String sessionName, SessionType sessionType,
         ZonedDateTime startTime, ZonedDateTime endTime, Float duration, Float totalDuration, String status, Integer seriesRelevance,
         String racetrack, String racetrackLayoutUrl, String[] categories, Boolean rally, Boolean raid,
         String... seriesLogoUrl) {
@@ -35,7 +35,6 @@ public class SessionCalendarDTO {
 		this.seriesName = seriesName;
 		this.eventName = eventName;
 		this.sessionName = sessionName;
-        this.cancelled = cancelled;
 		this.sessionType = sessionType;
 		this.startTime = startTime;
 		this.endTime = endTime;

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.icesoft.msdb.domain.EventSession;
+import com.icesoft.msdb.domain.enums.DurationType;
+import com.icesoft.msdb.domain.enums.SessionType;
 import lombok.Data;
 
 @Data
@@ -14,8 +16,8 @@ public class SessionDataDTO {
 	private final ZonedDateTime sessionEndTime;
 	private final Float duration;
     private final Float totalDuration;
-	private final Integer durationType;
-    private final String sessionType;
+	private final DurationType durationType;
+    private final SessionType sessionType;
 	private final Long eventEditionId;
 	private final String eventName;
 	private final String racetrack;
@@ -37,7 +39,7 @@ public class SessionDataDTO {
 		this.duration = session.getDuration();
         this.totalDuration = session.getTotalDuration();
 		this.durationType = session.getDurationType();
-        this.sessionType = session.getSessionType().name();
+        this.sessionType = session.getSessionType();
 		this.eventEditionId = session.getEventEdition().getId();
 		this.eventName = session.getEventEdition().getLongEventName();
 		this.seriesIds = session.getSeriesIds();

@@ -12,17 +12,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.*;
-import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -66,10 +63,11 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     private Integer maxDuration;
 
     @Column(name= "duration_type")
-    private Integer durationType;
+    @Enumerated(EnumType.STRING)
+    private DurationType durationType;
 
     @Column(name= "session_type")
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private SessionType sessionType;
 
     @Column(name= "additional_lap")
@@ -95,13 +93,6 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 
     @Column(name = "location_time_zone")
     private String locationTimeZone;
-
-    @Column
-    private Boolean cancelled;
-
-	public int getSessionTypeValue() {
-		return sessionType.getValue() - 1;
-	}
 
 	public boolean isRace() {
 		return sessionType.equals(SessionType.RACE);
@@ -135,12 +126,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 		return getSessionEndTime().isBefore(ZonedDateTime.now(ZoneId.of("UTC")));
 	}
 
-    public boolean isCancelled() {
-        return Optional.ofNullable(cancelled).orElse(false);
-    }
-
 	public ZonedDateTime getSessionEndTime() {
-		DurationType durationType = DurationType.valueOf(getDurationType());
 		TemporalUnit temp = durationType.equals(DurationType.MINUTES) ? ChronoUnit.MINUTES :
 				durationType.equals(DurationType.HOURS) ? ChronoUnit.HOURS : null;
 
