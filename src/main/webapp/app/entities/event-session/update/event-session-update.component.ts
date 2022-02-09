@@ -4,8 +4,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
-import { DateTime } from 'luxon';
-
 import { IEventSession } from '../event-session.model';
 import { EventSessionService } from '../service/event-session.service';
 import { DurationType } from 'app/shared/enumerations/durationType.enum';
@@ -64,7 +62,7 @@ export class EventSessionUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.eventSession.id === undefined) {
-      this.eventSession.sessionStartTime = DateTime.local();
+      this.eventSession.sessionStartTime = this.eventSession.eventEdition!.eventDate!.set({ second: 0, millisecond: 0});
     }
 
     this.updateForm(this.eventSession);
@@ -91,9 +89,9 @@ export class EventSessionUpdateComponent implements OnInit {
 
   getSessionValues(): string[] {
     const enumNames=[];
-    for (const log in SessionType) {
-        if (isNaN(Number(log))) {
-           enumNames.push(log);
+    for (const name in SessionType) {
+        if (isNaN(Number(name))) {
+           enumNames.push(name.toLowerCase());
        }
     }
     return enumNames;
@@ -101,9 +99,9 @@ export class EventSessionUpdateComponent implements OnInit {
 
   getDurationValues(): string[] {
     const enumNames=[];
-    for (const log in DurationType) {
-        if (isNaN(Number(log))) {
-           enumNames.push(log);
+    for (const name in DurationType) {
+        if (isNaN(Number(name))) {
+           enumNames.push(name.toLowerCase());
        }
     }
     return enumNames;
@@ -133,7 +131,9 @@ export class EventSessionUpdateComponent implements OnInit {
       id: eventSession.id,
       name: eventSession.name,
       shortname: eventSession.shortname,
-      sessionStartTime: eventSession.sessionStartTime?.setZone(this.timeZone).toJSDate(),
+      sessionStartTime: eventSession.sessionStartTime?.setZone(this.timeZone).toISO({
+        includeOffset: false
+      }),
       duration: eventSession.duration,
       totalDuration: eventSession.totalDuration,
       durationType: eventSession.durationType,
@@ -142,11 +142,12 @@ export class EventSessionUpdateComponent implements OnInit {
       maxDuration: eventSession.maxDuration,
       location: eventSession.location
     });
-    this.isRaceAndLaps = eventSession.sessionType! >= 2 && eventSession.durationType === 5;
+    this.isRaceAndLaps =
+      (eventSession.sessionType! === SessionType.RACE || eventSession.sessionType! === SessionType.QUALIFYING_RACE) && eventSession.durationType === DurationType.LAPS;
     if (this.eventSession.eventEdition?.event?.rally || this.eventSession.eventEdition?.event?.raid) {
       this.editForm.get('durationType')!.disable();
-      this.editForm.get('durationType')!.setValue(this.durationValues.kilometers);
-      this.editForm.get('sessionType')!.setValue(this.sessionValues.stage);
+      this.editForm.get('durationType')!.setValue(this.durationValues.KILOMETERS);
+      this.editForm.get('sessionType')!.setValue(this.sessionValues.STAGE);
     }
   }
 
@@ -156,9 +157,7 @@ export class EventSessionUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       name: this.editForm.get(['name'])!.value,
       shortname: this.editForm.get(['shortname'])!.value,
-//       sessionStartTime: this.editForm.get(['sessionStartTime'])!.value
-//         ? DateTime.fromJSDate(this.editForm.get(['sessionStartTime'])!.value).toFormat(DATE_TIME_FORMAT)
-//         : undefined,
+      sessionStartTime: this.editForm.get(['sessionStartTime'])!.value,
       duration: this.editForm.get(['duration'])!.value,
       totalDuration: this.editForm.get(['totalDuration'])!.value,
       durationType: this.editForm.get(['durationType'])!.value,

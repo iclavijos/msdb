@@ -1,7 +1,7 @@
 export enum SessionType {
-  practice,
-  qualifying,
-  race,
-  qualifyingRace,
-  stage
+  PRACTICE,
+  QUALIFYING,
+  RACE,
+  QUALIFYING_RACE,
+  STAGE
 }
