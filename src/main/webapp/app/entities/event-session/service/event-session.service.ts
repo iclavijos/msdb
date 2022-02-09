@@ -8,9 +8,11 @@ import { ApplicationConfigService } from 'app/core/config/application-config.ser
 import { createRequestOption } from 'app/core/request/request-util';
 import { Search } from 'app/core/request/request.model';
 import { IEventSession, getEventSessionIdentifier } from '../event-session.model';
-import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 import { IDriverAverages } from 'app/shared/model/driver-averages.model';
 import { ILapPositions } from 'app/shared/model/lap-positions.model';
+
+import { DurationType } from 'app/shared/enumerations/durationType.enum';
+import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 
 export type EntityResponseType = HttpResponse<IEventSession>;
 export type EntityArrayResponseType = HttpResponse<IEventSession[]>;
@@ -74,7 +76,7 @@ export class EventSessionService {
   findSessions(id: number, timeZone: string): Observable<EntityArrayResponseType> {
     return this.http
       .get<IEventSession[]>(`${this.resourceEventEditionUrl}/${id}/sessions`, { observe: 'response' })
-      .pipe(map((res: EntityArrayResponseType) => this.transformDateTime(res, timeZone)));
+      .pipe(map((res: EntityArrayResponseType) => this.transformResponseData(res, timeZone)));
   }
 
   findSessionDriverNames(id: number): Observable<string[]> {
@@ -110,19 +112,19 @@ export class EventSessionService {
   }
 
   protected convertDateFromClient(eventSession: IEventSession): IEventSession {
-    const tmp = Object.assign({}, eventSession.eventEdition, {
-      eventDate: [
-        eventSession.eventEdition!.eventDate!.year,
-        eventSession.eventEdition!.eventDate!.month,
-        eventSession.eventEdition!.eventDate!.day,
-      ]
-    });
-    const result = Object.assign({}, eventSession, {
-      sessionStartTime: eventSession.sessionStartTime?.isValid ? eventSession.sessionStartTime.toSeconds() : undefined,
-      eventEdition: tmp
+    const event = Object.assign({}, eventSession.eventEdition, {
+      eventDate: eventSession.eventEdition!.eventDate!.toISODate()
     });
 
-    return result;
+    const startTime = DateTime.fromISO((eventSession.sessionStartTime as unknown) as string, {
+      zone: eventSession.locationTimeZone
+    });
+    const session = Object.assign({}, eventSession, {
+      eventEdition: event,
+      sessionStartTime: startTime.toSeconds(),
+    });
+
+    return session;
   }
 
   protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
@@ -151,11 +153,13 @@ export class EventSessionService {
     return res;
   }
 
-  private transformDateTime(res: EntityArrayResponseType, timeZone: string): EntityArrayResponseType {
+  private transformResponseData(res: EntityArrayResponseType, timeZone: string): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((eventSession: IEventSession) => {
         const tzToApply = timeZone ? timeZone : eventSession.locationTimeZone;
-        eventSession.sessionStartTime = DateTime.fromSeconds(eventSession.sessionStartTimeDate!, { zone: tzToApply});
+        eventSession.sessionType = SessionType[(eventSession.sessionType as unknown) as keyof typeof SessionType];
+        eventSession.durationType = DurationType[(eventSession.durationType as unknown) as keyof typeof DurationType];
+        eventSession.sessionStartTime = DateTime.fromSeconds(eventSession.sessionStartTimeDate!, { zone: tzToApply });
       });
     }
     return res;

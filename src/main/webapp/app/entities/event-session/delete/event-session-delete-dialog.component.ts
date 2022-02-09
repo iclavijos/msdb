@@ -1,6 +1,5 @@
-import { Component, Inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { IEventSession } from '../event-session.model';
 import { EventSessionService } from '../service/event-session.service';
@@ -11,13 +10,7 @@ import { EventSessionService } from '../service/event-session.service';
 export class EventSessionDeleteDialogComponent {
   eventSession?: IEventSession;
 
-  constructor(
-    protected eventSessionService: EventSessionService,
-    protected activeModal: NgbActiveModal,
-    protected dialogRef: MatDialogRef<EventSessionDeleteDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) protected data: any) {
-    this.eventSession = data.eventSession;
-  }
+  constructor(protected eventSessionService: EventSessionService, protected activeModal: NgbActiveModal) {}
 
   cancel(): void {
     this.activeModal.dismiss();

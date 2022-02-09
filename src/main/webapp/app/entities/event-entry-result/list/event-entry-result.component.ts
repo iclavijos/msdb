@@ -15,6 +15,8 @@ import { EventEntryResultUpdateComponent } from '../update/event-entry-result-up
 import { EventEntryUploadResultsComponent } from '../upload/event-entry-result-upload.component';
 import { EventEntryResultUploadLapByLapComponent } from '../upload/event-entry-result-upload-lapbylap.component';
 import { EventEntryResultDeleteDialogComponent } from '../delete/event-entry-result-delete-dialog.component';
+import { DurationType } from 'app/shared/enumerations/durationType.enum';
+import { SessionType } from 'app/shared/enumerations/sessionType.enum';
 
 import { MatDialog } from '@angular/material/dialog';
 
@@ -35,6 +37,9 @@ export class EventEntryResultComponent implements OnInit {
   resultsLength = 0;
   isLoading = false;
 
+  sessionValues = SessionType;
+  durationValues = DurationType;
+
   constructor(
     protected eventEntryResultService: EventEntryResultService,
     protected modalService: NgbModal,
@@ -52,20 +57,20 @@ export class EventEntryResultComponent implements OnInit {
     if (this.getEventAllowedCategories().length > 1) {
       this.displayedColumns.push('category');
     }
-    if (this.eventSession.sessionTypeValue === 2 || this.eventSession.sessionTypeValue === 4) {
+    if (this.eventSession.sessionType === SessionType.RACE || this.eventSession.sessionType === SessionType.QUALIFYING_RACE) {
       this.displayedColumns.push('totalTime');
     }
-    if (this.eventSession.sessionTypeValue !== 4) {
+    if (this.eventSession.sessionType !== SessionType.QUALIFYING_RACE) {
       this.displayedColumns.push('bestLapTime');
     }
-    if (this.eventSession.sessionTypeValue !== 2 && this.eventSession.sessionTypeValue !== 4) {
+    if (this.eventSession.sessionType !== SessionType.RACE && this.eventSession.sessionType !== SessionType.QUALIFYING_RACE) {
       this.displayedColumns.push('difference', 'previous');
     }
     this.displayedColumns.push('lapsCompleted');
-    if (this.eventSession.sessionTypeValue === 2) {
+    if (this.eventSession.sessionType === SessionType.RACE) {
       this.displayedColumns.push('lapsLed');
     }
-    if (this.eventSession.sessionTypeValue === 2 || this.eventSession.sessionTypeValue === 4) {
+    if (this.eventSession.sessionType === SessionType.RACE || this.eventSession.sessionType === SessionType.QUALIFYING_RACE) {
       this.displayedColumns.push('retired', 'retirementCause');
     }
     this.displayedColumns.push('buttons');

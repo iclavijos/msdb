@@ -21,7 +21,9 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-3">
+            <div
+                [class.col-md-3]="!eventSession.eventEdition!.event?.rally && !eventSession.eventEdition!.event?.raid"
+                [class.col-md-4]="eventSession.eventEdition!.event?.rally || eventSession.eventEdition!.event?.raid">
                 <mat-form-field class="example-full-width">
                     <mat-label>
                         {{ 'motorsportsDatabaseApp.eventEdition.session.shortname' | translate}}
@@ -40,13 +42,16 @@
                     </div>
                 </mat-form-field>
             </div>
-            <div class="col-md-6">
+            <div
+                [class.col-md-6]="!eventSession.eventEdition!.event?.rally && !eventSession.eventEdition!.event?.raid"
+                [class.col-md-8]="eventSession.eventEdition!.event?.rally || eventSession.eventEdition!.event?.raid">
                 <mat-form-field class="example-full-width">
                     <mat-label>
                         {{'motorsportsDatabaseApp.eventEdition.session.sessionStartTime' | translate}}
                     </mat-label>
                     <input matInput type="datetime-local" name="sessionStartTime" id="field_sessionStartTime"
                        formControlName="sessionStartTime" matInput required>
+
                     <div *ngIf="editForm.get('sessionStartTime')!.invalid && (editForm.get('sessionStartTime')!.dirty || editForm.get('sessionStartTime')!.touched)">
                         <small class="form-text text-danger"
                                *ngIf="editForm.get('sessionStartTime')!.errors!.required" jhiTranslate="entity.validation.required">
@@ -59,13 +64,13 @@
                     </div>
                 </mat-form-field>
             </div>
-            <div *ngIf="!eventSession.eventEdition!.event?.rally && !eventSession.eventEdition!.event?.raid" class="col-md-3">
+            <div *ngIf="eventSession.eventEdition!.event?.rally || eventSession.eventEdition!.event?.raid" class="col-md-3">
                 <mat-form-field class="example-full-width">
                     <mat-label>
                         {{'motorsportsDatabaseApp.eventEdition.session.sessionType' | translate}}
                     </mat-label>
                     <mat-select id="field_sessionType" name="sessionType" formControlName="sessionType">
-                        <mat-option *ngFor="let session of getSessionValues(); let i = index" [value]="i + 1">
+                        <mat-option *ngFor="let session of getSessionValues(); let i = index" [value]="i">
                             {{'motorsportsDatabaseApp.eventEdition.enumerations.' + session | translate }}
                         </mat-option>
                     </mat-select>
@@ -131,7 +136,7 @@
                         {{'motorsportsDatabaseApp.eventEdition.session.durationType' | translate}}
                     </mat-label>
                     <mat-select id="field_durationType" name="durationType" formControlName="durationType" (selectionChange)="onChangeType($event)" required>
-                        <mat-option *ngFor="let duration of getDurationValues(); let i = index" [value]="i+1">
+                        <mat-option *ngFor="let duration of getDurationValues(); let i = index" [value]="i">
                             {{'motorsportsDatabaseApp.eventEdition.enumerations.' + duration | translate }}
                         </mat-option>
                     </mat-select>

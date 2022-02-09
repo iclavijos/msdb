@@ -408,12 +408,24 @@ public class EventEditionResource {
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
     }
 
-    @PutMapping("/event-editions/event-sessions")
+    @PutMapping("/event-editions/event-sessions/{id}")
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict(cacheNames="calendar", allEntries=true)
     @Transactional
-    public ResponseEntity<EventSession> updateEventSession(@Valid @RequestBody EventSession eventSession) throws URISyntaxException {
-        log.debug("REST request to update EventSession : {}", eventSession);
+    public ResponseEntity<EventSession> updateEventSession(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody EventSession eventSession) throws URISyntaxException {
+        log.debug("REST request to update EventSession : {}, {}", id, eventSession);
+        if (eventSession.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, eventSession.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+        if (!eventSessionRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
         eventSession.setSessionStartTime(resetSessionStartTimeSeconds(eventSession.getSessionStartTimeDate()));
         eventSession.setEventEdition(eventEditionRepository.findById(eventSession.getEventEdition().getId()).orElseThrow(
             () -> new MSDBException("Invalid event edition id " + eventSession.getEventEdition().getId())

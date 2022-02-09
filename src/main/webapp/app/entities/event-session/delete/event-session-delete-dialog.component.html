@@ -1,9 +1,29 @@
-<h1 mat-dialog-title>{{'entity.delete.title' | translate }}</h1>
-<div mat-dialog-content>
-    <p id="jhi-delete-eventSession-heading" jhiTranslate="motorsportsDatabaseApp.eventEdition.session.delete.question"
-       [translateValues]="{id: eventSession!.name}">Are you sure you want to delete this Event Session?</p>
-</div>
-<mat-dialog-actions align="end">
-    <button mat-button (click)="cancel()" cdkFocusInitial>{{'entity.action.cancel' | translate }}</button>
-    <button mat-button (click)="confirmDelete(eventSession!.id!)">{{'entity.action.delete' | translate }}</button>
-</mat-dialog-actions>
+<form *ngIf="eventSession" name="deleteForm" (ngSubmit)="confirmDelete(eventSession.id!)">
+    <div class="modal-header">
+        <h4 class="modal-title" data-cy="eventSessionDeleteDialogHeading" jhiTranslate="entity.delete.title">Confirm delete operation</h4>
+
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="cancel()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+
+        <p
+            id="jhi-delete-eventSession-heading"
+            jhiTranslate="motorsportsDatabaseApp.eventEdition.session.delete.question"
+            [translateValues]="{ id: eventSession.name }"
+        >
+            Are you sure you want to delete this Event Session?
+        </p>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
+            <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button id="jhi-confirm-delete-eventSession" data-cy="entityConfirmDeleteButton" type="submit" class="btn btn-danger">
+            <fa-icon icon="times"></fa-icon>&nbsp;<span jhiTranslate="entity.action.delete">Delete</span>
+        </button>
+    </div>
+</form>
