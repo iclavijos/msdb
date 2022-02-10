@@ -2,22 +2,18 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Inject } from '
 import { FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { SessionStorageService } from 'ngx-webstorage';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { IEventEdition } from '../shared/model/event-edition.model';
-import { EventEditionService } from '../entities/event-edition/event-edition.service';
+import { AccountService } from 'app/core/auth/account.service';
+import { IEventEdition } from 'app/entities/event-edition/event-edition.model';
+import { EventEditionService } from 'app/entities/event-edition/service/event-edition.service';
 import { TimeZone } from 'app/home/home-events.component';
 
-import * as moment from 'moment-timezone';
+import { DateTime } from 'luxon';
 
 import { FullCalendarComponent, CalendarOptions, EventClickArg } from '@fullcalendar/angular';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import timeLinePlugin from '@fullcalendar/timeline';
-import listPlugin from '@fullcalendar/list';
-import momentTimezonePlugin from '@fullcalendar/moment-timezone';
-
 import esLocale from '@fullcalendar/core/locales/es';
 import caLocale from '@fullcalendar/core/locales/ca';
 import enLocale from '@fullcalendar/core/locales/en-gb';
@@ -35,8 +31,8 @@ export class MyEvent {
   totalDuration!: number;
   textColor!: string;
   color!: string;
-  start!: any;
-  end!: any;
+  start!: string;
+  end!: string;
   seriesLogoUrl!: string;
   seriesName!: string;
   allDay = false;
@@ -65,9 +61,9 @@ export class EventDialogComponent {
     this.dialogRef.close();
   }
 
-  public navigateToEvent(event: IEventEdition): void {
+  public navigateToEvent(eventEdition: IEventEdition): void {
     this.dialogRef.close();
-    this.router.navigate(['/event/edition', event.id, 'view-ed']);
+    this.router.navigate(['/event', eventEdition.event!.id, 'edition', eventEdition.id]);
   }
 }
 
@@ -77,7 +73,7 @@ export class EventDialogComponent {
 export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
 
-  calendarPlugins = [dayGridPlugin, timeGridPlugin, timeLinePlugin, listPlugin, momentTimezonePlugin];
+  // calendarPlugins = [dayGridPlugin, listPlugin, luxon2Plugin];
   calendarLocales = [esLocale, caLocale, enLocale];
 
   sessionsSrc: MyEvent[] = [];
@@ -94,6 +90,8 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private eventEditionService: EventEditionService,
+    private sessionStorageService: SessionStorageService,
+    private accountService: AccountService,
     private translateService: TranslateService,
     private http: HttpClient,
     private eventDialog: MatDialog
@@ -123,11 +121,13 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   ngOnInit(): void {
-    this.timezone = moment.tz.guess();
+    this.timezone = DateTime.local().zoneName;
     this.http.get<TimeZone[]>('api/timezones').subscribe(res => (this.timezones = res));
 
     this.calendarOptions = {
+      themeSystem: 'bootstrap5',
       initialView: 'dayGridMonth',
+      titleFormat: 'DDD',
       eventClick: this.openEventDialog.bind(this),
       headerToolbar: {
         left: 'prev,next today',
@@ -148,11 +148,17 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    if (this.translateService.currentLang) {
-      this.calendarComponent.getApi().setOption('locale', this.translateService.currentLang);
-    } else {
-      this.calendarComponent.getApi().setOption('locale', 'es');
+    let localeKey = this.sessionStorageService.retrieve('locale');
+    if (!localeKey) {
+      this.accountService.getAuthenticationState()
+        .subscribe(
+          account =>
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            localeKey = account!.langKey);
     }
+
+    this.calendarComponent.getApi().setOption('locale', localeKey);
+
     this.langChangeSubscription = this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
       this.calendarComponent.getApi().setOption('locale', langChangeEvent.lang);
     });
@@ -185,16 +191,20 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       newEvent.title = `${session.eventName} ${session.sessionName}`;
       newEvent.eventName = session.eventName;
       newEvent.sessionName = session.sessionName;
-      newEvent.start = moment(session.startTime * 1000).tz(currentTZ);
+      newEvent.start = DateTime.fromSeconds(session.startTime, {
+          zone: currentTZ
+        }).toISO();
       newEvent.duration = session.duration;
       newEvent.totalDuration = session.totalDuration;
-      if (toDate) {
-        newEvent.start = newEvent.start.toDate()
-      };
-      newEvent.end = moment(session.endTime * 1000).tz(currentTZ);
-      if (toDate) {
-        newEvent.end = newEvent.end.toDate()
-      };
+//       if (toDate) {
+//         newEvent.start = newEvent.start.toDate()
+//       };
+      newEvent.end = DateTime.fromSeconds(session.endTime, {
+          zone: currentTZ
+        }).toISO();
+//       if (toDate) {
+//         newEvent.end = newEvent.end.toDate()
+//       };
       newEvent.seriesLogoUrl = session.seriesLogoUrl;
       newEvent.textColor = 'white';
       newEvent.sessionType = session.sessionType;
