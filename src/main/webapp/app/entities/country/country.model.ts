@@ -1,5 +1,3 @@
-import { Moment } from 'moment';
-
 export interface ICountry {
   id?: number;
   countryCode?: string;
