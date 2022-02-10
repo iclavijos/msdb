@@ -1,0 +1,389 @@
+﻿/*
+ *  Document   : _card.scss
+ *  Author     : RedStar Template
+ *  Description: This scss file for card style classes
+ */
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  position: relative;
+  margin-bottom: 30px;
+  border: 1px solid #deebfd;
+  box-shadow: -8px 12px 18px 0 #dadee8;
+
+  .card-inside-title {
+    margin-top: 25px;
+    margin-bottom: 15px;
+    display: block;
+    font-size: 15px;
+    color: #000;
+
+    small {
+      color: #999;
+      display: block;
+      font-size: 11px;
+      margin-top: 5px;
+
+      a {
+        color: #777;
+        font-weight: bold;
+      }
+    }
+  }
+
+  .card-inside-title:first-child {
+    margin-top: 0;
+  }
+
+  .bg-red,
+  .bg-pink,
+  .bg-purple,
+  .bg-indigo,
+  .bg-blue,
+  .bg-cyan,
+  .bg-teal,
+  .bg-green,
+  .bg-yellow,
+  .bg-orange,
+  .bg-deep-orange,
+  .bg-brown,
+  .bg-grey,
+  .bg-black {
+    border-bottom: none !important;
+    color: #fff !important;
+
+    h2,
+    small,
+    .material-icons {
+      color: #fff !important;
+    }
+
+    .badge {
+      background-color: #fff;
+      color: #555;
+    }
+  }
+
+  .header {
+    position: relative;
+    display: flex;
+    width: 100%;
+    color: #555;
+    padding: 10px 15px;
+    line-height: 30px;
+
+    .header-dropdown {
+      position: absolute;
+      top: 10px;
+      right: 0px;
+      list-style: none;
+
+      .dropdown-menu {
+        li {
+          display: block !important;
+        }
+      }
+
+      li {
+        display: inline-block;
+      }
+
+      i {
+        font-size: 20px;
+        color: #999;
+        @include transition(all 0.5s);
+
+        &:hover {
+          color: #000;
+        }
+      }
+    }
+
+    h2 {
+      margin: 0;
+      color: #5b626b;
+      font-size: 17px;
+      line-height: 28px;
+      padding-right: 10px;
+      font-weight: 500;
+
+      small {
+        display: block;
+        font-size: 12px;
+        margin-top: 5px;
+        color: #999;
+        line-height: 15px;
+
+        a {
+          font-weight: bold;
+          color: #777;
+        }
+      }
+    }
+
+    .col-xs-12 {
+      h2 {
+        margin-top: 5px;
+      }
+    }
+  }
+
+  .body {
+    font-size: 14px;
+    color: #555;
+    padding: 15px;
+
+    @for $i from 1 through 12 {
+      .col-xs-#{$i},
+      .col-sm-#{$i},
+      .col-md-#{$i},
+      .col-lg-#{$i} {
+        margin-bottom: 20px;
+      }
+    }
+  }
+  &.card-statistic-1 .card-header,
+  &.card-statistic-2 .card-header {
+    border-color: transparent;
+    padding-bottom: 0;
+    height: auto;
+    min-height: auto;
+    display: block;
+  }
+
+  &.card-statistic-1 .card-icon {
+    width: 30px;
+    height: 30px;
+    margin: 10px 0px 0px 20px;
+    border-radius: 3px;
+    line-height: 78px;
+    text-align: center;
+    float: left;
+    font-size: 30px;
+  }
+
+  &.card-statistic-1 .card-header h4,
+  &.card-statistic-2 .card-header h4 {
+    line-height: 1.2;
+    color: color(muted);
+  }
+
+  &.card-statistic-1 .card-body,
+  &.card-statistic-2 .card-body {
+    padding-top: 0;
+  }
+
+  &.card-statistic-1 .card-body,
+  &.card-statistic-2 .card-body {
+    font-size: 26px;
+    font-weight: 700;
+    color: color(fontdark);
+    padding-bottom: 0;
+  }
+
+  &.card-statistic-1,
+  &.card-statistic-2 {
+    display: inline-block;
+    width: 100%;
+  }
+
+  &.card-statistic-1 .card-icon,
+  &.card-statistic-2 .card-icon {
+    width: 80px;
+    height: 80px;
+    margin: 10px;
+    border-radius: 3px;
+    line-height: 94px;
+    text-align: center;
+    float: left;
+    border-radius: 50px;
+    margin-right: 15px;
+
+    .ion,
+    .fas,
+    .far,
+    .fab,
+    .fal {
+      font-size: 22px;
+      color: #fff;
+    }
+  }
+
+  &.card-statistic-1 .card-icon {
+    line-height: 90px;
+  }
+
+  &.card-statistic-2 .card-icon {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 22px;
+    margin: 25px;
+    box-shadow: 5px 3px 10px 0 rgba(21, 15, 15, 0.3);
+    border-radius: 10px;
+    background: #6777ef;
+  }
+
+  &.card-statistic-1 .card-header,
+  &.card-statistic-2 .card-header {
+    padding-bottom: 0;
+    padding-top: 25px;
+  }
+
+  &.card-statistic-2 .card-header + .card-body,
+  &.card-statistic-2 .card-body + .card-header {
+    padding-top: 0;
+  }
+
+  &.card-statistic-1 .card-header h4,
+  &.card-statistic-2 .card-header h4 {
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  &.card-statistic-1 .card-header h4 {
+    margin-bottom: 0;
+  }
+
+  &.card-statistic-2 .card-header h4 {
+    text-transform: none;
+    margin-bottom: 0;
+  }
+
+  &.card-statistic-1 .card-body {
+    font-size: 20px;
+  }
+
+  &.card-statistic-2 {
+    .card-chart {
+      padding-top: 20px;
+      margin-left: -9px;
+      margin-right: -1px;
+      margin-bottom: -15px;
+
+      canvas {
+        height: 90px !important;
+      }
+    }
+  }
+}
+.plain-card {
+  box-shadow: 0 0.46875rem 2.1875rem rgba(90, 97, 105, 0.1),
+    0 0.9375rem 1.40625rem rgba(90, 97, 105, 0.1),
+    0 0.25rem 0.53125rem rgba(90, 97, 105, 0.12),
+    0 0.125rem 0.1875rem rgba(90, 97, 105, 0.1);
+  padding: 20px;
+  padding-right: 35px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+  margin-bottom: 26px;
+  margin: 0.5rem 0 1rem 0;
+}
+.card-inner .progress {
+  height: 12px;
+  margin: 0px;
+}
+.col-block {
+  margin-left: 5px;
+}
+.card-height-100 {
+  height: 100px;
+}
+.course-card {
+  position: relative;
+  margin-bottom: 30px;
+  padding: 0 20px;
+  background: #fff;
+  border-radius: 3px;
+  box-shadow: 0 0.46875rem 2.1875rem rgba(90, 97, 105, 0.1),
+    0 0.9375rem 1.40625rem rgba(90, 97, 105, 0.1),
+    0 0.25rem 0.53125rem rgba(90, 97, 105, 0.12),
+    0 0.125rem 0.1875rem rgba(90, 97, 105, 0.1);
+  > footer {
+    margin: 0 -20px 0px;
+    height: 30px;
+  }
+}
+.course-card-controls {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  padding: 14px;
+  font-size: 12px;
+  > a {
+    padding: 1px 4px;
+    border-radius: 4px;
+    color: #fff;
+    transition: color 0.15s ease-in-out;
+  }
+}
+.course-card-top-overflow {
+  margin-top: -15px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  position: relative;
+  margin: 0 -20px;
+  > img {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    max-width: 100%;
+    + .tags {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      margin-bottom: 0px;
+    }
+  }
+}
+.course-card-middle-overflow {
+  position: relative;
+  margin: 0 -20px;
+  > img {
+    max-width: 100%;
+  }
+}
+.tags {
+  padding-left: 0;
+  list-style: none;
+  > li {
+    float: left;
+    margin: 3px;
+    > a {
+      padding: 1px 5px;
+      font-size: 13px;
+      border-radius: 6px;
+      border: 1px solid white;
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+}
+.post-user {
+  position: relative;
+  img {
+    border: 3px solid white;
+  }
+}
+.bg-body-light {
+  background-color: #e8e7e7;
+}
+.post-links {
+  margin-bottom: 0;
+  font-size: 12px;
+  padding-left: 5px;
+  > li {
+    float: left;
+    list-style: none;
+    margin: 4px;
+  }
+}
+.about-course-img img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
