@@ -27,6 +27,9 @@ export class LocalizedDatePipe implements PipeTransform {
         day: copyValue[2]
       });
     }
+    if (value instanceof Date) {
+      value = DateTime.fromJSDate(value);
+    }
     let localeKey = this.sessionStorageService.retrieve('locale');
     if (!localeKey) {
       this.accountService.getAuthenticationState()
