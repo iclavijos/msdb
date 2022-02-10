@@ -1,4 +1,4 @@
-/* after changing this file run 'yarn run webpack:build' */
+/* after changing this file run 'yarn run webapp:build' */
 
 /***************************
 put Sass variables here:
@@ -15,7 +15,7 @@ eg $input-color: red;
 @import '~icofont/css/icofont.min.css';
 @import '~@mdi/font/css/materialdesignicons.min.css';
 
-@import '~@fullcalendar/bootstrap/main.min.css';
+@import '~@fullcalendar/bootstrap5/main.min.css';
 @import '~@fullcalendar/daygrid/main.min.css';
 @import '~@fullcalendar/timegrid/main.min.css';
 @import '~@fullcalendar/timeline/main.min.css';
