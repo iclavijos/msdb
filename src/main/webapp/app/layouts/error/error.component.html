@@ -1,13 +1,16 @@
-<div class="main-content">
+<section class="content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-8">
-                <h1 jhiTranslate="error.title">Error Page!</h1>
+        <div class="block-header mt-n3">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <h1 jhiTranslate="error.title">Error Page!</h1>
 
-                <div *ngIf="errorMessage">
-                    <div class="alert alert-danger">{{ errorMessage }}</div>
+                    <img src="/images/no-idea.jpeg" alt="no idea what you were trying" style="max-height: 400px">
+                    <div *ngIf="errorMessage">
+                        <div class="alert alert-danger">{{ errorMessage }}</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
