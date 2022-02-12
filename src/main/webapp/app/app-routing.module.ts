@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { errorRoute } from './layouts/error/error.route';
-import { navbarRoute } from './layouts/navbar/navbar.route';
 import { DEBUG_INFO_ENABLED } from './app.constants';
 
 import { UserRouteAccessService } from './core/auth/user-route-access.service';
 
-const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
+const LAYOUT_ROUTES = [...errorRoute];
 
 @NgModule({
   imports: [
@@ -25,11 +24,11 @@ const LAYOUT_ROUTES = [navbarRoute, ...errorRoute];
           canActivate: [UserRouteAccessService],
           loadChildren: () => import('./calendar/calendar.module').then(m => m.CalendarModule)
         },
-//         {
-//           path: 'agenda',
-//           canActivate: [UserRouteAccessService],
-//           loadChildren: () => import('./agenda/agenda.module').then(m => m.MotorsportsDatabaseAgendaModule)
-//         },
+        {
+          path: 'agenda',
+          canActivate: [UserRouteAccessService],
+          loadChildren: () => import('./agenda/agenda.module').then(m => m.AgendaModule)
+        },
 //         {
 //           path: 'subscriptions',
 //           canActivate: [UserRouteAccessService],

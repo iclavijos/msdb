@@ -2,12 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 
-import { EventEditionService } from '../entities/event-edition/event-edition.service';
+import { EventEditionService } from 'app/entities/event-edition/service/event-edition.service';
 import { CalendarComponent, MyEvent } from '../calendar/calendar.component';
 import { TimeZone } from 'app/home/home-events.component';
 
-import { Moment } from 'moment';
-import * as moment from 'moment-timezone';
+import { DateTime } from 'luxon';
+
+export class EventItem {
+  name!: string;
+  racetrack!: string;
+  layoutUrl!: string;
+  categories!: string[];
+}
 
 @Component({
   selector: 'jhi-agenda-component',
@@ -15,59 +21,56 @@ import * as moment from 'moment-timezone';
   styleUrls: ['./agenda.scss']
 })
 export class AgendaComponent implements OnInit {
-  selectedDate: Moment;
-  endDate: Moment;
-  rangeType: string;
-  events: MyEvent[];
-  calendarComponent: CalendarComponent;
-  uniqueSeries: string[];
-  currentEvent: any;
-  backgroundColorIndex: number;
-  timezone: string;
-  timezones: TimeZone[];
+  selectedDate!: DateTime;
+  endDate!: DateTime;
+  rangeType!: string;
+  events!: MyEvent[];
+  calendarComponent!: CalendarComponent;
+  uniqueSeries!: string[];
+  currentEvent!: any;
+  backgroundColorIndex!: number;
+  timezone!: string;
+  timezones!: TimeZone[];
 
   constructor(private eventEditionService: EventEditionService, private translateService: TranslateService, private http: HttpClient) {
     this.rangeType = 'WEEK';
-    this.selectedDate = moment().isoWeekday(1);
-    this.endDate = moment().endOf('week');
+    this.selectedDate = DateTime.local().startOf('week');
+    this.endDate = DateTime.local().endOf('week');
     this.events = [];
-    this.calendarComponent = new CalendarComponent(null, null, null, null);
+    this.calendarComponent = new CalendarComponent();
   }
 
   ngOnInit() {
-    this.timezone = moment.tz.guess();
-    if (this.timezone === undefined) {
-      this.timezone = 'Europe/London';
-    }
+    this.timezone = DateTime.now().zoneName;
     this.http.get<TimeZone[]>('api/timezones').subscribe((res: TimeZone[]) => (this.timezones = res));
     this.query();
   }
 
   dateRangeChanged() {
     if (this.rangeType === 'WEEK') {
-      this.selectedDate = this.selectedDate.isoWeekday(1);
-      this.endDate = this.selectedDate.clone().isoWeekday(7);
+      this.selectedDate = this.selectedDate.startOf('week');
+      this.endDate = this.selectedDate.endOf('week');
     } else {
       this.selectedDate = this.selectedDate.startOf('month');
-      this.endDate = this.selectedDate.clone().endOf('month');
+      this.endDate = this.selectedDate.endOf('month');
     }
     this.query();
   }
 
   nextPeriod() {
     if (this.rangeType === 'WEEK') {
-      this.selectedDate = this.selectedDate.add(7, 'days');
+      this.selectedDate = this.selectedDate.plus({ days: 7});
     } else {
-      this.selectedDate = this.selectedDate.add(1, 'M');
+      this.selectedDate = this.selectedDate.plus({ months: 1 });
     }
     this.dateRangeChanged();
   }
 
   previousPeriod() {
     if (this.rangeType === 'WEEK') {
-      this.selectedDate = this.selectedDate.subtract(7, 'days');
+      this.selectedDate = this.selectedDate.minus({ days: 7});
     } else {
-      this.selectedDate = this.selectedDate.subtract(1, 'M');
+      this.selectedDate = this.selectedDate.minus({ months: 1 });
     }
     this.dateRangeChanged();
   }
@@ -75,23 +78,22 @@ export class AgendaComponent implements OnInit {
   query() {
     this.eventEditionService
       .findCalendarEvents(
-        this.selectedDate.toDate(),
+        this.selectedDate.toJSDate(),
         this.endDate
-          .clone()
-          .add(1, 'd')
-          .toDate()
+          .plus({ days: 1})
+          .toJSDate()
       )
       .subscribe(events => {
         this.backgroundColorIndex = -1;
-        this.events = this.calendarComponent.convertEvents(events, this.timezone, false, true); // .filter(e => e.status === 'O'), this.timezone, false);
+        this.events = this.calendarComponent.convertEvents(events, this.timezone, true); // .filter(e => e.status === 'O'), this.timezone, false);
         this.uniqueSeries = this.events.map(e => (e.seriesLogoUrl ? e.seriesLogoUrl[0] : '')).filter(this.onlyUniqueSeries);
       });
   }
 
-  uniqueEventsInSeries(series: string) {
+  uniqueEventsInSeries(series: string): EventItem[] {
     return this.events
       .filter(item => (item.seriesLogoUrl ? item.seriesLogoUrl[0] : '') === series)
-      .map(item => ({
+      .map((item: MyEvent) => ({
           name: item.eventName,
           racetrack: item.racetrack,
           layoutUrl: item.racetrackLayoutUrl,
@@ -101,18 +103,22 @@ export class AgendaComponent implements OnInit {
       .filter(this.onlyUniqueEvents);
   }
 
-  sessionsEvent(event: any) {
-    return this.events.filter(item => item.eventName === event.name);
+  sessionsEvent(event: any): MyEvent[] {
+    return this.events.filter((item: MyEvent) => item.eventName === event.name);
   }
 
-  formatDate(date: Moment, pattern: string, raid = false) {
+  formatDateStr(stringDate: string, pattern: string, raid = false): string {
+    return this.formatDate(DateTime.fromISO(stringDate), pattern, raid);
+  }
+
+  formatDate(date: DateTime, pattern: string, raid = false): string {
     if (raid) {
-      return date.locale(this.translateService.currentLang).format('dddd, LL');
+      return date.setLocale(this.translateService.currentLang).toFormat('dddd, LL');
     }
-    return date.locale(this.translateService.currentLang).format(pattern);
+    return date.setLocale(this.translateService.currentLang).toFormat(pattern);
   }
 
-  backgroundColor() {
+  backgroundColor(): string {
     this.backgroundColorIndex++;
     if (this.backgroundColorIndex % 3 === 0) {
       return '#dbffff';
@@ -123,15 +129,15 @@ export class AgendaComponent implements OnInit {
     }
   }
 
-  eventStatus(event: any) {
-    return this.events.filter(item => item.eventName === event.name)[0].status;
+  eventStatus(event: any): string {
+    return this.events.filter((item: MyEvent) => item.eventName === event.name)[0].status;
   }
 
-  private onlyUniqueSeries(value, index, self) {
+  private onlyUniqueSeries(value: string, index: number, self: string[]): boolean {
     return self.indexOf(value) === index;
   }
 
-  private onlyUniqueEvents(value, index, self) {
-    return self.map((x: MyEvent) => x.name as string).indexOf(value.name as string) === index;
+  private onlyUniqueEvents(value: EventItem, index: number, self: EventItem[]): boolean {
+    return self.map((x: EventItem) => x.name).indexOf(value.name) === index;
   }
 }
