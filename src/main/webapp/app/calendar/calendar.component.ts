@@ -30,6 +30,7 @@ export class MyEvent {
   endTime!: number;
   totalDuration!: number;
   textColor!: string;
+  backgroundColor!: string;
   color!: string;
   start!: string;
   end!: string;
@@ -37,7 +38,7 @@ export class MyEvent {
   seriesName!: string;
   allDay = false;
   status!: string;
-  sessionType!: number;
+  sessionType!: string;
   racetrack!: string;
   racetrackLayoutUrl!: string;
   categories!: string[];
@@ -89,12 +90,12 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
   private langChangeSubscription!: Subscription;
 
   constructor(
-    private eventEditionService: EventEditionService,
-    private sessionStorageService: SessionStorageService,
-    private accountService: AccountService,
-    private translateService: TranslateService,
-    private http: HttpClient,
-    private eventDialog: MatDialog
+    private eventEditionService?: EventEditionService,
+    private sessionStorageService?: SessionStorageService,
+    private accountService?: AccountService,
+    private translateService?: TranslateService,
+    private http?: HttpClient,
+    private eventDialog?: MatDialog
   ) {}
 
   events = (dates: any, callback: any): void => {
@@ -109,7 +110,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       this.filterModified = false;
       callback(this.convertEvents(sessions, this.timezone));
     } else {
-      this.eventEditionService.findCalendarEvents(dates.start, dates.end).subscribe({
+      this.eventEditionService!.findCalendarEvents(dates.start, dates.end).subscribe({
         next: events => {
           this.filter = new FormControl();
           this.sessionsSrc = events;
@@ -122,7 +123,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.timezone = DateTime.local().zoneName;
-    this.http.get<TimeZone[]>('api/timezones').subscribe(res => (this.timezones = res));
+    this.http!.get<TimeZone[]>('api/timezones').subscribe(res => (this.timezones = res));
 
     this.calendarOptions = {
       themeSystem: 'bootstrap5',
@@ -148,9 +149,9 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    let localeKey = this.sessionStorageService.retrieve('locale');
+    let localeKey = this.sessionStorageService!.retrieve('locale');
     if (!localeKey) {
-      this.accountService.getAuthenticationState()
+      this.accountService!.getAuthenticationState()
         .subscribe(
           account =>
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -159,7 +160,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.calendarComponent.getApi().setOption('locale', localeKey);
 
-    this.langChangeSubscription = this.translateService.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
+    this.langChangeSubscription = this.translateService!.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => {
       this.calendarComponent.getApi().setOption('locale', langChangeEvent.lang);
     });
   }
@@ -178,12 +179,12 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openEventDialog = (eventClick: EventClickArg): void => {
-    this.eventDialog.open(EventDialogComponent, {
+    this.eventDialog!.open(EventDialogComponent, {
       data: { event: eventClick }
     });
-  };
+  }
 
-  public convertEvents(sessions: MyEvent[], currentTZ: string, toDate = true, includeCancelled = false): MyEvent[] {
+  convertEvents(sessions: MyEvent[], currentTZ: string, includeCancelled = false): MyEvent[] {
     const result: MyEvent[] = [];
     for (const session of sessions) {
       const newEvent = new MyEvent();
@@ -196,15 +197,9 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
         }).toISO();
       newEvent.duration = session.duration;
       newEvent.totalDuration = session.totalDuration;
-//       if (toDate) {
-//         newEvent.start = newEvent.start.toDate()
-//       };
       newEvent.end = DateTime.fromSeconds(session.endTime, {
           zone: currentTZ
         }).toISO();
-//       if (toDate) {
-//         newEvent.end = newEvent.end.toDate()
-//       };
       newEvent.seriesLogoUrl = session.seriesLogoUrl;
       newEvent.textColor = 'white';
       newEvent.sessionType = session.sessionType;
@@ -215,17 +210,18 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       newEvent.allDay = session.raid;
       newEvent.rally = session.rally;
       newEvent.raid = session.raid;
+      newEvent.backgroundColor = 'pink';
       if (session.status === 'C') {
-        newEvent.color = 'red';
+        newEvent.backgroundColor = 'red';
       } else if (session.status === 'S') {
-        newEvent.color = 'orange';
+        newEvent.backgroundColor = 'orange';
       } else {
-        if (session.sessionType === 2) {
-          newEvent.color = 'green';
-        } else if (session.sessionType === 1 || session.sessionType === 3) {
-          newEvent.color = 'blue';
+        if (session.sessionType === 'RACE') {
+          newEvent.backgroundColor = 'green';
+        } else if (session.sessionType === 'QUALIFYING' || session.sessionType === 'QUALIFYING_RACE') {
+          newEvent.backgroundColor = 'blue';
         } else {
-          newEvent.color = 'grey';
+          newEvent.backgroundColor = 'grey';
         }
       }
       if (includeCancelled || session.status === 'O') {

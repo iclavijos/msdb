@@ -8,7 +8,7 @@
       "week": "Setmana",
       "month": "Mes",
       "resultTitleWeek": "Agenda per a la setmana del {{startDate}} al {{endDate}}",
-      "resultTitleMonth": "Agenda para el mes de {{ month }}",
+      "resultTitleMonth": "Agenda per el mes {{ month }}",
       "event": "Event",
       "session": "Sessió",
       "start": "Hora d'inici",

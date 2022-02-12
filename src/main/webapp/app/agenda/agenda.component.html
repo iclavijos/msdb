@@ -1,148 +1,152 @@
-<div class="main-content">
+<section class="content">
     <div class="container-fluid">
+        <div class="block-header mt-n3">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <ul class="breadcrumb breadcrumb-style ">
+                        <li class="breadcrumb-item">
+                            <h4 class="fw-bold">{{ 'motorsportsDatabaseApp.agenda.title' | translate }}</h4>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header card-header-danger">
-                        <h3 class="card-title">{{'motorsportsDatabaseApp.agenda.title' | translate }}</h3>
+            <div class="row">
+                <div class="col-xs-9 col-sm-5 col-lg-2">
+                    <mat-form-field>
+                        <mat-label>{{'motorsportsDatabaseApp.agenda.date' | translate }}</mat-label>
+                        <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate"
+                               placeholder="{{'motorsportsDatabaseApp.agenda.reference' | translate }}"
+                               (dateChange)="dateRangeChanged()">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker [startAt]="selectedDate"></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="col-xs-3 col-sm-3 col-lg-1">
+                    <fa-icon class="pointer" [icon]="'angle-left'" size="2x" (click)="previousPeriod()"></fa-icon>
+                    <fa-icon class="pointer" [icon]="'angle-right'" size="2x" (click)="nextPeriod()"></fa-icon>
+                </div>
+                <div class="col-xs-12 col-sm-4 col-lg-3">
+                    <div class="form-group">
+                        <label class="form-control-label">{{ 'motorsportsDatabaseApp.agenda.range' | translate }}</label><br/>
+                        <mat-radio-group [(ngModel)]="rangeType" (change)="dateRangeChanged()">
+                            <mat-radio-button value="WEEK">
+                                {{ 'motorsportsDatabaseApp.agenda.week' | translate }}
+                            </mat-radio-button>
+                            <mat-radio-button value="MONTH">
+                                {{ 'motorsportsDatabaseApp.agenda.month' | translate }}
+                            </mat-radio-button>
+                        </mat-radio-group>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-xs-9 col-sm-5 col-lg-2">
-                                <mat-form-field>
-                                    <mat-label>{{'motorsportsDatabaseApp.agenda.date' | translate }}</mat-label>
-                                    <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate"
-                                           placeholder="{{'motorsportsDatabaseApp.agenda.reference' | translate }}"
-                                            (dateChange)="dateRangeChanged()">
-                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                    <mat-datepicker #picker [startAt]="selectedDate"></mat-datepicker>
-                                </mat-form-field>
-                            </div>
-                            <div class="col-xs-3 col-sm-3 col-lg-1">
-                                <fa-icon class="pointer" [icon]="'angle-left'" size="2x" (click)="previousPeriod()"></fa-icon>
-                                <fa-icon class="pointer" [icon]="'angle-right'" size="2x" (click)="nextPeriod()"></fa-icon>
-                            </div>
-                            <div class="col-xs-12 col-sm-4 col-lg-3">
-                                <div class="form-group">
-                                    <label class="form-control-label">{{ 'motorsportsDatabaseApp.agenda.range' | translate }}</label><br/>
-                                    <mat-radio-group [(ngModel)]="rangeType" (change)="dateRangeChanged()">
-                                        <mat-radio-button value="WEEK">
-                                            {{ 'motorsportsDatabaseApp.agenda.week' | translate }}
-                                        </mat-radio-button>
-                                        <mat-radio-button value="MONTH">
-                                            {{ 'motorsportsDatabaseApp.agenda.month' | translate }}
-                                        </mat-radio-button>
-                                    </mat-radio-group>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-lg-3">
+                    {{ 'home.selectTimeZone' | translate }}
+                </div>
+                <div class="col-xs-12 col-lg-9">
+                    <mat-select class="form-control" [(ngModel)]="timezone" id="field_timezone" name="switchTimezone" (change)="query()">
+                        <ng-template ngFor let-item [ngForOf]="timezones" let-currentIndex="index">
+                            <mat-option [value]="item.zoneName">
+                                {{item.countryName}} ({{item.zoneName}} {{item.gmtOffset}})
+                            </mat-option>
+                        </ng-template>
+                    </mat-select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h3 *ngIf="rangeType === 'WEEK'">{{ 'motorsportsDatabaseApp.agenda.resultTitleWeek' |
+                        translate: {
+                            startDate: formatDate(selectedDate, 'DDD'),
+                            endDate: formatDate(endDate, 'DDD')
+                        }
+                        }}</h3>
+                    <h3 *ngIf="rangeType === 'MONTH'">
+                        {{ 'motorsportsDatabaseApp.agenda.resultTitleMonth' |
+                            translate: { month: formatDate(selectedDate, 'MMMM') }
+                        }}
+                    </h3>
+                </div>
+                <div class="col-12">
+                    <div class="row series-row">
+                        <div class="col-2 d-none d-lg-block"></div>
+                        <div class="col-10 d-none d-lg-block">
+                            <div class="row">
+                                <div class="col-4">{{ 'motorsportsDatabaseApp.agenda.event' | translate }}</div>
+                                <div class="col-8">
+                                    <div class="row">
+                                        <div class="col-4">{{ 'motorsportsDatabaseApp.agenda.session' | translate }}</div>
+                                        <div class="col-4">{{ 'motorsportsDatabaseApp.agenda.start' | translate }}</div>
+                                        <div class="col-4 d-none d-lg-block">{{ 'motorsportsDatabaseApp.agenda.end' | translate }}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-lg-3">
-                                {{ 'home.selectTimeZone' | translate }}
-                            </div>
-                            <div class="col-xs-12 col-lg-9">
-                                <select class="form-control" [(ngModel)]="timezone" id="field_timezone" name="switchTimezone" (change)="query()">
-                                    <ng-template ngFor let-item [ngForOf]="timezones" let-currentIndex="index">
-                                        <option [value]="item.zoneName">{{item.countryName}} ({{item.zoneName}} {{item.gmtOffset}})</option>
-                                    </ng-template>
-                                </select>
-                            </div>
+                    </div>
+                    <div class="row series-row" *ngFor="let series of uniqueSeries">
+                        <div class="col-2">
+                            <img *ngIf="series" [src]="series" class="img-fluid">
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <h3 *ngIf="rangeType === 'WEEK'">{{ 'motorsportsDatabaseApp.agenda.resultTitleWeek' |
-                                        translate: {
-                                            startDate: formatDate(selectedDate, 'LL'),
-                                            endDate: formatDate(endDate, 'LL')
-                                        }
-                                    }}</h3>
-                                <h3 *ngIf="rangeType === 'MONTH'">
-                                    {{ 'motorsportsDatabaseApp.agenda.resultTitleMonth' |
-                                        translate: { month: formatDate(selectedDate, 'MMMM') }
-                                    }}
-                                </h3>
-                            </div>
-                            <div class="col-12">
-                                <div class="row series-row">
-                                    <div class="col-2 d-none d-lg-block"></div>
-                                    <div class="col-10 d-none d-lg-block">
-                                        <div class="row">
-                                            <div class="col-4">{{ 'motorsportsDatabaseApp.agenda.event' | translate }}</div>
-                                            <div class="col-8">
-                                                <div class="row">
-                                                    <div class="col-4">{{ 'motorsportsDatabaseApp.agenda.session' | translate }}</div>
-                                                    <div class="col-4">{{ 'motorsportsDatabaseApp.agenda.start' | translate }}</div>
-                                                    <div class="col-4 d-none d-lg-block">{{ 'motorsportsDatabaseApp.agenda.end' | translate }}</div>
-                                                </div>
-                                            </div>
+                        <div class="col-10">
+                            <div class="row event-row" *ngFor="let event of uniqueEventsInSeries(series)"
+                                 [style.background-color]="backgroundColor()">
+                                <div class="col-xs-12 col-lg-4">
+                                    <div class="row event-detail-row">
+                                        <div class="col-*-12">
+                                            <h4><strong>{{ event.name }}</strong></h4>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="event.categories.length > 1" class="row event-detail-row">
+                                        <div class="col-*-12">
+                                            {{ event.categories }}
+                                        </div>
+                                    </div>
+                                    <div class="row event-detail-row">
+                                        <div class="col-*-12">
+                                            {{ event.racetrack }}
+                                        </div>
+                                    </div>
+                                    <div class="row event-detail-row">
+                                        <div class="col-*-12">
+                                            <img *ngIf="event.layoutUrl" [src]="event.layoutUrl" style="max-height: 100px"/>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row series-row" *ngFor="let series of uniqueSeries">
-                                    <div class="col-2">
-                                        <img *ngIf="series" [src]="series" class="img-fluid">
+                                <div class="col-xs-12 col-lg-8" *ngIf="eventStatus(event) === 'O'">
+                                    <div class="row" *ngFor="let session of sessionsEvent(event)"
+                                         [ngStyle]="{
+                                            'color': (session.sessionType === 'RACE') ? 'white' : 'black',
+                                            'background-color': (session.sessionType === 'RACE') ? 'black' : '',
+                                            'font-weight': (session.sessionType === 'RACE') ? 'bold' : 'normal'
+                                         }">
+                                        <div class="col-sm-6 col-lg-4">
+                                            {{ session.sessionName }}
+                                        </div>
+                                        <div class="col-sm-6 col-lg-4">
+                                            {{ formatDateStr(session.start, 'cccc, DDD - T', session.raid) }}
+                                        </div>
+                                        <div *ngIf="!session.raid && !session.rally" class="col-lg-4 d-none d-lg-block">
+                                            {{ formatDateStr(session.end, 'cccc, DDD - T') }}
+                                        </div>
+                                        <div *ngIf="session.rally" class="col-lg-4 d-none d-lg-block">
+                                            {{ session.duration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}
+                                        </div>
+                                        <div *ngIf="session.raid" class="col-lg-4 d-none d-lg-block">
+                                            {{ session.duration }} / {{ session.totalDuration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}
+                                        </div>
                                     </div>
-                                    <div class="col-10">
-                                        <div class="row event-row" *ngFor="let event of uniqueEventsInSeries(series)"
-                                             [style.background-color]="backgroundColor()">
-                                            <div class="col-xs-12 col-lg-4">
-                                                <div class="row event-detail-row">
-                                                    <div class="col-*-12">
-                                                        <h4><strong>{{ event.name }}</strong></h4>
-                                                    </div>
-                                                </div>
-                                                <div *ngIf="event.categories.length > 1" class="row event-detail-row">
-                                                    <div class="col-*-12">
-                                                        {{ event.categories }}
-                                                    </div>
-                                                </div>
-                                                <div class="row event-detail-row">
-                                                    <div class="col-*-12">
-                                                        {{ event.racetrack }}
-                                                    </div>
-                                                </div>
-                                                <div class="row event-detail-row">
-                                                    <div class="col-*-12">
-                                                        <img *ngIf="event.layoutUrl" [src]="event.layoutUrl" style="max-height: 100px"/>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-lg-8" *ngIf="eventStatus(event) === 'O'">
-                                                <div class="row" *ngFor="let session of sessionsEvent(event)"
-                                                     [ngStyle]="{
-                                                        'color': (session.sessionType === 2) ? 'white' : 'black',
-                                                        'background-color': (session.sessionType === 2) ? 'black' : '',
-                                                        'font-weight': (session.sessionType === 2) ? 'bold' : 'normal'
-                                                     }">
-                                                    <div class="col-sm-6 col-lg-4">
-                                                        {{ session.sessionName }}
-                                                    </div>
-                                                    <div class="col-sm-6 col-lg-4">
-                                                        {{ formatDate(session.start, 'LLLL', session.raid) }}
-                                                    </div>
-                                                    <div *ngIf="!session.raid && !session.rally" class="col-lg-4 d-none d-lg-block">
-                                                        {{ formatDate(session.end, 'LLLL') }}
-                                                    </div>
-                                                    <div *ngIf="session.rally" class="col-lg-4 d-none d-lg-block">
-                                                        {{ session.duration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}
-                                                    </div>
-                                                    <div *ngIf="session.raid" class="col-lg-4 d-none d-lg-block">
-                                                        {{ session.duration }} / {{ session.totalDuration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-lg-8" *ngIf="eventStatus(event) === 'S'">
-                                                <h1><span class="badge badge-warning">
+                                </div>
+                                <div class="col-xs-12 col-lg-8" *ngIf="eventStatus(event) === 'S'">
+                                    <h1><span class="badge badge-warning">
                                                     {{ 'motorsportsDatabaseApp.eventEdition.status.suspended' | translate }}
                                                 </span></h1>
-                                            </div>
-                                            <div class="col-xs-12 col-lg-8" *ngIf="eventStatus(event) === 'C'">
-                                                <h1><span class="badge badge-danger">
+                                </div>
+                                <div class="col-xs-12 col-lg-8" *ngIf="eventStatus(event) === 'C'">
+                                    <h1><span class="badge badge-danger">
                                                     {{ 'motorsportsDatabaseApp.eventEdition.status.cancelled' | translate }}
                                                 </span></h1>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -151,4 +155,4 @@
             </div>
         </div>
     </div>
-</div>
+</section>

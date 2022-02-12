@@ -9,4 +9,4 @@ import { AGENDA_ROUTE } from './agenda.route';
   imports: [SharedModule, RouterModule.forChild([AGENDA_ROUTE])],
   declarations: [AgendaComponent]
 })
-export class MotorsportsDatabaseAgendaModule {}
+export class AgendaModule {}
