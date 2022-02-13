@@ -1,29 +1,31 @@
-<div class="main-content">
+<section class="content">
     <div class="container-fluid">
-        <jhi-alert></jhi-alert>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header card-header-danger">
-                        <h3 class="card-title" id-="statistics-page-heading">
-                            <span jhiTranslate="motorsportsDatabaseApp.indexes.home.title">Indexes</span>
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div *ngIf="!finished">
-                                    <span jhiTranslate="motorsportsDatabaseApp.indexes.home.init">Rebuilding indexes</span>&nbsp;
-                                    <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
-                                </div>
-                                <span *ngIf="finished" jhiTranslate="motorsportsDatabaseApp.indexes.home.rebuilt">Indexes rebuilt</span>
-                            </div>
-                        </div>
-                    </div>
+        <div class="block-header mt-n3">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <ul class="breadcrumb breadcrumb-style ">
+                        <li class="breadcrumb-item">
+                            <h4 class="fw-bold">
+                                <span id="rebuild-indexed-page-heading" jhiTranslate="motorsportsDatabaseApp.indexes.home.title" data-cy="rebuildIndexesPageHeading">
+                                    Rebuild indexes
+                                </span>
+                            </h4>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12">
+                <jhi-alert></jhi-alert>
+                <div *ngIf="!finished">
+                    <span jhiTranslate="motorsportsDatabaseApp.indexes.home.init">Rebuilding indexes</span>&nbsp;
+                    <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
+                </div>
+                <span *ngIf="finished" jhiTranslate="motorsportsDatabaseApp.indexes.home.rebuilt">Indexes rebuilt</span>
+            </div>
+        </div>
     </div>
-</div>
+</section>
 
 
