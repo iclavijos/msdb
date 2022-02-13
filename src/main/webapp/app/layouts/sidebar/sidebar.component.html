@@ -19,6 +19,13 @@
               </a>
           </li>
           </ng-container>
+          <li>
+              <mat-slide-toggle
+                  labelPosition="before"
+                    (change)="switchTheme($event)">
+                  Dark theme
+              </mat-slide-toggle>
+          </li>
       </ul>
     </div>
     <!-- #Menu -->

@@ -11,6 +11,8 @@ import {
   OnDestroy,
 } from '@angular/core';
 
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+
 declare interface RouteInfo {
   path: string;
   title: string;
@@ -44,9 +46,6 @@ export const RESTRICTED_ROUTES: RouteInfo[] = [
 export class SidebarComponent implements OnInit, OnDestroy {
   menuItems = ROUTES;
   restrictedMenuItems = RESTRICTED_ROUTES;
-  level1Menu = '';
-  level2Menu = '';
-  level3Menu = '';
   public innerHeight: any;
   public bodyTag: any;
   listMaxHeight!: string;
@@ -54,6 +53,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
   headerHeight = 60;
   routerObj: Subscription = new Subscription();
   currentRoute!: string;
+  isDarkSidebar = false;
+  isDarkTheme = false;
+  selectedBgColor = 'white';
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -63,11 +65,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
   ) {
     this.routerObj = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        // logic for select active menu in dropdown
-        const currenturl = event.url.split('?')[0];
-        this.level1Menu = currenturl.split('/')[1];
-        this.level2Menu = currenturl.split('/')[2];
-
         // close sidebar on mobile screen after menu select
         this.renderer.removeClass(this.document.body, 'overlay-open');
       }
@@ -88,6 +85,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    const theme = localStorage.getItem('theme') ?? 'light';
+    if (theme === 'light') {
+      this.enableLightMode();
+    } else {
+      this.enableDarkMode();
+    }
     this.initLeftSidebar();
     this.bodyTag = this.document.body;
   }
@@ -136,4 +139,73 @@ export class SidebarComponent implements OnInit, OnDestroy {
       this.renderer.addClass(this.document.body, 'submenu-closed');
     }
   }
+
+  switchTheme(event: MatSlideToggleChange): void {
+    if (event.checked) {
+      this.enableDarkMode();
+    } else {
+      this.enableLightMode();
+    }
+  }
+
+  enableLightMode(): void {
+    const theme = 'light';
+    this.renderer.removeClass(this.document.body, 'menu_dark');
+    this.renderer.removeClass(this.document.body, 'logo-black');
+    this.renderer.addClass(this.document.body, 'menu_light');
+    this.renderer.addClass(this.document.body, 'logo-white');
+
+    this.renderer.removeClass(this.document.body, 'dark');
+    this.renderer.removeClass(this.document.body, 'submenu-closed');
+    this.renderer.removeClass(this.document.body, 'menu_dark');
+    this.renderer.removeClass(this.document.body, 'logo-black');
+    if (localStorage.getItem('choose_skin')) {
+      this.renderer.removeClass(
+        this.document.body,
+        localStorage.getItem('choose_skin') ?? 'light'
+      );
+      this.renderer.addClass(this.document.body, 'theme-white');
+    }
+
+    this.renderer.addClass(this.document.body, 'light');
+    this.renderer.addClass(this.document.body, 'submenu-closed');
+    this.renderer.addClass(this.document.body, 'menu_light');
+    this.renderer.addClass(this.document.body, 'logo-white');
+
+    this.selectedBgColor = 'white';
+    this.isDarkSidebar = false;
+    localStorage.setItem('choose_logoheader', 'logo-white');
+    localStorage.setItem('choose_skin', 'theme-white');
+    localStorage.setItem('theme', theme);
+  }
+
+  enableDarkMode(): void {
+    const theme = 'dark';
+    this.renderer.removeClass(this.document.body, 'menu_light');
+    this.renderer.removeClass(this.document.body, 'logo-white');
+    this.renderer.addClass(this.document.body, 'menu_dark');
+    this.renderer.addClass(this.document.body, 'logo-black');
+
+    this.renderer.removeClass(this.document.body, 'light');
+    this.renderer.removeClass(this.document.body, 'submenu-closed');
+    this.renderer.removeClass(this.document.body, 'menu_light');
+    this.renderer.removeClass(this.document.body, 'logo-white');
+    if (localStorage.getItem('choose_skin')) {
+      this.renderer.removeClass(
+        this.document.body,
+        localStorage.getItem('choose_skin') ?? 'light'
+      );
+      this.renderer.addClass(this.document.body, 'theme-black');
+    }
+    this.renderer.addClass(this.document.body, 'dark');
+    this.renderer.addClass(this.document.body, 'submenu-closed');
+    this.renderer.addClass(this.document.body, 'menu_dark');
+    this.renderer.addClass(this.document.body, 'logo-black');
+    this.selectedBgColor = 'black';
+    this.isDarkSidebar = true;
+    localStorage.setItem('choose_logoheader', 'logo-black');
+    localStorage.setItem('choose_skin', 'theme-black');
+    localStorage.setItem('theme', theme);
+  }
+
 }
