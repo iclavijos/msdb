@@ -22,7 +22,9 @@
           <li>
               <mat-slide-toggle
                   labelPosition="before"
-                    (change)="switchTheme($event)">
+                  color="primary"
+                  [checked]="isDarkTheme"
+                  (change)="switchTheme($event)">
                   Dark theme
               </mat-slide-toggle>
           </li>
