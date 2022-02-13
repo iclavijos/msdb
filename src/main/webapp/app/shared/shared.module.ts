@@ -19,6 +19,7 @@ import { EphemerisYearFilter } from './filters/ephemeris-year-filter.pipe';
 import { MaterialElevationDirective } from './directives/material-elevation.directive';
 import { ImagesService } from './services/images.service';
 import { ImportsService } from './services/imports.service';
+import { FullScreenService } from './services/fullscreen.service';
 
 @NgModule({
   imports: [SharedLibsModule, RouterModule],
@@ -57,6 +58,6 @@ import { ImportsService } from './services/imports.service';
     EphemerisYearFilter,
     MaterialElevationDirective
   ],
-  providers: [ImagesService, ImportsService, TimeMaskPipe]
+  providers: [ImagesService, ImportsService, FullScreenService, TimeMaskPipe]
 })
 export class SharedModule {}
