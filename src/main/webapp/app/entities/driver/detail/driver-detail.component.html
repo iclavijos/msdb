@@ -1,69 +1,96 @@
-<div class="main-content">
+<section class="content">
     <div class="container-fluid">
-        <jhi-alert-error></jhi-alert-error>
-        <jhi-alert></jhi-alert>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card card-profile">
-                    <div class="card-avatar">
-                        <a href="javascript:void(0)">
-                            <img [src]="driver!.getDriverFaceImageUrl()" class="img-fluid" alt="driver image"/>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title"></h4>
-                        <dl class="row-md jh-entity-details">
-                            <dt><span jhiTranslate="motorsportsDatabaseApp.driver.birthDate">Birth Date</span></dt>
-                            <dd>
-                                <span>{{ driver?.birthDate | localizedDate }}</span>
-                            </dd>
-                            <dt><span jhiTranslate="motorsportsDatabaseApp.driver.birthPlace">Birth Place</span></dt>
-                            <dd>
-                                <span>{{driver?.birthPlace}}</span>
-                            </dd>
-                            <dt><span jhiTranslate="motorsportsDatabaseApp.driver.nationality">Nationality</span></dt>
-                            <dd>
-                                <span *ngIf="driver?.nationality"><img src="/images/flags64/{{driver?.nationality?.countryCode}}.png"/></span>
-                            </dd>
-                            <dt *ngIf="driver?.deathDate"><span jhiTranslate="motorsportsDatabaseApp.driver.deathDate">Death Date</span></dt>
-                            <dd *ngIf="driver?.deathDate">
-                                <span>{{ driver?.deathDate! | localizedDate }}</span>
-                            </dd>
-                            <dt *ngIf="driver?.deathDate"><span jhiTranslate="motorsportsDatabaseApp.driver.deathPlace">Death Place</span></dt>
-                            <dd *ngIf="driver?.deathDate">
-                                <span>{{driver?.deathPlace}}</span>
-                            </dd>
-                            <dt><span jhiTranslate="motorsportsDatabaseApp.driver.age">Age</span></dt>
-                            <dd>
-                                <span *ngIf="driver?.age !== 0">{{driver?.age}}</span>
-                            </dd>
-                        </dl>
-
-                        <button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                [routerLink]="['/driver', driver?.id, 'edit']"
-                                class="btn btn-primary">
-                            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header card-header-danger">
-                        <h3 class="card-title">{{ driver!.getCompositeName() }}</h3>
-                    </div>
-                    <div class="card-body">
-                        <jhi-statistics [id]="driver?.id!" [statsType]="'drivers'">Statistics...</jhi-statistics>
-                    </div>
+        <div class="block-header mt-n3">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <ul class="breadcrumb breadcrumb-style ">
+                        <li class="breadcrumb-item">
+                            <a routerLink="/driver">
+                                <h4 class="fw-bold">{{ 'motorsportsDatabaseApp.driver.home.title' | translate }}</h4>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
-        <button type="submit"
-                (click)="previousState()"
-                class="btn btn-info">
-            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-        </button>
+        <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
+        <div class="row clearfix">
+            <div class="col-lg-4 col-md-12">
+                <div class="card">
+                    <div class="m-b-20">
+                        <div class="contact-grid">
+                            <div class="profile-header bg-dark">
+                                <div class="user-name">{{ driver!.getCompositeName() }}</div>
+                            </div>
+                            <img [src]="driver!.getDriverFaceImageUrl()" class="user-img img-fluid" alt="driver image"/>
+
+                            <div *ngIf="driver?.nationality">
+                                <span><img src="/images/flags64/{{driver?.nationality?.countryCode}}.png"/></span>
+                            </div>
+                            <div class="row">
+                                <div *ngIf="driver?.birthDate"
+                                    [class.col-4]="driver?.birthDate && driver?.deathDate"
+                                    [class.col-6]="driver?.birthDate && !driver?.deathDate">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h6>{{ driver?.birthPlace }}</h6>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="driver?.birthPlace">
+                                        <div class="col-12">
+                                            <h6>{{ driver?.birthDate | localizedDate }}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="driver?.deathDate"
+                                     [class.col-4]="driver?.birthDate && driver?.deathDate"
+                                     [class.col-6]="driver?.birthDate && !driver?.deathDate">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h6>{{ driver?.deathPlace }}</h6>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="driver?.deathDate">
+                                        <div class="col-12">
+                                            <h6>{{ driver?.deathDate! | localizedDate }}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="driver?.age !== 0"
+                                     [class.col-4]="driver?.birthDate && driver?.deathDate"
+                                     [class.col-6]="!driver?.deathDate">
+                                    <span jhiTranslate="motorsportsDatabaseApp.driver.age">Age: </span> <span >{{driver?.age}}</span>
+                                </div>
+                            </div>
+
+                            <button mat-mini-fab type="submit" color="primary"
+                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                    [routerLink]="['/driver', driver?.id, 'edit']">
+                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-8 col-md-12">
+                <div class="card">
+                    <mat-tab-group>
+                        <mat-tab>
+                            <ng-template mat-tab-label>
+                                <mat-icon class="example-tab-icon msr-2">analytics</mat-icon>
+                                {{ 'motorsportsDatabaseApp.stats.home.title' | translate }}
+                            </ng-template>
+                            <div class="p-4">
+                                <jhi-statistics [id]="driver?.id!" [statsType]="'drivers'">Statistics...</jhi-statistics>
+                            </div>
+                        </mat-tab>
+                    </mat-tab-group>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+</section>
 
 
