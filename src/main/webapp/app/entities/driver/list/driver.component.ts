@@ -11,6 +11,7 @@ import { IDriver, Driver } from '../driver.model';
 import { DriverService } from '../service/driver.service';
 import { DriverDeleteDialogComponent } from '../delete/driver-delete-dialog.component';
 import { DataUtils } from 'app/core/util/data-util.service';
+import { AccountService } from 'app/core/auth/account.service';
 
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -31,7 +32,7 @@ export class DriverComponent implements OnInit, AfterViewInit {
   reloadData = true;
 
   dataSource = new MatTableDataSource<IDriver>([]);
-  displayedColumns: string[] = ['flag', 'name', 'surname', 'birthDate', 'birthPlace', 'deathDate', 'deathPlace', 'portrait', 'buttons'];
+  displayedColumns: string[] = ['flag', 'name', 'surname', 'birthDate', 'birthPlace', 'deathDate', 'deathPlace', 'portrait'];
 
   driversSearchTextChanged = new Subject<string>();
 
@@ -44,6 +45,7 @@ export class DriverComponent implements OnInit, AfterViewInit {
     protected dataUtils: DataUtils,
     protected router: Router,
     protected modalService: NgbModal,
+    protected accountService: AccountService,
     private sessionStorageService: SessionStorageService
   ) {
     this.currentSearch = this.activatedRoute.snapshot.queryParams['search'] ?? '';
@@ -51,6 +53,10 @@ export class DriverComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+
+    if (this.accountService.hasAnyAuthority(["ROLE_ADMIN", "ROLE_EDITOR"])) {
+      this.displayedColumns.push('buttons');
+    }
   }
 
   ngOnInit(): void {
