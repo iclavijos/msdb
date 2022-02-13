@@ -90,6 +90,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       this.enableLightMode();
     } else {
       this.enableDarkMode();
+      this.isDarkTheme = true;
     }
     this.initLeftSidebar();
     this.bodyTag = this.document.body;
