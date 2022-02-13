@@ -1,11 +1,27 @@
-<button mat-flat-button *ngFor="let menuItem of menuItems" [routerLink]="[menuItem.path]">
-    <i class="{{ menuItem.iconClass }}">{{menuItem.icon}}</i>
-    <span>{{ menuItem.title | translate }}</span>
-</button>
-<ng-container *ngFor="let menuItem of restrictedMenuItems">
-    <button mat-flat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-       [routerLink]="[menuItem.path]">
-        <i class="{{ menuItem.iconClass }}">{{menuItem.icon}}</i>
-        <span>{{ menuItem.title | translate }}</span>
-    </button>
-</ng-container>
+<div>
+  <!-- Left Sidebar -->
+  <aside id="leftsidebar" class="sidebar" (mouseenter)="mouseHover()" (mouseleave)="mouseOut()">
+    <!-- Menu -->
+    <div class="menu">
+      <ul class="list"
+        [ngStyle]="{'position' : 'relative', 'max-height' : listMaxHeight+'px', 'max-width' : listMaxWidth+'px'}">
+          <li *ngFor="let menuItem of menuItems">
+              <a [routerLink]="[menuItem.path]" class="menu-top">
+                  <i class="{{ menuItem.iconClass }}">{{ menuItem.icon }}</i>
+                  <span>{{ menuItem.title | translate }}</span>
+              </a>
+          </li>
+          <ng-container *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
+          <li *ngFor="let menuItem of restrictedMenuItems">
+              <a [routerLink]="[menuItem.path]" class="menu-top">
+                  <i class="{{ menuItem.iconClass }}">{{ menuItem.icon }}</i>
+                  <span>{{ menuItem.title | translate }}</span>
+              </a>
+          </li>
+          </ng-container>
+      </ul>
+    </div>
+    <!-- #Menu -->
+  </aside>
+  <!-- #END# Left Sidebar -->
+</div>
