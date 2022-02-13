@@ -49,6 +49,7 @@
         "database": "Base de dades",
         "rebuildIndexes": "Reconstruir índexs de cerca",
         "rebuildStatistics": "Recalcular estadístiques",
+        "rebuildNotificationsSessions": "Reconstruir notificacions",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
       },
       "imports": {

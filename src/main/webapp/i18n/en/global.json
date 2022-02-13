@@ -51,6 +51,7 @@
         "database": "Database",
         "rebuildIndexes": "Rebuild search indexes",
         "rebuildStatistics": "Rebuild statistics",
+        "rebuildNotificationsSessions": "Rebuild notifications",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
       },
       "imports": {
