@@ -9,12 +9,8 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { TranslateService } from '@ngx-translate/core';
 import { SessionStorageService } from 'ngx-webstorage';
-
-import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
 
 import { VERSION } from 'app/app.constants';
 import { LANGUAGES } from 'app/config/language.constants';
@@ -73,7 +69,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
           (this.account = account));
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     // set theme on startup
     if (localStorage.getItem('theme')) {
       this.renderer.removeClass(this.document.body, this.config.layout.variant);
@@ -90,7 +86,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     } else {
       this.renderer.addClass(
         this.document.body,
-        `menu-${this.config.layout.sidebar.backgroundColor}`
+        `menu-${this.config.layout.sidebar.backgroundColor as string}`
       );
     }
 
@@ -102,7 +98,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     } else {
       this.renderer.addClass(
         this.document.body,
-        `logo-${this.config.layout.logo_bg_color}`
+        `logo-${this.config.layout.logo_bg_color as string}`
       );
     }
 

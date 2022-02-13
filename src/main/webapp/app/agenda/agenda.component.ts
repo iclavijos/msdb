@@ -40,13 +40,13 @@ export class AgendaComponent implements OnInit {
     this.calendarComponent = new CalendarComponent();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.timezone = DateTime.now().zoneName;
     this.http.get<TimeZone[]>('api/timezones').subscribe((res: TimeZone[]) => (this.timezones = res));
     this.query();
   }
 
-  dateRangeChanged() {
+  dateRangeChanged(): void {
     if (this.rangeType === 'WEEK') {
       this.selectedDate = this.selectedDate.startOf('week');
       this.endDate = this.selectedDate.endOf('week');
@@ -57,7 +57,7 @@ export class AgendaComponent implements OnInit {
     this.query();
   }
 
-  nextPeriod() {
+  nextPeriod(): void {
     if (this.rangeType === 'WEEK') {
       this.selectedDate = this.selectedDate.plus({ days: 7});
     } else {
@@ -66,7 +66,7 @@ export class AgendaComponent implements OnInit {
     this.dateRangeChanged();
   }
 
-  previousPeriod() {
+  previousPeriod(): void {
     if (this.rangeType === 'WEEK') {
       this.selectedDate = this.selectedDate.minus({ days: 7});
     } else {
@@ -75,7 +75,7 @@ export class AgendaComponent implements OnInit {
     this.dateRangeChanged();
   }
 
-  query() {
+  query(): void {
     this.eventEditionService
       .findCalendarEvents(
         this.selectedDate.toJSDate(),
