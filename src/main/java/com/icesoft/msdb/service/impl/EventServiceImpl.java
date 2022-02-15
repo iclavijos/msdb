@@ -124,7 +124,7 @@ public class EventServiceImpl implements EventService {
             page = searchService.performWildcardSearch(
                 Event.class,
                 query.toLowerCase(),
-                Arrays.asList("name", "description", "rally", "raid"),
+                Arrays.asList("name", "description"), // , "rally", "raid"),
                 pageable);
         } else {
             page = eventRepository.findAll(pageable);

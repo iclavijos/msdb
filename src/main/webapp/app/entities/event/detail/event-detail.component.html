@@ -1,40 +1,51 @@
-<div class="main-content">
+<section class="content">
     <div class="container-fluid">
+        <div class="block-header mt-n3">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <ul class="breadcrumb breadcrumb-style ">
+                        <li class="breadcrumb-item">
+                            <a routerLink="/event">
+                                <h4 class="fw-bold">{{ 'motorsportsDatabaseApp.event.home.title' | translate }}</h4>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <jhi-alert-error></jhi-alert-error>
         <jhi-alert></jhi-alert>
-        <div class="row">
-            <div class="col-md-12">
+        <div class="row clearfix">
+            <div class="col-lg-4 col-md-12">
                 <div class="card">
-                    <div class="card-header card-header-danger">
-                        <h3 class="card-title">{{event!.name}}</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div *ngIf="event!.description" class="col-md-3">
-                                <dl class="row-md jh-entity-details">
-                                    <dt><span jhiTranslate="motorsportsDatabaseApp.event.description">Description</span></dt>
-                                    <dd>
-                                        <span>{{event!.description}}</span>
-                                    </dd>
-                                </dl>
+                    <div class="m-b-20">
+                        <div class="contact-grid">
+                            <div class="profile-header bg-dark">
+                                <div class="user-name">{{ event!.name }}</div>
                             </div>
-                            <div [class.col-md-9]="event!.description" [class.col-md-12]="!event!.description">
-                                <jhi-event-edition [event]="event!">Event editions...</jhi-event-edition>
+                            <div class="row">
+                                <div *ngIf="event!.description">
+                                    <h6 jhiTranslate="motorsportsDatabaseApp.event.description">Description</h6>
+                                    <h6>{{event!.description}}</h6>
+                                </div>
                             </div>
+
+                            <button mat-mini-fab type="submit" color="primary"
+                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                    [routerLink]="['/event', event?.id, 'edit']">
+                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-lg-8 col-md-12">
+                <div class="card">
+                    <div class="p-4">
+                        <jhi-event-edition [event]="event!">Event editions...</jhi-event-edition>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                [routerLink]="['/event', event!.id, 'edit']"
-                class="btn btn-primary">
-            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-        </button>
-        <button type="submit"
-                (click)="previousState()"
-                class="btn btn-info">
-            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-        </button>
     </div>
-</div>
+</section>
