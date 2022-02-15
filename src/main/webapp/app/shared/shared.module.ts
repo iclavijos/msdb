@@ -10,7 +10,8 @@ import { HasAnyAuthorityDirective } from './auth/has-any-authority.directive';
 import { SortByDirective } from './sort/sort-by.directive';
 import { SortDirective } from './sort/sort.directive';
 import { ItemCountComponent } from './pagination/item-count.component';
-import { StatisticsComponent } from './statistics/statistics.component';
+import { StatisticsComponent } from './components/statistics/statistics.component';
+import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
 import { TimeMaskPipe } from './mask/time-mask.pipe';
 import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
@@ -30,6 +31,7 @@ import { FullScreenService } from './services/fullscreen.service';
     AlertErrorComponent,
     HasAnyAuthorityDirective,
     StatisticsComponent,
+    FileUploadComponent,
     SortByDirective,
     SortDirective,
     ItemCountComponent,
@@ -48,6 +50,7 @@ import { FullScreenService } from './services/fullscreen.service';
     AlertErrorComponent,
     HasAnyAuthorityDirective,
     StatisticsComponent,
+    FileUploadComponent,
     SortByDirective,
     SortDirective,
     ItemCountComponent,
