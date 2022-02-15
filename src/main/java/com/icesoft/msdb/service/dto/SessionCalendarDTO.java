@@ -8,7 +8,8 @@ import java.time.ZonedDateTime;
 @Data
 public class SessionCalendarDTO {
 
-	private final Long id;
+    private final Long eventEditionId;
+    private final Long eventId;
 	private final String seriesName;
 	private final String eventName;
 	private final String sessionName;
@@ -27,11 +28,12 @@ public class SessionCalendarDTO {
     private final Boolean raid;
 
 	public SessionCalendarDTO(
-	    Long id, String seriesName, String eventName, String sessionName, SessionType sessionType,
+	    Long eventEditionId, Long eventId, String seriesName, String eventName, String sessionName, SessionType sessionType,
         ZonedDateTime startTime, ZonedDateTime endTime, Float duration, Float totalDuration, String status, Integer seriesRelevance,
         String racetrack, String racetrackLayoutUrl, String[] categories, Boolean rally, Boolean raid,
         String... seriesLogoUrl) {
-		this.id = id;
+        this.eventEditionId = eventEditionId;
+        this.eventId = eventId;
 		this.seriesName = seriesName;
 		this.eventName = eventName;
 		this.sessionName = sessionName;

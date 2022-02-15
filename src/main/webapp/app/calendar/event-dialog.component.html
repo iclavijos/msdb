@@ -1,30 +1,49 @@
-<h1 mat-dialog-title>{{ data.event.event.title }}</h1>
-<mat-dialog-content>
-    <div class="ui-grid-row">
-        <div class="ui-grid-col-12" align="center">
-            <img *ngIf="data.event.event.extendedProps.seriesLogoUrl" [src]="data.event.event.extendedProps.seriesLogoUrl[0]"
-                 style="max-width: 100%; max-height: 250px;" alt="series logo"/>
+<div class="addContainer">
+    <div class="modalHeader">
+        <div class="editRowModal">
+            <div class="modalHeader clearfix">
+                <div class="modal-about">
+                    <div class="fw-bold p-t-5 p-l-10 font-17">{{ data.event.event.title }}</div>
+                </div>
+            </div>
         </div>
+        <button mat-icon-button (click)="dialogRef.close()" aria-label="Close dialog">
+            <mat-icon>close</mat-icon>
+        </button>
     </div>
-    <div class="ui-grid-row">
-        <div class="ui-grid-col-2"><label>{{'motorsportsDatabaseApp.calendar.start' | translate}}</label></div>
-        <div class="ui-grid-col-10"><span>{{data.event.event.start | localizedDate: 'DDDD, T' }}</span></div>
+    <div mat-dialog-content>
+        <form class="register-form m-4">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                    <img *ngIf="data.event.event.extendedProps.seriesLogoUrl" [src]="data.event.event.extendedProps.seriesLogoUrl[0]"
+                         class="img-fluid" style="max-height: 250px; padding: 10px" alt="series logo"/>
+                </div>
+            </div>
+            <div class="row m-t-10">
+                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12"><h4>{{'motorsportsDatabaseApp.calendar.start' | translate}}</h4></div>
+                <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 font-15"><span>{{data.event.event.start | localizedDate: 'DDDD, T' }}</span></div>
+            </div>
+            <div class="row" *ngIf="!data.event.event.extendedProps.rally && !data.event.event.extendedProps.raid">
+                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12"><h4>{{'motorsportsDatabaseApp.calendar.end' | translate}}</h4></div>
+                <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 font-15"><span>{{data.event.event.end | localizedDate: 'DDDD, T' }}</span></div>
+            </div>
+            <div class="row" *ngIf="data.event.event.extendedProps.rally">
+                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12"><h4>{{'motorsportsDatabaseApp.calendar.distance' | translate}}</h4></div>
+                <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 font-15"><span>{{data.event.event.extendedProps.duration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}</span></div>
+            </div>
+            <div class="row" *ngIf="data.event.event.extendedProps.raid">
+                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12"><h4>{{'motorsportsDatabaseApp.calendar.distance' | translate}}</h4></div>
+                <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 font-15"><span>{{data.event.event.extendedProps.duration }} / {{data.event.event.extendedProps.totalDuration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}</span></div>
+            </div>
+            <div class="row m-t-10">
+                <div class="col-xl-10 col-lg-10 col-md-12 col-sm-12">
+                    <div class="example-button-row">
+                        <button mat-raised-button color="primary" type="button" (click)="navigateToEvent(data.event.event)" cdkFocusInitial>{{ 'motorsportsDatabaseApp.calendar.details' | translate}}</button>
+                        <button mat-raised-button color="warn" (click)="close()" tabindex="-1">{{ 'motorsportsDatabaseApp.eventEdition.reschedule.cancel' | translate }}</button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
-    <div class="ui-grid-row" *ngIf="!data.event.event.extendedProps.rally && !data.event.event.extendedProps.raid">
-        <div class="ui-grid-col-2"><label>{{'motorsportsDatabaseApp.calendar.end' | translate}}</label></div>
-        <div class="ui-grid-col-10"><span>{{data.event.event.end | localizedDate: 'DDDD, T' }}</span></div>
-    </div>
-    <div class="ui-grid-row" *ngIf="data.event.event.extendedProps.rally">
-        <div class="ui-grid-col-2"><label>{{'motorsportsDatabaseApp.calendar.distance' | translate}}</label></div>
-        <div class="ui-grid-col-10"><span>{{data.event.event.extendedProps.duration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}</span></div>
-    </div>
-    <div class="ui-grid-row" *ngIf="data.event.event.extendedProps.raid">
-        <div class="ui-grid-col-2"><label>{{'motorsportsDatabaseApp.calendar.distance' | translate}}</label></div>
-        <div class="ui-grid-col-10"><span>{{data.event.event.extendedProps.duration }} / {{data.event.event.extendedProps.totalDuration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}</span></div>
-    </div>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-    <button mat-button (click)="close()">{{'motorsportsDatabaseApp.eventEdition.reschedule.cancel' | translate }}</button>
-    <button mat-button (click)="navigateToEvent(data.event.event)" cdkFocusInitial>{{'motorsportsDatabaseApp.calendar.details' | translate}}</button>
-</mat-dialog-actions>
+</div>
 

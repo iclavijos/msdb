@@ -7,13 +7,12 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { AccountService } from 'app/core/auth/account.service';
-import { IEventEdition } from 'app/entities/event-edition/event-edition.model';
 import { EventEditionService } from 'app/entities/event-edition/service/event-edition.service';
 import { TimeZone } from 'app/home/home-events.component';
 
 import { DateTime } from 'luxon';
 
-import { FullCalendarComponent, CalendarOptions, EventClickArg } from '@fullcalendar/angular';
+import { FullCalendarComponent, CalendarOptions, EventClickArg, EventApi } from '@fullcalendar/angular';
 import esLocale from '@fullcalendar/core/locales/es';
 import caLocale from '@fullcalendar/core/locales/ca';
 import enLocale from '@fullcalendar/core/locales/en-gb';
@@ -21,7 +20,8 @@ import enLocale from '@fullcalendar/core/locales/en-gb';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 export class MyEvent {
-  id!: number;
+  eventId!: number;
+  eventEditionId!: number;
   title!: string;
   eventName!: string;
   sessionName!: string;
@@ -45,6 +45,7 @@ export class MyEvent {
   event!: any;
   rally!: boolean;
   raid!: boolean;
+  className!: string;
 }
 
 @Component({
@@ -62,9 +63,9 @@ export class EventDialogComponent {
     this.dialogRef.close();
   }
 
-  public navigateToEvent(eventEdition: IEventEdition): void {
+  public navigateToEvent(event: EventApi): void {
     this.dialogRef.close();
-    this.router.navigate(['/event', eventEdition.event!.id, 'edition', eventEdition.id]);
+    this.router.navigate(['/event', event.extendedProps.eventId, 'edition', event.extendedProps.eventEditionId]);
   }
 }
 
@@ -74,7 +75,6 @@ export class EventDialogComponent {
 export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
 
-  // calendarPlugins = [dayGridPlugin, listPlugin, luxon2Plugin];
   calendarLocales = [esLocale, caLocale, enLocale];
 
   sessionsSrc: MyEvent[] = [];
@@ -133,7 +133,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
       },
       nowIndicator: true,
       eventTimeFormat: {
@@ -142,6 +142,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       aspectRatio: 1,
       allDaySlot: false,
+      dayMaxEvents: true,
       timeZone: this.timezone,
       locales: this.calendarLocales,
       events: this.events
@@ -188,7 +189,8 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
     const result: MyEvent[] = [];
     for (const session of sessions) {
       const newEvent = new MyEvent();
-      newEvent.id = session.id;
+      newEvent.eventId = session.eventId;
+      newEvent.eventEditionId = session.eventEditionId;
       newEvent.title = `${session.eventName} ${session.sessionName}`;
       newEvent.eventName = session.eventName;
       newEvent.sessionName = session.sessionName;
