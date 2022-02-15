@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DateTime } from 'luxon';
 
-import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { SearchWithPagination } from 'app/core/request/request.model';
@@ -80,8 +79,8 @@ export class DriverService {
 
   protected convertDateFromClient(driver: IDriver): IDriver {
     return Object.assign({}, driver, {
-      birthDate: driver.birthDate?.isValid ? driver.birthDate.toFormat(DATE_FORMAT) : undefined,
-      deathDate: driver.deathDate?.isValid ? driver.deathDate.toFormat(DATE_FORMAT) : undefined,
+      birthDate: driver.birthDate?.isValid ? driver.birthDate.toISODate() : undefined,
+      deathDate: driver.deathDate?.isValid ? driver.deathDate.toISODate() : undefined,
     });
   }
 
