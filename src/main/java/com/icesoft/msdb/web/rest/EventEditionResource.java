@@ -756,6 +756,7 @@ public class EventEditionResource {
     		}
 
     		return new SessionCalendarDTO(session.getEventEdition().getId(),
+                    session.getEventEdition().getEvent().getId(),
     				seriesName,
     				session.getEventEdition().getLongEventName(),
     				session.getSessionType().equals(SessionType.STAGE)
@@ -774,7 +775,7 @@ public class EventEditionResource {
                         .map(racetrackLayout -> racetrackLayout.getLayoutImageUrl())
                         .orElse(null),
                     session.getEventEdition().getAllowedCategories().stream()
-                        .map(category -> category.getShortname()).toArray(size -> new String[size]),
+                        .map(category -> category.getShortname()).toArray(String[]::new),
                     session.getEventEdition().getEvent().isRally(),
                     session.getEventEdition().getEvent().isRaid(),
     				logoUrl);
