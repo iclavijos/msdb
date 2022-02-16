@@ -50,7 +50,8 @@
               "node_modules/perfect-scrollbar/css/perfect-scrollbar.css",
               "src/main/webapp/content/scss/axen/style.scss",
               "src/main/webapp/content/scss/axen/theme/all-themes.scss",
-              "node_modules/ngx-spinner/animations/ball-scale-multiple.css"
+              "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
+              "node_modules/ngx-lightbox/lightbox.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",

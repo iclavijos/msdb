@@ -1,0 +1,7 @@
+<img #popupImage
+     [src]="imageUrl"
+     class="img-fluid pointer"
+     [alt]="imageAlt"
+     (mouseover)="zoomIn(popupImage)"
+     (mouseleave)="zoomOut(popupImage)"
+     (click)="open()"/>
