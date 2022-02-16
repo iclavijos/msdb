@@ -2,6 +2,7 @@ import {
   faAngleDoubleLeft,
   faAngleDoubleRight,
   faArrowLeft,
+  faArrowAltCircleRight,
   faAsterisk,
   faBan,
   faBars,
@@ -44,10 +45,17 @@ import {
   // jhipster-needle-add-icon-import
 } from '@fortawesome/free-solid-svg-icons';
 
+import {
+  faAdn,
+  // jhipster-needle-add-icon-import
+} from '@fortawesome/free-brands-svg-icons';
+
 export const fontAwesomeIcons = [
+  faAdn,
   faAngleDoubleLeft,
   faAngleDoubleRight,
   faArrowLeft,
+  faArrowAltCircleRight,
   faAsterisk,
   faBan,
   faBars,
