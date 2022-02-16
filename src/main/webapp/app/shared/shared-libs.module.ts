@@ -46,6 +46,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { ImageModule } from 'primeng/image';
 
+import { LightboxModule } from 'ngx-lightbox';
+
 @NgModule({
   exports: [
     FormsModule,
@@ -89,6 +91,7 @@ import { ImageModule } from 'primeng/image';
     MatProgressBarModule,
     LeafletModule,
     ImageModule,
+    LightboxModule
   ]
 })
 export class SharedLibsModule {}
