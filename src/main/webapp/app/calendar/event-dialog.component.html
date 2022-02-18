@@ -12,6 +12,29 @@
         </button>
     </div>
     <div mat-dialog-content>
+        <div *ngIf="!data.event.event.extendedProps.cancelled">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-2"><label>{{'motorsportsDatabaseApp.calendar.start' | translate}}</label></div>
+                <div class="ui-grid-col-10"><span>{{data.event.event.start | localizedDate }}</span></div>
+            </div>
+            <div class="ui-grid-row" *ngIf="!data.event.event.extendedProps.rally && !data.event.event.extendedProps.raid">
+                <div class="ui-grid-col-2"><label>{{'motorsportsDatabaseApp.calendar.end' | translate}}</label></div>
+                <div class="ui-grid-col-10"><span>{{data.event.event.end | localizedDate }}</span></div>
+            </div>
+            <div class="ui-grid-row" *ngIf="data.event.event.extendedProps.rally">
+                <div class="ui-grid-col-2"><label>{{'motorsportsDatabaseApp.calendar.distance' | translate}}</label></div>
+                <div class="ui-grid-col-10"><span>{{data.event.event.extendedProps.duration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}</span></div>
+            </div>
+            <div class="ui-grid-row" *ngIf="data.event.event.extendedProps.raid">
+                <div class="ui-grid-col-2"><label>{{'motorsportsDatabaseApp.calendar.distance' | translate}}</label></div>
+                <div class="ui-grid-col-10"><span>{{data.event.event.extendedProps.duration }} / {{data.event.event.extendedProps.totalDuration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}</span></div>
+            </div>
+        </div>
+        <div *ngIf="data.event.event.extendedProps.cancelled">
+            <div class="badge badge-danger">
+                <h4>{{ 'motorsportsDatabaseApp.eventEdition.status.cancelled' | translate }}</h4>
+            </div>
+        </div>
         <form class="register-form m-4">
             <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">

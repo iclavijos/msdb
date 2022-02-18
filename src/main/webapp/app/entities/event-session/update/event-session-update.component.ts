@@ -40,7 +40,8 @@ export class EventSessionUpdateComponent implements OnInit {
     additionalLap: [],
     sessionType: [null, [Validators.required]],
     maxDuration: [],
-    location: []
+    location: [],
+    cancelled: []
   });
 
   constructor(
@@ -140,7 +141,8 @@ export class EventSessionUpdateComponent implements OnInit {
       additionalLap: eventSession.additionalLap,
       sessionType: eventSession.sessionType,
       maxDuration: eventSession.maxDuration,
-      location: eventSession.location
+      location: eventSession.location,
+      cancelled: eventSession.cancelled
     });
     this.isRaceAndLaps =
       (eventSession.sessionType! === SessionType.RACE || eventSession.sessionType! === SessionType.QUALIFYING_RACE) && eventSession.durationType === DurationType.LAPS;
@@ -165,7 +167,8 @@ export class EventSessionUpdateComponent implements OnInit {
       sessionType: this.editForm.get(['sessionType'])!.value,
       maxDuration: this.editForm.get(['maxDuration'])!.value,
       location: this.editForm.get(['location'])!.value,
-      locationTimeZone: this.timeZone
+      locationTimeZone: this.timeZone,
+      cancelled: this.editForm.get(['cancelled'])!.value,
     };
   }
 }

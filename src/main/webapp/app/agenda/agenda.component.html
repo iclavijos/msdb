@@ -117,23 +117,27 @@
                                 <div class="col-xs-12 col-lg-8" *ngIf="eventStatus(event) === 'O'">
                                     <div class="row" *ngFor="let session of sessionsEvent(event)"
                                          [ngStyle]="{
-                                            'color': (session.sessionType === 'RACE') ? 'white' : 'black',
-                                            'background-color': (session.sessionType === 'RACE') ? 'black' : '',
+                                            'color': (session.sessionType === 'RACE' || session.cancelled) ? 'white' : 'black',
+                                            'background-color': (session.sessionType === 'RACE' && !session.cancelled) ? 'black' :
+                                                session.cancelled ? 'red' : '',
                                             'font-weight': (session.sessionType === 'RACE') ? 'bold' : 'normal'
                                          }">
                                         <div class="col-sm-6 col-lg-4">
                                             {{ session.sessionName }}
                                         </div>
-                                        <div class="col-sm-6 col-lg-4">
+                                        <div *ngIf="session.cancelled" class="col-sm-6 col-lg-4">
+                                            {{ 'motorsportsDatabaseApp.eventEdition.status.cancelled' | translate }}
+                                        </div>
+                                        <div *ngIf="!session.cancelled" class="col-sm-6 col-lg-4">
                                             {{ formatDateStr(session.start, 'cccc, DDD - T', session.raid) }}
                                         </div>
-                                        <div *ngIf="!session.raid && !session.rally" class="col-lg-4 d-none d-lg-block">
+                                        <div *ngIf="!session.cancelled && !session.raid && !session.rally" class="col-lg-4 d-none d-lg-block">
                                             {{ formatDateStr(session.end, 'cccc, DDD - T') }}
                                         </div>
-                                        <div *ngIf="session.rally" class="col-lg-4 d-none d-lg-block">
+                                        <div *ngIf="!session.cancelled && session.rally" class="col-lg-4 d-none d-lg-block">
                                             {{ session.duration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}
                                         </div>
-                                        <div *ngIf="session.raid" class="col-lg-4 d-none d-lg-block">
+                                        <div *ngIf="!session.cancelled && session.raid" class="col-lg-4 d-none d-lg-block">
                                             {{ session.duration }} / {{ session.totalDuration }} {{ 'motorsportsDatabaseApp.eventEdition.enumerations.kilometers' | translate }}
                                         </div>
                                     </div>

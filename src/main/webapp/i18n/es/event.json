@@ -98,6 +98,7 @@
         "additionalLap": "¿Vuelta extra?",
         "maxDuration": "Duración máxima (minutos)",
         "lap": "vuelta",
+        "cancelled": "Cancelada",
         "created": "Se ha creado una nueva sesión",
         "updated": "Se ha actualizado la sesión",
         "deleted": "Se ha borrado la sesión",

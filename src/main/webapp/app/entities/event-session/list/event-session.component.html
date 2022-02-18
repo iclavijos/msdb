@@ -34,7 +34,12 @@
 
                     <ng-container matColumnDef="sessionStartTime">
                         <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.session.sessionStartTime' | translate }}</th>
-                        <td mat-cell *matCellDef="let session">{{ session.sessionStartTime | localizedDate: (eventEdition.event!.raid ? 'DDDD' : 'cccc, DDD - T') }}</td>
+                        <td mat-cell *matCellDef="let session">
+                            <div *ngIf="!session.cancelled">{{ session.sessionStartTime | localizedDate: (eventEdition.event!.raid ? 'DDDD' : 'cccc, DDD - T') }}</div>
+                            <div *ngIf="session.cancelled" class="badge badge-danger">
+                                <h4>{{ 'motorsportsDatabaseApp.eventEdition.status.cancelled' | translate }}</h4>
+                            </div>
+                        </td>
                     </ng-container>
 
                     <ng-container *ngIf="!eventEdition.event!.rally && !eventEdition.event!.raid" matColumnDef="duration">
