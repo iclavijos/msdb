@@ -77,7 +77,9 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
                 .map(session -> session.getSessionId())
                 .collect(Collectors.toList())
             )
-            .stream().filter(session -> session.getEventEdition().getStatus().equals(EventStatusType.ONGOING))
+            .stream()
+            .filter(session -> session.getEventEdition().getStatus().equals(EventStatusType.ONGOING))
+            .filter(session -> !session.getCancelled())
             .peek(session -> log.trace("Session to notify: {}", session.getName()))
             .collect(Collectors.toList());
 

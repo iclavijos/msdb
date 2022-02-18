@@ -98,6 +98,7 @@
         "additionalLap": "Volta extra?",
         "maxDuration": "Duració màxima (minuts)",
         "lap": "volta",
+        "cancelled": "Cancel.lada",
         "created": "S'ha creat una nova sessió",
         "updated": "S'ha actualitzat la sessió",
         "deleted": "S'ha esborrat la sessió",

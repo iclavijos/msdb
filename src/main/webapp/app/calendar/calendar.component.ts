@@ -28,6 +28,7 @@ export class MyEvent {
   title: string;
   eventName: string;
   sessionName: string;
+  cancelled: boolean;
   duration: number;
   totalDuration: number;
   textColor: string;
@@ -159,6 +160,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       newEvent.title = session.eventName + ' - ' + session.sessionName;
       newEvent.eventName = session.eventName;
       newEvent.sessionName = session.sessionName;
+      newEvent.cancelled = session.cancelled;
       newEvent.start = moment(session.startTime * 1000).tz(currentTZ);
       newEvent.duration = session.duration;
       newEvent.totalDuration = session.totalDuration;
@@ -175,7 +177,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       newEvent.allDay = session.raid;
       newEvent.rally = session.rally;
       newEvent.raid = session.raid;
-      if (session.status === 'C') {
+      if (session.status === 'C' || session.cancelled) {
         newEvent.color = 'red';
       } else if (session.status === 'S') {
         newEvent.color = 'orange';

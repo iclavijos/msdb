@@ -717,6 +717,7 @@ public class EventEditionResource {
     				session.getSessionType().equals(SessionType.STAGE)
                         ? String.format("%s - %s", session.getShortname(), session.getName())
                         : session.getName(),
+                    session.getCancelled(),
     				session.getSessionTypeValue(),
     				session.getSessionStartTimeDate(), session.getSessionEndTime(),
                     session.getDuration(),
