@@ -134,6 +134,7 @@ spring:
           oidc:
             # issuer-uri: https://dev-871921.okta.com/oauth2/default
             issuer-uri: https://msdb.eu.auth0.com/
+            jwk-set-uri: https://msdb.eu.auth0.com/.well-known/jwks.json
         registration:
           oidc:
             client-id: ${OIDC_CLIENT_ID}
