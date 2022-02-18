@@ -1,110 +1,112 @@
-<div>
-    <div class="row">
-        <div class="col-sm-12">
-            <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity"
-                    class="btn btn-primary float-right jh-create-entity create-event"
-                    [routerLink]="['/event-edition/new']">
-                <fa-icon [icon]="'plus'"></fa-icon>
-                <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.eventEdition.home.createLabel">
-                    Create a new event edition
-                </span>
-            </button>
+<div class="responsive_table">
+    <div class="materialTableHeader">
+        <div class="row">
+            <div class="col-8">
+            </div>
+            <div class="col-4">
+                <ul class="header-buttons">
+                    <li>
+                        <div class="icon-button-demo">
+                            <button mat-mini-fab *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" color="primary" [routerLink]="['/event-edition/new']">
+                                <mat-icon class="col-white">add</mat-icon>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div class="card">
-                <div class="card-header card-header-danger">
-                    <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.eventEdition.home.title">Event edition</span></h4>
-                </div>
-                <div class="card-body">
-                    <mat-spinner [hidden]="!isLoading"></mat-spinner>
-                    <div class="alert alert-warning" id="no-result" [hidden]="dataSource!.data!.length != 0 || isLoading">
-                        <span jhiTranslate="motorsportsDatabaseApp.eventEdition.home.notFound">No event editions found</span>
-                    </div>
-                    <div class="table-responsive" [hidden]="dataSource!.data!.length === 0 || isLoading">
-                        <table mat-table class="table table-hover" [dataSource]="dataSource"
-                               matSort matSortActive="editionYear" matSortDisableClear matSortDirection="desc">
+            <mat-spinner [hidden]="!isLoading"></mat-spinner>
+            <div class="alert alert-warning" id="no-result" [hidden]="dataSource!.data!.length != 0 || isLoading">
+                <span jhiTranslate="motorsportsDatabaseApp.eventEdition.home.notFound">No event editions found</span>
+            </div>
+            <div class="table-responsive" [hidden]="dataSource!.data!.length === 0 || isLoading">
+                <table mat-table class="table table-hover body" [dataSource]="dataSource"
+                       matSort matSortActive="editionYear" matSortDisableClear matSortDirection="desc">
 
-                            <ng-container matColumnDef="editionYear">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.eventEdition.editionYear' | translate }}</th>
-                                <td mat-cell *matCellDef="let eventEdition">{{ eventEdition.editionYear }}</td>
-                            </ng-container>
+                    <ng-container matColumnDef="editionYear">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.eventEdition.editionYear' | translate }}</th>
+                        <td mat-cell *matCellDef="let eventEdition">{{ eventEdition.editionYear }}</td>
+                    </ng-container>
 
-                            <ng-container matColumnDef="affiche">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-                                <td mat-cell *matCellDef="let eventEdition">
-                                    <img #afficheImg *ngIf="eventEdition?.posterUrl" [src]="eventEdition.posterUrl" alt="official poster"
-                                         class="img-fluid" style="max-height: 50px;" (click)="$event.stopPropagation();openAffiche(eventEdition.id)"
-                                         (mouseover)="zoomIn(afficheImg)" (mouseleave)="zoomOut(afficheImg)"/>
-                                </td>
-                            </ng-container>
+                    <ng-container matColumnDef="affiche">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <td mat-cell *matCellDef="let eventEdition">
+                            <img *ngIf="eventEdition?.posterUrl"
+                                 [src]="eventEdition.posterUrl"
+                                 alt="official poster"
+                                 class="img-fluid" style="max-height: 50px">
+                        </td>
+                    </ng-container>
 
-                            <ng-container matColumnDef="longEventName">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.eventEdition.longEventName' | translate }}</th>
-                                <td mat-cell *matCellDef="let eventEdition">{{ eventEdition.longEventName }}</td>
-                            </ng-container>
+                    <ng-container matColumnDef="longEventName">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.eventEdition.longEventName' | translate }}</th>
+                        <td mat-cell *matCellDef="let eventEdition">{{ eventEdition.longEventName }}</td>
+                    </ng-container>
 
-                            <ng-container matColumnDef="eventDate">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.eventEdition.eventDate' | translate }}</th>
-                                <td mat-cell *matCellDef="let eventEdition">{{ eventEdition.eventDate | localizedDate: 'DD' }}</td>
-                            </ng-container>
+                    <ng-container matColumnDef="eventDate">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.eventEdition.eventDate' | translate }}</th>
+                        <td mat-cell *matCellDef="let eventEdition">{{ eventEdition.eventDate | localizedDate: 'DD' }}</td>
+                    </ng-container>
 
-                            <ng-container matColumnDef="allowedCategories">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.eventEdition.allowedCategories' | translate }}</th>
-                                <td mat-cell *matCellDef="let eventEdition">
-                                    <div *ngFor="let category of eventEdition.allowedCategories">
-                                        <span class="tag tag-info">{{ category.shortname }}</span>
-                                    </div>
-                                </td>
-                            </ng-container>
+                    <ng-container matColumnDef="allowedCategories">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.eventEdition.allowedCategories' | translate }}</th>
+                        <td mat-cell *matCellDef="let eventEdition">
+                            <div *ngFor="let category of eventEdition.allowedCategories">
+                                <span class="tag tag-info">{{ category.shortname }}</span>
+                            </div>
+                        </td>
+                    </ng-container>
 
-                            <ng-container matColumnDef="trackLayout">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.eventEdition.trackLayout' | translate }}</th>
-                                <td mat-cell *matCellDef="let eventEdition">
-                                    <div *ngIf="!eventEdition.event.rally && eventEdition.trackLayout">
-                                        <a [routerLink]="['/racetrack-layout', eventEdition.trackLayout?.id, 'view' ]" >
-                                            {{eventEdition.trackLayout?.racetrack.name}}<br/>{{eventEdition.trackLayout?.name}}
-                                        </a>
-                                    </div>
-                                    <div *ngIf="eventEdition.event.rally">
-                                            {{eventEdition.location}}
-                                    </div>
-                                </td>
-                            </ng-container>
+                    <ng-container matColumnDef="trackLayout">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.eventEdition.trackLayout' | translate }}</th>
+                        <td mat-cell *matCellDef="let eventEdition">
+                            <div *ngIf="!eventEdition.event.rally && eventEdition.trackLayout">
+                                <a [routerLink]="['/racetrack-layout', eventEdition.trackLayout?.id, 'view' ]" >
+                                    <img [src]="eventEdition.trackLayout.layoutImageUrl"
+                                         class="img-fluid" style="max-height: 50px"
+                                         [alt]="eventEdition.trackLayout?.racetrack.name"
+                                         [matTooltip]="eventEdition.trackLayout?.racetrack.name + ' ' + eventEdition.trackLayout?.name">
+                                </a>
+                            </div>
+                            <div *ngIf="eventEdition.event.rally">
+                                {{ eventEdition.location }}
+                            </div>
+                        </td>
+                    </ng-container>
 
-                            <ng-container matColumnDef="buttons">
-                                <th mat-header-cell *matHeaderCellDef></th>
-                                <td mat-cell *matCellDef="let eventEdition">
-                                    <div class="btn-group">
-                                        <button type="submit"
-                                                *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                                [routerLink]="['edition', eventEdition.id, 'edit']"
-                                                (click)="$event.stopPropagation()"
-                                                class="btn btn-primary btn-sm">
-                                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                                        </button>
-                                        <button type="submit"
-                                                *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                                (click)="delete($event, eventEdition)"
-                                                class="btn btn-danger btn-sm">
-                                            <fa-icon [icon]="'times'"></fa-icon>
-                                        </button>
-                                    </div>
-                                </td>
-                            </ng-container>
+                    <ng-container matColumnDef="buttons">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let eventEdition">
+                            <div class="btn-group">
+                                <button mat-mini-fab type="submit"
+                                        color="primary"
+                                        *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                        [routerLink]="['edition', eventEdition.id, 'edit']"
+                                        (click)="$event.stopPropagation()">
+                                    <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                </button>
+                                <button mat-mini-fab type="submit"
+                                        color="warn"
+                                        *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                                        (click)="delete($event, eventEdition)">
+                                    <fa-icon [icon]="'times'"></fa-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
 
-                            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-                                [routerLink]="['edition', row.id ]"></tr>
-                        </table>
-                        <mat-paginator [length]="totalItems"
-                                       [pageSizeOptions]="[5, 10, 20]"
-                                       [pageSize]="10"
-                                       showFirstLastButtons
-                                       (page)="pageChanged($event)"></mat-paginator>
-                    </div>
-                </div>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
+                        [routerLink]="['edition', row.id ]"></tr>
+                </table>
+                <mat-paginator [length]="totalItems"
+                               [pageSizeOptions]="[5, 10, 20]"
+                               [pageSize]="10"
+                               showFirstLastButtons
+                               (page)="pageChanged($event)"></mat-paginator>
             </div>
         </div>
     </div>

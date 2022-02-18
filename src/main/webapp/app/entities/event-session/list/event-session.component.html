@@ -1,11 +1,19 @@
-<div>
-    <div class="row">
-        <div class="col-sm-12">
-            <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                    (click)="createSession()"
-                    class="btn btn-primary float-right create-event-session">
-                <span class="fa fa-plus"></span>
-            </button>
+<div class="responsive_table">
+    <div class="materialTableHeader" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']">
+        <div class="row">
+            <div class="col-8">
+            </div>
+            <div class="col-4">
+                <ul class="header-buttons">
+                    <li>
+                        <div class="icon-button-demo">
+                            <button mat-mini-fab color="primary" (click)="createSession()">
+                                <mat-icon class="col-white">add</mat-icon>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -14,9 +22,8 @@
             <div class="alert alert-warning" id="no-result" [hidden]="dataSource!.data!.length != 0 || isLoading">
                 <span jhiTranslate="motorsportsDatabaseApp.eventEdition.session.notFound">No event sessions found</span>
             </div>
-            <div class="table-responsive" [hidden]="dataSource!.data!.length === 0">
-                <table mat-table class="table table-hover" [dataSource]="dataSource">
-
+            <div class="table-responsive" [hidden]="dataSource!.data!.length === 0 || isLoading">
+                <table mat-table class="table table-hover body" [dataSource]="dataSource">
                     <ng-container matColumnDef="name">
                         <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.session.name' | translate }}</th>
                         <td mat-cell *matCellDef="let session">
@@ -73,16 +80,16 @@
                         <th mat-header-cell *matHeaderCellDef></th>
                         <td mat-cell *matCellDef="let session">
                             <div class="btn-group">
-                                <button type="submit"
+                                <button mat-mini-fab type="submit"
+                                        color="primary"
                                         *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                        (click)="editSession(session)"
-                                        class="btn btn-primary btn-sm">
+                                        (click)="editSession(session)">
                                     <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                 </button>
-                                <button type="button"
+                                <button mat-mini-fab type="submit"
+                                        color="warn"
                                         *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                        (click)="delete(session)"
-                                        class="btn btn-danger btn-sm">
+                                        (click)="delete(session)">
                                     <fa-icon [icon]="'times'"></fa-icon>
                                 </button>
                             </div>
