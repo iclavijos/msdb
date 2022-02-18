@@ -5,6 +5,8 @@ import com.icesoft.msdb.security.SecurityUtils;
 import com.icesoft.msdb.security.oauth2.AudienceValidator;
 import com.icesoft.msdb.security.oauth2.CustomClaimConverter;
 import com.icesoft.msdb.security.oauth2.JwtGrantedAuthorityConverter;
+
+import java.time.Duration;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -29,6 +31,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.web.client.RestOperations;
 import org.springframework.web.filter.CorsFilter;
 import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 import tech.jhipster.config.JHipsterProperties;
@@ -44,6 +47,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Value("${spring.security.oauth2.client.provider.oidc.issuer-uri}")
     private String issuerUri;
+    @Value("${spring.security.oauth2.client.provider.oidc.jwk-set-uri}")
+    private String jwkSetUri;
 
     private final SecurityProblemSupport problemSupport;
 
@@ -154,7 +159,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     JwtDecoder jwtDecoder(ClientRegistrationRepository clientRegistrationRepository, RestTemplateBuilder restTemplateBuilder) {
-        NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuerUri);
+        RestOperations rest = restTemplateBuilder
+            .setConnectTimeout(Duration.ofSeconds(10))
+            .setReadTimeout(Duration.ofSeconds(10))
+            .build();
+        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).restOperations(rest).build();
+
+        // NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuerUri);
 
         OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(jHipsterProperties.getSecurity().getOauth2().getAudience());
         OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuerUri);
