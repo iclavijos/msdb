@@ -98,6 +98,7 @@
         "additionalLap": "Extra lap?",
         "maxDuration": "Maximum duration (minutes)",
         "lap": "lap",
+        "cancelled": "Cancelled",
         "created": "A new session is created",
         "updated": "A session is updated",
         "deleted": "A session is deleted",

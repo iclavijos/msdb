@@ -94,6 +94,9 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @Column(name = "location_time_zone")
     private String locationTimeZone;
 
+    @Column
+    private Boolean cancelled;
+
 	public boolean isRace() {
 		return sessionType.equals(SessionType.RACE);
 	}
