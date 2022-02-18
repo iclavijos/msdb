@@ -8,6 +8,7 @@ import { IEventSession, EventSession } from '../event-session.model';
 import { EventSessionUpdateComponent } from '../update/event-session-update.component';
 import { EventSessionDeleteDialogComponent } from '../delete/event-session-delete-dialog.component';
 import { EventSessionService } from '../service/event-session.service';
+import { AccountService } from 'app/core/auth/account.service';
 
 import { DurationType } from 'app/shared/enumerations/durationType.enum';
 import { SessionType } from 'app/shared/enumerations/sessionType.enum';
@@ -44,6 +45,7 @@ export class EventSessionComponent implements OnInit, OnChanges {
     protected modalService: NgbModal,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
+    protected accountService: AccountService,
     private dialog: MatDialog
   ) {}
 
@@ -51,7 +53,9 @@ export class EventSessionComponent implements OnInit, OnChanges {
     if (this.eventEdition.event?.raid) {
       this.displayedColumns.push('totalDuration');
     }
-    this.displayedColumns.push('buttons');
+    if (this.accountService.hasAnyAuthority(["ROLE_ADMIN", "ROLE_EDITOR"])) {
+      this.displayedColumns.push('buttons');
+    }
     if (!this.eventEdition.event?.rally && !this.eventEdition.event?.raid) {
       this.timeZone = this.eventEdition.trackLayout!.racetrack!.timeZone;
     } else if (this.eventEdition.event.rally) {

@@ -103,15 +103,6 @@ export class EventEditionComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openAffiche(eventEditionId: number): void {
-    // const affiche = this.lightboxAlbum.find(item => item.src.endsWith(eventEditionId + '.jpg'));
-    // this.lightbox.open(this.lightboxAlbum, this.lightboxAlbum.indexOf(affiche), { centerVertically: true });
-  }
-
-  closeAffiche(): void {
-    // this.lightbox.close();
-  }
-
   zoomIn(elementToZoom: HTMLElement): void {
     this.renderer.setStyle(elementToZoom, 'transform', 'scale(1.1)');
   }
