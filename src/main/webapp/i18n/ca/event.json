@@ -62,6 +62,7 @@
       "lapsAnalysis": "Volta a volta",
       "poster": "Pòster",
       "location": "Base",
+      "roundSeries": "Event {{ numEvent }} de {{ totalEvents }} del campionat ",
       "status": {
         "label": "Situació",
         "ongoing": "Planificat",

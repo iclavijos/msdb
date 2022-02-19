@@ -62,6 +62,7 @@
       "lapsAnalysis": "Lap by lap",
       "poster": "Poster",
       "location": "Location",
+      "roundSeries": "Round {{ numEvent }} of {{ totalEvents }} of ",
       "status": {
         "label": "Status",
         "ongoing": "Ongoing",
