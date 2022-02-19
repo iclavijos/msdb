@@ -8,17 +8,17 @@
   width: 100%;
 }
 
-#yearSelect .mat-select-value,
-#yearSelect .mat-select-arrow {
-  color: white;
-  font-size: large;
-}
+// #yearSelect .mat-select-value,
+// #yearSelect .mat-select-arrow {
+//   color: white;
+//   font-size: large;
+// }
 
 .pointer {
   cursor: pointer;
 }
 
-.select-year-panel {
+#yearSelect .select-year-panel {
   width: 100px;
   margin-left: 10px;
   margin-right: 10px;

@@ -73,36 +73,8 @@ export class EventEditionDetailComponent implements OnInit {
         this.driversBestTimes = res.slice(1);
         this.bestTimesColumns = res[0];
       });
-
-//       this.lightboxAlbum = [];
-//       if (this.eventEdition.trackLayout?.layoutImageUrl) {
-//         const layout = {
-//           src: this.eventEdition.trackLayout.layoutImageUrl,
-//           caption: '',
-//           thumb: this.eventEdition.trackLayout.layoutImageUrl.replace('/upload', '/upload/c_thumb,w_200')
-//         };
-//         this.posLayout = this.lightboxAlbum.push(layout);
-//       }
-//
-//       if (this.eventEdition.posterUrl) {
-//         const afficheThumb = this.eventEdition.posterUrl.replace('/upload', '/upload/c_thumb,w_200');
-//         const affiche = {
-//           src: this.eventEdition.posterUrl,
-//           caption: '',
-//           thumb: afficheThumb
-//         };
-//         this.posAffiche = this.lightboxAlbum.push(affiche);
-//       }
     });
   }
-
-//   openAffiche() {
-//     this.lightbox.open(this.lightboxAlbum, this.posAffiche - 1, { centerVertically: true });
-//   }
-//
-//   openLayout() {
-//     this.lightbox.open(this.lightboxAlbum, this.posLayout - 1, { centerVertically: true });
-//   }
 
   isRally(): boolean {
     return this.eventEdition!.event!.rally ?? false;
@@ -120,10 +92,6 @@ export class EventEditionDetailComponent implements OnInit {
     this.renderer.setStyle(elementToUnzoom, 'transform', 'scale(1.0)');
   }
 
-//   closeAffiche() {
-//     this.lightbox.close();
-//   }
-
   updateSessions(newSessions: IEventSession[]): void {
     this.eventSessions = newSessions;
   }
@@ -137,15 +105,7 @@ export class EventEditionDetailComponent implements OnInit {
   }
 
   jumpToEdition(id: number): void {
-    this.router.navigate(['/event/edition', id, 'view-ed']);
-  }
-
-  gotoPrevious(): void {
-    this.router.navigate(['/event/edition', this.previousEditionId, 'view-ed']);
-  }
-
-  gotoNext(): void {
-    this.router.navigate(['/event/edition', this.nextEditionId, 'view-ed']);
+    this.router.navigate(['/event', this.eventEdition!.event!.id, 'edition', id]);
   }
 
   previousState(): void {
@@ -153,7 +113,7 @@ export class EventEditionDetailComponent implements OnInit {
   }
 
   editEdition(): void {
-    this.router.navigate(['/event/edition', this.eventEdition!.id, 'edit-ed'], {
+    this.router.navigate(['/event', this.eventEdition!.event!.id, 'edition', this.eventEdition!.id, 'edit'], {
       state: {
         event: JSON.stringify(this.eventEdition!.event!)
       }
