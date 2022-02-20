@@ -143,6 +143,14 @@
     text-transform: uppercase;
   }
 
+  .mat-button-toggle-checked {
+    button {
+      background-color: #3f51b5 !important;
+      color: #fff !important;
+      // border-color: $theme-black !important;
+    }
+  }
+
   .btn-primary {
     background-color: $theme-white-active-color !important;
     color: #fff !important;
