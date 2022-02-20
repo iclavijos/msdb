@@ -16,6 +16,7 @@ import { ImageComponent } from './components/image/image.component';
 import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
 import { TimeMaskPipe } from './mask/time-mask.pipe';
 import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
+import { CategoriesFilter } from './filters/categories-filter.pipe';
 import { EventEntryCategoryFilter } from './filters/entry-category-filter.pipe';
 import { EphemerisYearFilter } from './filters/ephemeris-year-filter.pipe';
 import { MaterialElevationDirective } from './directives/material-elevation.directive';
@@ -40,6 +41,7 @@ import { FullScreenService } from './services/fullscreen.service';
     RacetrackLengthPipe,
     TimeMaskPipe,
     LocalizedDatePipe,
+    CategoriesFilter,
     EventEntryCategoryFilter,
     EphemerisYearFilter,
     MaterialElevationDirective
@@ -60,6 +62,7 @@ import { FullScreenService } from './services/fullscreen.service';
     RacetrackLengthPipe,
     TimeMaskPipe,
     LocalizedDatePipe,
+    CategoriesFilter,
     EventEntryCategoryFilter,
     EphemerisYearFilter,
     MaterialElevationDirective
