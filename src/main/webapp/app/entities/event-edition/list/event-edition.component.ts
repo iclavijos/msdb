@@ -103,14 +103,6 @@ export class EventEditionComponent implements OnInit, AfterViewInit {
     }
   }
 
-  zoomIn(elementToZoom: HTMLElement): void {
-    this.renderer.setStyle(elementToZoom, 'transform', 'scale(1.1)');
-  }
-
-  zoomOut(elementToUnzoom: HTMLElement): void {
-    this.renderer.setStyle(elementToUnzoom, 'transform', 'scale(1.0)');
-  }
-
   protected loadPage(): void {
     if (!this.reloadData) {
       return;

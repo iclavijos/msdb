@@ -6,7 +6,6 @@ import com.icesoft.msdb.domain.RacetrackLayout;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.RacetrackService;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
-import com.icesoft.msdb.service.dto.RacetrackLayoutSearchResultDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
 import org.slf4j.Logger;
@@ -304,12 +303,10 @@ public class RacetrackResource {
     }
 
     @GetMapping("/_search/racetrack-layouts")
-    public List<RacetrackLayoutSearchResultDTO> searchTypeaheadLayouts(@RequestParam String query) {
+    public List<RacetrackLayout> searchTypeaheadLayouts(@RequestParam String query) {
     	log.debug("REST request to search RacetracksLayouts for query {}", query);
-        Page<RacetrackLayout> page = racetrackService.searchLayouts(query, PageRequest.of(0, 10));
-        return page.getContent().parallelStream()
-        		.map(l -> new RacetrackLayoutSearchResultDTO(l))
-        		.collect(Collectors.toList());
+        Page<RacetrackLayout> page = racetrackService.searchLayouts(query, PageRequest.of(0, 20));
+        return page.getContent();
     }
 
 }

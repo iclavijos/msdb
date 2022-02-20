@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { SearchWithPagination } from 'app/core/request/request.model';
+import { Search } from 'app/core/request/request.model';
 import { IEvent, getEventIdentifier, EditionIdYear } from '../event.model';
 
 export type EntityResponseType = HttpResponse<IEvent>;
@@ -42,9 +42,9 @@ export class EventService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  search(req: SearchWithPagination): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http.get<IEvent[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
+  search(req: Search): Observable<EntityArrayResponseType> {
+    // const options = createRequestOption(req);
+    return this.http.get<IEvent[]>(this.resourceSearchUrl, { params: { query: req.query }, observe: 'response' });
   }
 
   findEventEditionIds(idEvent: number): Observable<EditionIdYear[]> {

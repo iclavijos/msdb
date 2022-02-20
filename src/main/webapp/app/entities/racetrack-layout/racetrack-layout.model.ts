@@ -10,7 +10,6 @@ export interface IRacetrackLayout {
   layoutImageUrl?: string;
   active?: boolean;
   racetrack?: IRacetrack;
-  getFullName(): string;
 }
 
 export class RacetrackLayout implements IRacetrackLayout {
@@ -28,12 +27,12 @@ export class RacetrackLayout implements IRacetrackLayout {
     this.racetrack = racetrack;
     this.active = this.active ?? false;
   }
-
-  getFullName(): string {
-    return `${this.racetrack!.name} - ${this.name}`;
-  }
 }
 
 export function getRacetrackLayoutIdentifier(racetrackLayout: IRacetrackLayout): number | undefined {
   return racetrackLayout.id;
+}
+
+export function getFullName(racetrackLayout: IRacetrackLayout): string {
+  return `${racetrackLayout.racetrack!.name} - ${racetrackLayout.name}`;
 }

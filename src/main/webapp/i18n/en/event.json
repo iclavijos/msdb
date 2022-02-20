@@ -47,6 +47,7 @@
       "longEventName": "Long Event Name",
       "eventDate": "Event Date",
       "allowedCategories": "Allowed Categories",
+      "filterCategories": "Filter categories",
       "trackLayout": "Track Layout",
       "event": "Event",
       "sessions": "Sessions",
