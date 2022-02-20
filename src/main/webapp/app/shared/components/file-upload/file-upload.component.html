@@ -8,13 +8,14 @@
               class="img-fluid" style="max-height: 250px;" [alt]="imageAlt"/>
          <button
              type="button"
-             (click)="clearInputImage(controlName, controlNameContentType, 'fileImage')"
+             (click)="clearInputImage(controlName, controlNameContentType, controlName)"
              class="btn btn-secondary btn-xs pull-right">
              <fa-icon icon="times"></fa-icon>
          </button>
      </div>
 
      <input class="form-control" type="file"
+            [id]="controlName"
             (change)="setFileData($event, controlName, isImage)"
             [accept]="acceptedMimeType"
             jhiTranslate="entity.action.addimage"/>
