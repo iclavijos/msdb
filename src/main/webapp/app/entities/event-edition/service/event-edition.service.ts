@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DateTime } from 'luxon';
 
-import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { SearchWithPagination } from 'app/core/request/request.model';
@@ -131,7 +130,7 @@ export class EventEditionService {
 
   protected convertDateFromClient(eventEdition: IEventEdition): IEventEdition {
     return Object.assign({}, eventEdition, {
-      eventDate: eventEdition.eventDate?.isValid ? eventEdition.eventDate.toFormat(DATE_FORMAT) : undefined,
+      eventDate: eventEdition.eventDate?.isValid ? eventEdition.eventDate.toISODate() : undefined,
     });
   }
 

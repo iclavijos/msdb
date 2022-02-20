@@ -84,14 +84,6 @@ export class EventEditionDetailComponent implements OnInit {
     return this.eventEdition!.event!.raid ?? false;
   }
 
-  zoomIn(elementToZoom: HTMLElement): void {
-    this.renderer.setStyle(elementToZoom, 'transform', 'scale(1.1)');
-  }
-
-  zoomOut(elementToUnzoom: HTMLElement): void {
-    this.renderer.setStyle(elementToUnzoom, 'transform', 'scale(1.0)');
-  }
-
   updateSessions(newSessions: IEventSession[]): void {
     this.eventSessions = newSessions;
   }

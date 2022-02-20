@@ -2,20 +2,19 @@ import { Component, OnInit, ElementRef } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { switchMap, debounceTime, map, filter, finalize } from 'rxjs/operators';
 
 import { IEventEdition, EventEdition } from '../event-edition.model';
 import { EventEditionService } from '../service/event-edition.service';
 import { ICategory } from 'app/entities/category/category.model';
 import { CategoryService } from 'app/entities/category/service/category.service';
-import { IRacetrackLayout } from 'app/entities/racetrack-layout/racetrack-layout.model';
+import { IRacetrackLayout, getFullName } from 'app/entities/racetrack-layout/racetrack-layout.model';
 import { RacetrackLayoutService } from 'app/entities/racetrack-layout/service/racetrack-layout.service';
-import { IEvent } from 'app/entities/event/event.model';
+import { IEvent, isRally, isRaid, instantiateEvent } from 'app/entities/event/event.model';
 import { EventService } from 'app/entities/event/service/event.service';
-import { AlertError } from 'app/shared/alert/alert-error.model';
-import { EventManager, EventWithContent } from 'app/core/util/event-manager.service';
-import { DataUtils, FileLoadError } from 'app/core/util/data-util.service';
+import { EventManager } from 'app/core/util/event-manager.service';
+import { DataUtils } from 'app/core/util/data-util.service';
 
 @Component({
   selector: 'jhi-event-edition-update',
@@ -43,7 +42,8 @@ export class EventEditionUpdateComponent implements OnInit {
     posterUrl: [],
     status: ['ONGOING', []],
     multidriver: [false, []],
-    location: []
+    location: [],
+    categoryFilterText: []
   });
 
   constructor(
@@ -69,31 +69,20 @@ export class EventEditionUpdateComponent implements OnInit {
 
     this.layoutOptions = this.editForm.get('trackLayout')!.valueChanges.pipe(
       debounceTime(300),
-      switchMap(value => {
-        if (typeof value === 'string') {
-          return this.racetrackLayoutService.query(value);
-        } else {
-          return of(null);
-        }
-      }),
-      map(response => (response ? response.body : null))
+      switchMap(value => this.racetrackLayoutService.search({ query: value })),
+      map(response => response.body)
     );
 
     this.eventOptions = this.editForm.get('event')!.valueChanges.pipe(
       debounceTime(300),
-      switchMap(value => {
-        if (typeof value === 'string') {
-          return this.eventService.query(value);
-        } else {
-          return of(null);
-        }
-      }),
-      map(response => (response ? response.body : null))
+      switchMap(value => this.eventService.search({ query: value })),
+      map(response => response.body)
     );
 
     this.activatedRoute.data.subscribe(({ eventEdition }) => {
       this.updateForm(eventEdition);
     });
+
     this.categoryService
       .query({
         page: 0,
@@ -121,6 +110,22 @@ export class EventEditionUpdateComponent implements OnInit {
     return event ? event.name as string : '';
   }
 
+  isRally(): boolean {
+    return isRally(this.event!);
+  }
+
+  isRaid(): boolean {
+    return isRaid(this.event!);
+  }
+
+  getLayoutFullName(layout: IRacetrackLayout): string {
+    return getFullName(layout);
+  }
+
+  onBlurLayout(event: any): void {
+    const layout = (<HTMLInputElement>event.target).value;
+  }
+
   save(): void {
     this.isSaving = true;
     const eventEdition = this.createFromForm();
@@ -139,31 +144,10 @@ export class EventEditionUpdateComponent implements OnInit {
     window.history.back();
   }
 
-  byteSize(base64String: string): string {
-    return this.dataUtils.byteSize(base64String);
-  }
-
-  openFile(base64String: string, contentType: string | null | undefined): void {
-    this.dataUtils.openFile(base64String, contentType);
-  }
-
-  setFileData(event: Event, field: string, isImage: boolean): void {
-    this.dataUtils.loadFileToForm(event, this.editForm, field, isImage).subscribe({
-      error: (err: FileLoadError) =>
-        this.eventManager.broadcast(
-          new EventWithContent<AlertError>('motorsportsDatabaseApp.error', { ...err, key: 'error.file.' + err.key })
-        ),
-    });
-  }
-
-  clearInputImage(field: string, fieldContentType: string, idInput: string): void {
+  clearCategoriesFilter(): void {
     this.editForm.patchValue({
-      [field]: null,
-      [fieldContentType]: null,
+      ['categoryFilterText']: null,
     });
-    if (idInput && this.elementRef.nativeElement.querySelector('#' + idInput)) {
-      this.elementRef.nativeElement.querySelector('#' + idInput).value = null;
-    }
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IEventEdition>>): void {
@@ -186,6 +170,7 @@ export class EventEditionUpdateComponent implements OnInit {
   }
 
   protected updateForm(eventEdition: IEventEdition): void {
+    this.event = instantiateEvent(eventEdition.event!);
     this.editForm.patchValue({
       id: eventEdition.id,
       editionYear: eventEdition.editionYear,
@@ -198,15 +183,15 @@ export class EventEditionUpdateComponent implements OnInit {
         : null,
       allowedCategories: eventEdition.allowedCategories,
       trackLayout: eventEdition.trackLayout,
-      event: this.event ? this.event : eventEdition.event,
+      event: eventEdition.event,
       poster: eventEdition.poster,
       posterContentType: eventEdition.posterContentType,
       posterUrl: eventEdition.posterUrl,
-      status: eventEdition.status,
+      status: eventEdition.status ?? 'ONGOING',
       multidriver: eventEdition.multidriver,
       location: eventEdition.location
     });
-    if (this.event!.rally || this.event!.raid) {
+    if (this.event.rally || this.event.raid) {
       this.editForm.get('multidriver')!.disable();
       this.editForm.get('multidriver')!.setValue(true);
     }

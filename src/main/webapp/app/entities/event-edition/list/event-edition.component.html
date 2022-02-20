@@ -7,7 +7,17 @@
                 <ul class="header-buttons">
                     <li>
                         <div class="icon-button-demo">
-                            <button mat-mini-fab *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" color="primary" [routerLink]="['/event-edition/new']">
+                            <button mat-mini-fab type="submit"
+                                    color="primary"
+                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                    [routerLink]="['/event', event.id, 'edit']"
+                                    (click)="$event.stopPropagation()">
+                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            </button>
+                            <button mat-mini-fab type="button"
+                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                    color="primary"
+                                    [routerLink]="['/event', event.id, 'edition', 'new']">
                                 <mat-icon class="col-white">add</mat-icon>
                             </button>
                         </div>
