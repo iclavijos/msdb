@@ -145,6 +145,22 @@
     box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.2);
   }
 
+  .mat-button-toggle {
+    button {
+      background: $theme-black !important;
+      color: #fff !important;
+      // border: 1px solid 0 0 !important;
+    }
+  }
+
+  .mat-button-toggle-checked {
+    button {
+      background-color: #3f51b5 !important;
+      color: #fff !important;
+      // border-color: $theme-black !important;
+    }
+  }
+
   .btn-primary {
     background-color: $theme-black-button-color !important;
     color: #fff !important;
