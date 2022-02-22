@@ -140,22 +140,17 @@
                                             </div>
                                             <div class="row" *ngIf="!isRally() && !isRaid()">
                                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-                                                    <mat-form-field class="example-full-width" appearance="outline">
-                                                        <mat-label>{{ 'motorsportsDatabaseApp.eventEdition.trackLayout' | translate }}</mat-label>
-                                                        <input matInput type="text" class="form-control"
-                                                               [matAutocomplete]="autoLayout" formControlName="trackLayout"
-                                                               (blur)="onBlurLayout($event)"/>
-                                                        <mat-autocomplete #autoLayout="matAutocomplete" [displayWith]="displayFnLayouts">
-                                                            <mat-option *ngFor="let trackLayout of layoutOptions | async"
-                                                                        [value]="trackLayout"
-                                                                        [matTooltip]="getLayoutFullName(trackLayout)"
-                                                                        style="height: 80px">
-                                                                <img *ngIf="trackLayout.layoutImageUrl" [src]="trackLayout.layoutImageUrl" class="img-fluid" style="height: 40px"/>
-                                                                <span>{{ getLayoutFullName(trackLayout) }}</span>
-                                                            </mat-option>
-                                                        </mat-autocomplete>
-                                                        <mat-icon matSuffix><i class="icofont icofont-whistle"></i></mat-icon>
-                                                    </mat-form-field>
+                                                    <jhi-autocomplete
+                                                        [editForm]="editForm"
+                                                        elementId="layoutAutocomplete"
+                                                        controlName="trackLayout"
+                                                        label="motorsportsDatabaseApp.eventEdition.trackLayout"
+                                                        [items]="layoutOptions"
+                                                        [isRequired]="true"
+                                                        imageAttr="layoutImageUrl"
+                                                        [displayWithFunction]="displayFnLayouts"
+                                                        [tooltipFunction]="getLayoutFullName" icon='icofont icofont-whistle'>
+                                                    </jhi-autocomplete>
                                                 </div>
                                             </div>
                                             <div class="row" *ngIf="isRally()">
@@ -174,17 +169,16 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-                                                    <mat-form-field class="example-full-width" appearance="outline">
-                                                        <mat-label>{{ 'motorsportsDatabaseApp.eventEdition.event' | translate }}</mat-label>
-                                                        <input matInput type="text" class="form-control"
-                                                               [matAutocomplete]="autoEvent" formControlName="event"/>
-                                                        <mat-autocomplete #autoEvent="matAutocomplete" [displayWith]="displayFnEvents">
-                                                            <mat-option *ngFor="let event of eventOptions | async" [value]="event">
-                                                                <span>{{ event.name }}</span>
-                                                            </mat-option>
-                                                        </mat-autocomplete>
-                                                        <mat-icon matSuffix><i class="icofont icofont-racing-flag-alt"></i></mat-icon>
-                                                    </mat-form-field>
+                                                    <jhi-autocomplete
+                                                        [editForm]="editForm"
+                                                        elementId="eventAutocomplete"
+                                                        controlName="event"
+                                                        label="motorsportsDatabaseApp.eventEdition.event"
+                                                        [items]="eventOptions"
+                                                        [isRequired]="true"
+                                                        [displayWithFunction]="displayFnEvents"
+                                                        [tooltipFunction]="getEventName" icon='icofont icofont-racing-flag-alt'>
+                                                    </jhi-autocomplete>
                                                 </div>
                                             </div>
                                         </div>
