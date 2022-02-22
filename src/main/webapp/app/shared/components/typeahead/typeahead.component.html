@@ -1,0 +1,19 @@
+<mat-form-field class="example-full-width" appearance="outline" [formGroup]="editForm">
+    <mat-label>{{ label | translate }}</mat-label>
+    <input [id]="elementId" matInput type="text" class="form-control"
+           [matAutocomplete]="autocomplete" [formControlName]="controlName"
+           (keypress)="onValueChanged()"
+           (blur)="onBlurLayout()" [required]="isRequired"/>
+    <mat-autocomplete #autocomplete="matAutocomplete"
+                      [displayWith]="displayWithFunction"
+                      (optionSelected)="onOptionSelected()">
+        <mat-option *ngFor="let item of items | async"
+                    [value]="item"
+                    [matTooltip]="tooltipFunction(item)"
+                    style="height: 60px">
+            <img *ngIf="isImageValueAvailable(item)" [src]="getImageSrc(item)" class="img-fluid" style="height: 40px"/>
+            <span>{{ tooltipFunction(item) }}</span>
+        </mat-option>
+    </mat-autocomplete>
+    <mat-icon matSuffix><i class="{{ icon }}"></i></mat-icon>
+</mat-form-field>
