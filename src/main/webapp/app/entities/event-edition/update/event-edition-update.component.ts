@@ -69,12 +69,15 @@ export class EventEditionUpdateComponent implements OnInit {
 
     this.layoutOptions = this.editForm.get('trackLayout')!.valueChanges.pipe(
       debounceTime(300),
+      filter(value => value.length >= 3),
+      filter(value => typeof value === 'string'),
       switchMap(value => this.racetrackLayoutService.search({ query: value })),
       map(response => response.body)
     );
 
     this.eventOptions = this.editForm.get('event')!.valueChanges.pipe(
       debounceTime(300),
+      filter(value => typeof value === 'string'),
       switchMap(value => this.eventService.search({ query: value })),
       map(response => response.body)
     );
@@ -98,16 +101,16 @@ export class EventEditionUpdateComponent implements OnInit {
       );
   }
 
-  displayFnLayouts(trackLayout?: any): string {
+  displayFnLayouts(trackLayout?: IRacetrackLayout): string {
     if (trackLayout?.racetrack) {
-      return `${trackLayout.racetrack.name as string} - ${trackLayout.name as string}`;
+      return `${trackLayout.racetrack.name} - ${trackLayout.name}`;
     } else {
-      return trackLayout ? trackLayout.getFullName() as string : '';
+      return trackLayout ? getFullName(trackLayout) : '';
     }
   }
 
-  displayFnEvents(event?: any): string {
-    return event ? event.name as string : '';
+  displayFnEvents(event?: IEvent): string {
+    return event ? event.name! : '';
   }
 
   isRally(): boolean {
@@ -122,8 +125,8 @@ export class EventEditionUpdateComponent implements OnInit {
     return getFullName(layout);
   }
 
-  onBlurLayout(event: any): void {
-    const layout = (<HTMLInputElement>event.target).value;
+  getEventName(event: IEvent): string {
+    return event.name!;
   }
 
   save(): void {
