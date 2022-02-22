@@ -90,18 +90,17 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
-                                            <mat-form-field class="example-full-width" appearance="outline">
-                                                <mat-label>{{ 'motorsportsDatabaseApp.driver.nationality' | translate }}</mat-label>
-                                                <input matInput type="text" class="form-control"
-                                                       [matAutocomplete]="auto" formControlName="nationality"/>
-                                                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                                                    <mat-option *ngFor="let country of (options | async)" [value]="country">
-                                                        <img aria-hidden src="/images/flags/{{country.countryCode}}.png">
-                                                        <span>{{ country.countryName }}</span>
-                                                    </mat-option>
-                                                </mat-autocomplete>
-                                                <mat-icon matSuffix>flag</mat-icon>
-                                            </mat-form-field>
+                                            <jhi-autocomplete
+                                                [editForm]="editForm"
+                                                elementId="nationalityAutocomplete"
+                                                controlName="nationality"
+                                                label="motorsportsDatabaseApp.driver.nationality"
+                                                [items]="options"
+                                                imageAttr="countryCode"
+                                                imageUrlPattern="/images/flags/%s.png"
+                                                [displayWithFunction]="displayFn"
+                                                [tooltipFunction]="displayFn">
+                                            </jhi-autocomplete>
                                         </div>
                                     </div>
                                     <div class="row">
