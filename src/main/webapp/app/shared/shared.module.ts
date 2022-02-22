@@ -13,6 +13,7 @@ import { ItemCountComponent } from './pagination/item-count.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { ImageComponent } from './components/image/image.component';
+import { TypeAheadComponent } from './components/typeahead/typeahead.component';
 import { RacetrackLengthPipe } from './mask/racetrack-length.pipe';
 import { TimeMaskPipe } from './mask/time-mask.pipe';
 import { LocalizedDatePipe } from './pipes/localizedDate.pipe';
@@ -35,6 +36,7 @@ import { FullScreenService } from './services/fullscreen.service';
     StatisticsComponent,
     FileUploadComponent,
     ImageComponent,
+    TypeAheadComponent,
     SortByDirective,
     SortDirective,
     ItemCountComponent,
@@ -56,6 +58,7 @@ import { FullScreenService } from './services/fullscreen.service';
     StatisticsComponent,
     FileUploadComponent,
     ImageComponent,
+    TypeAheadComponent,
     SortByDirective,
     SortDirective,
     ItemCountComponent,
