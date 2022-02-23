@@ -50,62 +50,96 @@
                     </div>
                 </mat-tab>
                 <mat-tab label="{{'motorsportsDatabaseApp.racetrack.home.list' | translate }}">
-                    <mat-spinner [hidden]="!isLoading"></mat-spinner>
-                    <div class="alert alert-warning" id="no-result" [hidden]="dataSource!.data!.length != 0 || isLoading">
-                        <span jhiTranslate="motorsportsDatabaseApp.racetrack.home.notFound">No racetracks found</span>
-                    </div>
-                    <div class="table-responsive mt-2" [hidden]="dataSource!.data!.length === 0 || isLoading">
-                        <mat-table class="table table-hover" [dataSource]="dataSource"
-                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc"
-                                   (matSortChange)="sortChanged($event)">
+                    <div class="responsive_table">
+                        <div class="materialTableHeader">
+                            <div class="row">
+                                <div class="col-8">
+                                    <ul class="header-buttons-left ml-0">
+                                        <li class="dropdown m-l-20">
+                                            <label for="currentSearch"><i class="material-icons search-icon">search</i></label>
+                                            <input type="text" #filter class="browser-default search-field" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch"
+                                                   placeholder="{{ 'motorsportsDatabaseApp.event.home.search' | translate }}"
+                                                   (keyup)="search(currentSearch)" (keydown.enter)="$event.preventDefault()">
+                                            <button mat-mini-fab class="input-group-append btn btn-danger" (click)="clearSearch()" *ngIf="currentSearch">
+                                                <fa-icon [icon]="'trash-alt'"></fa-icon>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-4">
+                                    <ul class="header-buttons">
+                                        <li>
+                                            <div class="icon-button-demo">
+                                                <button mat-mini-fab *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" color="primary" [routerLink]="['/event/new']">
+                                                    <mat-icon class="col-white">add</mat-icon>
+                                                </button>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <mat-spinner [hidden]="!isLoading"></mat-spinner>
+                                <div class="alert alert-warning" id="no-result" [hidden]="dataSource!.data!.length != 0 || isLoading">
+                                    <span jhiTranslate="motorsportsDatabaseApp.racetrack.home.notFound">No racetracks found</span>
+                                </div>
+                                <div [hidden]="dataSource!.data!.length === 0 || isLoading">
+                                    <mat-table class="table-responsive table-hover body" [dataSource]="dataSource"
+                                               matSort matSortActive="name" matSortDisableClear matSortDirection="asc"
+                                               (matSortChange)="sortChanged($event)">
 
-                            <ng-container matColumnDef="name">
-                                <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.racetrack.name' | translate }}</mat-header-cell>
-                                <mat-cell *matCellDef="let racetrack">{{ racetrack.name }}</mat-cell>
-                            </ng-container>
+                                        <ng-container matColumnDef="name">
+                                            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.racetrack.name' | translate }}</mat-header-cell>
+                                            <mat-cell *matCellDef="let racetrack">{{ racetrack.name }}</mat-cell>
+                                        </ng-container>
 
-                            <ng-container matColumnDef="location">
-                                <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.racetrack.location' | translate }}</mat-header-cell>
-                                <mat-cell *matCellDef="let racetrack">{{ racetrack.location }}</mat-cell>
-                            </ng-container>
+                                        <ng-container matColumnDef="location">
+                                            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.racetrack.location' | translate }}</mat-header-cell>
+                                            <mat-cell *matCellDef="let racetrack">{{ racetrack.location }}</mat-cell>
+                                        </ng-container>
 
-                            <ng-container matColumnDef="logo">
-                                <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.racetrack.logo' | translate }}</mat-header-cell>
-                                <mat-cell *matCellDef="let racetrack">
-                                    <img *ngIf="racetrack?.logoUrl" [src]="racetrack.logoUrl" style="max-height: 30px;" alt="racetrack logo"/>
-                                </mat-cell>
-                            </ng-container>
+                                        <ng-container matColumnDef="logo">
+                                            <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.racetrack.logo' | translate }}</mat-header-cell>
+                                            <mat-cell *matCellDef="let racetrack">
+                                                <img *ngIf="racetrack?.logoUrl" [src]="racetrack.logoUrl" style="max-height: 30px;" alt="racetrack logo"/>
+                                            </mat-cell>
+                                        </ng-container>
 
-                            <ng-container matColumnDef="buttons">
-                                <mat-header-cell *matHeaderCellDef></mat-header-cell>
-                                <mat-cell *matCellDef="let racetrack">
-                                    <div class="btn-group">
-                                        <button type="submit"
-                                                *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                                [routerLink]="['/racetrack', racetrack.id, 'edit']"
-                                                (click)="$event.stopPropagation()"
-                                                class="btn btn-primary btn-sm">
-                                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                                        </button>
-                                        <button type="submit"
-                                                *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                                (click)="delete($event, racetrack)"
-                                                class="btn btn-danger btn-sm">
-                                            <fa-icon [icon]="'times'"></fa-icon>
-                                        </button>
-                                    </div>
-                                </mat-cell>
-                            </ng-container>
+                                        <ng-container matColumnDef="buttons">
+                                            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                            <mat-cell *matCellDef="let racetrack">
+                                                <div class="btn-group">
+                                                    <button type="submit"
+                                                            *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                                            [routerLink]="['/racetrack', racetrack.id, 'edit']"
+                                                            (click)="$event.stopPropagation()"
+                                                            class="btn btn-primary btn-sm">
+                                                        <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                                    </button>
+                                                    <button type="submit"
+                                                            *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                                                            (click)="delete($event, racetrack)"
+                                                            class="btn btn-danger btn-sm">
+                                                        <fa-icon [icon]="'times'"></fa-icon>
+                                                    </button>
+                                                </div>
+                                            </mat-cell>
+                                        </ng-container>
 
-                            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-                            <mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
-                                     [routerLink]="['/racetrack', row.id ]"></mat-row>
-                        </mat-table>
-                        <mat-paginator [length]="totalItems"
-                                       [pageSizeOptions]="[5, 10, 20]"
-                                       [pageSize]="10"
-                                       showFirstLastButtons
-                                       (page)="pageChanged($event)"></mat-paginator>
+                                        <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                                        <mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
+                                                 [routerLink]="['/racetrack', row.id ]"></mat-row>
+                                    </mat-table>
+                                    <mat-paginator [length]="totalItems"
+                                                   [pageSizeOptions]="[5, 10, 20]"
+                                                   [pageSize]="10"
+                                                   showFirstLastButtons
+                                                   (page)="pageChanged($event)"></mat-paginator>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </mat-tab>
             </mat-tab-group>
