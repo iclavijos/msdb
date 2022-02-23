@@ -44,6 +44,7 @@
                                             </div>
                                             <div class="col-10">
                                                 <strong>
+                                                    <span *ngIf="session.cancelled"><div class="badge bg-red">{{ 'motorsportsDatabaseApp.eventEdition.status.cancelled' | translate }}</div></span>
                                                     <span *ngIf="!session.raid">{{ formatSessionTime(session.sessionStartTime, "HH:mm") }}</span>
                                                     <span *ngIf="session.sessionEndTime && !session.rally && !session.raid"> - {{ formatSessionTime(session.sessionEndTime, "HH:mm") }}</span>
                                                     <span *ngIf="session.durationType === 5"> ({{ session.duration}}L)</span>
