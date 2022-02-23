@@ -24,6 +24,7 @@ public class SessionDataDTO {
 	private final String seriesLogo;
     private final Boolean rally;
     private final Boolean raid;
+    private final Boolean cancelled;
 
 	public SessionDataDTO(EventSession session) {
 		this.sessionName =
@@ -54,6 +55,7 @@ public class SessionDataDTO {
 
         this.rally = session.getEventEdition().getEvent().isRally();
         this.raid = session.getEventEdition().getEvent().isRaid();
+        this.cancelled = session.getCancelled();
 	}
 
 }
