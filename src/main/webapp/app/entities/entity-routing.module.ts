@@ -44,11 +44,6 @@ import { RouterModule } from '@angular/router';
         data: { pageTitle: 'motorsportsDatabaseApp.racetrack.home.title' },
         loadChildren: () => import('./racetrack/racetrack.module').then(m => m.RacetrackModule),
       },
-      {
-        path: 'racetrack-layout',
-        data: { pageTitle: 'motorsportsDatabaseApp.racetrackLayout.home.title' },
-        loadChildren: () => import('./racetrack-layout/racetrack-layout.module').then(m => m.RacetrackLayoutModule),
-      },
 //       {
 //         path: 'series',
 //         data: { pageTitle: 'motorsportsDatabaseApp.series.home.title' },
@@ -69,8 +64,6 @@ import { RouterModule } from '@angular/router';
         data: { pageTitle: 'motorsportsDatabaseApp.tyreProvider.home.title' },
         loadChildren: () => import('./tyre-provider/tyre-provider.module').then(m => m.TyreProviderModule),
       },
-
-
 //       {
 //         path: 'driver-points-details',
 //         data: { pageTitle: 'motorsportsDatabaseApp.driverPointsDetails.home.title' },
