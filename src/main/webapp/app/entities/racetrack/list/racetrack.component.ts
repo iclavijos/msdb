@@ -101,6 +101,7 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
       this.map.invalidateSize();
     });
     this.addMapMarkers();
+    this.searchMap(this.currentSearch);
   }
 
   ngOnInit(): void {
