@@ -11,23 +11,7 @@ import { RacetrackRoutingResolveService } from 'app/entities/racetrack/route/rac
 
 const racetrackLayoutRoute: Routes = [
   {
-    path: '',
-    component: RacetrackLayoutComponent,
-    canActivate: [UserRouteAccessService],
-  },
-  {
-    path: ':id/view',
-    component: RacetrackLayoutDetailComponent,
-    resolve: {
-      racetrackLayout: RacetrackLayoutRoutingResolveService,
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-    },
-    canActivate: [UserRouteAccessService]
-  },
-  {
-    path: 'new/:id',
+    path: 'new',
     component: RacetrackLayoutUpdateComponent,
     resolve: {
       // racetrackLayout: RacetrackLayoutRoutingResolveService,
@@ -35,6 +19,17 @@ const racetrackLayoutRoute: Routes = [
     },
     data: {
       authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id',
+    component: RacetrackLayoutDetailComponent,
+    resolve: {
+      racetrackLayout: RacetrackLayoutRoutingResolveService,
+    },
+    data: {
+      authorities: ['ROLE_USER'],
     },
     canActivate: [UserRouteAccessService]
   },

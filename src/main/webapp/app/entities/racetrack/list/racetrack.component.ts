@@ -17,7 +17,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort, MatSortHeader } from '@angular/material/sort';
 
-import { latLng, Marker } from 'leaflet';
+import { latLng, Marker, tileLayer } from 'leaflet';
 import * as L from 'leaflet';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
@@ -60,6 +60,23 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
 
   map!: L.Map;
 
+  mapOptions = {
+    layers: [
+      tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        detectRetina: true,
+      })
+    ],
+    zoom: 2,
+    center: latLng([ 0, 0 ]),
+    maxBounds: L.latLngBounds(latLng(-90, -180), latLng(90, 180)),
+    worldCopyJump: true,
+  }
+
+  racetracksMarkers: Marker[] = [];
+
   constructor(
     protected racetrackService: RacetrackService,
     protected activatedRoute: ActivatedRoute,
@@ -76,7 +93,13 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
-    this.initMap();
+  }
+
+  onMapReady(event: any): void { // newMap: L.Map): void {
+    this.map = event as L.Map;
+    setTimeout(() => {
+      this.map.invalidateSize();
+    });
     this.addMapMarkers();
   }
 
@@ -116,12 +139,36 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
     }
   }
 
+  searchMap(query: string): void {
+    if (!query || query.length < 3) {
+      return;
+    }
+    this.racetracksMarkers.forEach(marker => {
+      const lcQuery = query.toLowerCase();
+      this.map.removeLayer(marker);
+      const markerOptions = marker.options as any;
+      if (markerOptions.trackName.toLowerCase().includes(lcQuery) ||
+          markerOptions.trackLocation.toLowerCase().includes(lcQuery)) {
+        marker.addTo(this.map);
+      }
+    });
+    this.search(query);
+  }
+
   clearSearch(): void {
     this.sessionStorageService.clear('racetrackSearchPage');
     this.sessionStorageService.clear('racetrackSearchItems');
     this.sessionStorageService.clear('racetrackSearchPredicate');
     this.sessionStorageService.clear('racetrackSearchAscending');
     this.search('');
+  }
+
+  clearSearchMap(): void {
+    this.clearSearch();
+    this.racetracksMarkers.forEach(marker => {
+      this.map.removeLayer(marker);
+      marker.addTo(this.map);
+    });
   }
 
   trackId(index: number, item: IRacetrack): number {
@@ -208,24 +255,8 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
     return sortPredicates;
   }
 
-  private initMap(): void {
-    this.map = L.map('map', {
-      center: [ 0, 0 ],
-      zoom: 2,
-      maxBounds: L.latLngBounds(latLng(-90, -180), latLng(90, 180)),
-      worldCopyJump: true,
-    });
-
-    const streetMaps = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      detectRetina: true,
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    });
-
-    streetMaps.addTo(this.map);
-  }
-
   private addMapMarkers(): void {
+    this.racetracksMarkers = [];
     this.racetrackService
       .query({
         page: 0,
@@ -233,15 +264,16 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
       })
       .subscribe(data =>
         data.body!.forEach(rt => {
-          const racetrackLocation = new Marker([rt.latitude!, rt.longitude!])
+          const racetrackMarker = new Marker([rt.latitude!, rt.longitude!])
             .on('popupopen', $event => {
               this.navigateFromPopup($event.target.options.trackId, this.elementRef);
             });
-          L.Util.setOptions(racetrackLocation, { trackId: rt.id });
+          L.Util.setOptions(racetrackMarker, { trackId: rt.id, trackName: rt.name, trackLocation: rt.location });
           const logo = rt.logoUrl ? `<img src=${rt.logoUrl} style="max-height: 200px; max-width: 200px"><br/>` : '';
           let popup = `<p align="center">${logo}<h4>${rt.name}</h4><br/>${rt.location}, ${rt.countryCode}<br/></p>`;
           popup = popup + `<a id="mapLink" href="javascript:void">${this.translateService.instant('motorsportsDatabaseApp.racetrack.home.link') as string}</a>`;
-          racetrackLocation.addTo(this.map).bindPopup(popup, { minWidth: 220 });
+          racetrackMarker.addTo(this.map).bindPopup(popup, { minWidth: 220 });
+          this.racetracksMarkers.push(racetrackMarker);
         })
       );
   }

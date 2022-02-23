@@ -18,17 +18,6 @@ const racetrackRoute: Routes = [
     canActivate: [UserRouteAccessService],
   },
   {
-    path: ':id/view',
-    component: RacetrackDetailComponent,
-    resolve: {
-      racetrack: RacetrackRoutingResolveService,
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-    },
-    canActivate: [UserRouteAccessService]
-  },
-  {
     path: 'new',
     component: RacetrackUpdateComponent,
     resolve: {
@@ -38,6 +27,26 @@ const racetrackRoute: Routes = [
       authorities: ['ROLE_ADMIN', 'ROLE_EDITOR'],
     },
     canActivate: [UserRouteAccessService]
+  },
+  {
+    path: ':id', // /view',
+    children: [
+      {
+        path: '',
+        component: RacetrackDetailComponent,
+        resolve: {
+          racetrack: RacetrackRoutingResolveService,
+        },
+        data: {
+          authorities: ['ROLE_USER'],
+        },
+        canActivate: [UserRouteAccessService]
+      },
+      {
+        path: 'layout',
+        loadChildren: () => import('app/entities/racetrack-layout/racetrack-layout.module').then(m => m.RacetrackLayoutModule),
+      }
+    ]
   },
   {
     path: ':id/edit',
