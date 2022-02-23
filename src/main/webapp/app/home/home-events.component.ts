@@ -19,6 +19,7 @@ export class HomeEvent {
   seriesLogo!: string;
   rally!: boolean;
   raid!: boolean;
+  cancelled!: boolean;
 }
 
 export class TimeZone {
