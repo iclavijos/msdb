@@ -18,9 +18,7 @@
         "question": "¿Seguro que quiere eliminar el circuito {{ id }}?"
       },
       "detail": {
-        "title": "circuito",
-        "latitude": "Latitud",
-        "longitude": "Longitud"
+        "title": "circuito"
       },
       "name": "Nombre",
       "location": "Localización",
@@ -28,7 +26,9 @@
       "logo": "Logo",
       "layouts": "Trazados",
       "nextEvents": "Próximos eventos",
-      "prevEvents": "Anteriores eventos"
+      "prevEvents": "Anteriores eventos",
+      "latitude": "Latitud",
+      "longitude": "Longitud"
     },
     "racetrackLayout": {
       "home": {

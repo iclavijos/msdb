@@ -18,9 +18,7 @@
         "question": "Are you sure you want to delete Racetrack {{ id }}?"
       },
       "detail": {
-        "title": "Racetrack",
-        "latitude": "Latitude",
-        "longitude": "Longitude"
+        "title": "Racetrack"
       },
       "name": "Name",
       "location": "Location",
@@ -28,7 +26,9 @@
       "logo": "Logo",
       "layouts": "Layouts",
       "nextEvents": "Next events",
-      "prevEvents": "Previous events"
+      "prevEvents": "Previous events",
+      "latitude": "Latitude",
+      "longitude": "Longitude"
     },
     "racetrackLayout": {
       "home": {

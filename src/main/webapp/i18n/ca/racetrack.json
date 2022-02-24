@@ -18,9 +18,7 @@
         "question": "Esteu segur que voleu esborrar el circuit amb identificador {{ id }}?"
       },
       "detail": {
-        "title": "Circuit",
-        "latitude": "Latitut",
-        "longitude": "Longitut"
+        "title": "Circuit"
       },
       "name": "Nom",
       "location": "Localització",
@@ -28,7 +26,9 @@
       "logo": "Logo",
       "layouts": "Traçats",
       "nextEvents": "Properes cites",
-      "prevEvents": "Cites anteriors"
+      "prevEvents": "Cites anteriors",
+      "latitude": "Latitut",
+      "longitude": "Longitut"
     },
     "racetrackLayout": {
       "home": {
