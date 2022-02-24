@@ -13,15 +13,16 @@
             </div>
         </div>
         <div class="responsive_table">
-            <mat-tab-group mat-stretch-tabs dynamicHeight="yes">
+            <mat-tab-group mat-stretch-tabs dynamicHeight="yes" [selectedIndex]="selectedTabIndex"
+                           (selectedIndexChange)="onTabChange($event)">
                 <mat-tab label="{{'motorsportsDatabaseApp.racetrack.home.map' | translate }}">
                     <div class="materialTableHeader">
                         <div class="row">
                             <div class="col-8">
                                 <ul class="header-buttons-left ml-0">
                                     <li class="dropdown m-l-20">
-                                        <label for="currentSearch"><i class="material-icons search-icon">search</i></label>
-                                        <input type="text" #filter class="browser-default search-field" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch"
+                                        <label><i class="material-icons search-icon">search</i></label>
+                                        <input type="text" #filter class="browser-default search-field" [(ngModel)]="currentSearch" name="currentSearch"
                                                placeholder="{{ 'motorsportsDatabaseApp.racetrack.home.search' | translate }}"
                                                (keyup)="searchMap(currentSearch)" (keydown.enter)="$event.preventDefault()">
                                         <button mat-mini-fab class="input-group-append btn btn-danger" (click)="clearSearchMap()" *ngIf="currentSearch">
@@ -34,7 +35,7 @@
                                 <ul class="header-buttons">
                                     <li>
                                         <div class="icon-button-demo">
-                                            <button mat-mini-fab *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" color="primary" [routerLink]="['/event/new']">
+                                            <button mat-mini-fab *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" color="primary" [routerLink]="['/event/new']">
                                                 <mat-icon class="col-white">add</mat-icon>
                                             </button>
                                         </div>
@@ -56,8 +57,8 @@
                                 <div class="col-8">
                                     <ul class="header-buttons-left ml-0">
                                         <li class="dropdown m-l-20">
-                                            <label for="currentSearch"><i class="material-icons search-icon">search</i></label>
-                                            <input type="text" #filter class="browser-default search-field" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch"
+                                            <label><i class="material-icons search-icon">search</i></label>
+                                            <input type="text" #filter class="browser-default search-field" [(ngModel)]="currentSearch" name="currentSearch"
                                                    placeholder="{{ 'motorsportsDatabaseApp.event.home.search' | translate }}"
                                                    (keyup)="search(currentSearch)" (keydown.enter)="$event.preventDefault()">
                                             <button mat-mini-fab class="input-group-append btn btn-danger" (click)="clearSearch()" *ngIf="currentSearch">
@@ -70,7 +71,7 @@
                                     <ul class="header-buttons">
                                         <li>
                                             <div class="icon-button-demo">
-                                                <button mat-mini-fab *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" color="primary" [routerLink]="['/event/new']">
+                                                <button mat-mini-fab *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" color="primary" [routerLink]="['/racetrack/new']">
                                                     <mat-icon class="col-white">add</mat-icon>
                                                 </button>
                                             </div>
@@ -111,17 +112,17 @@
                                             <mat-header-cell *matHeaderCellDef></mat-header-cell>
                                             <mat-cell *matCellDef="let racetrack">
                                                 <div class="btn-group">
-                                                    <button type="submit"
+                                                    <button mat-mini-fab type="submit"
+                                                            color="primary"
                                                             *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                                             [routerLink]="['/racetrack', racetrack.id, 'edit']"
-                                                            (click)="$event.stopPropagation()"
-                                                            class="btn btn-primary btn-sm">
+                                                            (click)="$event.stopPropagation()">
                                                         <fa-icon [icon]="'pencil-alt'"></fa-icon>
                                                     </button>
-                                                    <button type="submit"
+                                                    <button mat-mini-fab type="submit"
+                                                            color="warn"
                                                             *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                                            (click)="delete($event, racetrack)"
-                                                            class="btn btn-danger btn-sm">
+                                                            (click)="delete($event, racetrack)">
                                                         <fa-icon [icon]="'times'"></fa-icon>
                                                     </button>
                                                 </div>
