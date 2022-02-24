@@ -1,10 +1,11 @@
 import { IRacetrackLayout } from '../racetrack-layout/racetrack-layout.model';
+import { ICountry } from 'app/entities/country/country.model';
 
 export interface IRacetrack {
   id?: number;
   name?: string;
   location?: string;
-  countryCode?: string;
+  country?: ICountry;
   timeZone?: string;
   latitude?: number;
   longitude?: number;
@@ -19,7 +20,7 @@ export class Racetrack implements IRacetrack {
     public id?: number,
     public name?: string,
     public location?: string,
-    public countryCode?: string,
+    public country?: ICountry,
     public timeZone?: string,
     public latitude?: number,
     public longitude?: number,
