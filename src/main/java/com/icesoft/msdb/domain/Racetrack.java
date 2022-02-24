@@ -46,9 +46,10 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
     private String location;
 
     @NotNull
-    @Size(max = 2)
-    @Column(name = "country_code", length = 2, nullable = false)
-    private String countryCode;
+    @ManyToOne
+    @JoinColumn(name="country_code")
+    @Field(type = FieldType.Object)
+    private Country country;
 
     @Column(name= "time_zone")
     private String timeZone;

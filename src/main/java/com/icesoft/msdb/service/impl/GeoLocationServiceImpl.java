@@ -30,7 +30,7 @@ public class GeoLocationServiceImpl implements GeoLocationService {
         GeocodingResult[] results;
         try {
             results = GeocodingApi.geocode(context,
-                racetrack.getName() + ", " + racetrack.getLocation() + ", " + racetrack.getCountryCode()).await();
+                racetrack.getName() + ", " + racetrack.getLocation() + ", " + racetrack.getCountry().getCountryCode()).await();
             if (results == null || results.length == 0) {
                 throw new MSDBException("No geolocation could be found for racetrack " + racetrack.getName());
             }
