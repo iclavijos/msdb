@@ -3,7 +3,7 @@ import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { switchMap, debounceTime, map, finalize } from 'rxjs/operators';
+import { switchMap, debounceTime, map, finalize, filter } from 'rxjs/operators';
 
 import { IDriver, Driver } from '../driver.model';
 import { DriverService } from '../service/driver.service';
@@ -45,6 +45,7 @@ export class DriverUpdateComponent implements OnInit {
 
     this.options = this.editForm.get('nationality')!.valueChanges.pipe(
       debounceTime(300),
+      filter(value => typeof value === 'string'),
       switchMap(value => this.countryService.searchCountries(value)),
       map(response => response.body)
     );
