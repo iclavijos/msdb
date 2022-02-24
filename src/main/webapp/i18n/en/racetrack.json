@@ -18,9 +18,7 @@
         "question": "Are you sure you want to delete Racetrack {{ id }}?"
       },
       "detail": {
-        "title": "Racetrack",
-        "latitude": "Latitude",
-        "longitude": "Longitude"
+        "title": "Racetrack"
       },
       "name": "Name",
       "location": "Location",
