@@ -12,6 +12,7 @@ import { IRacetrack, Racetrack } from '../racetrack.model';
 import { RacetrackService } from '../service/racetrack.service';
 import { RacetrackDeleteDialogComponent } from '../delete/racetrack-delete-dialog.component';
 import { DataUtils } from 'app/core/util/data-util.service';
+import { AccountService } from 'app/core/auth/account.service';
 
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -49,9 +50,10 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
   predicate = 'name';
   ascending = true;
   reloadData = true;
+  selectedTabIndex: number;
 
   dataSource = new MatTableDataSource<IRacetrack>([]);
-  displayedColumns: string[] = ['name', 'location', 'logo', 'buttons'];
+  displayedColumns: string[] = ['name', 'location', 'logo']; // , 'buttons'];
 
   racetracksSearchTextChanged = new Subject<string>();
 
@@ -84,15 +86,20 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
     protected router: Router,
     protected modalService: NgbModal,
     protected sessionStorageService: SessionStorageService,
+    protected accountService: AccountService,
     protected ngZone: NgZone,
     protected elementRef: ElementRef,
     protected translateService: TranslateService
   ) {
     this.currentSearch = this.activatedRoute.snapshot.queryParams['search'] ?? '';
+    this.selectedTabIndex = this.sessionStorageService.retrieve('racetracksSelectedTab') ?? 0;
   }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+    if (this.accountService.hasAnyAuthority(["ROLE_ADMIN", "ROLE_EDITOR"])) {
+      this.displayedColumns.push('buttons');
+    }
   }
 
   onMapReady(event: any): void { // newMap: L.Map): void {
@@ -122,6 +129,11 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
         this.ascending = true;
         this.loadPage();
       });
+  }
+
+  onTabChange(selectedTabIndex: number): void {
+    this.sessionStorageService.store('racetracksSelectedTab', selectedTabIndex);
+    this.selectedTabIndex = selectedTabIndex;
   }
 
   search(query: string): void {
@@ -271,7 +283,7 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
             });
           L.Util.setOptions(racetrackMarker, { trackId: rt.id, trackName: rt.name, trackLocation: rt.location });
           const logo = rt.logoUrl ? `<img src=${rt.logoUrl} style="max-height: 200px; max-width: 200px"><br/>` : '';
-          let popup = `<p align="center">${logo}<h4>${rt.name}</h4><br/>${rt.location}, ${rt.countryCode}<br/></p>`;
+          let popup = `<p align="center">${logo}<h4>${rt.name}</h4><br/>${rt.location}, ${rt.country!.countryCode}<br/></p>`;
           popup = popup + `<a id="mapLink" href="javascript:void">${this.translateService.instant('motorsportsDatabaseApp.racetrack.home.link') as string}</a>`;
           racetrackMarker.addTo(this.map).bindPopup(popup, { minWidth: 220 });
           this.racetracksMarkers.push(racetrackMarker);
@@ -294,7 +306,7 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
         racetrack.id,
         racetrack.name,
         racetrack.location,
-        racetrack.countryCode,
+        racetrack.country,
         racetrack.timeZone,
         racetrack.latitude,
         racetrack.longitude,

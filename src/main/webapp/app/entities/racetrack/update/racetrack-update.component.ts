@@ -3,15 +3,13 @@ import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { switchMap, debounceTime, finalize, map, tap, startWith, distinctUntilChanged } from 'rxjs/operators';
+import { switchMap, debounceTime, finalize, map, filter } from 'rxjs/operators';
 
 import { IRacetrack, Racetrack } from '../racetrack.model';
 import { RacetrackService } from '../service/racetrack.service';
 import { ICountry } from 'app/entities/country/country.model';
 import { CountryService } from 'app/entities/country/country.service';
-import { AlertError } from 'app/shared/alert/alert-error.model';
-import { EventManager, EventWithContent } from 'app/core/util/event-manager.service';
-import { DataUtils, FileLoadError } from 'app/core/util/data-util.service';
+import { EventManager } from 'app/core/util/event-manager.service';
 
 @Component({
   selector: 'jhi-racetrack-update',
@@ -21,13 +19,13 @@ export class RacetrackUpdateComponent implements OnInit {
   isSaving = false;
   isLoading = false;
 
-  options: Observable<ICountry[]> = new Observable();
+  options: Observable<ICountry[] | null> = new Observable();
 
   editForm = this.fb.group({
     id: [],
     name: [null, [Validators.required, Validators.maxLength(100)]],
     location: [null, [Validators.required, Validators.maxLength(100)]],
-    countryCode: [],
+    country: [],
     timeZone: [],
     latitude: [],
     longitude: [],
@@ -37,7 +35,6 @@ export class RacetrackUpdateComponent implements OnInit {
   });
 
   constructor(
-    protected dataUtils: DataUtils,
     protected eventManager: EventManager,
     protected racetrackService: RacetrackService,
     protected countryService: CountryService,
@@ -47,22 +44,11 @@ export class RacetrackUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.options = this.editForm.get('countryCode')!.valueChanges.pipe(
-      startWith(''),
+    this.options = this.editForm.get('country')!.valueChanges.pipe(
       debounceTime(300),
-      distinctUntilChanged(),
-      tap(() => {
-        this.isLoading = true;
-      }),
-      switchMap(value => {
-        if (typeof value !== 'object' && value !== null) {
-          return this.countryService.searchCountries(value)
-            .pipe(finalize(() => this.isLoading = false));
-        } else {
-          return [];
-        }
-      }),
-      map(response => response.body as ICountry[])
+      filter(value => typeof value === 'string'),
+      switchMap(value => this.countryService.searchCountries(value)),
+      map(response => response.body)
     );
 
     this.activatedRoute.data.subscribe(({ racetrack }) => {
@@ -72,33 +58,6 @@ export class RacetrackUpdateComponent implements OnInit {
 
   displayFn(country?: ICountry): string {
     return country ? country.countryName! : '';
-  }
-
-  byteSize(base64String: string): string {
-    return this.dataUtils.byteSize(base64String);
-  }
-
-  openFile(base64String: string, contentType: string | null | undefined): void {
-    this.dataUtils.openFile(base64String, contentType);
-  }
-
-  setFileData(event: Event, field: string, isImage: boolean): void {
-    this.dataUtils.loadFileToForm(event, this.editForm, field, isImage).subscribe({
-      error: (err: FileLoadError) =>
-        this.eventManager.broadcast(
-          new EventWithContent<AlertError>('motorsportsDatabaseApp.error', { ...err, key: 'error.file.' + err.key })
-        ),
-    });
-  }
-
-  clearInputImage(field: string, fieldContentType: string, idInput: string): void {
-    this.editForm.patchValue({
-      [field]: null,
-      [fieldContentType]: null,
-    });
-    if (idInput && this.elementRef.nativeElement.querySelector('#' + idInput)) {
-      this.elementRef.nativeElement.querySelector('#' + idInput).value = null;
-    }
   }
 
   previousState(): void {
@@ -141,7 +100,7 @@ export class RacetrackUpdateComponent implements OnInit {
       location: racetrack.location,
       latitude: racetrack.latitude,
       longitude: racetrack.longitude,
-      countryCode: racetrack.countryCode,
+      country: racetrack.country,
       timeZone: racetrack.timeZone,
       logo: racetrack.logo,
       logoUrl: racetrack.logoUrl,
@@ -157,7 +116,7 @@ export class RacetrackUpdateComponent implements OnInit {
       location: this.editForm.get(['location'])!.value,
       latitude: this.editForm.get(['latitude'])!.value,
       longitude: this.editForm.get(['longitude'])!.value,
-      countryCode: this.editForm.get(['countryCode'])!.value.countryCode,
+      country: this.editForm.get(['country'])!.value,
       timeZone: this.editForm.get(['timeZone'])!.value,
       logoContentType: this.editForm.get(['logoContentType'])!.value,
       logo: this.editForm.get(['logo'])!.value,
