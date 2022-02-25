@@ -32,7 +32,7 @@
     },
     "racetrackLayout": {
       "home": {
-        "title": "Trazado",
+        "title": "Trazados",
         "createLabel": "Crear nuevo trazado",
         "createOrEditLabel": "Crear o editar trazado",
         "search": "Buscar trazados",
