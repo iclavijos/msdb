@@ -6,8 +6,14 @@ import { RacetrackUpdateComponent } from './update/racetrack-update.component';
 import { RacetrackDeleteDialogComponent } from './delete/racetrack-delete-dialog.component';
 import { RacetrackRoutingModule } from './route/racetrack-routing.module';
 
+import { RacetrackLayoutModule } from 'app/entities/racetrack-layout/racetrack-layout.module';
+
 @NgModule({
-  imports: [SharedModule, RacetrackRoutingModule],
+  imports: [
+    SharedModule,
+    RacetrackRoutingModule,
+    RacetrackLayoutModule
+  ],
   declarations: [RacetrackComponent, RacetrackDetailComponent, RacetrackUpdateComponent, RacetrackDeleteDialogComponent],
   entryComponents: [RacetrackDeleteDialogComponent],
 })

@@ -12,8 +12,9 @@ export type EntityArrayResponseType = HttpResponse<IRacetrackLayout[]>;
 
 @Injectable({ providedIn: 'root' })
 export class RacetrackLayoutService {
+  protected resourceRaceTrackUrl = this.applicationConfigService.getEndpointFor('api/racetracks');
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/racetrack-layouts');
-  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/racetrack-layouts');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/racetracks');
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
@@ -39,6 +40,10 @@ export class RacetrackLayoutService {
 
   find(id: number): Observable<EntityResponseType> {
     return this.http.get<IRacetrackLayout>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  findRacetrackLayouts(id: number): Observable<HttpResponse<IRacetrackLayout[]>> {
+    return this.http.get<IRacetrackLayout[]>(`${this.resourceRaceTrackUrl}/${id}/layouts`, { observe: 'response' });
   }
 
   query(req?: any): Observable<EntityArrayResponseType> {

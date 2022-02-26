@@ -14,6 +14,9 @@ import { RacetrackLayoutRoutingModule } from './route/racetrack-layout-routing.m
     RacetrackLayoutUpdateComponent,
     RacetrackLayoutDeleteDialogComponent,
   ],
+  exports: [
+    RacetrackLayoutComponent
+  ],
   entryComponents: [RacetrackLayoutDeleteDialogComponent],
 })
 export class RacetrackLayoutModule {}

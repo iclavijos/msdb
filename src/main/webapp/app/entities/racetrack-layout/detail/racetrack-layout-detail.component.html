@@ -1,54 +1,72 @@
-<div class="main-content">
+<section class="content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card card-profile">
-                    <div class="card-header card-header-danger">
-                        <h4 class="card-title">{{ racetrackLayout?.racetrack?.name}} - {{ racetrackLayout?.name }}</h4>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title"></h4>
-                        <dl class="row-md jh-entity-details">
-                            <dt><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.length">Length</span></dt>
-                            <dd>
-                                <span>{{racetrackLayout?.length! / 1000 | number: '1.3' }} km</span>
-                            </dd>
-                            <dt><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.yearFirstUse">Year First Use</span></dt>
-                            <dd>
-                                <span>{{racetrackLayout?.yearFirstUse}}</span>
-                            </dd>
-                            <dt><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.active">Active</span></dt>
-                            <dd>
-		                        <span><i *ngIf="racetrackLayout?.active" class="fa fa-fw fa-check-square-o" aria-hidden="true"></i>
-						        <i *ngIf="!racetrackLayout?.active" class="fa fa-fw fa-square-o" aria-hidden="true"></i></span>
-                            </dd>
-                        </dl>
-                        <button type="submit"
-                                (click)="previousState()"
-                                class="btn btn-info">
-                            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-                        </button>
-
-                        <button type="button"
-                                [routerLink]="['/racetrack-layout', racetrackLayout?.id, 'edit']"
-                                class="btn btn-primary">
-                            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title"></h4>
-                        <dl class="row-md jh-entity-details">
-                            <dd>
-                                <td><img *ngIf="racetrackLayout?.layoutImageUrl" [src]="racetrackLayout?.layoutImageUrl" class="img-fluid" alt="racetrack layout"/></td>
-                            </dd>
-                        </dl>
-                    </div>
+        <div class="block-header mt-n3">
+            <div class="row justify-content-between">
+                <div class="col-12">
+                    <ul class="breadcrumb breadcrumb-style">
+                        <li class="breadcrumb-item bcrumb-2">
+                            <a routerLink="/"><fa-icon [icon]="['fas', 'arrow-alt-circle-right']" size="2x"></fa-icon></a>
+                        </li>
+                        <li class="breadcrumb-item bcrumb-2">
+                            <a routerLink="/racetrack">{{ 'motorsportsDatabaseApp.racetrack.home.title' | translate }}</a>
+                        </li>
+                        <li class="breadcrumb-item bcrumb-3">
+                            <a [routerLink]="['/racetrack', racetrackLayout!.racetrack!.id ]">{{ racetrackLayout!.racetrack!.name }}</a>
+                        </li>
+                        <li class="breadcrumb-item active">{{ racetrackLayout!.name }}</li>
+                    </ul>
                 </div>
             </div>
         </div>
+        <div class="row clearfix">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                <div class="card">
+                    <div class="m-b-20">
+                        <div class="contact-grid">
+                            <div class="profile-header bg-dark">
+                                <div class="user-name">{{ racetrackLayout!.name }}</div>
+                            </div>
+                            <img *ngIf="racetrackLayout!.racetrack!.logoUrl"
+                                 [src]="racetrackLayout!.racetrack!.logoUrl"
+                                 class="racetrack-logo-img bg-dark img-fluid" alt="racetrack logo"/>
+                            <div class="row">
+                                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                                    <dt><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.length">Length</span></dt>
+                                    <dd>
+                                        <span>{{racetrackLayout?.length! / 1000 | number: '1.3' }} km</span>
+                                    </dd>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                                    <dt><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.yearFirstUse">Year First Use</span></dt>
+                                    <dd>
+                                        <span>{{racetrackLayout?.yearFirstUse}}</span>
+                                    </dd>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                                    <dt><span jhiTranslate="motorsportsDatabaseApp.racetrackLayout.active">Active</span></dt>
+                                    <dd>
+		                        <span><i *ngIf="racetrackLayout?.active" class="fa fa-fw fa-check-square-o" aria-hidden="true"></i>
+						        <i *ngIf="!racetrackLayout?.active" class="fa fa-fw fa-square-o" aria-hidden="true"></i></span>
+                                    </dd>
+                                </div>
+                            </div>
+
+                            <button mat-mini-fab type="submit" color="primary"
+                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                    [routerLink]="['/racetrack', racetrackLayout!.racetrack!.id, 'layout', racetrackLayout!.id, 'edit']">
+                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-8 col-md-12">
+                <jhi-popup-image *ngIf="racetrackLayout?.layoutImageUrl"
+                                 [imageUrl]="racetrackLayout?.layoutImageUrl!"
+                                 imageAlt="racetrack layout">
+                </jhi-popup-image>
+            </div>
+        </div>
     </div>
-</div>
+</section>
