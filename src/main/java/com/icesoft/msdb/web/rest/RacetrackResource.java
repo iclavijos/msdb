@@ -120,9 +120,9 @@ public class RacetrackResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of racetracks in body.
      */
     @GetMapping("/racetracks")
-    public ResponseEntity<List<Racetrack>> getAllRacetracks(@RequestParam(required = false) String query,  Pageable pageable) {
+    public ResponseEntity<List<Racetrack>> getAllRacetracks(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of Racetracks");
-        Page<Racetrack> page = racetrackService.findRacetracks(Optional.ofNullable(query), pageable);
+        Page<Racetrack> page = racetrackService.findRacetracks(query, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

@@ -13,6 +13,7 @@ import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.GeoLocationService;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.dto.SessionWinnersDTO;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,13 +137,13 @@ public class RacetrackServiceImpl implements RacetrackService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<Racetrack> findRacetracks(Optional<String> query, Pageable pageable) {
+    public Page<Racetrack> findRacetracks(String query, Pageable pageable) {
         log.debug("Request to get all Racetracks");
         Page<Racetrack> page;
-        if (query.isPresent()) {
+        if (!StringUtils.isBlank(query)) {
             page = searchService.performWildcardSearch(
                 Racetrack.class,
-                query.get().toLowerCase(),
+                query.toLowerCase(),
                 Arrays.asList("name", "location"),
                 pageable);
         } else {

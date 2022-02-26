@@ -32,7 +32,7 @@ public interface RacetrackService {
      *  @param pageable the pagination information
      *  @return the list of entities
      */
-    Page<Racetrack> findRacetracks(Optional<String> query, Pageable pageable);
+    Page<Racetrack> findRacetracks(String query, Pageable pageable);
 
     /**
      *  Get the "id" racetrack.
