@@ -1,67 +1,55 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { IRacetrackLayout } from '../racetrack-layout.model';
+import { IRacetrack } from 'app/entities/racetrack/racetrack.model';
+import { IRacetrackLayout, RacetrackLayout } from '../racetrack-layout.model';
 import { RacetrackLayoutService } from '../service/racetrack-layout.service';
+import { RacetrackLayoutUpdateComponent } from '../update/racetrack-layout-update.component';
 import { RacetrackLayoutDeleteDialogComponent } from '../delete/racetrack-layout-delete-dialog.component';
-import { DataUtils } from 'app/core/util/data-util.service';
+import { AccountService } from 'app/core/auth/account.service';
+
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'jhi-racetrack-layout',
   templateUrl: './racetrack-layout.component.html',
 })
 export class RacetrackLayoutComponent implements OnInit {
-  racetrackLayouts?: IRacetrackLayout[];
+  @Input() racetrack!: IRacetrack;
   isLoading = false;
-  currentSearch: string;
+
+  displayedColumns: string[] = ['name', 'length', 'yearFirstUse', 'layoutImage', 'active'];
+
+  dataSource = new MatTableDataSource<IRacetrackLayout>([]);
 
   constructor(
     protected racetrackLayoutService: RacetrackLayoutService,
-    protected dataUtils: DataUtils,
+    protected accountService: AccountService,
     protected modalService: NgbModal,
-    protected activatedRoute: ActivatedRoute
+    private dialog: MatDialog
   ) {
-    this.currentSearch = this.activatedRoute.snapshot.queryParams['search'] ?? '';
   }
 
   loadAll(): void {
     this.isLoading = true;
-    if (this.currentSearch) {
-      this.racetrackLayoutService
-        .search({
-          query: this.currentSearch,
-        })
-        .subscribe(
-          (res: HttpResponse<IRacetrackLayout[]>) => {
-            this.isLoading = false;
-            this.racetrackLayouts = res.body ?? [];
-          },
-          () => {
-            this.isLoading = false;
-          }
-        );
-      return;
-    }
-
-    this.racetrackLayoutService.query().subscribe(
-      (res: HttpResponse<IRacetrackLayout[]>) => {
-        this.isLoading = false;
-        this.racetrackLayouts = res.body ?? [];
-      },
-      () => {
-        this.isLoading = false;
-      }
-    );
-  }
-
-  search(query: string): void {
-    this.currentSearch = query;
-    this.loadAll();
+    this.racetrackLayoutService.findRacetrackLayouts(this.racetrack.id!)
+      .subscribe(
+        (res: HttpResponse<IRacetrackLayout[]>) => {
+          this.isLoading = false;
+          this.dataSource.data = res.body ?? [];
+        },
+        () => {
+          this.isLoading = false;
+        }
+      );
   }
 
   ngOnInit(): void {
+    if (this.accountService.hasAnyAuthority(["ROLE_ADMIN", "ROLE_EDITOR"])) {
+      this.displayedColumns.push('buttons');
+    }
     this.loadAll();
   }
 
@@ -69,13 +57,37 @@ export class RacetrackLayoutComponent implements OnInit {
     return item.id!;
   }
 
-  byteSize(base64String: string): string {
-    return this.dataUtils.byteSize(base64String);
+  createLayout(): void {
+    const newLayout = new RacetrackLayout();
+    newLayout.racetrack = this.racetrack;
+    const dialogRef = this.dialog.open(RacetrackLayoutUpdateComponent, {
+      data: {
+        racetrackLayout: newLayout
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(reason => {
+      if (reason === 'updatedLayout') {
+        this.loadAll();
+      }
+    });
   }
 
-  openFile(base64String: string, contentType: string | null | undefined): void {
-    return this.dataUtils.openFile(base64String, contentType);
+  editLayout(layout: IRacetrackLayout): void {
+    layout.racetrack = this.racetrack;
+    const dialogRef = this.dialog.open(RacetrackLayoutUpdateComponent, {
+      data: {
+        racetrackLayout: layout
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(reason => {
+      if (reason === 'updatedLayout') {
+        this.loadAll();
+      }
+    });
   }
+
 
   delete(racetrackLayout: IRacetrackLayout): void {
     const modalRef = this.modalService.open(RacetrackLayoutDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
@@ -87,4 +99,5 @@ export class RacetrackLayoutComponent implements OnInit {
       }
     });
   }
+
 }

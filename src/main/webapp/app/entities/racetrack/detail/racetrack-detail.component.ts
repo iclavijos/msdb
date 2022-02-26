@@ -22,13 +22,11 @@ import { MatPaginator } from '@angular/material/paginator';
 })
 export class RacetrackDetailComponent implements OnInit, AfterViewInit {
   racetrack: IRacetrack | null = null;
-  racetrackLayouts: IRacetrackLayout[] = [];
   nextEventsEditions: EventEditionAndWinners[] = [];
   prevEventsEditions: EventEditionAndWinners[] = [];
   resultsLength = 0;
   links: any;
 
-  displayedColumns: string[] = ['name', 'length', 'yearFirstUse', 'layoutImage', 'active', 'buttons'];
   nextEventsDisplayedColumns: string[] = ['date', 'eventName', 'layoutImage'];
   prevEventsDisplayedColumns: string[] = ['date', 'prevEventName', 'winners'];
 
@@ -45,7 +43,6 @@ export class RacetrackDetailComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ racetrack }) => {
       this.racetrack = racetrack;
-      this.loadLayouts(racetrack.id);
       this.racetrackService.findNextEvents(racetrack.id).subscribe((res: HttpResponse<EventEditionAndWinners[]>) => {
         this.nextEventsEditions = res.body!;
       });
@@ -66,38 +63,12 @@ export class RacetrackDetailComponent implements OnInit, AfterViewInit {
       .subscribe(data => (this.prevEventsEditions = data!));
   }
 
-  byteSize(base64String: string): string {
-    return this.dataUtils.byteSize(base64String);
-  }
-
-  openFile(base64String: string, contentType: string | null | undefined): void {
-    this.dataUtils.openFile(base64String, contentType);
-  }
-
   previousState(): void {
     window.history.back();
   }
 
   concatDriverNames(drivers: any[]): string {
     return drivers.map(d => d.driverName as string).join(', ');
-  }
-
-  deleteLayout(event: MouseEvent, layout: IRacetrackLayout): void {
-    event.stopPropagation();
-    const modalRef = this.modalService.open(RacetrackLayoutDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.racetrackLayout = layout;
-    // unsubscribe not needed because closed completes on modal close
-    modalRef.closed.subscribe(reason => {
-      if (reason === 'deleted') {
-        this.loadLayouts(this.racetrack!.id!);
-      }
-    });
-  }
-
-  private loadLayouts(id: number): void {
-    this.racetrackService.findLayouts(id).subscribe((res: HttpResponse<IRacetrackLayout[]>) => {
-      this.racetrackLayouts = res.body!;
-    });
   }
 
   private loadPreviousEvents(id: number): Observable<HttpResponse<EventEditionAndWinners[]>> {
