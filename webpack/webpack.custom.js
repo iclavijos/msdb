@@ -105,7 +105,8 @@ module.exports = async (config, options, targetOptions) => {
     { from: './src/main/webapp/content/images', to: 'images' },
     { from: './node_modules/leaflet/dist/images', to: 'assets'},
     // jhipster-needle-add-assets-to-webpack - JHipster will add/remove third-party resources in this array
-    { from: './src/main/webapp/robots.txt', to: 'robots.txt' }
+    { from: './src/main/webapp/robots.txt', to: 'robots.txt' },
+    { from: '/tmp/maintenance.txt', to: 'maintenance.txt'}
   ];
 
   if (patterns.length > 0) {
