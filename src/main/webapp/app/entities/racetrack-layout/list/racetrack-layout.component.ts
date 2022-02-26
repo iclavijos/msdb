@@ -89,7 +89,8 @@ export class RacetrackLayoutComponent implements OnInit {
   }
 
 
-  delete(racetrackLayout: IRacetrackLayout): void {
+  delete(event: MouseEvent, racetrackLayout: IRacetrackLayout): void {
+    event.stopPropagation();
     const modalRef = this.modalService.open(RacetrackLayoutDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.racetrackLayout = racetrackLayout;
     // unsubscribe not needed because closed completes on modal close

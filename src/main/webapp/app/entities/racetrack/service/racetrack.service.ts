@@ -8,7 +8,6 @@ import { ApplicationConfigService } from 'app/core/config/application-config.ser
 import { createRequestOption } from 'app/core/request/request-util';
 import { SearchWithPagination } from 'app/core/request/request.model';
 import { IRacetrack, getRacetrackIdentifier } from '../racetrack.model';
-import { IRacetrackLayout } from '../../racetrack-layout/racetrack-layout.model';
 import { EventEditionAndWinners } from 'app/entities/event-edition/event-edition.model';
 
 export type EntityResponseType = HttpResponse<IRacetrack>;
@@ -53,10 +52,6 @@ export class RacetrackService {
   search(req: SearchWithPagination): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http.get<IRacetrack[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
-  }
-
-  findLayouts(id: number): Observable<HttpResponse<IRacetrackLayout[]>> {
-    return this.http.get<IRacetrackLayout[]>(`${this.resourceUrl}/${id}/layouts`, { observe: 'response' });
   }
 
   findNextEvents(id: number): Observable<HttpResponse<EventEditionAndWinners[]>> {

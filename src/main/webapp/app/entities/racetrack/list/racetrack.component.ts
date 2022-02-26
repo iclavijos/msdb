@@ -102,13 +102,13 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onMapReady(event: any): void { // newMap: L.Map): void {
+  onMapReady(event: any): void {
     this.map = event as L.Map;
     setTimeout(() => {
       this.map.invalidateSize();
     });
     this.addMapMarkers();
-    this.searchMap(this.currentSearch);
+    this.searchMap(this.currentSearch, false);
   }
 
   ngOnInit(): void {
@@ -134,6 +134,12 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
   onTabChange(selectedTabIndex: number): void {
     this.sessionStorageService.store('racetracksSelectedTab', selectedTabIndex);
     this.selectedTabIndex = selectedTabIndex;
+    if (selectedTabIndex === 0) {
+      this.map.fire('resize', {
+              			oldSize: {x: 1000, y: 1000},
+              			newSize: {x: 100, y: 100}
+              		});
+    }
   }
 
   search(query: string): void {
@@ -147,12 +153,13 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
       this.loadPage();
     } else {
       if (query.length >= 3) {
+        this.searchMap(query, false);
         this.racetracksSearchTextChanged.next();
       }
     }
   }
 
-  searchMap(query: string): void {
+  searchMap(query: string, extendSearch = true): void {
     if (!query || query.length < 3) {
       return;
     }
@@ -165,7 +172,9 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
         marker.addTo(this.map);
       }
     });
-    this.search(query);
+    if (extendSearch) {
+      this.search(query);
+    }
   }
 
   clearSearch(): void {
@@ -186,14 +195,6 @@ export class RacetrackComponent implements OnInit, AfterViewInit {
 
   trackId(index: number, item: IRacetrack): number {
     return item.id!;
-  }
-
-  byteSize(base64String: string): string {
-    return this.dataUtils.byteSize(base64String);
-  }
-
-  openFile(base64String: string, contentType: string | null | undefined): void {
-    return this.dataUtils.openFile(base64String, contentType);
   }
 
   delete(event: MouseEvent, racetrack: IRacetrack): void {

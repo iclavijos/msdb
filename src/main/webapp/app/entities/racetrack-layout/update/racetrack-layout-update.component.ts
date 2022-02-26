@@ -7,11 +7,8 @@ import { finalize } from 'rxjs/operators';
 
 import { IRacetrackLayout, RacetrackLayout } from '../racetrack-layout.model';
 import { RacetrackLayoutService } from '../service/racetrack-layout.service';
-import { AlertError } from 'app/shared/alert/alert-error.model';
-import { EventManager, EventWithContent } from 'app/core/util/event-manager.service';
-import { DataUtils, FileLoadError } from 'app/core/util/data-util.service';
-import { IRacetrack } from 'app/entities/racetrack/racetrack.model';
-import { RacetrackService } from 'app/entities/racetrack/service/racetrack.service';
+import { EventManager } from 'app/core/util/event-manager.service';
+import { IRacetrack, Racetrack } from 'app/entities/racetrack/racetrack.model';
 
 @Component({
   selector: 'jhi-racetrack-layout-update',
@@ -31,13 +28,12 @@ export class RacetrackLayoutUpdateComponent implements OnInit {
     active: []
   });
 
-  private racetrack: IRacetrack = new RacetrackLayout();
+  racetrackLayout!: IRacetrackLayout;
+  private racetrack: IRacetrack = new Racetrack();
 
   constructor(
-    protected dataUtils: DataUtils,
     protected eventManager: EventManager,
     protected racetrackLayoutService: RacetrackLayoutService,
-    protected racetrackService: RacetrackService,
     protected elementRef: ElementRef,
     protected activatedRoute: ActivatedRoute,
     protected fb: FormBuilder
@@ -45,46 +41,9 @@ export class RacetrackLayoutUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ racetrackLayout }) => {
-      if (!racetrackLayout) {
-        racetrackLayout = new RacetrackLayout();
-      }
       this.updateForm(racetrackLayout);
-
-      if (!racetrackLayout.racetrack) {
-        this.activatedRoute.data.subscribe(({ racetrack }) => {
-          this.racetrack = racetrack;
-        });
-      } else {
-        this.racetrack = racetrackLayout.racetrack;
-      }
+      this.racetrackLayout = racetrackLayout;
     });
-  }
-
-  byteSize(base64String: string): string {
-    return this.dataUtils.byteSize(base64String);
-  }
-
-  openFile(base64String: string, contentType: string | null | undefined): void {
-    this.dataUtils.openFile(base64String, contentType);
-  }
-
-  setFileData(event: Event, field: string, isImage: boolean): void {
-    this.dataUtils.loadFileToForm(event, this.editForm, field, isImage).subscribe({
-      error: (err: FileLoadError) =>
-        this.eventManager.broadcast(
-          new EventWithContent<AlertError>('motorsportsDatabaseApp.error', { ...err, key: 'error.file.' + err.key })
-        ),
-    });
-  }
-
-  clearInputImage(field: string, fieldContentType: string, idInput: string): void {
-    this.editForm.patchValue({
-      [field]: null,
-      [fieldContentType]: null,
-    });
-    if (idInput && this.elementRef.nativeElement.querySelector('#' + idInput)) {
-      this.elementRef.nativeElement.querySelector('#' + idInput).value = null;
-    }
   }
 
   previousState(): void {
@@ -154,7 +113,7 @@ export class RacetrackLayoutUpdateComponent implements OnInit {
     racetrackLayout.layoutImage = this.editForm.get(['layoutImage'])!.value;
     racetrackLayout.layoutImageUrl = this.editForm.get(['layoutImageUrl'])!.value;
     racetrackLayout.active = this.editForm.get(['active'])!.value;
-    racetrackLayout.racetrack = this.racetrack;
+    racetrackLayout.racetrack = this.racetrackLayout.racetrack;
 
     return racetrackLayout;
   }

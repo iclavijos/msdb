@@ -14,7 +14,10 @@
                 <ul class="header-buttons">
                     <li>
                         <div class="icon-button-demo">
-                            <button mat-mini-fab color="primary" (click)="createLayout()">
+                            <button mat-mini-fab type="button"
+                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                    color="primary"
+                                    [routerLink]="['/racetrack', racetrack!.id, 'layout', 'new']">
                                 <mat-icon class="col-white">add</mat-icon>
                             </button>
                         </div>
@@ -80,7 +83,7 @@
                                 <button mat-mini-fab type="submit"
                                         color="warn"
                                         *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                        (click)="delete(layout)">
+                                        (click)="delete($event, layout)">
                                     <fa-icon [icon]="'times'"></fa-icon>
                                 </button>
                             </div>
