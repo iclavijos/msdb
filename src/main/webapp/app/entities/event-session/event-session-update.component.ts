@@ -20,7 +20,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class EventSessionUpdateComponent implements OnInit {
   isSaving: boolean;
-  isRaceAndLaps = false;
+  isTimedRace = false;
 
   private eventEditionId: number;
   eventSession: IEventSession;
@@ -97,7 +97,7 @@ export class EventSessionUpdateComponent implements OnInit {
       location: eventSession.location,
       cancelled: eventSession.cancelled
     });
-    this.isRaceAndLaps = eventSession.sessionType >= 2 && eventSession.durationType === 5;
+    this.isTimedRace = eventSession.sessionType >= 2 && eventSession.durationType >= 3;
     if (this.eventSession.eventEdition.event.rally || this.eventSession.eventEdition.event.raid) {
       this.editForm.get('durationType').disable();
       this.editForm.get('durationType').setValue(this.durationTypes.kilometers);
@@ -136,7 +136,7 @@ export class EventSessionUpdateComponent implements OnInit {
 
   public onChangeType(event) {
     const selectedType = parseInt(event.value, 10);
-    this.isRaceAndLaps = selectedType >= 2 && this.editForm.get(['durationType']).value === 5;
+    this.isTimedRace = selectedType >= 2 && this.editForm.get(['durationType']).value >= 3;
   }
 
   private createFromForm(): IEventSession {
