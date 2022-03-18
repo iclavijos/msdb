@@ -136,6 +136,10 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 		return getSessionEndTime().isBefore(ZonedDateTime.now(ZoneId.of("UTC")));
 	}
 
+    public boolean isCancelled() {
+        return Optional.ofNullable(cancelled).orElse(false);
+    }
+
 	public ZonedDateTime getSessionEndTime() {
 		DurationType durationType = DurationType.valueOf(getDurationType());
 		TemporalUnit temp = durationType.equals(DurationType.MINUTES) ? ChronoUnit.MINUTES :
