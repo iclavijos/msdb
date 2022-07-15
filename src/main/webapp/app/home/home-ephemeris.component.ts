@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'jhi-home-ephemeris',
@@ -14,8 +14,8 @@ export class HomeEphemerisComponent implements OnInit {
 
   ngOnInit() {
     const date = new Date();
-    this.http.get<HttpResponse<any[]>>(`api/home/ephemeris/${date.getDate()}-${date.getMonth() + 1}`).subscribe(res => {
-      this.ephemeris = res.body;
+    this.http.get<any[]>(`api/home/ephemeris/${date.getDate()}-${date.getMonth() + 1}`).subscribe(res => {
+      this.ephemeris = res;
       if (this.ephemeris) {
         this.years = this.ephemeris.map(r => r.date[0]).filter(this.onlyUnique);
       } else {
