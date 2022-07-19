@@ -251,7 +251,11 @@ public class UserService {
         if (username != null) {
             user.setLogin(username);
         } else if (user.getLogin() == null) {
-            user.setLogin(user.getId());
+            if (details.get("email") != null) {
+                user.setLogin((String) details.get("email"));
+            } else {
+                user.setLogin(user.getId());
+            }
         }
         if (details.get("given_name") != null) {
             user.setFirstName((String) details.get("given_name"));
