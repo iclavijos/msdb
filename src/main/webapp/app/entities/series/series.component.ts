@@ -93,7 +93,7 @@ export class SeriesComponent implements OnDestroy, AfterViewInit {
     this.currentSearch = sessionStorage.getItem('seriesSearch');
     this.series = [];
     if (this.currentSearch) {
-      return this.seriesService.search({
+      return this.seriesService.query({
         page: this.paginator.pageIndex,
         query: this.currentSearch,
         size: this.paginator.pageSize,
@@ -135,7 +135,7 @@ export class SeriesComponent implements OnDestroy, AfterViewInit {
     this.currentSearch = query;
     this.isLoadingResults = true;
     this.seriesService
-      .search({
+      .query({
         page: this.paginator.pageIndex,
         query: this.currentSearch,
         size: this.paginator.pageSize,
