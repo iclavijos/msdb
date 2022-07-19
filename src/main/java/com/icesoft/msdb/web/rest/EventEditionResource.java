@@ -22,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -350,20 +348,27 @@ public class EventEditionResource {
 
     @GetMapping("/event-editions/{id}/sessions")
     @Transactional(readOnly = true)
-    public List<EventSession> getEventEditionSessions(@PathVariable Long id) {
+    public List<EventSession> getEventEditionSessions(
+            @PathVariable Long id,
+            @RequestParam(required = false, defaultValue = "false") Boolean nonFP) {
     	log.debug("REST request to get all EventEditions {} sessions", id);
-    	List<EventSession> result = eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(id);
-    	result.parallelStream().forEach(session -> session.setEventEdition(null));
+        List<EventSession> result;
+        if (nonFP) {
+            result = eventSessionRepository.findNonFPSessions(id);
+        } else {
+            result = eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(id);
+        }
+        result.parallelStream().forEach(session -> session.setEventEdition(null));
     	return result;
     }
 
-    @GetMapping("/event-editions/{id}/sessions/nonfp")
-    public List<EventSession> getEventEditionNonFPSessions(@PathVariable Long id) {
-    	log.debug("REST request to get all EventEditions {} sessions", id);
-    	List<EventSession> result = eventSessionRepository.findNonFPSessions(id);
-    	result.parallelStream().forEach(session -> session.setEventEdition(null));
-    	return result;
-    }
+//    @GetMapping("/event-editions/{id}/sessions/nonfp")
+//    public List<EventSession> getEventEditionNonFPSessions(@PathVariable Long id) {
+//    	log.debug("REST request to get all EventEditions {} sessions", id);
+//    	List<EventSession> result = eventSessionRepository.findNonFPSessions(id);
+//    	result.parallelStream().forEach(session -> session.setEventEdition(null));
+//    	return result;
+//    }
 
     @PostMapping("/event-editions/event-sessions")
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
