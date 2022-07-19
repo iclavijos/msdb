@@ -23,6 +23,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -193,16 +194,27 @@ public class SeriesResource {
     }
 
     /**
-     * {@code GET  /series} : get all the series.
+     * {@code GET  /series} : get series.
      *
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of series in body.
      */
     @GetMapping("/series")
-    public ResponseEntity<List<Series>> getAllSeries(Pageable pageable) {
-        log.debug("REST request to get a page of Series");
-        List<Series> allSeries = seriesRepository.findAll(pageable.getSort());
-        return ResponseEntity.ok(allSeries);
+    public ResponseEntity<List<Series>> getSeries(@RequestParam(required = false) String query, Pageable pageable) {
+        log.debug("REST request to search for a page of Series for query {}", query);
+        Page<Series> page;
+        if (StringUtils.isBlank(query)) {
+            page = seriesRepository.findAll(pageable);
+        } else {
+            page = searchService.performWildcardSearch(
+                Series.class,
+                query,
+                Arrays.asList("name", "shortname", "organizer"),
+                pageable
+            );
+        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     @GetMapping("/series/{id}/editions")
