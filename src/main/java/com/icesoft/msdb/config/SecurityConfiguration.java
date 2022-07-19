@@ -100,15 +100,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/api/home/**").permitAll()
             .antMatchers("/api/timezones").permitAll()
             .antMatchers("/api/event-editions/calendar/**").permitAll()
-            //Start of "public" access
+            // Start of "public" access
             .antMatchers(HttpMethod.GET, "/api/series/**").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/_search/series").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/series-editions/**").permitAll()
-
-            .antMatchers(HttpMethod.GET, "/api/events/**").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/event-editions/**").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/icalendar/**").permitAll()
-            //End of "public" access
+//            .antMatchers(HttpMethod.GET, "/api/_search/series").permitAll()
+//            .antMatchers(HttpMethod.GET, "/api/series-editions/**").permitAll()
+//
+//            .antMatchers(HttpMethod.GET, "/api/events/**").permitAll()
+//            .antMatchers(HttpMethod.GET, "/api/event-editions/**").permitAll()
+//            .antMatchers(HttpMethod.GET, "/api/event-editions/*/sessions").permitAll()
+            // .antMatchers(HttpMethod.GET, "/api/icalendar/**").permitAll()
+            // End of "public" access
 
             .antMatchers("/api/**").authenticated()
             .antMatchers("/management/health").permitAll()
@@ -117,14 +118,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/management/prometheus").permitAll()
             .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
         .and()
-            .oauth2Login()
-        .and()
-            .oauth2ResourceServer()
-                .jwt()
-                .jwtAuthenticationConverter(authenticationConverter())
-                .and()
-            .and()
-                .oauth2Client();
+            .oauth2Login();
+//        .and()
+//            .oauth2ResourceServer()
+//                .jwt()
+//                .jwtAuthenticationConverter(authenticationConverter())
+//                .and()
+//            .and()
+//                .oauth2Client();
         // @formatter:on
     }
 
@@ -163,9 +164,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .setConnectTimeout(Duration.ofSeconds(10))
             .setReadTimeout(Duration.ofSeconds(10))
             .build();
-        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).restOperations(rest).build();
+        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder
+            .withJwkSetUri(jwkSetUri)
+            .restOperations(rest)
+            .build();
 
-        // NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuerUri);
+//        NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuerUri);
 
         OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(jHipsterProperties.getSecurity().getOauth2().getAudience());
         OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuerUri);
