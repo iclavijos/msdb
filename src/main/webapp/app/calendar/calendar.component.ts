@@ -32,6 +32,7 @@ export class MyEvent {
   duration: number;
   totalDuration: number;
   textColor: string;
+  backgroundColor!: string;
   color: string;
   start: any;
   end: any;
@@ -180,14 +181,14 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       if (session.status === 'C' || session.cancelled) {
         newEvent.color = 'red';
       } else if (session.status === 'S') {
-        newEvent.color = 'orange';
+        newEvent.backgroundColor = 'orange';
       } else {
-        if (session.sessionType === 2) {
-          newEvent.color = 'green';
-        } else if (session.sessionType === 1 || session.sessionType === 3) {
-          newEvent.color = 'blue';
+        if (session.sessionType === 'RACE') {
+          newEvent.backgroundColor = 'green';
+        } else if (session.sessionType === 'QUALIFYING' || session.sessionType === 'QUALIFYING_RACE') {
+          newEvent.backgroundColor = 'blue';
         } else {
-          newEvent.color = 'grey';
+          newEvent.backgroundColor = 'grey';
         }
       }
       if (includeCancelled || session.status === 'O') {
