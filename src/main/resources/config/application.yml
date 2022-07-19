@@ -130,16 +130,19 @@ spring:
   security:
     oauth2:
       client:
-        provider:
-          oidc:
-            # issuer-uri: https://dev-871921.okta.com/oauth2/default
-            issuer-uri: https://msdb.eu.auth0.com/
-            jwk-set-uri: https://msdb.eu.auth0.com/.well-known/jwks.json
         registration:
           oidc:
             client-id: ${OIDC_CLIENT_ID}
             client-secret: ${OIDC_CLIENT_SECRET}
-            scope: openid, profile, email
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          oidc:
+            issuer-uri: https://msdb.eu.auth0.com/
+            jwk-set-uri: https://msdb.eu.auth0.com/.well-known/jwks.json
+
   flyway:
     table: schema_version
 
@@ -191,7 +194,6 @@ jhipster:
       audience:
         - account
         - api://default
-        - ${mobile_app_audience}
 
 # ===================================================================
 # Application specific properties
