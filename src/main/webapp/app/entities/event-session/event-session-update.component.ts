@@ -100,8 +100,8 @@ export class EventSessionUpdateComponent implements OnInit {
     this.isTimedRace = eventSession.sessionType >= 2 && eventSession.durationType >= 3;
     if (this.eventSession.eventEdition.event.rally || this.eventSession.eventEdition.event.raid) {
       this.editForm.get('durationType').disable();
-      this.editForm.get('durationType').setValue(this.durationTypes.kilometers);
-      this.editForm.get('sessionType').setValue(this.sessionTypes.stage);
+      this.editForm.get('durationType').setValue(this.durationTypes.KILOMETERS);
+      this.editForm.get('sessionType').setValue(this.sessionTypes.STAGE);
     }
   }
 
