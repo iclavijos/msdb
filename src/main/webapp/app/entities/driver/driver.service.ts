@@ -31,7 +31,7 @@ export class DriverService {
   update(driver: IDriver): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(driver);
     return this.http
-      .put<IDriver>(this.resourceUrl, copy, { observe: 'response' })
+      .put<IDriver>(`${this.resourceUrl}/${driver.id}`, copy, { observe: 'response' })
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
