@@ -26,7 +26,7 @@ export class EventEditionService {
   }
 
   update(event: IEventEdition): Observable<EntityResponseType> {
-    return this.http.put<IEventEdition>(this.resourceUrl, event, { observe: 'response' });
+    return this.http.put<IEventEdition>(`${this.resourceUrl}/${event.id}`, event, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {
