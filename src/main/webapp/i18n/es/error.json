@@ -3,6 +3,7 @@
     "title": "¡Página de error!",
     "http": {
       "400": "Solicitud incorrecta.",
+      "401": "No tiene permisos para acceder a la página.",
       "403": "No tiene permisos para acceder a la página.",
       "404": "La página no existe.",
       "405": "El verbo HTTP utilizado no tiene soporte para este URL.",
