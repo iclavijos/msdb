@@ -320,13 +320,13 @@
             <mat-table class="table table-hover" [dataSource]="seriesEdition.events">
 
                 <ng-container matColumnDef="date">
-                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.eventDate' | translate }}</mat-header-cell>
-                    <mat-cell *matCellDef="let event">{{ event.eventDate | localizedDate : 'LL' }}</mat-cell>
+                    <td mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.eventDate' | translate }}</td>
+                    <td mat-cell *matCellDef="let event">{{ event.eventDate | localizedDate : 'L' }}</td>
                 </ng-container>
 
                 <ng-container matColumnDef="status">
-                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.status.label' | translate }}</mat-header-cell>
-                    <mat-cell *matCellDef="let event">
+                    <td mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.status.label' | translate }}</td>
+                    <td mat-cell *matCellDef="let event">
                         <div *ngIf="event.status === 'SUSPENDED'">
                             <h4><span class="badge badge-warning">
                                 {{ 'motorsportsDatabaseApp.eventEdition.status.suspended' | translate }}
@@ -337,24 +337,24 @@
                                 {{ 'motorsportsDatabaseApp.eventEdition.status.cancelled' | translate }}
                             </span></h4>
                         </div>
-                    </mat-cell>
+                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="name">
-                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.event' | translate }}</mat-header-cell>
-                    <mat-cell *matCellDef="let event">{{ event.longEventName }}</mat-cell>
+                    <td mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.event' | translate }}</td>
+                    <td mat-cell *matCellDef="let event">{{ event.longEventName }}</td>
                 </ng-container>
 
                 <ng-container matColumnDef="winners">
-                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.winner' | translate }}</mat-header-cell>
-                    <mat-cell *matCellDef="let event; let i = index;">
+                    <td mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.series.seriesEdition.winner' | translate }}</td>
+                    <td mat-cell *matCellDef="let event; let i = index;">
                         <div *ngTemplateOutlet="winnersTemplate; context:{event: eventsAndWinners[i], thumbSize: 80}"></div>
-                    </mat-cell>
+                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="buttons">
-                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
-                    <mat-cell *matCellDef="let event">
+                    <td mat-header-cell *matHeaderCellDef></td>
+                    <td mat-cell *matCellDef="let event">
                         <button mat-button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
                                 (click)="$event.stopPropagation(); editEventAssignment(event)"
                                 class="btn btn-primary btn-xs">
@@ -365,12 +365,12 @@
                                 class="btn btn-danger btn-xs">
                             <fa-icon [icon]="'times'"></fa-icon>
                         </button>
-                    </mat-cell>
+                    </td>
                 </ng-container>
 
-                <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
-                    [routerLink]="['/event/edition', row.id, 'view-ed']"></mat-row>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
+                    [routerLink]="['/event/edition', row.id, 'view-ed']"></tr>
             </mat-table>
         </div>
     </div>
