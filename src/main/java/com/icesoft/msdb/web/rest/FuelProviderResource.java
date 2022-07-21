@@ -1,5 +1,6 @@
 package com.icesoft.msdb.web.rest;
 
+import com.icesoft.msdb.domain.Category;
 import com.icesoft.msdb.domain.FuelProvider;
 
 import com.icesoft.msdb.repository.FuelProviderRepository;
@@ -9,6 +10,7 @@ import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -195,10 +197,20 @@ public class FuelProviderResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of fuelProviders in body.
      */
     @GetMapping("/fuel-providers")
-    public ResponseEntity<List<FuelProvider>> getFuelProviders(Pageable pageable) {
+    public ResponseEntity<List<FuelProvider>> getFuelProviders(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of FuelProviders");
-        List<FuelProvider> allFuelProviders = fuelProviderRepository.findAll(pageable.getSort());
-        return ResponseEntity.ok(allFuelProviders);
+        Page<FuelProvider> page;
+        if (!StringUtils.isBlank(query)) {
+            page = searchService.performWildcardSearch(
+                FuelProvider.class,
+                query.toLowerCase(),
+                Arrays.asList("name"),
+                pageable);
+        } else {
+            page = fuelProviderRepository.findAll(pageable);
+        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
