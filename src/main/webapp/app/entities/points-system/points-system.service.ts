@@ -20,7 +20,7 @@ export class PointsSystemService {
   }
 
   update(pointsSystem: IPointsSystem): Observable<EntityResponseType> {
-    return this.http.put<IPointsSystem>(this.resourceUrl, pointsSystem, { observe: 'response' });
+    return this.http.put<IPointsSystem>(`${this.resourceUrl}/${pointsSystem.id}`, pointsSystem, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {
