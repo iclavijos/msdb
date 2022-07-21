@@ -22,7 +22,7 @@ export class TeamService {
   }
 
   update(team: ITeam): Observable<EntityResponseType> {
-    return this.http.put<ITeam>(this.resourceUrl, team, { observe: 'response' });
+    return this.http.put<ITeam>(`${this.resourceUrl}/${team.id}`, team, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {
