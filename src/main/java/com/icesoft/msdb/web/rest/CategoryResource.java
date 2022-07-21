@@ -2,12 +2,14 @@ package com.icesoft.msdb.web.rest;
 
 import com.icesoft.msdb.domain.Category;
 
+import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.repository.CategoryRepository;
 import com.icesoft.msdb.repository.search.CategorySearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
+import org.apache.commons.lang3.StringUtils;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -177,10 +179,20 @@ public class CategoryResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of categories in body.
      */
     @GetMapping("/categories")
-    public ResponseEntity<List<Category>> getCategories(Pageable pageable) {
+    public ResponseEntity<List<Category>> getCategories(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of Categories");
-        List<Category> allCategories = categoryRepository.findAll(pageable.getSort());
-        return ResponseEntity.ok().body(allCategories);
+        Page<Category> page;
+        if (!StringUtils.isBlank(query)) {
+            page = searchService.performWildcardSearch(
+                Category.class,
+                query.toLowerCase(),
+                Arrays.asList("name", "shortname"),
+                pageable);
+        } else {
+            page = categoryRepository.findAll(pageable);
+        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
