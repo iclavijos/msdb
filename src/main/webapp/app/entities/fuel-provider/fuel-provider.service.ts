@@ -21,7 +21,7 @@ export class FuelProviderService {
   }
 
   update(fuelProvider: IFuelProvider): Observable<EntityResponseType> {
-    return this.http.put<IFuelProvider>(this.resourceUrl, fuelProvider, { observe: 'response' });
+    return this.http.put<IFuelProvider>(`${this.resourceUrl}/${fuelProvider.id}`, fuelProvider, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {
