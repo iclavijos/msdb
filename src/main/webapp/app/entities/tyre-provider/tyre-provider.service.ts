@@ -22,7 +22,7 @@ export class TyreProviderService {
   }
 
   update(tyreProvider: ITyreProvider): Observable<EntityResponseType> {
-    return this.http.put<ITyreProvider>(this.resourceUrl, tyreProvider, { observe: 'response' });
+    return this.http.put<ITyreProvider>(`${this.resourceUrl}/${tyreProvider.id}`, tyreProvider, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {
