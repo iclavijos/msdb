@@ -61,7 +61,7 @@
                                             {{ 'motorsportsDatabaseApp.tyreProvider.symbol.symbol' | translate }}
                                             <div [style.background]="editForm.get('backgroundColor').value" [style.color]="editForm.get('letterColor').value"
                                                  style="width: 30px; height: 30px; vertical-align: top; text-align:center;">
-                                                <h3>{{editForm.get('name').value.substring(0,1)}}</h3>
+                                                <h3>{{ editForm.get('name').value ? editForm.get('name').value.substring(0,1) : '' }}</h3>
                                             </div>
                                         </div>
                                     </div>
