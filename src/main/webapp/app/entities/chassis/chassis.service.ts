@@ -22,7 +22,7 @@ export class ChassisService {
   }
 
   update(chassis: IChassis): Observable<EntityResponseType> {
-    return this.http.put<IChassis>(this.resourceUrl, chassis, { observe: 'response' });
+    return this.http.put<IChassis>(`${this.resourceUrl}/${chassis.id}`, chassis, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {
