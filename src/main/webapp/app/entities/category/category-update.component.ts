@@ -52,7 +52,7 @@ export class CategoryUpdateComponent implements OnInit {
       logo: category.logo,
       logoContentType: category.logoContentType,
       logoUrl: category.logoUrl,
-      categoryColor: category.categoryColor
+      categoryColor: category.categoryColor ? category.categoryColor : '000000'
     });
   }
 
@@ -82,11 +82,7 @@ export class CategoryUpdateComponent implements OnInit {
       } else {
         reject(`Base64 data was not set as file could not be extracted from passed parameter: ${event}`);
       }
-    }).then(
-      // eslint-disable-next-line no-console
-      () => console.log('blob added'), // success
-      this.onError
-    );
+    }).then(this.onError);
   }
 
   clearInputImage(field: string, fieldContentType: string, idInput: string) {
