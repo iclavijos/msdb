@@ -1,5 +1,6 @@
 package com.icesoft.msdb.web.rest;
 
+import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.PointsSystem;
 
 import com.icesoft.msdb.repository.PointsSystemRepository;
@@ -8,6 +9,7 @@ import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +27,7 @@ import tech.jhipster.web.util.ResponseUtil;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.awt.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -194,8 +197,18 @@ public class PointsSystemResource {
     @GetMapping("/points-systems")
     public ResponseEntity<List<PointsSystem>> getPointsSystems(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of PointsSystems");
-        List<PointsSystem> allPointsSystems = pointsSystemRepository.findAll(pageable.getSort());
-        return ResponseEntity.ok(allPointsSystems);
+        Page<PointsSystem> page;
+        if (!StringUtils.isBlank(query)) {
+            page = searchService.performWildcardSearch(
+                PointsSystem.class,
+                query.toLowerCase(),
+                Arrays.asList("name"),
+                pageable);
+        } else {
+            page = pointsSystemRepository.findAll(pageable);
+        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
