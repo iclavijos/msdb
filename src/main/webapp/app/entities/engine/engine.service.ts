@@ -22,7 +22,7 @@ export class EngineService {
   }
 
   update(engine: IEngine): Observable<EntityResponseType> {
-    return this.http.put<IEngine>(this.resourceUrl, engine, { observe: 'response' });
+    return this.http.put<IEngine>(`${this.resourceUrl}/${engine.id}`, engine, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {
