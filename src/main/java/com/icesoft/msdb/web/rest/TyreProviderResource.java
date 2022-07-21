@@ -1,5 +1,6 @@
 package com.icesoft.msdb.web.rest;
 
+import com.icesoft.msdb.domain.FuelProvider;
 import com.icesoft.msdb.domain.TyreProvider;
 import com.icesoft.msdb.repository.TyreProviderRepository;
 import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
@@ -16,6 +17,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -199,10 +201,20 @@ public class TyreProviderResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of tyreProviders in body.
      */
     @GetMapping("/tyre-providers")
-    public ResponseEntity<List<TyreProvider>> getTyreProviders(Pageable pageable) {
+    public ResponseEntity<List<TyreProvider>> getTyreProviders(@RequestParam(required = false) String query, Pageable pageable) {
         log.debug("REST request to get a page of TyreProviders");
-        List<TyreProvider> allTyreProviders = tyreProviderRepository.findAll(pageable.getSort());
-        return ResponseEntity.ok(allTyreProviders);
+        Page<TyreProvider> page;
+        if (!StringUtils.isBlank(query)) {
+            page = searchService.performWildcardSearch(
+                TyreProvider.class,
+                query.toLowerCase(),
+                Arrays.asList("name"),
+                pageable);
+        } else {
+            page = tyreProviderRepository.findAll(pageable);
+        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
