@@ -21,7 +21,7 @@ export class CategoryService {
   }
 
   update(category: ICategory): Observable<EntityResponseType> {
-    return this.http.put<ICategory>(this.resourceUrl, category, { observe: 'response' });
+    return this.http.put<ICategory>(`${this.resourceUrl}/${category.id}`, category, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {
