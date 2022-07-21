@@ -23,7 +23,7 @@ export class RacetrackService {
   }
 
   update(racetrack: IRacetrack): Observable<EntityResponseType> {
-    return this.http.put<IRacetrack>(this.resourceUrl, racetrack, { observe: 'response' });
+    return this.http.put<IRacetrack>(`${this.resourceUrl}/${racetrack.id}`, racetrack, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {
