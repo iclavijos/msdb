@@ -8,7 +8,8 @@
         "search": "Cercar circuits",
         "notFound": "No s'ha trobat cap circuit",
         "map": "Mapa",
-        "list": "Llistat"
+        "list": "Llistat",
+        "link": "Detall del circuit"
       },
       "created": "S'ha afegit un circuit amb identificador {{ param }}",
       "updated": "S'ha modificat el circuit amb identificador {{ param }}",
@@ -25,7 +26,9 @@
       "logo": "Logo",
       "layouts": "Traçats",
       "nextEvents": "Properes cites",
-      "prevEvents": "Cites anteriors"
+      "prevEvents": "Cites anteriors",
+      "latitude": "Latitut",
+      "longitude": "Longitut"
     },
     "racetrackLayout": {
       "home": {

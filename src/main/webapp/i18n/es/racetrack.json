@@ -8,7 +8,8 @@
         "search": "Buscar circuitos",
         "notFound": "Ningún circuito encontrado",
         "map": "Mapa",
-        "list": "Listado"
+        "list": "Listado",
+        "link": "Detalles del circuito"
       },
       "created": "Un nuevo circuito ha sido creado con el identificador {{ param }}",
       "updated": "Un circuito ha sido actualizado con el identificador {{ param }}",
@@ -25,11 +26,13 @@
       "logo": "Logo",
       "layouts": "Trazados",
       "nextEvents": "Próximos eventos",
-      "prevEvents": "Anteriores eventos"
+      "prevEvents": "Anteriores eventos",
+      "latitude": "Latitud",
+      "longitude": "Longitud"
     },
     "racetrackLayout": {
       "home": {
-        "title": "Trazado",
+        "title": "Trazados",
         "createLabel": "Crear nuevo trazado",
         "createOrEditLabel": "Crear o editar trazado",
         "search": "Buscar trazados",
