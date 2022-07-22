@@ -25,7 +25,7 @@ export class RacetrackUpdateComponent implements OnInit {
     id: [],
     name: [null, [Validators.required, Validators.maxLength(100)]],
     location: [null, [Validators.required, Validators.maxLength(100)]],
-    countryCode: [],
+    country: [],
     timeZone: [],
     latitude: [],
     longitude: [],
@@ -47,7 +47,7 @@ export class RacetrackUpdateComponent implements OnInit {
   ngOnInit() {
     this.isSaving = false;
 
-    this.options = this.editForm.get('countryCode').valueChanges.pipe(
+    this.options = this.editForm.get('country').valueChanges.pipe(
       debounceTime(300),
       switchMap(value => {
         if (typeof value !== 'object' && value !== null) {
@@ -69,7 +69,7 @@ export class RacetrackUpdateComponent implements OnInit {
       location: racetrack.location,
       latitude: racetrack.latitude,
       longitude: racetrack.longitude,
-      countryCode: racetrack.countryCode,
+      country: racetrack.country,
       timeZone: racetrack.timeZone,
       logo: racetrack.logo,
       logoUrl: racetrack.logoUrl,
@@ -146,7 +146,7 @@ export class RacetrackUpdateComponent implements OnInit {
       location: this.editForm.get(['location']).value,
       latitude: this.editForm.get(['latitude']).value,
       longitude: this.editForm.get(['longitude']).value,
-      countryCode: this.editForm.get(['countryCode']).value.countryCode,
+      country: this.editForm.get(['country']).value.country,
       timeZone: this.editForm.get(['timeZone']).value,
       logoContentType: this.editForm.get(['logoContentType']).value,
       logo: this.editForm.get(['logo']).value,

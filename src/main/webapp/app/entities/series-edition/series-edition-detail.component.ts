@@ -142,7 +142,7 @@ export class SeriesEditionDetailComponent implements OnInit {
         id = event.trackLayout.racetrack.id;
         logoUrl = event.trackLayout.racetrack.logoUrl;
         locationName = event.trackLayout.racetrack.name;
-        flag = event.trackLayout.racetrack.countryCode;
+        flag = event.trackLayout.racetrack.country.countryCode;
         trackLayoutUrl = event.trackLayout.layoutImageUrl;
       }
       const location = new Marker([latitude, longitude])

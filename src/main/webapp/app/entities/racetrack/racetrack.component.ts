@@ -144,7 +144,7 @@ export class RacetrackComponent implements AfterViewInit, OnDestroy {
             });
           L.Util.setOptions(racetrackLocation, { trackId: rt.id });
           const logo = rt.logoUrl ? `<img src=${rt.logoUrl} style="max-height: 200px; max-width: 200px"><br/>` : '';
-          let popup = `<p align="center">${logo}<h4>${rt.name}</h4><br/>${rt.location}, ${rt.countryCode}<br/></p>`;
+          let popup = `<p align="center">${logo}<h4>${rt.name}</h4><br/>${rt.location}, ${rt.country.countryCode}<br/></p>`;
           popup = popup + `<a id="mapLink" href="javascript:void">Link</a>`;
           racetrackLocation.addTo(this.map).bindPopup(popup, { minWidth: 220 });
         })

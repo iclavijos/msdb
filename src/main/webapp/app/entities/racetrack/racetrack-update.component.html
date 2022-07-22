@@ -50,7 +50,7 @@
                                         <div class="col-5">
                                             <mat-form-field class="example-full-width">
                                                 <input matInput class="form-control"
-                                                       [matAutocomplete]="auto" formControlName="countryCode"
+                                                       [matAutocomplete]="auto" formControlName="country"
                                                        placeholder="{{ 'motorsportsDatabaseApp.racetrack.country' | translate }}"/>
                                                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
                                                     <mat-option *ngFor="let country of (options | async)" [value]="country">
