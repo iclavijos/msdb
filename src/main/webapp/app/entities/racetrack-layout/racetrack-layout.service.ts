@@ -21,7 +21,7 @@ export class RacetrackLayoutService {
   }
 
   update(racetrackLayout: IRacetrackLayout): Observable<EntityResponseType> {
-    return this.http.put<IRacetrackLayout>(this.resourceUrl, racetrackLayout, { observe: 'response' });
+    return this.http.put<IRacetrackLayout>(`${this.resourceUrl}/${racetrackLayout.id}`, racetrackLayout, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {
