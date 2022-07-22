@@ -64,11 +64,11 @@
                                     <div class="row">
                                         <div class="col-6">
                                             <mat-form-field class="example-full-width">
-                                                <input matInput placeholder="{{ 'motorsportsDatabaseApp.racetrack.latitude' | translate }}" type="number"
+                                                <input matInput placeholder="{{ 'motorsportsDatabaseApp.racetrack.latitude' | translate }}" type="decimal"
                                                        class="form-control" name="latitude" id="field_latitude" formControlName="latitude">
                                                 <div *ngIf="editForm.get('latitude').invalid && (editForm.get('latitude').dirty || editForm.get('latitude').touched)">
                                                     <small class="form-text text-danger"
-                                                           *ngIf="editForm.get('latitude').errors.number" jhiTranslate="entity.validation.number">
+                                                           [hidden]="!editForm.controls.latitude?.errors?.number" jhiTranslate="entity.validation.number">
                                                         This field should be a number.
                                                     </small>
                                                 </div>
@@ -76,11 +76,11 @@
                                         </div>
                                         <div class="col-6">
                                             <mat-form-field class="example-full-width">
-                                                <input matInput placeholder="{{ 'motorsportsDatabaseApp.racetrack.longitude' | translate }}" type="number"
+                                                <input matInput placeholder="{{ 'motorsportsDatabaseApp.racetrack.longitude' | translate }}" type="decimal"
                                                        class="form-control" name="longitude" id="field_longitude" formControlName="longitude">
                                                 <div *ngIf="editForm.get('longitude').invalid && (editForm.get('longitude').dirty || editForm.get('longitude').touched)">
                                                     <small class="form-text text-danger"
-                                                           *ngIf="editForm.get('longitude').errors.number" jhiTranslate="entity.validation.number">
+                                                           [hidden]="!editForm.controls.longitude?.errors?.number" jhiTranslate="entity.validation.number">
                                                         This field should be a number.
                                                     </small>
                                                 </div>
