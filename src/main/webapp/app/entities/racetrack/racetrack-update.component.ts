@@ -146,7 +146,7 @@ export class RacetrackUpdateComponent implements OnInit {
       location: this.editForm.get(['location']).value,
       latitude: this.editForm.get(['latitude']).value,
       longitude: this.editForm.get(['longitude']).value,
-      country: this.editForm.get(['country']).value.country,
+      country: this.editForm.get(['country']).value,
       timeZone: this.editForm.get(['timeZone']).value,
       logoContentType: this.editForm.get(['logoContentType']).value,
       logo: this.editForm.get(['logo']).value,
