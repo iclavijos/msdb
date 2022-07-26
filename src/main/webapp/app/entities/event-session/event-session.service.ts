@@ -134,7 +134,6 @@ export class EventSessionService {
   private transformDateTime(res: EntityArrayResponseType, timeZone: string): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((eventSession: IEventSession) => {
-        eventSession.sessionType = this.sessionTypes[this.sessionTypes[eventSession.sessionTypeValue]];
         eventSession.sessionStartTime =
           eventSession.sessionStartTime != null
             ? moment(Number(eventSession.sessionStartTime) * 1000).tz(timeZone ? timeZone : eventSession.locationTimeZone)
