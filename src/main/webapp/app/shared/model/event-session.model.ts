@@ -16,7 +16,6 @@ export interface IEventSession {
   durationType?: DurationType;
   additionalLap?: boolean;
   sessionType?: SessionType;
-  sessionTypeValue?: number;
   eventEdition?: IEventEdition;
   pointsSystemsSession?: any;
   location?: string;
@@ -37,7 +36,6 @@ export class EventSession implements IEventSession {
     public durationType?: DurationType,
     public additionalLap = false,
     public sessionType?: SessionType,
-    public sessionTypeValue?: number,
     public eventEdition?: IEventEdition,
     public pointsSystemsSession?: any,
     public location?: string,
