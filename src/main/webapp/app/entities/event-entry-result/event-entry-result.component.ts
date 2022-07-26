@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { JhiEventManager, JhiParseLinks, JhiDataUtils, JhiAlertService } from 'ng-jhipster';
 
+import { SessionType } from '../../shared/enumerations/sessionType.enum';
 import { EventEdition } from '../../shared/model/event-edition.model';
 import { EventSession } from '../../shared/model/event-session.model';
 import { EventEntry } from '../../shared/model/event-entry.model';
@@ -54,20 +55,20 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     if (this.eventEdition.allowedCategories.length > 1) {
       this.displayedColumns.push('category');
     }
-    if (this.eventSession.sessionTypeValue === 2 || this.eventSession.sessionTypeValue === 4) {
+    if (this.isRace()) {
       this.displayedColumns.push('totalTime');
     }
-    if (this.eventSession.sessionTypeValue !== 4) {
-      this.displayedColumns.push('bestLapTime');
-    }
-    if (this.eventSession.sessionTypeValue !== 2 && this.eventSession.sessionTypeValue !== 4) {
+
+    this.displayedColumns.push('bestLapTime');
+
+    if (!this.isRace()) {
       this.displayedColumns.push('difference', 'previous');
     }
     this.displayedColumns.push('lapsCompleted');
-    if (this.eventSession.sessionTypeValue === 2) {
+    if (this.isRace()) {
       this.displayedColumns.push('lapsLed');
     }
-    if (this.eventSession.sessionTypeValue === 2 || this.eventSession.sessionTypeValue === 4) {
+    if (this.isRace()) {
       this.displayedColumns.push('retired', 'retirementCause');
     }
     this.displayedColumns.push('buttons');
@@ -195,5 +196,9 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
 
   registerChangeInEventEntryResults() {
     this.eventSubscriber = this.eventManager.subscribe('eventEntryResultListModification', () => this.loadAll());
+  }
+
+  private isRace(): boolean {
+    return this.eventSession.sessionType === SessionType.RACE || this.eventSession.sessionType === SessionType.QUALIFYING_RACE;
   }
 }
