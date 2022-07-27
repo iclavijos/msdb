@@ -37,7 +37,7 @@
                     <ng-container *ngIf="!eventEdition.event.rally && !eventEdition.event.raid" matColumnDef="duration">
                         <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.session.duration' | translate }}</th>
                         <td mat-cell *matCellDef="let session">
-                            {{session.duration}} {{'motorsportsDatabaseApp.eventEdition.enumerations.' + getDurationTypeKey(session.durationType) | translate}}
+                            {{session.duration}} {{'motorsportsDatabaseApp.eventEdition.enumerations.' + session.durationType | translate}}
                             <span *ngIf="session.additionalLap">+ 1 {{'motorsportsDatabaseApp.eventEdition.session.lap' | translate}}</span>
                         </td>
                     </ng-container>

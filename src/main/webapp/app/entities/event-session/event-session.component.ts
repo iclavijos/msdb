@@ -163,9 +163,4 @@ export class EventSessionComponent implements OnInit, OnChanges {
     this.convertedTime = false;
     this.eventSessions = clonedSessions;
   }
-
-  getDurationTypeKey(durationType: DurationType): string {
-    const enumIndex = DurationType[durationType];
-    return DurationType[enumIndex].toLowerCase();
-  }
 }
