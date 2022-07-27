@@ -8,6 +8,7 @@ import javax.validation.constraints.*;
 
 import com.icesoft.msdb.domain.enums.DurationType;
 import com.icesoft.msdb.domain.enums.SessionType;
+import com.icesoft.msdb.repository.converter.DurationTypeConverter;
 import com.icesoft.msdb.repository.converter.SessionTypeConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -64,7 +65,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     private Integer maxDuration;
 
     @Column(name= "duration_type")
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = DurationTypeConverter.class)
     private DurationType durationType;
 
     @Column(name= "session_type")
