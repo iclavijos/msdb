@@ -25,7 +25,12 @@ public class JDBCRepositoryImpl {
 				+ "where editionId = ? "
 				+ "order by sessionStartTime asc, finalPos asc";
 		List<Object[]> tmp = jdbcTemplate.query(query, new Object[] {eventEditionId},
-				(rs, rowNum) -> new Object[] {rs.getLong("entryId"), rs.getString("catName"), rs.getString("sessionName"), rs.getInt("finalPos")});
+				(rs, rowNum) -> new Object[] {
+                    rs.getLong("entryId"),
+                    rs.getString("catName"),
+                    rs.getString("sessionName"),
+                    rs.getInt("finalPos")
+        });
 
 		List<String> categories = tmp.parallelStream().map(o -> o[1].toString()).distinct().collect(Collectors.toList());
 		List<String> sessions = tmp.parallelStream().map(o -> o[2].toString()).distinct().collect(Collectors.toList());
