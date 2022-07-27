@@ -75,7 +75,7 @@
                         {{'motorsportsDatabaseApp.eventEdition.session.sessionType' | translate}}
                     </mat-label>
                     <mat-select id="field_sessionType" name="sessionType" formControlName="sessionType">
-                        <mat-option *ngFor="let session of sessionKeys()" [value]="sessionValues[session]">
+                        <mat-option *ngFor="let session of sessionTypeValues()" [value]="session">
                             {{'motorsportsDatabaseApp.eventEdition.enumerations.' + session | translate}}
                         </mat-option>
                     </mat-select>
@@ -141,8 +141,8 @@
                         {{'motorsportsDatabaseApp.eventEdition.session.durationType' | translate}}
                     </mat-label>
                     <mat-select id="field_durationType" name="durationType" formControlName="durationType" (selectionChange)="onChangeType($event)" required>
-                        <mat-option *ngFor="let duration of durationKeys()" [value]="durationValues[duration]">
-                            {{'motorsportsDatabaseApp.eventEdition.enumerations.' + duration | translate}}
+                        <mat-option *ngFor="let duration of durationTypeValues()" [value]="duration">
+                            {{'motorsportsDatabaseApp.eventEdition.enumerations.' + duration.toLowerCase() | translate}}
                         </mat-option>
                     </mat-select>
                     <div [hidden]="!(editForm.controls.durationType?.dirty && editForm.controls.durationType?.invalid)">

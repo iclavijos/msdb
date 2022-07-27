@@ -14,6 +14,8 @@ import { SessionType } from '../../shared/enumerations/sessionType.enum';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
+type SessionTypeKeys = keyof typeof SessionType;
+
 @Component({
   selector: 'jhi-event-session-update',
   templateUrl: './event-session-update.component.html'
@@ -24,10 +26,6 @@ export class EventSessionUpdateComponent implements OnInit {
 
   private eventEditionId: number;
   eventSession: IEventSession;
-  sessionTypes = SessionType;
-  sessionValues = SessionType;
-  durationTypes = DurationType;
-  durationValues = DurationType;
 
   timeZone: any;
 
@@ -72,14 +70,12 @@ export class EventSessionUpdateComponent implements OnInit {
     this.updateForm(this.eventSession);
   }
 
-  durationKeys(): Array<string> {
-    const keys = Object.keys(this.durationTypes);
-    return keys.slice(keys.length / 2);
+  durationTypeValues(): Array<string> {
+    return Object.values(DurationType);
   }
 
-  sessionKeys(): Array<string> {
-    const keys = Object.keys(this.sessionTypes);
-    return keys.slice(keys.length / 2);
+  sessionTypeValues(): Array<string> {
+    return Object.values(SessionType);
   }
 
   updateForm(eventSession: IEventSession) {
@@ -97,11 +93,12 @@ export class EventSessionUpdateComponent implements OnInit {
       location: eventSession.location,
       cancelled: eventSession.cancelled
     });
-    this.isTimedRace = eventSession.sessionType >= 2 && eventSession.durationType >= 3;
+
+    this.isTimedRace = this.sessionIsTimedRace(eventSession.sessionType, eventSession.durationType);
     if (this.eventSession.eventEdition.event.rally || this.eventSession.eventEdition.event.raid) {
       this.editForm.get('durationType').disable();
-      this.editForm.get('durationType').setValue(this.durationTypes.KILOMETERS);
-      this.editForm.get('sessionType').setValue(this.sessionTypes.STAGE);
+      this.editForm.get('durationType').setValue(DurationType.KILOMETERS);
+      this.editForm.get('sessionType').setValue(SessionType.STAGE);
     }
   }
 
@@ -169,5 +166,12 @@ export class EventSessionUpdateComponent implements OnInit {
 
   protected onSaveError() {
     this.isSaving = false;
+  }
+
+  private sessionIsTimedRace(sessionType: SessionType, durationType: DurationType): boolean {
+    return (
+      (sessionType === SessionType.RACE || sessionType === SessionType.QUALIFYING_RACE) &&
+      !(durationType === DurationType.MINUTES || durationType === DurationType.HOURS)
+    );
   }
 }
