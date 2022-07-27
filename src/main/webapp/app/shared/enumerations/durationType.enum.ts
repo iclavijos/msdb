@@ -1,7 +1,7 @@
 export enum DurationType {
-  MINUTES,
-  HOURS,
-  KILOMETERS,
-  MILES,
-  LAPS
+  MINUTES = 'minutes',
+  HOURS = 'hours',
+  KILOMETERS = 'kms',
+  MILES = 'miles',
+  LAPS = 'laps'
 }
