@@ -24,7 +24,6 @@ export class EventEntryResultUpdateComponent implements OnInit {
   eventEdition: IEventEdition;
   eventEntryResult: IEventEntryResult;
   entries: IEventEntry[];
-  sessionTypes = SessionType;
 
   positions: number[];
 
@@ -186,5 +185,9 @@ export class EventEntryResultUpdateComponent implements OnInit {
     }
 
     return parseInt((hours * 3600 + minutes * 60 + seconds).toString() + tenthousands, 10);
+  }
+
+  public isRace(): boolean {
+    return this.eventEntryResult.session.sessionType === SessionType.RACE || this.eventEntryResult.session.sessionType === SessionType.QUALIFYING_RACE;
   }
 }

@@ -2,7 +2,7 @@
 <div mat-dialog-content [formGroup]="editForm">
     <jhi-alert-error></jhi-alert-error>
     <div class="row">
-        <div class="col-3" *ngIf="eventEntryResult.session.sessionType === sessionTypes['race']">
+        <div class="col-3" *ngIf="isRace()">
             <mat-form-field class="example-full-width">
                 <mat-label>
                     {{'motorsportsDatabaseApp.eventEdition.result.startingPosition' | translate}}
@@ -45,7 +45,7 @@
             </mat-form-field>
         </div>
     </div>
-    <div *ngIf="eventEntryResult.session.sessionType !== sessionTypes['race']">
+    <div *ngIf="!isRace()">
         <div class="row">
             <div class="col-3">
                 <mat-form-field class="example-full-width">
@@ -68,7 +68,7 @@
             </div>
         </div>
     </div>
-    <div *ngIf="eventEntryResult.session.sessionType === sessionTypes['race']">
+    <div *ngIf="isRace()">
         <div class="row">
             <div class="col-3">
                 <mat-form-field class="example-full-width">
