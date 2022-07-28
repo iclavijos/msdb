@@ -607,7 +607,8 @@ public class EventEditionResource {
 
 			eventEntryRepository.save(result);
         }
-        eventEntrySearchRepo.save(result);
+        // Temporarily removing persistence of event entries on search engine
+        // eventEntrySearchRepo.save(result);
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/entries"))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME_ENTRY, result.getId().toString()))
             .body(result);
@@ -633,7 +634,9 @@ public class EventEditionResource {
         eventEntry.getDrivers().forEach(de -> de.setEventEntry(eventEntry));
         driverEntryRepository.saveAll(eventEntry.getDrivers());
         EventEditionEntry result = eventEntryRepository.save(eventEntry);
-        eventEntrySearchRepo.save(result);
+
+        // Temporarily removing persistence of event entries on search engine
+        // eventEntrySearchRepo.save(result);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME_ENTRY, eventEntry.getId().toString()))
             .body(result);
