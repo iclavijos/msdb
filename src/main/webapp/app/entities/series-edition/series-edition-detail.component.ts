@@ -118,7 +118,7 @@ export class SeriesEditionDetailComponent implements OnInit {
       this.map.invalidateSize();
     });
     this.map = newMap;
-    if (this.eventsAndWinners && this.eventsAndWinners.length > 0) {
+    if (this.eventsAndWinners?.length > 0) {
       this.addMapMarkers();
     }
   }
@@ -201,9 +201,6 @@ export class SeriesEditionDetailComponent implements OnInit {
     this.seriesEditionService.findEvents(this.seriesEdition.id).subscribe(events => {
       this.eventsAndWinners = events.body;
       this.seriesEdition.events = this.eventsAndWinners.map(eventWinners => eventWinners.eventEdition);
-      if (this.seriesEdition.events.filter(event => event.status !== 'ONGOING').length > 0) {
-        this.displayedColumns.unshift('status');
-      }
       this.addMapMarkers();
     });
   }
