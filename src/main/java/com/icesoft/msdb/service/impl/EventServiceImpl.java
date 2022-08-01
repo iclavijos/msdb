@@ -101,7 +101,14 @@ public class EventServiceImpl implements EventService {
             ));
             result = eventEditionRepository.save(result);
         }
-        eventEditionSearchRepository.save(result);
+
+        EventEdition searchEntry = new EventEdition();
+        searchEntry.setId(result.getId());
+        searchEntry.setLongEventName(result.getLongEventName());
+        searchEntry.setShortEventName(result.getShortEventName());
+        searchEntry.setMultidriver(null);
+        eventEditionSearchRepository.save(searchEntry);
+
         if (result.getSeriesEditions() != null) {
             result.getSeriesEditions().forEach(se -> cacheHandler.resetWinnersCache(se.getId()));
         }
