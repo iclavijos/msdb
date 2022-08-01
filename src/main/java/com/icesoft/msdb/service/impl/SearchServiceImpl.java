@@ -7,6 +7,7 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.icesoft.msdb.domain.AbstractAuditingEntity;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortMode;
@@ -184,7 +185,10 @@ public class SearchServiceImpl implements SearchService {
 	private <T> Void updateSearchIndex(final Stream<T> stream, final ElasticsearchRepository<T, Long> searchRepo) {
 		searchRepo.deleteAll();
 		log.trace("Index deleted. Rebuilding...");
-		stream.parallel().forEach(elem -> searchRepo.save(elem));
+		stream.parallel().forEach(elem -> {
+            T tmp = (T)((AbstractAuditingEntity)elem).trim();
+            searchRepo.save(tmp);
+        });
 		stream.close();
 		return null;
 	}
