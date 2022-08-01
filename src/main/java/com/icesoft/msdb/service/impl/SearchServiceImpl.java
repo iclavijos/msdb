@@ -165,11 +165,11 @@ public class SearchServiceImpl implements SearchService {
             txTemplate.execute(status -> updateSearchIndex(seriesRepo.streamAll(), seriesSearchRepo));
             log.debug("Building Series index done");
         });
-//        tasks.add(() -> {
-//            log.debug("Building Event Editions index");
-//            txTemplate.execute(status -> updateSearchIndex(eventEditionRepo.streamAllByIdNotNull(), eventEditionSearchRepo));
-//            log.debug("Building Event Editions index done");
-//        });
+        tasks.add(() -> {
+            log.debug("Building Event Editions index");
+            txTemplate.execute(status -> updateSearchIndex(eventEditionRepo.streamAllByIdNotNull(), eventEditionSearchRepo));
+            log.debug("Building Event Editions index done");
+        });
 
         tasks.forEach(task -> {
             executor.execute(task);
@@ -217,7 +217,6 @@ public class SearchServiceImpl implements SearchService {
                 .order(sort.getDirection().isAscending() ? SortOrder.ASC : SortOrder.DESC)));
 
         NativeSearchQuery nativeQuery = nativeSearchQueryBuilder.build();
-
         SearchHitsIterator<T> hits = operations.searchForStream(nativeQuery, searchClass);
         Page<T> result = new PageImpl(
             hits.stream()
