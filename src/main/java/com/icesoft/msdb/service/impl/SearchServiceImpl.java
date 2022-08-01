@@ -195,23 +195,13 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public <T> Page<T> performWildcardSearch(Class<T> searchClass, String query, List<String> fields, Pageable pageable) {
-        String[] queryTerms = query.split(" ");
+        String[] queryFields = new String[fields.size()];
+        MultiMatchQueryBuilder queryBuilder = QueryBuilders.multiMatchQuery(query, fields.toArray(queryFields));
+        queryBuilder
+            .type(MultiMatchQueryBuilder.Type.BOOL_PREFIX)
+            .operator(Operator.OR);
+
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
-        fields.stream().forEach(field -> {
-            Arrays.stream(queryTerms).forEach(queryTerm -> {
-                boolQueryBuilder.should(
-                    QueryBuilders.wildcardQuery(field, "*" + queryTerm + "*"));
-                boolQueryBuilder.should(
-                    QueryBuilders.matchQuery(field, queryTerm));
-            });
-        });
-
-        String queryString = Arrays.stream(queryTerms)
-            .map(value -> value + "*")
-            .collect(Collectors.joining("~2 | "));
-        SimpleQueryStringBuilder queryBuilder = new SimpleQueryStringBuilder(queryString + "~2");
-        fields.parallelStream().forEach(field -> queryBuilder.field(field));
-
         boolQueryBuilder.should(queryBuilder);
         NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder()
             .withQuery(boolQueryBuilder);
@@ -220,8 +210,7 @@ public class SearchServiceImpl implements SearchService {
                 .fieldSort(sort.getProperty())
                 .order(sort.getDirection().isAscending() ? SortOrder.ASC : SortOrder.DESC)));
 
-        NativeSearchQuery nativeQuery = nativeSearchQueryBuilder.build();
-        SearchHitsIterator<T> hits = operations.searchForStream(nativeQuery, searchClass);
+        SearchHitsIterator<T> hits = operations.searchForStream(nativeSearchQueryBuilder.build(), searchClass);
         Page<T> result = new PageImpl(
             hits.stream()
                 .skip(pageable.getPageNumber() * pageable.getPageSize())
