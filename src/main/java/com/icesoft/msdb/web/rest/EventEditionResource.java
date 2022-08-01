@@ -860,7 +860,7 @@ public class EventEditionResource {
     @PostMapping("/event-editions/{eventEditionId}/clone")
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
-    public ResponseEntity<Void> cloneSeriesEdition(@PathVariable Long eventEditionId, @RequestBody String newPeriod) {
+    public ResponseEntity<Void> cloneEventEdition(@PathVariable Long eventEditionId, @RequestBody String newPeriod) {
         eventService.cloneEventEdition(eventEditionId, newPeriod, Collections.EMPTY_SET);
         return ResponseEntity.ok().headers(
             HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, eventEditionId.toString())).build();
