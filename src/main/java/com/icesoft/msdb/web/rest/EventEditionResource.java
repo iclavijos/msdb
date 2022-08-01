@@ -152,8 +152,8 @@ public class EventEditionResource {
         }
         result = eventService.save(eventEdition, true);
 
-        eventEditionSearchRepo.deleteById(result.getId()); //TODO: Temporary fix to avoid duplicity after cloning series edition
-        eventEditionSearchRepo.save(result);
+//        eventEditionSearchRepo.deleteById(result.getId()); //TODO: Temporary fix to avoid duplicity after cloning series edition
+//        eventEditionSearchRepo.save(result);
 
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, eventEdition.getId().toString()))
@@ -330,12 +330,6 @@ public class EventEditionResource {
     @GetMapping("/_search/event-editions")
     public ResponseEntity<List<EventEdition>> searchEventEditions(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of EventEditions for query {}", query);
-
-//        QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(
-//    			QueryBuilders.queryStringQuery("*" + query.toLowerCase() + "*")
-//    				.analyzeWildcard(true)
-//    				.field("longEventName", 2.0f)
-//    				.field("shortEventName"));
 
         Page<EventEdition> page = searchService.performWildcardSearch(
             EventEdition.class,
