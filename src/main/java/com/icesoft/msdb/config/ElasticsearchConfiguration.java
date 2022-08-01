@@ -38,7 +38,8 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
                 new InstantWritingConverter(),
                 new InstantReadingConverter(),
                 new LocalDateWritingConverter(),
-                new LocalDateReadingConverter()
+                new LocalDateReadingConverter(),
+                new IntegerArrayListDateReadingConverter()
             )
         );
     }
@@ -115,17 +116,17 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
         }
     }
 
-//    @ReadingConverter
-//    static class IntegerArrayListDateReadingConverter implements Converter<ArrayList<Integer>, LocalDate> {
-//
-//        @Override
-//        public LocalDate convert(ArrayList<Integer> source) {
-//            if (source == null || source.size() != 3) {
-//                return null;
-//            }
-//            return LocalDate.of(source.get(0), source.get(1), source.get(2));
-//        }
-//    }
+    @ReadingConverter
+    static class IntegerArrayListDateReadingConverter implements Converter<ArrayList<Integer>, LocalDate> {
+
+        @Override
+        public LocalDate convert(ArrayList<Integer> source) {
+            if (source == null || source.size() != 3) {
+                return null;
+            }
+            return LocalDate.of(source.get(0), source.get(1), source.get(2));
+        }
+    }
 
 //    @Bean
 //    public EntityMapper getEntityMapper() {

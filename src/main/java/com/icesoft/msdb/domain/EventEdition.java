@@ -3,10 +3,7 @@ package com.icesoft.msdb.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.repository.converter.EventStatusTypeConverter;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -54,13 +51,13 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     @NotNull
     @Size(max = 40)
     @Column(name = "short_event_name", length = 40, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String shortEventName;
 
     @NotNull
     @Size(max = 100)
     @Column(name = "long_event_name", length = 100, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String longEventName;
 
     @NotNull
@@ -187,6 +184,16 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
 
     public Boolean isMultidriver() {
         return multidriver;
+    }
+
+    public EventEdition trim() {
+        EventEdition eventEdition = new EventEdition();
+        eventEdition.setId(this.id);
+        eventEdition.setLongEventName(this.longEventName);
+        eventEdition.setShortEventName(this.shortEventName);
+        eventEdition.multidriver = null;
+
+        return eventEdition;
     }
 
 }

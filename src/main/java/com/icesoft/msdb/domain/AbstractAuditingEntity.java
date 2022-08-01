@@ -21,7 +21,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Data
-public abstract class AbstractAuditingEntity implements Serializable {
+public abstract class AbstractAuditingEntity<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,4 +45,7 @@ public abstract class AbstractAuditingEntity implements Serializable {
     @JsonIgnore
     private Instant lastModifiedDate = Instant.now();
 
+    public T trim() {
+        return (T)this;
+    }
 }
