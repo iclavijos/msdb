@@ -16,7 +16,7 @@
 logging:
   level:
     ROOT: INFO
-    tech.jhipster: DEBUG
+    tech.jhipster: INFO
     org.hibernate.SQL: ERROR
     com.icesoft.msdb: DEBUG
 
