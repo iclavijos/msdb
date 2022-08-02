@@ -1,5 +1,6 @@
 package com.icesoft.msdb.service.dto;
 
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -46,7 +47,7 @@ public class EventEntrySearchResultDTO {
 				entry.getChassis().getName());
 		if (entry.getEngine() != null) {
 			Double capacity = new java.math.BigDecimal(Optional.ofNullable(entry.getEngine()).orElse(new Engine()).getCapacity() / 1000d)
-					.setScale(1, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+					.setScale(1, RoundingMode.HALF_UP).doubleValue();
 			chassisEngine.concat(String.format("/%s %s %s %s",
 					entry.getEngine().getManufacturer(),
 					entry.getEngine().getName(),

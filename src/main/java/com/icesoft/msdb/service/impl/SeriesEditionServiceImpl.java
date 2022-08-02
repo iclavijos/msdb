@@ -230,7 +230,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	    			if (winner[2].equals(session)) {
 		        		EventEditionEntry entry = eventEntryRepo.findById((Long)winner[0]).get();
 		        		catWinners.addWinners((String)winner[1], entry);
-		        		if (winner[3].equals(new Integer(1))) {
+		        		if (winner[3].equals(Integer.valueOf(1))) {
 		        			overallWinner = entry;
 		        		}
 	    			}

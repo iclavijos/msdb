@@ -135,7 +135,7 @@ public class EventEditionResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        EventEdition result = eventEditionRepository.getOne(eventEdition.getId());
+        EventEdition result = eventEditionRepository.getById(eventEdition.getId());
         if (result.getSeriesEditions() != null) {
     		eventEdition.setSeriesEditions(result.getSeriesEditions());
     	}
@@ -270,7 +270,7 @@ public class EventEditionResource {
     @Transactional
     public ResponseEntity<Void> deleteEventEdition(@PathVariable Long id) {
         log.debug("REST request to delete EventEdition : {}", id);
-        EventEdition eventEd = eventEditionRepository.getOne(id);
+        EventEdition eventEd = eventEditionRepository.getById(id);
 
         if (eventEd.getSeriesEditions() != null) {
             eventEd.getSeriesEditions().stream().forEach(se -> {
@@ -283,7 +283,7 @@ public class EventEditionResource {
         sessions.forEach(eventSession -> {
             eventResultRepository.deleteBySession(eventSession);
         });
-        eventSessionRepository.deleteInBatch(sessions);
+        eventSessionRepository.deleteAllInBatch(sessions);
         eventEntryRepository.deleteByEventEdition(eventEd);
 
         if (eventEd.getPosterUrl() != null) {
