@@ -1,5 +1,6 @@
 package com.icesoft.msdb.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.repository.converter.EventStatusTypeConverter;
@@ -35,7 +36,7 @@ import java.util.TreeSet;
 		@NamedAttributeNode(value="longEventName")
 })
 @Data @EqualsAndHashCode(callSuper=false)
-@NoArgsConstructor
+@Builder @NoArgsConstructor @AllArgsConstructor
 public class EventEdition extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -65,6 +66,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     private LocalDate eventDate;
 
     @Column(name = "multidriver")
+    @Builder.Default
     private Boolean multidriver = false;
 
     @Convert(converter = EventStatusTypeConverter.class)
@@ -186,14 +188,14 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
         return multidriver;
     }
 
+    @Override
+    @JsonIgnore
     public EventEdition trim() {
-        EventEdition eventEdition = new EventEdition();
-        eventEdition.setId(this.id);
-        eventEdition.setLongEventName(this.longEventName);
-        eventEdition.setShortEventName(this.shortEventName);
-        eventEdition.multidriver = null;
-
-        return eventEdition;
+        return EventEdition.builder()
+            .id(this.id)
+            .longEventName(this.longEventName)
+            .shortEventName(this.shortEventName)
+            .build();
     }
 
 }

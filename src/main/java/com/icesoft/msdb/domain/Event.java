@@ -1,9 +1,7 @@
 package com.icesoft.msdb.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -30,6 +28,7 @@ import java.util.Set;
 		@NamedAttributeNode(value="description")
 })
 @Data @EqualsAndHashCode(callSuper=false)
+@Builder @AllArgsConstructor @NoArgsConstructor
 public class Event extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -41,12 +40,12 @@ public class Event extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String name;
 
     @Size(max = 100)
     @Column(name = "description", length = 100)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String description;
 
     @OneToMany(mappedBy = "event")
@@ -55,6 +54,7 @@ public class Event extends AbstractAuditingEntity implements Serializable {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @org.springframework.data.annotation.Transient
+    @Builder.Default
     private Set<EventEdition> editions = new HashSet<>();
 
     @Column(name= "rally")
@@ -71,5 +71,15 @@ public class Event extends AbstractAuditingEntity implements Serializable {
 
     public boolean isRaid() {
         return Optional.ofNullable(raid).orElse(Boolean.FALSE).booleanValue();
+    }
+
+    @Override
+    @JsonIgnore
+    public Event trim() {
+        return Event.builder()
+            .id(this.id)
+            .name(this.name)
+            .description(this.description)
+            .build();
     }
 }

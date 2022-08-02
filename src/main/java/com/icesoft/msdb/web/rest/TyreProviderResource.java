@@ -82,7 +82,7 @@ public class TyreProviderResource {
         tyreProviderSearchRepository.save(result);
         if (tyreProvider.getLogo() != null) {
 	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), tyreProvider.getLogo(), ENTITY_NAME);
-	        tyreProvider.logoUrl(cdnUrl);
+	        tyreProvider.setLogoUrl(cdnUrl);
 
 			result = tyreProviderRepository.save(result);
         }
@@ -123,7 +123,7 @@ public class TyreProviderResource {
 
         if (tyreProvider.getLogo() != null) {
         	String cdnUrl = cdnService.uploadImage(tyreProvider.getId().toString(), tyreProvider.getLogo(), ENTITY_NAME);
-        	tyreProvider.logoUrl(cdnUrl);
+        	tyreProvider.setLogoUrl(cdnUrl);
         } else if (tyreProvider.getLogoUrl() == null) {
         	cdnService.deleteImage(tyreProvider.getId().toString(), ENTITY_NAME);
         }

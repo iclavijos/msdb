@@ -3,8 +3,8 @@ package com.icesoft.msdb.domain;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -20,8 +20,8 @@ import java.util.Objects;
 @Table(name = "points_system")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "pointssystem")
-@Data
-@EqualsAndHashCode(callSuper = false)
+@Data @EqualsAndHashCode(callSuper = false)
+@Builder @AllArgsConstructor @NoArgsConstructor
 public class PointsSystem extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -34,12 +34,12 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
     @NotNull
     @Size(max = 50)
     @Column(name = "name", length = 50, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String name;
 
     @Size(max = 100)
     @Column(name = "description", length = 100)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String description;
 
     @Column(name = "points")
@@ -59,17 +59,21 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 
     //Maximum finishing position to get points for fast lap
     @Column(name = "max_pos_fast_lap")
+    @Builder.Default
     private Integer maxPosFastLap = 9999;
 
     //Minimum percentage of the race to be completed to award points for fast lap
     @Column(name = "pct_completed_fl")
+    @Builder.Default
     private Integer pctCompletedFastLap = 0;
 
     @Column(name = "always_assign_fl")
+    @Builder.Default
     private Boolean alwaysAssignFastLap = true;
 
     //If started from pitlane, award points for fast lap?
     @Column(name = "pitlane_start_allowed")
+    @Builder.Default
     private Boolean pitlaneStartAllowed = false;
 
     @Column(name = "race_pct_completed_total_points")
@@ -103,4 +107,12 @@ public class PointsSystem extends AbstractAuditingEntity implements Serializable
 		return pitlaneStartAllowed;
 	}
 
+    @Override
+    @JsonIgnore
+    public PointsSystem trim() {
+        return PointsSystem.builder()
+            .id(this.id)
+            .name(this.name)
+            .build();
+    }
 }

@@ -85,7 +85,7 @@ public class FuelProviderResource {
         fuelProviderSearchRepository.save(result);
         if (fuelProvider.getLogo() != null) {
             String cdnUrl = cdnService.uploadImage(result.getId().toString(), fuelProvider.getLogo(), ENTITY_NAME);
-            fuelProvider.logoUrl(cdnUrl);
+            fuelProvider.setLogoUrl(cdnUrl);
 
             result = fuelProviderRepository.save(result);
         }
@@ -126,7 +126,7 @@ public class FuelProviderResource {
 
         if (fuelProvider.getLogo() != null) {
             String cdnUrl = cdnService.uploadImage(fuelProvider.getId().toString(), fuelProvider.getLogo(), ENTITY_NAME);
-            fuelProvider.logoUrl(cdnUrl);
+            fuelProvider.setLogoUrl(cdnUrl);
         } else if (fuelProvider.getLogoUrl() == null) {
             cdnService.deleteImage(fuelProvider.getId().toString(), ENTITY_NAME);
         }

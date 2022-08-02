@@ -3,8 +3,8 @@ package com.icesoft.msdb.domain;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -22,6 +22,7 @@ import java.util.Set;
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "series")
 @Data @EqualsAndHashCode(callSuper = false)
+@Builder @AllArgsConstructor @NoArgsConstructor
 public class Series extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -33,18 +34,18 @@ public class Series extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 100)
     @Column(name = "name", length = 100, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String name;
 
     @NotNull
     @Size(max = 10)
     @Column(name = "shortname", length = 10, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String shortname;
 
     @Size(max = 50)
     @Column(name = "organizer", length = 50)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String organizer;
 
     @Transient
@@ -56,5 +57,14 @@ public class Series extends AbstractAuditingEntity implements Serializable {
     @Column
     private Integer relevance;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    @Override
+    @JsonIgnore
+    public Series trim() {
+        return Series.builder()
+            .id(this.id)
+            .name(this.name)
+            .shortname(this.shortname)
+            .organizer(this.organizer)
+            .build();
+    }
 }

@@ -3,8 +3,8 @@ package com.icesoft.msdb.domain;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -20,6 +20,7 @@ import java.util.Objects;
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "tyreprovider")
 @Data @EqualsAndHashCode(callSuper = false)
+@Builder @AllArgsConstructor @NoArgsConstructor
 public class TyreProvider extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -32,7 +33,7 @@ public class TyreProvider extends AbstractAuditingEntity implements Serializable
     @NotNull
     @Size(max = 50)
     @Column(name = "name", length = 50, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String name;
 
     @Transient
@@ -47,19 +48,12 @@ public class TyreProvider extends AbstractAuditingEntity implements Serializable
     @Column(name="background_color")
     private String backgroundColor;
 
-    public TyreProvider name(String name) {
-        this.name = name;
-        return this;
+    @Override
+    @JsonIgnore
+    public TyreProvider trim() {
+        return TyreProvider.builder()
+            .id(this.id)
+            .name(this.name)
+            .build();
     }
-
-    public TyreProvider logo(byte[] logo) {
-        this.logo = logo;
-        return this;
-    }
-
-    public TyreProvider logoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
-        return this;
-    }
-
 }

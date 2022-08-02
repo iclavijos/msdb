@@ -3,8 +3,8 @@ package com.icesoft.msdb.domain;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -21,7 +21,7 @@ import java.io.Serializable;
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "category")
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
-@Data
+@Data @Builder @AllArgsConstructor @NoArgsConstructor
 public class Category extends AbstractAuditingEntity implements Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
@@ -35,14 +35,14 @@ public class Category extends AbstractAuditingEntity implements Serializable, Co
     @NotNull
     @Size(max = 40)
     @Column(name = "name", length = 40, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     @EqualsAndHashCode.Include
     private String name;
 
     @NotNull
     @Size(max = 10)
     @Column(name = "shortname", length = 10, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     @EqualsAndHashCode.Include
     private String shortname;
 
@@ -81,5 +81,15 @@ public class Category extends AbstractAuditingEntity implements Serializable, Co
         } else {
             return this.getId().compareTo(otherCategory.getId());
         }
+    }
+
+    @Override
+    @JsonIgnore
+    public Category trim() {
+        return Category.builder()
+            .id(this.id)
+            .name(this.name)
+            .shortname(this.shortname)
+            .build();
     }
 }

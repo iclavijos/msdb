@@ -95,7 +95,7 @@ public class DriverResource {
         driverSearchRepository.save(result);
         if (driver.getPortrait() != null) {
 	        String cdnUrl = cdnService.uploadImage(driver.getId().toString(), driver.getPortrait(), ENTITY_NAME);
-			driver.portraitUrl(cdnUrl);
+			driver.setPortraitUrl(cdnUrl);
 
 			result = driverRepository.save(driver);
 			driverSearchRepository.save(result);

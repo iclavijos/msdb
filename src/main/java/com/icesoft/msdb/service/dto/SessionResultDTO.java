@@ -47,7 +47,10 @@ public class SessionResultDTO {
     	this.differenceType = result.getDifferenceType();
     	this.entry = result.getEntry();
     	this.entry.setEventEdition(null);
-    	this.entry.engine(null).chassis(null).fuel(null).team(null);
+    	this.entry.setEngine(null);
+        this.entry.setChassis(null);
+        this.entry.setFuel(null);
+        this.entry.setTeam(null);
     }
 
 	public void setFinalPosition(String finalPosition) {

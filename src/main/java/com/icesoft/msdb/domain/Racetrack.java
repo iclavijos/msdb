@@ -4,9 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -24,6 +22,7 @@ import java.util.Objects;
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "racetrack")
 @Data @EqualsAndHashCode(callSuper = false)
+@Builder @AllArgsConstructor @NoArgsConstructor
 public class Racetrack extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -36,13 +35,13 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 100)
     @Column(name = "name", length = 100, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String name;
 
     @NotNull
     @Size(max = 100)
     @Column(name = "location", length = 100, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String location;
 
     @NotNull
@@ -71,6 +70,16 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @EqualsAndHashCode.Exclude @ToString.Exclude
     @org.springframework.data.annotation.Transient
+    @Builder.Default
     private Set<RacetrackLayout> layouts = new HashSet<>();
 
+    @Override
+    @JsonIgnore
+    public Racetrack trim() {
+        return Racetrack.builder()
+            .id(this.id)
+            .name(this.name)
+            .location(this.location)
+            .build();
+    }
 }
