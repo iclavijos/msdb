@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -31,6 +29,7 @@ import java.util.Set;
 		@NamedAttributeNode(value="debutYear")
 })
 @Data @EqualsAndHashCode(callSuper = false)
+@Builder @AllArgsConstructor @NoArgsConstructor
 public class Chassis extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -43,13 +42,13 @@ public class Chassis extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @Size(max = 50)
     @Column(name = "name", length = 50, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String name;
 
     @NotNull
     @Size(max = 50)
     @Column(name = "manufacturer", length = 50, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String manufacturer;
 
     @NotNull
@@ -70,6 +69,7 @@ public class Chassis extends AbstractAuditingEntity implements Serializable {
     @EqualsAndHashCode.Exclude @ToString.Exclude
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @org.springframework.data.annotation.Transient
+    @Builder.Default
     private Set<Chassis> evolutions = new HashSet<>();
 
     @ManyToOne
@@ -91,4 +91,13 @@ public class Chassis extends AbstractAuditingEntity implements Serializable {
         return this;
     }
 
+    @Override
+    @JsonIgnore
+    public Chassis trim() {
+        return Chassis.builder()
+            .id(this.id)
+            .name(this.name)
+            .manufacturer(this.manufacturer)
+            .build();
+    }
 }

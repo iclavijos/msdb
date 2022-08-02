@@ -545,8 +545,7 @@ public class EventEditionResource {
             () -> new MSDBException("Invalid event edition id " + idTarget)
         );
     	for(EventEditionEntry entry : entries) {
-    		EventEditionEntry copiedEntry = new EventEditionEntry();
-    		copiedEntry
+    		EventEditionEntry copiedEntry = EventEditionEntry.builder()
     			.category(entry.getCategory())
     			.entryName(entry.getEntryName())
     			.eventEdition(target)
@@ -557,7 +556,8 @@ public class EventEditionResource {
     			.tyres(entry.getTyres())
     			.team(entry.getTeam())
     			.operatedBy(entry.getOperatedBy())
-    			.setCarImageUrl(entry.getCarImageUrl());
+    			.carImageUrl(entry.getCarImageUrl())
+                .build();
 
             copiedEntry = eventEntryRepository.save(copiedEntry);
 

@@ -1,12 +1,11 @@
 package com.icesoft.msdb.domain;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -22,6 +21,7 @@ import java.util.Objects;
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "racetracklayout")
 @Data @EqualsAndHashCode(callSuper = false)
+@Builder @AllArgsConstructor @NoArgsConstructor
 public class RacetrackLayout extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -34,7 +34,7 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
     @NotNull
     @Size(max = 100)
     @Column(name = "name", length = 100, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String name;
 
     @NotNull
@@ -57,4 +57,12 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
     @EqualsAndHashCode.Exclude @ToString.Exclude
     private Racetrack racetrack;
 
+    @Override
+    @JsonIgnore
+    public RacetrackLayout trim() {
+        return RacetrackLayout.builder()
+            .id(this.id)
+            .name(this.name)
+            .build();
+    }
 }

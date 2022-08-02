@@ -89,7 +89,7 @@ public class TeamResource {
         teamSearchRepository.save(result);
         if (team.getLogo() != null) {
 	        String cdnUrl = cdnService.uploadImage(team.getId().toString(), team.getLogo(), ENTITY_NAME);
-			team.logoUrl(cdnUrl);
+			team.setLogoUrl(cdnUrl);
 
 			result = teamRepository.save(result);
         }
@@ -128,7 +128,7 @@ public class TeamResource {
 
         if (team.getLogo() != null) {
         	String cdnUrl = cdnService.uploadImage(team.getId().toString(), team.getLogo(), ENTITY_NAME);
-			team.logoUrl(cdnUrl);
+			team.setLogoUrl(cdnUrl);
         } else if (team.getLogoUrl() == null) {
         	cdnService.deleteImage(team.getId().toString(), ENTITY_NAME);
         }

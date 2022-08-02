@@ -7,8 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.icesoft.msdb.MSDBException;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -28,8 +27,8 @@ import java.util.regex.Pattern;
 @Table(name = "series_edition")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "seriesedition")
-@Data
-@EqualsAndHashCode(callSuper = false)
+@Data @EqualsAndHashCode(callSuper = false)
+@Builder @AllArgsConstructor @NoArgsConstructor
 public class SeriesEdition extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -41,7 +40,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     @NotNull
     @Size(max = 150)
     @Column(name = "edition_name", length = 150, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String editionName;
 
     @Transient
@@ -65,6 +64,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     private Boolean singleTyre;
 
     @Column(name = "multidriver")
+    @Builder.Default
     private Boolean multidriver = false;
 
     @ManyToMany(fetch=FetchType.EAGER)
@@ -74,6 +74,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="ID"))
     @OrderBy("relevance")
+    @Builder.Default
     private SortedSet<Category> allowedCategories = new TreeSet<>();
 
     @ManyToMany(fetch=FetchType.EAGER)
@@ -82,6 +83,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         name="POINTS_SERIES",
         joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="points_id", referencedColumnName="ID"))
+    @Builder.Default
     private List<PointsSystem> pointsSystems = new ArrayList<>();
 
     @ManyToMany(fetch=FetchType.LAZY)
@@ -93,6 +95,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         joinColumns=@JoinColumn(name="series_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="event_id", referencedColumnName="ID"))
     @OrderBy("eventDate ASC")
+    @Builder.Default
     private Set<EventEdition> events = new HashSet<>();
 
 //    @ManyToMany(fetch=FetchType.EAGER)
@@ -116,25 +119,23 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     private Series series;
 
     @Column(name="drivers_standings")
+    @Builder.Default
     private Boolean driversStandings = Boolean.TRUE;
 
     @Column(name="teams_standings")
+    @Builder.Default
     private Boolean teamsStandings = Boolean.FALSE;
 
     @Column(name="manufacturers_standings")
+    @Builder.Default
     private Boolean manufacturersStandings = Boolean.FALSE;
 
     @Column(name="num_events", nullable=false)
     private Integer numEvents;
 
     @Column(name="standings_per_category")
+    @Builder.Default
     private Boolean standingsPerCategory = Boolean.FALSE;
-
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-
-    public SeriesEdition() {
-        super();
-    }
 
     public SeriesEdition(SeriesEdition source, String period) {
         this.setId(null);
@@ -209,4 +210,12 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 //		this.driversChampions = driversChampions;
 //	}
 
+    @Override
+    @JsonIgnore
+    public SeriesEdition trim() {
+        return SeriesEdition.builder()
+            .id(this.id)
+            .editionName(this.editionName)
+            .build();
+    }
 }

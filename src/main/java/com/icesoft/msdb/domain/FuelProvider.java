@@ -3,8 +3,8 @@ package com.icesoft.msdb.domain;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -19,6 +19,7 @@ import java.io.Serializable;
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "fuelprovider")
 @Data @EqualsAndHashCode(callSuper=false)
+@Builder @AllArgsConstructor @NoArgsConstructor
 public class FuelProvider extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -31,7 +32,7 @@ public class FuelProvider extends AbstractAuditingEntity implements Serializable
     @NotNull
     @Size(max = 50)
     @Column(name = "name", length = 50, nullable = false)
-    @Field(type = FieldType.Keyword, normalizer = "lowercase")
+    @Field(type = FieldType.Search_As_You_Type)
     private String name;
 
     @Transient
@@ -40,29 +41,12 @@ public class FuelProvider extends AbstractAuditingEntity implements Serializable
     @Column(name = "logo_url")
     private String logoUrl;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-
-    public FuelProvider name(String name) {
-        this.name = name;
-        return this;
+    @Override
+    @JsonIgnore
+    public FuelProvider trim() {
+        return FuelProvider.builder()
+            .id(this.id)
+            .name(this.name)
+            .build();
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setLogo(byte[] logo) {
-        this.logo = logo;
-    }
-
-    public FuelProvider logo(byte[] logo) {
-        this.logo = logo;
-        return this;
-    }
-
-    public FuelProvider logoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
-        return this;
-    }
-
 }
