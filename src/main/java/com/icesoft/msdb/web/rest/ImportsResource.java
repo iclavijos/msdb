@@ -112,8 +112,10 @@ public class ImportsResource {
     private <T> MappingIterator<T> initializeIterator(Class<T> type, String data, boolean ignoreUnknownFields) {
     	CsvSchema bootstrapSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator(';');
 
-        CsvMapper mapper = new CsvMapper();
         try {
+            CsvMapper mapper = CsvMapper.builder()
+                .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
+                .build();
         	JavaTimeModule javaTimeModule=new JavaTimeModule();
             javaTimeModule.addDeserializer(LocalDate.class, new ParseDeserializer());
             mapper.registerModule(javaTimeModule);
@@ -121,7 +123,6 @@ public class ImportsResource {
                 mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
                 // mapper.enable(JsonGenerator.Feature.IGNORE_UNKNOWN);
             }
-            mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
 	        return mapper.readerFor(type).with(bootstrapSchema).readValues(data);
 
         } catch (Exception e) {
@@ -381,14 +382,14 @@ public class ImportsResource {
 		        			Pattern p = Pattern.compile("\\+?\\d+");
 			        		Matcher m = p.matcher(tmp.getDifference());
 			        		m.find();
-			        		result.setDifference(new Long(Integer.parseInt(m.group())));
+			        		result.setDifference(Long.valueOf(Integer.parseInt(m.group())));
 			        		result.setDifferenceType(2);
 		        		}
 		        	} else {
 		        		if (result.getFinalPosition() != 1 && result.getTotalTime() != null) {
 		        			if (result.getLapsCompleted() < first.getLapsCompleted()) {
 		        				result.setDifference(
-		        						new Long(first.getLapsCompleted() - result.getLapsCompleted()));
+                                    Long.valueOf(first.getLapsCompleted() - result.getLapsCompleted()));
 		        			} else {
 		        				result.setDifference(result.getTotalTime() - first.getTotalTime());
 		        				result.setDifferenceType(1);
@@ -440,7 +441,7 @@ public class ImportsResource {
     		log.warn("The provided time {} is not valid. Ignoring it", time);
     		return null;
     	}
-    	return new Long(total);
+    	return Long.valueOf(total);
     }
 
 }
