@@ -60,6 +60,7 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
     @Column(name = "team_name", length = 100, nullable = false)
     private String entryName;
 
+    @EqualsAndHashCode.Exclude @ToString.Exclude
     @OneToMany(mappedBy = "eventEntry", fetch = FetchType.EAGER)
     private Set<DriverEntry> drivers;
 
