@@ -4,27 +4,35 @@ import java.util.List;
 import java.util.Optional;
 
 import com.icesoft.msdb.domain.EventEdition;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
 @Getter
 public class SeriesEventsAndWinnersDTO {
 
 	private final EventEdition eventEdition;
 	private final List<SessionWinnersDTO> winners;
 
-	public String getEventEditionPosterUrl() { return eventEdition.getPosterUrl(); }
+    private final String eventEditionPosterUrl;
+    private final String racetrackLogoUrl;
+    private final String racetrackLayoutUrl;
 
-	public String getRacetrackLogoUrl() {
-        return Optional.ofNullable(eventEdition.getTrackLayout())
+    public SeriesEventsAndWinnersDTO(EventEdition eventEdition, List<SessionWinnersDTO> winners) {
+        this.winners = winners;
+        this.eventEditionPosterUrl = eventEdition.getPosterUrl();
+        this.racetrackLogoUrl = Optional.ofNullable(eventEdition.getTrackLayout())
             .map(trackLayout -> trackLayout.getRacetrack().getLogoUrl())
             .orElse(null);
-    }
-
-    public String getRacetrackLayoutUrl() {
-        return Optional.ofNullable(eventEdition.getTrackLayout())
+        this.racetrackLayoutUrl = Optional.ofNullable(eventEdition.getTrackLayout())
             .map(trackLayout -> trackLayout.getLayoutImageUrl())
             .orElse(null);
+
+        this.eventEdition = EventEdition.builder()
+            .allowedCategories(eventEdition.getAllowedCategories())
+            .eventDate(eventEdition.getEventDate())
+            .id(eventEdition.getId())
+            .longEventName(eventEdition.getLongEventName())
+            .status(eventEdition.getStatus())
+            .build();
     }
+
 }
