@@ -1,12 +1,12 @@
 package com.icesoft.msdb.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.AbstractAuditingEntity;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -194,21 +194,51 @@ public class SearchServiceImpl implements SearchService {
 	}
 
     @Override
-    public <T> Page<T> performWildcardSearch(Class<T> searchClass, String query, List<String> fields, Pageable pageable) {
-        String[] queryFields = new String[fields.size()];
-        MultiMatchQueryBuilder queryBuilder = QueryBuilders.multiMatchQuery(query, fields.toArray(queryFields));
-        queryBuilder
-            .type(MultiMatchQueryBuilder.Type.BOOL_PREFIX)
-            .operator(Operator.OR);
+    public <T> Page<T> performWildcardSearch(Class<T> searchClass, String query, List<String> fields, Pageable pageable, Float... boosts) {
+        return performWildcardSearch(searchClass, query, fields, false, pageable, boosts);
+    }
 
+    @Override
+    public <T> Page<T> performWildcardSearch(Class<T> searchClass, String query, List<String> fields, Boolean sortByPageable, Pageable pageable, Float... boosts) {
+        if (null != boosts && null != fields) {
+            if (boosts.length > 0 && fields.size() != boosts.length) {
+                throw new MSDBException("You must pass no boosts or as many boosts as query fields. Passed query fields: " +
+                    fields.size() + " Passed boosts: " + boosts.length);
+            }
+        }
+
+        Map<String, Float> queryBoosts = new HashMap<>();
+        AtomicInteger fieldCounter = new AtomicInteger(0);
+        if (boosts.length > 0) {
+            fields.stream().forEach(field -> queryBoosts.put(field, boosts[fieldCounter.getAndIncrement()]));
+        }
+        String[] queryTerms = query.split(" ");
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+
+        fields.stream().forEach(field -> {
+            Arrays.stream(queryTerms).forEach(queryTerm -> {
+                WildcardQueryBuilder wildcardQueryBuilder = new WildcardQueryBuilder(field, "*" + queryTerm + "*");
+                wildcardQueryBuilder.caseInsensitive(true);
+                wildcardQueryBuilder.boost(queryBoosts.getOrDefault(field, 1.0f));
+                boolQueryBuilder.should(wildcardQueryBuilder);
+            });
+        });
+
+        String queryString = Arrays.stream(queryTerms)
+            .collect(Collectors.joining("~2 | "));
+        SimpleQueryStringBuilder queryBuilder = new SimpleQueryStringBuilder(queryString + "~2");
+        fields.parallelStream().forEach(field -> queryBuilder.field(field));
+
         boolQueryBuilder.should(queryBuilder);
         NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder()
             .withQuery(boolQueryBuilder);
-        pageable.getSort().forEach(sort -> nativeSearchQueryBuilder
-            .withSort(SortBuilders
-                .fieldSort(sort.getProperty())
-                .order(sort.getDirection().isAscending() ? SortOrder.ASC : SortOrder.DESC)));
+
+        if (sortByPageable) {
+            pageable.getSort().forEach(sort -> nativeSearchQueryBuilder
+                .withSort(SortBuilders
+                    .fieldSort(sort.getProperty())
+                    .order(sort.getDirection().isAscending() ? SortOrder.ASC : SortOrder.DESC)));
+        }
 
         SearchHitsIterator<T> hits = operations.searchForStream(nativeSearchQueryBuilder.build(), searchClass);
         Page<T> result = new PageImpl(
