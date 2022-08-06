@@ -80,6 +80,7 @@ spring:
         # Uncomment to activate TLS for the dev profile
         #- tls
   jackson:
+    default-property-inclusion: NON_NULL
     serialization.write_dates_as_timestamps: true
   jmx:
     enabled: false
