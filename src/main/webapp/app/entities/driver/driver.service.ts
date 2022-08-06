@@ -81,11 +81,11 @@ export class DriverService {
 
   protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
     if (res.body) {
-      if (res.body.birthDate !== null) {
+      if (res.body.birthDate !== undefined) {
         res.body.birthDate[1]--;
         res.body.birthDate = moment(res.body.birthDate);
       }
-      if (res.body.deathDate !== null) {
+      if (res.body.deathDate !== undefined) {
         res.body.deathDate[1]--;
         res.body.deathDate = moment(res.body.deathDate);
       }
@@ -96,11 +96,11 @@ export class DriverService {
   protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
     if (res.body) {
       res.body.forEach((driver: IDriver) => {
-        if (driver.birthDate !== null) {
+        if (driver.birthDate !== undefined) {
           driver.birthDate[1]--;
           driver.birthDate = moment(driver.birthDate);
         }
-        if (driver.deathDate !== null) {
+        if (driver.deathDate !== undefined) {
           driver.deathDate[1]--;
           driver.deathDate = moment(driver.deathDate);
         }
