@@ -1,27 +1,23 @@
 package com.icesoft.msdb.service.impl;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.maps.model.Geometry;
 import com.icesoft.msdb.domain.*;
-import com.icesoft.msdb.repository.*;
+import com.icesoft.msdb.repository.jpa.*;
 import com.icesoft.msdb.service.SearchService;
 import com.icesoft.msdb.service.GeoLocationService;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.service.dto.SessionWinnersDTO;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

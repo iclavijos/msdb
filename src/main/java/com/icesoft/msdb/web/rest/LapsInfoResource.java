@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.DriverPerformance;
 import com.icesoft.msdb.domain.LapInfo;
-import com.icesoft.msdb.repository.SessionLapDataRepository;
+import com.icesoft.msdb.repository.mongo.SessionLapDataRepository;
 import com.icesoft.msdb.service.dto.DriverRaceStatisticsDTO;
 import com.icesoft.msdb.service.dto.LapsInfoDriversDTO;
 import com.icesoft.msdb.service.dto.RacePositionsDTO;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.icesoft.msdb.domain.SessionLapData;
-import com.icesoft.msdb.repository.EventEntryResultRepository;
+import com.icesoft.msdb.repository.jpa.EventEntryResultRepository;
 
 @RestController
 @RequestMapping("/api/event-editions")

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.domain.enums.SessionType;
-import com.icesoft.msdb.repository.*;
+import com.icesoft.msdb.repository.jpa.*;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.repository.search.EventEntrySearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
@@ -42,10 +42,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 /**

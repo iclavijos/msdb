@@ -1,9 +1,8 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.PointsSystem;
 
-import com.icesoft.msdb.repository.PointsSystemRepository;
+import com.icesoft.msdb.repository.jpa.PointsSystemRepository;
 import com.icesoft.msdb.repository.search.PointsSystemSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SearchService;
@@ -27,7 +26,6 @@ import tech.jhipster.web.util.ResponseUtil;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.awt.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;

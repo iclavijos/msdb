@@ -2,10 +2,10 @@ package com.icesoft.msdb.web.rest;
 
 import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.domain.stats.TeamStatistics;
-import com.icesoft.msdb.repository.EventEntryRepository;
-import com.icesoft.msdb.repository.TeamRepository;
+import com.icesoft.msdb.repository.jpa.EventEntryRepository;
+import com.icesoft.msdb.repository.jpa.TeamRepository;
 import com.icesoft.msdb.repository.search.TeamSearchRepository;
-import com.icesoft.msdb.repository.stats.TeamStatisticsRepository;
+import com.icesoft.msdb.repository.mongo.stats.TeamStatisticsRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.SearchService;

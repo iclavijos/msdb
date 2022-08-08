@@ -3,8 +3,6 @@ package com.icesoft.msdb.service.impl;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
@@ -17,14 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.domain.enums.DurationType;
 import com.icesoft.msdb.domain.enums.ResultType;
-import com.icesoft.msdb.repository.DriverEventPointsRepository;
-import com.icesoft.msdb.repository.EventEntryRepository;
-import com.icesoft.msdb.repository.EventEntryResultRepository;
-import com.icesoft.msdb.repository.EventSessionRepository;
-import com.icesoft.msdb.repository.ManufacturerEventPointsRepository;
-import com.icesoft.msdb.repository.SeriesEditionRepository;
-import com.icesoft.msdb.repository.TeamEventPointsRepository;
-import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
+import com.icesoft.msdb.repository.jpa.DriverEventPointsRepository;
+import com.icesoft.msdb.repository.jpa.EventEntryRepository;
+import com.icesoft.msdb.repository.jpa.EventEntryResultRepository;
+import com.icesoft.msdb.repository.jpa.EventSessionRepository;
+import com.icesoft.msdb.repository.jpa.ManufacturerEventPointsRepository;
+import com.icesoft.msdb.repository.jpa.SeriesEditionRepository;
+import com.icesoft.msdb.repository.jpa.TeamEventPointsRepository;
+import com.icesoft.msdb.repository.jpa.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.service.dto.ParticipantPointsDTO;
 import com.icesoft.msdb.service.dto.ManufacturerPointsDTO;
 

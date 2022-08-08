@@ -5,9 +5,9 @@ import com.icesoft.msdb.config.Constants;
 import com.icesoft.msdb.domain.Authority;
 import com.icesoft.msdb.domain.User;
 import com.icesoft.msdb.domain.UserSubscription;
-import com.icesoft.msdb.repository.AuthorityRepository;
-import com.icesoft.msdb.repository.UserRepository;
-import com.icesoft.msdb.repository.UserSubscriptionRepository;
+import com.icesoft.msdb.repository.jpa.AuthorityRepository;
+import com.icesoft.msdb.repository.jpa.UserRepository;
+import com.icesoft.msdb.repository.jpa.UserSubscriptionRepository;
 import com.icesoft.msdb.repository.search.UserSearchRepository;
 import com.icesoft.msdb.security.SecurityUtils;
 import com.icesoft.msdb.service.dto.AdminUserDTO;
@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 

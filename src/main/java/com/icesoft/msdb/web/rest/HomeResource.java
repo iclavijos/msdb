@@ -3,8 +3,7 @@ package com.icesoft.msdb.web.rest;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.domain.enums.EventStatusType;
-import com.icesoft.msdb.repository.*;
-import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
+import com.icesoft.msdb.repository.jpa.*;
 import com.icesoft.msdb.service.MessagingService;
 import com.icesoft.msdb.service.TelegramSenderService;
 import com.icesoft.msdb.service.dto.SessionDataDTO;
@@ -26,7 +25,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;

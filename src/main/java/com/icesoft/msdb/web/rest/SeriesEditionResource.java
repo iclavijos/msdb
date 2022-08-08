@@ -2,8 +2,8 @@ package com.icesoft.msdb.web.rest;
 
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
-import com.icesoft.msdb.repository.EventSessionRepository;
-import com.icesoft.msdb.repository.SeriesEditionRepository;
+import com.icesoft.msdb.repository.jpa.EventSessionRepository;
+import com.icesoft.msdb.repository.jpa.SeriesEditionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
 import com.icesoft.msdb.service.SeriesEditionService;
@@ -32,11 +32,8 @@ import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;

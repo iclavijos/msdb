@@ -3,6 +3,7 @@ package com.icesoft.msdb.config;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
+import com.icesoft.msdb.repository.jpa.UserRepository;
 import org.ehcache.config.builders.*;
 import org.ehcache.jsr107.Eh107Configuration;
 import org.hibernate.cache.jcache.ConfigSettings;
@@ -66,8 +67,8 @@ public class CacheConfiguration {
     @Bean
     public JCacheManagerCustomizer cacheManagerCustomizer() {
         return cm -> {
-            createCache(cm, com.icesoft.msdb.repository.UserRepository.USERS_BY_LOGIN_CACHE);
-            createCache(cm, com.icesoft.msdb.repository.UserRepository.USERS_BY_EMAIL_CACHE);
+            createCache(cm, UserRepository.USERS_BY_LOGIN_CACHE);
+            createCache(cm, UserRepository.USERS_BY_EMAIL_CACHE);
             createCache(cm, com.icesoft.msdb.domain.User.class.getName());
             createCache(cm, com.icesoft.msdb.domain.Authority.class.getName());
             createCache(cm, com.icesoft.msdb.domain.User.class.getName() + ".authorities");
