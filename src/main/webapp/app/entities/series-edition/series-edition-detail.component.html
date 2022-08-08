@@ -203,7 +203,7 @@
     <div class="col-md-3 col-sm-6 col-12" *ngFor="let event of seriesEdition.events; let i = index;">
         <mat-card jhiMaterialElevation>
             <div class="poster">
-                <img [src]="getPosterUrl(event.eventEditionPosterUrl)" class="poster img-fluid">
+                <img [src]="getPosterUrl(event.posterUrl)" class="poster img-fluid">
                 <div class="overlay" *ngIf="event.status === 'ONGOING'">
                     <div class="container">
                         <div *ngTemplateOutlet="winnersTemplate; context:{event: eventsAndWinners[i], thumbSize: 180}"></div>
@@ -262,14 +262,14 @@
                         <h5>{{ event.eventDate | localizedDate : 'll' }}</h5>
                     </div>
                 </div>
-                <div class="row" *ngIf="eventsAndWinners[i].racetrackLogoUrl">
+                <div class="row" *ngIf="eventsAndWinners[i].eventEdition.trackLayout?.racetrack.logoUrl">
                     <div class="col-12">
-                        <img [src]="eventsAndWinners[i].racetrackLogoUrl" class="img-fluid mx-auto d-block logo">
+                        <img [src]="eventsAndWinners[i].eventEdition.trackLayout.racetrack.logoUrl" class="img-fluid mx-auto d-block logo">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <img [src]="eventsAndWinners[i].racetrackLayoutUrl" class="img-fluid mx-auto d-block layout">
+                        <img [src]="eventsAndWinners[i].eventEdition.trackLayout.layoutImageUrl" class="img-fluid mx-auto d-block layout">
                     </div>
                 </div>
 
