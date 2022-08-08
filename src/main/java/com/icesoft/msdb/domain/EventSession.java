@@ -99,8 +99,9 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @Column
     private Boolean cancelled;
 
+    @JsonIgnore
 	public boolean isRace() {
-		return sessionType.equals(SessionType.RACE);
+        return sessionType.equals(SessionType.RACE) || sessionType.equals(SessionType.QUALIFYING_RACE);
 	}
 
 	public List<PointsSystemSession> addPointsSystemsSession(PointsSystemSession pss) {
