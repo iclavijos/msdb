@@ -17,9 +17,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -28,6 +26,7 @@ import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
@@ -39,7 +38,7 @@ import tech.jhipster.config.JHipsterProperties;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Import(SecurityProblemSupport.class)
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration {
 
     private final JHipsterProperties jHipsterProperties;
 
@@ -58,20 +57,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         this.jHipsterProperties = jHipsterProperties;
     }
 
-    @Override
-    public void configure(WebSecurity web) {
-        web
-            .ignoring()
-            .antMatchers(HttpMethod.OPTIONS, "/**")
-            .antMatchers("/app/**/*.{js,html}")
-            .antMatchers("/i18n/**")
-            .antMatchers("/content/**")
-            .antMatchers("/swagger-ui/**")
-            .antMatchers("/test/**");
-    }
-
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // @formatter:off
         http
             .csrf()
@@ -92,33 +79,45 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .frameOptions()
             .deny()
         .and()
-            .authorizeRequests()
-            .antMatchers("/api/authenticate").permitAll()
-            .antMatchers("/api/auth-info").permitAll()
-            .antMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
+            .authorizeHttpRequests(authz -> {
+                authz
+                    .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .antMatchers("/app/**/*.{js,html}").permitAll()
+                    .antMatchers("/i18n/**").permitAll()
+                    .antMatchers("/content/**").permitAll()
+                    .antMatchers("/swagger-ui/**").permitAll()
+                    .antMatchers("/test/**").permitAll()
 
-            .antMatchers("/api/home/**").permitAll()
-            .antMatchers("/api/timezones").permitAll()
-            .antMatchers("/api/event-editions/calendar/**").permitAll()
-            // Start of "public" access
-            .antMatchers(HttpMethod.GET, "/api/series/**").permitAll()
-//            .antMatchers(HttpMethod.GET, "/api/_search/series").permitAll()
-//            .antMatchers(HttpMethod.GET, "/api/series-editions/**").permitAll()
+                    .antMatchers("/api/authenticate").permitAll()
+                    .antMatchers("/api/auth-info").permitAll()
+                    .antMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
+
+                    .antMatchers("/api/home/**").permitAll()
+                    .antMatchers("/api/timezones").permitAll()
+                    .antMatchers("/api/event-editions/calendar/**").permitAll()
+
+                    .antMatchers("/api/**").authenticated()
+                    .antMatchers("/management/health").permitAll()
+                    .antMatchers("/management/health/**").permitAll()
+                    .antMatchers("/management/info").permitAll()
+                    .antMatchers("/management/prometheus").permitAll()
+                    .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN);
+            })
+        .oauth2Login();
+
+//            // Start of "public" access
+//            .antMatchers(HttpMethod.GET, "/api/series/**").permitAll()
+////            .antMatchers(HttpMethod.GET, "/api/_search/series").permitAll()
+////            .antMatchers(HttpMethod.GET, "/api/series-editions/**").permitAll()
+////
+////            .antMatchers(HttpMethod.GET, "/api/events/**").permitAll()
+////            .antMatchers(HttpMethod.GET, "/api/event-editions/**").permitAll()
+////            .antMatchers(HttpMethod.GET, "/api/event-editions/*/sessions").permitAll()
+//            // .antMatchers(HttpMethod.GET, "/api/icalendar/**").permitAll()
+//            // End of "public" access
 //
-//            .antMatchers(HttpMethod.GET, "/api/events/**").permitAll()
-//            .antMatchers(HttpMethod.GET, "/api/event-editions/**").permitAll()
-//            .antMatchers(HttpMethod.GET, "/api/event-editions/*/sessions").permitAll()
-            // .antMatchers(HttpMethod.GET, "/api/icalendar/**").permitAll()
-            // End of "public" access
-
-            .antMatchers("/api/**").authenticated()
-            .antMatchers("/management/health").permitAll()
-            .antMatchers("/management/health/**").permitAll()
-            .antMatchers("/management/info").permitAll()
-            .antMatchers("/management/prometheus").permitAll()
-            .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
-        .and()
-            .oauth2Login();
+//        .and()
+//            .oauth2Login();
 //        .and()
 //            .oauth2ResourceServer()
 //                .jwt()
@@ -127,6 +126,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //            .and()
 //                .oauth2Client();
         // @formatter:on
+
+        return http.build();
     }
 
     Converter<Jwt, AbstractAuthenticationToken> authenticationConverter() {
