@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.icesoft.msdb.domain.Country;
-import com.icesoft.msdb.repository.CountryRepository;
+import com.icesoft.msdb.repository.jpa.CountryRepository;
 
 /**
  * REST controller for managing Engine.

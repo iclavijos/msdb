@@ -1,12 +1,10 @@
 package com.icesoft.msdb.service.impl;
 
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.icesoft.msdb.repository.*;
+import com.icesoft.msdb.repository.jpa.*;
 import com.icesoft.msdb.service.EventService;
-import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,7 +19,7 @@ import com.icesoft.msdb.domain.PointsSystem;
 import com.icesoft.msdb.domain.PointsSystemSession;
 import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.Team;
-import com.icesoft.msdb.repository.impl.JDBCRepositoryImpl;
+import com.icesoft.msdb.repository.jpa.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;

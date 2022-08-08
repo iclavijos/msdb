@@ -2,7 +2,7 @@ package com.icesoft.msdb.service.impl;
 
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.SeriesEdition;
-import com.icesoft.msdb.repository.SeriesEditionRepository;
+import com.icesoft.msdb.repository.jpa.SeriesEditionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +10,6 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class CacheHandler {

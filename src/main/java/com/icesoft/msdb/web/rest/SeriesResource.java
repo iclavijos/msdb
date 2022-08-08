@@ -1,11 +1,9 @@
 package com.icesoft.msdb.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
-
 import com.icesoft.msdb.domain.Series;
 import com.icesoft.msdb.domain.SeriesEdition;
-import com.icesoft.msdb.repository.SeriesEditionRepository;
-import com.icesoft.msdb.repository.SeriesRepository;
+import com.icesoft.msdb.repository.jpa.SeriesEditionRepository;
+import com.icesoft.msdb.repository.jpa.SeriesRepository;
 import com.icesoft.msdb.repository.search.SeriesSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;

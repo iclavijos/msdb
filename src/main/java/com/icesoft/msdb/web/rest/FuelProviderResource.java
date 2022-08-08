@@ -1,9 +1,8 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.domain.Category;
 import com.icesoft.msdb.domain.FuelProvider;
 
-import com.icesoft.msdb.repository.FuelProviderRepository;
+import com.icesoft.msdb.repository.jpa.FuelProviderRepository;
 import com.icesoft.msdb.repository.search.FuelProviderSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;

@@ -1,8 +1,7 @@
 package com.icesoft.msdb.web.rest;
 
-import com.icesoft.msdb.domain.FuelProvider;
 import com.icesoft.msdb.domain.TyreProvider;
-import com.icesoft.msdb.repository.TyreProviderRepository;
+import com.icesoft.msdb.repository.jpa.TyreProviderRepository;
 import com.icesoft.msdb.repository.search.TyreProviderSearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;

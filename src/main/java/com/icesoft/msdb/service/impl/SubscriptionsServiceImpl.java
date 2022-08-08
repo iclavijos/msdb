@@ -5,10 +5,10 @@ import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.domain.subscriptions.SessionData;
 import com.icesoft.msdb.domain.subscriptions.Sessions;
-import com.icesoft.msdb.repository.EventSessionRepository;
-import com.icesoft.msdb.repository.UserRepository;
-import com.icesoft.msdb.repository.UserSubscriptionRepository;
-import com.icesoft.msdb.repository.subscriptions.SessionsRepository;
+import com.icesoft.msdb.repository.jpa.EventSessionRepository;
+import com.icesoft.msdb.repository.jpa.UserRepository;
+import com.icesoft.msdb.repository.jpa.UserSubscriptionRepository;
+import com.icesoft.msdb.repository.mongo.subscriptions.SessionsRepository;
 import com.icesoft.msdb.service.MessagingService;
 import com.icesoft.msdb.service.SubscriptionsService;
 import com.icesoft.msdb.service.TelegramSenderService;
@@ -22,7 +22,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 @Transactional

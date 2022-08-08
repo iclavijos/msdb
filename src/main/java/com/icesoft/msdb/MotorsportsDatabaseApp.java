@@ -2,6 +2,9 @@ package com.icesoft.msdb;
 
 import com.icesoft.msdb.config.ApplicationProperties;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import tech.jhipster.config.DefaultProfileUtil;
 import tech.jhipster.config.JHipsterConstants;
 
@@ -25,6 +28,7 @@ import java.util.TimeZone;
 
 @SpringBootApplication
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
+@EnableAutoConfiguration
 public class MotorsportsDatabaseApp implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(MotorsportsDatabaseApp.class);

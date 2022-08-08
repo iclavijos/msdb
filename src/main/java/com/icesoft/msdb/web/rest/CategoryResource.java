@@ -2,8 +2,7 @@ package com.icesoft.msdb.web.rest;
 
 import com.icesoft.msdb.domain.Category;
 
-import com.icesoft.msdb.domain.Driver;
-import com.icesoft.msdb.repository.CategoryRepository;
+import com.icesoft.msdb.repository.jpa.CategoryRepository;
 import com.icesoft.msdb.repository.search.CategorySearchRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SearchService;

@@ -1,9 +1,6 @@
 package com.icesoft.msdb.web.rest.stats;
 
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
-import java.util.stream.Collectors;
 
 import tech.jhipster.web.util.HeaderUtil;
 import org.slf4j.Logger;
@@ -12,13 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.icesoft.msdb.repository.EventEditionRepository;
-import com.icesoft.msdb.repository.SeriesEditionRepository;
+import com.icesoft.msdb.repository.jpa.EventEditionRepository;
+import com.icesoft.msdb.repository.jpa.SeriesEditionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
