@@ -2,20 +2,22 @@
 version: '3.8'
 services:
   motorsportsdatabase-elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.3.3
     container_name: msdb-es
     volumes:
-      - ~/volumes/jhipster/MotorsportsDatabase/elasticsearch/:/usr/share/elasticsearch/data/
+      - elastic:/usr/share/elasticsearch/data/
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     ports:
       - 127.0.0.1:9200:9200
       - 127.0.0.1:9300:9300
     environment:
-      - 'xpack.security.enabled=false'
-      - 'discovery.type=single-node'
-      - 'bootstrap.memory_lock=true'
-      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - cluster.routing.allocation.disk.watermark.flood_stage=99%
+      - ingest.geoip.downloader.enabled=false
     ulimits:
       memlock:
         soft: -1
@@ -27,7 +29,7 @@ services:
       - IPC_LOCK
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.13.3
+    image: docker.elastic.co/kibana/kibana:8.3.3
     container_name: msdb-kibana
     ports:
       - 5601:5601
@@ -35,3 +37,10 @@ services:
       - 'xpack.security.enabled=false'
       - 'ELASTICSEARCH_URL=http://msdb-es:9200'
       - 'ELASTICSEARCH_HOSTS=["http://msdb-es:9200"]'
+
+volumes:
+  elastic:
+    driver_opts:
+      o: "size=10g,uid=1000"
+      device: tmpfs
+      type: tmpfs
