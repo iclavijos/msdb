@@ -23,7 +23,7 @@ import com.icesoft.msdb.domain.PointsSystem;
 @Repository
 public interface PointsSystemRepository extends JpaRepository<PointsSystem,Long> {
 
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "select ps from PointsSystem ps")
 	@Transactional(readOnly=true)
 	Stream<PointsSystem> streamAll();

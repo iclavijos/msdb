@@ -36,7 +36,7 @@ public interface DriverRepository extends JpaRepository<Driver,Long> {
     @Query("FROM Driver d WHERE day(d.deathDate) = ?1 AND month(d.deathDate) = ?2")
     List<Driver> findDeadOnDay(Integer day, Integer month);
 
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "select d from Driver d JOIN FETCH d.nationality n")
 	@Transactional(readOnly=true)
 	Stream<Driver> streamAll();

@@ -24,7 +24,7 @@ public interface CategoryRepository extends JpaRepository<Category,Long> {
 
     SortedSet<Category> findByNameIn(String[] names);
 
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "select c from Category c")
 	@Transactional(readOnly=true)
 	Stream<Category> streamAll();

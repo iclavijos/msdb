@@ -23,7 +23,7 @@ import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 @Repository
 public interface SeriesEditionRepository extends JpaRepository<SeriesEdition,Long> {
 
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "select s from SeriesEdition s")
 	@Transactional(readOnly=true)
 	Stream<SeriesEdition> streamAll();

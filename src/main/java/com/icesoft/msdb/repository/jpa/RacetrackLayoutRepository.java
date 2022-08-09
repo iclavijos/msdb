@@ -22,7 +22,7 @@ import com.icesoft.msdb.domain.RacetrackLayout;
 @Repository
 public interface RacetrackLayoutRepository extends JpaRepository<RacetrackLayout,Long> {
 
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "select r from RacetrackLayout r")
 	@Transactional(readOnly=true)
 	Stream<RacetrackLayout> streamAll();

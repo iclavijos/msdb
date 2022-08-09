@@ -26,7 +26,7 @@ public interface TeamRepository extends JpaRepository<Team,Long> {
 
 	List<Team> findByIdIn(List<Long> ids);
 
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "select t from Team t")
 	@Transactional(readOnly=true)
 	Stream<Team> streamAll();
