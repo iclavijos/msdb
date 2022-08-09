@@ -21,7 +21,7 @@ import com.icesoft.msdb.domain.FuelProvider;
 @Repository
 public interface FuelProviderRepository extends JpaRepository<FuelProvider,Long> {
 
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "select f from FuelProvider f")
 	@Transactional(readOnly=true)
 	Stream<FuelProvider> streamAll();

@@ -21,7 +21,7 @@ import com.icesoft.msdb.domain.Series;
 @Repository
 public interface SeriesRepository extends JpaRepository<Series,Long> {
 
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "select s from Series s")
 	@Transactional(readOnly=true)
 	Stream<Series> streamAll();

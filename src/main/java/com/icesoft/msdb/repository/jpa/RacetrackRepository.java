@@ -23,7 +23,7 @@ public interface RacetrackRepository extends JpaRepository<Racetrack,Long> {
 
 	Racetrack findByName(String name);
 
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "select r from Racetrack r")
 	@Transactional(readOnly=true)
 	Stream<Racetrack> streamAll();

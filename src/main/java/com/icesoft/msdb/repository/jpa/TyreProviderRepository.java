@@ -21,7 +21,7 @@ import com.icesoft.msdb.domain.TyreProvider;
 @Repository
 public interface TyreProviderRepository extends JpaRepository<TyreProvider,Long> {
 
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
+	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
 	@Query(value = "select t from TyreProvider t")
 	@Transactional(readOnly=true)
 	Stream<TyreProvider> streamAll();
