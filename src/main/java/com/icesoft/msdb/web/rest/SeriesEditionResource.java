@@ -31,7 +31,7 @@ import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -130,7 +130,7 @@ public class SeriesEditionResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        seriesEdition.setEvents(seriesEditionRepository.getOne(seriesEdition.getId()).getEvents());
+        seriesEdition.setEvents(seriesEditionRepository.findById(seriesEdition.getId()).get().getEvents());
         if (seriesEdition.getLogo() != null) {
             String cdnUrl = cdnService.uploadImage(seriesEdition.getId().toString(), seriesEdition.getLogo(), ENTITY_NAME);
             seriesEdition.setLogoUrl(cdnUrl);

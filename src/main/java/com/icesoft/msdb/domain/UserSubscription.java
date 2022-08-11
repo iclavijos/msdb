@@ -3,7 +3,7 @@ package com.icesoft.msdb.domain;
 import com.icesoft.msdb.service.dto.UserSubscriptionDTO;
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Entity(name = "USER_SUSCRIPTION")

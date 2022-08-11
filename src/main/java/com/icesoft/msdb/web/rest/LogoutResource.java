@@ -3,7 +3,7 @@ package com.icesoft.msdb.web.rest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

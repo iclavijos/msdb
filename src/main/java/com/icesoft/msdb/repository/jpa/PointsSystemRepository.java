@@ -1,10 +1,10 @@
 package com.icesoft.msdb.repository.jpa;
 
-import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
+import static org.hibernate.jpa.AvailableHints.HINT_FETCH_SIZE;
 
 import java.util.stream.Stream;
 
-import javax.persistence.QueryHint;
+import jakarta.persistence.QueryHint;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

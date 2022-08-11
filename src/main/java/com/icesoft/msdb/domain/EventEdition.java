@@ -12,9 +12,9 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -84,7 +84,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
         name="CATEGORIES_EVENT",
         joinColumns=@JoinColumn(name="event_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="ID"))
-    @OrderBy("relevance")
+    // @OrderBy("relevance")
     private SortedSet<Category> allowedCategories;
 
     @ManyToOne(fetch = FetchType.EAGER)

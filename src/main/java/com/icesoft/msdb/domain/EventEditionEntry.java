@@ -1,21 +1,17 @@
 package com.icesoft.msdb.domain;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -146,10 +142,15 @@ public class EventEditionEntry extends AbstractAuditingEntity implements Seriali
 	}
 
     private String driversToString() {
-    	StringBuffer buff = new StringBuffer();
+    	StringBuilder buff = new StringBuilder();
     	for(DriverEntry driver: drivers) {
     		buff.append(driver.getDriver().getFullName()).append(", ");
     	}
     	return buff.toString();
+    }
+
+    @Override
+    public EventEditionEntry trim() {
+        return this;
     }
 }

@@ -2,8 +2,8 @@ package com.icesoft.msdb.repository.converter;
 
 import com.icesoft.msdb.domain.enums.EventStatusType;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import java.util.stream.Stream;
 
 @Converter(autoApply = true)

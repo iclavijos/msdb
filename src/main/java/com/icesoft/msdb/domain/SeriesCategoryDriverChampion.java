@@ -1,6 +1,6 @@
 package com.icesoft.msdb.domain;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

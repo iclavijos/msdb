@@ -182,7 +182,7 @@ public class RacetrackServiceImpl implements RacetrackService {
         Racetrack racetrack = racetrackRepository.findById(id)
             .orElseThrow(() -> new MSDBException("Invalid racetrack id " + id));
         racetrackLayoutSearchRepo.deleteAll(racetrack.getLayouts());
-        racetrackLayoutRepository.deleteInBatch(racetrack.getLayouts());
+        racetrackLayoutRepository.deleteAllInBatch(racetrack.getLayouts());
         racetrackRepository.deleteById(id);
         racetrackSearchRepo.deleteById(id);
         cdnService.deleteImage(id.toString(), "racetrack");

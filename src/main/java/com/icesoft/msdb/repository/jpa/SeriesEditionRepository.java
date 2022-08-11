@@ -9,12 +9,12 @@ import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.QueryHint;
+import jakarta.persistence.QueryHint;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
+import static org.hibernate.jpa.AvailableHints.HINT_FETCH_SIZE;
 
 /**
  * Spring Data  repository for the SeriesEdition entity.

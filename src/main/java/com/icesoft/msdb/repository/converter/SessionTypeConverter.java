@@ -2,8 +2,8 @@ package com.icesoft.msdb.repository.converter;
 
 import com.icesoft.msdb.domain.enums.SessionType;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter
 public class SessionTypeConverter implements AttributeConverter<SessionType, String> {

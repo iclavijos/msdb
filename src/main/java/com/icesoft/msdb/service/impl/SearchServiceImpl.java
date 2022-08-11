@@ -6,11 +6,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import co.elastic.clients.elasticsearch._types.SortOptionsBuilders;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.AbstractAuditingEntity;
-import org.elasticsearch.index.query.*;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +17,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHitsIterator;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -184,6 +184,7 @@ public class SearchServiceImpl implements SearchService {
 		searchRepo.deleteAll();
 		log.trace("Index deleted. Rebuilding...");
 		stream.parallel().forEach(elem -> {
+            @SuppressWarnings (value="unchecked")
             T tmp = (T)((AbstractAuditingEntity)elem).trim();
             searchRepo.save(tmp);
         });
@@ -211,34 +212,44 @@ public class SearchServiceImpl implements SearchService {
             fields.stream().forEach(field -> queryBoosts.put(field, boosts[fieldCounter.getAndIncrement()]));
         }
         String[] queryTerms = query.split(" ");
-        BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+        BoolQuery.Builder boolQueryBuilder = QueryBuilders.bool();
 
         fields.stream().forEach(field -> {
             Arrays.stream(queryTerms).forEach(queryTerm -> {
-                WildcardQueryBuilder wildcardQueryBuilder = new WildcardQueryBuilder(field, "*" + queryTerm + "*");
-                wildcardQueryBuilder.caseInsensitive(true);
-                wildcardQueryBuilder.boost(queryBoosts.getOrDefault(field, 1.0f));
-                boolQueryBuilder.should(wildcardQueryBuilder);
+                WildcardQuery.Builder wildcardQueryBuilder = new WildcardQuery.Builder();
+                wildcardQueryBuilder
+                    .field(field)
+                    .wildcard("*" + queryTerm + "*")
+                    .caseInsensitive(true)
+                    .boost(queryBoosts.getOrDefault(field, 1.0f));
+                boolQueryBuilder.should(wildcardQueryBuilder.build()._toQuery());
             });
         });
 
         String queryString = Arrays.stream(queryTerms)
             .collect(Collectors.joining("~2 | "));
-        SimpleQueryStringBuilder queryBuilder = new SimpleQueryStringBuilder(queryString + "~2");
-        fields.parallelStream().forEach(field -> queryBuilder.field(field));
+        queryString += "~2";
+        QueryStringQuery queryStringQuery = QueryBuilders.queryString()
+            .query(queryString)
+            .fields(fields)
+            .build();
 
-        boolQueryBuilder.should(queryBuilder);
-        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder()
-            .withQuery(boolQueryBuilder);
+        boolQueryBuilder.should(queryStringQuery._toQuery());
+        NativeQueryBuilder nativeQueryBuilder = new NativeQueryBuilder();
+        nativeQueryBuilder.withQuery(boolQueryBuilder.build()._toQuery());
 
         if (sortByPageable) {
-            pageable.getSort().forEach(sort -> nativeSearchQueryBuilder
-                .withSort(SortBuilders
-                    .fieldSort(sort.getProperty())
-                    .order(sort.getDirection().isAscending() ? SortOrder.ASC : SortOrder.DESC)));
+            pageable.getSort().forEach(sort -> nativeQueryBuilder
+                .withSort(Sort.by(
+                    sort.getDirection().isAscending() ? Sort.Direction.ASC : Sort.Direction.DESC,
+                    sort.getProperty()
+                    )
+                )
+            );
         }
 
-        SearchHitsIterator<T> hits = operations.searchForStream(nativeSearchQueryBuilder.build(), searchClass);
+        SearchHitsIterator<T> hits = operations.searchForStream(nativeQueryBuilder.build(), searchClass);
+        @SuppressWarnings (value="unchecked")
         Page<T> result = new PageImpl(
             hits.stream()
                 .skip(pageable.getPageNumber() * pageable.getPageSize())

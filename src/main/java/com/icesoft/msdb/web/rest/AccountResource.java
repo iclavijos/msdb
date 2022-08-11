@@ -11,8 +11,8 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;

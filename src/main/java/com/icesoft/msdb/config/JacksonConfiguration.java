@@ -1,6 +1,6 @@
 package com.icesoft.msdb.config;
 
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
@@ -29,9 +29,9 @@ public class JacksonConfiguration {
      * Support for Hibernate types in Jackson.
      */
     @Bean
-    public Hibernate5Module hibernate5Module() {
-        Hibernate5Module hibernate5Module = new Hibernate5Module();
-        hibernate5Module.disable(Hibernate5Module.Feature.USE_TRANSIENT_ANNOTATION);
+    public Hibernate5JakartaModule hibernate5Module() {
+        Hibernate5JakartaModule hibernate5Module = new Hibernate5JakartaModule();
+        hibernate5Module.disable(Hibernate5JakartaModule.Feature.USE_TRANSIENT_ANNOTATION);
         return hibernate5Module;
     }
 

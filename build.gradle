@@ -8,20 +8,20 @@ buildscript {
 }
 
 plugins {
-    id "io.freefair.lombok" version "6.3.0"
-    id "java"
-    id "maven-publish"
-    id "idea"
-    id "eclipse"
-    id "jacoco"
-    id "org.springframework.boot"
-    id "com.google.cloud.tools.jib"
-    id "com.gorylenko.gradle-git-properties"
-    id "com.github.node-gradle.node"
-    id "org.sonarqube"
-    id "io.spring.nohttp"
-    id "com.github.andygoossens.gradle-modernizer-plugin"
-    //jhipster-needle-gradle-plugins - JHipster will add additional gradle plugins here
+    id 'io.freefair.lombok' version '6.5.0.3'
+    id 'org.springframework.boot' version '3.0.0-M4'
+    id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+    id 'java'
+    id 'maven-publish'
+    id 'idea'
+    id 'eclipse'
+    id 'jacoco'
+    id 'com.google.cloud.tools.jib'
+    id 'com.gorylenko.gradle-git-properties'
+    id 'com.github.node-gradle.node'
+    id 'org.sonarqube'
+    id 'io.spring.nohttp'
+    id 'com.github.andygoossens.gradle-modernizer-plugin'
 }
 
 group = "com.icesoft.msdb"
@@ -29,15 +29,14 @@ version = "5.5.0"
 
 description = ""
 
-sourceCompatibility=11
-targetCompatibility=11
+sourceCompatibility=17
+targetCompatibility=17
 assert System.properties["java.specification.version"] == "11" || "12" || "13" || "14" || "15" || "16" || "17" || "18"
 
 apply from: "gradle/docker.gradle"
 apply from: "gradle/sonar.gradle"
-//jhipster-needle-gradle-apply-from - JHipster will add additional gradle scripts to be applied here
 
-if (project.hasProperty("prod") || project.hasProperty("gae")) {
+if (project.hasProperty("prod")) {
     apply from: "gradle/profile_prod.gradle"
 } else {
     apply from: "gradle/profile_dev.gradle"
@@ -46,20 +45,6 @@ if (project.hasProperty("prod") || project.hasProperty("gae")) {
 if (project.hasProperty("war")) {
     apply from: "gradle/war.gradle"
 }
-
-if (project.hasProperty("gae")) {
-    apply plugin: 'maven'
-    apply plugin: 'org.springframework.boot.experimental.thin-launcher'
-    apply plugin: 'io.spring.dependency-management'
-
-    dependencyManagement {
-        imports {
-            mavenBom "tech.jhipster:jhipster-dependencies:${jhipsterDependenciesVersion}"
-        }
-    }
-    appengineStage.dependsOn thinResolve
-}
-
 
 idea {
     module {
@@ -156,47 +141,49 @@ configurations {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
-    //jhipster-needle-gradle-repositories - JHipster will add additional repositories
+    mavenLocal()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
 }
 
 dependencies {
-    // import JHipster dependencies BOM
-    if (!project.hasProperty("gae")) {
-        implementation platform("tech.jhipster:jhipster-dependencies:${jhipsterDependenciesVersion}")
-    }
+    implementation platform("tech.jhipster:jhipster-dependencies:${jhipsterDependenciesVersion}" )
 
-    // Use ", version: jhipsterDependenciesVersion, changing: true" if you want
-    // to use a SNAPSHOT release instead of a stable release
-    implementation group: "tech.jhipster", name: "jhipster-framework"
+    implementation "tech.jhipster:jhipster-framework:${jhipsterDependenciesVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter'
+
     implementation "javax.annotation:javax.annotation-api"
+    implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation "io.dropwizard.metrics:metrics-core"
     implementation "io.micrometer:micrometer-registry-prometheus"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-hppc"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     implementation "com.fasterxml.jackson.module:jackson-module-jaxb-annotations"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5-jakarta"
     implementation "com.fasterxml.jackson.core:jackson-annotations"
     implementation "com.fasterxml.jackson.core:jackson-databind"
-    implementation "javax.cache:cache-api"
-    implementation "org.hibernate:hibernate-core"
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv'
+    implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation 'javax.cache:cache-api'
+    implementation "org.hibernate:hibernate-core:${hibernateVersion}"
+    implementation "org.hibernate:hibernate-jcache:${hibernateVersion}"
+    implementation "org.hibernate.validator:hibernate-validator"
     implementation "com.zaxxer:HikariCP"
     implementation "org.apache.commons:commons-lang3"
     implementation "org.apache.commons:commons-math3:3.6.1"
     implementation "commons-io:commons-io"
     implementation "javax.transaction:javax.transaction-api"
-    implementation "org.ehcache:ehcache"
-    implementation "io.mongock:mongock-springboot"
-    implementation "io.mongock:mongodb-springdata-v3-driver"
-    testImplementation "org.testcontainers:mongodb"
+    implementation "org.ehcache:ehcache:${ehCacheVersion}"
+    implementation "io.mongock:mongock-springboot:${mongockVersion}"
+    implementation "io.mongock:mongodb-springdata-v3-driver:${mongockVersion}"
+    implementation "net.logstash.logback:logstash-logback-encoder:${logstashLogbackEncoderVersion}"
+    testImplementation "org.testcontainers:mongodb:${testcontainersVersion}"
     // Mongo db driver was excluded from starter, adding manually
     implementation "org.mongodb:mongodb-driver-sync"
-    implementation "org.hibernate:hibernate-jcache"
-    implementation "org.hibernate:hibernate-entitymanager"
-    implementation "org.hibernate.validator:hibernate-validator"
     implementation "org.flywaydb:flyway-core"
     implementation "org.flywaydb:flyway-mysql"
+    implementation 'org.springframework.boot:spring-boot-starter'
     implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation "org.springframework.boot:spring-boot-loader-tools"
     implementation "org.springframework.boot:spring-boot-starter-mail"
@@ -211,20 +198,24 @@ dependencies {
     }
     implementation "org.springframework.boot:spring-boot-starter-undertow"
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
-    implementation "org.zalando:problem-spring-web"
+    implementation "org.zalando:problem-spring-web:0.29.0-SB3-SNAPSHOT"
     implementation "org.springframework.security:spring-security-config"
     implementation "org.springframework.security:spring-security-data"
     implementation "org.springframework.security:spring-security-web"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
+    implementation 'org.springframework.boot:spring-boot-starter-reactor-netty'
 
-    implementation "io.springfox:springfox-swagger2:2.7.0"
-    implementation "io.springfox:springfox-swagger-ui:2.7.0"
+    implementation 'co.elastic.clients:elasticsearch-java:8.3.3'
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
+    implementation 'io.springfox:springfox-swagger2:3.0.0'
+    implementation 'io.springfox:springfox-oas:3.0.0'
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
     implementation "org.mariadb.jdbc:mariadb-java-client"
 
     implementation 'com.sendgrid:sendgrid-java:3.0.9'
     implementation 'com.cloudinary:cloudinary-http44:1.26.0'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.8.7'
 
     implementation 'com.google.maps:google-maps-services:0.15.0'
 
@@ -241,27 +232,19 @@ dependencies {
     annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernateVersion}"
     annotationProcessor "org.glassfish.jaxb:jaxb-runtime:${jaxbRuntimeVersion}"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
+
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.springframework.security:spring-security-test"
     testImplementation "org.springframework.boot:spring-boot-test"
     testImplementation "com.tngtech.archunit:archunit-junit5-api:${archunitJunit5Version}"
     testRuntimeOnly "com.tngtech.archunit:archunit-junit5-engine:${archunitJunit5Version}"
     testImplementation "com.h2database:h2"
-    testImplementation "org.testcontainers:mariadb"
+    testImplementation "org.testcontainers:mariadb:${testcontainersVersion}"
     developmentOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
-    //jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
 }
 
-if (project.hasProperty("gae")) {
-    task createPom {
-        def basePath = 'build/resources/main/META-INF/maven'
-        doLast {
-            pom {
-                withXml(dependencyManagement.pomConfigurer)
-            }.writeTo("${basePath}/${project.group}/${project.name}/pom.xml")
-        }
-    }
-    bootJar.dependsOn = [createPom]
+tasks.named('test') {
+    useJUnitPlatform()
 }
 
 task cleanResources(type: Delete) {
@@ -269,7 +252,7 @@ task cleanResources(type: Delete) {
 }
 
 wrapper {
-    gradleVersion = "7.0.2"
+    gradleVersion = "7.5"
 }
 
 

@@ -2,16 +2,15 @@ package com.icesoft.msdb.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import com.icesoft.msdb.MSDBException;
 import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.SortComparator;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -73,7 +72,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         name="CATEGORIES_SERIES",
         joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
         inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="ID"))
-    @OrderBy("relevance")
+    // @OrderBy("relevance")
     @Builder.Default
     private SortedSet<Category> allowedCategories = new TreeSet<>();
 

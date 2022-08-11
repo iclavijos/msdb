@@ -2,8 +2,8 @@ package com.icesoft.msdb.repository.converter;
 
 import com.icesoft.msdb.domain.enums.DriverCategory;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
 public class DriverCategoryConverter implements AttributeConverter<DriverCategory, Integer> {
