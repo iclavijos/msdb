@@ -1,7 +1,5 @@
 package com.icesoft.msdb.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
-
 import com.icesoft.msdb.config.Constants;
 import com.icesoft.msdb.domain.User;
 import com.icesoft.msdb.repository.search.UserSearchRepository;
@@ -9,9 +7,7 @@ import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.UserService;
 import com.icesoft.msdb.service.dto.AdminUserDTO;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

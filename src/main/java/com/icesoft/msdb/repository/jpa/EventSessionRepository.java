@@ -1,5 +1,6 @@
 package com.icesoft.msdb.repository.jpa;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public interface EventSessionRepository extends JpaRepository<EventSession,Long>
     List<EventSession> findUpcomingSessions(Long fromDate);
 
 	@Query("SELECT s FROM EventSession s WHERE s.sessionStartTime BETWEEN ?1 AND ?2 ORDER BY s.sessionStartTime ASC")
-	List<EventSession> findUpcomingSessions(Long fromDate, Long toDate);
+	List<EventSession> findUpcomingSessions(Instant fromDate, Instant toDate);
 
     @Query("SELECT es FROM EventSession es WHERE ?1 = es.eventEdition AND "
         + "es.sessionType = com.icesoft.msdb.domain.enums.SessionType.RACE "
@@ -39,8 +40,10 @@ public interface EventSessionRepository extends JpaRepository<EventSession,Long>
 			+ "ORDER BY es.sessionStartTime")
 	List<EventSession> findRacesInSeries(SeriesEdition seriesEdition);
 
-    @Query("FROM EventSession e WHERE day(from_unixtime(e.sessionStartTime)) = ?1 AND " +
-        "month(from_unixtime(e.sessionStartTime)) = ?2 AND from_unixtime(e.sessionStartTime) < CURRENT_DATE AND " +
+    @Query("FROM EventSession e WHERE " +
+        "day(e.sessionStartTime) = ?1 AND " +
+        "month(e.sessionStartTime) = ?2 AND " +
+        "e.sessionStartTime < CURRENT_DATE AND " +
         "sessionType = com.icesoft.msdb.domain.enums.SessionType.RACE")
 	List<EventSession> findRacesOnDay(Integer day, Integer month);
 }

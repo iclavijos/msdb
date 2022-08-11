@@ -26,6 +26,7 @@ public class CloudinaryService implements CDNService {
 	public String uploadImage(String imageId, byte[] imageData, String folder) throws MSDBException {
 		Map params = ObjectUtils.asMap("public_id", folder + "/" + imageId);
         try {
+            @SuppressWarnings (value="unchecked")
 			Map<String, String> imgUpload = cloudinary.uploader().upload(imageData, params);
 			return imgUpload.get("secure_url");
         } catch (IOException e) {

@@ -1,10 +1,10 @@
 package com.icesoft.msdb.domain;
 
-import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.validation.constraints.*;
+import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.*;
 
 import com.icesoft.msdb.domain.enums.DurationType;
 import com.icesoft.msdb.domain.enums.SessionType;
@@ -52,7 +52,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 
     @NotNull
     @Column(name = "start_time_ts", nullable = false)
-    private Long sessionStartTime;
+    private Instant sessionStartTime;
 
     @NotNull
     @Column(name = "duration", nullable = false)
@@ -87,7 +87,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 
     @JsonIgnore
     public ZonedDateTime getSessionStartTimeDate() {
-        return ZonedDateTime.ofInstant(Instant.ofEpochSecond(getSessionStartTime()), ZoneId.of("UTC"));
+        return ZonedDateTime.ofInstant(sessionStartTime, ZoneId.of("UTC"));
     }
 
     @Column(name = "location")
@@ -158,4 +158,8 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 
 	}
 
+    @Override
+    public EventSession trim() {
+        return this;
+    }
 }

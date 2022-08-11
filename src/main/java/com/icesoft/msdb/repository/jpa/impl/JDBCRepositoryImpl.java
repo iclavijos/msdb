@@ -24,13 +24,13 @@ public class JDBCRepositoryImpl {
 				+ "from events_results "
 				+ "where editionId = ? "
 				+ "order by sessionStartTime asc, finalPos asc";
-		List<Object[]> tmp = jdbcTemplate.query(query, new Object[] {eventEditionId},
+		List<Object[]> tmp = jdbcTemplate.query(query,
 				(rs, rowNum) -> new Object[] {
                     rs.getLong("entryId"),
                     rs.getString("catName"),
                     rs.getString("sessionName"),
                     rs.getInt("finalPos")
-        });
+        }, new Object[] {eventEditionId});
 
 		List<String> categories = tmp.parallelStream().map(o -> o[1].toString()).distinct().collect(Collectors.toList());
 		List<String> sessions = tmp.parallelStream().map(o -> o[2].toString()).distinct().collect(Collectors.toList());
@@ -49,7 +49,8 @@ public class JDBCRepositoryImpl {
 
 	public Map<Long, List<Object[]>> getDriversResultsInSeries(Long seriesId) {
 		List<Object[]> results = jdbcTemplate.query("SELECT driverId, finalPos, times FROM driver_results WHERE seriesId = ?",
-				new Object[] {seriesId}, (rs, rowNum) -> new Object[] {rs.getLong("driverId"), rs.getInt("finalPos"), rs.getInt("times")});
+            (rs, rowNum) -> new Object[] {rs.getLong("driverId"), rs.getInt("finalPos"), rs.getInt("times")},
+            new Object[] {seriesId});
 
 		Map<Long, List<Object[]>> result = new HashMap<Long, List<Object[]>>();
         createResultObject(results, result);
@@ -59,7 +60,8 @@ public class JDBCRepositoryImpl {
 
     public Map<Long, List<Object[]>> getTeamsResultsInSeries(Long seriesId) {
 		List<Object[]> results = jdbcTemplate.query("SELECT teamId, finalPos, times FROM team_results WHERE seriesId = ?",
-				new Object[] {seriesId}, (rs, rowNum) -> new Object[] {rs.getLong("teamId"), rs.getInt("finalPos"), rs.getInt("times")});
+            (rs, rowNum) -> new Object[] {rs.getLong("teamId"), rs.getInt("finalPos"), rs.getInt("times")},
+            new Object[] {seriesId});
 
 		Map<Long, List<Object[]>> result = new HashMap<Long, List<Object[]>>();
         createResultObject(results, result);
@@ -86,7 +88,8 @@ public class JDBCRepositoryImpl {
 		List<ParticipantPointsDTO> result = jdbcTemplate.query("select d.id driverId, concat(d.name, ' ', d.surname) driverName, coalesce(dcs.points, 0) points, dcs.category category " +
                 "from drivers_classification_series dcs join driver d on d.id = dcs.driverId " +
                 "where dcs.seriesId = ?",
-				new Object[] {seriesId}, (rs, rowNum) -> new ParticipantPointsDTO(null, rs.getLong("driverId"), rs.getString("driverName"), rs.getFloat("points"), rs.getString("category")));
+				(rs, rowNum) -> new ParticipantPointsDTO(null, rs.getLong("driverId"), rs.getString("driverName"), rs.getFloat("points"), rs.getString("category")),
+                new Object[] {seriesId});
 
 		return result;
 	}
@@ -95,7 +98,8 @@ public class JDBCRepositoryImpl {
 		List<ParticipantPointsDTO> result = jdbcTemplate.query("select t.id teamId, t.name teamName, coalesce(tcs.points, 0) points, tcs.category category " +
                 "from team t left join teams_classification_series tcs on t.id = tcs.teamId " +
                 "where tcs.series_edition_id = ?",
-				new Object[] {seriesId}, (rs, rowNum) -> new ParticipantPointsDTO(rs.getLong("teamId"), rs.getString("teamName"), rs.getFloat("points"), rs.getString("category")));
+				(rs, rowNum) -> new ParticipantPointsDTO(rs.getLong("teamId"), rs.getString("teamName"), rs.getFloat("points"), rs.getString("category")),
+                new Object[] {seriesId});
 
 		return result;
 	}
@@ -106,7 +110,8 @@ public class JDBCRepositoryImpl {
 				+ "where series_edition_id = ?1 "
 				+ "group by manufacturer "
 				+ "order by points desc",
-				new Object[] {seriesId}, (rs, rowNum) -> new ManufacturerPointsDTO(rs.getString("manufacturer"), rs.getFloat("points"), rs.getString("category")));
+				(rs, rowNum) -> new ManufacturerPointsDTO(rs.getString("manufacturer"), rs.getFloat("points"), rs.getString("category")),
+                new Object[] {seriesId});
 
 		return result;
 	}

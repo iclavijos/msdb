@@ -36,8 +36,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -133,7 +133,7 @@ public class EventEditionResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        EventEdition result = eventEditionRepository.getById(eventEdition.getId());
+        EventEdition result = eventEditionRepository.findById(eventEdition.getId()).get();
         if (result.getSeriesEditions() != null) {
     		eventEdition.setSeriesEditions(result.getSeriesEditions());
     	}
@@ -268,7 +268,7 @@ public class EventEditionResource {
     @Transactional
     public ResponseEntity<Void> deleteEventEdition(@PathVariable Long id) {
         log.debug("REST request to delete EventEdition : {}", id);
-        EventEdition eventEd = eventEditionRepository.getById(id);
+        EventEdition eventEd = eventEditionRepository.findById(id).get();
 
         if (eventEd.getSeriesEditions() != null) {
             eventEd.getSeriesEditions().stream().forEach(se -> {
@@ -376,7 +376,7 @@ public class EventEditionResource {
             () -> new MSDBException("Invalid event edition id " + eventSession.getEventEdition().getId())
         ));
 
-        eventSession.setSessionStartTime(resetSessionStartTimeSeconds(eventSession.getSessionStartTimeDate()));
+        eventSession.setSessionStartTime(resetSessionStartTimeSeconds(eventSession.getSessionStartTimeDate()).toInstant());
         EventSession result = eventSessionRepository.save(eventSession);
         subscriptionsService.saveEventSession(result);
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/sessions"))
@@ -423,7 +423,7 @@ public class EventEditionResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        eventSession.setSessionStartTime(resetSessionStartTimeSeconds(eventSession.getSessionStartTimeDate()));
+        eventSession.setSessionStartTime(resetSessionStartTimeSeconds(eventSession.getSessionStartTimeDate()).toInstant());
         eventSession.setEventEdition(eventEditionRepository.findById(eventSession.getEventEdition().getId()).orElseThrow(
             () -> new MSDBException("Invalid event edition id " + eventSession.getEventEdition().getId())
         ));
@@ -432,7 +432,7 @@ public class EventEditionResource {
             return createEventEditionSession(eventSession);
         }
         Long prevSessionStartTime = eventSessionRepository.findById(eventSession.getId())
-            .orElseThrow(() -> new MSDBException("Invalid session id " + eventSession.getId())).getSessionStartTime();
+            .orElseThrow(() -> new MSDBException("Invalid session id " + eventSession.getId())).getSessionStartTime().getEpochSecond();
 
         EventSession result = eventSessionRepository.save(eventSession);
         if (result.getSessionStartTime().equals(prevSessionStartTime)) {
@@ -446,10 +446,9 @@ public class EventEditionResource {
             .body(result);
     }
 
-    private Long resetSessionStartTimeSeconds(ZonedDateTime eventSessionStartTime) {
+    private ZonedDateTime resetSessionStartTimeSeconds(ZonedDateTime eventSessionStartTime) {
         // Ensuring start time is set to zero seconds
-        ZonedDateTime zeroSeconds = eventSessionStartTime.truncatedTo(ChronoUnit.MINUTES);
-        return zeroSeconds.toEpochSecond();
+        return eventSessionStartTime.truncatedTo(ChronoUnit.MINUTES);
     }
 
     @PutMapping("/event-editions/event-sessions/{sessionId}/process-results")
@@ -731,7 +730,7 @@ public class EventEditionResource {
     	LocalDateTime startMidnight = LocalDateTime.of(startDate, LocalTime.MIDNIGHT);
 		ZonedDateTime start = ZonedDateTime.of(startMidnight, ZoneId.of("UTC"));
 		ZonedDateTime end = ZonedDateTime.of(endDate.atTime(23, 59, 59), ZoneId.of("UTC"));
-    	List<EventSession> tmp = eventSessionRepository.findUpcomingSessions(start.toEpochSecond(), end.toEpochSecond());
+    	List<EventSession> tmp = eventSessionRepository.findUpcomingSessions(start.toInstant(), end.toInstant());
     	return tmp.parallelStream().map(session -> {
     		String[] logoUrl = null;
             Integer seriesRelevance = null;
@@ -859,7 +858,7 @@ public class EventEditionResource {
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
     public ResponseEntity<Void> cloneEventEdition(@PathVariable Long eventEditionId, @RequestBody String newPeriod) {
-        eventService.cloneEventEdition(eventEditionId, newPeriod, Collections.EMPTY_SET);
+        eventService.cloneEventEdition(eventEditionId, newPeriod, Collections.<SeriesEdition>emptySet());
         return ResponseEntity.ok().headers(
             HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, eventEditionId.toString())).build();
     }

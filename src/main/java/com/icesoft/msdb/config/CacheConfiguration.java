@@ -140,7 +140,7 @@ public class CacheConfiguration {
         this.buildProperties = buildProperties;
     }
 
-    private void createCache(javax.cache.CacheManager cm, String cacheName, javax.cache.configuration.Configuration config) {
+    private void createCache(javax.cache.CacheManager cm, String cacheName, javax.cache.configuration.Configuration<?,?> config) {
         javax.cache.Cache<Object, Object> cache = cm.getCache(cacheName);
         if (cache != null) {
             cm.destroyCache(cacheName);

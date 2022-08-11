@@ -3,9 +3,9 @@ package com.icesoft.msdb.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.time.Instant;
-import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.MappedSuperclass;
 
 import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
@@ -45,7 +45,5 @@ public abstract class AbstractAuditingEntity<T> implements Serializable {
     @JsonIgnore
     private Instant lastModifiedDate = Instant.now();
 
-    public T trim() {
-        return (T)this;
-    }
+    public abstract T trim();
 }

@@ -35,9 +35,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.transaction.Transactional;
-import javax.validation.Valid;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.xml.bind.DatatypeConverter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -283,7 +283,7 @@ public class ImportsResource {
     		session.setEventEdition(eventEdition);
     		session.setName(tmp.getSessionName());
     		session.setShortname(tmp.getSessionShortName());
-    		session.setSessionStartTime(tmp.getSessionStartTime().atZone(tz.toZoneId()).toInstant().toEpochMilli());
+    		session.setSessionStartTime(tmp.getSessionStartTime().atZone(tz.toZoneId()).toInstant());
     		session.setDuration(tmp.getSessionDuration());
     		session.setSessionType(SessionType.valueOf(tmp.getSessionType().toUpperCase()));
     		session.setDurationType(DurationType.valueOf(tmp.getDurationType().toUpperCase()));

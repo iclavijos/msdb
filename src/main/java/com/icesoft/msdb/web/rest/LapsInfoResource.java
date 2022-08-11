@@ -58,7 +58,7 @@ public class LapsInfoResource {
             .collect(Collectors.groupingBy(LapInfo::getRaceNumber));
 
         result = driversPerRaceNumber.keySet().stream()
-            .sorted(Comparator.comparing(Integer::new))
+            .sorted(Comparator.comparing(Integer::valueOf))
             .map(raceNumber -> {
                 String names = driversPerRaceNumber.get(raceNumber).stream()
                     .map(d -> d.getDriverName()).distinct().collect(Collectors.joining(", "));

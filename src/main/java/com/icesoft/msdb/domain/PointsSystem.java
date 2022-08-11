@@ -1,7 +1,7 @@
 package com.icesoft.msdb.domain;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -11,7 +11,6 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * A PointsSystem.

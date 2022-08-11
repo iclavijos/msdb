@@ -165,6 +165,7 @@ public class UserService {
             throw new IllegalArgumentException("AuthenticationToken is not OAuth2 or JWT!");
         }
         User user = getUser(attributes);
+        @SuppressWarnings (value="unchecked")
         List<String> groups = (List<String>)attributes.get("https://www.motorsports-database.racing/groups");
 //        user.setAuthorities(groups.stream()
 //            .map(authority -> {
