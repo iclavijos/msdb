@@ -84,7 +84,7 @@ export class EventEditionComponent implements AfterViewInit, OnDestroy {
 
     this.lightboxAlbum = [];
     eventEditions.body
-      .filter(eventEdition => eventEdition.posterUrl !== null)
+      .filter(eventEdition => eventEdition.posterUrl !== undefined)
       .forEach(eventEdition => {
         const poster = {
           src: eventEdition.posterUrl,
