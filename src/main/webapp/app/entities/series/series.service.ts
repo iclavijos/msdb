@@ -21,7 +21,7 @@ export class SeriesService {
   }
 
   update(series: ISeries): Observable<EntityResponseType> {
-    return this.http.put<ISeries>(this.resourceUrl, series, { observe: 'response' });
+    return this.http.put<ISeries>(`${this.resourceUrl}/${series.id}`, series, { observe: 'response' });
   }
 
   find(id: number): Observable<EntityResponseType> {
