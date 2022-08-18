@@ -1,5 +1,7 @@
 package com.icesoft.msdb.repository.jpa;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import com.icesoft.msdb.domain.EventEdition;
@@ -26,7 +28,7 @@ public interface EventSessionRepository extends JpaRepository<EventSession,Long>
     List<EventSession> findUpcomingSessions(Long fromDate);
 
 	@Query("SELECT s FROM EventSession s WHERE s.sessionStartTime BETWEEN ?1 AND ?2 ORDER BY s.sessionStartTime ASC")
-	List<EventSession> findUpcomingSessions(Long fromDate, Long toDate);
+	List<EventSession> findUpcomingSessions(Instant fromDate, Instant toDate);
 
     @Query("SELECT es FROM EventSession es WHERE ?1 = es.eventEdition AND "
         + "es.sessionType = com.icesoft.msdb.domain.enums.SessionType.RACE "
