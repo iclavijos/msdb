@@ -354,14 +354,6 @@ public class EventEditionResource {
     	return result;
     }
 
-//    @GetMapping("/event-editions/{id}/sessions/nonfp")
-//    public List<EventSession> getEventEditionNonFPSessions(@PathVariable Long id) {
-//    	log.debug("REST request to get all EventEditions {} sessions", id);
-//    	List<EventSession> result = eventSessionRepository.findNonFPSessions(id);
-//    	result.parallelStream().forEach(session -> session.setEventEdition(null));
-//    	return result;
-//    }
-
     @PostMapping("/event-editions/event-sessions")
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @CacheEvict(cacheNames="calendar", allEntries=true)
