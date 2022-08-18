@@ -219,6 +219,13 @@ public class SearchServiceImpl implements SearchService {
                 WildcardQuery.Builder wildcardQueryBuilder = new WildcardQuery.Builder();
                 wildcardQueryBuilder
                     .field(field)
+                    .wildcard(queryTerm + "*")
+                    .caseInsensitive(true)
+                    .boost(queryBoosts.getOrDefault(field, 1.0f));
+                boolQueryBuilder.should(wildcardQueryBuilder.build()._toQuery());
+                wildcardQueryBuilder = new WildcardQuery.Builder();
+                wildcardQueryBuilder
+                    .field(field)
                     .wildcard("*" + queryTerm + "*")
                     .caseInsensitive(true)
                     .boost(queryBoosts.getOrDefault(field, 1.0f));
