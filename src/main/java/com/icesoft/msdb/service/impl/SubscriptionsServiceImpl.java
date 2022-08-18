@@ -151,7 +151,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 
     @Override
     public void saveEventSession(EventSession session) {
-        saveEventSession(session, session.getSessionStartTime().getEpochSecond());
+        saveEventSession(session, session.getSessionStartTime());
     }
 
     @Override
@@ -170,8 +170,8 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             );
         }
         Sessions sessions = sessionsRepository
-            .findById(session.getSessionStartTime().getEpochSecond())
-            .orElse(new Sessions(session.getSessionStartTime().getEpochSecond()));
+            .findById(session.getSessionStartTime())
+            .orElse(new Sessions(session.getSessionStartTime()));
 
         sessions.addSession(session);
         sessionsRepository.save(sessions);
@@ -179,11 +179,11 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 
     @Override
     public void deleteEventSession(EventSession session) {
-        sessionsRepository.findById(session.getSessionStartTime().getEpochSecond()).ifPresent(
+        sessionsRepository.findById(session.getSessionStartTime()).ifPresent(
             sessions -> {
                 sessions.removeSession(session);
                 if (sessions.isEmpty()) {
-                    sessionsRepository.deleteById(session.getSessionStartTime().getEpochSecond());
+                    sessionsRepository.deleteById(session.getSessionStartTime());
                 } else {
                     sessionsRepository.save(sessions);
                 }

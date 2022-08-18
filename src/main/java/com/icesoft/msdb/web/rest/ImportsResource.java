@@ -283,7 +283,7 @@ public class ImportsResource {
     		session.setEventEdition(eventEdition);
     		session.setName(tmp.getSessionName());
     		session.setShortname(tmp.getSessionShortName());
-    		session.setSessionStartTime(tmp.getSessionStartTime().atZone(tz.toZoneId()).toInstant());
+    		session.setSessionStartTime(tmp.getSessionStartTime().atZone(tz.toZoneId()).toInstant().toEpochMilli());
     		session.setDuration(tmp.getSessionDuration());
     		session.setSessionType(SessionType.valueOf(tmp.getSessionType().toUpperCase()));
     		session.setDurationType(DurationType.valueOf(tmp.getDurationType().toUpperCase()));

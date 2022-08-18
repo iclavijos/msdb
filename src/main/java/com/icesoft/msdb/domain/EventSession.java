@@ -52,7 +52,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 
     @NotNull
     @Column(name = "start_time_ts", nullable = false)
-    private Instant sessionStartTime;
+    private Long sessionStartTime;
 
     @NotNull
     @Column(name = "duration", nullable = false)
@@ -87,7 +87,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 
     @JsonIgnore
     public ZonedDateTime getSessionStartTimeDate() {
-        return ZonedDateTime.ofInstant(sessionStartTime, ZoneId.of("UTC"));
+        return ZonedDateTime.ofInstant(Instant.ofEpochSecond(getSessionStartTime()), ZoneId.of("UTC"));
     }
 
     @Column(name = "location")
