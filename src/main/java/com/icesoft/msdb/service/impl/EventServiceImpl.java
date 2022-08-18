@@ -195,12 +195,12 @@ public class EventServiceImpl implements EventService {
         log.trace("Days between: {}", daysBetween);
         List<EventSession> sessions = eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(event.getId());
         sessions.forEach(session -> {
-            Long previousStartTime = session.getSessionStartTime();
-            LocalDateTime time = LocalDateTime.ofInstant(Instant.ofEpochSecond(previousStartTime), ZoneId.of("UTC"));
+            Long previousStartTime = session.getSessionStartTime().getEpochSecond();
+            LocalDateTime time = LocalDateTime.ofInstant(session.getSessionStartTime(), ZoneId.of("UTC"));
             log.trace("Original time for session {}: {}", session.getName(), time);
             time = time.plusDays(daysBetween);
             log.trace("New time: {}", time);
-            session.setSessionStartTime(time.toEpochSecond(ZoneOffset.UTC));
+            session.setSessionStartTime(time.toInstant(ZoneOffset.UTC));
             eventSessionRepository.save(session);
             subscriptionsService.saveEventSession(session, previousStartTime);
         });
@@ -244,7 +244,7 @@ public class EventServiceImpl implements EventService {
             newSession.setPointsSystemsSession(null);
 
             ZonedDateTime zdt = es.getSessionStartTimeDate();
-            newSession.setSessionStartTime(zdt.withYear(yearCopy).toEpochSecond());
+            newSession.setSessionStartTime(zdt.withYear(yearCopy).toInstant());
             final EventSession copy = eventSessionRepository.save(newSession);
 
             if (!series.isEmpty()) {
