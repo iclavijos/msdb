@@ -232,7 +232,8 @@ public class DriverResource {
                 Driver.class,
                 query.toLowerCase(),
                 Arrays.asList("surname", "name"),
-                pageable);
+                pageable,
+                2f, 1f);
         } else {
             page = driverRepository.findAll(pageable);
         }
