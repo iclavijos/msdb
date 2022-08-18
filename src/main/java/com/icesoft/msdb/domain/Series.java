@@ -62,6 +62,7 @@ public class Series extends AbstractAuditingEntity implements Serializable {
             .name(this.name)
             .shortname(this.shortname)
             .organizer(this.organizer)
+            .logoUrl(this.logoUrl)
             .build();
     }
 }
