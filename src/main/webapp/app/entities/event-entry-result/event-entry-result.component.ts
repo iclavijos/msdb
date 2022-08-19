@@ -64,6 +64,7 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     if (!this.isRace()) {
       this.displayedColumns.push('difference', 'previous');
     }
+
     this.displayedColumns.push('lapsCompleted');
     if (this.isRace()) {
       this.displayedColumns.push('lapsLed');
