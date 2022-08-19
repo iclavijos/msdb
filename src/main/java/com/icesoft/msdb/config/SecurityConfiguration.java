@@ -96,6 +96,9 @@ public class SecurityConfiguration {
                     .antMatchers("/api/timezones").permitAll()
                     .antMatchers("/api/event-editions/calendar/**").permitAll()
 
+                    // Public endpoints for mobile app
+                    .antMatchers("/api/series").permitAll()
+
                     .antMatchers("/api/**").authenticated()
                     .antMatchers("/management/health").permitAll()
                     .antMatchers("/management/health/**").permitAll()
