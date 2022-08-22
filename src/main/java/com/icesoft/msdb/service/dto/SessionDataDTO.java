@@ -3,6 +3,7 @@ package com.icesoft.msdb.service.dto;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.enums.DurationType;
@@ -22,6 +23,7 @@ public class SessionDataDTO {
 	private final String eventName;
 	private final String racetrack;
 	private final List<Long> seriesIds;
+    private final List<Long> seriesEditionIds;
 	private final List<String> seriesNames;
 	private final String seriesLogo;
     private final Boolean rally;
@@ -42,7 +44,9 @@ public class SessionDataDTO {
         this.sessionType = session.getSessionType();
 		this.eventEditionId = session.getEventEdition().getId();
 		this.eventName = session.getEventEdition().getLongEventName();
-		this.seriesIds = session.getSeriesIds();
+		this.seriesEditionIds = session.getSeriesIds();
+        this.seriesIds = session.getEventEdition().getSeriesEditions().stream()
+            .map(seriesEdition -> seriesEdition.getSeries().getId()).collect(Collectors.toList());
 		this.seriesNames = session.getSeriesNames();
 		this.racetrack = Optional.ofNullable(session.getEventEdition().getTrackLayout())
             .map(trackLayout -> trackLayout.getRacetrack().getName())
