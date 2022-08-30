@@ -196,6 +196,7 @@ jhipster:
       audience:
         - account
         - api://default
+        - https://msdb.eu.auth0.com/api/v2/
 
 # ===================================================================
 # Application specific properties
