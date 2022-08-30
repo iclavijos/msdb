@@ -199,7 +199,7 @@ export class EventEntryResultComponent implements OnInit, OnDestroy {
     this.eventSubscriber = this.eventManager.subscribe('eventEntryResultListModification', () => this.loadAll());
   }
 
-  private isRace(): boolean {
+  isRace(): boolean {
     return this.eventSession.sessionType === SessionType.RACE || this.eventSession.sessionType === SessionType.QUALIFYING_RACE;
   }
 }

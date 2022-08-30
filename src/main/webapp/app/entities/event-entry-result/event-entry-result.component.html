@@ -57,7 +57,7 @@
                             result.finalPosition == 902 ? 'DSQ' :
                             result.finalPosition == 903 ? 'DNQ' :
                             result.finalPosition == 800 ? 'NC' : '-' :	i + 1 }}
-                            <span *ngIf="eventSession.sessionTypeValue === 2 && result.startingPosition && result.finalPosition < 800">
+                            <span *ngIf="isRace() && result.startingPosition && result.finalPosition < 800">
                                 <span *ngIf="result.startingPosition < result.finalPosition" style="color: red">
                                     <i class="fa fa-arrow-down" aria-hidden="true"></i> {{ result.startingPosition - result.finalPosition }}
                                 </span>
@@ -140,7 +140,7 @@
                     <ng-container matColumnDef="difference">
                         <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.result.difference' | translate}}</th>
                         <td mat-cell *matCellDef="let result; let i = index">
-                            <div *ngIf="eventSession.sessionTypeValue !== 2 && i !== 0 && result.bestLapTime">
+                            <div *ngIf="!isRace() && i !== 0 && result.bestLapTime">
                                 <span>+{{gap(result.bestLapTime, 0) | timeMaskPipe}}</span>
                             </div>
                         </td>
@@ -149,7 +149,7 @@
                     <ng-container matColumnDef="previous">
                         <th mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.eventEdition.result.previous' | translate}}</th>
                         <td mat-cell *matCellDef="let result; let i = index">
-                            <div *ngIf="eventSession.sessionTypeValue !== 2 && i !== 0 && result.bestLapTime">
+                            <div *ngIf="isRace() && i !== 0 && result.bestLapTime">
                                 <span>+{{gap(result.bestLapTime, i-1) | timeMaskPipe}}</span>
                             </div>
                         </td>
@@ -207,7 +207,7 @@
                     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
                 </table>
-                <span *ngIf="eventSession.sessionTypeValue === 2" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.pitlaneStartDesc">Indicates pitlane start</span>
+                <span *ngIf="isRace()" jhiTranslate="motorsportsDatabaseApp.eventEdition.result.pitlaneStartDesc">Indicates pitlane start</span>
             </div>
         </div>
     </div>
