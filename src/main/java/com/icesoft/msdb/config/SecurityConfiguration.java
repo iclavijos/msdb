@@ -106,7 +106,14 @@ public class SecurityConfiguration {
                     .antMatchers("/management/prometheus").permitAll()
                     .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN);
             })
-        .oauth2Login();
+        .oauth2Login()
+            .and()
+            .oauth2ResourceServer()
+                .jwt()
+                .jwtAuthenticationConverter(authenticationConverter())
+                .and()
+            .and()
+                .oauth2Client();
 
 //            // Start of "public" access
 //            .antMatchers(HttpMethod.GET, "/api/series/**").permitAll()
