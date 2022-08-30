@@ -3,11 +3,8 @@ package com.icesoft.msdb.security.oauth2;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.icesoft.msdb.security.SecurityUtils;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.springframework.core.convert.converter.Converter;
@@ -72,7 +69,9 @@ public class CustomClaimConverter implements Converter<Map<String, Object>, Map<
 
             // Add custom claims
             if (user != null) {
-                convertedClaims.put("preferred_username", user.get("preferred_username").asText());
+                Optional<JsonNode> userNameOpt = Optional.ofNullable(user.get("preferred_username"));
+                Optional<JsonNode> nickNameOpt = Optional.ofNullable(user.get("nickname"));
+                convertedClaims.put("preferred_username", userNameOpt.orElse(nickNameOpt.get()).asText());
                 if (user.has("given_name")) {
                     convertedClaims.put("given_name", user.get("given_name").asText());
                 }
