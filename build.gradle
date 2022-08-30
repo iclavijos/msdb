@@ -153,7 +153,7 @@ dependencies {
     implementation "tech.jhipster:jhipster-framework:${jhipsterDependenciesVersion}"
     implementation 'org.springframework.boot:spring-boot-starter'
 
-    implementation "javax.annotation:javax.annotation-api"
+    implementation "jakarta.annotation:jakarta.annotation-api"
     implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation "io.dropwizard.metrics:metrics-core"
     implementation "io.micrometer:micrometer-registry-prometheus"
@@ -173,7 +173,7 @@ dependencies {
     implementation "org.apache.commons:commons-lang3"
     implementation "org.apache.commons:commons-math3:3.6.1"
     implementation "commons-io:commons-io"
-    implementation "javax.transaction:javax.transaction-api"
+    implementation "jakarta.transaction:jakarta.transaction-api"
     implementation "org.ehcache:ehcache:${ehCacheVersion}"
     implementation "io.mongock:mongock-springboot:${mongockVersion}"
     implementation "io.mongock:mongodb-springdata-v3-driver:${mongockVersion}"
