@@ -87,6 +87,10 @@ export class AgendaComponent implements OnInit {
       });
   }
 
+  isRace(event: MyEvent): boolean {
+    return event.sessionType === 'race' || event.sessionType === 'qualifyingRace';
+  }
+
   private onlyUniqueSeries(value, index, self) {
     return self.indexOf(value) === index;
   }

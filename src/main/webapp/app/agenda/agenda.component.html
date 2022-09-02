@@ -110,10 +110,10 @@
                                             <div class="col-xs-12 col-lg-8" *ngIf="eventStatus(event) === 'O'">
                                                 <div class="row" *ngFor="let session of sessionsEvent(event)"
                                                      [ngStyle]="{
-                                                        'color': (session.sessionType === 2 || session.cancelled) ? 'white' : 'black',
-                                                        'background-color': (session.sessionType === 2 && !session.cancelled) ? 'black' :
+                                                        'color': (isRace(session) || session.cancelled) ? 'white' : 'black',
+                                                        'background-color': (isRace(session) && !session.cancelled) ? 'black' :
                                                             session.cancelled ? 'red' : '',
-                                                        'font-weight': (session.sessionType === 2 || session.cancelled) ? 'bold' : 'normal'
+                                                        'font-weight': (isRace(session) || session.cancelled) ? 'bold' : 'normal'
                                                      }">
                                                     <div class="col-sm-6 col-lg-4">
                                                         {{ session.sessionName }}
