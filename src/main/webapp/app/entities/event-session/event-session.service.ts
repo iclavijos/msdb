@@ -41,7 +41,7 @@ export class EventSessionService {
   update(eventSession: IEventSession): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(eventSession);
     return this.http
-      .put<IEventSession>(this.resourceUrl, copy, { observe: 'response' })
+      .put<IEventSession>(`${this.resourceUrl}/${eventSession.id}`, copy, { observe: 'response' })
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
