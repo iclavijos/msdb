@@ -157,7 +157,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
     const result = [];
     for (const session of sessions) {
       const newEvent = new MyEvent();
-      newEvent.id = session.id;
+      newEvent.id = session.eventEditionId;
       newEvent.title = session.eventName + ' - ' + session.sessionName;
       newEvent.eventName = session.eventName;
       newEvent.sessionName = session.sessionName;
@@ -183,9 +183,9 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
       } else if (session.status === 'S') {
         newEvent.backgroundColor = 'orange';
       } else {
-        if (session.sessionType === 'RACE') {
+        if (session.sessionType === 'race') {
           newEvent.backgroundColor = 'green';
-        } else if (session.sessionType === 'QUALIFYING' || session.sessionType === 'QUALIFYING_RACE') {
+        } else if (session.sessionType === 'qualifying' || session.sessionType === 'qualifyingRace') {
           newEvent.backgroundColor = 'blue';
         } else {
           newEvent.backgroundColor = 'grey';
