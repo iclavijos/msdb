@@ -104,6 +104,10 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
         return sessionType.equals(SessionType.RACE) || sessionType.equals(SessionType.QUALIFYING_RACE);
 	}
 
+    public boolean getCancelled() {
+        return Optional.ofNullable(cancelled).orElse(false);
+    }
+
 	public List<PointsSystemSession> addPointsSystemsSession(PointsSystemSession pss) {
 		if (pointsSystemsSession == null) {
 			pointsSystemsSession = new ArrayList<>();
