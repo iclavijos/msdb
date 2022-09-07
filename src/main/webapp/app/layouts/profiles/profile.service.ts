@@ -22,12 +22,7 @@ export class ProfileService {
       map((profileInfo: ProfileInfo) => {
         const pi = new ProfileInfo();
         pi.activeProfiles = profileInfo.activeProfiles;
-        const displayRibbonOnProfiles = profileInfo['display-ribbon-on-profiles'].split(',');
         if (pi.activeProfiles) {
-          const ribbonProfiles = displayRibbonOnProfiles.filter(profile => pi.activeProfiles.includes(profile));
-          if (ribbonProfiles.length !== 0) {
-            pi.ribbonEnv = ribbonProfiles[0];
-          }
           pi.inProduction = pi.activeProfiles.includes('prod');
           pi.swaggerEnabled = pi.activeProfiles.includes('swagger');
         }
