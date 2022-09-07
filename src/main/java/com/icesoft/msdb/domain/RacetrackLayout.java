@@ -61,6 +61,8 @@ public class RacetrackLayout extends AbstractAuditingEntity implements Serializa
         return RacetrackLayout.builder()
             .id(this.id)
             .name(this.name)
+            .racetrack(this.getRacetrack().trim())
+            .layoutImageUrl(this.layoutImageUrl)
             .build();
     }
 }
