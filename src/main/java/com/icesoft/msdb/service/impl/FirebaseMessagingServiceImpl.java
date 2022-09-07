@@ -34,7 +34,7 @@ public class FirebaseMessagingServiceImpl implements MessagingService {
                     .putData("eventEditionId", session.getEventEdition().getId().toString())
                     .putData("sessionId", session.getId().toString())
                     .putData("eventName", session.getEventEdition().getLongEventName())
-                    .putData("startTime", session.getSessionStartTime().toString())
+                    .putData("startTime", Long.toString(session.getSessionStartTimeDate().toEpochSecond()))
                     .putData("seriesLogoUrl", session.getEventEdition().getSeriesEditions().stream()
                         .map(series -> series.getLogoUrl()).findFirst().orElseGet(null)
                     );
