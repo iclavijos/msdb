@@ -34,7 +34,7 @@ public class FirebaseMessagingServiceImpl implements MessagingService {
                     .putData("eventEditionId", session.getEventEdition().getId().toString())
                     .putData("sessionId", session.getId().toString())
                     .putData("eventName", session.getEventEdition().getLongEventName())
-                    .putData("startTime", session.getSessionStartTime().toString())
+                    .putData("startTime", Long.toString(session.getSessionStartTimeDate().toEpochSecond()))
                     .putData("seriesLogoUrl", session.getEventEdition().getSeriesEditions().stream()
                         .map(series -> series.getLogoUrl()).findFirst().orElseGet(null)
                     );
@@ -54,8 +54,8 @@ public class FirebaseMessagingServiceImpl implements MessagingService {
                     builder.putData("racetrack", session.getEventEdition().getTrackLayout().getRacetrack().getName());
                     builder.putData("racetrackLayoutUrl", session.getEventEdition().getTrackLayout().getLayoutImageUrl());
                 }
-                builder.putData("rally", session.getEventEdition().getEvent().getRally().toString());
-                builder.putData("raid", session.getEventEdition().getEvent().getRaid().toString());
+                builder.putData("rally", Boolean.toString(session.getEventEdition().getEvent().isRally()));
+                builder.putData("raid", Boolean.toString(session.getEventEdition().getEvent().isRaid()));
 
                 Message message = builder.build();
 
