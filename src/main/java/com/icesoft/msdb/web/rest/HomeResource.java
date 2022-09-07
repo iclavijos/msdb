@@ -84,7 +84,8 @@ public class HomeResource {
 
 		ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
 		List<SessionDataDTO> filtered =
-				sessions.parallelStream().filter(session -> !session.isFinished(now))
+				sessions.parallelStream()
+                    .filter(session -> !session.isFinished(now))
                     .filter(session -> session.getEventEdition().getStatus().equals(EventStatusType.ONGOING))
 					.map(SessionDataDTO::new)
 					.sorted(Comparator.comparing(SessionDataDTO::getSessionStartTime))
@@ -147,7 +148,7 @@ public class HomeResource {
     public void testNotif(@PathVariable String email, @PathVariable Long sessionId) {
         User ivan = userRepository.findOneByEmailIgnoreCase(email).get();
         EventSession session = eventSessionRepository.findById(sessionId).get();
-        // messagingService.sendSessionNotification(ivan, session);
-        telegramSenderService.sendMessage(session, 17);
+        messagingService.sendSessionNotification(ivan, session);
+        // telegramSenderService.sendMessage(session, 17);
     }
 }
