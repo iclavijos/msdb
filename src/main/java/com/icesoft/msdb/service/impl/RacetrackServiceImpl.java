@@ -209,8 +209,9 @@ public class RacetrackServiceImpl implements RacetrackService {
     	return searchService.performWildcardSearch(
             RacetrackLayout.class,
             query.toLowerCase(),
-            Arrays.asList("name"),
-            pageable);
+            Arrays.asList("racetrack.name", "name", "racetrack.location"),
+            pageable,
+            1.5f, 1.0f, 1.0f);
     }
 
     @Override
