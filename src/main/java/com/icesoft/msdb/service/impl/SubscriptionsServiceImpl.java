@@ -78,8 +78,8 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
                     log.trace("Session to notify: {}", session.getName());
                     // Send notifications to telegram channel
                     telegramSenderService.sendMessage(session,
-                        session.getSessionStartTime().equals(utcPlus15m) ? 15 :
-                            session.getSessionStartTime().equals(utcPlus1h)? 60 : 180
+                        session.getSessionStartTime().getEpochSecond() == utcPlus15m.toEpochSecond() ? 15 :
+                            session.getSessionStartTime().getEpochSecond() == utcPlus1h.toEpochSecond() ? 60 : 180
                     );
                 })
                 .collect(Collectors.toList());
