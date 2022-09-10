@@ -10,8 +10,7 @@ import com.icesoft.msdb.domain.enums.DurationType;
 import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.repository.converter.DurationTypeConverter;
 import com.icesoft.msdb.repository.converter.SessionTypeConverter;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.*;
 import java.io.Serializable;
@@ -32,6 +31,7 @@ import java.util.stream.Collectors;
 @Table(name = "event_session")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Data @EqualsAndHashCode(callSuper=false)
+@Builder @NoArgsConstructor @AllArgsConstructor
 public class EventSession extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
