@@ -18,37 +18,34 @@ spring:
     name: MotorsportsDatabase
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:h2:mem:MotorsportsDatabase;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    name:
-    username:
-    password:
+    url: jdbc:tc:mariadb:msdb-1.0.4:///msdb?serverTimezone=UTC # &TC_REUSABLE=true # &TC_INITSCRIPT=db/init_script.sql
+
     hikari:
       auto-commit: false
+      user: root
+      password: test
   jpa:
-    database-platform: io.github.jhipster.domain.util.FixedH2Dialect
-    database: H2
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    # database: mariadb
     open-in-view: false
     show-sql: false
-    hibernate:
-      ddl-auto: none
-      naming:
-        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
-        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+
     properties:
       hibernate.id.new_generator_mappings: true
       hibernate.connection.provider_disables_autocommit: true
       hibernate.cache.use_second_level_cache: false
       hibernate.cache.use_query_cache: false
       hibernate.generate_statistics: false
-      hibernate.hbm2ddl.auto: validate
+      # hibernate.hbm2ddl.auto: validate
       hibernate.jdbc.time_zone: UTC
+  flyway:
+    enabled: false
+
   data:
     elasticsearch:
       properties:
         path:
           home: build/elasticsearch
-  liquibase:
-    contexts: test
   mail:
     host: localhost
   main:
@@ -58,6 +55,8 @@ spring:
   mvc:
     favicon:
       enabled: false
+    pathmatch:
+      matching-strategy: ant_path_matcher
   task:
     execution:
       thread-name-prefix: motorsports-database-task-
@@ -75,9 +74,18 @@ spring:
   security:
     oauth2:
       client:
+        registration:
+          oidc:
+            client-id: ${OIDC_CLIENT_ID}
+            client-secret: ${OIDC_CLIENT_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
         provider:
           oidc:
-            issuer-uri: http://DO_NOT_CALL:9080/auth/realms/jhipster
+            issuer-uri: https://msdb.eu.auth0.com/
+            jwk-set-uri: https://msdb.eu.auth0.com/.well-known/jwks.json
 
 server:
   port: 10344
@@ -94,7 +102,7 @@ jhipster:
     name: 'motorsportsDatabaseApp'
   logging:
     # To test json console appender
-    use-json-format: true # By default, logs are in Json format
+    use-json-format: false
     logstash:
       enabled: false
       host: localhost
@@ -103,10 +111,12 @@ jhipster:
   mail:
     from: test@localhost
     base-url: http://127.0.0.1:8080
-  metrics:
-    logs: # Reports metrics in the logs
-      enabled: true
-      report-frequency: 60 # in seconds
+  security:
+    oauth2:
+      audience:
+        - account
+        - api://default
+        - https://msdb.eu.auth0.com/api/v2/
 
 # ===================================================================
 # Application specific properties
@@ -117,4 +127,16 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  cloudinary:
+    name: ${cloudinary_name}
+    key: ${cloudinary_key}
+    secret: ${cloudinary_secret}
+  geolocation:
+    key: ${geolocation_key}
+  timezone:
+    key: ${timezone_key}
+    url: https://api.timezonedb.com/v2.1/list-time-zone?key=%s&format=json&fields=countryName,zoneName,gmtOffset
+  telegramBot:
+    token: ${telegram_token}
+    channelId: ${telegram_channel}
