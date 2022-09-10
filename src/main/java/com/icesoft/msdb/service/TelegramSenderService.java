@@ -33,7 +33,7 @@ public class TelegramSenderService {
     private final ApplicationProperties applicationProperties;
     private final TelegramBot telegramBot;
 
-    public void sendMessage(String messageContent) {
+    private void sendMessage(String messageContent) {
         SendMessage sendMessage = new SendMessage(
             applicationProperties.getTelegramBot().getChannelId(),
             messageContent);
