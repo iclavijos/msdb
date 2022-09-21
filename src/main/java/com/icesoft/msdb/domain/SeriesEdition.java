@@ -152,7 +152,9 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         this.setManufacturersStandings(source.getManufacturersStandings());
         this.setDriversStandings(source.getDriversStandings());
         this.setLogoUrl(source.getLogoUrl());
+        this.setAllowedCategories(new TreeSet<>());
         this.getAllowedCategories().addAll(source.getAllowedCategories());
+        this.setPointsSystems(new ArrayList<>());
         this.getPointsSystems().addAll(source.getPointsSystems());
     }
 
@@ -185,7 +187,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     }
 
 	public void addEvent(EventEdition event) {
-        Set<EventEdition> events = getEvents();
+        Set<EventEdition> events = Optional.ofNullable(getEvents()).orElse(new HashSet<>());
         events.add(event);
         this.events = events;
         event.getSeriesEditions().add(this);
