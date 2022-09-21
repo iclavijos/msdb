@@ -1,6 +1,7 @@
 import { Title } from '@angular/platform-browser';
 import { Component, OnInit, Renderer2, Inject, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
 
 import { Subscription } from 'rxjs/Rx';
 
@@ -19,7 +20,6 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 
 import { Lightbox } from 'ngx-lightbox';
 
-import { Moment } from 'moment';
 import * as moment from 'moment';
 
 @Component({
@@ -27,17 +27,21 @@ import * as moment from 'moment';
   templateUrl: 'reschedule-dialog.component.html'
 })
 export class RescheduleDialogComponent {
-  startDate = new Date();
-  newDate: Moment;
 
-  constructor(public dialogRef: MatDialogRef<RescheduleDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {}
+  eventDate: FormControl;
+  eventEdition: IEventEdition;
+
+  constructor(public dialogRef: MatDialogRef<RescheduleDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+    this.eventEdition = data.eventEdition;
+    this.eventDate = new FormControl(new Date(data.eventEdition.eventDate));
+  }
 
   cancel(): void {
     this.dialogRef.close();
   }
 
   confirmReschedule(): void {
-    this.dialogRef.close(this.newDate);
+    this.dialogRef.close(this.eventDate.value);
   }
 }
 
