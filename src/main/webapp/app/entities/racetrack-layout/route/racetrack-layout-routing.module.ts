@@ -7,7 +7,7 @@ import { RacetrackLayoutUpdateComponent } from '../update/racetrack-layout-updat
 import { RacetrackLayoutRoutingResolveService } from './racetrack-layout-routing-resolve.service';
 import { RacetrackLayoutNewRoutingResolveService } from './racetrack-layout-new-routing-resolve.service';
 
-import { RacetrackRoutingResolveService } from 'app/entities/racetrack/route/racetrack-routing-resolve.service';
+// import { RacetrackRoutingResolveService } from 'app/entities/racetrack/route/racetrack-routing-resolve.service';
 
 const racetrackLayoutRoute: Routes = [
   {

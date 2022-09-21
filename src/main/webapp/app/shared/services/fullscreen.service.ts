@@ -6,6 +6,7 @@ export class FullScreenService {
 
   enter(): void {
     const el = this.doc.documentElement;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (el.requestFullscreen) {
       el.requestFullscreen();
     } else if (el.msRequestFullscreen) {
@@ -18,6 +19,7 @@ export class FullScreenService {
   }
 
   leave(): void {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (this.doc.exitFullscreen) {
       this.doc.exitFullscreen();
     } else if (this.doc.msExitFullscreen) {
