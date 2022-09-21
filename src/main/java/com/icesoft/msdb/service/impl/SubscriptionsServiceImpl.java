@@ -95,7 +95,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
             log.trace("User to be notified: {}", userSubscription.getUser().getEmail());
             eventSessions.stream()
                 .filter(eventSession -> eventSession.getEventEdition().getSeriesEditions()
-                    .stream().map(seriesEdition -> seriesEdition.getId()).collect(Collectors.toList())
+                    .stream().map(seriesEdition -> seriesEdition.getSeries().getId()).collect(Collectors.toList())
                     .contains(userSubscription.getSeries().getId()))
                 .forEach(
                     eventSession -> {
