@@ -32,7 +32,8 @@ export class ImageComponent {
     this.album = [
       {
         src: this.imageUrl,
-        thumb: ''
+        thumb: '',
+        downloadUrl: ''
       }
     ];
     this.lightbox.open(this.album, 0);
