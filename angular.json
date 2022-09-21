@@ -65,7 +65,8 @@
             "allowedCommonJsDependencies" : [
               "rxjs/add/operator/filter",
               "jquery",
-              "chartist"
+              "chartist",
+              "ngx-lightbox"
             ]
           },
           "configurations": {
