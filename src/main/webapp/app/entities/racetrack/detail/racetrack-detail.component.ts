@@ -7,8 +7,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { IRacetrack } from '../racetrack.model';
 import { RacetrackService } from '../service/racetrack.service';
-import { IRacetrackLayout } from 'app/entities/racetrack-layout/racetrack-layout.model';
-import { RacetrackLayoutDeleteDialogComponent } from 'app/entities/racetrack-layout/delete/racetrack-layout-delete-dialog.component';
+// import { IRacetrackLayout } from 'app/entities/racetrack-layout/racetrack-layout.model';
+// import { RacetrackLayoutDeleteDialogComponent } from 'app/entities/racetrack-layout/delete/racetrack-layout-delete-dialog.component';
 import { RacetrackLayoutService } from 'app/entities/racetrack-layout/service/racetrack-layout.service';
 import { EventEditionAndWinners } from 'app/entities/event-edition/event-edition.model';
 
