@@ -75,7 +75,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
                 .filter(session -> session.getEventEdition().getStatus().equals(EventStatusType.ONGOING))
                 .filter(session -> !session.getCancelled())
                 .peek(session -> {
-                    log.trace("Session to notify: {}", session.getName());
+                    log.trace("Session to notify: {} - {}", session.getEventEdition().getLongEventName(), session.getName());
                     // Send notifications to telegram channel
                     telegramSenderService.sendMessage(session,
                         session.getSessionStartTime().getEpochSecond() == utcPlus15m.toEpochSecond() ? 15 :
@@ -92,19 +92,23 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 
         List<UserSubscription> usersSubs = userSubscriptionRepository.findAllBySeriesIn(seriesEds);
         usersSubs.forEach(userSubscription -> {
-            log.trace("User to be notified: {}", userSubscription.getUser().getId());
+            log.trace("User to be notified: {}", userSubscription.getUser().getEmail());
             eventSessions.stream()
                 .filter(eventSession -> eventSession.getEventEdition().getSeriesEditions()
                     .stream().map(seriesEdition -> seriesEdition.getId()).collect(Collectors.toList())
                     .contains(userSubscription.getSeries().getId()))
                 .forEach(
                     eventSession -> {
+                        log.trace("Checking if session {} - {} may be notified to user {}",
+                            eventSession.getEventEdition().getLongEventName(), eventSession.getName(),
+                            userSubscription.getUser().getEmail());
                         if (eventSession.getSessionType().equals(SessionType.STAGE) ||
                             userSubscription.getPracticeSessions() && eventSession.getSessionType().equals(SessionType.PRACTICE) ||
                             userSubscription.getQualiSessions() && eventSession.getSessionType().equals(SessionType.QUALIFYING) ||
                             userSubscription.getRaces() && (eventSession.getSessionType().equals(SessionType.QUALIFYING_RACE)
                                 || eventSession.getSessionType().equals(SessionType.RACE))) {
 
+                            log.trace("User wants notification. Does session need to be notified?");
                             if (isUserToBeNotified(userSubscription, eventSession, sessionData15m, sessionData1h, sessionData3h)) {
                                 sendNotification(eventSession, userSubscription.getUser());
                             }
@@ -118,17 +122,21 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 
         boolean notify = false;
         if (userSubscription.getFifteenMinWarning()) {
+            log.trace("User wants notifications 15 minutes before the start");
             notify = sessionData15m.stream()
                 .anyMatch(sessionData -> sessionData.getSessionId().equals(eventSession.getId()));
         }
         if (userSubscription.getOneHourWarning()) {
+            log.trace("User wants notifications 1 hour before the start");
             notify = notify || sessionData1h.stream()
                 .anyMatch(sessionData -> sessionData.getSessionId().equals(eventSession.getId()));
         }
         if (userSubscription.getThreeHoursWarning()) {
+            log.trace("User wants notifications 3 hours before the start");
             notify = notify || sessionData3h.stream()
                 .anyMatch(sessionData -> sessionData.getSessionId().equals(eventSession.getId()));
         }
+        log.trace("Notification to be sent? {}", notify);
         return notify;
 
     }
