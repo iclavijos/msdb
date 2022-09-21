@@ -131,7 +131,7 @@
     "ngx-color-picker": "^11.0.0",
     "ngx-cookie": "4.0.2",
     "ngx-infinite-scroll": "10.0.1",
-    "ngx-lightbox": "^2.5.2",
+    "ngx-lightbox": "^2.6.1",
     "ngx-spinner": "^13.1.1",
     "ngx-toastr": "^12.1.0",
     "ngx-webstorage": "9.0.0",
