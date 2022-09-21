@@ -29,10 +29,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @SpringBootTest(classes = { MotorsportsDatabaseApp.class })
 @ExtendWith(SpringExtension.class)
@@ -67,6 +64,12 @@ public class SubscriptionsServiceTest {
     private Sessions sessions3hour;
 
     private Map<Long, EventSession> eventSessions = new HashMap<>();
+
+    private Series series = Series.builder()
+        .id(19L)
+        .name("Series 1")
+        .shortname("S1")
+        .build();
 
     @Mock
     private SendResponse telegramSendResponse;
@@ -198,7 +201,7 @@ public class SubscriptionsServiceTest {
             .duration(20f)
             .name("Race")
             .shortname("R")
-            .sessionType(SessionType.PRACTICE)
+            .sessionType(SessionType.RACE)
             .durationType(DurationType.MINUTES)
             .sessionStartTime(now.plusHours(3).toInstant())
             .cancelled(false)
@@ -218,7 +221,11 @@ public class SubscriptionsServiceTest {
                     .raid(false)
                     .rally(false)
                     .build())
-                .seriesEditions(Collections.emptySet())
+                .seriesEditions(Set.of(SeriesEdition.builder()
+                        .id(230L)
+                        .editionName("Series Edition 1")
+                        .series(series)
+                    .build()))
                 .build())
             .build());
 
@@ -230,7 +237,7 @@ public class SubscriptionsServiceTest {
     }
 
     @Test
-    public void testGenerateNotifications() {
+    public void testTelegramInvocations() {
         when(sessionsRepository.findById(epochSecs15m)).thenReturn(Optional.of(sessions15min));
         when(sessionsRepository.findById(epochSecs1h)).thenReturn(Optional.of(sessions1hour));
         when(sessionsRepository.findById(epochSecs3h)).thenReturn(Optional.of(sessions3hour));
@@ -250,5 +257,39 @@ public class SubscriptionsServiceTest {
         }
 
         verify(telegramBot, times(5)).execute(any(SendMessage.class));
+    }
+
+    @Test
+    public void testUserNotifications() {
+        when(sessionsRepository.findById(epochSecs15m)).thenReturn(Optional.of(sessions15min));
+        when(sessionsRepository.findById(epochSecs1h)).thenReturn(Optional.of(sessions1hour));
+        when(sessionsRepository.findById(epochSecs3h)).thenReturn(Optional.of(sessions3hour));
+
+        when(eventSessionRepository.findAllById(anyCollection())).thenReturn(eventSessions.values().stream().toList());
+
+        when(telegramSendResponse.isOk()).thenReturn(true);
+        when(telegramBot.execute(any(SendMessage.class))).thenReturn(telegramSendResponse);
+
+        UserSubscription userSubscription = new UserSubscription();
+        userSubscription.setUser(User.builder()
+                .email("xyz@domain.com")
+            .build());
+        userSubscription.setFifteenMinWarning(true);
+        userSubscription.setThreeHoursWarning(true);
+        userSubscription.setRaces(true);
+        userSubscription.setSeries(series);
+        List<UserSubscription> userSubscriptions = Arrays.asList(userSubscription);
+        when(userSubscriptionRepository.findAllBySeriesIn(anyList())).thenReturn(userSubscriptions);
+
+        try (MockedStatic<OffsetDateTime> mockedLocalDateTime = mockStatic(OffsetDateTime.class)) {
+            mockedLocalDateTime.when(() -> OffsetDateTime.now(ZoneOffset.UTC)).thenReturn(now);
+            mockedLocalDateTime.when(() -> OffsetDateTime.of(
+                anyInt(), anyInt(), anyInt(), anyInt(),
+                anyInt(), anyInt(), anyInt(), any(ZoneOffset.class))).thenCallRealMethod();
+
+            subscriptionsService.generateNotifications();
+        }
+
+        verify(messagingService, times(1)).sendSessionNotification(any(User.class), any(EventSession.class));
     }
 }
