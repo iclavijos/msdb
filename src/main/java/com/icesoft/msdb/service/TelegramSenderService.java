@@ -58,7 +58,7 @@ public class TelegramSenderService {
         if (!eventSession.getEventEdition().getSeriesEditions().isEmpty()) {
             Optional<SeriesEdition> seriesEdition = eventSession.getEventEdition().getSeriesEditions().stream().findFirst();
             if (seriesEdition.isPresent()) {
-                message = String.format(MESSAGE_IMG, seriesEdition.get().getLogoUrl()) + message;
+                message = String.format(MESSAGE_IMG, seriesEdition.get().getLogoUrl().replace(".png", ".jpg")) + message;
             }
         }
         sendMessage(message);
