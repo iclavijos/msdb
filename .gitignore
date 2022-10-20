@@ -157,3 +157,4 @@ Desktop.ini
 /src/tsconfig.app.json
 /package-lock.json
 /src/main/generated/
+/src/main/resources/tls/keystore.p12
