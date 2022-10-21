@@ -65,11 +65,11 @@ public class SubscriptionsServiceTest {
 
     private Map<Long, EventSession> eventSessions = new HashMap<>();
 
-    private Series series = Series.builder()
-        .id(19L)
-        .name("Series 1")
-        .shortname("S1")
-        .build();
+                                                                private Series series = Series.builder()
+                                                                    .id(19L)
+                                                                    .name("Series 1")
+                                                                    .shortname("S1")
+                                                                    .build();
 
     @Mock
     private SendResponse telegramSendResponse;

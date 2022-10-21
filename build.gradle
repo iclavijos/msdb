@@ -241,6 +241,7 @@ dependencies {
     testImplementation 'org.testcontainers:junit-jupiter:1.15.0'
     testImplementation "org.testcontainers:mariadb:${testcontainersVersion}"
     testImplementation 'org.mockito:mockito-inline'
+    testImplementation "com.h2database:h2"
     developmentOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
 }
 
