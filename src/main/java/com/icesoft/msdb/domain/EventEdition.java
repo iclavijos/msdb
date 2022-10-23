@@ -87,7 +87,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     // @OrderBy("relevance")
     private SortedSet<Category> allowedCategories;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JsonIgnoreProperties("eventEditions")
     private RacetrackLayout trackLayout;
 

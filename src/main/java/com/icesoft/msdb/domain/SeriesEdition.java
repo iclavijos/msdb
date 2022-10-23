@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 
 import com.icesoft.msdb.MSDBException;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -86,7 +87,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     private List<PointsSystem> pointsSystems = new ArrayList<>();
 
     @ManyToMany(fetch=FetchType.LAZY)
-    @Fetch(FetchMode.SELECT)
+    @Fetch(FetchMode.JOIN)
     @JsonIgnore
     @org.springframework.data.annotation.Transient
     @JoinTable(
