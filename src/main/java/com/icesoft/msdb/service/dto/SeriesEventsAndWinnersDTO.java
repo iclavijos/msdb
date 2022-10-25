@@ -32,6 +32,11 @@ public class SeriesEventsAndWinnersDTO {
             .status(eventEdition.getStatus())
             .trackLayout(eventEdition.getTrackLayout())
             .build();
+
+        if (trimmedEvent.isRally() || trimmedEvent.isRaid()) {
+            this.eventEdition.setLatitude(eventEdition.getLatitude());
+            this.eventEdition.setLongitude(eventEdition.getLongitude());
+        }
     }
 
 }

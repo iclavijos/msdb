@@ -78,7 +78,7 @@ public class EventServiceImpl implements EventService {
                 () -> new MSDBException("Invalid racetrack layout id " + eventEdition.getTrackLayout().getId())
             );
             eventEdition.setTrackLayout(layout);
-        } else if (eventEdition.getEvent().isRally()) {
+        } else {
             Geometry geometry = geoLocationService
                 .getGeolocationInformation(eventEdition.getLocation());
             eventEdition.setLatitude(geometry.location.lat);
