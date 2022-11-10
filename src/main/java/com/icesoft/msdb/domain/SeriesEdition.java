@@ -191,7 +191,7 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
         Set<EventEdition> events = Optional.ofNullable(getEvents()).orElse(new HashSet<>());
         events.add(event);
         this.events = events;
-        event.getSeriesEditions().add(this);
+//        event.getSeriesEditions().add(this);
     }
 
     public void removeEvent(EventEdition event) {

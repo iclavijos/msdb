@@ -19,9 +19,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -83,7 +81,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @LazyCollection(LazyCollectionOption.FALSE)
     @NotFound(action = NotFoundAction.IGNORE)
     @EqualsAndHashCode.Exclude
-    private List<PointsSystemSession> pointsSystemsSession = new ArrayList<>();
+    private Set<PointsSystemSession> pointsSystemsSession = new HashSet<>();
 
     @JsonIgnore
     public ZonedDateTime getSessionStartTimeDate() {
@@ -110,10 +108,10 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
 
 	public List<PointsSystemSession> addPointsSystemsSession(PointsSystemSession pss) {
 		if (pointsSystemsSession == null) {
-			pointsSystemsSession = new ArrayList<>();
+			pointsSystemsSession = new HashSet<>();
 		}
 		pointsSystemsSession.add(pss);
-		return pointsSystemsSession;
+		return pointsSystemsSession.stream().toList();
 	}
 
 	public List<Long> getSeriesIds() {

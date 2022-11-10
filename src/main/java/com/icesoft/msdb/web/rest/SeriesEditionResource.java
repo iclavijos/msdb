@@ -272,7 +272,7 @@ public class SeriesEditionResource {
     	List<EventEdition> events = seriesEditionService.findSeriesEvents(id);
     	events.stream().forEach(eventEdition -> {
     		eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(eventEdition.getId()).stream()
-    			.filter(es -> !Optional.ofNullable(es.getPointsSystemsSession()).orElse(new ArrayList<>()).isEmpty())
+    			.filter(es -> !Optional.ofNullable(es.getPointsSystemsSession()).orElse(new HashSet<>()).isEmpty())
     			.forEach(es -> resultsService.processSessionResults(es.getId()));
     			log.debug("Updating statistics...", eventEdition.getLongEventName());
     			statsService.removeEventStatistics(eventEdition);

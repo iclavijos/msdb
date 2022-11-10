@@ -99,7 +99,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 				}
 				PointsSystemSession pss = new PointsSystemSession(points, seriesEd, session);
 				pss.setPsMultiplier(racePoints.getPsMultiplier());
-				List<PointsSystemSession> sPss = Optional.ofNullable(session.getPointsSystemsSession()).orElse(new ArrayList<>());
+				Set<PointsSystemSession> sPss = Optional.ofNullable(session.getPointsSystemsSession()).orElse(new HashSet<>());
 				session.getPointsSystemsSession().parallelStream()
 					.filter(tmpPss -> tmpPss.getSeriesEdition().getId().equals(seriesId))
 					.findFirst().map(tmp -> sPss.remove(tmp));
@@ -129,7 +129,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		eventEd.getSeriesEditions().remove(sEdition);
 		sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventId).stream()
 			.forEach(session -> {
-                List<PointsSystemSession> tmp = new ArrayList<>();
+                Set<PointsSystemSession> tmp = new HashSet<>();
 				if (session.getPointsSystemsSession() != null && !session.getPointsSystemsSession().isEmpty()) {
 					for (PointsSystemSession pss : session.getPointsSystemsSession()) {
 						if (pss.getSeriesEdition().getId().equals(seriesId)) {
@@ -256,11 +256,9 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		SeriesEdition newSeriesEd = new SeriesEdition(seriesEd, newPeriod);
 
 		final SeriesEdition seriesEdCopy = seriesRepo.save(newSeriesEd);
-		Set<SeriesEdition> series = new HashSet<>();
-		series.add(seriesEdCopy);
 
 		seriesEd.getEvents().stream().forEach(ev -> {
-            EventEdition newEventEdition = eventService.cloneEventEdition(ev.getId(), newPeriod, series);
+            EventEdition newEventEdition = eventService.cloneEventEdition(ev.getId(), newPeriod, Collections.singleton(seriesEdCopy));
             seriesEdCopy.addEvent(newEventEdition);
             seriesRepo.save(seriesEdCopy);
         });

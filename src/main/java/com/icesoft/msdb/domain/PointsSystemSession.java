@@ -43,6 +43,11 @@ public class PointsSystemSession implements Serializable {
     private EventSession eventSession;
 
     @ManyToOne
+    @MapsId("points_system_id")
+    @JoinColumn(name = "POINTS_SYSTEM_ID")
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private PointsSystem pointsSystem;
 
     @Column(name="ps_multiplier")
@@ -56,7 +61,7 @@ public class PointsSystemSession implements Serializable {
 		this.pointsSystem = pointsSystem;
 		this.seriesEdition = seriesEdition;
 		this.eventSession = eventSession;
-		this.id = new PointsSystemSessionPK(eventSession.getId(), seriesEdition.getId());
+		this.id = new PointsSystemSessionPK(eventSession.getId(), seriesEdition.getId(), pointsSystem.getId());
 	}
 
 }

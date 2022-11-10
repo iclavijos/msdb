@@ -238,17 +238,27 @@ public class EventServiceImpl implements EventService {
         final int yearCopy = year;
 
         eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(event.getId()).stream().forEach(es -> {
-            EventSession newSession = SerializationUtils.clone(es);
-            newSession.setId(null);
-            newSession.setEventEdition(evCopy);
-            newSession.setPointsSystemsSession(null);
+            EventSession newSession = EventSession.builder()
+                .eventEdition(evCopy)
+                .name(es.getName())
+                .shortname(es.getShortname())
+                .cancelled(Boolean.FALSE)
+                .durationType(es.getDurationType())
+                .sessionType(es.getSessionType())
+                .additionalLap(es.getAdditionalLap())
+                .duration(es.getDuration())
+                .totalDuration(es.getTotalDuration())
+                .maxDuration(es.getMaxDuration())
+                .location(es.getLocation())
+                .locationTimeZone(es.getLocationTimeZone())
+                .build();
 
             ZonedDateTime zdt = es.getSessionStartTimeDate();
             newSession.setSessionStartTime(zdt.withYear(yearCopy).toInstant());
             final EventSession copy = eventSessionRepository.save(newSession);
 
             if (!series.isEmpty()) {
-                List<PointsSystemSession> pssL = new ArrayList<>();
+                Set<PointsSystemSession> pssL = new HashSet<>();
                 es.getPointsSystemsSession().parallelStream().forEach(pss -> {
                     PointsSystemSession tmp = new PointsSystemSession(
                         pss.getPointsSystem(),
