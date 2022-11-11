@@ -81,6 +81,7 @@ public class EventSession extends AbstractAuditingEntity implements Serializable
     @LazyCollection(LazyCollectionOption.FALSE)
     @NotFound(action = NotFoundAction.IGNORE)
     @EqualsAndHashCode.Exclude
+    @Builder.Default
     private Set<PointsSystemSession> pointsSystemsSession = new HashSet<>();
 
     @JsonIgnore

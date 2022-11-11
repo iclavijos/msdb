@@ -57,6 +57,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     @NotNull
     @Column(nullable = false)
+    @Builder.Default
     private boolean activated = false;
 
     @Size(min = 2, max = 10)
@@ -76,6 +77,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
     )
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @BatchSize(size = 20)
+    @Builder.Default
     private Set<Authority> authorities = new HashSet<>();
 
     @JsonIgnore
