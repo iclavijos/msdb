@@ -16,6 +16,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,7 +37,7 @@ import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 import tech.jhipster.config.JHipsterProperties;
 
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Import(SecurityProblemSupport.class)
 public class SecurityConfiguration {
 
@@ -78,42 +79,37 @@ public class SecurityConfiguration {
         .and()
             .frameOptions()
             .deny()
-        .and()
-            .authorizeHttpRequests(authz -> {
-                authz
-                    .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .antMatchers("/app/**/*.{js,html}").permitAll()
-                    .antMatchers("/i18n/**").permitAll()
-                    .antMatchers("/content/**").permitAll()
-                    .antMatchers("/swagger-ui/**").permitAll()
-                    .antMatchers("/test/**").permitAll()
+        .and().authorizeHttpRequests()
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers("/app/**/*.{js,html}").permitAll()
+            .requestMatchers("/i18n/**").permitAll()
+            .requestMatchers("/content/**").permitAll()
+            .requestMatchers("/swagger-ui/**").permitAll()
+            .requestMatchers("/test/**").permitAll()
 
-                    .antMatchers("/api/authenticate").permitAll()
-                    .antMatchers("/api/auth-info").permitAll()
-                    .antMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
+            .requestMatchers("/api/authenticate").permitAll()
+            .requestMatchers("/api/auth-info").permitAll()
+            .requestMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
 
-                    .antMatchers("/api/home/**").permitAll()
-                    .antMatchers("/api/timezones").permitAll()
-                    .antMatchers("/api/event-editions/calendar/**").permitAll()
+            .requestMatchers("/api/home/**").permitAll()
+            .requestMatchers("/api/timezones").permitAll()
+            .requestMatchers("/api/event-editions/calendar/**").permitAll()
 
-                    // Public endpoints for mobile app
-                    .antMatchers("/api/series").permitAll()
+            // Public endpoints for mobile app
+            .requestMatchers("/api/series").permitAll()
 
-                    .antMatchers("/api/**").authenticated()
-                    .antMatchers("/management/health").permitAll()
-                    .antMatchers("/management/health/**").permitAll()
-                    .antMatchers("/management/info").permitAll()
-                    .antMatchers("/management/prometheus").permitAll()
-                    .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN);
-            })
-        .oauth2Login()
+            .requestMatchers("/api/**").authenticated()
+            .requestMatchers("/management/health").permitAll()
+            .requestMatchers("/management/health/**").permitAll()
+            .requestMatchers("/management/info").permitAll()
+            .requestMatchers("/management/prometheus").permitAll()
+            .requestMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
+        .and().oauth2Login()
+        .and().oauth2ResourceServer()
+            .jwt()
+            .jwtAuthenticationConverter(authenticationConverter())
             .and()
-            .oauth2ResourceServer()
-                .jwt()
-                .jwtAuthenticationConverter(authenticationConverter())
-                .and()
-            .and()
-                .oauth2Client();
+        .and().oauth2Client();
 
 //            // Start of "public" access
 //            .antMatchers(HttpMethod.GET, "/api/series/**").permitAll()
