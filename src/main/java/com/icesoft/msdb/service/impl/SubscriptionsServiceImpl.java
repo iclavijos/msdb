@@ -31,7 +31,6 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 
     private final SessionsRepository sessionsRepository;
     private final EventSessionRepository eventSessionRepository;
-    private final UserRepository userRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final MessagingService messagingService;
     private final TelegramSenderService telegramSenderService;
