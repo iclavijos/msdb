@@ -11,11 +11,11 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,12 +33,11 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.filter.CorsFilter;
-import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 import tech.jhipster.config.JHipsterProperties;
 
+@Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
-@Import(SecurityProblemSupport.class)
+@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
 
     private final JHipsterProperties jHipsterProperties;
@@ -50,11 +49,8 @@ public class SecurityConfiguration {
     @Value("${spring.security.oauth2.client.provider.oidc.jwk-set-uri}")
     private String jwkSetUri;
 
-    private final SecurityProblemSupport problemSupport;
-
-    public SecurityConfiguration(CorsFilter corsFilter, JHipsterProperties jHipsterProperties, SecurityProblemSupport problemSupport) {
+    public SecurityConfiguration(CorsFilter corsFilter, JHipsterProperties jHipsterProperties) {
         this.corsFilter = corsFilter;
-        this.problemSupport = problemSupport;
         this.jHipsterProperties = jHipsterProperties;
     }
 
@@ -67,8 +63,6 @@ public class SecurityConfiguration {
         .and()
             .addFilterBefore(corsFilter, CsrfFilter.class)
             .exceptionHandling()
-                .authenticationEntryPoint(problemSupport)
-                .accessDeniedHandler(problemSupport)
         .and()
             .headers()
             .contentSecurityPolicy(jHipsterProperties.getSecurity().getContentSecurityPolicy())

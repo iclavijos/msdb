@@ -198,7 +198,6 @@ dependencies {
     }
     implementation "org.springframework.boot:spring-boot-starter-undertow"
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
-    implementation "org.zalando:problem-spring-web:0.29.0-SB3-SNAPSHOT"
     implementation "org.springframework.security:spring-security-config"
     implementation "org.springframework.security:spring-security-data"
     implementation "org.springframework.security:spring-security-web"
@@ -208,7 +207,7 @@ dependencies {
 
     implementation 'co.elastic.clients:elasticsearch-java:8.3.3'
 
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-api"
     implementation 'io.springfox:springfox-swagger2:3.0.0'
     implementation 'io.springfox:springfox-oas:3.0.0'
     implementation 'io.springfox:springfox-swagger-ui:3.0.0'

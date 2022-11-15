@@ -61,7 +61,7 @@ spring:
     rest:
       uris: http://localhost:9200
   mail:
-    host: localhost
+    # host: localhost
     port: 25
     username:
     password:
@@ -101,7 +101,7 @@ jhipster:
       enabled: false
       host: localhost
       port: 5000
-      queue-size: 512
+      # queue-size: 512
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
