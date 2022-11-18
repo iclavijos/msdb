@@ -91,6 +91,7 @@ spring:
   jpa:
     open-in-view: false
     properties:
+      jakarta.persistence.sharedCache.mode: ENABLE_SELECTIVE
       hibernate.jdbc.time_zone: UTC
       hibernate.id.new_generator_mappings: true
       hibernate.connection.provider_disables_autocommit: true

@@ -19,6 +19,7 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     # url: jdbc:tc:mariadb:msdb-1.0.4:///msdb?serverTimezone=UTC # &TC_REUSABLE=true # &TC_INITSCRIPT=db/init_script.sql
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=true;MODE=MySQL
 
     hikari:
       auto-commit: false
@@ -31,13 +32,15 @@ spring:
     show-sql: false
 
     properties:
+      jakarta.persistence.sharedCache.mode: ALL
       hibernate.id.new_generator_mappings: true
       hibernate.connection.provider_disables_autocommit: true
       hibernate.cache.use_second_level_cache: false
       hibernate.cache.use_query_cache: false
       hibernate.generate_statistics: false
-      # hibernate.hbm2ddl.auto: validate
+      hibernate.hbm2ddl.auto: update
       hibernate.jdbc.time_zone: UTC
+      hibernate.globally_quoted_identifiers: true
   flyway:
     enabled: false
 
@@ -46,8 +49,7 @@ spring:
       properties:
         path:
           home: build/elasticsearch
-  mail:
-    host: localhost
+
   main:
     allow-bean-definition-overriding: true
   messages:
@@ -84,7 +86,7 @@ spring:
               - email
         provider:
           oidc:
-            issuer-uri: https://dummy.com/
+            issuer-uri: http://DO_NOT_CALL:9080/realms/jhipster
             jwk-set-uri: https://dummy.com/.well-known/jwks.json
 
 server:
@@ -107,7 +109,7 @@ jhipster:
       enabled: false
       host: localhost
       port: 5000
-      queue-size: 512
+      # queue-size: 512
   mail:
     from: test@localhost
     base-url: http://127.0.0.1:8080

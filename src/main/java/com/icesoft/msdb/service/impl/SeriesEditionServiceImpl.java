@@ -194,10 +194,10 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	public void setSeriesTeamsChampions(Long seriesEditionId, List<Long> teamsIds) {
 		SeriesEdition seriesEd = seriesRepo.findById(seriesEditionId)
             .orElseThrow(() ->new MSDBException("Invalid series edition id " + seriesEditionId));
-		List<Team> currentChamps = seriesEd.getTeamsChampions();
+		List<Team> currentChamps = null; //seriesEd.getTeamsChampions();
 		List<Team> newChamps = teamRepo.findByIdIn(teamsIds);
 
-		seriesEd.setTeamsChampions(newChamps);
+		// seriesEd.setTeamsChampions(newChamps);
 		seriesRepo.save(seriesEd);
 
 		statsService.updateSeriesTeamsChampions(seriesEd, currentChamps, newChamps,
@@ -207,9 +207,10 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Team> getSeriesTeamsChampions(Long seriesEditionId) {
-		return seriesRepo.findById(seriesEditionId)
-            .orElseThrow(() ->new MSDBException("Invalid series edition id " + seriesEditionId))
-            .getTeamsChampions();
+//		return seriesRepo.findById(seriesEditionId)
+//            .orElseThrow(() ->new MSDBException("Invalid series edition id " + seriesEditionId))
+//            .getTeamsChampions();
+        return Collections.emptyList();
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.icesoft.msdb.config;
 
+
 import com.icesoft.msdb.security.*;
 import com.icesoft.msdb.security.SecurityUtils;
 import com.icesoft.msdb.security.oauth2.AudienceValidator;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -30,6 +30,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.filter.CorsFilter;
@@ -60,6 +61,8 @@ public class SecurityConfiguration {
         http
             .csrf()
             .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            // This needs to be reviewed later on, as it doesn't work with SB RC2 without this (403 error)
+            .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
         .and()
             .addFilterBefore(corsFilter, CsrfFilter.class)
             .exceptionHandling()

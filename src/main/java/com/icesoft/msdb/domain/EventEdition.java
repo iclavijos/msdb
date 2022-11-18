@@ -82,8 +82,8 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
     @Fetch(FetchMode.SELECT)
     @JoinTable(
         name="CATEGORIES_EVENT",
-        joinColumns=@JoinColumn(name="event_edition_id", referencedColumnName="ID"),
-        inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="ID"))
+        joinColumns=@JoinColumn(name="event_edition_id", referencedColumnName="id"),
+        inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="id"))
     // @OrderBy("relevance")
     private SortedSet<Category> allowedCategories;
 

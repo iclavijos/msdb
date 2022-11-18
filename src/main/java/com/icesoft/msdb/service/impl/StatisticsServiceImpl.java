@@ -407,8 +407,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         updateSeriesDriversChampions(seriesEd,
             currentChamps, currentChamps,
             seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());
-        updateSeriesTeamsChampions(seriesEd, seriesEd.getTeamsChampions(), seriesEd.getTeamsChampions(),
-            seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());
+//        updateSeriesTeamsChampions(seriesEd, seriesEd.getTeamsChampions(), seriesEd.getTeamsChampions(),
+//            seriesEd.getSeries().getName(), seriesEd.getPeriodEnd());
 	}
 
 	@Override
@@ -454,16 +454,16 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 		//Update statistics again for new champs
 
-		for(Team t: seriesEd.getTeamsChampions()) {
-			TeamStatistics ts = teamStatsRepo.findById(t.getId().toString()).get();
-			ParticipantStatistics st = ts.getStaticsForCategory(category);
-			st.addChampionship(seriesEd.getEditionName(), period, seriesEd.getId());
-			ts.updateStatistics(category, st);
-			st = ts.getStaticsForCategory(category, period).orElse(new ParticipantStatistics());
-			st.addChampionship(seriesEd.getEditionName(), period, seriesEd.getId());
-			ts.updateStatistics(category, st, period);
-			teamStatsRepo.save(ts);
-		}
+//		for(Team t: seriesEd.getTeamsChampions()) {
+//			TeamStatistics ts = teamStatsRepo.findById(t.getId().toString()).get();
+//			ParticipantStatistics st = ts.getStaticsForCategory(category);
+//			st.addChampionship(seriesEd.getEditionName(), period, seriesEd.getId());
+//			ts.updateStatistics(category, st);
+//			st = ts.getStaticsForCategory(category, period).orElse(new ParticipantStatistics());
+//			st.addChampionship(seriesEd.getEditionName(), period, seriesEd.getId());
+//			ts.updateStatistics(category, st, period);
+//			teamStatsRepo.save(ts);
+//		}
 	}
 
 }

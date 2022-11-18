@@ -71,8 +71,8 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     @Fetch(FetchMode.SELECT)
     @JoinTable(
         name="CATEGORIES_SERIES",
-        joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
-        inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="ID"))
+        joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="id"),
+        inverseJoinColumns=@JoinColumn(name="category_id", referencedColumnName="id"))
     // @OrderBy("relevance")
     @Builder.Default
     private SortedSet<Category> allowedCategories = new TreeSet<>();
@@ -81,8 +81,8 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     @Fetch(FetchMode.SELECT)
     @JoinTable(
         name="POINTS_SERIES",
-        joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
-        inverseJoinColumns=@JoinColumn(name="points_id", referencedColumnName="ID"))
+        joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="id"),
+        inverseJoinColumns=@JoinColumn(name="points_id", referencedColumnName="id"))
     @Builder.Default
     private List<PointsSystem> pointsSystems = new ArrayList<>();
 
@@ -92,8 +92,8 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     @org.springframework.data.annotation.Transient
     @JoinTable(
         name="EVENTS_SERIES",
-        joinColumns=@JoinColumn(name="series_id", referencedColumnName="ID"),
-        inverseJoinColumns=@JoinColumn(name="event_id", referencedColumnName="ID"))
+        joinColumns=@JoinColumn(name="series_id", referencedColumnName="id"),
+        inverseJoinColumns=@JoinColumn(name="event_id", referencedColumnName="id"))
     @OrderBy("eventDate ASC")
     @Builder.Default
     private Set<EventEdition> events = new HashSet<>();
@@ -106,13 +106,13 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 //        inverseJoinColumns=@JoinColumn(name="driver_id", referencedColumnName="ID"))
 //    private List<Driver> driversChampions;
 
-    @ManyToMany(fetch=FetchType.EAGER)
-    @Fetch(FetchMode.SELECT)
-    @JoinTable(
-        name="SERIES_TEAMS_CHAMPIONS",
-        joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
-        inverseJoinColumns=@JoinColumn(name="team_id", referencedColumnName="ID"))
-    private List<Team> teamsChampions;
+//    @ManyToMany(fetch=FetchType.EAGER)
+//    @Fetch(FetchMode.SELECT)
+//    @JoinTable(
+//        name="SERIES_TEAMS_CHAMPIONS",
+//        joinColumns=@JoinColumn(name="series_edition_id", referencedColumnName="ID"),
+//        inverseJoinColumns=@JoinColumn(name="team_id", referencedColumnName="ID"))
+//    private List<Team> teamsChampions;
 
     @ManyToOne
     @org.springframework.data.annotation.Transient

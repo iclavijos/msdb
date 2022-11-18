@@ -24,6 +24,7 @@ public class TelegramSenderService {
 
     private static final String MESSAGE_IMG = "<a href=\"%s\">&#8205;</a>";
     private static final String MESSAGE_PATTERN = "<b>%s</b> session belonging to <b>%s</b> will start in %s";
+    private static final String RALLY_MESSAGE_PATTERN = "<b>%s - %s</b> stage belonging to <b>%s</b> will start in %s";
     private static final String MESSAGE_PATTERN_AT = " at <b>%s</b>";
 
     private static final String FIFTEEN_MIN = "15 minutes";
@@ -45,20 +46,32 @@ public class TelegramSenderService {
     }
 
     public void sendMessage(EventSession eventSession, Integer minutesToStart) {
-        String message = String.format(MESSAGE_PATTERN,
-            eventSession.getName(),
-            eventSession.getEventEdition().getLongEventName(),
-            minutesToStart == 15 ? FIFTEEN_MIN :
-                minutesToStart == 60 ? ONE_HOUR : THREE_HOURS);
+        String message;
+
         Event event = eventSession.getEventEdition().getEvent();
         if (!event.isRaid() && !event.isRally()) {
+            message = String.format(MESSAGE_PATTERN,
+                eventSession.getName(),
+                eventSession.getEventEdition().getLongEventName(),
+                minutesToStart == 15 ? FIFTEEN_MIN :
+                    minutesToStart == 60 ? ONE_HOUR : THREE_HOURS);
             message += String.format(MESSAGE_PATTERN_AT,
                 eventSession.getEventEdition().getTrackLayout().getRacetrack().getName());
+        } else {
+            message = String.format(RALLY_MESSAGE_PATTERN,
+                eventSession.getShortname(),
+                eventSession.getName(),
+                eventSession.getEventEdition().getLongEventName(),
+                minutesToStart == 15 ? FIFTEEN_MIN :
+                    minutesToStart == 60 ? ONE_HOUR : THREE_HOURS);
         }
         if (!eventSession.getEventEdition().getSeriesEditions().isEmpty()) {
             Optional<SeriesEdition> seriesEdition = eventSession.getEventEdition().getSeriesEditions().stream().findFirst();
             if (seriesEdition.isPresent()) {
-                message = String.format(MESSAGE_IMG, seriesEdition.get().getLogoUrl().replace(".png", ".jpg")) + message;
+                Optional<String> optLogoUrl = Optional.ofNullable(seriesEdition.get().getLogoUrl());
+                if (optLogoUrl.isPresent()) {
+                    message = String.format(MESSAGE_IMG, seriesEdition.get().getLogoUrl().replace(".png", ".jpg")) + message;
+                }
             }
         }
         sendMessage(message);

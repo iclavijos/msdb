@@ -1,50 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE configuration>
+<configuration>
+<include resource="org/springframework/boot/logging/logback/base.xml"/>
 
-<configuration scan="true">
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+<logger name="com.icesoft.msdb" level="INFO"/>
 
-    <logger name="com.icesoft.msdb" level="INFO"/>
+<logger name="org.springframework.security" level="${sec.log.level:-WARN}"/>
+<logger name="tech.jhipster" level="${sec.log.level:-WARN}"/>
 
-    <logger name="tech.jhipster" level="WARN"/>
+<logger name="javax.activation" level="${sec.log.level:-WARN}"/>
+<logger name="javax.mail" level="${sec.log.level:-WARN}"/>
+<logger name="javax.xml.bind" level="${sec.log.level:-WARN}"/>
+<logger name="ch.qos.logback" level="${sec.log.level:-WARN}"/>
+<logger name="com.jayway.jsonpath" level="${sec.log.level:-WARN}"/>
+<logger name="com.ryantenney" level="${sec.log.level:-WARN}"/>
+<logger name="com.sun" level="${sec.log.level:-WARN}"/>
+<logger name="com.zaxxer" level="${sec.log.level:-WARN}"/>
+<logger name="io.searchbox" level="${sec.log.level:-WARN}"/>
+<logger name="com.github.dockerjava" level="${sec.log.level:-WARN}"/>
+<logger name="org.testcontainers" level="${sec.log.level:-WARN}"/>
+<logger name="io.undertow" level="${sec.log.level:-WARN}"/>
+<logger name="io.undertow.websockets.jsr" level="ERROR"/>
+<logger name="org.ehcache" level="${sec.log.level:-WARN}"/>
+<logger name="org.apache" level="${sec.log.level:-WARN}"/>
+<logger name="org.apache.catalina.startup.DigesterFactory" level="OFF"/>
+<logger name="org.bson" level="${sec.log.level:-WARN}"/>
+<logger name="org.elasticsearch" level="${sec.log.level:-WARN}"/>
+<logger name="org.hibernate.validator" level="${sec.log.level:-WARN}"/>
+<logger name="org.hibernate" level="${sec.log.level:-WARN}"/>
+<logger name="org.hibernate.ejb.HibernatePersistence" level="OFF"/>
+<logger name="org.springframework" level="${sec.log.level:-WARN}"/>
+<logger name="org.springframework.web" level="${sec.log.level:-WARN}"/>
+<logger name="org.springframework.security" level="${sec.log.level:-WARN}"/>
+<logger name="org.springframework.cache" level="${sec.log.level:-WARN}"/>
+<logger name="org.thymeleaf" level="${sec.log.level:-WARN}"/>
+<logger name="org.xnio" level="${sec.log.level:-WARN}"/>
+<logger name="springfox" level="${sec.log.level:-WARN}"/>
+<logger name="sun.rmi" level="${sec.log.level:-WARN}"/>
+<logger name="liquibase" level="${sec.log.level:-WARN}"/>
+<logger name="LiquibaseSchemaResolver" level="INFO"/>
+<logger name="sun.rmi.transport" level="${sec.log.level:-WARN}"/>
+<logger name="com.tngtech.archunit.core.importer" level="ERROR"/>
 
-    <logger name="javax.activation" level="WARN"/>
-    <logger name="javax.mail" level="WARN"/>
-    <logger name="javax.xml.bind" level="WARN"/>
-    <logger name="ch.qos.logback" level="WARN"/>
-    <logger name="com.jayway.jsonpath" level="WARN"/>
-    <logger name="com.ryantenney" level="WARN"/>
-    <logger name="com.sun" level="WARN"/>
-    <logger name="com.zaxxer" level="WARN"/>
-    <logger name="io.searchbox" level="WARN"/>
-    <logger name="com.github.dockerjava" level="WARN"/>
-    <logger name="org.testcontainers" level="WARN"/>
-    <logger name="io.undertow" level="WARN"/>
-    <logger name="io.undertow.websockets.jsr" level="ERROR"/>
-    <logger name="org.ehcache" level="WARN"/>
-    <logger name="org.apache" level="WARN"/>
-    <logger name="org.apache.catalina.startup.DigesterFactory" level="OFF"/>
-    <logger name="org.bson" level="WARN"/>
-    <logger name="org.elasticsearch" level="WARN"/>
-    <logger name="org.hibernate.validator" level="WARN"/>
-    <logger name="org.hibernate" level="WARN"/>
-    <logger name="org.hibernate.ejb.HibernatePersistence" level="OFF"/>
-    <logger name="org.springframework" level="WARN"/>
-    <logger name="org.springframework.web" level="WARN"/>
-    <logger name="org.springframework.security" level="WARN"/>
-    <logger name="org.springframework.cache" level="WARN"/>
-    <logger name="org.thymeleaf" level="WARN"/>
-    <logger name="org.xnio" level="WARN"/>
-    <logger name="springfox" level="WARN"/>
-    <logger name="sun.rmi" level="WARN"/>
-    <logger name="liquibase" level="WARN"/>
-    <logger name="LiquibaseSchemaResolver" level="INFO"/>
-    <logger name="sun.rmi.transport" level="WARN"/>
-    <logger name="com.tngtech.archunit.core.importer" level="ERROR"/>
-
-    <root>
-        <level>WARN</level>
-        <appender-ref ref="CONSOLE"/>
-    </root>
+<root level="${root.level:-WARN}">
+    <appender-ref ref="STDOUT" />
+</root>
 
 </configuration>

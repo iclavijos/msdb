@@ -3,6 +3,7 @@ package com.icesoft.msdb.service;
 import static org.mockito.Mockito.*;
 
 import com.icesoft.msdb.MotorsportsDatabaseApp;
+import com.icesoft.msdb.configuration.TestSecurityConfiguration;
 import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.domain.enums.DurationType;
 import com.icesoft.msdb.domain.enums.EventStatusType;
@@ -25,6 +26,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.OffsetDateTime;
@@ -32,6 +34,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 
 @SpringBootTest(classes = { MotorsportsDatabaseApp.class })
+@ContextConfiguration(classes = TestSecurityConfiguration.class)
 @ExtendWith(SpringExtension.class)
 public class SubscriptionsServiceTest {
 
@@ -39,8 +42,6 @@ public class SubscriptionsServiceTest {
     private SessionsRepository sessionsRepository;
     @MockBean
     private EventSessionRepository eventSessionRepository;
-    @MockBean
-    private UserRepository userRepository;
     @MockBean
     private UserSubscriptionRepository userSubscriptionRepository;
     @MockBean
@@ -65,11 +66,11 @@ public class SubscriptionsServiceTest {
 
     private Map<Long, EventSession> eventSessions = new HashMap<>();
 
-                                                                private Series series = Series.builder()
-                                                                    .id(19L)
-                                                                    .name("Series 1")
-                                                                    .shortname("S1")
-                                                                    .build();
+    private Series series = Series.builder()
+        .id(19L)
+        .name("Series 1")
+        .shortname("S1")
+        .build();
 
     @Mock
     private SendResponse telegramSendResponse;
