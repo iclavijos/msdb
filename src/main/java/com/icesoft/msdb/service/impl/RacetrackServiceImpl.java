@@ -77,31 +77,53 @@ public class RacetrackServiceImpl implements RacetrackService {
      * @return the persisted entity
      */
     @Override
-    public Racetrack save(Racetrack racetrack) {
+    public Racetrack save(final Racetrack racetrack) {
         log.debug("Request to save Racetrack : {}", racetrack);
 
-        if (racetrack.getLongitude() == null || racetrack.getLongitude() == null || racetrack.getTimeZone() == null) {
-            Geometry geometry = geoLocationService.getGeolocationInformation(racetrack);
-            racetrack.setLatitude(geometry.location.lat);
-            racetrack.setLongitude(geometry.location.lng);
-            racetrack.setTimeZone(geoLocationService.getTimeZone(geometry));
-        }
+        Geometry geometry = null;
+        if (racetrack.getId() == null) {
+            // It's new track
+            if (racetrack.getLongitude() != null && racetrack.getLatitude() != null) {
+                geometry = geoLocationService.getGeolocationInformation(racetrack.getLongitude(), racetrack.getLatitude());
+            } else {
+                geometry = geoLocationService.getGeolocationInformation(racetrack);
+            }
 
+        } else {
+            Racetrack prevRacetrack = racetrackRepository.findById(racetrack.getId()).orElseThrow(
+                () -> new MSDBException("Invalid racetrack id " + racetrack.getId())
+            );
+            if (isLocationChanged(racetrack, prevRacetrack)) {
+                geometry = geoLocationService.getGeolocationInformation(racetrack);
+            }
+        }
+        racetrack.setTimeZone(geoLocationService.getTimeZone(geometry));
+        racetrack.setLatitude(geometry.location.lat);
+        racetrack.setLongitude(geometry.location.lng);
+
+        Racetrack updatedRacetrack = racetrack;
         if (racetrack.getLogo() != null) {
             byte[] logo = racetrack.getLogo();
-            racetrack = racetrackRepository.save(racetrack);
-            String cdnUrl = cdnService.uploadImage(racetrack.getId().toString(), logo, "racetrack");
-            racetrack.setLogoUrl(cdnUrl);
+            updatedRacetrack = racetrackRepository.save(racetrack);
+            String cdnUrl = cdnService.uploadImage(updatedRacetrack.getId().toString(), logo, "racetrack");
+            updatedRacetrack.setLogoUrl(cdnUrl);
 
-            racetrack = racetrackRepository.save(racetrack);
+            updatedRacetrack = racetrackRepository.save(updatedRacetrack);
         } else if (racetrack.getLogoUrl() == null) {
             if (racetrack.getId() != null) {
                 cdnService.deleteImage(racetrack.getId().toString(), "racetrack");
             }
         }
-        Racetrack result = racetrackRepository.save(racetrack);
+        Racetrack result = racetrackRepository.save(updatedRacetrack);
         racetrackSearchRepo.save(result);
         return result;
+    }
+
+    private boolean isLocationChanged(Racetrack updated, Racetrack prev) {
+        boolean latitudeChanged = updated.getLatitude() == null || !updated.getLatitude().equals(prev.getLatitude());
+        boolean longitudeChanged = updated.getLongitude() == null || !updated.getLongitude().equals(prev.getLongitude());
+
+        return latitudeChanged || longitudeChanged;
     }
 
     @Override

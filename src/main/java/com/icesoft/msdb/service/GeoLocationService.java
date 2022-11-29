@@ -9,6 +9,8 @@ public interface GeoLocationService {
 
     Geometry getGeolocationInformation(String location);
 
+    Geometry getGeolocationInformation(Double longitude, Double latitude);
+
     String getTimeZone(Geometry geometry);
 
 }

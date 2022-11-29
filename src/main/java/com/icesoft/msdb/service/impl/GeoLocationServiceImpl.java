@@ -6,6 +6,7 @@ import com.google.maps.TimeZoneApi;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.Geometry;
+import com.google.maps.model.LatLng;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.Racetrack;
 import com.icesoft.msdb.service.GeoLocationService;
@@ -50,6 +51,22 @@ public class GeoLocationServiceImpl implements GeoLocationService {
             results = GeocodingApi.geocode(context, location).await();
             if (results == null || results.length == 0) {
                 throw new MSDBException("No geolocation could be found for location " + location);
+            }
+            return results[0].geometry;
+
+        } catch (ApiException | InterruptedException | IOException e) {
+            log.error("Error accessing Google Geolocation API", e);
+            throw new MSDBException("Problems trying to retrieve geolocation information");
+        }
+    }
+
+    @Override
+    public Geometry getGeolocationInformation(Double latitude, Double longitude) {
+        GeocodingResult[] results;
+        try {
+            results = GeocodingApi.reverseGeocode(context, new LatLng(latitude, longitude)).await();
+            if (results == null || results.length == 0) {
+                throw new MSDBException("No geolocation could be found for coordinates " + latitude + "-" + longitude);
             }
             return results[0].geometry;
 
