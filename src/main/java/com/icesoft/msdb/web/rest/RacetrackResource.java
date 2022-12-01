@@ -8,6 +8,7 @@ import com.icesoft.msdb.service.RacetrackService;
 import com.icesoft.msdb.service.dto.EventEditionWinnersDTO;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,6 +75,12 @@ public class RacetrackResource {
         if (racetrack.getId() != null) {
             throw new BadRequestAlertException("A new racetrack cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        if ((StringUtils.isEmpty(racetrack.getLocation()) || racetrack.getCountry() == null) &&
+            (racetrack.getLongitude() == null || racetrack.getLatitude() == null)) {
+            throw new BadRequestAlertException("Location and country or latitude and longitude must be provided", ENTITY_NAME, "invalidLocationData");
+        }
+
         Racetrack result = racetrackService.save(racetrack);
 
         return ResponseEntity
@@ -104,6 +111,10 @@ public class RacetrackResource {
         }
         if (!Objects.equals(id, racetrack.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+        if ((StringUtils.isEmpty(racetrack.getLocation()) || racetrack.getCountry() == null) &&
+            (racetrack.getLongitude() == null || racetrack.getLatitude() == null)) {
+            throw new BadRequestAlertException("Location and country or latitude and longitude must be provided", ENTITY_NAME, "invalidLocationData");
         }
 
         Racetrack result = racetrackService.save(racetrack);
