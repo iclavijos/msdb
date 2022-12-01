@@ -37,13 +37,11 @@ public class Racetrack extends AbstractAuditingEntity implements Serializable {
     @Field(type = FieldType.Search_As_You_Type)
     private String name;
 
-    @NotNull
     @Size(max = 100)
-    @Column(name = "location", length = 100, nullable = false)
+    @Column(name = "location", length = 100)
     @Field(type = FieldType.Search_As_You_Type)
     private String location;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name="country_code")
     @Field(type = FieldType.Object)
