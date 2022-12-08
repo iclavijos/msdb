@@ -28,13 +28,17 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.filter.CorsFilter;
 import tech.jhipster.config.JHipsterProperties;
+import tech.jhipster.web.filter.CookieCsrfFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -57,78 +61,62 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // @formatter:off
         http
-            .csrf()
-            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            // This needs to be reviewed later on, as it doesn't work with SB RC2 without this (403 error)
-            .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-        .and()
-            .addFilterBefore(corsFilter, CsrfFilter.class)
-            .exceptionHandling()
-        .and()
+            .csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                // See https://stackoverflow.com/q/74447118/65681
+                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
+
+            .addFilterAfter(new CookieCsrfFilter(), BasicAuthenticationFilter.class)
+
             .headers()
-            .contentSecurityPolicy(jHipsterProperties.getSecurity().getContentSecurityPolicy())
-        .and()
-            .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
-        .and()
-            .permissionsPolicy().policy("camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()")
-        .and()
-            .frameOptions()
-            .deny()
-        .and().authorizeHttpRequests()
-            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .requestMatchers("/app/**/*.{js,html}").permitAll()
+                .contentSecurityPolicy(jHipsterProperties.getSecurity().getContentSecurityPolicy())
+                .and()
+                .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
+                .and()
+                .permissionsPolicy().policy("camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()")
+                .and()
+                .frameOptions().sameOrigin()
+                .and()
+            .authorizeHttpRequests()
+            .requestMatchers("/app/*.html").permitAll()
+            .requestMatchers("/app/*/*.html").permitAll()
+            .requestMatchers("/app/*.js").permitAll()
+            .requestMatchers("/app/*/*.js").permitAll()
             .requestMatchers("/i18n/**").permitAll()
             .requestMatchers("/content/**").permitAll()
             .requestMatchers("/swagger-ui/**").permitAll()
             .requestMatchers("/test/**").permitAll()
 
             .requestMatchers("/api/authenticate").permitAll()
+
             .requestMatchers("/api/auth-info").permitAll()
-            .requestMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
 
             .requestMatchers("/api/home/**").permitAll()
             .requestMatchers("/api/timezones").permitAll()
             .requestMatchers("/api/event-editions/calendar/**").permitAll()
-
             // Public endpoints for mobile app
             .requestMatchers("/api/series").permitAll()
 
+            .requestMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
             .requestMatchers("/api/**").authenticated()
+
             .requestMatchers("/management/health").permitAll()
             .requestMatchers("/management/health/**").permitAll()
             .requestMatchers("/management/info").permitAll()
             .requestMatchers("/management/prometheus").permitAll()
             .requestMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
-        .and().oauth2Login()
-        .and().oauth2ResourceServer()
-            .jwt()
-            .jwtAuthenticationConverter(authenticationConverter())
             .and()
-        .and().oauth2Client();
 
-//            // Start of "public" access
-//            .antMatchers(HttpMethod.GET, "/api/series/**").permitAll()
-////            .antMatchers(HttpMethod.GET, "/api/_search/series").permitAll()
-////            .antMatchers(HttpMethod.GET, "/api/series-editions/**").permitAll()
-////
-////            .antMatchers(HttpMethod.GET, "/api/events/**").permitAll()
-////            .antMatchers(HttpMethod.GET, "/api/event-editions/**").permitAll()
-////            .antMatchers(HttpMethod.GET, "/api/event-editions/*/sessions").permitAll()
-//            // .antMatchers(HttpMethod.GET, "/api/icalendar/**").permitAll()
-//            // End of "public" access
-//
-//        .and()
-//            .oauth2Login();
-//        .and()
-//            .oauth2ResourceServer()
-//                .jwt()
-//                .jwtAuthenticationConverter(authenticationConverter())
-//                .and()
-//            .and()
-//                .oauth2Client();
-        // @formatter:on
+            .oauth2Login()
+                    .and()
+
+            .oauth2ResourceServer()
+                .jwt()
+                .jwtAuthenticationConverter(authenticationConverter())
+                .and()
+                .and()
+                .oauth2Client();
 
         return http.build();
     }
