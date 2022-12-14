@@ -1,5 +1,6 @@
 package com.icesoft.msdb.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -28,7 +29,11 @@ public class JacksonConfiguration {
      */
     @Bean
     public Hibernate5JakartaModule hibernate5Module() {
-        return new Hibernate5JakartaModule();
+        Hibernate5JakartaModule hibernate5Module = new Hibernate5JakartaModule();
+        hibernate5Module.disable(Hibernate5JakartaModule.Feature.USE_TRANSIENT_ANNOTATION);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(hibernate5Module);
+        return hibernate5Module;
     }
 
 }
