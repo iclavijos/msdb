@@ -129,6 +129,7 @@ spring:
     mode: HTML
   output:
     ansi:
+      enabled: DETECT
       console-available: true
   security:
     oauth2:
