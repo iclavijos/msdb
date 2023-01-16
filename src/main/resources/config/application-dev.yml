@@ -18,7 +18,11 @@ logging:
     ROOT: INFO
     tech.jhipster: INFO
     org.hibernate.SQL: ERROR
-    com.icesoft.msdb: DEBUG
+    com.icesoft.msdb: INFO
+
+    org.springframework.security:
+      web: ERROR
+      oauth2: ERROR
 
 management:
   health:
