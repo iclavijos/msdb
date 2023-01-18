@@ -115,7 +115,7 @@ public class SecurityConfiguration {
                 .jwt()
                 .jwtAuthenticationConverter(authenticationConverter())
                 .and()
-                .and()
+            .and()
                 .oauth2Client();
 
         return http.build();
