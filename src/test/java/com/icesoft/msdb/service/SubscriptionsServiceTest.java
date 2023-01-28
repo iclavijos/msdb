@@ -47,8 +47,6 @@ public class SubscriptionsServiceTest {
     @MockBean
     private MessagingService messagingService;
 
-    @Autowired
-    private TelegramSenderService telegramSenderService;
     @MockBean
     private TelegramBot telegramBot;
 
