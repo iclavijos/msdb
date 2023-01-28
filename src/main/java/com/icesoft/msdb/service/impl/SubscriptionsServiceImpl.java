@@ -210,7 +210,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     public void rebuildSessionsData() {
         sessionsRepository.deleteAll();
         OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
-        eventSessionRepository.findUpcomingSessions(utc.toEpochSecond())
+        eventSessionRepository.findUpcomingSessions(utc.toInstant())
             .forEach(eventSession -> saveEventSession(eventSession));
     }
 }
