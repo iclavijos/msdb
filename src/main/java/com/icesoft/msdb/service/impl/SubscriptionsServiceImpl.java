@@ -18,8 +18,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,10 +38,15 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     private final MessagingService messagingService;
     private final TelegramSenderService telegramSenderService;
 
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
     @Scheduled(cron = "0 * * * * *")
     @Transactional(readOnly = true)
     public void generateNotifications() {
         OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
+        if (log.isTraceEnabled()) {
+            log.trace("Generating notifications at {} - {}", utc.toEpochSecond(), TIME_FORMATTER.format(utc));
+        }
         utc = OffsetDateTime.of(
             utc.getYear(), utc.getMonthValue(),
             utc.getDayOfMonth(), utc.getHour(),
@@ -46,7 +54,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
         OffsetDateTime utcPlus15m = utc.plusMinutes(15);
         OffsetDateTime utcPlus1h = utc.plusHours(1);
         OffsetDateTime utcPlus3h = utc.plusHours(3);
-        log.trace("Generating notifications at {}", utc);
+
         List<SessionData> sessionData15m = sessionsRepository
             .findById(utcPlus15m.toEpochSecond())
             .map(sessions -> sessions.getSessions())
