@@ -6,6 +6,7 @@ import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.configuration.TestSecurityConfiguration;
 import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.subscriptions.Sessions;
+import com.icesoft.msdb.repository.jpa.EventSessionRepository;
 import com.icesoft.msdb.repository.mongo.subscriptions.SessionsRepository;
 import com.icesoft.msdb.service.SubscriptionsService;
 import org.elasticsearch.client.RestClient;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -25,9 +27,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 @Testcontainers
 @SpringBootTest(classes = MotorsportsDatabaseApp.class)
@@ -62,10 +66,12 @@ class SubscriptionsServiceIT {
     @Autowired
     private SessionsRepository sessionsRepository;
 
+    @MockBean
+    private EventSessionRepository eventSessionRepository;
+
     @BeforeEach
     void testIsContainerRunning() {
         Assertions.assertTrue(elasticContainer.isRunning());
-        // resetIndex();
     }
 
     @AfterEach
@@ -185,5 +191,39 @@ class SubscriptionsServiceIT {
 
         assertTrue(sessions.isPresent());
         assertTrue(sessions.get().getSessions().size() == 1);
+    }
+
+    @Test
+    void shouldInsertAllUpcomingSessions() {
+        when(eventSessionRepository.findUpcomingSessions(any())).thenReturn(
+            Arrays.asList(
+                EventSession.builder()
+                    .id(1L)
+                    .sessionStartTime(now.toInstant())
+                    .name("Session 1")
+                    .build(),
+                EventSession.builder()
+                    .id(2L)
+                    .sessionStartTime(now.toInstant())
+                    .name("Session 2")
+                    .build(),
+                EventSession.builder()
+                    .id(3L)
+                    .sessionStartTime(now.toInstant())
+                    .name("Session 3")
+                    .build(),
+                EventSession.builder()
+                    .id(4L)
+                    .sessionStartTime(now.toInstant())
+                    .name("Session 4")
+                    .build()
+            )
+        );
+        subscriptionsService.rebuildSessionsData();
+
+        Optional<Sessions> sessions = sessionsRepository.findById(now.toEpochSecond());
+
+        assertTrue(sessions.isPresent());
+        assertTrue(sessions.get().getSessions().size() == 4);
     }
 }
