@@ -147,6 +147,13 @@ repositories {
     maven { url "https://repo.spring.io/milestone" }
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+        mavenBom "org.junit:junit-bom:5.8.1"
+    }
+}
+
 dependencies {
     implementation platform("tech.jhipster:jhipster-dependencies:${jhipsterDependenciesVersion}" )
 
@@ -237,18 +244,20 @@ dependencies {
     testImplementation "org.springframework.boot:spring-boot-test"
     testImplementation "com.tngtech.archunit:archunit-junit5-api:${archunitJunit5Version}"
     testRuntimeOnly "com.tngtech.archunit:archunit-junit5-engine:${archunitJunit5Version}"
-    testImplementation 'org.testcontainers:junit-jupiter:1.15.0'
+    testImplementation "org.testcontainers:testcontainers:${testcontainersVersion}"
+    testImplementation "org.testcontainers:junit-jupiter:${testcontainersVersion}"
     testImplementation "org.testcontainers:mariadb:${testcontainersVersion}"
+    testImplementation "org.testcontainers:mongodb:${testcontainersVersion}"
+    testImplementation "org.testcontainers:elasticsearch:${testcontainersVersion}"
     testImplementation 'org.mockito:mockito-inline'
     testImplementation "com.h2database:h2"
+
     developmentOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
-
-
 
 task cleanResources(type: Delete) {
     delete "build/resources"
@@ -257,7 +266,6 @@ task cleanResources(type: Delete) {
 wrapper {
     gradleVersion = "7.5"
 }
-
 
 if (project.hasProperty("nodeInstall")) {
     // Workaround node grade plugin not working on apple silicon https://github.com/node-gradle/gradle-node-plugin/issues/154
@@ -270,6 +278,7 @@ if (project.hasProperty("nodeInstall")) {
         download = downloadNode
     }
 }
+
 compileJava {
     dependsOn processResources
     options.compilerArgs = [ '-Amapstruct.defaultComponentModel=spring', '-parameters' ]
