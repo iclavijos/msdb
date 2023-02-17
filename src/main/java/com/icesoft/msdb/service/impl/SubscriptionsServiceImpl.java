@@ -19,9 +19,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,10 +45,12 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     @Scheduled(cron = "0 * * * * *")
     @Transactional(readOnly = true)
     public void generateNotifications() {
-        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
+        // Changed to use System.currentTimeMillis() to avoid a discrepancy with OffsetDateTime.now(), as they work with different precisions
+        OffsetDateTime utc = OffsetDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), ZoneOffset.UTC);
         if (log.isTraceEnabled()) {
             log.trace("Generating notifications at {} - {}", utc.toEpochSecond(), TIME_FORMATTER.format(utc));
         }
+
         utc = OffsetDateTime.of(
             utc.getYear(), utc.getMonthValue(),
             utc.getDayOfMonth(), utc.getHour(),
