@@ -204,7 +204,7 @@ dependencies {
         exclude module: "spring-boot-starter-tomcat"
     }
     implementation "org.springframework.boot:spring-boot-starter-undertow"
-    implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+    implementation "org.springframework.boot:spring-boot-starter-freemarker"
     implementation "org.springframework.security:spring-security-config"
     implementation "org.springframework.security:spring-security-data"
     implementation "org.springframework.security:spring-security-web"
@@ -249,6 +249,7 @@ dependencies {
     testImplementation "org.testcontainers:mariadb:${testcontainersVersion}"
     testImplementation "org.testcontainers:mongodb:${testcontainersVersion}"
     testImplementation "org.testcontainers:elasticsearch:${testcontainersVersion}"
+    testImplementation "org.testcontainers:mongodb:${testcontainersVersion}"
     testImplementation 'org.mockito:mockito-inline'
     testImplementation "com.h2database:h2"
 

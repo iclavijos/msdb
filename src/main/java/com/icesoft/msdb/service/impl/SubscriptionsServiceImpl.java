@@ -1,12 +1,12 @@
 package com.icesoft.msdb.service.impl;
 
+import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.domain.enums.SessionType;
 import com.icesoft.msdb.domain.subscriptions.SessionData;
 import com.icesoft.msdb.domain.subscriptions.Sessions;
 import com.icesoft.msdb.repository.jpa.EventSessionRepository;
-import com.icesoft.msdb.repository.jpa.UserRepository;
 import com.icesoft.msdb.repository.jpa.UserSubscriptionRepository;
 import com.icesoft.msdb.repository.mongo.subscriptions.SessionsRepository;
 import com.icesoft.msdb.service.MessagingService;
@@ -18,13 +18,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
-import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,17 +38,21 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     private final MessagingService messagingService;
     private final TelegramSenderService telegramSenderService;
 
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'");
 
     @Scheduled(cron = "0 * * * * *")
     @Transactional(readOnly = true)
     public void generateNotifications() {
-        // Changed to use System.currentTimeMillis() to avoid a discrepancy with OffsetDateTime.now(), as they work with different precisions
-        OffsetDateTime utc = OffsetDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), ZoneOffset.UTC);
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
         if (log.isTraceEnabled()) {
             log.trace("Generating notifications at {} - {}", utc.toEpochSecond(), TIME_FORMATTER.format(utc));
         }
-
+        // For some reason, utc calculated time is XX minutes 59 seconds, regardless of using OffsetDateTime.now() or System.currentTimeMillis()
+        // It happens more frequently when using OffsetDateTime.now(), but it happens with both approaches
+        // So it's required to change it to the next minute to avoid duplicate or missed notifications
+        if (utc.get(ChronoField.SECOND_OF_MINUTE) == 59) {
+            utc = utc.plusSeconds(1L);
+        }
         utc = OffsetDateTime.of(
             utc.getYear(), utc.getMonthValue(),
             utc.getDayOfMonth(), utc.getHour(),
@@ -88,10 +90,14 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
                 .peek(session -> {
                     log.trace("Session to notify: {} - {}", session.getEventEdition().getLongEventName(), session.getName());
                     // Send notifications to telegram channel
-                    telegramSenderService.sendMessage(session,
-                        session.getSessionStartTime().getEpochSecond() == utcPlus15m.toEpochSecond() ? 15 :
-                            session.getSessionStartTime().getEpochSecond() == utcPlus1h.toEpochSecond() ? 60 : 180
-                    );
+                    try {
+                        telegramSenderService.notifySession(session,
+                            session.getSessionStartTime().getEpochSecond() == utcPlus15m.toEpochSecond() ? 15 :
+                                session.getSessionStartTime().getEpochSecond() == utcPlus1h.toEpochSecond() ? 60 : 180
+                        );
+                    } catch (MSDBException e) {
+                        log.warn("Issues while processing Telegram notifications");
+                    }
                 })
                 .collect(Collectors.toList());
 

@@ -13,6 +13,9 @@
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
 
+logging.level:
+  org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
 spring:
   application:
     name: MotorsportsDatabase

@@ -83,7 +83,6 @@ public class SeriesEditionRepositoryTest {
             // .seriesEditions(Set.of(seriesEdition))
             .build();
         racetrackEventEdition.setCreatedBy("Test");
-        racetrackEventEdition = eventEditionRepository.save(racetrackEventEdition);
 
         Event rallyEvent = Event.builder()
             .name("Rally Event")
