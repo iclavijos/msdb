@@ -1,0 +1,3 @@
+#if ($rallyOrRaid)<b>$session.shortname - $session.name ($session.duration km)</b> stage#end#if (!$rallyOrRaid)<b>$session.name</b> session#end belonging to <b>$session.eventEdition.longEventName</b> will start in #if ($minutesToStart == 15)15 minutes#end#if ($minutesToStart == 60)1 hour #end#if ($minutesToStart == 180)3 hours#end#if (!$rallyOrRaid) at <b>$session.eventEdition.trackLayout.racetrack.name</b>#end#if ($logoUrl != $null)
+
+<a href="$logoUrl">&#8205;</a>#end

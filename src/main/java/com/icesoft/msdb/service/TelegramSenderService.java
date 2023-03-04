@@ -13,14 +13,14 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
-import freemarker.template.TemplateException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,7 +32,7 @@ public class TelegramSenderService {
     private final TelegramBot telegramBot;
     private final TelegramGroupSubscriptionRepository telegramGroupSubscriptionRepository;
     private final TelegramGroupSettingsRepository telegramGroupSettingsRepository;
-    private final FreeMarkerConfig freeMarkerConfig;
+    private final VelocityEngine velocityEngine;
 
     private void sendMessage(String messageContent) {
         sendMessage(messageContent, applicationProperties.getTelegramBot().getChannelId());
@@ -44,6 +44,18 @@ public class TelegramSenderService {
         SendResponse response = telegramBot.execute(sendMessage);
         if (!response.isOk()) {
             log.error("Couldn't deliver message to Telegram channel: {}-{}", response.errorCode(), response.description());
+            if (response.errorCode() == 403) {
+                // Remove subscription
+                try {
+                    Long chatId = Long.parseLong(channelId);
+                    log.trace("Removing subscriptions and settings");
+                    telegramGroupSubscriptionRepository.deleteByIdChatId(chatId);
+                    telegramGroupSettingsRepository.deleteById(chatId);
+                } catch (NumberFormatException e) {
+                    // Do nothing. This should not happen, as the only non Long Id is for MSDB Bot Channel
+                    log.warn("Received a non numeric channel Id when trying to unsubscribe a channel: {}", channelId);
+                }
+            }
         }
     }
 
@@ -57,7 +69,7 @@ public class TelegramSenderService {
 
         List<TelegramGroupSubscription> subscriptions = telegramGroupSubscriptionRepository.findAllByIdSeriesId(seriesIds);
 
-        Map<String, Object> model = new HashMap<>();
+        VelocityContext model = new VelocityContext();
         model.put("session", eventSession);
         model.put("rallyOrRaid", eventSession.getEventEdition().getEvent().isRaid() || eventSession.getEventEdition().getEvent().isRally());
         model.put("minutesToStart", minutesToStart);
@@ -91,16 +103,13 @@ public class TelegramSenderService {
         sendMessage(generateMessageContents(model, Optional.empty()));
     }
 
-    private String generateMessageContents(Map<String, Object> model, Optional<String> optSettings) {
-        try {
-            return FreeMarkerTemplateUtils.processTemplateIntoString(
-                freeMarkerConfig.getConfiguration().getTemplate(
-                    "telegram/message.ftlh",
-                    Locale.forLanguageTag(optSettings.orElse("EN"))),
-                model);
-        } catch (IOException | TemplateException e) {
-            log.error("Freemarker error", e);
-            throw new MSDBException("Couldn't process message template");
-        }
+    private String generateMessageContents(VelocityContext model, Optional<String> optSettings) {
+        Locale groupLocale = Locale.forLanguageTag(optSettings.orElse("EN"));
+        StringWriter stringWriter = new StringWriter();
+        log.trace("Generating message for locale {} and data {}", groupLocale, model);
+        velocityEngine.mergeTemplate(
+            String.format("templates/telegram/message_%s.vm", groupLocale.getLanguage()),
+            "UTF-8", model, stringWriter);
+        return stringWriter.toString();
     }
 }

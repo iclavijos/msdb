@@ -204,7 +204,6 @@ dependencies {
         exclude module: "spring-boot-starter-tomcat"
     }
     implementation "org.springframework.boot:spring-boot-starter-undertow"
-    implementation "org.springframework.boot:spring-boot-starter-freemarker"
     implementation "org.springframework.security:spring-security-config"
     implementation "org.springframework.security:spring-security-data"
     implementation "org.springframework.security:spring-security-web"
@@ -232,6 +231,7 @@ dependencies {
     implementation "io.vavr:vavr:0.10.4"
 
     implementation 'com.github.pengrad:java-telegram-bot-api:6.2.0'
+    implementation 'org.apache.velocity:velocity-engine-core:2.3'
 
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"

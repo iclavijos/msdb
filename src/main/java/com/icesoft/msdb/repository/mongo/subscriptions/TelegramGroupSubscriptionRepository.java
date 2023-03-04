@@ -14,4 +14,5 @@ public interface TelegramGroupSubscriptionRepository extends MongoRepository<Tel
     @Query(value = "{ '_id.seriesId' : {'$in' : ?0 } }")
     List<TelegramGroupSubscription> findAllByIdSeriesId(List<Long> seriesIds);
 
+    void deleteByIdChatId(Long chatId);
 }
