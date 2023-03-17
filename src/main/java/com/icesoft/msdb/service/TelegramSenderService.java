@@ -68,6 +68,7 @@ public class TelegramSenderService {
         log.trace("Retrieving subscriptions for series ids {}", seriesIds.stream().map(Object::toString).collect(Collectors.joining(",")));
 
         List<TelegramGroupSubscription> subscriptions = telegramGroupSubscriptionRepository.findAllByIdSeriesId(seriesIds);
+        Set<TelegramGroupSettings> settings = telegramGroupSettingsRepository.findAll().stream().collect(Collectors.toUnmodifiableSet());
 
         VelocityContext model = new VelocityContext();
         model.put("session", eventSession);
@@ -83,28 +84,30 @@ public class TelegramSenderService {
         }
 
         // Send message to each subscribed channel
-        Set<TelegramGroupSettings> settings = telegramGroupSettingsRepository.findAll().stream().collect(Collectors.toUnmodifiableSet());
         log.trace("Retrieved {} settings and {} subscriptions", settings.size(), subscriptions.size());
         subscriptions.parallelStream().forEach(subscription -> {
             log.trace("Subscription: {}", subscription.toString());
-            Optional<String> optSettings = settings.stream()
+            Optional<TelegramGroupSettings> optSettings = settings.stream()
                 .filter(groupSettings -> groupSettings.getId().equals(subscription.getId().getChatId()))
-                .map(TelegramGroupSettings::getLanguageCode).findFirst();
-            log.trace("Settings: {}", optSettings.orElse("No settings found"));
-            if (eventSession.isRace() || eventSession.getSessionType().equals(SessionType.STAGE) ||
-                eventSession.getSessionType().equals(SessionType.PRACTICE) && subscription.getNotifyPractice() ||
-                eventSession.getSessionType().equals(SessionType.QUALIFYING) && subscription.getNotifyQualifying()) {
-                log.trace("Sending message to chatId {}", subscription.getId().getChatId());
-                sendMessage(generateMessageContents(model, optSettings), subscription.getId().getChatId().toString());
+                .findFirst();
+
+            if (optSettings.isEmpty() || optSettings.get().getMinutesNotification().contains(minutesToStart)) {
+                if (eventSession.isRace() || eventSession.getSessionType().equals(SessionType.STAGE) ||
+                    eventSession.getSessionType().equals(SessionType.PRACTICE) && subscription.getNotifyPractice() ||
+                    eventSession.getSessionType().equals(SessionType.QUALIFYING) && subscription.getNotifyQualifying()) {
+                    log.trace("Sending message to chatId {}", subscription.getId().getChatId());
+                    String languageCode = optSettings.orElse(TelegramGroupSettings.builder().languageCode("EN").build()).getLanguageCode();
+                    sendMessage(generateMessageContents(model, languageCode), subscription.getId().getChatId().toString());
+                }
             }
         });
 
         // Send message to bot channel
-        sendMessage(generateMessageContents(model, Optional.empty()));
+        sendMessage(generateMessageContents(model, "EN"));
     }
 
-    private String generateMessageContents(VelocityContext model, Optional<String> optSettings) {
-        Locale groupLocale = Locale.forLanguageTag(optSettings.orElse("EN"));
+    private String generateMessageContents(VelocityContext model, String languageCode) {
+        Locale groupLocale = Locale.forLanguageTag(languageCode);
         StringWriter stringWriter = new StringWriter();
         log.trace("Generating message for locale {} and data {}", groupLocale, model);
         velocityEngine.mergeTemplate(

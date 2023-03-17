@@ -314,4 +314,83 @@ public class TelegramSenderServiceTest {
         verify(telegramGroupSubscriptionRepository, times(1)).deleteByIdChatId(anyLong());
         verify(telegramGroupSettingsRepository, times(1)).deleteById(anyLong());
     }
+
+    @Test
+    public void testMessageSentWhenNoNotificationsSetting() {
+        EventSession racetrackSession = getRacetrackSession();
+
+        when(telegramSendResponse.isOk()).thenReturn(true);
+        when(telegramBot.execute(any(SendMessage.class))).thenReturn(telegramSendResponse);
+
+        when(telegramGroupSubscriptionRepository.findAllByIdSeriesId(anyList())).thenReturn(Arrays.asList(
+            TelegramGroupSubscription.builder()
+                .id(new TelegramGroupSubscriptionKey(1L, 1L))
+                .notifyRaces(true)
+                .notifyQualifying(true)
+                .notifyPractice(false)
+                .build()
+        ));
+        when(telegramGroupSettingsRepository.findAll()).thenReturn(Arrays.asList(
+            TelegramGroupSettings.builder()
+                .id(1L)
+                .languageCode("CA")
+                .build()
+        ));
+
+        telegramSenderService.notifySession(racetrackSession, 15);
+
+        ArgumentCaptor<SendMessage> argument = ArgumentCaptor.forClass(SendMessage.class);
+        verify(telegramBot, times(2)).execute(argument.capture());
+        List<SendMessage> values = argument.getAllValues();
+        assertNotNull(values);
+        assertFalse(values.isEmpty());
+        List<String> messageValues = values.parallelStream().map(value -> (String)value.getParameters().get("text")).collect(Collectors.toList());
+        assertTrue(
+            Arrays.asList(
+                    "<b>Session 1</b> session belonging to <b>Long Event Name 1</b> will start in 15 minutes at <b>Track 1</b>\n<a href=\"http://something.com/image.jpg\">&#8205;</a>\n",
+                    "La sesión <b>Session 1</b> perteneciente a <b>Long Event Name 1</b> empieza en 15 minutos en <b>Track 1</b>\n<a href=\"http://something.com/image.jpg\">&#8205;</a>\n",
+                    "La sessió <b>Session 1</b> que pertany a <b>Long Event Name 1</b> comença en 15 minuts a <b>Track 1</b>\n<a href=\"http://something.com/image.jpg\">&#8205;</a>\n")
+                .containsAll(messageValues));
+
+    }
+
+    @Test
+    public void testNoMessageSentWhenNotificationsSettingDoNotMatch() {
+        EventSession racetrackSession = getRacetrackSession();
+
+        when(telegramSendResponse.isOk()).thenReturn(true);
+        when(telegramBot.execute(any(SendMessage.class))).thenReturn(telegramSendResponse);
+
+        when(telegramGroupSubscriptionRepository.findAllByIdSeriesId(anyList())).thenReturn(Arrays.asList(
+            TelegramGroupSubscription.builder()
+                .id(new TelegramGroupSubscriptionKey(1L, 1L))
+                .notifyRaces(true)
+                .notifyQualifying(true)
+                .notifyPractice(false)
+                .build()
+        ));
+        when(telegramGroupSettingsRepository.findAll()).thenReturn(Arrays.asList(
+            TelegramGroupSettings.builder()
+                .id(1L)
+                .languageCode("CA")
+                .minutesNotification(Arrays.asList(60))
+                .build()
+        ));
+
+        telegramSenderService.notifySession(racetrackSession, 15);
+
+        ArgumentCaptor<SendMessage> argument = ArgumentCaptor.forClass(SendMessage.class);
+        verify(telegramBot, times(1)).execute(argument.capture());
+        List<SendMessage> values = argument.getAllValues();
+        assertNotNull(values);
+        assertFalse(values.isEmpty());
+        List<String> messageValues = values.parallelStream().map(value -> (String)value.getParameters().get("text")).collect(Collectors.toList());
+        assertTrue(
+            Arrays.asList(
+                    "<b>Session 1</b> session belonging to <b>Long Event Name 1</b> will start in 15 minutes at <b>Track 1</b>\n<a href=\"http://something.com/image.jpg\">&#8205;</a>\n",
+                    "La sesión <b>Session 1</b> perteneciente a <b>Long Event Name 1</b> empieza en 15 minutos en <b>Track 1</b>\n<a href=\"http://something.com/image.jpg\">&#8205;</a>\n",
+                    "La sessió <b>Session 1</b> que pertany a <b>Long Event Name 1</b> comença en 15 minuts a <b>Track 1</b>\n<a href=\"http://something.com/image.jpg\">&#8205;</a>\n")
+                .containsAll(messageValues));
+
+    }
 }
