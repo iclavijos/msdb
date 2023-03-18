@@ -72,7 +72,8 @@ public class TelegramSenderService {
 
         VelocityContext model = new VelocityContext();
         model.put("session", eventSession);
-        model.put("rallyOrRaid", eventSession.getEventEdition().getEvent().isRaid() || eventSession.getEventEdition().getEvent().isRally());
+        model.put("rally", eventSession.getEventEdition().getEvent().isRally());
+        model.put("raid", eventSession.getEventEdition().getEvent().isRaid());
         model.put("minutesToStart", minutesToStart);
 
         if (!eventSession.getEventEdition().getSeriesEditions().isEmpty()) {
@@ -91,7 +92,7 @@ public class TelegramSenderService {
                 .filter(groupSettings -> groupSettings.getId().equals(subscription.getId().getChatId()))
                 .findFirst();
 
-            if (optSettings.isEmpty() || optSettings.get().getMinutesNotification().contains(minutesToStart)) {
+            if (optSettings.isEmpty() || Optional.ofNullable(optSettings.get().getMinutesNotification()).orElse(Arrays.asList(15, 60, 180)).contains(minutesToStart)) {
                 if (eventSession.isRace() || eventSession.getSessionType().equals(SessionType.STAGE) ||
                     eventSession.getSessionType().equals(SessionType.PRACTICE) && subscription.getNotifyPractice() ||
                     eventSession.getSessionType().equals(SessionType.QUALIFYING) && subscription.getNotifyQualifying()) {
