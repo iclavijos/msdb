@@ -48,11 +48,11 @@
                                                class="form-control" name="debutYear" id="field_debutYear" formControlName="debutYear">
                                         <div *ngIf="editForm.get('debutYear')?.invalid && (editForm.get('debutYear')?.dirty || editForm.get('debutYear')?.touched)">
                                             <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('debutYear')?.errors?.required" jhiTranslate="entity.validation.required">
+                                                   *ngIf="editForm.controls.debutYear.errors?.required" jhiTranslate="entity.validation.required">
                                                 This field is required.
                                             </small>
                                             <small class="form-text text-danger"
-                                                   [hidden]="!editForm.controls.debutYear?.errors?.number" jhiTranslate="entity.validation.number">
+                                                   [hidden]="!editForm.controls.debutYear.errors?.number" jhiTranslate="entity.validation.number">
                                                 This field should be a number.
                                             </small>
                                         </div>

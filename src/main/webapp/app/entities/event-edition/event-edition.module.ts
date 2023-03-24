@@ -16,25 +16,24 @@ import { EventEntryResultModule } from 'app/entities/event-entry-result/event-en
 // import { MotorsportsDatabaseLapsAnalysisModule } from '../laps-analysis/laps-analysis.module';
 
 @NgModule({
-  imports: [
-    SharedModule,
-    EventEditionRoutingModule,
-    EventSessionModule,
-    EventEntryModule,
-    EventEntryResultModule
-  ],
-  declarations: [
-    EventEditionComponent,
-    EventEditionDetailComponent,
-    EventEditionUpdateComponent,
-    EventEditionDeleteDialogComponent,
-    EventEditionCopyEntriesDialogComponent,
-    EventEditionCloneDialogComponent,
-    EventEditionRescheduleDialogComponent
-  ],
-  exports: [
-    EventEditionComponent
-  ],
-  entryComponents: [EventEditionDeleteDialogComponent],
+    imports: [
+        SharedModule,
+        EventEditionRoutingModule,
+        EventSessionModule,
+        EventEntryModule,
+        EventEntryResultModule
+    ],
+    declarations: [
+        EventEditionComponent,
+        EventEditionDetailComponent,
+        EventEditionUpdateComponent,
+        EventEditionDeleteDialogComponent,
+        EventEditionCopyEntriesDialogComponent,
+        EventEditionCloneDialogComponent,
+        EventEditionRescheduleDialogComponent
+    ],
+    exports: [
+        EventEditionComponent
+    ]
 })
 export class EventEditionModule {}

@@ -1,11 +1,11 @@
 import { Component, Input, ElementRef, OnInit } from '@angular/core';
-import { FormGroup } from "@angular/forms";
+import { UntypedFormGroup } from "@angular/forms";
 
 import { Observable, BehaviorSubject } from 'rxjs';
 import { takeWhile, tap } from 'rxjs/operators';
 
-export type DisplayWithFunc = <T>(item: T) => string;
-export type TooltipFunc = <T>(item: T) => string;
+export type DisplayWithFunc<T> = (item: T) => string;
+export type TooltipFunc<T> = (item: T) => string;
 
 @Component({
   selector: 'jhi-autocomplete',
@@ -13,7 +13,7 @@ export type TooltipFunc = <T>(item: T) => string;
 })
 export class TypeAheadComponent<T> implements OnInit {
 
-  @Input() editForm!: FormGroup;
+  @Input() editForm!: UntypedFormGroup;
   @Input() elementId!: string;
   @Input() controlName!: string;
   @Input() label!: string;
@@ -23,8 +23,8 @@ export class TypeAheadComponent<T> implements OnInit {
   @Input() imageUrlPattern!: string;
   @Input() icon = '';
 
-  @Input() displayWithFunction!: DisplayWithFunc;
-  @Input() tooltipFunction!: TooltipFunc;
+  @Input() displayWithFunction!: DisplayWithFunc<T>;
+  @Input() tooltipFunction!: TooltipFunc<T>;
 
   private typeAheadBlurred = new BehaviorSubject(false);
   private typeAheadValueSelected = new BehaviorSubject(false);

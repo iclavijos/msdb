@@ -8,18 +8,12 @@ eg $input-color: red;
 // Override Bootstrap variables
 @import 'bootstrap-variables';
 // Import Bootstrap source files from node_modules
-@import '~bootstrap/scss/bootstrap';
-@import '~bootstrap-icons/font/bootstrap-icons';
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-icons/font/bootstrap-icons';
 
 @import 'primeng.scss';
 
-@import '~icofont/css/icofont.min.css';
-@import '~@mdi/font/css/materialdesignicons.min.css';
+@import 'icofont/css/icofont.min.css';
+@import '@mdi/font/css/materialdesignicons.min.css';
 
-@import '~@fullcalendar/bootstrap5/main.min.css';
-@import '~@fullcalendar/daygrid/main.min.css';
-@import '~@fullcalendar/timegrid/main.min.css';
-@import '~@fullcalendar/timeline/main.min.css';
-@import '~@fullcalendar/list/main.min.css';
-
-@import '~leaflet/dist/leaflet.css';
+@import 'leaflet/dist/leaflet.css';

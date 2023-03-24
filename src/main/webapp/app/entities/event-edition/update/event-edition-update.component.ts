@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap, debounceTime, map, filter, finalize } from 'rxjs/operators';
@@ -52,7 +52,7 @@ export class EventEditionUpdateComponent implements OnInit {
     protected racetrackLayoutService: RacetrackLayoutService,
     protected eventService: EventService,
     protected activatedRoute: ActivatedRoute,
-    protected fb: FormBuilder,
+    protected fb: UntypedFormBuilder,
     protected eventManager: EventManager,
     protected dataUtils: DataUtils,
     protected elementRef: ElementRef,

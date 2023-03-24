@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 
 import { AlertService } from 'app/core/util/alert.service';
 import { AlertError } from 'app/shared/alert/alert-error.model';
@@ -14,7 +14,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   templateUrl: './event-entry-result-upload.component.html'
 })
 export class EventEntryUploadResultsComponent {
-  editForm: FormGroup;
+  editForm: UntypedFormGroup;
   imports: Imports;
   isSaving = false;
 
@@ -23,7 +23,7 @@ export class EventEntryUploadResultsComponent {
     private dataUtils: DataUtils,
     private importsService: ImportsService,
     private eventManager: EventManager,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dialogRef: MatDialogRef<EventEntryUploadResultsComponent>,
     @Inject(MAT_DIALOG_DATA) data: any
   ) {

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 import { IEventEdition } from '../event-edition.model';
 import { EventEditionService } from '../service/event-edition.service';
@@ -14,10 +14,10 @@ export class EventEditionRescheduleDialogComponent {
   eventEdition?: IEventEdition;
   startDate = DateTime.now();
   isSaving = false;
-  public rescheduleForm: FormGroup;
+  public rescheduleForm: UntypedFormGroup;
 
   constructor(
-    private _fb: FormBuilder,
+    private _fb: UntypedFormBuilder,
     private eventEditionService: EventEditionService,
     private activeModal: NgbActiveModal
   ) {

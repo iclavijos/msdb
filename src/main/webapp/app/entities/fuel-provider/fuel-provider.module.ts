@@ -7,8 +7,7 @@ import { FuelProviderDeleteDialogComponent } from './delete/fuel-provider-delete
 import { FuelProviderRoutingModule } from './route/fuel-provider-routing.module';
 
 @NgModule({
-  imports: [SharedModule, FuelProviderRoutingModule],
-  declarations: [FuelProviderComponent, FuelProviderDetailComponent, FuelProviderUpdateComponent, FuelProviderDeleteDialogComponent],
-  entryComponents: [FuelProviderDeleteDialogComponent],
+    imports: [SharedModule, FuelProviderRoutingModule],
+    declarations: [FuelProviderComponent, FuelProviderDetailComponent, FuelProviderUpdateComponent, FuelProviderDeleteDialogComponent]
 })
 export class FuelProviderModule {}

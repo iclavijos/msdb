@@ -3,7 +3,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FormBuilder, Validators, FormGroup, FormControl, ValidationErrors, FormArray } from '@angular/forms';
+import { UntypedFormBuilder, Validators, UntypedFormGroup, FormControl, ValidationErrors, FormArray } from '@angular/forms';
 
 import { IEventEdition } from '../event-edition.model';
 import { EventEditionService } from '../service/event-edition.service';
@@ -15,10 +15,10 @@ export class EventEditionCloneDialogComponent {
   eventEdition!: IEventEdition;
   isSaving = false;
 
-  public cloneForm: FormGroup;
+  public cloneForm: UntypedFormGroup;
 
   constructor(
-    private _fb: FormBuilder,
+    private _fb: UntypedFormBuilder,
     private eventEditionService: EventEditionService,
     private activeModal: NgbActiveModal
   ) {

@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
@@ -48,7 +48,7 @@ export class EventSessionUpdateComponent implements OnInit {
     public dialogRef: MatDialogRef<EventSessionUpdateComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     protected eventSessionService: EventSessionService,
-    protected fb: FormBuilder
+    protected fb: UntypedFormBuilder
   ) {
     this.eventSession = data.eventSession;
 

@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input } from "@angular/core";
-import { FormGroup } from "@angular/forms";
+import { UntypedFormGroup } from "@angular/forms";
 
 import { EventManager, EventWithContent } from 'app/core/util/event-manager.service';
 import { DataUtils, FileLoadError } from 'app/core/util/data-util.service';
@@ -11,7 +11,7 @@ import { AlertError } from 'app/shared/alert/alert-error.model';
   styleUrls: ["./file-upload.component.scss"],
 })
 export class FileUploadComponent {
-  @Input() editForm!: FormGroup;
+  @Input() editForm!: UntypedFormGroup;
   @Input() imageUrl = '';
   @Input() controlName!: string;
   @Input() controlNameContentType!: string;

@@ -16,10 +16,10 @@
   clear: both;
 }
 
-/* -------------------------------- 
-      
-      Main components 
-      
+/* --------------------------------
+
+      Main components
+
       -------------------------------- */
 header {
   height: 200px;
@@ -692,17 +692,17 @@ header h1 {
     }
   }
 }
-@media screen and(max-width: 992px) and(min-width: 768px) {
+@media screen and (max-width: 992px) and (min-width: 768px) {
   .left-timeline > li .left-time {
     padding-right: 60px;
   }
 }
-@media screen and(max-width: 65.375em) {
+@media screen and (max-width: 65.375em) {
   .left-timeline > li .left-time span:last-child {
     font-size: 12px;
   }
 }
-@media screen and(max-width: 47.2em) {
+@media screen and (max-width: 47.2em) {
   .left-timeline {
     &:before {
       display: none;

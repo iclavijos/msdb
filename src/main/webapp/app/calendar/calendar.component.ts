@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Inject } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { SessionStorageService } from 'ngx-webstorage';
@@ -12,7 +12,8 @@ import { TimeZone } from 'app/home/home-events.component';
 
 import { DateTime } from 'luxon';
 
-import { FullCalendarComponent, CalendarOptions, EventClickArg, EventApi } from '@fullcalendar/angular';
+import { FullCalendarComponent } from '@fullcalendar/angular';
+import { CalendarOptions, EventClickArg, EventApi } from '@fullcalendar/core';
 import esLocale from '@fullcalendar/core/locales/es';
 import caLocale from '@fullcalendar/core/locales/ca';
 import enLocale from '@fullcalendar/core/locales/en-gb';
@@ -85,7 +86,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   calendarOptions: CalendarOptions = {};
 
-  filter = new FormControl();
+  filter = new UntypedFormControl();
   series: string[] = [];
 
   private langChangeSubscription!: Subscription;
@@ -113,7 +114,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.eventEditionService!.findCalendarEvents(dates.start, dates.end).subscribe({
         next: events => {
-          this.filter = new FormControl();
+          this.filter = new UntypedFormControl();
           this.sessionsSrc = events;
           this.series = [...new Set(events.map(s => s.seriesName as string))].sort();
           callback(this.convertEvents(this.sessionsSrc, this.timezone));

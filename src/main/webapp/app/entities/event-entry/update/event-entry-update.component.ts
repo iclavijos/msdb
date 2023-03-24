@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, ElementRef } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
+import { UntypedFormBuilder, Validators, UntypedFormGroup, UntypedFormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of, Subject } from 'rxjs';
 import { finalize, switchMap, debounceTime, map } from 'rxjs/operators';
@@ -35,7 +35,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class EventEntryUpdateComponent implements OnInit {
   isSaving = false;
-  editForm: FormGroup;
+  editForm: UntypedFormGroup;
   eventEntry: IEventEntry;
 
   driversOptions: Observable<IDriver[] | null> = new Observable();
@@ -62,7 +62,7 @@ export class EventEntryUpdateComponent implements OnInit {
     protected tyresProviderService: TyreProviderService,
     protected fuelProviderService: FuelProviderService,
     protected activatedRoute: ActivatedRoute,
-    protected fb: FormBuilder,
+    protected fb: UntypedFormBuilder,
     private dialogRef: MatDialogRef<EventEntryUpdateComponent>,
     @Inject(MAT_DIALOG_DATA) data: any
   ) {
@@ -347,8 +347,8 @@ export class EventEntryUpdateComponent implements OnInit {
     );
   }
 
-  get driversEntry(): FormArray {
-    return this.editForm.get('driversEntry') as FormArray;
+  get driversEntry(): UntypedFormArray {
+    return this.editForm.get('driversEntry') as UntypedFormArray;
   }
 
   protected createFromForm(): IEventEntry {

@@ -9,12 +9,11 @@ import { RacetrackRoutingModule } from './route/racetrack-routing.module';
 import { RacetrackLayoutModule } from 'app/entities/racetrack-layout/racetrack-layout.module';
 
 @NgModule({
-  imports: [
-    SharedModule,
-    RacetrackRoutingModule,
-    RacetrackLayoutModule
-  ],
-  declarations: [RacetrackComponent, RacetrackDetailComponent, RacetrackUpdateComponent, RacetrackDeleteDialogComponent],
-  entryComponents: [RacetrackDeleteDialogComponent],
+    imports: [
+        SharedModule,
+        RacetrackRoutingModule,
+        RacetrackLayoutModule
+    ],
+    declarations: [RacetrackComponent, RacetrackDetailComponent, RacetrackUpdateComponent, RacetrackDeleteDialogComponent]
 })
 export class RacetrackModule {}

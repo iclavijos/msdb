@@ -74,7 +74,7 @@ test {
     testLogging {
         events 'FAILED', 'SKIPPED'
     }
-    jvmArgs += '-Djava.security.egd=file:/dev/./urandom -Xmx256m'
+    jvmArgs += '-Djava.security.egd=file:/dev/./urandom -Xmx512m'
     // uncomment if the tests reports are not generated
     // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
     // ignoreFailures true
@@ -86,24 +86,7 @@ modernizer {
     includeTestClasses = true
 }
 
-task integrationTest(type: Test) {
-    useJUnitPlatform()
-    description = "Execute integration tests."
-    group = "verification"
-    include "**/*IT*", "**/*IntTest*"
-    testLogging {
-        events 'FAILED', 'SKIPPED'
-    }
-    jvmArgs += '-Djava.security.egd=file:/dev/./urandom -Xmx256m'
-    if (project.hasProperty('testcontainers')) {
-        environment 'spring.profiles.active', 'testcontainers'
-    }
 
-    // uncomment if the tests reports are not generated
-    // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
-    // ignoreFailures true
-    reports.html.required = false
-}
 
 check.dependsOn integrationTest
 task testReport(type: TestReport) {
@@ -278,9 +261,9 @@ if (project.hasProperty("nodeInstall")) {
     Architecture arch = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentArchitecture();
     Boolean downloadNode = !os.isMacOsX() || arch.isAmd64()
     node {
-        version = "14.18.1"
-        npmVersion = "8.1.4"
-        download = downloadNode
+        version = "16.17.0"
+        npmVersion = "8.19.1"
+        download = true
     }
 }
 

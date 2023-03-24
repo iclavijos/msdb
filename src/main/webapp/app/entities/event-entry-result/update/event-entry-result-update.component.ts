@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -48,7 +48,7 @@ export class EventEntryResultUpdateComponent implements OnInit {
   constructor(
     protected eventEntryResultService: EventEntryResultService,
     protected activatedRoute: ActivatedRoute,
-    protected fb: FormBuilder,
+    protected fb: UntypedFormBuilder,
     protected timeMaskPipe: TimeMaskPipe
   ) {
 //     this.eventEdition = data.eventEdition;

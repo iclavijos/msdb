@@ -25,7 +25,7 @@
             <div class="alert alert-warning" [hidden]="eventEntries && eventEntries.length > 0">
                 <span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.notFound">No event entries found</span>
             </div>
-            <div class="table-responsive" [hidden]="!eventEntries || eventEntries?.length === 0">
+            <div class="table-responsive" [hidden]="!eventEntries || eventEntries.length === 0">
                 <mat-accordion>
                     <mat-expansion-panel *ngFor="let entry of filteredEntries" [style.marginTop]="'3px'">
                         <mat-expansion-panel-header [collapsedHeight]="'100%'" [expandedHeight]="'100%'">
@@ -83,22 +83,22 @@
                             <div class="col-md-3">
                                 <label *ngIf="entry.team"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.team">Team</span></label>
                                 <div *ngIf="entry.team">
-                                    <a [routerLink]="['/team', entry.team?.id, 'view' ]" >
-                                        <img *ngIf="entry.team?.logoUrl" [src]="entry.team.logoUrl" class="img-fluid logo-img"/>
-                                        <span *ngIf="!entry.team?.logoUrl">{{ entry.team?.name }}</span>
+                                    <a [routerLink]="['/team', entry.team.id, 'view' ]" >
+                                        <img *ngIf="entry.team.logoUrl" [src]="entry.team.logoUrl" class="img-fluid logo-img"/>
+                                        <span *ngIf="!entry.team.logoUrl">{{ entry.team.name }}</span>
                                     </a>
                                 </div><br/>
                                 <label *ngIf="entry.operatedBy"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.operatedBy">Operated By</span></label>
                                 <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.chassis">Chassis</span></label>
                                 <div *ngIf="entry.chassis">
-                                    <a [routerLink]="['/chassis', entry.chassis?.id, 'view' ]" >{{entry.chassis?.manufacturer}} {{entry.chassis?.name}}</a>
+                                    <a [routerLink]="['/chassis', entry.chassis.id, 'view' ]" >{{entry.chassis.manufacturer}} {{entry.chassis.name}}</a>
                                 </div><br>
                                 <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.engine">Engine</span></label>
                                 <div *ngIf="entry.engine">
-                                    <a [routerLink]="['/engine', entry.engine?.id, 'view' ]" >{{entry.engine?.manufacturer}} {{entry.engine?.name}}</a>
+                                    <a [routerLink]="['/engine', entry.engine.id, 'view' ]" >{{entry.engine.manufacturer}} {{entry.engine.name}}</a>
                                 </div><br>
                                 <div *ngIf="entry.operatedBy">
-                                    <a [routerLink]="['/team', entry.operatedBy?.id, 'view' ]" >{{entry.operatedBy?.name}}</a>
+                                    <a [routerLink]="['/team', entry.operatedBy.id, 'view' ]" >{{entry.operatedBy.name}}</a>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -110,8 +110,8 @@
                                 </div><br>
                                 <label><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.fuel">Fuel</span></label>
                                 <div *ngIf="entry.fuel">
-                                    <a [routerLink]="['/fuel-provider', entry.fuel?.id, 'view' ]" >
-                                        <img [src]="entry.fuel?.logoUrl" class="img-fluid logo-img" alt="fuel logo"/>
+                                    <a [routerLink]="['/fuel-provider', entry.fuel.id, 'view' ]" >
+                                        <img [src]="entry.fuel.logoUrl" class="img-fluid logo-img" alt="fuel logo"/>
                                     </a>
                                 </div><br>
                                 <label *ngIf="eventEdition.allowedCategories!.length != 1"><span jhiTranslate="motorsportsDatabaseApp.eventEdition.entry.category">Category</span></label>

@@ -46,7 +46,7 @@
             <div class="alert alert-warning" [hidden]="eventEntryResults && eventEntryResults.length > 0">
                 <span jhiTranslate="motorsportsDatabaseApp.eventEdition.result.home.notFound">No event sessions found</span>
             </div>
-            <div class="table-responsive" [hidden]="!eventEntryResults || eventEntryResults?.length === 0">
+            <div class="table-responsive" [hidden]="!eventEntryResults || eventEntryResults.length === 0">
                 <table mat-table class="table table-hover" [dataSource]="dataSource">
 
                     <ng-container matColumnDef="position">

@@ -3,7 +3,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FormBuilder, Validators, FormGroup, FormControl, ValidationErrors, FormArray } from '@angular/forms';
+import { UntypedFormBuilder, Validators, UntypedFormGroup, UntypedFormControl, ValidationErrors, FormArray } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { switchMap, debounceTime, map } from 'rxjs/operators';
 
@@ -18,15 +18,15 @@ export class EventEditionCopyEntriesDialogComponent implements OnInit {
   sourceEvent!: IEventEdition;
   eventOptions: Observable<IEventEdition[] | null> = new Observable();
   isSaving = false;
-  public copyEntriesForm: FormGroup;
+  public copyEntriesForm: UntypedFormGroup;
 
   constructor(
-    private _fb: FormBuilder,
+    private _fb: UntypedFormBuilder,
     private eventEditionService: EventEditionService,
     private activeModal: NgbActiveModal
   ) {
     this.copyEntriesForm = this._fb.group({
-      sourceEvent: new FormControl()
+      sourceEvent: new UntypedFormControl()
     });
   }
 

@@ -15,15 +15,15 @@ import { CalendarComponent, EventDialogComponent } from './calendar.component';
 
 import { calendarRoute } from './calendar.route';
 
-FullCalendarModule.registerPlugins([ // register FullCalendar plugins
-  dayGridPlugin,
-  timeGridPlugin,
-  timeLinePlugin,
-  listPlugin,
-  interactionPlugin,
-  luxon2Plugin,
-  bootstrap5Plugin
-]);
+// FullCalendarModule.registerPlugins([ // register FullCalendar plugins
+//   dayGridPlugin,
+//   timeGridPlugin,
+//   timeLinePlugin,
+//   listPlugin,
+//   interactionPlugin,
+//   luxon2Plugin,
+//   bootstrap5Plugin
+// ]);
 
 @NgModule({
   imports: [SharedModule, RouterModule.forChild([calendarRoute])],

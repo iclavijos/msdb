@@ -39,7 +39,11 @@ module.exports = async (config, options, targetOptions) => {
   if (config.mode === 'development') {
     config.plugins.push(
       new ESLintPlugin({
-        extensions: ['js', 'ts'],
+        baseConfig: {
+          parserOptions: {
+            project: ['../tsconfig.app.json'],
+          },
+        },
       }),
       new WebpackNotifierPlugin({
         title: 'Motorsports Database',
@@ -63,6 +67,7 @@ module.exports = async (config, options, targetOptions) => {
           https: tls,
           proxy: {
             target: `http${tls ? 's' : ''}://localhost:${targetOptions.target === 'serve' ? '4200' : '8080'}`,
+            ws: true,
             proxyOptions: {
               changeOrigin: false, //pass the Host header to the backend unchanged  https://github.com/Browsersync/browser-sync/issues/430
             },
@@ -101,6 +106,18 @@ module.exports = async (config, options, targetOptions) => {
 
   const patterns = [
     // jhipster-needle-add-assets-to-webpack - JHipster will add/remove third-party resources in this array
+    {
+      // https://github.com/swagger-api/swagger-ui/blob/v4.6.1/swagger-ui-dist-package/README.md
+      context: require('swagger-ui-dist').getAbsoluteFSPath(),
+      from: '*.{js,css,html,png}',
+      to: 'swagger-ui/',
+      globOptions: { ignore: ['**/index.html'] },
+    },
+    {
+      from: require.resolve('axios/dist/axios.min.js'),
+      to: 'swagger-ui/',
+    },
+    { from: './src/main/webapp/swagger-ui/', to: 'swagger-ui/' },
     { from: './src/main/webapp/content/', to: 'content' },
     { from: './src/main/webapp/content/images', to: 'images' },
     { from: './node_modules/leaflet/dist/images', to: 'assets'},

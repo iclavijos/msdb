@@ -17,8 +17,8 @@
 /*                 [1. Common ]                   			*/
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 /* Importing Bootstrap SCSS file. */
-@import '~bootstrap/scss/bootstrap';
-@import '~perfect-scrollbar/css/perfect-scrollbar.css';
+@import 'bootstrap/scss/bootstrap';
+@import 'perfect-scrollbar/css/perfect-scrollbar.css';
 @import 'common/_variables';
 @import 'common/_mixins';
 @import 'common/_customanimate.scss';

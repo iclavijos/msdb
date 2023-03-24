@@ -111,11 +111,11 @@
                            name="duration" id="field_duration" formControlName="duration">
                     <div *ngIf="editForm.get('duration')!.invalid && (editForm.get('duration')!.dirty || editForm.get('duration')!.touched)">
                         <small class="form-text text-danger"
-                               [hidden]="!editForm.controls.duration?.errors?.required" jhiTranslate="entity.validation.required">
+                               [hidden]="!editForm.controls.duration.errors?.required" jhiTranslate="entity.validation.required">
                             This field is required.
                         </small>
                         <small class="form-text text-danger"
-                               [hidden]="!editForm.controls.duration?.errors?.number" jhiTranslate="entity.validation.number">
+                               [hidden]="!editForm.controls.duration.errors?.number" jhiTranslate="entity.validation.number">
                             This field should be a number.
                         </small>
                     </div>
@@ -127,11 +127,11 @@
                            name="duration" id="field_totalDuration" formControlName="totalDuration">
                     <div *ngIf="editForm.get('totalDuration')!.invalid && (editForm.get('totalDuration')!.dirty || editForm.get('totalDuration')!.touched)">
                         <small class="form-text text-danger"
-                               [hidden]="!editForm.controls.totalDuration?.errors?.required" jhiTranslate="entity.validation.required">
+                               [hidden]="!editForm.controls.totalDuration.errors?.required" jhiTranslate="entity.validation.required">
                             This field is required.
                         </small>
                         <small class="form-text text-danger"
-                               [hidden]="!editForm.controls.totalDuration?.errors?.number" jhiTranslate="entity.validation.number">
+                               [hidden]="!editForm.controls.totalDuration.errors?.number" jhiTranslate="entity.validation.number">
                             This field should be a number.
                         </small>
                     </div>
@@ -147,9 +147,9 @@
                             {{'motorsportsDatabaseApp.eventEdition.enumerations.' + duration | translate }}
                         </mat-option>
                     </mat-select>
-                    <div [hidden]="!(editForm.controls.durationType?.dirty && editForm.controls.durationType?.invalid)">
+                    <div [hidden]="!(editForm.controls.durationType.dirty && editForm.controls.durationType.invalid)">
                         <small class="form-text text-danger"
-                               [hidden]="!editForm.controls.durationType?.errors?.required" jhiTranslate="entity.validation.required">
+                               [hidden]="!editForm.controls.durationType.errors?.required" jhiTranslate="entity.validation.required">
                             This field is required.
                         </small>
                     </div>
