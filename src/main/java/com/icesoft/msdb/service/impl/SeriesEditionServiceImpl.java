@@ -3,22 +3,18 @@ package com.icesoft.msdb.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.repository.jpa.*;
 import com.icesoft.msdb.service.EventService;
+import com.icesoft.msdb.service.GoogleCalendarService;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.MSDBException;
-import com.icesoft.msdb.domain.Driver;
-import com.icesoft.msdb.domain.EventEdition;
-import com.icesoft.msdb.domain.EventEditionEntry;
-import com.icesoft.msdb.domain.EventSession;
-import com.icesoft.msdb.domain.PointsSystem;
-import com.icesoft.msdb.domain.PointsSystemSession;
-import com.icesoft.msdb.domain.SeriesEdition;
-import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.repository.jpa.impl.JDBCRepositoryImpl;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.service.SeriesEditionService;
@@ -30,6 +26,7 @@ import com.icesoft.msdb.service.dto.SeriesEventsAndWinnersDTO;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class SeriesEditionServiceImpl implements SeriesEditionService {
 
 	private final Logger log = LoggerFactory.getLogger(SeriesEditionServiceImpl.class);
@@ -50,39 +47,27 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	private final EventEditionSearchRepository eventEdSearchRepo;
 	private final SeriesCategoryDriverChampionRepository seriesCategoryDriverChampionRepository;
     private final EventService eventService;
+    private final GoogleCalendarService calendarService;
 
-	public SeriesEditionServiceImpl(EventEditionRepository eventRepo, SeriesEditionRepository seriesRepo,
-                                    EventSessionRepository sessionRepo, PointsSystemRepository pointsRepo,
-                                    DriverRepository driverRepo, DriverEventPointsRepository driverPointsRepo, TeamRepository teamRepo,
-                                    TeamEventPointsRepository teamPointsRepo, ManufacturerEventPointsRepository manufacturerPointsRepo,
-                                    StatisticsService statsService, JDBCRepositoryImpl jdbcRepo,
-                                    EventEntryRepository eventEntryRepo, PointsSystemSessionRepository pssRepository,
-                                    EventEditionSearchRepository eventEdSearchRepo,
-                                    SeriesCategoryDriverChampionRepository seriesCategoryDriverChampionRepository,
-                                    EventService eventService) {
-		this.eventRepo = eventRepo;
-		this.seriesRepo = seriesRepo;
-		this.sessionRepo = sessionRepo;
-		this.pointsRepo = pointsRepo;
-		this.driverRepo = driverRepo;
-		this.driverPointsRepo = driverPointsRepo;
-		this.teamRepo = teamRepo;
-		this.teamPointsRepo = teamPointsRepo;
-		this.manufacturerPointsRepo = manufacturerPointsRepo;
-		this.statsService = statsService;
-		this.jdbcRepo = jdbcRepo;
-		this.eventEntryRepo = eventEntryRepo;
-		this.pssRepo = pssRepository;
-		this.eventEdSearchRepo = eventEdSearchRepo;
-		this.seriesCategoryDriverChampionRepository = seriesCategoryDriverChampionRepository;
-        this.eventService = eventService;
-	}
+    @Override
+    public SeriesEdition createSeriesEdition(SeriesEdition seriesEdition) {
+        seriesEdition.setCalendarId(calendarService.createSeriesCalendar(seriesEdition));
+        return seriesRepo.save(seriesEdition);
+    }
+
+    @Override
+    public void deleteSeriesEdition(SeriesEdition seriesEdition) {
+        seriesRepo.delete(seriesEdition);
+        if (StringUtils.isNotEmpty(seriesEdition.getCalendarId())) {
+            calendarService.removeSeriesCalendar(seriesEdition);
+        }
+    }
 
 	@Override
 	public void addEventToSeries(Long seriesId, Long idEvent, List<EventRacePointsDTO> racesPointsData) {
 		SeriesEdition seriesEd = seriesRepo.findById(seriesId)
-            .orElseThrow(() ->new MSDBException("Invalid series id " + seriesId));
-		EventEdition eventEd = null;
+            .orElseThrow(() -> new MSDBException("Invalid series id " + seriesId));
+		EventEdition eventEd;
 
 		racesPointsData.parallelStream().forEach(racePoints -> {
 			EventSession session = sessionRepo.findById(racePoints.getRaceId()).get();
@@ -112,7 +97,12 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		eventEd = eventRepo.findById(idEvent).get();
 		seriesEd.addEvent(eventEd);
 
-		seriesRepo.save(seriesEd);
+        if (StringUtils.isEmpty(seriesEd.getCalendarId())) {
+            seriesEd.setCalendarId(calendarService.createSeriesCalendar(seriesEd));
+        }
+        seriesRepo.save(seriesEd);
+        calendarService.addEvent(seriesEd, eventEd, sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventEd.getId()));
+
 	}
 
 	@Override
@@ -145,7 +135,8 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 			});
 
 		//We must remove the assigned points, if there were any
-		sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventId).stream()
+        List<EventSession> sessions = sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventId);
+        sessions.stream()
 			.forEach(session -> {
 				driverPointsRepo.deleteSessionPoints(session.getId(), seriesId);
 				teamPointsRepo.deleteSessionPoints(session.getId(), seriesId);
@@ -153,6 +144,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 			});
 		seriesRepo.save(sEdition);
 		eventRepo.save(eventEd);
+        calendarService.removeEvent(sEdition, sessions);
 	}
 
 	@Transactional(readOnly=true)

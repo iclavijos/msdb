@@ -137,6 +137,9 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
     @Builder.Default
     private Boolean standingsPerCategory = Boolean.FALSE;
 
+    @Column(name="calendar_id")
+    private String calendarId;
+
     public SeriesEdition(SeriesEdition source, String period) {
         this.setId(null);
         this.setPeriod(period);

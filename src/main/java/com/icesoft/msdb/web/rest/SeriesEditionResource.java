@@ -6,12 +6,14 @@ import com.icesoft.msdb.repository.jpa.EventSessionRepository;
 import com.icesoft.msdb.repository.jpa.SeriesEditionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
+import com.icesoft.msdb.service.GoogleCalendarService;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.*;
 import com.icesoft.msdb.service.impl.CacheHandler;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,17 +46,17 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 @Transactional
+@RequiredArgsConstructor
 public class SeriesEditionResource {
 
     private final Logger log = LoggerFactory.getLogger(SeriesEditionResource.class);
 
     private static final String ENTITY_NAME = "seriesEdition";
 
-    private final SeriesEditionService seriesEditionService;
-
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final SeriesEditionService seriesEditionService;
     private final SeriesEditionRepository seriesEditionRepository;
     private final EventSessionRepository eventSessionRepository;
     private final ResultsService resultsService;
@@ -63,17 +65,6 @@ public class SeriesEditionResource {
 
     @Autowired
     private CacheHandler cacheHandler;
-
-    public SeriesEditionResource(SeriesEditionService seriesEditionService, SeriesEditionRepository seriesEditionRepository,
-    		EventSessionRepository eventSessionRepository, ResultsService resultsService, StatisticsService statsService,
-            CDNService cdnService) {
-        this.seriesEditionService = seriesEditionService;
-    	this.seriesEditionRepository = seriesEditionRepository;
-    	this.eventSessionRepository = eventSessionRepository;
-    	this.resultsService = resultsService;
-    	this.statsService = statsService;
-    	this.cdnService = cdnService;
-    }
 
     /**
      * {@code POST  /series-editions} : Create a new seriesEdition.
@@ -90,13 +81,14 @@ public class SeriesEditionResource {
         if (seriesEdition.getId() != null) {
             throw new BadRequestAlertException("A new seriesEdition cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        SeriesEdition result = seriesEditionRepository.save(seriesEdition);
+        SeriesEdition result = seriesEditionService.createSeriesEdition(seriesEdition);
         if (result.getLogo() != null) {
             String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getLogo(), ENTITY_NAME);
             result.setLogoUrl(cdnUrl);
 
             result = seriesEditionRepository.save(result);
         }
+
         return ResponseEntity.created(new URI("/api/series-editions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -182,7 +174,7 @@ public class SeriesEditionResource {
     @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteSeriesEdition(@PathVariable Long id) {
         log.debug("REST request to delete SeriesEdition : {}", id);
-        seriesEditionRepository.deleteById(id);
+        seriesEditionService.deleteSeriesEdition(seriesEditionRepository.findById(id).orElseThrow(() -> new MSDBException("Invalid series edition id " + id)));
         cdnService.deleteImage(id.toString(), ENTITY_NAME);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }

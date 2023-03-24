@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.icesoft.msdb.domain.Driver;
 import com.icesoft.msdb.domain.EventEdition;
+import com.icesoft.msdb.domain.SeriesEdition;
 import com.icesoft.msdb.domain.Team;
 import com.icesoft.msdb.service.dto.DriverCategoryChampionDTO;
 import com.icesoft.msdb.service.dto.EventRacePointsDTO;
@@ -11,24 +12,28 @@ import com.icesoft.msdb.service.dto.SeriesEventsAndWinnersDTO;
 
 public interface SeriesEditionService {
 
-	public void addEventToSeries(Long seriesId, Long idEvent, List<EventRacePointsDTO> racesPointsData);
-	
-	public void removeEventFromSeries(Long seriesId, Long eventId);
-	
-	public List<EventEdition> findSeriesEvents(Long seriesId);
-	
-	public void setSeriesDriversChampions(Long seriesEditionId, List<DriverCategoryChampionDTO> driverIds);
-	
-	public List<Driver> getSeriesDriversChampions(Long seriesEditionId);
+    SeriesEdition createSeriesEdition(SeriesEdition seriesEdition);
 
-	public List<Driver> getSeriesCategoryDriversChampions(Long seriesEditionId, Long categoryId);
-	
-	public void setSeriesTeamsChampions(Long seriesEditionId, List<Long> teamsIds);
-	
-	public List<Team> getSeriesTeamsChampions(Long seriesEditionId);
-	
-	public List<SeriesEventsAndWinnersDTO> getSeriesEditionsEventsAndWinners(Long seriesEditionId);
-	
-	public void cloneSeriesEdition(Long seriesEditionId, String newPeriod);
-	
+    void deleteSeriesEdition(SeriesEdition seriesEdition);
+
+	void addEventToSeries(Long seriesId, Long idEvent, List<EventRacePointsDTO> racesPointsData);
+
+	void removeEventFromSeries(Long seriesId, Long eventId);
+
+	List<EventEdition> findSeriesEvents(Long seriesId);
+
+	void setSeriesDriversChampions(Long seriesEditionId, List<DriverCategoryChampionDTO> driverIds);
+
+	List<Driver> getSeriesDriversChampions(Long seriesEditionId);
+
+	List<Driver> getSeriesCategoryDriversChampions(Long seriesEditionId, Long categoryId);
+
+	void setSeriesTeamsChampions(Long seriesEditionId, List<Long> teamsIds);
+
+	List<Team> getSeriesTeamsChampions(Long seriesEditionId);
+
+	List<SeriesEventsAndWinnersDTO> getSeriesEditionsEventsAndWinners(Long seriesEditionId);
+
+	void cloneSeriesEdition(Long seriesEditionId, String newPeriod);
+
 }
