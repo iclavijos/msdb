@@ -56,7 +56,7 @@
                                                       <a [routerLink]="['/series/edition', item, 'view' ]" >{{session.seriesNames[currentIndex]}} </a>
                                                     </ng-template> -
                                                 </span>
-                                                <a [routerLink]="['/event/edition', session.eventEditionId, 'view-ed' ]" >{{ session.eventName }}, {{ session.sessionName }}</a>
+                                                <a [routerLink]="['/event', session.eventId, 'edition', session.eventEditionId ]" >{{ session.eventName }}, {{ session.sessionName }}</a>
                                                 <span *ngIf="session.durationType === 3 && !session.raid"> ({{ session.duration}}KM)</span>
                                                 <span *ngIf="session.raid"> - {{ session.duration}} / {{ session.totalDuration}} KM</span>
                                             </span>

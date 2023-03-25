@@ -19,6 +19,7 @@ public class SessionDataDTO {
     private final Float totalDuration;
 	private final DurationType durationType;
     private final SessionType sessionType;
+    private final Long eventId;
 	private final Long eventEditionId;
 	private final String eventName;
 	private final String racetrack;
@@ -42,6 +43,7 @@ public class SessionDataDTO {
         this.totalDuration = session.getTotalDuration();
 		this.durationType = session.getDurationType();
         this.sessionType = session.getSessionType();
+        this.eventId = session.getEventEdition().getEvent().getId();
 		this.eventEditionId = session.getEventEdition().getId();
 		this.eventName = session.getEventEdition().getLongEventName();
 		this.seriesEditionIds = session.getSeriesIds();

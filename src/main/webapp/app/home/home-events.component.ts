@@ -11,6 +11,7 @@ export class HomeEvent {
   totalDuration!: number;
   durationType!: number;
   sessionType!: string;
+  eventId!: number;
   eventEditionId!: number;
   eventName!: string;
   racetrack!: string;
