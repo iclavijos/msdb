@@ -1,7 +1,7 @@
 export enum SessionType {
-  PRACTICE,
-  QUALIFYING,
-  RACE,
-  QUALIFYING_RACE,
-  STAGE
+  PRACTICE = 'practice',
+  QUALIFYING = 'qualifying',
+  RACE = 'race',
+  QUALIFYING_RACE = 'qualifyingRace',
+  STAGE = 'stage'
 }

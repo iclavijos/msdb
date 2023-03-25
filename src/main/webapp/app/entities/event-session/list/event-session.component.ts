@@ -167,8 +167,4 @@ export class EventSessionComponent implements OnInit, OnChanges {
     this.convertedTime = false;
     this.dataSource.data = clonedSessions;
   }
-
-  getDurationTypeKey(durationType: DurationType): string {
-    return DurationType[durationType].toLowerCase();
-  }
 }

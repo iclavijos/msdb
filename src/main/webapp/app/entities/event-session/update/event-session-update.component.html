@@ -71,7 +71,7 @@
                     </div>
                 </mat-form-field>
             </div>
-            <div *ngIf="eventSession.eventEdition!.event?.rally || eventSession.eventEdition!.event?.raid" class="col-md-3">
+            <div *ngIf="!(eventSession.eventEdition!.event?.rally || eventSession.eventEdition!.event?.raid)" class="col-md-3">
                 <mat-form-field class="example-full-width">
                     <mat-label>
                         {{'motorsportsDatabaseApp.eventEdition.session.sessionType' | translate}}

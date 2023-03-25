@@ -33,11 +33,11 @@ export function getEventIdentifier(event: IEvent): number | undefined {
 }
 
 export function isRally(event: IEvent): boolean {
-  return event.rally!;
+  return event.rally ?? false;
 }
 
 export function isRaid(event: IEvent): boolean {
-  return event.raid!;
+  return event.raid ?? false;
 }
 
 export function instantiateEvent(event: IEvent): Event {
