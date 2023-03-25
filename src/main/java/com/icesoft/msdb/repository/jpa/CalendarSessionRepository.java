@@ -16,5 +16,5 @@ import java.util.List;
 public interface CalendarSessionRepository extends JpaRepository<CalendarSession, CalendarSessionPK> {
 
     List<CalendarSession> findByEventSessionId(Long eventSessionId);
-    List<CalendarSession> findBySeriesEditionIdEventSessionId(Long seriesEditionId, Long eventSessionId);
+    // List<CalendarSession> findBySeriesEditionIdEventSessionId(Long seriesEditionId, Long eventSessionId);
 }
