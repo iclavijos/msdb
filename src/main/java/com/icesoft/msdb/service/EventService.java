@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import com.icesoft.msdb.domain.EventSession;
 import com.icesoft.msdb.domain.SeriesEdition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +36,8 @@ public interface EventService {
     EventEdition save(EventEdition eventEdition);
 
     EventEdition save(EventEdition eventEdition, boolean update);
+
+    void deleteEventEdition(EventEdition eventEdition);
 
     /**
      *  Get all the events.
@@ -68,4 +71,10 @@ public interface EventService {
     EventEdition rescheduleEvent(EventEdition event, LocalDate newDate);
 
     EventEdition cloneEventEdition(Long eventEditionId, String newPeriod, Set<SeriesEdition> series);
+
+    EventSession createEventSession(EventSession eventSession);
+
+    EventSession modifyEventSession(EventSession eventSession);
+
+    void removeEventSession(EventSession eventSession);
 }

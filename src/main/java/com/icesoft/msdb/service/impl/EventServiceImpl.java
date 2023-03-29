@@ -8,10 +8,7 @@ import java.util.stream.Collectors;
 import com.google.maps.model.Geometry;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
-import com.icesoft.msdb.repository.jpa.EventEditionRepository;
-import com.icesoft.msdb.repository.jpa.EventRepository;
-import com.icesoft.msdb.repository.jpa.EventSessionRepository;
-import com.icesoft.msdb.repository.jpa.RacetrackLayoutRepository;
+import com.icesoft.msdb.repository.jpa.*;
 import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.service.*;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
@@ -43,6 +40,8 @@ public class EventServiceImpl implements EventService {
     private final EventEditionRepository eventEditionRepository;
     private final EventSessionRepository eventSessionRepository;
     private final EventSearchRepository eventSearchRepository;
+    private final EventEntryResultRepository eventResultRepository;
+    private final EventEntryRepository eventEntryRepository;
     private final SearchService searchService;
     private final SubscriptionsService subscriptionsService;
     private final EventEditionSearchRepository eventEditionSearchRepository;
@@ -50,6 +49,7 @@ public class EventServiceImpl implements EventService {
     private final CacheHandler cacheHandler;
     private final CDNService cdnService;
     private final GeoLocationService geoLocationService;
+    private final GoogleCalendarService calendarService;
 
     /**
      * Save a racetrack.
@@ -110,11 +110,34 @@ public class EventServiceImpl implements EventService {
         searchEntry.setMultidriver(null);
         eventEditionSearchRepository.save(searchEntry);
 
+        // TODO: Update calendar sessions to ensure name is aligned
+
         if (result.getSeriesEditions() != null) {
             result.getSeriesEditions().forEach(se -> cacheHandler.resetWinnersCache(se.getId()));
         }
 
         return result;
+    }
+
+    @Override
+    public void deleteEventEdition(EventEdition eventEdition) {
+        Long id = eventEdition.getId();
+
+        List<EventSession> sessions = eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(id);
+        sessions.forEach(eventSession -> {
+            eventResultRepository.deleteBySession(eventSession);
+        });
+        eventSessionRepository.deleteAllInBatch(sessions);
+        eventEntryRepository.deleteByEventEdition(eventEdition);
+
+        if (eventEdition.getPosterUrl() != null) {
+            cdnService.deleteImage(id.toString(), "affiche");
+        }
+
+        eventEditionRepository.deleteById(id);
+        eventEditionSearchRepository.deleteById(id);
+
+        eventEdition.getSeriesEditions().forEach(seriesEdition -> calendarService.removeEvent(seriesEdition, eventEdition, sessions));
     }
 
     /**
@@ -237,7 +260,9 @@ public class EventServiceImpl implements EventService {
         eventEditionSearchRepository.save(evCopy);
         final int yearCopy = year;
 
-        eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(event.getId()).stream().forEach(es -> {
+        List<EventSession> eventSessions = eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(event.getId());
+        List<EventSession> newSessions = new ArrayList<>();
+        eventSessions.stream().forEach(es -> {
             EventSession newSession = EventSession.builder()
                 .eventEdition(evCopy)
                 .name(es.getName())
@@ -270,9 +295,64 @@ public class EventServiceImpl implements EventService {
                 newSession.setPointsSystemsSession(pssL);
             }
             eventSessionRepository.save(newSession);
+            newSessions.add(newSession);
         });
 
+        if (!series.isEmpty()) {
+            calendarService.addEvent(
+                series.iterator().next(),
+                evCopy,
+                newSessions
+            );
+        }
         return evCopy;
+    }
+
+    public EventSession createEventSession(EventSession eventSession) {
+        EventEdition eventEdition = eventEditionRepository.findById(eventSession.getEventEdition().getId()).orElseThrow(
+            () -> new MSDBException("Invalid event edition id " + eventSession.getEventEdition().getId())
+        );
+        eventSession.setEventEdition(eventEdition);
+        EventSession result = eventSessionRepository.save(eventSession);
+
+        eventEdition.getSeriesEditions().forEach(seriesEdition -> calendarService.addSession(seriesEdition, eventEdition, result));
+
+        subscriptionsService.saveEventSession(result);
+
+        return result;
+    }
+
+    public EventSession modifyEventSession(EventSession eventSession) {
+        EventSession previous = eventSessionRepository.findById(eventSession.getId())
+            .orElseThrow(() -> new MSDBException("Invalid session id " + eventSession.getId()));
+        Long prevSessionStartTime = previous.getSessionStartTime().getEpochSecond();
+
+        if (eventSession.getSessionStartTime().equals(prevSessionStartTime)) {
+            subscriptionsService.saveEventSession(eventSession);
+        } else {
+            subscriptionsService.saveEventSession(eventSession, prevSessionStartTime);
+        }
+
+        EventEdition eventEdition = eventEditionRepository.findById(eventSession.getEventEdition().getId()).orElseThrow(
+            () -> new MSDBException("Invalid event edition id " + eventSession.getEventEdition().getId())
+        );
+        eventSession.setEventEdition(eventEdition);
+
+        eventEdition.getSeriesEditions().forEach(seriesEdition -> calendarService.modifySession(eventEdition, eventSession));
+
+        EventSession result = eventSessionRepository.save(eventSession);
+        subscriptionsService.saveEventSession(result);
+
+        return result;
+    }
+
+    public void removeEventSession(EventSession eventSession) {
+        EventEdition eventEdition = eventEditionRepository.findById(eventSession.getEventEdition().getId()).orElseThrow(
+            () -> new MSDBException("Invalid event edition id " + eventSession.getEventEdition().getId())
+        );
+        calendarService.removeSession(eventEdition, eventSession);
+        subscriptionsService.deleteEventSession(eventSession);
+        eventSessionRepository.delete(eventSession);
     }
 
     private String updateImage(byte[] image, String imageUrl, String id, String folder) {

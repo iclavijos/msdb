@@ -121,15 +121,13 @@ public class SeriesEditionResource {
         if (!seriesEditionRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
-
-        seriesEdition.setEvents(seriesEditionRepository.findById(seriesEdition.getId()).get().getEvents());
         if (seriesEdition.getLogo() != null) {
             String cdnUrl = cdnService.uploadImage(seriesEdition.getId().toString(), seriesEdition.getLogo(), ENTITY_NAME);
             seriesEdition.setLogoUrl(cdnUrl);
         } else if (seriesEdition.getLogoUrl() == null) {
             cdnService.deleteImage(seriesEdition.getId().toString(), ENTITY_NAME);
         }
-        SeriesEdition result = seriesEditionRepository.save(seriesEdition);
+        SeriesEdition result = seriesEditionService.updateSeriesEdition(seriesEdition);
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, seriesEdition.getId().toString()))

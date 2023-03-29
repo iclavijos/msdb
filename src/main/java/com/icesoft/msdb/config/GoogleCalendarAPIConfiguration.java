@@ -13,6 +13,7 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.icesoft.msdb.MSDBException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,7 +30,8 @@ public class GoogleCalendarAPIConfiguration {
     private static final GsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
     private static final List<String> SCOPES = CalendarScopes.all().stream().toList();
-    private static final String TOKENS_DIRECTORY_PATH = "tokens";
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
     @Bean
     public Calendar googleCalendarAPI() {
@@ -46,7 +48,7 @@ public class GoogleCalendarAPIConfiguration {
             // Build flow and trigger user authorization request.
             GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(applicationProperties.getGoogleCalendar().getTokensPath())))
                 .setAccessType("offline")
                 .build();
             LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();

@@ -16,6 +16,8 @@ public interface SeriesEditionService {
 
     void deleteSeriesEdition(SeriesEdition seriesEdition);
 
+    SeriesEdition updateSeriesEdition(SeriesEdition seriesEdition);
+
 	void addEventToSeries(Long seriesId, Long idEvent, List<EventRacePointsDTO> racesPointsData);
 
 	void removeEventFromSeries(Long seriesId, Long eventId);

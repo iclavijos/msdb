@@ -8,13 +8,12 @@ import com.google.api.services.calendar.model.EventDateTime;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.repository.jpa.CalendarSessionRepository;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,11 +21,10 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class GoogleCalendarService {
 
-    @Autowired
     private Calendar service;
-    @Autowired
     private CalendarSessionRepository calendarSessionRepository;
 
     public String createSeriesCalendar(SeriesEdition seriesEdition) {
@@ -59,35 +57,73 @@ public class GoogleCalendarService {
         }
     }
 
-    public void addEvent(SeriesEdition seriesEdition, EventEdition eventEdition, List<EventSession> sessions) {
-        final String eventName = eventEdition.getLongEventName().concat(" - ");
-        sessions.forEach(session -> {
-            Event calendarEvent = new Event()
-                .setSummary(eventName.concat(session.getName()))
-                .setLocation(
-                    eventEdition.getEvent().isRaid() || eventEdition.getEvent().isRally() ?
-                        eventEdition.getLocation() :
-                        eventEdition.getTrackLayout().getRacetrack().getName()
-                );
-            EventDateTime start = new EventDateTime()
-                .setDateTime(new DateTime(session.getSessionStartTime().toEpochMilli()));
-            EventDateTime end = new EventDateTime()
-                .setDateTime(new DateTime(session.getSessionEndTime().toInstant().toEpochMilli()));
-            calendarEvent.setStart(start);
-            calendarEvent.setEnd(end);
+    public void updateSeriesCalendar(SeriesEdition seriesEdition) {
+        com.google.api.services.calendar.model.Calendar calendar = new com.google.api.services.calendar.model.Calendar();
+        calendar.setSummary(seriesEdition.getEditionName());
 
-            Map<CalendarSessionPK, CalendarSession> calendarsSession = calendarSessionRepository.findByEventSessionId(session.getId())
-                .stream().collect(Collectors.toMap(calendarSession -> calendarSession.getId(), calendarSession -> calendarSession));
+        try {
+            service.calendars().update(seriesEdition.getCalendarId(), calendar).execute();
+        } catch (IOException e) {
+            log.error("Calendar could not be removed", e);
+            throw new MSDBException(e);
+        }
+    }
 
+    public void addSession(SeriesEdition seriesEdition, EventEdition eventEdition, EventSession session) {
+        Event calendarEvent = generateCalendarEvent(eventEdition, session);
 
-            CalendarSession calSession;
+        Map<CalendarSessionPK, CalendarSession> calendarsSession = calendarSessionRepository.findByEventSessionId(session.getId())
+            .stream().collect(Collectors.toMap(calendarSession -> calendarSession.getId(), calendarSession -> calendarSession));
+
+        CalendarSession calSession;
+        try {
+            Event calEvent = service.events().insert(seriesEdition.getCalendarId(), calendarEvent).execute();
+            calSession = Optional.ofNullable(calendarsSession.get(new CalendarSessionPK(session.getId(), seriesEdition.getId())))
+                .orElse(new CalendarSession(seriesEdition, session));
+            calSession.setCalendarId(calEvent.getId());
+            log.trace("Session added to calendar: {}", calEvent);
+            calendarSessionRepository.save(calSession);
+        } catch (IOException e) {
+            log.error("Session {} couldn't be added to calendar: {}", e.getLocalizedMessage());
+            throw new MSDBException(e);
+        }
+    }
+
+    public void modifySession(EventEdition eventEdition, EventSession session) {
+        eventEdition.getSeriesEditions().forEach(seriesEdition -> {
+            List<CalendarSession> calendarSessions = calendarSessionRepository.findBySeriesEditionIdEventSessionId(
+                seriesEdition.getId(), session.getId()
+            );
+            calendarSessions.forEach(calendarSession -> {
+                try {
+                    Event event = generateCalendarEvent(eventEdition, session);
+                    service.events().update(seriesEdition.getCalendarId(), calendarSession.getCalendarId(), event).execute();
+                } catch (IOException e) {
+                    log.error("Session {} couldn't be added to calendar: {}", e.getLocalizedMessage());
+                    throw new MSDBException(e);
+                }
+            });
+        });
+    }
+
+    public void removeSession(EventEdition eventEdition, EventSession session) {
+        removeSession(null, eventEdition, session);
+    }
+
+    public void removeSession(SeriesEdition seriesEdition, EventEdition eventEdition, EventSession session) {
+        List<SeriesEdition> series = seriesEdition != null ?
+            List.of(seriesEdition) :
+            eventEdition.getSeriesEditions().stream().toList();
+
+        series.forEach(sEdition -> {
             try {
-                Event calEvent = service.events().insert(seriesEdition.getCalendarId(), calendarEvent).execute();
-                calSession = Optional.ofNullable(calendarsSession.get(new CalendarSessionPK(session.getId(), seriesEdition.getId())))
-                    .orElse(new CalendarSession());
-                calSession.setCalendarId(calEvent.getId());
-                log.trace("Session added to calendar: {}", calEvent);
-                calendarSessionRepository.save(calSession);
+                List<CalendarSession> calendarSessions = calendarSessionRepository.findBySeriesEditionIdEventSessionId(
+                    sEdition.getId(), session.getId()
+                );
+                if (!calendarSessions.isEmpty()) {
+                    service.events().delete(sEdition.getCalendarId(), calendarSessions.get(0).getCalendarId()).execute();
+                    calendarSessionRepository.deleteById(new CalendarSessionPK(session.getId(), sEdition.getId()));
+                }
             } catch (IOException e) {
                 log.error("Session {} couldn't be added to calendar: {}", e.getLocalizedMessage());
                 throw new MSDBException(e);
@@ -95,18 +131,33 @@ public class GoogleCalendarService {
         });
     }
 
-    public void removeEvent(SeriesEdition seriesEdition, List<EventSession> sessions) {
+    public void addEvent(SeriesEdition seriesEdition, EventEdition eventEdition, List<EventSession> sessions) {
+        sessions.forEach(session -> addSession(seriesEdition, eventEdition, session));
+    }
+
+    // TODO: Use seriesEdition
+    public void removeEvent(SeriesEdition seriesEdition, EventEdition eventEdition, List<EventSession> sessions) {
         sessions.forEach(session -> {
-            // TODO: All this needs a good rethink
-            calendarSessionRepository.findByEventSessionId(session.getId()).stream()
-                .filter(calendarSession -> calendarSession.getId().getSeriesEditionId().equals(seriesEdition.getId()));
-            try {
-                service.events().delete(seriesEdition.getCalendarId(), "").execute();
-            } catch (IOException e) {
-                log.error("Session {} couldn't be added to calendar: {}", e.getLocalizedMessage());
-                throw new MSDBException(e);
-            }
+            removeSession(seriesEdition, eventEdition, session);
             log.trace("Session removed from calendar: {}", session);
         });
+    }
+
+    private Event generateCalendarEvent(EventEdition eventEdition, EventSession session) {
+        final String eventName = eventEdition.getLongEventName().concat(" - ");
+        Event calendarEvent = new Event()
+            .setSummary(eventName.concat(session.getName()))
+            .setLocation(
+                eventEdition.getEvent().isRaid() || eventEdition.getEvent().isRally() ?
+                    eventEdition.getLocation() :
+                    eventEdition.getTrackLayout().getRacetrack().getName()
+            );
+        EventDateTime start = new EventDateTime()
+            .setDateTime(new DateTime(session.getSessionStartTime().toEpochMilli()));
+        EventDateTime end = new EventDateTime()
+            .setDateTime(new DateTime(session.getSessionEndTime().toInstant().toEpochMilli()));
+        calendarEvent.setStart(start);
+        calendarEvent.setEnd(end);
+        return calendarEvent;
     }
 }

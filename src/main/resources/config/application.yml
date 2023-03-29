@@ -222,3 +222,5 @@ application:
   telegramBot:
     token: ${telegram_token}
     channelId: ${telegram_channel}
+  googleCalendar:
+    tokensPath: /opt/msdb/tokens

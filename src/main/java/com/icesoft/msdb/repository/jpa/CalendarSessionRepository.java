@@ -1,10 +1,8 @@
 package com.icesoft.msdb.repository.jpa;
 
-import com.icesoft.msdb.domain.CalendarSession;
-import com.icesoft.msdb.domain.CalendarSessionPK;
-import com.icesoft.msdb.domain.PointsSystemSession;
-import com.icesoft.msdb.domain.PointsSystemSessionPK;
+import com.icesoft.msdb.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,5 +14,7 @@ import java.util.List;
 public interface CalendarSessionRepository extends JpaRepository<CalendarSession, CalendarSessionPK> {
 
     List<CalendarSession> findByEventSessionId(Long eventSessionId);
-    // List<CalendarSession> findBySeriesEditionIdEventSessionId(Long seriesEditionId, Long eventSessionId);
+
+    @Query("SELECT cs FROM CalendarSession cs WHERE cs.seriesEdition.id = ?1 AND cs.eventSession.id = ?2")
+    List<CalendarSession> findBySeriesEditionIdEventSessionId(Long seriesEditionId, Long eventSessionId);
 }

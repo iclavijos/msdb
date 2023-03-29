@@ -268,28 +268,15 @@ public class EventEditionResource {
     @Transactional
     public ResponseEntity<Void> deleteEventEdition(@PathVariable Long id) {
         log.debug("REST request to delete EventEdition : {}", id);
-        EventEdition eventEd = eventEditionRepository.findById(id).get();
-
-        if (eventEd.getSeriesEditions() != null) {
-            eventEd.getSeriesEditions().stream().forEach(se -> {
+        EventEdition eventEdition = eventEditionRepository.findById(id).get();
+        if (eventEdition.getSeriesEditions() != null) {
+            Set<SeriesEdition> clonedSeries = Set.copyOf(eventEdition.getSeriesEditions());
+            clonedSeries.stream().forEach(se -> {
                 seriesEditionService.removeEventFromSeries(se.getId(), id);
                 cacheHandler.resetWinnersCache(se.getId());
             });
         }
-
-        List<EventSession> sessions = eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(id);
-        sessions.forEach(eventSession -> {
-            eventResultRepository.deleteBySession(eventSession);
-        });
-        eventSessionRepository.deleteAllInBatch(sessions);
-        eventEntryRepository.deleteByEventEdition(eventEd);
-
-        if (eventEd.getPosterUrl() != null) {
-            cdnService.deleteImage(id.toString(), "affiche");
-        }
-
-        eventEditionRepository.deleteById(id);
-        eventEditionSearchRepo.deleteById(id);
+        eventService.deleteEventEdition(eventEdition);
 
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
@@ -364,13 +351,9 @@ public class EventEditionResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
             		applicationName, true, ENTITY_NAME_SESSION, "idexists", "A new eventSession cannot already have an ID")).body(null);
         }
-        eventSession.setEventEdition(eventEditionRepository.findById(eventSession.getEventEdition().getId()).orElseThrow(
-            () -> new MSDBException("Invalid event edition id " + eventSession.getEventEdition().getId())
-        ));
-
         eventSession.setSessionStartTime(resetSessionStartTimeSeconds(eventSession.getSessionStartTimeDate()).toInstant());
-        EventSession result = eventSessionRepository.save(eventSession);
-        subscriptionsService.saveEventSession(result);
+        EventSession result = eventService.createEventSession(eventSession);
+
         return ResponseEntity.created(new URI("/api/event-editions/" + result.getId() +"/sessions"))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME_SESSION, result.getId().toString()))
             .body(result);
@@ -390,10 +373,10 @@ public class EventEditionResource {
     @Transactional
     public ResponseEntity<Void> deleteEventSession(@PathVariable Long id) {
         log.debug("REST request to delete EventSession : {}", id);
-        eventSessionRepository.findById(id).ifPresent(session -> {
-            subscriptionsService.deleteEventSession(session);
-            eventSessionRepository.delete(session);
-        });
+        EventSession eventSession = eventSessionRepository.findById(id).orElseThrow(
+                () -> new MSDBException("Invalid event session id " + id)
+        );
+        eventService.removeEventSession(eventSession);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
     }
 
@@ -423,15 +406,8 @@ public class EventEditionResource {
         if (eventSession.getId() == null) {
             return createEventEditionSession(eventSession);
         }
-        Long prevSessionStartTime = eventSessionRepository.findById(eventSession.getId())
-            .orElseThrow(() -> new MSDBException("Invalid session id " + eventSession.getId())).getSessionStartTime().getEpochSecond();
 
-        EventSession result = eventSessionRepository.save(eventSession);
-        if (result.getSessionStartTime().equals(prevSessionStartTime)) {
-            subscriptionsService.saveEventSession(result);
-        } else {
-            subscriptionsService.saveEventSession(result, prevSessionStartTime);
-        }
+        EventSession result = eventService.modifyEventSession(eventSession);
 
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))

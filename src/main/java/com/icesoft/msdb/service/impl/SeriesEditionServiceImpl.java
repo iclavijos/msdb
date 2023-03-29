@@ -57,10 +57,23 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 
     @Override
     public void deleteSeriesEdition(SeriesEdition seriesEdition) {
-        seriesRepo.delete(seriesEdition);
         if (StringUtils.isNotEmpty(seriesEdition.getCalendarId())) {
             calendarService.removeSeriesCalendar(seriesEdition);
         }
+        seriesRepo.delete(seriesEdition);
+    }
+
+    @Override
+    public SeriesEdition updateSeriesEdition(SeriesEdition seriesEdition) {
+        seriesEdition.setEvents(seriesRepo.findById(seriesEdition.getId()).get().getEvents());
+        if (StringUtils.isBlank(seriesEdition.getCalendarId())) {
+            seriesEdition.setCalendarId(calendarService.createSeriesCalendar(seriesEdition));
+            seriesEdition.getEvents().forEach(event -> {
+                calendarService.addEvent(seriesEdition, event, sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(event.getId()));
+            });
+        }
+        calendarService.updateSeriesCalendar(seriesEdition);
+        return seriesRepo.save(seriesEdition);
     }
 
 	@Override
@@ -144,7 +157,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 			});
 		seriesRepo.save(sEdition);
 		eventRepo.save(eventEd);
-        calendarService.removeEvent(sEdition, sessions);
+        calendarService.removeEvent(sEdition, eventEd, sessions);
 	}
 
 	@Transactional(readOnly=true)
@@ -247,6 +260,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		seriesEd.getEvents().isEmpty();
 
 		SeriesEdition newSeriesEd = new SeriesEdition(seriesEd, newPeriod);
+        newSeriesEd.setCalendarId(calendarService.createSeriesCalendar(newSeriesEd));
 
 		final SeriesEdition seriesEdCopy = seriesRepo.save(newSeriesEd);
 
