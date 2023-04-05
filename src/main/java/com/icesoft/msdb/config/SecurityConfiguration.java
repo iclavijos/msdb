@@ -92,6 +92,7 @@ public class SecurityConfiguration {
 
             .requestMatchers("/api/auth-info").permitAll()
 
+            .requestMatchers("/api/mobile/version/**").permitAll()
             .requestMatchers("/api/home/**").permitAll()
             .requestMatchers("/api/timezones").permitAll()
             .requestMatchers("/api/event-editions/calendar/**").permitAll()

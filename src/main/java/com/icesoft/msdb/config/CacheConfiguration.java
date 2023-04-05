@@ -28,6 +28,7 @@ public class CacheConfiguration {
     private final javax.cache.configuration.Configuration<Object, Object> longLivedCacheConfiguration;
     private final javax.cache.configuration.Configuration<Object, Object> alwaysCacheConfiguration;
     private final javax.cache.configuration.Configuration<Object, Object> oneDayCacheConfiguration;
+    private final javax.cache.configuration.Configuration<Object, Object> oneHourCacheConfiguration;
 
     public CacheConfiguration(JHipsterProperties jHipsterProperties) {
         JHipsterProperties.Cache.Ehcache ehcache = jHipsterProperties.getCache().getEhcache();
@@ -51,6 +52,12 @@ public class CacheConfiguration {
                         ResourcePoolsBuilder.heap(100))
                         .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(24 * 60 * 60, ChronoUnit.SECONDS))) //TODO: Externalize
                         .build());
+
+        oneHourCacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
+            CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
+                    ResourcePoolsBuilder.heap(10))
+                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(60 * 60, ChronoUnit.SECONDS))) //TODO: Externalize
+                .build());
 
         alwaysCacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
         		CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
@@ -116,6 +123,8 @@ public class CacheConfiguration {
             createCache(cm, "lapsAveragesCache", longLivedCacheConfiguration);
             createCache(cm, "positionsCache", longLivedCacheConfiguration);
             createCache(cm, "racetrackLayoutsCache", longLivedCacheConfiguration);
+
+            createCache(cm, "constantsCache", oneHourCacheConfiguration);
 
             createCache(cm, "winnersCache", alwaysCacheConfiguration);
         };
