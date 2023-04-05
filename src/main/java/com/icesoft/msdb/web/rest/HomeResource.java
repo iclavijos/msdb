@@ -1,6 +1,7 @@
 package com.icesoft.msdb.web.rest;
 
 import com.icesoft.msdb.MSDBException;
+import com.icesoft.msdb.config.ApplicationProperties;
 import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.domain.enums.EventStatusType;
 import com.icesoft.msdb.repository.jpa.*;
@@ -15,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,9 +46,7 @@ public class HomeResource {
 	private final TeamRepository teamRepository;
 	private final EventEditionRepository eventsEditionsRepository;
 	private final EventSessionRepository eventSessionRepository;
-    private final UserRepository userRepository;
-    private final MessagingService messagingService;
-    private final TelegramSenderService telegramSenderService;
+    private final ConstantsRepository constantsRepository;
 
     @Autowired
     private String timeZoneServiceUrl;
@@ -144,11 +145,21 @@ public class HomeResource {
         return timeZones;
 	}
 
-	@GetMapping("/home/testNotif/{email}/{sessionId}")
-    public void testNotif(@PathVariable String email, @PathVariable Long sessionId) {
-        User ivan = userRepository.findOneByEmailIgnoreCase(email).get();
-        EventSession session = eventSessionRepository.findById(sessionId).get();
-        messagingService.sendSessionNotification(ivan, session);
-        // telegramSenderService.sendMessage(session, 17);
+//	@GetMapping("/home/testNotif/{email}/{sessionId}")
+//    public void testNotif(@PathVariable String email, @PathVariable Long sessionId) {
+//        User ivan = userRepository.findOneByEmailIgnoreCase(email).get();
+//        EventSession session = eventSessionRepository.findById(sessionId).get();
+//        messagingService.sendSessionNotification(ivan, session);
+//    }
+
+    @GetMapping("/mobile/version/{os}")
+    @Cacheable(cacheNames="constantsCache")
+    public ResponseEntity<String> getLatestMobileVersion(@PathVariable String os) {
+        if ("android".equals(os)) {
+            return ResponseEntity.ok(constantsRepository.findByName(os + "Version").get().getValue());
+        }
+        return ResponseEntity
+            .of(ProblemDetail.forStatus(HttpStatusCode.valueOf(404)))
+            .build();
     }
 }
