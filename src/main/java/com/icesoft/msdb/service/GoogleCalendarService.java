@@ -36,11 +36,16 @@ public class GoogleCalendarService {
         AclRule.Scope scope = new AclRule.Scope();
         scope.setType("default");
         rule.setScope(scope).setRole("reader");
+        AclRule ownerRule = new AclRule();
+        AclRule.Scope ownerScope = new AclRule.Scope();
+        ownerScope.setType("user").setValue("iclavijos@gmail.com");
+        ownerRule.setScope(ownerScope).setRole("owner");
         try {
             calendar = service.calendars().insert(calendar).execute();
             log.trace("Calendar created: {}", calendar);
             rule = service.acl().insert(calendar.getId(), rule).execute();
-            log.trace("ACL rule created: {}", rule);
+            ownerRule = service.acl().insert(calendar.getId(), ownerRule).execute();
+            log.trace("ACL rules created: {}, {}", rule, ownerRule);
             return calendar.getId();
         } catch (IOException e) {
             log.error("Calendar could not be created", e);

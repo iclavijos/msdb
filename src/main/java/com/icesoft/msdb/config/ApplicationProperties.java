@@ -20,7 +20,6 @@ public class ApplicationProperties {
     private final Geolocation geolocation = new Geolocation();
     private final TimeZone timeZone = new TimeZone();
     private final TelegramBot telegramBot = new TelegramBot();
-    private final GoogleCalendar googleCalendar = new GoogleCalendar();
 
     @Data
 	public class SendGrid {
@@ -55,8 +54,4 @@ public class ApplicationProperties {
         private String channelId;
     }
 
-    @Data
-    public class GoogleCalendar {
-        private String tokensPath;
-    }
 }
