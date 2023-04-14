@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.repository.jpa.impl.JDBCRepositoryImpl;
-import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.DriverCategoryChampionDTO;
@@ -44,7 +43,6 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	private final JDBCRepositoryImpl jdbcRepo;
 	private final EventEntryRepository eventEntryRepo;
 	private final PointsSystemSessionRepository pssRepo;
-	private final EventEditionSearchRepository eventEdSearchRepo;
 	private final SeriesCategoryDriverChampionRepository seriesCategoryDriverChampionRepository;
     private final EventService eventService;
     private final GoogleCalendarService calendarService;
@@ -100,7 +98,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 				Set<PointsSystemSession> sPss = Optional.ofNullable(session.getPointsSystemsSession()).orElse(new HashSet<>());
 				session.getPointsSystemsSession().parallelStream()
 					.filter(tmpPss -> tmpPss.getSeriesEdition().getId().equals(seriesId))
-					.findFirst().map(tmp -> sPss.remove(tmp));
+					.findFirst().map(sPss::remove);
 				sPss.add(pss);
 				session.setPointsSystemsSession(sPss);
 			}
@@ -123,14 +121,14 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		EventEdition eventEd = eventRepo.findById(eventId)
             .orElseThrow(() ->new MSDBException("Invalid event edition id " + eventId));
 
-		if (!eventEd.getSeriesEditions().stream()
-            .filter(se -> se.getId().equals(seriesId)).findFirst().isPresent()) {
+		if (eventEd.getSeriesEditions().stream()
+            .noneMatch(se -> se.getId().equals(seriesId))) {
 			throw new MSDBException("Provided series id does not match an already assigned one");
 		}
 		SeriesEdition sEdition = seriesRepo.findById(seriesId).get();
 		sEdition.removeEvent(eventEd);
 		eventEd.getSeriesEditions().remove(sEdition);
-		sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventId).stream()
+		sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventId)
 			.forEach(session -> {
                 Set<PointsSystemSession> tmp = new HashSet<>();
 				if (session.getPointsSystemsSession() != null && !session.getPointsSystemsSession().isEmpty()) {
@@ -149,7 +147,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 
 		//We must remove the assigned points, if there were any
         List<EventSession> sessions = sessionRepo.findByEventEditionIdOrderBySessionStartTimeAsc(eventId);
-        sessions.stream()
+        sessions
 			.forEach(session -> {
 				driverPointsRepo.deleteSessionPoints(session.getId(), seriesId);
 				teamPointsRepo.deleteSessionPoints(session.getId(), seriesId);
@@ -162,9 +160,9 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 
 	@Transactional(readOnly=true)
 	public List<EventEdition> findSeriesEvents(Long seriesId) {
-	    return seriesRepo.findById(seriesId)
-            .orElseThrow(() ->new MSDBException("Invalid series edition id " + seriesId))
-            .getEvents().stream().collect(Collectors.toList());
+	    return new ArrayList<>(seriesRepo.findById(seriesId)
+            .orElseThrow(() -> new MSDBException("Invalid series edition id " + seriesId))
+            .getEvents());
 	}
 
 	@Override
@@ -172,7 +170,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 		SeriesEdition seriesEd = seriesRepo.findById(seriesEditionId).get();
 		List<Driver> currChamps = null; //seriesEd.getDriversChampions();
 		List<Driver> newChamps = driverRepo.findByIdIn(
-				driverIds.stream().map(dc -> dc.getDriverId())
+				driverIds.stream().map(DriverCategoryChampionDTO::getDriverId)
 					.collect(Collectors.toList()));
 
 		//seriesEd.setDriversChampions(newChamps);
@@ -226,7 +224,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 			List<SessionWinnersDTO> winners = new ArrayList<>();
 
 	    	List<Object[]> tmpWinners = jdbcRepo.getEventWinners(e.getId());
-	    	List<String> sessions = tmpWinners.stream().map(w -> (String)w[2]).distinct().collect(Collectors.toList());
+	    	List<String> sessions = tmpWinners.stream().map(w -> (String)w[2]).distinct().toList();
 	    	for(String session : sessions) {
 	    		SessionWinnersDTO catWinners = new SessionWinnersDTO(session);
 	    		EventEditionEntry overallWinner = null;
@@ -234,7 +232,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	    			if (winner[2].equals(session)) {
 		        		EventEditionEntry entry = eventEntryRepo.findById((Long)winner[0]).get();
 		        		catWinners.addWinners((String)winner[1], entry);
-		        		if (winner[3].equals(Integer.valueOf(1))) {
+		        		if (winner[3].equals(1)) {
 		        			overallWinner = entry;
 		        		}
 	    			}
@@ -242,7 +240,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 	    		if (catWinners.getNumberOfCategories() > 1) {
 	    			catWinners.addWinners("Overall", overallWinner);
 	    		}
-	    		catWinners.getWinners().sort((w1, w2) -> w1.compareTo(w2));
+	    		catWinners.getWinners().sort(SessionWinnersDTO.CategoryWinner::compareTo);
 	    		winners.add(catWinners);
 	    	}
 
@@ -264,7 +262,7 @@ public class SeriesEditionServiceImpl implements SeriesEditionService {
 
 		final SeriesEdition seriesEdCopy = seriesRepo.save(newSeriesEd);
 
-		seriesEd.getEvents().stream().forEach(ev -> {
+		seriesEd.getEvents().forEach(ev -> {
             EventEdition newEventEdition = eventService.cloneEventEdition(ev.getId(), newPeriod, Collections.singleton(seriesEdCopy));
             seriesEdCopy.addEvent(newEventEdition);
             seriesRepo.save(seriesEdCopy);
