@@ -130,14 +130,14 @@ public class GoogleCalendarService {
                     calendarSessionRepository.deleteById(new CalendarSessionPK(session.getId(), sEdition.getId()));
                 }
             } catch (IOException e) {
-                log.error("Session {} couldn't be added to calendar: {}", e.getLocalizedMessage());
+                log.error("Couldn't remove session {} from calendar {}", session.getName(), sEdition.getEditionName());
                 throw new MSDBException(e);
             }
         });
     }
 
     public void addEvent(SeriesEdition seriesEdition, EventEdition eventEdition, List<EventSession> sessions) {
-        sessions.forEach(session -> addSession(seriesEdition, eventEdition, session));
+        sessions.parallelStream().forEach(session -> addSession(seriesEdition, eventEdition, session));
     }
 
     // TODO: Use seriesEdition
