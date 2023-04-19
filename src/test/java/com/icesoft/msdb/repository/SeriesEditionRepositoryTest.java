@@ -8,6 +8,7 @@ import com.icesoft.msdb.repository.jpa.EventEditionRepository;
 import com.icesoft.msdb.repository.jpa.EventRepository;
 import com.icesoft.msdb.repository.jpa.SeriesEditionRepository;
 import com.icesoft.msdb.repository.jpa.SeriesRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -108,6 +109,14 @@ public class SeriesEditionRepositoryTest {
         // seriesEdition.addEvent(racetrackEventEdition);
         seriesEdition.addEvent(rallyEventEdition);
         repository.save(seriesEdition);
+    }
+
+    @AfterEach
+    public void emptyDB() {
+        repository.deleteAll();
+        seriesRepository.deleteAll();
+        eventEditionRepository.deleteAll();
+        eventRepository.deleteAll();
     }
 
     @Test
