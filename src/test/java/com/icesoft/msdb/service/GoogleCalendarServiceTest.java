@@ -5,19 +5,26 @@ import com.icesoft.msdb.MotorsportsDatabaseApp;
 import com.icesoft.msdb.configuration.TestSecurityConfiguration;
 import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.repository.jpa.CalendarSessionRepository;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.elasticsearch.ElasticsearchContainer;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
 
+@Testcontainers
 @SpringBootTest(classes = { MotorsportsDatabaseApp.class })
 @ContextConfiguration(classes = TestSecurityConfiguration.class)
 @ExtendWith(SpringExtension.class)
@@ -33,6 +40,17 @@ public class GoogleCalendarServiceTest {
     private Calendar.Events events;
     @MockBean
     private Calendar.Events.Delete eventsDelete;
+
+    static ElasticsearchContainer elasticContainer = new ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:8.3.3")
+        .withReuse(true)
+        .withExposedPorts(9200)
+        .withEnv("discovery.type", "single-node")
+        .withEnv("xpack.security.enabled", "false");
+
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.elasticsearch.uris", elasticContainer::getHttpHostAddress);
+    }
 
     private SeriesEdition getSeriesEdition() {
         return SeriesEdition.builder()
@@ -57,6 +75,16 @@ public class GoogleCalendarServiceTest {
                 .id(2L)
                 .build()
         );
+    }
+
+    @BeforeAll
+    public static void beforeAll() {
+        elasticContainer.start();
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        elasticContainer.stop();
     }
 
     @Test

@@ -10,10 +10,7 @@ import com.icesoft.msdb.repository.jpa.EventSessionRepository;
 import com.icesoft.msdb.repository.mongo.subscriptions.SessionsRepository;
 import com.icesoft.msdb.service.SubscriptionsService;
 import org.elasticsearch.client.RestClient;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,7 +19,6 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.OffsetDateTime;
@@ -44,10 +40,8 @@ class SubscriptionsServiceIT {
 
     private OffsetDateTime now = OffsetDateTime.of(2022, 9, 10, 0, 0, 0, 0, ZoneOffset.UTC);
 
-    @Container
     static MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:4.4.2").withReuse(true);
 
-    @Container
     static ElasticsearchContainer elasticContainer = new ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:8.3.3")
         .withReuse(true)
         .withExposedPorts(9200)
@@ -68,6 +62,18 @@ class SubscriptionsServiceIT {
 
     @MockBean
     private EventSessionRepository eventSessionRepository;
+
+    @BeforeAll
+    public static void beforeAll() {
+        elasticContainer.start();
+        mongoDBContainer.start();
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        elasticContainer.stop();
+        mongoDBContainer.stop();
+    }
 
     @BeforeEach
     void testIsContainerRunning() {

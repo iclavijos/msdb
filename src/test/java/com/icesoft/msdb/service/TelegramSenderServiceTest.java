@@ -14,6 +14,8 @@ import com.icesoft.msdb.repository.mongo.subscriptions.TelegramGroupSubscription
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -21,7 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.elasticsearch.ElasticsearchContainer;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -32,6 +38,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Testcontainers
 @SpringBootTest(classes = { MotorsportsDatabaseApp.class })
 @ContextConfiguration(classes = TestSecurityConfiguration.class)
 @ExtendWith(SpringExtension.class)
@@ -49,6 +56,17 @@ public class TelegramSenderServiceTest {
     private TelegramGroupSubscriptionRepository telegramGroupSubscriptionRepository;
     @MockBean
     private TelegramGroupSettingsRepository telegramGroupSettingsRepository;
+
+    static ElasticsearchContainer elasticContainer = new ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:8.3.3")
+        .withReuse(true)
+        .withExposedPorts(9200)
+        .withEnv("discovery.type", "single-node")
+        .withEnv("xpack.security.enabled", "false");
+
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.elasticsearch.uris", elasticContainer::getHttpHostAddress);
+    }
 
     private EventSession getRacetrackSession() {
         EventSession racetrackSession = EventSession.builder()
@@ -111,6 +129,16 @@ public class TelegramSenderServiceTest {
                 .seriesEditions(Collections.emptySet())
                 .build())
             .build();
+    }
+
+    @BeforeAll
+    public static void beforeAll() {
+        elasticContainer.start();
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        elasticContainer.stop();
     }
 
     @Test
