@@ -86,34 +86,15 @@ modernizer {
     includeTestClasses = true
 }
 
-task integrationTest(type: Test) {
-    useJUnitPlatform()
-    description = "Execute integration tests."
-    group = "verification"
-    include "**/*IT*", "**/*IntTest*"
-    testLogging {
-        events 'FAILED', 'SKIPPED'
-    }
-    jvmArgs += '-Djava.security.egd=file:/dev/./urandom -Xmx256m'
-    if (project.hasProperty('testcontainers')) {
-        environment 'spring.profiles.active', 'testcontainers'
-    }
-
-    // uncomment if the tests reports are not generated
-    // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
-    // ignoreFailures true
-    reports.html.required = false
-}
-
 check.dependsOn integrationTest
 task testReport(type: TestReport) {
-    getDestinationDirectory().set(file("$buildDir/reports/tests"))
-    reportOn test
+    destinationDirectory = file("$buildDir/reports/tests")
+    testResults.from(test)
 }
 
 task integrationTestReport(type: TestReport) {
-    getDestinationDirectory().set(file("$buildDir/reports/tests"))
-    reportOn integrationTest
+    destinationDirectory = file("$buildDir/reports/tests")
+    testResults.from(integrationTest)
 }
 
 if (!project.hasProperty("runList")) {
@@ -267,7 +248,7 @@ task cleanResources(type: Delete) {
 }
 
 wrapper {
-    gradleVersion = "7.5"
+    gradleVersion = "7.6"
 }
 
 if (project.hasProperty("nodeInstall")) {
@@ -287,4 +268,5 @@ compileJava {
     options.compilerArgs = [ '-Amapstruct.defaultComponentModel=spring', '-parameters' ]
 }
 
+compileJava.dependsOn processResources
 processResources.dependsOn bootBuildInfo

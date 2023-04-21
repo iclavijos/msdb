@@ -1,5 +1,5 @@
 jacoco {
-    toolVersion = "0.8.5"
+    toolVersion = "0.8.9"
 }
 
 jacocoTestReport {
@@ -8,7 +8,8 @@ jacocoTestReport {
     sourceDirectories.from = files(sourceSets.main.java.srcDirs)
 
     reports {
-        xml.required = true
+        xml.enabled = true
+        html.enabled = true
     }
 }
 

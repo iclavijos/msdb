@@ -17,14 +17,14 @@ if (project.hasProperty("tls")) {
 
 springBoot {
     buildInfo {
-		properties {
-			time = null
-		}
-	}
+        properties {
+            time = null
+        }
+    }
 }
 
 bootRun {
-    args = []
+    args = ["--spring.profiles.active=${profiles}"]
 }
 
 task webpack(type: YarnTask) {
@@ -56,5 +56,22 @@ processResources {
     }
 }
 
-processResources // .dependsOn webpack
+task integrationTest(type: Test) {
+    maxHeapSize = "1G"
+    useJUnitPlatform()
+    description = "Execute integration tests."
+    group = "verification"
+    include "**/*IT*", "**/*IntTest*"
+    testLogging {
+        events 'FAILED', 'SKIPPED'
+    }
+    systemProperty('spring.profiles.active', 'testdev')
+    systemProperty('java.security.egd', 'file:/dev/./urandom')
+    // uncomment if the tests reports are not generated
+    // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
+    // ignoreFailures true
+    reports.html.required = false
+}
+integrationTest.dependsOn test
+
 bootJar.dependsOn processResources
