@@ -26,6 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -61,7 +62,8 @@ public class TelegramSenderServiceTest {
         .withReuse(true)
         .withExposedPorts(9200)
         .withEnv("discovery.type", "single-node")
-        .withEnv("xpack.security.enabled", "false");
+        .withEnv("xpack.security.enabled", "false")
+        .waitingFor(Wait.forListeningPort());
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
