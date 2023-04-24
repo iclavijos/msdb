@@ -78,7 +78,7 @@ public class GoogleCalendarService {
         Event calendarEvent = generateCalendarEvent(eventEdition, session);
 
         Map<CalendarSessionPK, CalendarSession> calendarsSession = calendarSessionRepository.findByEventSessionId(session.getId())
-            .stream().collect(Collectors.toMap(calendarSession -> calendarSession.getId(), calendarSession -> calendarSession));
+            .stream().collect(Collectors.toMap(CalendarSession::getId, calendarSession -> calendarSession));
 
         CalendarSession calSession;
         try {
@@ -89,7 +89,7 @@ public class GoogleCalendarService {
             log.trace("Session added to calendar: {}", calEvent);
             calendarSessionRepository.save(calSession);
         } catch (IOException e) {
-            log.error("Session {} couldn't be added to calendar: {}", e.getLocalizedMessage());
+            log.error("Session {} couldn't be added to calendar: {}", session.getName(), e.getLocalizedMessage());
             throw new MSDBException(e);
         }
     }
@@ -104,7 +104,7 @@ public class GoogleCalendarService {
                     Event event = generateCalendarEvent(eventEdition, session);
                     service.events().update(seriesEdition.getCalendarId(), calendarSession.getCalendarId(), event).execute();
                 } catch (IOException e) {
-                    log.error("Session {} couldn't be added to calendar: {}", e.getLocalizedMessage());
+                    log.error("Session {} couldn't be added to calendar: {}", session.getName(), e.getLocalizedMessage());
                     throw new MSDBException(e);
                 }
             });
@@ -137,7 +137,7 @@ public class GoogleCalendarService {
     }
 
     public void addEvent(SeriesEdition seriesEdition, EventEdition eventEdition, List<EventSession> sessions) {
-        sessions.parallelStream().forEach(session -> addSession(seriesEdition, eventEdition, session));
+        sessions.forEach(session -> addSession(seriesEdition, eventEdition, session));
     }
 
     // TODO: Use seriesEdition
