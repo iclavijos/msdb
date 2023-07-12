@@ -14,7 +14,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,13 +27,11 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfFilter;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.filter.CorsFilter;
 import tech.jhipster.config.JHipsterProperties;
@@ -97,6 +94,8 @@ public class SecurityConfiguration {
             .requestMatchers("/api/timezones").permitAll()
             .requestMatchers("/api/event-editions/calendar/**").permitAll()
             // Public endpoints for mobile app
+            .requestMatchers(RegexRequestMatcher.regexMatcher("\\/api\\/series\\/\\d+\\/editions")).permitAll()
+            .requestMatchers(RegexRequestMatcher.regexMatcher("\\/api\\/series-editions\\/\\d+\\/events")).permitAll()
             .requestMatchers("/api/series").permitAll()
 
             .requestMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)

@@ -31,6 +31,7 @@ public class SeriesEventsAndWinnersDTO {
             .posterUrl(eventEdition.getPosterUrl())
             .status(eventEdition.getStatus())
             .trackLayout(eventEdition.getTrackLayout())
+            .posterUrl(eventEdition.getPosterUrl())
             .build();
 
         if (trimmedEvent.isRally() || trimmedEvent.isRaid()) {

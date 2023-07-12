@@ -2,13 +2,14 @@ package com.icesoft.msdb.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.icesoft.msdb.web.rest.views.ResponseViews;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import com.icesoft.msdb.MSDBException;
 import lombok.*;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -35,18 +36,21 @@ public class SeriesEdition extends AbstractAuditingEntity implements Serializabl
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(ResponseViews.SeriesEditionsView.class)
     private Long id;
 
     @NotNull
     @Size(max = 150)
     @Column(name = "edition_name", length = 150, nullable = false)
     @Field(type = FieldType.Search_As_You_Type)
+    @JsonView(ResponseViews.SeriesEditionsView.class)
     private String editionName;
 
     @Transient
     private byte[] logo;
 
     @Column(name = "logo_url")
+    @JsonView(ResponseViews.SeriesEditionsView.class)
     private String logoUrl;
 
 	@NotNull

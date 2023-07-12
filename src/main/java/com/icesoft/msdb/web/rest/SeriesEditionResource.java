@@ -1,18 +1,19 @@
 package com.icesoft.msdb.web.rest;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.icesoft.msdb.MSDBException;
 import com.icesoft.msdb.domain.*;
 import com.icesoft.msdb.repository.jpa.EventSessionRepository;
 import com.icesoft.msdb.repository.jpa.SeriesEditionRepository;
 import com.icesoft.msdb.security.AuthoritiesConstants;
 import com.icesoft.msdb.service.CDNService;
-import com.icesoft.msdb.service.GoogleCalendarService;
 import com.icesoft.msdb.service.SeriesEditionService;
 import com.icesoft.msdb.service.StatisticsService;
 import com.icesoft.msdb.service.dto.*;
 import com.icesoft.msdb.service.impl.CacheHandler;
 import com.icesoft.msdb.service.impl.ResultsService;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
+import com.icesoft.msdb.web.rest.views.ResponseViews;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,8 @@ import tech.jhipster.web.util.ResponseUtil;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -335,12 +338,11 @@ public class SeriesEditionResource {
         Optional<SeriesEdition> prev = Optional.ofNullable(pos > 0 ? tmpList.get(pos - 1) : null);
         Optional<SeriesEdition> next = Optional.ofNullable(pos < tmpList.size() - 1 ? tmpList.get(pos + 1) : null);
 
-        EventsSeriesNavigationDTO result = new EventsSeriesNavigationDTO(
-            prev.map(se -> se.getId()).orElse(null),
-            next.map(se -> se.getId()).orElse(null),
-            prev.map(se -> se.getEditionName()).orElse(null),
-            next.map(se -> se.getEditionName()).orElse(null)
+        return new EventsSeriesNavigationDTO(
+            prev.map(SeriesEdition::getId).orElse(null),
+            next.map(SeriesEdition::getId).orElse(null),
+            prev.map(SeriesEdition::getEditionName).orElse(null),
+            next.map(SeriesEdition::getEditionName).orElse(null)
         );
-        return result;
     }
 }
