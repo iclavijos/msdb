@@ -13,12 +13,12 @@ import com.icesoft.msdb.repository.search.EventEditionSearchRepository;
 import com.icesoft.msdb.service.*;
 import com.icesoft.msdb.web.rest.errors.BadRequestAlertException;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -353,6 +353,17 @@ public class EventServiceImpl implements EventService {
         calendarService.removeSession(eventEdition, eventSession);
         subscriptionsService.deleteEventSession(eventSession);
         eventSessionRepository.delete(eventSession);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<EventSession> findNextSessionInSeries(Long seriesId) {
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        Page<EventSession> sessionPage = eventSessionRepository.findNextSessionInSeries(now.toInstant(), seriesId, PageRequest.of(0, 1));
+        if (sessionPage.hasContent()) {
+            return Optional.ofNullable(sessionPage.stream().findFirst().get());
+        }
+        return Optional.ofNullable(null);
     }
 
     private String updateImage(byte[] image, String imageUrl, String id, String folder) {

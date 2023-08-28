@@ -95,6 +95,7 @@ public class SecurityConfiguration {
             .requestMatchers("/api/event-editions/calendar/**").permitAll()
             // Public endpoints for mobile app
             .requestMatchers(RegexRequestMatcher.regexMatcher("\\/api\\/series\\/\\d+\\/editions")).permitAll()
+            .requestMatchers(RegexRequestMatcher.regexMatcher("\\/api\\/event-editions\\/event-sessions\\/\\d+\\/nextSession")).permitAll()
             .requestMatchers(RegexRequestMatcher.regexMatcher("\\/api\\/series-editions\\/\\d+\\/events")).permitAll()
             .requestMatchers("/api/series").permitAll()
 

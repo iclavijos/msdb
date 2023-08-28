@@ -77,4 +77,6 @@ public interface EventService {
     EventSession modifyEventSession(EventSession eventSession);
 
     void removeEventSession(EventSession eventSession);
+
+    Optional<EventSession> findNextSessionInSeries(Long seriesId);
 }

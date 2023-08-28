@@ -135,8 +135,8 @@ public class EventEditionResource {
 
         EventEdition result = eventEditionRepository.findById(eventEdition.getId()).get();
         if (result.getSeriesEditions() != null) {
-    		eventEdition.setSeriesEditions(result.getSeriesEditions());
-    	}
+            eventEdition.setSeriesEditions(result.getSeriesEditions());
+        }
 
         if (eventEdition.getPoster() != null || result.getPosterUrl() != null) {
             eventEdition.setId(result.getId());
@@ -243,14 +243,14 @@ public class EventEditionResource {
         Optional<EventEdition> eventEditionOpt = eventEditionRepository.findById(id);
         if (eventEditionOpt.isPresent()) {
             EventEdition eventEdition = eventEditionOpt.get();
-        	List<Long> tmp = eventEditionRepository.findNextEditionId(eventEdition.getEvent().getId(), eventEdition.getEditionYear());
-        	if (tmp != null && !tmp.isEmpty()) {
-        		eventEdition.setNextEditionId(tmp.get(0));
-        	}
-        	tmp = eventEditionRepository.findPreviousEditionId(eventEdition.getEvent().getId(), eventEdition.getEditionYear());
-        	if (tmp != null && !tmp.isEmpty()) {
-        		eventEdition.setPreviousEditionId(tmp.get(0));
-        	}
+            List<Long> tmp = eventEditionRepository.findNextEditionId(eventEdition.getEvent().getId(), eventEdition.getEditionYear());
+            if (tmp != null && !tmp.isEmpty()) {
+                eventEdition.setNextEditionId(tmp.get(0));
+            }
+            tmp = eventEditionRepository.findPreviousEditionId(eventEdition.getEvent().getId(), eventEdition.getEditionYear());
+            if (tmp != null && !tmp.isEmpty()) {
+                eventEdition.setPreviousEditionId(tmp.get(0));
+            }
 
         }
         return ResponseUtil.wrapOrNotFound(eventEditionOpt);
@@ -284,24 +284,24 @@ public class EventEditionResource {
     @GetMapping("/event-editions/{id}/prevNextInSeries")
     @Transactional(readOnly=true)
     public List<EventsSeriesNavigationDTO> getPrevNextIdInSeries(@PathVariable Long id) {
-    	EventEdition event = eventEditionRepository.findById(id).orElseThrow(
+        EventEdition event = eventEditionRepository.findById(id).orElseThrow(
             () -> new MSDBException("Invalid event edition id " + id)
         );
-    	List<EventsSeriesNavigationDTO> result = new ArrayList<>();
-    	for(SeriesEdition se: event.getSeriesEditions()) {
-    		List<EventEdition> events = se.getEvents().parallelStream().sorted(Comparator.comparing(EventEdition::getEventDate))
+        List<EventsSeriesNavigationDTO> result = new ArrayList<>();
+        for(SeriesEdition se: event.getSeriesEditions()) {
+            List<EventEdition> events = se.getEvents().parallelStream().sorted(Comparator.comparing(EventEdition::getEventDate))
                 .collect(Collectors.toList());
-    		int index = events.indexOf(event);
-    		EventEdition next = (index < se.getEvents().size() - 1) ? events.get(index + 1) : null;
+            int index = events.indexOf(event);
+            EventEdition next = (index < se.getEvents().size() - 1) ? events.get(index + 1) : null;
             EventEdition prev = (index > 0) ? events.get(index - 1) : null;
             result.add(new EventsSeriesNavigationDTO(
-            		Optional.ofNullable(prev).map(ee -> ee.getId()).orElse(null),
-            		Optional.ofNullable(next).map(ee -> ee.getId()).orElse(null),
-            		Optional.ofNullable(prev).map(ee -> ee.getLongEventName()).orElse(null),
-            		Optional.ofNullable(next).map(ee -> ee.getLongEventName()).orElse(null)));
-    	}
+                Optional.ofNullable(prev).map(ee -> ee.getId()).orElse(null),
+                Optional.ofNullable(next).map(ee -> ee.getId()).orElse(null),
+                Optional.ofNullable(prev).map(ee -> ee.getLongEventName()).orElse(null),
+                Optional.ofNullable(next).map(ee -> ee.getLongEventName()).orElse(null)));
+        }
 
-    	return result;
+        return result;
     }
 
     /**
@@ -330,7 +330,7 @@ public class EventEditionResource {
     public List<EventSession> getEventEditionSessions(
             @PathVariable Long id,
             @RequestParam(required = false, defaultValue = "false") Boolean nonFP) {
-    	log.debug("REST request to get all EventEditions {} sessions", id);
+        log.debug("REST request to get all EventEditions {} sessions", id);
         List<EventSession> result;
         if (nonFP) {
             result = eventSessionRepository.findNonFPSessions(id);
@@ -338,7 +338,7 @@ public class EventEditionResource {
             result = eventSessionRepository.findByEventEditionIdOrderBySessionStartTimeAsc(id);
         }
         result.parallelStream().forEach(session -> session.setEventEdition(null));
-    	return result;
+        return result;
     }
 
     @PostMapping("/event-editions/event-sessions")
@@ -349,7 +349,7 @@ public class EventEditionResource {
         log.debug("REST request to save EventSession : {}", eventSession);
         if (eventSession.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
-            		applicationName, true, ENTITY_NAME_SESSION, "idexists", "A new eventSession cannot already have an ID")).body(null);
+                applicationName, true, ENTITY_NAME_SESSION, "idexists", "A new eventSession cannot already have an ID")).body(null);
         }
         eventSession.setSessionStartTime(resetSessionStartTimeSeconds(eventSession.getSessionStartTimeDate()).toInstant());
         EventSession result = eventService.createEventSession(eventSession);
@@ -424,57 +424,57 @@ public class EventEditionResource {
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.EDITOR})
     @Transactional
     public ResponseEntity<Void> processSessionResults(@PathVariable Long sessionId) {
-    	log.debug("Processing results of session {}", sessionId);
-    	EventSession session = eventSessionRepository.findById(sessionId).orElseThrow(
+        log.debug("Processing results of session {}", sessionId);
+        EventSession session = eventSessionRepository.findById(sessionId).orElseThrow(
             () -> new MSDBException("Invalid event session id " + sessionId)
         );
-    	session.getEventEdition().getSeriesEditions().forEach(seriesEdition -> cacheHandler.resetSeriesEditionCaches(seriesEdition));
-    	resultsService.processSessionResults(sessionId);
-    	if (session.getSessionType().equals(SessionType.RACE)) {
-			log.info("Updating statistics...", session.getEventEdition().getLongEventName(), session.getName());
-			statsService.removeEventStatistics(session.getEventEdition());
-			statsService.buildEventStatistics(session.getEventEdition());
-			log.info("Statistics updated");
-		}
-    	return ResponseEntity.ok().build();
+        session.getEventEdition().getSeriesEditions().forEach(seriesEdition -> cacheHandler.resetSeriesEditionCaches(seriesEdition));
+        resultsService.processSessionResults(sessionId);
+        if (session.getSessionType().equals(SessionType.RACE)) {
+            log.info("Updating statistics...", session.getEventEdition().getLongEventName(), session.getName());
+            statsService.removeEventStatistics(session.getEventEdition());
+            statsService.buildEventStatistics(session.getEventEdition());
+            log.info("Statistics updated");
+        }
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/event-editions/{id}/entries")
     public List<EventEditionEntry> getEventEditionEntries(@PathVariable Long id) {
-    	log.debug("REST request to get all EventEditions {} entries", id);
-    	List<EventEditionEntry> result = eventEntryRepository.findEventEditionEntries(id);
-    	result.parallelStream().forEach(entry -> {
-    		EventEdition tmp = new EventEdition();
-    		tmp.setId(entry.getEventEdition().getId());
-    		tmp.setMultidriver(entry.getEventEdition().isMultidriver());
-    		entry.setEventEdition(tmp);
-    	});
-    	return result;
+        log.debug("REST request to get all EventEditions {} entries", id);
+        List<EventEditionEntry> result = eventEntryRepository.findEventEditionEntries(id);
+        result.parallelStream().forEach(entry -> {
+            EventEdition tmp = new EventEdition();
+            tmp.setId(entry.getEventEdition().getId());
+            tmp.setMultidriver(entry.getEventEdition().isMultidriver());
+            entry.setEventEdition(tmp);
+        });
+        return result;
     }
 
     @GetMapping("/event-editions/{eventId}/points/drivers/{driverId}")
     @Transactional(readOnly = true)
     @JsonView(ResponseViews.ParticipantPointsDetailView.class)
     public ResponseEntity<List<ParticipantPointsDTO>> getDriverEventPoints(@PathVariable Long eventId, @PathVariable Long driverId) {
-    	List<ParticipantPointsDTO> result = resultsService.getDriverPointsEvent(eventId, driverId);
+        List<ParticipantPointsDTO> result = resultsService.getDriverPointsEvent(eventId, driverId);
 
-    	return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/event-editions/{eventId}/points/drivers")
     @Transactional(readOnly = true)
     public ResponseEntity<List<ParticipantPointsDTO>> getDriversEventPoints(@PathVariable Long eventId) {
-    	List<ParticipantPointsDTO> result = resultsService.getDriversPointsEvent(eventId);
+        List<ParticipantPointsDTO> result = resultsService.getDriversPointsEvent(eventId);
 
-    	return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/event-editions/{seriesId}/{eventId}/points/drivers")
     @Transactional(readOnly = true)
     public ResponseEntity<List<ParticipantPointsDTO>> getDriversEventPointsInSeries(@PathVariable Long seriesId, @PathVariable Long eventId) {
-    	List<ParticipantPointsDTO> result = resultsService.getDriversPointsEvent(seriesId, eventId);
+        List<ParticipantPointsDTO> result = resultsService.getDriversPointsEvent(seriesId, eventId);
 
-    	return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/event-editions/{eventId}/points/teams/{teamId}")
@@ -505,41 +505,41 @@ public class EventEditionResource {
     @PostMapping("/event-editions/{idTarget}/entries/{idSource}")
     @Transactional
     public ResponseEntity<Void> copyEntries(@PathVariable Long idTarget, @PathVariable Long idSource) {
-    	List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(idSource);
-    	EventEdition target = eventEditionRepository.findById(idTarget).orElseThrow(
+        List<EventEditionEntry> entries = eventEntryRepository.findEventEditionEntries(idSource);
+        EventEdition target = eventEditionRepository.findById(idTarget).orElseThrow(
             () -> new MSDBException("Invalid event edition id " + idTarget)
         );
-    	for(EventEditionEntry entry : entries) {
-    		EventEditionEntry copiedEntry = EventEditionEntry.builder()
-    			.category(entry.getCategory())
-    			.entryName(entry.getEntryName())
-    			.eventEdition(target)
-    			.raceNumber(entry.getRaceNumber())
-    			.chassis(entry.getChassis())
-    			.engine(entry.getEngine())
-    			.fuel(entry.getFuel())
-    			.tyres(entry.getTyres())
-    			.team(entry.getTeam())
-    			.operatedBy(entry.getOperatedBy())
-    			.carImageUrl(entry.getCarImageUrl())
+        for(EventEditionEntry entry : entries) {
+            EventEditionEntry copiedEntry = EventEditionEntry.builder()
+                .category(entry.getCategory())
+                .entryName(entry.getEntryName())
+                .eventEdition(target)
+                .raceNumber(entry.getRaceNumber())
+                .chassis(entry.getChassis())
+                .engine(entry.getEngine())
+                .fuel(entry.getFuel())
+                .tyres(entry.getTyres())
+                .team(entry.getTeam())
+                .operatedBy(entry.getOperatedBy())
+                .carImageUrl(entry.getCarImageUrl())
                 .build();
 
             copiedEntry = eventEntryRepository.save(copiedEntry);
 
-    		Set<DriverEntry> copiedList = new HashSet<>();
-    		for(DriverEntry driverEntry: entry.getDrivers()) {
-    		    DriverEntry de = new DriverEntry();
-    		    de.setDriver(driverEntry.getDriver());
-    		    de.setEventEntry(copiedEntry);
-    		    de.setCategory(driverEntry.getCategory());
-    		    de.setRookie(driverEntry.getRookie());
-    			copiedList.add(de);
-    		}
-    		copiedEntry.drivers(copiedList);
+            Set<DriverEntry> copiedList = new HashSet<>();
+            for(DriverEntry driverEntry: entry.getDrivers()) {
+                DriverEntry de = new DriverEntry();
+                de.setDriver(driverEntry.getDriver());
+                de.setEventEntry(copiedEntry);
+                de.setCategory(driverEntry.getCategory());
+                de.setRookie(driverEntry.getRookie());
+                copiedList.add(de);
+            }
+            copiedEntry.drivers(copiedList);
 
             driverEntryRepository.saveAll(copiedList);
-    	}
-    	return ResponseEntity.ok().headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, idTarget.toString())).build();
+        }
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, idTarget.toString())).build();
     }
 
     @PostMapping("/event-editions/{eventEditionId}/entries")
@@ -550,7 +550,7 @@ public class EventEditionResource {
         log.debug("REST request to save EventEntry : {}", eventEntry);
         if (eventEntry.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
-            		applicationName, true, ENTITY_NAME_ENTRY, "idexists", "A new eventEntry cannot already have an ID")).body(null);
+                applicationName, true, ENTITY_NAME_ENTRY, "idexists", "A new eventEntry cannot already have an ID")).body(null);
         }
 
         EventEdition eventEdition = eventEditionRepository.findById(eventEditionId).orElseThrow(
@@ -561,10 +561,10 @@ public class EventEditionResource {
         eventEntry.getDrivers().forEach(de -> de.setEventEntry(result));
         driverEntryRepository.saveAll(eventEntry.getDrivers());
         if (result.getCarImage() != null) {
-	        String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getCarImage(), ENTITY_NAME_ENTRY);
-			result.setCarImageUrl(cdnUrl);
+            String cdnUrl = cdnService.uploadImage(result.getId().toString(), result.getCarImage(), ENTITY_NAME_ENTRY);
+            result.setCarImageUrl(cdnUrl);
 
-			eventEntryRepository.save(result);
+            eventEntryRepository.save(result);
         }
         // Temporarily removing persistence of event entries on search engine
         // eventEntrySearchRepo.save(result);
@@ -586,8 +586,8 @@ public class EventEditionResource {
         );
         eventEntry.setEventEdition(eventEdition);
         if (eventEntry.getCarImage() != null) {
-	        String cdnUrl = cdnService.uploadImage(eventEntry.getId().toString(), eventEntry.getCarImage(), ENTITY_NAME_ENTRY);
-	        eventEntry.setCarImageUrl(cdnUrl);
+            String cdnUrl = cdnService.uploadImage(eventEntry.getId().toString(), eventEntry.getCarImage(), ENTITY_NAME_ENTRY);
+            eventEntry.setCarImageUrl(cdnUrl);
         }
         driverEntryRepository.deleteByEventEntry(eventEntry);
         eventEntry.getDrivers().forEach(de -> de.setEventEntry(eventEntry));
@@ -632,15 +632,15 @@ public class EventEditionResource {
     @GetMapping("/event-editions/{id}/event-sessions/{idSession}/results")
     @Transactional(readOnly = true)
     public List<SessionResultDTO> getEventSessionResults(@PathVariable Long id, @PathVariable Long idSession) {
-    	log.debug("REST request to get EventEdition {} results for session {}", id, idSession);
-    	List<EventEntryResult> result = eventResultRepository.findBySessionIdOrderByFinalPositionAsc(idSession);
+        log.debug("REST request to get EventEdition {} results for session {}", id, idSession);
+        List<EventEntryResult> result = eventResultRepository.findBySessionIdOrderByFinalPositionAsc(idSession);
 
-    	return result.parallelStream()
-    			.sorted((r1, r2) -> {
-    				if (r1.getFinalPosition() < 800 && r2.getFinalPosition() < 800) {
-    					return r1.getFinalPosition().compareTo(r2.getFinalPosition());
-    				} else if (r1.getFinalPosition() >= 800 && r2.getFinalPosition() >= 800) {
-    				    //Both cars DNFed
+        return result.parallelStream()
+            .sorted((r1, r2) -> {
+                if (r1.getFinalPosition() < 800 && r2.getFinalPosition() < 800) {
+                    return r1.getFinalPosition().compareTo(r2.getFinalPosition());
+                } else if (r1.getFinalPosition() >= 800 && r2.getFinalPosition() >= 800) {
+                    //Both cars DNFed
                         if (r1.getFinalPosition().equals(r2.getFinalPosition())) {
                             if (r2.getLapsCompleted() == null || r1.getLapsCompleted() == null) {
                                 return r2.getFinalPosition().compareTo(r1.getFinalPosition()) * -1;
@@ -648,13 +648,13 @@ public class EventEditionResource {
                         } else {
                             return r1.getFinalPosition().compareTo(r2.getFinalPosition());
                         }
-    				} else if (r1.getFinalPosition() < 800) {
-    					return -1;
-    				} else {
-    					return 1;
-    				}
-    			})
-    			.map(r -> new SessionResultDTO(r)).collect(Collectors.toList());
+                } else if (r1.getFinalPosition() < 800) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            })
+            .map(r -> new SessionResultDTO(r)).collect(Collectors.toList());
     }
 
     @GetMapping("/event-editions/event-sessions/{idSession}/fastestLap")
@@ -677,17 +677,17 @@ public class EventEditionResource {
             () -> new MSDBException("Invalid event entry result id " + idResult)
         );
         if (eventEntryResult.getEntry().getEventEdition() != null &&
-        		eventEntryResult.getEntry().getEventEdition().getSeriesEditions() != null) {
-        	eventEntryResult.getEntry().getEventEdition().getSeriesEditions().stream().forEach(sEd -> {
-        		SeriesEdition tmp = new SeriesEdition();
-        		tmp.setId(sEd.getId());
-        		tmp.setEditionName(sEd.getEditionName());
-        		Series tmpSeries = new Series();
-        		tmpSeries.setId(sEd.getSeries().getId());
-        		tmpSeries.setName(sEd.getSeries().getName());
-        		tmp.setSeries(tmpSeries);
-    			//eventEntryResult.getEntry().getEventEdition().setSeriesEdition(tmp);
-        	});
+            eventEntryResult.getEntry().getEventEdition().getSeriesEditions() != null) {
+            eventEntryResult.getEntry().getEventEdition().getSeriesEditions().stream().forEach(sEd -> {
+                SeriesEdition tmp = new SeriesEdition();
+                tmp.setId(sEd.getId());
+                tmp.setEditionName(sEd.getEditionName());
+                Series tmpSeries = new Series();
+                tmpSeries.setId(sEd.getSeries().getId());
+                tmpSeries.setName(sEd.getSeries().getName());
+                tmp.setSeries(tmpSeries);
+                //eventEntryResult.getEntry().getEventEdition().setSeriesEdition(tmp);
+            });
 
         }
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(eventEntryResult));
@@ -695,15 +695,15 @@ public class EventEditionResource {
 
     @GetMapping("/event-editions/calendar/{startDate}/{endDate}")
     public List<SessionCalendarDTO> getEvents(@PathVariable LocalDate startDate, @PathVariable LocalDate endDate) {
-    	LocalDateTime startMidnight = LocalDateTime.of(startDate, LocalTime.MIDNIGHT);
-		ZonedDateTime start = ZonedDateTime.of(startMidnight, ZoneId.of("UTC"));
-		ZonedDateTime end = ZonedDateTime.of(endDate.atTime(23, 59, 59), ZoneId.of("UTC"));
-    	List<EventSession> tmp = eventSessionRepository.findUpcomingSessions(start.toInstant(), end.toInstant());
-    	return tmp.parallelStream().map(session -> {
-    		String[] logoUrl = null;
+        LocalDateTime startMidnight = LocalDateTime.of(startDate, LocalTime.MIDNIGHT);
+        ZonedDateTime start = ZonedDateTime.of(startMidnight, ZoneId.of("UTC"));
+        ZonedDateTime end = ZonedDateTime.of(endDate.atTime(23, 59, 59), ZoneId.of("UTC"));
+        List<EventSession> tmp = eventSessionRepository.findUpcomingSessions(start.toInstant(), end.toInstant());
+        return tmp.parallelStream().map(session -> {
+                String[] logoUrl = null;
             Integer seriesRelevance = null;
             String seriesName = null;
-    		if (session.getEventEdition().getSeriesEditions() != null) {
+                if (session.getEventEdition().getSeriesEditions() != null) {
                 Optional<String> seriesLogo = Optional.ofNullable(session.getEventEdition().getSeriesEditions().stream()
                     .map(series -> Optional.ofNullable(series.getLogoUrl()).orElse(
                         series.getSeries().getLogoUrl()
@@ -717,26 +717,26 @@ public class EventEditionResource {
                         .map(sEd -> sEd.getSeries().getRelevance())
                         .max(Integer::compareTo).orElse(700);
                 }
-    			seriesName = session.getEventEdition().getSeriesEditions().parallelStream()
+                    seriesName = session.getEventEdition().getSeriesEditions().parallelStream()
                         .map(sEd -> sEd.getSeries().getName())
                         .findFirst().orElse(null);
-    		}
+                }
 
-    		return new SessionCalendarDTO(session.getEventEdition().getId(),
+                return new SessionCalendarDTO(session.getEventEdition().getId(),
                     session.getEventEdition().getEvent().getId(),
-    				seriesName,
-    				session.getEventEdition().getLongEventName(),
-    				session.getSessionType().equals(SessionType.STAGE)
+                    seriesName,
+                    session.getEventEdition().getLongEventName(),
+                    session.getSessionType().equals(SessionType.STAGE)
                         ? String.format("%s - %s", session.getShortname(), session.getName())
                         : session.getName(),
                     session.getCancelled(),
-    				session.getSessionType(),
-    				session.getSessionStartTimeDate(), session.getSessionEndTime(),
+                    session.getSessionType(),
+                    session.getSessionStartTimeDate(), session.getSessionEndTime(),
                     session.getDuration(),
                     session.getTotalDuration(),
-    				session.getEventEdition().getStatus().getCode(),
+                    session.getEventEdition().getStatus().getCode(),
                     seriesRelevance,
-    				Optional.ofNullable(session.getEventEdition().getTrackLayout())
+                    Optional.ofNullable(session.getEventEdition().getTrackLayout())
                         .map(racetrackLayout -> racetrackLayout.getRacetrack().getName())
                         .orElse(session.getEventEdition().getLocation()),
                     Optional.ofNullable(session.getEventEdition().getTrackLayout())
@@ -746,8 +746,8 @@ public class EventEditionResource {
                         .map(category -> category.getShortname()).toArray(String[]::new),
                     session.getEventEdition().getEvent().isRally(),
                     session.getEventEdition().getEvent().isRaid(),
-    				logoUrl);
-    	})
+                    logoUrl);
+            })
             .sorted(Comparator.comparing(SessionCalendarDTO::getSeriesRelevance))
             .collect(Collectors.toList());
     }
@@ -765,7 +765,7 @@ public class EventEditionResource {
         session.getEventEdition().getSeriesEditions().forEach(seriesEdition -> cacheHandler.resetSeriesEditionCaches(seriesEdition));
         if (eventSessionResult.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
-            		applicationName, true, ENTITY_NAME_ENTRY, "idexists", "A new eventSessionResult cannot already have an ID")).body(null);
+                applicationName, true, ENTITY_NAME_ENTRY, "idexists", "A new eventSessionResult cannot already have an ID")).body(null);
         }
         EventEntryResult result = eventResultRepository.save(eventSessionResult);
 
@@ -807,8 +807,8 @@ public class EventEditionResource {
 
     @GetMapping("/event-editions/{id}/bestTimes")
     public ResponseEntity<String[][]> getDriversBestTimes(@PathVariable Long id) {
-    	log.debug("REST request to retrieve drivers best times on event {}", id);
-    	return ResponseEntity.ok(resultsService.getDriverEventBestTimes(id));
+        log.debug("REST request to retrieve drivers best times on event {}", id);
+        return ResponseEntity.ok(resultsService.getDriverEventBestTimes(id));
     }
 
     @PutMapping("/event-editions/{id}/reschedule")
@@ -829,6 +829,15 @@ public class EventEditionResource {
         eventService.cloneEventEdition(eventEditionId, newPeriod, Collections.<SeriesEdition>emptySet());
         return ResponseEntity.ok().headers(
             HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, eventEditionId.toString())).build();
+    }
+
+    @GetMapping("/event-editions/event-sessions/{seriesId}/nextSession")
+    public ResponseEntity<EventSession> findNextEventSession(@PathVariable Long seriesId) {
+        Optional<EventSession> eventEdition = eventService.findNextSessionInSeries(seriesId);
+        if (eventEdition.isPresent()) {
+            return ResponseEntity.ok(eventEdition.get());
+        }
+        return ResponseEntity.notFound().build();
     }
 
     private String updateImage(byte[] image, String imageUrl, String id, String folder) {

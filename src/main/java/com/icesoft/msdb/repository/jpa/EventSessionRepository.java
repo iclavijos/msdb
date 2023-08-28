@@ -1,10 +1,11 @@
 package com.icesoft.msdb.repository.jpa;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import com.icesoft.msdb.domain.EventEdition;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -47,4 +48,11 @@ public interface EventSessionRepository extends JpaRepository<EventSession,Long>
         "sessionType = com.icesoft.msdb.domain.enums.SessionType.RACE")
 	List<EventSession> findRacesOnDay(Integer day, Integer month);
 
+    @Query("FROM EventSession es " +
+        "INNER JOIN es.eventEdition.seriesEditions seriesEditions " +
+        "WHERE es.sessionStartTime >= ?1 AND seriesEditions.series.id = ?2 " +
+        "AND es.eventEdition.status = com.icesoft.msdb.domain.enums.EventStatusType.ONGOING " +
+        "AND es.cancelled = FALSE " +
+        "ORDER BY es.sessionStartTime ASC")
+    Page<EventSession> findNextSessionInSeries(Instant now, Long seriesId, Pageable pageable);
 }
