@@ -79,6 +79,10 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
         sessionsData.addAll(sessionData1h);
         sessionsData.addAll(sessionData3h);
 
+        if (sessionsData.isEmpty()) {
+            return;
+        }
+
         List<EventSession> eventSessions = eventSessionRepository
             .findAllById(sessionsData.stream()
                 .map(session -> session.getSessionId())
