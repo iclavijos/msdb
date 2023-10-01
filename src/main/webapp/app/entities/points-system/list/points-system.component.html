@@ -1,112 +1,122 @@
-<div class="main-content">
+<section class="content">
     <div class="container-fluid">
-        <jhi-alert-error></jhi-alert-error>
-        <jhi-alert></jhi-alert>
-        <div class="row">
-            <div class="col-sm-12">
-                <form name="searchForm" class="form-inline">
-                    <div class="input-group w-100 mt-3">
-                        <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch"
-                               placeholder="{{ 'motorsportsDatabaseApp.pointsSystem.home.search' | translate }}"
-                               (keyup)="search(currentSearch)">
-                        <button class="input-group-append btn btn-danger" (click)="search('')" *ngIf="currentSearch">
-                            <fa-icon [icon]="'trash-alt'"></fa-icon>
-                        </button>
-                        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-pointsSystem" [routerLink]="['/points-system/new']">
-                            <fa-icon [icon]="'plus'"></fa-icon>
-                            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.pointsSystem.home.createLabel">
-                                Create a new points system
-                            </span>
-                        </button>
+        <div class="block-header mt-n3">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                        <ul class="breadcrumb breadcrumb-style ">
+                            <li class="breadcrumb-item bcrumb-2">
+                                <a routerLink="/"><fa-icon [icon]="['fas', 'arrow-alt-circle-right']" size="2x"></fa-icon></a>
+                            </li>
+                            <li class="breadcrumb-item active">{{ 'motorsportsDatabaseApp.pointsSystem.home.title' | translate }}</li>
+                        </ul>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header card-header-danger">
-                        <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.pointsSystem.home.title">Points system</span></h4>
+        <div class="responsive_table">
+            <div class="materialTableHeader">
+                <div class="row">
+                    <div class="col-8">
+                        <ul class="header-buttons-left ml-0">
+                            <li class="dropdown m-l-20">
+                                <label for="currentSearch"><i class="material-icons search-icon">search</i></label>
+                                <input type="text" #filter class="browser-default search-field" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch"
+                                       placeholder="{{ 'motorsportsDatabaseApp.pointsSystem.home.search' | translate }}"
+                                       (keyup)="search(currentSearch)" (keydown.enter)="$event.preventDefault()">
+                                <button mat-mini-fab class="input-group-append btn btn-danger" (click)="clearSearch()" *ngIf="currentSearch">
+                                    <fa-icon [icon]="'trash-alt'"></fa-icon>
+                                </button>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="card-body">
-                        <mat-spinner [hidden]="!isLoading"></mat-spinner>
-                        <div class="alert alert-warning" id="no-result" [hidden]="dataSource!.data!.length != 0 || isLoading">
-                            <span jhiTranslate="motorsportsDatabaseApp.pointsSystem.home.notFound">No points systems found</span>
-                        </div>
-                        <div class="table-responsive" [hidden]="dataSource!.data!.length === 0">
-                            <mat-table class="table table-hover" [dataSource]="dataSource"
-                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
+                    <div class="col-4">
+                        <ul class="header-buttons">
+                            <li>
+                                <div class="icon-button-demo">
+                                    <button mat-mini-fab *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" color="primary" [routerLink]="['/points-system/new']">
+                                        <mat-icon class="col-white">add</mat-icon>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <mat-spinner [hidden]="!isLoading"></mat-spinner>
+                    <div class="alert alert-warning" id="no-result" [hidden]="dataSource!.data!.length != 0 || isLoading">
+                        <span jhiTranslate="motorsportsDatabaseApp.pointsSystem.home.notFound">No points system found</span>
+                    </div>
+                    <div [hidden]="dataSource!.data!.length === 0 || isLoading">
+                        <mat-table class="table-responsive table-hover body" [dataSource]="dataSource"
+                                   matSort matSortActive="surname" matSortDisableClear matSortDirection="asc"
+                                   (matSortChange)="sortChanged($event)">
 
-                                <ng-container matColumnDef="name">
-                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.pointsSystem.name' | translate }}</mat-header-cell>
-                                    <mat-cell *matCellDef="let pointsSystem">{{ pointsSystem.name }}</mat-cell>
-                                </ng-container>
+                            <ng-container matColumnDef="name">
+                                <mat-header-cell [style.flex]="'2 1'" *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.pointsSystem.name' | translate }}</mat-header-cell>
+                                <mat-cell [style.flex]="'2 1'" *matCellDef="let pointsSystem">{{ pointsSystem.name }}</mat-cell>
+                            </ng-container>
 
-                                <ng-container matColumnDef="points">
-                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.pointsSystem.points' | translate }}</mat-header-cell>
-                                    <mat-cell *matCellDef="let pointsSystem" style="overflow: hidden; text-overflow: ellipsis; word-break: break-word;">{{ pointsSystem.points }}</mat-cell>
-                                </ng-container>
+                            <ng-container matColumnDef="points">
+                                <mat-header-cell [style.flex]="'3 1 25%'" *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.pointsSystem.points' | translate }}</mat-header-cell>
+                                <mat-cell [style.flex]="'3 1 25%'" *matCellDef="let pointsSystem" style="overflow: hidden; text-overflow: ellipsis; word-break: break-word;">{{ pointsSystem.points }}</mat-cell>
+                            </ng-container>
 
-                                <ng-container matColumnDef="pointsMostLeadLaps">
-                                    <mat-header-cell *matHeaderCellDef mat-sort-header class="center-align">{{ 'motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps' | translate }}</mat-header-cell>
-                                    <mat-cell *matCellDef="let pointsSystem" class="center-align">{{ pointsSystem.pointsMostLeadLaps }}</mat-cell>
-                                </ng-container>
+                            <ng-container matColumnDef="pointsMostLeadLaps">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header disableClear>{{ 'motorsportsDatabaseApp.pointsSystem.pointsMostLeadLaps' | translate }}</mat-header-cell>
+                                <mat-cell *matCellDef="let pointsSystem" class="center-align">{{ pointsSystem.pointsMostLeadLaps }}</mat-cell>
+                            </ng-container>
 
-                                <ng-container matColumnDef="pointsFastLap">
-                                    <mat-header-cell *matHeaderCellDef mat-sort-header class="center-align">{{ 'motorsportsDatabaseApp.pointsSystem.pointsFastLap' | translate }}</mat-header-cell>
-                                    <mat-cell *matCellDef="let pointsSystem" class="center-align">{{ pointsSystem.pointsFastLap }}</mat-cell>
-                                </ng-container>
+                            <ng-container matColumnDef="pointsFastLap">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header disableClear class="center-align">{{ 'motorsportsDatabaseApp.pointsSystem.pointsFastLap' | translate }}</mat-header-cell>
+                                <mat-cell *matCellDef="let pointsSystem" class="center-align">{{ pointsSystem.pointsFastLap }}</mat-cell>
+                            </ng-container>
 
-                                <ng-container matColumnDef="pointsPole">
-                                    <mat-header-cell *matHeaderCellDef mat-sort-header class="center-align">{{ 'motorsportsDatabaseApp.pointsSystem.pointsPole' | translate }}</mat-header-cell>
-                                    <mat-cell *matCellDef="let pointsSystem" class="center-align">{{ pointsSystem.pointsPole }}</mat-cell>
-                                </ng-container>
+                            <ng-container matColumnDef="pointsPole">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header disableClear class="center-align">{{ 'motorsportsDatabaseApp.pointsSystem.pointsPole' | translate }}</mat-header-cell>
+                                <mat-cell *matCellDef="let pointsSystem" class="center-align">{{ pointsSystem.pointsPole }}</mat-cell>
+                            </ng-container>
 
-                                <ng-container matColumnDef="pointsLeadLap">
-                                    <mat-header-cell *matHeaderCellDef mat-sort-header class="center-align">{{ 'motorsportsDatabaseApp.pointsSystem.pointsLeadLap' | translate }}</mat-header-cell>
-                                    <mat-cell *matCellDef="let pointsSystem" class="center-align">{{ pointsSystem.pointsLeadLap }}</mat-cell>
-                                </ng-container>
+                            <ng-container matColumnDef="pointsLeadLap">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header disableClear class="center-align">{{ 'motorsportsDatabaseApp.pointsSystem.pointsLeadLap' | translate }}</mat-header-cell>
+                                <mat-cell *matCellDef="let pointsSystem" class="center-align">{{ pointsSystem.pointsLeadLap }}</mat-cell>
+                            </ng-container>
 
-                                <ng-container matColumnDef="active">
-                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.pointsSystem.active' | translate }}</mat-header-cell>
-                                    <mat-cell *matCellDef="let pointsSystem">
-                                        <i [ngClass]="pointsSystem.active ? 'fa fa-fw fa-check' : 'none'"></i>
-                                    </mat-cell>
-                                </ng-container>
+                            <ng-container matColumnDef="buttons">
+                                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                <mat-cell [style.align-items]="'flex-end'" *matCellDef="let pointsSystem">
+                                    <div class="btn-group">
+                                        <button mat-mini-fab type="submit"
+                                                color="primary"
+                                                *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                                [routerLink]="['/points-system', pointsSystem.id, 'edit']"
+                                                (click)="$event.stopPropagation()">
+                                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                        </button>
+                                        <button mat-mini-fab type="submit"
+                                                color="warn"
+                                                *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                                                (click)="delete($event, pointsSystem)">
+                                            <fa-icon [icon]="'times'"></fa-icon>
+                                        </button>
+                                    </div>
+                                </mat-cell>
+                            </ng-container>
 
-                                <ng-container matColumnDef="buttons">
-                                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
-                                    <mat-cell *matCellDef="let pointsSystem">
-                                        <div class="btn-group">
-                                            <button type="submit"
-                                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                                    [routerLink]="['/points-system', pointsSystem.id, 'edit']"
-                                                    (click)="$event.stopPropagation()"
-                                                    class="btn btn-primary btn-sm">
-                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                                            </button>
-                                            <button type="submit"
-                                                    *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                                    (click)="delete($event, pointsSystem)"
-                                                    class="btn btn-danger btn-sm">
-                                                <fa-icon [icon]="'times'"></fa-icon>
-                                            </button>
-                                        </div>
-                                    </mat-cell>
-                                </ng-container>
-
-                                <mat-header-row mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-                                <mat-row mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
-                                    [routerLink]="['/points-system', row.id, 'view' ]"></mat-row>
-                            </mat-table>
-                            <mat-paginator [length]="totalItems"
-                                           [pageSizeOptions]="[5, 10, 20]"
-                                           [pageSize]="10"
-                                           showFirstLastButtons></mat-paginator>
-                        </div>
+                            <mat-header-row mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                            <mat-row mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
+                                     [routerLink]="['/points-system', row.id, 'view' ]"></mat-row>
+                        </mat-table>
+                        <mat-paginator [length]="totalItems"
+                                       [pageSizeOptions]="[5, 10, 20]"
+                                       [pageSize]="10"
+                                       showFirstLastButtons
+                                       (page)="pageChanged($event)"></mat-paginator>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>

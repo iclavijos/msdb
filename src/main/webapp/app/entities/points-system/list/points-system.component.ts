@@ -1,18 +1,21 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SessionStorageService } from 'ngx-webstorage';
 
-import { IPointsSystem } from '../points-system.model';
-
-import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
+import { ASC, DESC, ITEMS_PER_PAGE } from 'app/config/pagination.constants';
+import { IPointsSystem, PointsSystem } from '../points-system.model';
 import { PointsSystemService } from '../service/points-system.service';
 import { PointsSystemDeleteDialogComponent } from '../delete/points-system-delete-dialog.component';
+import { DataUtils } from 'app/core/util/data-util.service';
+import { AccountService } from 'app/core/auth/account.service';
 
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort, Sort, MatSortHeader } from '@angular/material/sort';
 
 @Component({
   selector: 'jhi-points-system',
@@ -24,9 +27,10 @@ export class PointsSystemComponent implements OnInit, AfterViewInit {
   isLoading = false;
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
-  page?: number;
-  predicate!: string;
-  ascending!: boolean;
+  page = 0;
+  predicate = 'name';
+  ascending = true;
+  reloadData = true;
 
   dataSource = new MatTableDataSource<IPointsSystem>([]);
   displayedColumns: string[] = [
@@ -35,33 +39,75 @@ export class PointsSystemComponent implements OnInit, AfterViewInit {
       'pointsMostLeadLaps',
       'pointsFastLap',
       'pointsPole',
-      'pointsLeadLap',
-      'active',
-      'buttons'
+      'pointsLeadLap'
     ];
+  pointsSystemSearchTextChanged = new Subject<string>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sorter!: MatSort;
+  @ViewChild(MatSort, {static: true}) sorter!: MatSort;
 
   constructor(
     protected pointsSystemService: PointsSystemService,
     protected activatedRoute: ActivatedRoute,
+    protected dataUtils: DataUtils,
     protected router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected accountService: AccountService,
+    private sessionStorageService: SessionStorageService
   ) {
     this.currentSearch = this.activatedRoute.snapshot.queryParams['search'] ?? '';
   }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+
+    if (this.accountService.hasAnyAuthority(["ROLE_ADMIN", "ROLE_EDITOR"])) {
+      this.displayedColumns.push('buttons');
+    }
   }
 
   ngOnInit(): void {
+    this.currentSearch = this.sessionStorageService.retrieve('pointsSystemSearch') ?? '';
+    this.page = this.sessionStorageService.retrieve('pointsSystemSearchPage') ?? 0;
+    this.itemsPerPage = this.sessionStorageService.retrieve('pointsSystemSearchItems') ?? ITEMS_PER_PAGE;
+    this.predicate = this.sessionStorageService.retrieve('pointsSystemSearchPredicate') ?? 'name';
+    this.ascending = this.sessionStorageService.retrieve('pointsSystemSearchAscending') ?? true;
+
     this.loadPage();
+
+    this.pointsSystemSearchTextChanged
+      .pipe(debounceTime(300))
+      .subscribe(() => {
+        this.page = 0;
+        this.itemsPerPage = ITEMS_PER_PAGE;
+        this.predicate = 'name';
+        this.ascending = true;
+        this.loadPage();
+      });
   }
 
   search(query: string): void {
-    this.dataSource.filter = query.trim().toLowerCase();
+    this.sessionStorageService.store('pointsSystemSearch', query);
+    if (query.length === 0) {
+      this.currentSearch = '';
+      this.page = 0;
+      this.itemsPerPage = ITEMS_PER_PAGE;
+      this.predicate = 'name';
+      this.ascending = true;
+      this.loadPage();
+    } else {
+      if (query.length >= 3) {
+        this.pointsSystemSearchTextChanged.next();
+      }
+    }
+  }
+
+  clearSearch(): void {
+    this.sessionStorageService.clear('pointsSystemSearchPage');
+    this.sessionStorageService.clear('pointsSystemSearchItems');
+    this.sessionStorageService.clear('pointsSystemSearchPredicate');
+    this.sessionStorageService.clear('pointsSystemSearchAscending');
+    this.search('');
   }
 
   trackId(index: number, item: IPointsSystem): number {
@@ -80,48 +126,104 @@ export class PointsSystemComponent implements OnInit, AfterViewInit {
     });
   }
 
+  pageChanged(event: PageEvent): void {
+    this.page = event.pageIndex;
+    this.itemsPerPage = event.pageSize;
+    this.sessionStorageService.store('pointsSystemSearchPage', this.page);
+    this.sessionStorageService.store('pointsSystemSearchItems', this.itemsPerPage);
+    this.loadPage();
+  }
+
+  sortChanged(event: Sort): void {
+    this.predicate = event.active;
+    this.ascending = (event.direction as string) === 'asc';
+    this.sessionStorageService.store('pointsSystemSearchPredicate', this.predicate);
+    this.sessionStorageService.store('pointsSystemSearchAscending', this.ascending);
+    this.loadPage();
+    if (this.reloadData) {
+      this.page = 0;
+      this.sessionStorageService.store('pointsSystemSearchPage', this.page);
+      this.paginator.pageIndex = 0;
+    }
+  }
+
   protected loadPage(): void {
+    if (!this.reloadData) {
+      return;
+    }
+
+    this.isLoading = true;
     this.pointsSystemService
       .query({
-        page: 0,
+        page: this.page,
         query: this.currentSearch,
         size: this.itemsPerPage,
-        sort: ['name,asc'],
+        sort: this.sort(),
       })
       .subscribe(
         (res: HttpResponse<IPointsSystem[]>) => {
           this.isLoading = false;
           this.totalItems = Number(res.headers.get('X-Total-Count'));
-          this.dataSource.data = res.body ?? [];
+          this.dataSource = new MatTableDataSource(this.instantiateResponseObjects(res.body as IPointsSystem[]));
+          this.sorter.active = this.predicate;
+          this.sorter.start = this.ascending ? 'asc' : 'desc';
           this.dataSource.sort = this.sorter;
+          this.paginator.pageIndex = this.page;
+          this.setSort(this.predicate, this.ascending ? 'asc' : 'desc');
         },
         () => {
           this.isLoading = false;
-          this.onError();
+          // this.onError();
         }
       );
   }
 
   protected sort(): string[] {
-    return [this.predicate + ',' + (this.ascending ? ASC : DESC)];
+    const sortPredicates = [`${this.predicate},${this.ascending ? ASC : DESC }`];
+    if (this.predicate !== 'name') {
+      sortPredicates.push(`name,${ASC}`);
+    }
+    return sortPredicates;
   }
 
-  protected handleNavigation(): void {
-    combineLatest([this.activatedRoute.data, this.activatedRoute.queryParamMap]).subscribe(([data, params]) => {
-      const page = params.get('page');
-      const pageNumber = +(page ?? 1);
-      const sort = (params.get(SORT) ?? data['defaultSort']).split(',');
-      const predicate = sort[0];
-      const ascending = sort[1] === ASC;
-      if (pageNumber !== this.page || predicate !== this.predicate || ascending !== this.ascending) {
-        this.predicate = predicate;
-        this.ascending = ascending;
-        // this.loadPage(pageNumber, true);
-      }
-    });
+  private instantiateResponseObjects(data: IPointsSystem[]): IPointsSystem[] {
+    const objects: IPointsSystem[] = [];
+    data.forEach(pointsSystem => objects.push(
+      new PointsSystem(
+        pointsSystem.id,
+        pointsSystem.name,
+        pointsSystem.description,
+        pointsSystem.points,
+        pointsSystem.pointsMostLeadLaps,
+        pointsSystem.pointsFastLap,
+        pointsSystem.maxPosFastLap,
+        pointsSystem.dnfFastLap,
+        pointsSystem.pitlaneStartAllowed,
+        pointsSystem.alwaysAssignFastLap,
+        pointsSystem.pctCompletedFastLap,
+        pointsSystem.pointsPole,
+        pointsSystem.pointsLeadLap,
+        pointsSystem.racePctCompleted,
+        pointsSystem.pctTotalPoints,
+        pointsSystem.active
+      )));
+
+    return objects;
   }
 
-  protected onError(): void {
-    this.page = this.page ?? 1;
+  private setSort(id: string, start?: 'asc' | 'desc'): void {
+    start = start ?? 'asc';
+    const matSort = this.dataSource.sort;
+    const toState = 'active';
+    const disableClear = false;
+
+    // reset state so that start is the first sort direction that you will see
+    this.reloadData = false;
+    matSort!.sort({ id: '', start, disableClear });
+    matSort!.sort({ id, start, disableClear });
+    this.reloadData = true;
+
+    // ugly hack
+    (matSort!.sortables.get(id) as MatSortHeader)._setAnimationTransitionState({ toState });
   }
 }
