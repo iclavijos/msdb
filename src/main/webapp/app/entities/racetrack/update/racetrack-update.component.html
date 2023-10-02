@@ -63,31 +63,27 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-6">
-                                            <mat-form-field class="example-full-width">
-                                                <mat-form-field class="example-full-width" appearance="outline">
-                                                    <mat-label>{{ 'motorsportsDatabaseApp.racetrack.latitude' | translate }}</mat-label>
-                                                    <input matInput type="text" class="form-control" formControlName="latitude">
-                                                    <mat-error *ngIf="editForm.get('latitude')!.hasError('required')">
-                                                        {{ 'entity.validation.required' | translate }}
-                                                    </mat-error>
-                                                    <mat-error *ngIf="editForm.get('latitude')!.hasError('number')">
-                                                        {{ 'entity.validation.number' }}
-                                                    </mat-error>
-                                                </mat-form-field>
+                                            <mat-form-field class="example-full-width" appearance="outline">
+                                                <mat-label>{{ 'motorsportsDatabaseApp.racetrack.latitude' | translate }}</mat-label>
+                                                <input matInput type="text" class="form-control" formControlName="latitude">
+                                                <mat-error *ngIf="editForm.get('latitude')!.hasError('required')">
+                                                    {{ 'entity.validation.required' | translate }}
+                                                </mat-error>
+                                                <mat-error *ngIf="editForm.get('latitude')!.hasError('number')">
+                                                    {{ 'entity.validation.number' }}
+                                                </mat-error>
                                             </mat-form-field>
                                         </div>
                                         <div class="col-6">
-                                            <mat-form-field class="example-full-width">
-                                                <mat-form-field class="example-full-width" appearance="outline">
-                                                    <mat-label>{{ 'motorsportsDatabaseApp.racetrack.longitude' | translate }}</mat-label>
-                                                    <input matInput type="text" class="form-control" formControlName="longitude">
-                                                    <mat-error *ngIf="editForm.get('longitude')!.hasError('required')">
-                                                        {{ 'entity.validation.required' | translate }}
-                                                    </mat-error>
-                                                    <mat-error *ngIf="editForm.get('longitude')!.hasError('number')">
-                                                        {{ 'entity.validation.number' }}
-                                                    </mat-error>
-                                                </mat-form-field>
+                                            <mat-form-field class="example-full-width" appearance="outline">
+                                                <mat-label>{{ 'motorsportsDatabaseApp.racetrack.longitude' | translate }}</mat-label>
+                                                <input matInput type="text" class="form-control" formControlName="longitude">
+                                                <mat-error *ngIf="editForm.get('longitude')!.hasError('required')">
+                                                    {{ 'entity.validation.required' | translate }}
+                                                </mat-error>
+                                                <mat-error *ngIf="editForm.get('longitude')!.hasError('number')">
+                                                    {{ 'entity.validation.number' }}
+                                                </mat-error>
                                             </mat-form-field>
                                         </div>
                                     </div>
