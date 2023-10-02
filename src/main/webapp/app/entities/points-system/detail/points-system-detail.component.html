@@ -1,13 +1,43 @@
-<div class="main-content">
+<section class="content">
     <div class="container-fluid">
+        <div class="block-header mt-n3">
+            <div class="row">
+                <div class="col-12">
+                    <ul class="breadcrumb breadcrumb-style">
+                        <li class="breadcrumb-item bcrumb-2">
+                            <a routerLink="/"><fa-icon [icon]="['fas', 'arrow-alt-circle-right']" size="2x"></fa-icon></a>
+                        </li>
+                        <li class="breadcrumb-item bcrumb-2">
+                            <a routerLink="/points-system">{{ 'motorsportsDatabaseApp.pointsSystem.home.title' | translate }}</a>
+                        </li>
+                        <li class="breadcrumb-item active">{{ pointsSystem!.name }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <jhi-alert-error></jhi-alert-error>
         <jhi-alert></jhi-alert>
-        <div class="row">
-            <div class="col-md-12">
+        <div class="row clearfix">
+            <div class="col-lg-4 col-md-12">
                 <div class="card">
-                    <div class="card-header card-header-danger">
-                        <h3 class="card-title">{{pointsSystem!.name}}</h3>
+                    <div class="m-b-20">
+                        <div class="contact-grid">
+                            <div class="profile-header bg-dark">
+                                <div class="user-name">{{ pointsSystem!.name }}</div>
+                            </div>
+
+                            <button mat-mini-fab type="submit" color="primary"
+                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                    [routerLink]="['/points-system', pointsSystem?.id, 'edit']">
+                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            </button>
+                        </div>
                     </div>
+                </div>
+
+            </div>
+            <div class="col-lg-8 col-md-12">
+                <div class="card">
                     <div class="card-body">
                         <div class="row jh-entity-details">
                             <div class="col-md-10">
@@ -100,15 +130,5 @@
                 </div>
             </div>
         </div>
-        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                [routerLink]="['/points-system', pointsSystem!.id, 'edit']"
-                class="btn btn-primary">
-            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-        </button>
-        <button type="submit"
-                (click)="previousState()"
-                class="btn btn-info">
-            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-        </button>
     </div>
-</div>
+</section>
