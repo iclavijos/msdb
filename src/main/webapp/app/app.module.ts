@@ -65,7 +65,6 @@ import { ErrorComponent } from './layouts/error/error.component';
     HeaderComponent,
     SidebarComponent,
 
-
     ErrorComponent,
     PageRibbonComponent,
     FooterComponent,

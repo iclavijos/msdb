@@ -18,11 +18,18 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                <!-- Dark mode toggle -->
+                <li class="nav-item">
+                    <a (click)="switchTheme()" role="button">
+                        <fa-icon [icon]="switchThemeIcon"></fa-icon>
+                    </a>
+                </li>
+                <!-- #END# Dark mode toggle -->
                 <!-- Full Screen Button -->
-                <li class="fullscreen">
-                    <button mat-icon-button (click)="callFullscreen()" class=" nav-notification-icons">
+                <li class="nav-item">
+                    <a (click)="callFullscreen()" role="button">
                         <mat-icon>fullscreen</mat-icon>
-                    </button>
+                    </a>
                 </li>
                 <!-- #END# Full Screen Button -->
                 <!-- Calendar Button -->

@@ -21,6 +21,11 @@ import { ProfileService } from 'app/layouts/profiles/profile.service';
 import { ConfigService } from 'app/config/config.service';
 import { FullScreenService } from 'app/shared/services/fullscreen.service';
 
+import {
+  faMoon as farMoon,
+  faSun as farSun
+  // jhipster-needle-add-icon-import
+} from '@fortawesome/free-regular-svg-icons';
 
 @Component({
   selector: 'jhi-app-header',
@@ -36,6 +41,10 @@ export class HeaderComponent implements OnInit, AfterViewInit {
   version = '';
   account: Account | null = null;
   userFullName = '';
+  isDarkSidebar = false;
+  isDarkTheme = false;
+  selectedBgColor = 'white';
+  switchThemeIcon = farMoon;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -57,6 +66,13 @@ export class HeaderComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const theme = localStorage.getItem('theme') ?? 'light';
+    if (theme === 'light') {
+      this.enableLightMode();
+    } else {
+      this.enableDarkMode();
+      this.isDarkTheme = true;
+    }
     this.config = this.configService.configData;
     this.profileService.getProfileInfo().subscribe(profileInfo => {
       this.inProduction = profileInfo.inProduction;
@@ -166,5 +182,75 @@ export class HeaderComponent implements OnInit, AfterViewInit {
 
   getImageUrl(): string | null {
     return this.isAuthenticated() ? this.accountService.getImageUrl() : null;
+  }
+
+  enableLightMode(): void {
+    const theme = 'light';
+    this.renderer.removeClass(this.document.body, 'menu_dark');
+    this.renderer.removeClass(this.document.body, 'logo-black');
+    this.renderer.addClass(this.document.body, 'menu_light');
+    this.renderer.addClass(this.document.body, 'logo-white');
+
+    this.renderer.removeClass(this.document.body, 'dark');
+    this.renderer.removeClass(this.document.body, 'submenu-closed');
+    this.renderer.removeClass(this.document.body, 'menu_dark');
+    this.renderer.removeClass(this.document.body, 'logo-black');
+    if (localStorage.getItem('choose_skin')) {
+      this.renderer.removeClass(
+        this.document.body,
+        localStorage.getItem('choose_skin') ?? 'light'
+      );
+      this.renderer.addClass(this.document.body, 'theme-white');
+    }
+
+    this.renderer.addClass(this.document.body, 'light');
+    this.renderer.addClass(this.document.body, 'submenu-closed');
+    this.renderer.addClass(this.document.body, 'menu_light');
+    this.renderer.addClass(this.document.body, 'logo-white');
+
+    this.selectedBgColor = 'white';
+    this.isDarkSidebar = false;
+    localStorage.setItem('choose_logoheader', 'logo-white');
+    localStorage.setItem('choose_skin', 'theme-white');
+    localStorage.setItem('theme', theme);
+    this.switchThemeIcon = farMoon;
+  }
+
+  enableDarkMode(): void {
+    const theme = 'dark';
+    this.renderer.removeClass(this.document.body, 'menu_light');
+    this.renderer.removeClass(this.document.body, 'logo-white');
+    this.renderer.addClass(this.document.body, 'menu_dark');
+    this.renderer.addClass(this.document.body, 'logo-black');
+
+    this.renderer.removeClass(this.document.body, 'light');
+    this.renderer.removeClass(this.document.body, 'submenu-closed');
+    this.renderer.removeClass(this.document.body, 'menu_light');
+    this.renderer.removeClass(this.document.body, 'logo-white');
+    if (localStorage.getItem('choose_skin')) {
+      this.renderer.removeClass(
+        this.document.body,
+        localStorage.getItem('choose_skin') ?? 'light'
+      );
+      this.renderer.addClass(this.document.body, 'theme-black');
+    }
+    this.renderer.addClass(this.document.body, 'dark');
+    this.renderer.addClass(this.document.body, 'submenu-closed');
+    this.renderer.addClass(this.document.body, 'menu_dark');
+    this.renderer.addClass(this.document.body, 'logo-black');
+    this.selectedBgColor = 'black';
+    this.isDarkSidebar = true;
+    localStorage.setItem('choose_logoheader', 'logo-black');
+    localStorage.setItem('choose_skin', 'theme-black');
+    localStorage.setItem('theme', theme);
+    this.switchThemeIcon = farSun;
+  }
+
+  switchTheme(): void {
+    if (this.isDarkSidebar) {
+      this.enableLightMode();
+    } else {
+      this.enableDarkMode();
+    }
   }
 }
