@@ -17,13 +17,6 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <!-- Dark mode toggle -->
-                <li class="nav-item">
-                    <a (click)="switchTheme()" role="button">
-                        <fa-icon [icon]="switchThemeIcon"></fa-icon>
-                    </a>
-                </li>
-                <!-- #END# Dark mode toggle -->
                 <!-- Full Screen Button -->
                 <li class="nav-item">
                     <a (click)="callFullscreen()" role="button">
@@ -48,40 +41,40 @@
                 <!-- #START# Imports -->
                 <li *jhiHasAnyAuthority="'ROLE_ADMIN'" class="nav-item user_profile" ngbDropdown>
                     <a href="#" onClick="return false;" ngbDropdownToggle role="button">
-                        <i class="fa fa-upload" aria-hidden="true"></i>
+                        <i class="fa fa-upload"></i>
                     </a>
-                    <div ngbDropdownMenu class="notification-dropdown pullDown">
-                        <div class="noti-list" style="position: relative; max-width: 600px;">
+                    <div ngbDropdownMenu class="notification-dropdown pullDown" style="width: 280px;">
+                        <div class="noti-list" style="position: relative;">
                             <ul class="menu">
                                 <li class="body">
                                     <ul class="user_dw_menu">
-                                        <li ngbDropdownItem>
+                                        <li>
                                             <a href="javascript:void(0);" (click)="router.navigate(['/import/drivers']);">
-                                                <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+                                                <i class="fa fa-fw fa-asterisk msr-2" aria-hidden="true"></i>
                                                 <span jhiTranslate="global.menu.imports.drivers">Import drivers</span>
                                             </a>
                                         </li>
-                                        <li ngbDropdownItem>
-                                            <a href="javascript:void(0);" (click)="router.navigate(['/import/racetracks']);" role="button">
-                                                <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+                                        <li>
+                                            <a href="javascript:void(0);" (click)="router.navigate(['/import/racetracks']);">
+                                                <i class="fa fa-fw fa-asterisk msr-2" aria-hidden="true"></i>
                                                 <span jhiTranslate="global.menu.imports.racetracks">Import racetracks</span>
                                             </a>
                                         </li>
-                                        <li ngbDropdownItem>
-                                            <a href="javascript:void(0);" (click)="router.navigate(['/import/teams']);" role="button">
-                                                <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+                                        <li>
+                                            <a href="javascript:void(0);" (click)="router.navigate(['/import/teams']);">
+                                                <i class="fa fa-fw fa-asterisk msr-2" aria-hidden="true"></i>
                                                 <span jhiTranslate="global.menu.imports.teams">Import teams</span>
                                             </a>
                                         </li>
-                                        <li ngbDropdownItem>
-                                            <a href="javascript:void(0);" (click)="router.navigate(['/import/engines']);" role="button">
-                                                <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+                                        <li>
+                                            <a href="javascript:void(0);" (click)="router.navigate(['/import/engines']);">
+                                                <i class="fa fa-fw fa-asterisk msr-2" aria-hidden="true"></i>
                                                 <span jhiTranslate="global.menu.imports.engines">Import engines</span>
                                             </a>
                                         </li>
-                                        <li ngbDropdownItem>
-                                            <a href="javascript:void(0);" (click)="router.navigate(['/import/events']);" role="button">
-                                                <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+                                        <li>
+                                            <a href="javascript:void(0);" (click)="router.navigate(['/import/events']);">
+                                                <i class="fa fa-fw fa-asterisk msr-2" aria-hidden="true"></i>
                                                 <span jhiTranslate="global.menu.imports.events">Import events</span>
                                             </a>
                                         </li>
@@ -102,51 +95,51 @@
                             <ul class="menu">
                                 <li class="body">
                                     <ul class="user_dw_menu">
-                                        <li ngbDropdownItem>
+                                        <li>
                                             <a href="javascript:void(0);" (click)="router.navigate(['/admin/metrics']);">
-                                                <fa-icon icon="tachometer-alt" [fixedWidth]="true"></fa-icon>
+                                                <fa-icon icon="tachometer-alt" class="msr-2" aria-hidden="false"></fa-icon>
                                                 <span jhiTranslate="global.menu.admin.metrics">Metrics</span>
                                             </a>
                                         </li>
-                                        <li ngbDropdownItem>
+                                        <li>
                                             <a href="javascript:void(0);" (click)="router.navigate(['/admin/health']);">
-                                                <fa-icon icon="heart" [fixedWidth]="true"></fa-icon>
+                                                <fa-icon icon="heart" class="msr-2" aria-hidden="false"></fa-icon>
                                                 <span jhiTranslate="global.menu.admin.health">Health</span>
                                             </a>
                                         </li>
-                                        <li ngbDropdownItem>
+                                        <li>
                                             <a href="javascript:void(0);" (click)="router.navigate(['/admin/configuration']);">
-                                                <fa-icon icon="list" [fixedWidth]="true"></fa-icon>
+                                                <fa-icon icon="list" class="msr-2" aria-hidden="false"></fa-icon>
                                                 <span jhiTranslate="global.menu.admin.configuration">Configuration</span>
                                             </a>
                                         </li>
-                                        <li ngbDropdownItem>
+                                        <li>
                                             <a href="javascript:void(0);" (click)="router.navigate(['/admin/logs']);">
-                                                <fa-icon icon="tasks" [fixedWidth]="true"></fa-icon>
+                                                <fa-icon icon="tasks" class="msr-2" aria-hidden="false"></fa-icon>
                                                 <span jhiTranslate="global.menu.admin.logs">Logs</span>
                                             </a>
                                         </li>
-                                        <li ngbDropdownItem *ngIf="openAPIEnabled">
+                                        <li *ngIf="openAPIEnabled">
                                             <a href="javascript:void(0);" (click)="router.navigate(['/admin/docs']);">
-                                                <fa-icon icon="book" [fixedWidth]="true"></fa-icon>
+                                                <fa-icon icon="book" class="msr-2" aria-hidden="false"></fa-icon>
                                                 <span jhiTranslate="global.menu.admin.apidocs">API</span>
                                             </a>
                                         </li>
-                                        <li ngbDropdownItem>
+                                        <li>
                                             <a href="javascript:void(0);" (click)="router.navigate(['/admin/rebuildIndexes']);">
-                                                <fa-icon icon="search" [fixedWidth]="true"></fa-icon>
+                                                <fa-icon icon="search" class="msr-2" aria-hidden="false"></fa-icon>
                                                 <span jhiTranslate="global.menu.admin.rebuildIndexes">Rebuild search indexes</span>
                                             </a>
                                         </li>
-                                        <li ngbDropdownItem>
+                                        <li>
                                             <a href="javascript:void(0);" (click)="router.navigate(['/admin/rebuildStatistics']);">
-                                                <i class="icofont icofont-chart-bar-graph"></i>
+                                                <i class="icofont icofont-chart-bar-graph msr-2" aria-hidden="false"></i>
                                                 <span jhiTranslate="global.menu.admin.rebuildStatistics">Rebuild statistics</span>
                                             </a>
                                         </li>
-                                        <li ngbDropdownItem>
+                                        <li>
                                             <a href="javascript:void(0);" (click)="router.navigate(['/admin/rebuildSessionsNotifications']);">
-                                                <i class="icofont icofont-chart-bar-graph"></i>
+                                                <i class="icofont icofont-chart-bar-graph msr-2" aria-hidden="false"></i>
                                                 <span jhiTranslate="global.menu.admin.rebuildNotificationsSessions">Rebuild notif sessions</span>
                                             </a>
                                         </li>
@@ -167,7 +160,7 @@
                             <ul class="menu">
                                 <li class="body">
                                     <ul class="user_dw_menu">
-                                        <li ngbDropdownItem *ngFor="let lang of languages" class="nav-itme">
+                                        <li *ngFor="let lang of languages">
                                             <a href="javascript:void(0);" (click)="changeLanguage(lang);">
                                                 {{ lang | findLanguageFromKey }}
                                             </a>
@@ -181,35 +174,35 @@
                 <!-- #END# Language -->
                 <!-- #START# Account -->
                 <li class="nav-item user_profile" ngbDropdown>
-                    <a href="#" onClick="return false;" ngbDropdownToggle role="button">
+                    <div class="chip dropdown-toggle" ngbDropdownToggle class="nav-notification-icons pt-0">
                         <span *ngIf="!getImageUrl()">
                             <fa-icon icon="user"></fa-icon>
-                            <span *ngIf="isAuthenticated()">{{ userFullName }}</span>
+                            <!-- span *ngIf="isAuthenticated()">{{ userFullName }}</span -->
                         </span>
                         <span *ngIf="getImageUrl()">
                             <img [src]="getImageUrl()" class="rounded-circle" width="32" height="32" alt="User">
                         </span>
-                    </a>
+                    </div>
                     <div ngbDropdownMenu class="notification-dropdown pullDown" style="width: 280px;">
-                        <div class="noti-list" style="position: relative;">
+                        <div class="noti-list" style="position: relative">
                             <ul class="menu">
                                 <li class="body">
                                     <ul class="user_dw_menu" [ngSwitch]="isAuthenticated()">
-                                        <li ngbDropdownItem class="nav-itme" *ngSwitchCase="true">
-                                            <a href="javascript:void(0);" (click)="router.navigate(['/subscriptions']);">
-                                                <i class="fa fa-bullhorn" aria-hidden="true"></i>
+                                        <li *ngSwitchCase="true">
+                                            <a href="#" (click)="router.navigate(['/subscriptions']);">
+                                                <i class="fa fa-bullhorn msr-2" aria-hidden="false"></i>
                                                 <span jhiTranslate="global.menu.account.subscriptions">Subscriptions</span>
                                             </a>
                                         </li>
-                                        <li ngbDropdownItem class="nav-itme" *ngSwitchCase="true">
+                                        <li *ngSwitchCase="true">
                                             <a href="javascript:void(0);" (click)="logout()">
-                                                <fa-icon icon="sign-out-alt" [fixedWidth]="true"></fa-icon>
+                                                <fa-icon icon="sign-out-alt" class="msr-2" aria-hidden="false"></fa-icon>
                                                 <span jhiTranslate="global.menu.account.logout">Sign out</span>
                                             </a>
                                         </li>
-                                        <li ngbDropdownItem class="nav-itme" *ngSwitchCase="false">
+                                        <li *ngSwitchCase="false">
                                             <a href="javascript:void(0);" (click)="login()">
-                                                <fa-icon icon="sign-in-alt" [fixedWidth]="true"></fa-icon>
+                                                <fa-icon icon="sign-in-alt" class="msr-2" aria-hidden="false"></fa-icon>
                                                 <span jhiTranslate="global.menu.account.login">Sign in</span>
                                             </a>
                                         </li>
@@ -220,6 +213,13 @@
                     </div>
                 </li>
                 <!-- #END# Account -->
+                <!-- Dark mode toggle -->
+                <li class="nav-item">
+                    <a (click)="switchTheme()" role="button">
+                        <fa-icon [icon]="switchThemeIcon"></fa-icon>
+                    </a>
+                </li>
+                <!-- #END# Dark mode toggle -->
             </ul>
         </div>
     </div>
