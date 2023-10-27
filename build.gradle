@@ -213,7 +213,7 @@ dependencies {
 
     implementation "io.vavr:vavr:0.10.4"
 
-    implementation 'com.github.pengrad:java-telegram-bot-api:6.2.0'
+    implementation 'com.github.pengrad:java-telegram-bot-api:6.9.1'
     implementation 'org.apache.velocity:velocity-engine-core:2.3'
 
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
