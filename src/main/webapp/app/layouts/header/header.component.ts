@@ -45,6 +45,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
   isDarkTheme = false;
   selectedBgColor = 'white';
   switchThemeIcon = farMoon;
+  headerImage = 'images/logo_banner.jpeg';
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -174,9 +175,11 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     if (hasClass) {
       this.renderer.removeClass(this.document.body, 'side-closed');
       this.renderer.removeClass(this.document.body, 'submenu-closed');
+      this.headerImage = 'images/logo_banner.jpeg';
     } else {
       this.renderer.addClass(this.document.body, 'side-closed');
       this.renderer.addClass(this.document.body, 'submenu-closed');
+      this.headerImage = 'images/ic_launcher.png';
     }
   }
 

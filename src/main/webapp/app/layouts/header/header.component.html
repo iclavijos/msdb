@@ -5,8 +5,7 @@
                (click)="isNavbarCollapsed = !isNavbarCollapsed" aria-expanded="false"></a>
             <a href="#" onClick="return false;" class="bars" (click)="mobileMenuSidebarOpen($event,'overlay-open')"></a>
             <a class="navbar-brand" routerLink="/">
-                <img src="images/logo48x48.png" alt="msdb logo" />
-                <span class="logo-name">MSDB</span>
+                <img [src]="headerImage" alt="msdb logo" />
             </a>
         </div>
         <div class="collapse navbar-collapse" [ngbCollapse]="isNavbarCollapsed">
