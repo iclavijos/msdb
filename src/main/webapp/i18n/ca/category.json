@@ -19,7 +19,9 @@
       },
       "name": "Nom",
       "shortname": "Nom curt",
-      "logo": "Logo"
+      "relevance": "Rellevància",
+      "categoryColor": "Color dorsal",
+      "categoryFrontColor": "Color tipografia"
     }
   }
 }

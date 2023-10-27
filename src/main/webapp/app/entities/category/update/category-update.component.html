@@ -1,50 +1,52 @@
-<div class="main-content">
+<section class="content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header card-header-danger">
-                        <h4 class="card-title">{{ editForm.get('name')!.value }}</h4>
-                        <p class="card-category">{{ 'motorsportsDatabaseApp.category.home.createOrEditLabel' | translate }}</p>
-                    </div>
-                    <div class="card-body">
-                        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+        <div class="block-header mt-n3">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                    <ul class="breadcrumb breadcrumb-style ">
+                        <li class="breadcrumb-item bcrumb-2">
+                            <a routerLink="/"><fa-icon [icon]="['fas', 'arrow-alt-circle-right']" size="2x"></fa-icon></a>
+                        </li>
+                        <li class="breadcrumb-item active">{{ 'motorsportsDatabaseApp.category.home.title' | translate }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row clearfix">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <form class="register-form m-4" name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+                    <div class="card">
+                        <div class="body">
                             <jhi-alert-error></jhi-alert-error>
                             <div class="row">
-                                <div class="col-md-5">
-                                    <mat-form-field class="example-full-width">
-                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.category.name' | translate }}" type="text"
-                                               class="form-control" name="name" id="field_name" formControlName="name">
-                                        <div *ngIf="editForm.get('name')!.invalid && (editForm.get('name')!.dirty || editForm.get('name')!.touched)">
-                                            <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('name')?.errors?.required" jhiTranslate="entity.validation.required">
-                                                This field is required.
-                                            </small>
-                                            <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('name')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 40 }">
-                                                This field cannot be longer than 40 characters.
-                                            </small>
-                                        </div>
+                                <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12">
+                                    <mat-form-field class="example-full-width" appearance="outline">
+                                        <mat-label>{{ 'motorsportsDatabaseApp.category.name' | translate }}</mat-label>
+                                        <input matInput type="text" class="form-control" formControlName="name"/>
+                                        <mat-error *ngIf="editForm.get('name')!.hasError('required')">
+                                            {{ 'entity.validation.required' | translate }}
+                                        </mat-error>
+                                        <mat-error *ngIf="editForm.get('name')!.hasError('maxlength')">
+                                            {{ 'entity.validation.maxlength' | translate: { max: 40 } }}
+                                        </mat-error>
                                     </mat-form-field>
-
-                                    <mat-form-field class="example-full-width">
-                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.category.shortname' | translate }}" type="text"
-                                               class="form-control" name="name" id="field_shortname" formControlName="shortname">
-                                        <div *ngIf="editForm.get('shortname')!.invalid && (editForm.get('shortname')!.dirty || editForm.get('shortname')!.touched)">
-                                            <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('shortname')?.errors?.required" jhiTranslate="entity.validation.required">
-                                                This field is required.
-                                            </small>
-                                            <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('shortname')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 10 }">
-                                                This field cannot be longer than 10 characters.
-                                            </small>
-                                        </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                                    <mat-form-field class="example-full-width" appearance="outline">
+                                        <mat-label>{{ 'motorsportsDatabaseApp.category.shortname' | translate }}</mat-label>
+                                        <input matInput type="text" class="form-control" formControlName="shortname"/>
+                                        <mat-error *ngIf="editForm.get('name')!.hasError('required')">
+                                            {{ 'entity.validation.required' | translate }}
+                                        </mat-error>
+                                        <mat-error *ngIf="editForm.get('name')!.hasError('maxlength')">
+                                            {{ 'entity.validation.maxlength' | translate: { max: 10 } }}
+                                        </mat-error>
                                     </mat-form-field>
-
-                                    <mat-form-field class="example-full-width">
-                                        <input matInput type="number" formControlName="relevance"
-                                               placeholder="{{ 'motorsportsDatabaseApp.series.relevance' | translate }}"/>
+                                </div>
+                                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                    <mat-form-field class="example-full-width" appearance="outline">
+                                        <mat-label>{{ 'motorsportsDatabaseApp.category.relevance' | translate }}</mat-label>
+                                        <input matInput type="number" formControlName="relevance"/>
                                         <mat-error *ngIf="editForm.get('relevance')?.hasError('max')">
                                             {{ 'entity.validation.max' | translate: '{ max: 1000 }' }}
                                         </mat-error>
@@ -52,55 +54,41 @@
                                             {{ 'entity.validation.min' | translate: '{ min: 100 }' }}
                                         </mat-error>
                                     </mat-form-field>
-
-                                    <div class="row">
-                                        <div class="col-md-6 col-xs-12">
-                                            <mat-form-field class="example-full-width">
-                                                <input matInput placeholder="{{ 'motorsportsDatabaseApp.tyreProvider.symbol.backgroundColor' | translate }}" type="color"
-                                                       class="form-control" name="name" id="field_categoryColor" formControlName="categoryColor">
-                                            </mat-form-field>
-                                        </div>
-                                        <div class="col-md-6 col-xs-12">
-                                            <mat-form-field class="example-full-width">
-                                                <input matInput placeholder="{{ 'motorsportsDatabaseApp.tyreProvider.symbol.letterColor' | translate }}" type="color"
-                                                       class="form-control" name="name" id="field_categoryFrontColor" formControlName="categoryFrontColor">
-                                            </mat-form-field>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.category.logo" for="field_logo">Logo</label>
-                                        <div>
-                                            <img [src]="editForm.get('logoUrl')?.value" style="max-height: 100px;" *ngIf="!editForm.get('logo')?.value && editForm.get('logoUrl')?.value != null" alt="category logo"/>
-                                            <img [src]="'data:' + editForm.get('logoContentType')?.value + ';base64,' + editForm.get('logo')?.value" style="max-height: 100px;" *ngIf="editForm.get('logo')?.value" alt="category logo"/>
-                                            <div *ngIf="editForm.get('logoUrl')?.value || editForm.get('logo')?.value" class="form-text text-danger clearfix">
-                                                <button type="button" (click)="clearInputImage('logo', 'logoContentType', 'fileImage')"
-                                                        class="btn btn-secondary btn-sm pull-right">
-                                                    <span class="fa fa-times"></span>
-                                                </button>
-                                            </div>
-                                            <input type="file" id="file_logo" (change)="setFileData($event, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
-                                        </div>
-                                        <input type="hidden" class="form-control" name="logo" id="field_logo" formControlName="logo"/>
-                                        <input type="hidden" class="form-control" name="logoContentType" id="field_logoContentType" formControlName="logoContentType" />
-                                    </div>
                                 </div>
                             </div>
-                            <div>
-                                <button mat-raised-button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
-                                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
-                                </button>
-                                <button mat-raised-button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
-                                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
-                                </button>
+                            <div class="row">
+                                <div class="col-md-6 col-xs-12">
+                                    <mat-form-field class="example-full-width" appearance="outline">
+                                        <mat-label>{{ 'motorsportsDatabaseApp.category.categoryColor' | translate }}</mat-label>
+                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.category.categoryColor' | translate }}" type="color"
+                                               class="form-control" name="name" id="field_categoryColor" formControlName="categoryColor">
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6 col-xs-12">
+                                    <mat-form-field class="example-full-width" appearance="outline">
+                                        <mat-label>{{ 'motorsportsDatabaseApp.category.categoryFrontColor' | translate }}</mat-label>
+                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.category.categoryFrontColor' | translate }}" type="color"
+                                               class="form-control" name="name" id="field_categoryFrontColor" formControlName="categoryFrontColor">
+                                    </mat-form-field>
+                                </div>
                             </div>
-                            <div class="clearfix"></div>
-                        </form>
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+                                    <button class="msr-3" [disabled]="!editForm.valid || isSaving" mat-raised-button color="primary">
+                                        <span jhiTranslate="entity.action.save">Save</span>
+                                        <mat-icon matPrefix>save</mat-icon>
+                                    </button>
+
+                                    <button type="button" mat-button id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                                        <span jhiTranslate="entity.action.cancel">Cancel</span>
+                                        <mat-icon matPrefix>cancel</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
+</section>

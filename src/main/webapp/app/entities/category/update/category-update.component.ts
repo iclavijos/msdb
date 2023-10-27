@@ -23,9 +23,6 @@ export class CategoryUpdateComponent implements OnInit {
     name: [null, [Validators.required, Validators.maxLength(40)]],
     shortname: [null, [Validators.required, Validators.maxLength(10)]],
     relevance: [1000, [Validators.min(100), Validators.max(1000)]],
-    logo: [],
-    logoContentType: [],
-    logoUrl: [],
     categoryColor: ['#ffffff'],
     categoryFrontColor: ['#000000']
   });
@@ -43,33 +40,6 @@ export class CategoryUpdateComponent implements OnInit {
     this.activatedRoute.data.subscribe(({ category }) => {
       this.updateForm(category);
     });
-  }
-
-  byteSize(base64String: string): string {
-    return this.dataUtils.byteSize(base64String);
-  }
-
-  openFile(base64String: string, contentType: string | null | undefined): void {
-    this.dataUtils.openFile(base64String, contentType);
-  }
-
-  setFileData(event: Event, field: string, isImage: boolean): void {
-    this.dataUtils.loadFileToForm(event, this.editForm, field, isImage).subscribe({
-      error: (err: FileLoadError) =>
-        this.eventManager.broadcast(
-          new EventWithContent<AlertError>('motorsportsDatabaseApp.error', { ...err, key: 'error.file.' + err.key })
-        ),
-    });
-  }
-
-  clearInputImage(field: string, fieldContentType: string, idInput: string): void {
-    this.editForm.patchValue({
-      [field]: null,
-      [fieldContentType]: null,
-    });
-    if (idInput && this.elementRef.nativeElement.querySelector('#' + idInput)) {
-      this.elementRef.nativeElement.querySelector('#' + idInput).value = null;
-    }
   }
 
   previousState(): void {
@@ -111,9 +81,6 @@ export class CategoryUpdateComponent implements OnInit {
       name: category.name,
       shortname: category.shortname,
       relevance: category.relevance,
-      logo: category.logo,
-      logoContentType: category.logoContentType,
-      logoUrl: category.logoUrl,
       categoryColor: category.categoryColor,
       categoryFrontColor: category.categoryFrontColor
     });
@@ -126,9 +93,6 @@ export class CategoryUpdateComponent implements OnInit {
       name: this.editForm.get(['name'])!.value,
       shortname: this.editForm.get(['shortname'])!.value,
       relevance: this.editForm.get('relevance')!.value,
-      logoContentType: this.editForm.get(['logoContentType'])!.value,
-      logo: this.editForm.get(['logo'])!.value,
-      logoUrl: this.editForm.get(['logoUrl'])!.value,
       categoryColor: this.editForm.get(['categoryColor'])!.value,
       categoryFrontColor: this.editForm.get(['categoryFrontColor'])!.value,
     };

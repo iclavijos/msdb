@@ -23,8 +23,6 @@ describe('Category Service', () => {
       id: 0,
       name: 'AAAAAAA',
       shortname: 'AAAAAAA',
-      logoContentType: 'image/png',
-      logo: 'AAAAAAA',
     };
   });
 
@@ -62,7 +60,6 @@ describe('Category Service', () => {
           id: 1,
           name: 'BBBBBB',
           shortname: 'BBBBBB',
-          logo: 'BBBBBB',
         },
         elemDefault
       );
@@ -101,7 +98,6 @@ describe('Category Service', () => {
           id: 1,
           name: 'BBBBBB',
           shortname: 'BBBBBB',
-          logo: 'BBBBBB',
         },
         elemDefault
       );

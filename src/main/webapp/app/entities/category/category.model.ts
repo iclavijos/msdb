@@ -3,9 +3,6 @@ export interface ICategory {
   name?: string;
   shortname?: string;
   relevance?: number;
-  logoContentType?: string | null;
-  logo?: string | null;
-  logoUrl?: string;
   categoryColor?: string;
   categoryFrontColor?: string;
 }
@@ -16,9 +13,6 @@ export class Category implements ICategory {
     public name?: string,
     public shortname?: string,
     public relevance?: number,
-    public logoContentType?: string | null,
-    public logo?: string | null,
-    public logoUrl?: string,
     public categoryColor = '#FFFFFF',
     public categoryFrontColor = '#000000'
   ) {}

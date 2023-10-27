@@ -19,7 +19,9 @@
       },
       "name": "Name",
       "shortname": "Shortname",
-      "logo": "Logo"
+      "relevance": "Relevance",
+      "categoryColor": "Bib color",
+      "categoryFrontColor": "Typography color"
     }
   }
 }

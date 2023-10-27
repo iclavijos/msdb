@@ -19,7 +19,9 @@
       },
       "name": "Nombre",
       "shortname": "Nombre corto",
-      "logo": "Logo"
+      "relevance": "Relevancia",
+      "categoryColor": "Color dorsal",
+      "categoryFrontColor": "Color tipografía"
     }
   }
 }
