@@ -174,16 +174,24 @@
                 <!-- #END# Language -->
                 <!-- #START# Account -->
                 <li class="nav-item user_profile" ngbDropdown>
-                    <div class="chip dropdown-toggle" ngbDropdownToggle class="nav-notification-icons pt-0">
+                    <a href="#" class="dropdown-toggle" onClick="return false;" ngbDropdownToggle role="button">
+                        <span *ngIf="!getImageUrl()">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                        </span>
+                        <span *ngIf="getImageUrl()">
+                            <img [src]="getImageUrl()" class="rounded-circle" width="32" height="32" alt="User" aria-hidden="true">
+                        </span>
+                    </a>
+                    <!-- div class="chip dropdown-toggle" ngbDropdownToggle class="nav-notification-icons pt-0">
                         <span *ngIf="!getImageUrl()">
                             <fa-icon icon="user"></fa-icon>
-                            <!-- span *ngIf="isAuthenticated()">{{ userFullName }}</span -->
+                            <span *ngIf="isAuthenticated()">{{ userFullName }}</span>
                         </span>
                         <span *ngIf="getImageUrl()">
                             <img [src]="getImageUrl()" class="rounded-circle" width="32" height="32" alt="User">
                         </span>
-                    </div>
-                    <div ngbDropdownMenu class="notification-dropdown pullDown" style="width: 280px;">
+                    </div -->
+                    <div ngbDropdownMenu class="notification-dropdown pullDown" style="width: 180px;">
                         <div class="noti-list" style="position: relative">
                             <ul class="menu">
                                 <li class="body">
