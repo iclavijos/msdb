@@ -48,6 +48,7 @@ import {
 
 import {
   faAdn,
+  faMastodon
   // jhipster-needle-add-icon-import
 } from '@fortawesome/free-brands-svg-icons';
 
@@ -76,6 +77,7 @@ export const fontAwesomeIcons = [
   faHome,
   faList,
   faLock,
+  faMastodon,
   faPencilAlt,
   faPlus,
   faRoad,
