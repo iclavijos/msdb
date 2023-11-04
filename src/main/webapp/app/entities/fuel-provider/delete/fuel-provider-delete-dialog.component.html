@@ -6,14 +6,14 @@
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
         <div mat-dialog-content>
-
             <p
                 id="jhi-delete-fuelProvider-heading"
                 jhiTranslate="motorsportsDatabaseApp.fuelProvider.delete.question"
                 [translateValues]="{ id: fuelProvider.id }"
             >
                 Are you sure you want to delete this Fuel Provider?
-            </p>        </div>
+            </p>
+        </div>
     </div>
     <div mat-dialog-actions>
         <button mat-button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">

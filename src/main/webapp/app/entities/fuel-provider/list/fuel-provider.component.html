@@ -1,87 +1,102 @@
-<div class="main-content">
+<section class="content">
     <div class="container-fluid">
-        <jhi-alert-error></jhi-alert-error>
-        <jhi-alert></jhi-alert>
-        <div class="row">
-            <div class="col-sm-12">
-                <form name="searchForm" class="form-inline">
-                    <div class="input-group w-100 mt-3">
-                        <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch"
-                               placeholder="{{ 'motorsportsDatabaseApp.fuelProvider.home.search' | translate }}"
-                               (keyup)="search(currentSearch)">
-                        <button class="input-group-append btn btn-danger" (click)="search('')" *ngIf="currentSearch">
-                            <fa-icon [icon]="'trash-alt'"></fa-icon>
-                        </button>
-                        <button *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-fuelProvider" [routerLink]="['/fuel-provider/new']">
-                            <fa-icon [icon]="'plus'"></fa-icon>
-                            <span class="hidden-sm-down"  jhiTranslate="motorsportsDatabaseApp.fuelProvider.home.createLabel">
-                                Create a new fuel provider
-                            </span>
-                        </button>
-                    </div>
-                </form>
+        <div class="block-header mt-n3">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                    <ul class="breadcrumb breadcrumb-style ">
+                        <li class="breadcrumb-item bcrumb-2">
+                            <a routerLink="/"><fa-icon [icon]="['fas', 'arrow-alt-circle-right']" size="2x"></fa-icon></a>
+                        </li>
+                        <li class="breadcrumb-item active">{{ 'motorsportsDatabaseApp.fuelProvider.home.title' | translate }}</li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header card-header-danger">
-                        <h4 class="card-title "><span jhiTranslate="motorsportsDatabaseApp.fuelProvider.home.title">Fuel provider</span></h4>
+        <div class="responsive_table">
+            <div class="materialTableHeader">
+                <div class="row">
+                    <div class="col-8">
+                        <ul class="header-buttons-left ml-0">
+                            <li class="dropdown m-l-20">
+                                <label for="currentSearch"><i class="material-icons search-icon">search</i></label>
+                                <input type="text" #filter class="browser-default search-field" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch"
+                                       placeholder="{{ 'motorsportsDatabaseApp.fuelProvider.home.search' | translate }}"
+                                       (keyup)="search(currentSearch)" (keydown.enter)="$event.preventDefault()">
+                                <button mat-mini-fab class="input-group-append btn btn-danger" (click)="clearSearch()" *ngIf="currentSearch">
+                                    <fa-icon [icon]="'trash-alt'"></fa-icon>
+                                </button>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="card-body">
-                        <mat-spinner [hidden]="!isLoading"></mat-spinner>
-                        <div class="alert alert-warning" id="no-result" [hidden]="dataSource!.data!.length != 0 || isLoading">
-                            <span jhiTranslate="motorsportsDatabaseApp.fuelProvider.home.notFound">No fuel providers found</span>
-                        </div>
-                        <div class="table-responsive" [hidden]="dataSource!.data!.length === 0">
-                            <mat-table class="table table-hover" [dataSource]="dataSource"
-                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
+                    <div class="col-4">
+                        <ul class="header-buttons">
+                            <li>
+                                <div class="icon-button-demo">
+                                    <button mat-mini-fab *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']" id="jh-create-entity" color="primary" [routerLink]="['/fuel-provider/new']">
+                                        <mat-icon class="col-white">add</mat-icon>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <mat-spinner [hidden]="!isLoading"></mat-spinner>
+                    <div class="alert alert-warning" id="no-result" [hidden]="dataSource!.data!.length != 0 || isLoading">
+                        <span jhiTranslate="motorsportsDatabaseApp.fuelProvider.home.notFound">No fuel providers found</span>
+                    </div>
+                    <div [hidden]="dataSource!.data!.length === 0 || isLoading">
+                        <mat-table class="table-responsive table-hover body" [dataSource]="dataSource"
+                                   matSort matSortActive="name" matSortDisableClear matSortDirection="asc"
+                                   (matSortChange)="sortChanged($event)">
 
-                                <ng-container matColumnDef="name">
-                                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.fuelProvider.name' | translate }}</mat-header-cell>
-                                    <mat-cell *matCellDef="let fuelProvider">{{ fuelProvider.name }}</mat-cell>
-                                </ng-container>
+                            <ng-container matColumnDef="name">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.fuelProvider.name' | translate }}</mat-header-cell>
+                                <mat-cell *matCellDef="let fuelProvider">{{ fuelProvider.name }}</mat-cell>
+                            </ng-container>
 
-                                <ng-container matColumnDef="logo">
-                                    <mat-header-cell *matHeaderCellDef>{{ 'motorsportsDatabaseApp.fuelProvider.logo' | translate }}</mat-header-cell>
-                                    <mat-cell *matCellDef="let fuelProvider">
-                                        <img *ngIf="fuelProvider?.logoUrl" [src]="fuelProvider.logoUrl" style="max-height: 30px;" alt="fuel provider logo"/>
-                                    </mat-cell>
-                                </ng-container>
+                            <ng-container matColumnDef="logo">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'motorsportsDatabaseApp.fuelProvider.logo' | translate }}</mat-header-cell>
+                                <mat-cell *matCellDef="let fuelProvider">
+                                    <img *ngIf="fuelProvider?.logoUrl" [src]="fuelProvider.logoUrl" style="max-height: 30px;" alt="fuel provider logo"/>
+                                </mat-cell>
+                            </ng-container>
 
-                                <ng-container matColumnDef="buttons">
-                                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
-                                    <mat-cell *matCellDef="let fuelProvider">
-                                        <div class="btn-group">
-                                            <button type="submit"
-                                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                                                    [routerLink]="['/fuel-provider', fuelProvider.id, 'edit']"
-                                                    (click)="$event.stopPropagation()"
-                                                    class="btn btn-primary btn-sm">
-                                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                                            </button>
-                                            <button type="submit"
-                                                    *jhiHasAnyAuthority="['ROLE_ADMIN']"
-                                                    (click)="delete($event, fuelProvider)"
-                                                    class="btn btn-danger btn-sm">
-                                                <fa-icon [icon]="'times'"></fa-icon>
-                                            </button>
-                                        </div>
-                                    </mat-cell>
-                                </ng-container>
+                            <ng-container matColumnDef="buttons">
+                                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                <mat-cell *matCellDef="let fuelProvider">
+                                    <div class="btn-group">
+                                        <button mat-mini-fab type="submit"
+                                                color="primary"
+                                                *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                                [routerLink]="['/fuel-provider', fuelProvider.id, 'edit']"
+                                                (click)="$event.stopPropagation()">
+                                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                                        </button>
+                                        <button mat-mini-fab type="submit"
+                                                color="warn"
+                                                *jhiHasAnyAuthority="['ROLE_ADMIN']"
+                                                (click)="delete($event, fuelProvider)">
+                                            <fa-icon [icon]="'times'"></fa-icon>
+                                        </button>
+                                    </div>
+                                </mat-cell>
+                            </ng-container>
 
-                                <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-                                <mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
-                                    [routerLink]="['/fuel-provider', row.id, 'view' ]"></mat-row>
-                            </mat-table>
-                            <mat-paginator [length]="totalItems"
-                                           [pageSizeOptions]="[5, 10, 20]"
-                                           [pageSize]="10"
-                                           showFirstLastButtons></mat-paginator>
-                        </div>
+                            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer"
+                                     [routerLink]="['/fuel-provider', row.id, 'view' ]"></mat-row>
+                        </mat-table>
+                        <mat-paginator [length]="totalItems"
+                                       [pageSizeOptions]="[5, 10, 20]"
+                                       [pageSize]="10"
+                                       showFirstLastButtons
+                                       (page)="pageChanged($event)"></mat-paginator>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>

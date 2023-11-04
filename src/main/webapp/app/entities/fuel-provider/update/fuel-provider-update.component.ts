@@ -23,6 +23,7 @@ export class FuelProviderUpdateComponent implements OnInit {
     name: [null, [Validators.required, Validators.maxLength(50)]],
     logo: [],
     logoContentType: [],
+    logoUrl: []
   });
 
   constructor(
@@ -106,6 +107,7 @@ export class FuelProviderUpdateComponent implements OnInit {
       name: fuelProvider.name,
       logo: fuelProvider.logo,
       logoContentType: fuelProvider.logoContentType,
+      logoUrl: fuelProvider.logoUrl
     });
   }
 
@@ -116,6 +118,7 @@ export class FuelProviderUpdateComponent implements OnInit {
       name: this.editForm.get(['name'])!.value,
       logoContentType: this.editForm.get(['logoContentType'])!.value,
       logo: this.editForm.get(['logo'])!.value,
+      logoUrl: this.editForm.get(['logoUrl'])!.value
     };
   }
 }

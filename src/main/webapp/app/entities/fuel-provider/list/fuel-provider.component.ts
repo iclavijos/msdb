@@ -1,19 +1,22 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SessionStorageService } from 'ngx-webstorage';
 
-import { IFuelProvider } from '../fuel-provider.model';
+import { IFuelProvider, FuelProvider } from '../fuel-provider.model';
 
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
 import { FuelProviderService } from '../service/fuel-provider.service';
 import { FuelProviderDeleteDialogComponent } from '../delete/fuel-provider-delete-dialog.component';
 import { DataUtils } from 'app/core/util/data-util.service';
+import { AccountService } from 'app/core/auth/account.service';
 
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort, Sort, MatSortHeader } from '@angular/material/sort';
 
 @Component({
   selector: 'jhi-fuel-provider',
@@ -24,36 +27,80 @@ export class FuelProviderComponent implements OnInit, AfterViewInit {
   isLoading = false;
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
-  page?: number;
-  predicate!: string;
-  ascending!: boolean;
+  page = 0;
+  predicate = 'name';
+  ascending = true;
+  reloadData = true;
+
+  fuelProvidersSearchTextChanged = new Subject<string>();
 
   dataSource = new MatTableDataSource<IFuelProvider>([]);
-  displayedColumns: string[] = ['name', 'logo', 'buttons'];
+  displayedColumns: string[] = ['name', 'logo'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sorter!: MatSort;
+  @ViewChild(MatSort, {static: true}) sorter!: MatSort;
 
   constructor(
     protected fuelProviderService: FuelProviderService,
     protected activatedRoute: ActivatedRoute,
     protected dataUtils: DataUtils,
     protected router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected accountService: AccountService,
+    private sessionStorageService: SessionStorageService
   ) {
     this.currentSearch = this.activatedRoute.snapshot.queryParams['search'] ?? '';
   }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+    if (this.accountService.hasAnyAuthority(["ROLE_ADMIN", "ROLE_EDITOR"])) {
+      this.displayedColumns.push('buttons');
+    }
   }
 
   ngOnInit(): void {
+    this.currentSearch = this.sessionStorageService.retrieve('fuelProviderSearch') ?? '';
+    this.page = this.sessionStorageService.retrieve('fuelProviderSearchPage') ?? 0;
+    this.itemsPerPage = this.sessionStorageService.retrieve('fuelProviderSearchItems') ?? ITEMS_PER_PAGE;
+    this.predicate = this.sessionStorageService.retrieve('fuelProviderSearchPredicate') ?? 'name';
+    this.ascending = this.sessionStorageService.retrieve('fuelProviderSearchAscending') ?? true;
+
     this.loadPage();
+
+    this.fuelProvidersSearchTextChanged
+      .pipe(debounceTime(300))
+      .subscribe(() => {
+        this.page = 0;
+        this.itemsPerPage = ITEMS_PER_PAGE;
+        this.predicate = 'name';
+        this.ascending = true;
+        this.loadPage();
+      });
   }
 
   search(query: string): void {
-    this.dataSource.filter = query.trim().toLowerCase();
+    this.sessionStorageService.store('fuelProviderSearch', query);
+    if (query.length === 0) {
+      this.currentSearch = '';
+      this.page = 0;
+      this.itemsPerPage = ITEMS_PER_PAGE;
+      this.predicate = 'name';
+      this.ascending = true;
+      this.loadPage();
+    } else {
+      if (query.length >= 3) {
+        this.fuelProvidersSearchTextChanged.next();
+      }
+    }
+  }
+
+  clearSearch(): void {
+    this.sessionStorageService.clear('fuelProviderSearchPage');
+    this.sessionStorageService.clear('fuelProviderSearchItems');
+    this.sessionStorageService.clear('fuelProviderSearchPredicate');
+    this.sessionStorageService.clear('fuelProviderSearchAscending');
+    this.search('');
   }
 
   trackId(index: number, item: IFuelProvider): number {
@@ -80,48 +127,93 @@ export class FuelProviderComponent implements OnInit, AfterViewInit {
     });
   }
 
+  pageChanged(event: PageEvent): void {
+    this.page = event.pageIndex;
+    this.itemsPerPage = event.pageSize;
+    this.sessionStorageService.store('fuelProviderSearchPage', this.page);
+    this.sessionStorageService.store('fuelProviderSearchItems', this.itemsPerPage);
+    this.loadPage();
+  }
+
+  sortChanged(event: Sort): void {
+    this.predicate = event.active;
+    this.ascending = (event.direction as string) === 'asc';
+    this.sessionStorageService.store('fuelProviderSearchPredicate', this.predicate);
+    this.sessionStorageService.store('fuelProviderSearchAscending', this.ascending);
+    this.loadPage();
+    if (this.reloadData) {
+      this.page = 0;
+      this.sessionStorageService.store('fuelProviderSearchPage', this.page);
+      this.paginator.pageIndex = 0;
+    }
+  }
+
   protected loadPage(): void {
+    if (!this.reloadData) {
+      return;
+    }
+
+    this.isLoading = true;
     this.fuelProviderService
       .query({
-        page: 0,
+        page: this.page,
         query: this.currentSearch,
         size: this.itemsPerPage,
-        sort: ['name,asc'],
+        sort: this.sort(),
       })
       .subscribe(
         (res: HttpResponse<IFuelProvider[]>) => {
           this.isLoading = false;
           this.totalItems = Number(res.headers.get('X-Total-Count'));
-          this.dataSource.data = res.body ?? [];
+          this.dataSource = new MatTableDataSource(this.instantiateResponseObjects(res.body as IFuelProvider[]));
+          this.sorter.active = this.predicate;
+          this.sorter.start = this.ascending ? 'asc' : 'desc';
           this.dataSource.sort = this.sorter;
+          this.paginator.pageIndex = this.page;
+          this.setSort(this.predicate, this.ascending ? 'asc' : 'desc');
         },
         () => {
           this.isLoading = false;
-          this.onError();
+          // this.onError();
         }
       );
   }
 
   protected sort(): string[] {
-    return [this.predicate + ',' + (this.ascending ? ASC : DESC)];
+    const sortPredicates = [`${this.predicate},${this.ascending ? ASC : DESC }`];
+    if (this.predicate !== 'name') {
+      sortPredicates.push(`name,${ASC}`);
+    }
+    return sortPredicates;
   }
 
-  protected handleNavigation(): void {
-    combineLatest([this.activatedRoute.data, this.activatedRoute.queryParamMap]).subscribe(([data, params]) => {
-      const page = params.get('page');
-      const pageNumber = +(page ?? 1);
-      const sort = (params.get(SORT) ?? data['defaultSort']).split(',');
-      const predicate = sort[0];
-      const ascending = sort[1] === ASC;
-      if (pageNumber !== this.page || predicate !== this.predicate || ascending !== this.ascending) {
-        this.predicate = predicate;
-        this.ascending = ascending;
-        // this.loadPage(pageNumber, true);
-      }
-    });
+  private instantiateResponseObjects(data: IFuelProvider[]): IFuelProvider[] {
+    const objects: IFuelProvider[] = [];
+    data.forEach(fuelProvider => objects.push(
+      new FuelProvider(
+        fuelProvider.id,
+        fuelProvider.name,
+        undefined,
+        undefined,
+        fuelProvider.logoUrl
+      )));
+
+    return objects;
   }
 
-  protected onError(): void {
-    this.page = this.page ?? 1;
+  private setSort(id: string, start?: 'asc' | 'desc'): void {
+    start = start ?? 'asc';
+    const matSort = this.dataSource.sort;
+    const toState = 'active';
+    const disableClear = false;
+
+    // reset state so that start is the first sort direction that you will see
+    this.reloadData = false;
+    matSort!.sort({ id: '', start, disableClear });
+    matSort!.sort({ id, start, disableClear });
+    this.reloadData = true;
+
+    // ugly hack
+    (matSort!.sortables.get(id) as MatSortHeader)._setAnimationTransitionState({ toState });
   }
 }
