@@ -1,61 +1,66 @@
-<div class="main-content">
+<section class="content">
     <div class="container-fluid">
+        <div class="block-header mt-n3">
+            <div class="row">
+                <div class="col-12">
+                    <ul class="breadcrumb breadcrumb-style">
+                        <li class="breadcrumb-item bcrumb-2">
+                            <a routerLink="/"><fa-icon [icon]="['fas', 'arrow-alt-circle-right']" size="2x"></fa-icon></a>
+                        </li>
+                        <li class="breadcrumb-item bcrumb-2">
+                            <a routerLink="/tyre-provider">{{ 'motorsportsDatabaseApp.tyreProvider.home.title' | translate }}</a>
+                        </li>
+                        <li class="breadcrumb-item active">{{ tyreProvider!.name }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <jhi-alert-error></jhi-alert-error>
         <jhi-alert></jhi-alert>
-        <div class="row">
-            <div class="col-md-12">
+        <div class="row clearfix">
+            <div class="col-lg-4 col-md-12">
                 <div class="card">
-                    <div class="card-header card-header-danger">
-                        <h3 class="card-title">{{tyreProvider.name!}}</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <img *ngIf="tyreProvider.logoUrl" [src]="tyreProvider.logoUrl!"
-                                     class="img-fluid" alt="tyre provider logo"/>
+                    <div class="m-b-20">
+                        <div class="contact-grid">
+                            <div class="profile-header bg-dark">
+                                <div class="user-name">{{ tyreProvider!.name }}</div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.symbol.letterColor">Letter Color</span></dt>
-                                <dd>
-                                    <p-colorPicker [(ngModel)]="tyreProvider.letterColor!" [disabled]="true"></p-colorPicker>
-                                </dd>
-                            </div>
-                            <div class="col-md-3">
-                                <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.symbol.backgroundColor">Background Color</span></dt>
-                                <dd>
-                                    <p-colorPicker [(ngModel)]="tyreProvider.backgroundColor!" [disabled]="true"></p-colorPicker>
-                                </dd>
-                            </div>
-                            <div class="col-md-2">
-                                <dt><span jhiTranslate="motorsportsDatabaseApp.tyreProvider.symbol.symbol">Symbol</span></dt>
-                                <dd>
-                                    <div [style.background]="tyreProvider.backgroundColor!" [style.color]="tyreProvider.letterColor!"
-                                         style="width: 30px; height: 30px; vertical-align: top; text-align:center;">
+                            <img *ngIf="tyreProvider.logoUrl" [src]="tyreProvider.logoUrl"
+                                 class="user-img img-fluid" alt="tyre provider logo"/>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <span jhiTranslate="motorsportsDatabaseApp.tyreProvider.symbol.symbol">Symbol: </span>
+                                </div>
+                                <div class="col-6">
+                                    <div [style.background]="tyreProvider.backgroundColor!" [style.color]="tyreProvider.letterColor!" style="width: 30px; height: 30px; vertical-align: top; text-align:center;">
                                         <h3>{{tyreProvider.name!.substring(0,1)}}</h3>
                                     </div>
-                                </dd>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <!-- jhi-statistics [id]="tyreProvider.id!" [statsType]="'tyreProvider'">Statistics...</jhi-statistics -->
-                            </div>
+                            <button mat-mini-fab type="submit" color="primary"
+                                    *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
+                                    [routerLink]="['/tyre-provider', tyreProvider.id, 'edit']">
+                                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-lg-8 col-md-12">
+                <div class="card">
+                    <mat-tab-group>
+                        <mat-tab>
+                            <ng-template mat-tab-label>
+                                <mat-icon class="example-tab-icon msr-2">analytics</mat-icon>
+                                {{ 'motorsportsDatabaseApp.stats.home.title' | translate }}
+                            </ng-template>
+                            <div class="p-4">
+                            </div>
+                        </mat-tab>
+                    </mat-tab-group>
+                </div>
+            </div>
         </div>
-        <button mat-button type="button" *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_EDITOR']"
-                [routerLink]="['/tyre-provider', tyreProvider.id, 'edit']"
-                class="btn btn-primary">
-            <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
-        </button>
-        <button type="submit"
-                (click)="previousState()"
-                class="btn btn-info">
-            <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
-        </button>
     </div>
-</div>
+</section>
