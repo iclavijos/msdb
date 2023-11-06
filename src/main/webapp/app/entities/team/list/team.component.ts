@@ -6,11 +6,13 @@ import { debounceTime } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SessionStorageService } from 'ngx-webstorage';
 
-import { ASC, DESC, ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 import { ITeam, Team } from '../team.model';
+
+import { ASC, DESC, ITEMS_PER_PAGE } from 'app/config/pagination.constants';
 import { TeamService } from '../service/team.service';
 import { TeamDeleteDialogComponent } from '../delete/team-delete-dialog.component';
 import { DataUtils } from 'app/core/util/data-util.service';
+import { AccountService } from 'app/core/auth/account.service';
 
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -30,13 +32,13 @@ export class TeamComponent implements OnInit, AfterViewInit {
   ascending = true;
   reloadData = true;
 
-  dataSource = new MatTableDataSource<ITeam>([]);
-  displayedColumns: string[] = ['name', 'description', 'hqLocation', 'logo', 'buttons'];
-
   teamsSearchTextChanged = new Subject<string>();
 
+  dataSource = new MatTableDataSource<ITeam>([]);
+  displayedColumns: string[] = ['name', 'description', 'hqLocation', 'logo'];
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sorter!: MatSort;
+  @ViewChild(MatSort, {static: true}) sorter!: MatSort;
 
   constructor(
     protected teamService: TeamService,
@@ -44,6 +46,7 @@ export class TeamComponent implements OnInit, AfterViewInit {
     protected dataUtils: DataUtils,
     protected router: Router,
     protected modalService: NgbModal,
+    protected accountService: AccountService,
     private sessionStorageService: SessionStorageService
   ) {
     this.currentSearch = this.activatedRoute.snapshot.queryParams['search'] ?? '';
@@ -51,6 +54,9 @@ export class TeamComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+    if (this.accountService.hasAnyAuthority(["ROLE_ADMIN", "ROLE_EDITOR"])) {
+      this.displayedColumns.push('buttons');
+    }
   }
 
   ngOnInit(): void {

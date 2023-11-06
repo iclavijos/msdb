@@ -1,91 +1,98 @@
-<div class="main-content">
+<section class="content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header card-header-danger">
-                        <h4 class="card-title">{{ editForm.get('name')?.value }}</h4>
-                        <p class="card-category">{{ 'motorsportsDatabaseApp.team.home.createOrEditLabel' | translate }}</p>
-                    </div>
-                    <div class="card-body">
-                        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-                            <jhi-alert-error></jhi-alert-error>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <mat-form-field class="example-full-width">
-                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.team.name' | translate }}" type="text"
-                                               class="form-control" name="name" id="field_name" formControlName="name">
-                                        <div *ngIf="editForm.get('name')?.invalid && (editForm.get('name')?.dirty || editForm.get('name')?.touched)">
-                                            <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('name')?.errors?.required" jhiTranslate="entity.validation.required">
-                                                This field is required.
-                                            </small>
-                                            <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('name')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 40 }">
-                                                This field cannot be longer than 40 characters.
-                                            </small>
-                                        </div>
-                                    </mat-form-field>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <mat-form-field class="example-full-width">
-                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.team.description' | translate }}" type="text"
-                                               class="form-control" name="description" id="field_description" formControlName="description">
-                                        <div *ngIf="editForm.get('description')?.invalid && (editForm.get('description')?.dirty || editForm.get('description')?.touched)">
-                                            <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('description')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
-                                                This field cannot be longer than 100 characters.
-                                            </small>
-                                        </div>
-                                    </mat-form-field>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <mat-form-field class="example-full-width">
-                                        <input matInput placeholder="{{ 'motorsportsDatabaseApp.team.hqLocation' | translate }}" type="text"
-                                               class="form-control" name="hqLocation" id="field_hqLocation" formControlName="hqLocation">
-                                        <div *ngIf="editForm.get('hqLocation')?.invalid && (editForm.get('hqLocation')?.dirty || editForm.get('hqLocation')?.touched)">
-                                            <small class="form-text text-danger"
-                                                   *ngIf="editForm.get('hqLocation')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">
-                                                This field cannot be longer than 100 characters.
-                                            </small>
-                                        </div>
-                                    </mat-form-field>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <label class="form-control-label" jhiTranslate="motorsportsDatabaseApp.team.logo" for="field_logo">Logo</label>
-                                    <div>
-                                        <img [src]="editForm.get('logoUrl')?.value" style="max-height: 100px;" *ngIf="!editForm.get('logo')?.value && editForm.get('logoUrl')?.value != null" alt="team logo"/>
-                                        <img [src]="'data:' + editForm.get('logoContentType')?.value + ';base64,' + editForm.get('logo')?.value" style="max-height: 100px;" *ngIf="editForm.get('logo')?.value" alt="team logo"/>
-                                        <div *ngIf="editForm.get('logo')?.value" class="form-text text-danger clearfix">
-                                            <button type="button" (click)="clearInputImage('logo', 'logoContentType', 'fileImage')" class="btn btn-secondary btn-sm pull-right">
-                                                <span class="fa fa-times"></span>
-                                            </button>
-                                        </div>
-                                        <input type="file" id="file_logo" (change)="setFileData($event, 'logo', true)" accept="image/*" jhiTranslate="entity.action.addimage"/>
-                                    </div>
-                                    <input type="hidden" class="form-control" name="logo" id="field_logo" formControlName="logo"/>
-                                    <input type="hidden" class="form-control" name="logoContentType" id="field_logoContentType" formControlName="logoContentType" />
-                                </div>
-                            </div>
-                            <div>
-                                <button mat-raised-button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
-                                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
-                                </button>
-                                <button mat-raised-button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
-                                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
-                                </button>
-                            </div>
-                            <div class="clearfix"></div>
-                        </form>
-                    </div>
+        <div class="block-header">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <ul class="breadcrumb breadcrumb-style ">
+                        <ul class="breadcrumb breadcrumb-style ">
+                            <li class="breadcrumb-item">
+                                <h4 class="fw-bold">{{ 'motorsportsDatabaseApp.team.home.title' | translate }}</h4>
+                            </li>
+                        </ul>
+                    </ul>
                 </div>
             </div>
         </div>
+        <div class="row clearfix">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <form class="register-form m-4" name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+                    <div class="card">
+                        <div class="body">
+                            <div class="row">
+                                <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12">
+                                    <div class="row">
+                                        <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 mb-2">
+                                            <mat-form-field class="example-full-width" appearance="outline">
+                                                <mat-label>{{ 'motorsportsDatabaseApp.team.name' | translate }}</mat-label>
+                                                <input matInput type="text" class="form-control" formControlName="name">
+                                                <mat-error *ngIf="editForm.get('name')!.hasError('required')">
+                                                    {{ 'entity.validation.required' | translate }}
+                                                </mat-error>
+                                                <mat-error *ngIf="editForm.get('name')!.hasError('maxlength')">
+                                                    {{ 'entity.validation.maxlength' | translate: { max: 40} }}
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12 mb-2">
+                                            <mat-form-field class="example-full-width" appearance="outline">
+                                                <mat-label>{{ 'motorsportsDatabaseApp.team.hqLocation' | translate }}</mat-label>
+                                                <input matInput type="text" class="form-control" formControlName="hqLocation">
+                                                <mat-error *ngIf="editForm.get('hqLocation')!.hasError('required')">
+                                                    {{ 'entity.validation.required' | translate }}
+                                                </mat-error>
+                                                <mat-error *ngIf="editForm.get('hqLocation')!.hasError('maxlength')">
+                                                    {{ 'entity.validation.maxlength' | translate: { max: 100 } }}
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <mat-form-field class="example-full-width" appearance="outline">
+                                                <mat-label>{{ 'motorsportsDatabaseApp.team.description' | translate }}</mat-label>
+                                                <input matInput type="text" class="form-control" formControlName="description">
+                                                <mat-error *ngIf="editForm.get('description')!.hasError('required')">
+                                                    {{ 'entity.validation.required' | translate }}
+                                                </mat-error>
+                                                <mat-error *ngIf="editForm.get('description')!.hasError('maxlength')">
+                                                    {{ 'entity.validation.maxlength' | translate: { max: 100 } }}
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+                                            <button class="msr-3" [disabled]="!editForm.valid || isSaving" mat-raised-button color="primary">
+                                                <span jhiTranslate="entity.action.save">Save</span>
+                                                <mat-icon matPrefix>save</mat-icon>
+                                            </button>
+
+                                            <button type="button" mat-button id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                                                <span jhiTranslate="entity.action.cancel">Cancel</span>
+                                                <mat-icon matPrefix>cancel</mat-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+                                            <mat-label>{{ 'motorsportsDatabaseApp.team.logo' | translate }}</mat-label>
+                                            <jhi-file-upload
+                                                [editForm]="editForm"
+                                                controlName="logo"
+                                                controlNameContentType="logoContentType"
+                                                imageUrl="logoUrl"
+                                                [isImage]="true"
+                                                acceptedMimeType="image/*"></jhi-file-upload>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-</div>
+</section>
