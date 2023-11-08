@@ -10,6 +10,7 @@ export class ImageComponent {
 
   @Input() imageUrl!: string;
   @Input() imageAlt!: string;
+  @Input() extraClasses!: string;
 
   private album: Array<IAlbum>;
 

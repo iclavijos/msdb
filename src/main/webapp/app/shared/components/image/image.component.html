@@ -1,6 +1,6 @@
 <img #popupImage
      [src]="imageUrl"
-     class="img-fluid pointer"
+     class="pointer {{ extraClasses }}"
      [alt]="imageAlt"
      (mouseover)="zoomIn(popupImage)"
      (mouseleave)="zoomOut(popupImage)"
