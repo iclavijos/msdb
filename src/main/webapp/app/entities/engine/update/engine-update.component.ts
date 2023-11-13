@@ -195,24 +195,24 @@ export class EngineUpdateComponent implements OnInit {
   }
 
   protected createFromForm(): IEngine {
-    return {
-      ...new Engine(),
-      id: this.editForm.get(['id'])!.value,
-      name: this.editForm.get(['name'])!.value,
-      manufacturer: this.editForm.get(['manufacturer'])!.value,
-      capacity: this.editForm.get(['capacity'])!.value,
-      architecture: this.editForm.get(['architecture'])!.value,
-      debutYear: this.editForm.get(['debutYear'])!.value,
-      petrolEngine: this.editForm.get(['petrolEngine'])!.value,
-      dieselEngine: this.editForm.get(['dieselEngine'])!.value,
-      electricEngine: this.editForm.get(['electricEngine'])!.value,
-      otherEngine: this.editForm.get(['otherEngine'])!.value,
-      turbo: this.editForm.get(['turbo'])!.value,
-      imageContentType: this.editForm.get(['imageContentType'])!.value,
-      image: this.editForm.get(['image'])!.value,
-      imageUrl: this.editForm.get(['imageUrl'])!.value,
-      derivedFrom: this.editForm.get(['derivedFrom'])!.value,
-      rebranded: this.editForm.get(['rebranded'])!.value
-    };
+    const engine = new Engine();
+    engine.id= this.editForm.get(['id'])!.value;
+    engine.name= this.editForm.get(['name'])!.value;
+    engine.manufacturer= this.editForm.get(['manufacturer'])!.value;
+    engine.capacity= this.editForm.get(['capacity'])!.value;
+    engine.architecture= this.editForm.get(['architecture'])!.value;
+    engine.debutYear= this.editForm.get(['debutYear'])!.value;
+    engine.petrolEngine= this.editForm.get(['petrolEngine'])!.value;
+    engine.dieselEngine= this.editForm.get(['dieselEngine'])!.value;
+    engine.electricEngine= this.editForm.get(['electricEngine'])!.value;
+    engine.otherEngine= this.editForm.get(['otherEngine'])!.value;
+    engine.turbo= this.editForm.get(['turbo'])!.value;
+    engine.imageContentType= this.editForm.get(['imageContentType'])!.value;
+    engine.image= this.editForm.get(['image'])!.value;
+    engine.imageUrl= this.editForm.get(['imageUrl'])!.value;
+    engine.derivedFrom= this.editForm.get(['derivedFrom'])!.value;
+    engine.rebranded= this.editForm.get(['rebranded'])!.value;
+
+    return engine;
   }
 }

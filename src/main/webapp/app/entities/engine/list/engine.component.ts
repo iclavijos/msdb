@@ -11,6 +11,7 @@ import { IEngine, Engine } from '../engine.model';
 import { EngineService } from '../service/engine.service';
 import { EngineDeleteDialogComponent } from '../delete/engine-delete-dialog.component';
 import { DataUtils } from 'app/core/util/data-util.service';
+import { AccountService } from 'app/core/auth/account.service';
 
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -31,7 +32,7 @@ export class EngineComponent implements OnInit, AfterViewInit {
   reloadData = true;
 
   dataSource = new MatTableDataSource<IEngine>([]);
-  displayedColumns: string[] = ['name', 'manufacturer', 'capacity', 'architecture', 'debutYear', 'petrolEngine', 'dieselEngine', 'electricEngine', 'otherEngine', 'buttons'];
+  displayedColumns: string[] = ['name', 'manufacturer', 'capacity', 'architecture', 'debutYear', 'petrolEngine', 'dieselEngine', 'electricEngine', 'otherEngine'];
 
   enginesSearchTextChanged = new Subject<string>();
 
@@ -44,6 +45,7 @@ export class EngineComponent implements OnInit, AfterViewInit {
     protected dataUtils: DataUtils,
     protected router: Router,
     protected modalService: NgbModal,
+    protected accountService: AccountService,
     private sessionStorageService: SessionStorageService
   ) {
     this.currentSearch = this.activatedRoute.snapshot.queryParams['search'] ?? '';
@@ -51,6 +53,10 @@ export class EngineComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+
+    if (this.accountService.hasAnyAuthority(["ROLE_ADMIN", "ROLE_EDITOR"])) {
+      this.displayedColumns.push('buttons');
+    }
   }
 
   ngOnInit(): void {
@@ -175,8 +181,8 @@ export class EngineComponent implements OnInit, AfterViewInit {
 
   protected sort(): string[] {
     const sortPredicates = [`${this.predicate},${this.ascending ? ASC : DESC }`];
-    if (this.predicate !== 'id') {
-      sortPredicates.push(`id,${ASC}`);
+    if (this.predicate !== 'name') {
+      sortPredicates.push(`name,${ASC}`);
     }
     return sortPredicates;
   }
