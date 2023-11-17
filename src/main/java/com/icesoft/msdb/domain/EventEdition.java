@@ -136,7 +136,7 @@ public class EventEdition extends AbstractAuditingEntity implements Serializable
         this.longEventName = copyFrom.longEventName;
         this.eventDate = copyFrom.eventDate;
         this.multidriver = copyFrom.multidriver;
-        this.status = copyFrom.status;
+        this.status = EventStatusType.ONGOING;
         this.setAllowedCategories(new TreeSet<>());
         copyFrom.getAllowedCategories()
             .forEach(category -> this.allowedCategories.add(category));
