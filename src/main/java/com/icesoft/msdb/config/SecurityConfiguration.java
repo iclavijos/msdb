@@ -94,9 +94,10 @@ public class SecurityConfiguration {
             .requestMatchers("/api/timezones").permitAll()
             .requestMatchers("/api/event-editions/calendar/**").permitAll()
             // Public endpoints for mobile app
-            .requestMatchers(RegexRequestMatcher.regexMatcher("\\/api\\/series\\/\\d+\\/editions")).permitAll()
-            .requestMatchers(RegexRequestMatcher.regexMatcher("\\/api\\/event-editions\\/event-sessions\\/\\d+\\/nextSession")).permitAll()
-            .requestMatchers(RegexRequestMatcher.regexMatcher("\\/api\\/series-editions\\/\\d+\\/events")).permitAll()
+            .requestMatchers(RegexRequestMatcher.regexMatcher("/api/series/\\d+")).permitAll()
+            .requestMatchers(RegexRequestMatcher.regexMatcher("/api/series/\\d+/editions(?:.+)?\\?(\\w+=.+(?:&\\w+=.+)*)")).permitAll()
+            .requestMatchers(RegexRequestMatcher.regexMatcher("/api/event-editions/event-sessions/\\d+/nextSession")).permitAll()
+            .requestMatchers(RegexRequestMatcher.regexMatcher("/api/series-editions/\\d+/events")).permitAll()
             .requestMatchers("/api/series").permitAll()
 
             .requestMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
@@ -105,7 +106,7 @@ public class SecurityConfiguration {
             .requestMatchers("/management/health").permitAll()
             .requestMatchers("/management/health/**").permitAll()
             .requestMatchers("/management/info").permitAll()
-            .requestMatchers("/management/prometheus").permitAll()
+            // .requestMatchers("/management/prometheus").permitAll()
             .requestMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
             .and()
 
