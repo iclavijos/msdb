@@ -79,7 +79,7 @@
     "@angular-material-components/datetime-picker": "^7.0.1",
     "@angular/animations": "^13.3.11",
     "@angular/cdk": "^13.3.9",
-    "@angular/common": "13.3.11",
+    "@angular/common": "19.2.16",
     "@angular/compiler": "13.3.11",
     "@angular/core": "13.3.11",
     "@angular/forms": "13.3.11",
