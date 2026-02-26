@@ -110,7 +110,7 @@
     "@ngx-translate/http-loader": "7.0.0",
     "@swimlane/ngx-datatable": "^20.0.0",
     "@types/file-saver": "^2.0.5",
-    "ajv": "8.6.1",
+    "ajv": "8.18.0",
     "ajv-formats": "^2.1.1",
     "arrive": "2.4.1",
     "bootstrap": "5.1.3",
